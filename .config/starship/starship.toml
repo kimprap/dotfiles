@@ -28,8 +28,8 @@ format = "| [$branch]($style)"
 symbol = ""
 
 [git_status]
-# Escaped parens — unescaped () are parsed as markup, producing "main?" not "main(?)"
-format = "\\([$all_status$ahead_behind\\)]($style)"
+# Optional \(\) — omitted when clean; shows main(?) when dirty
+format = '(\($all_status$ahead_behind\))'
 style = "bold red"
 conflicted = "✖"
 ahead = "↑${count}"
@@ -48,7 +48,7 @@ error_symbol = "[>](bold red)"
 vimcmd_symbol = "[>](bold yellow)"
 
 [python]
-format = "\\([$virtualenv\\)]($style) "
+format = '(\($virtualenv\) )'
 style = "bold yellow"
 
 [fill]
