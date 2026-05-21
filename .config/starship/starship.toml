@@ -1,15 +1,9 @@
 # ~/.config/starship/starship.toml
-# Clean two-line prompt (milo-inspired: path | git → arrow)
+# Preset A: tail-2 repo path | branch(status) → >
 
-# ─────────────────────────────────────────────────────────────
-# Layout
-# ─────────────────────────────────────────────────────────────
-# Line 1: cwd | branch status
-# Line 2: prompt character
 format = """
 $directory$git_branch$git_status$line_break$character"""
 
-# Disable cloud modules (gcloud picks active `gcloud config` — not always wanted in prompt)
 [gcloud]
 disabled = true
 
@@ -22,24 +16,12 @@ disabled = true
 [docker_context]
 disabled = true
 
-# ─────────────────────────────────────────────────────────────
-# Directory
-# ─────────────────────────────────────────────────────────────
-# truncate_to_repo: path relative to git root (not $HOME)
-# truncation_length: max path segments shown from repo root
-#
-# length=1 → yazi          (when deep in repo — very minimal)
-# length=2 → yazi/plugins  (common sweet spot)
-# length=3 → .config/yazi/plugins (current — fine for monorepos)
 [directory]
 truncation_length = 2
 truncate_to_repo = true
 style = "bold cyan"
 read_only = " 🔒"
 
-# ─────────────────────────────────────────────────────────────
-# Git
-# ─────────────────────────────────────────────────────────────
 [git_branch]
 format = "| [$branch]($style)"
 symbol = ""
@@ -53,22 +35,16 @@ behind = "↓${count}"
 diverged = "⇅"
 untracked = "?"
 stashed = "≡"
-modified = "!"
+modified = "*"
 staged = "+"
 renamed = "»"
 deleted = "✘"
 
-# ─────────────────────────────────────────────────────────────
-# Character (line 2)
-# ─────────────────────────────────────────────────────────────
 [character]
-success_symbol = "[⇒](bold cyan)"
-error_symbol = "[⇒](bold red)"
-vimcmd_symbol = "[⇐](bold yellow)"
+success_symbol = "[>](bold green)"
+error_symbol = "[>](bold red)"
+vimcmd_symbol = "[>](bold yellow)"
 
-# ─────────────────────────────────────────────────────────────
-# Python venv (only when active)
-# ─────────────────────────────────────────────────────────────
 [python]
 format = "([$virtualenv]($style)) "
 style = "bold yellow"
