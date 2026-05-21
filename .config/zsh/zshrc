@@ -94,7 +94,8 @@ alias gchp="git cherry-pick"
 alias gdummy="git commit --allow-empty -m"
 
 # --- Dotfiles ---
-alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+alias dot='git -C $HOME/.dotfiles'
+alias dot-add='$HOME/.dotfiles/bin/dot-add'
 
 # --- macOS ---
 alias add-divider="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"small-spacer-tile\";}'; killall Dock"
