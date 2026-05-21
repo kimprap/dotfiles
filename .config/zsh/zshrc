@@ -57,6 +57,9 @@ setopt SHARE_HISTORY
 # ═══════════════════════════════════════════════════════════════
 # Prompt (Starship)
 # ═══════════════════════════════════════════════════════════════
+# Starship reads ~/.config/starship.toml (not ~/.config/starship/starship.toml)
+export STARSHIP_CONFIG="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
+
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 else

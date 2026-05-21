@@ -1,8 +1,9 @@
 # ~/.config/starship/starship.toml
 # Preset A: tail-2 repo path | branch(status) → >
 
-format = """
-$directory$git_branch$git_status$line_break$character"""
+# Single-line format avoids leading blank line from multiline strings
+format = "$directory$git_branch$git_status$line_break$character"
+add_newline = false
 
 [gcloud]
 disabled = true
