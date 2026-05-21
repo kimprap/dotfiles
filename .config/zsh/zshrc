@@ -2,10 +2,36 @@
 # Main Zsh configuration (managed via dotfiles)
 
 # ═══════════════════════════════════════════════════════════════
+# Environment & PATH (must be first — starship/fzf live in brew PATH)
+# ═══════════════════════════════════════════════════════════════
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+export PATH="$HOME/.local/bin:$PATH"
+
+if [[ -d "$HOME/google-cloud-sdk/bin" ]]; then
+  export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+fi
+
+if ! command -v docker &>/dev/null; then
+  [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
+fi
+
+# Completions (required before uv/fzf compdef)
+autoload -Uz compinit
+compinit
+
+
+# ═══════════════════════════════════════════════════════════════
 # Plugin Manager (Antidote)
 # ═══════════════════════════════════════════════════════════════
 if [[ ! -d ~/.antidote ]]; then
-    git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
+  git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
 fi
 source ~/.antidote/antidote.zsh
 antidote load ~/.config/zsh/plugins.txt
@@ -14,17 +40,9 @@ antidote load ~/.config/zsh/plugins.txt
 # ═══════════════════════════════════════════════════════════════
 # Keybindings
 # ═══════════════════════════════════════════════════════════════
-
-# zsh-autosuggestions
 bindkey '^l' autosuggest-accept
 bindkey '^k' autosuggest-clear
 bindkey '^j' forward-word
-
-
-# ═══════════════════════════════════════════════════════════════
-# Prompt
-# ═══════════════════════════════════════════════════════════════
-eval "$(starship init zsh)"
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -37,39 +55,23 @@ setopt SHARE_HISTORY
 
 
 # ═══════════════════════════════════════════════════════════════
-# Environment & PATH
+# Prompt (Starship)
 # ═══════════════════════════════════════════════════════════════
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-export EDITOR="nvim"
-export VISUAL="nvim"
-
-# User-local binaries (portable)
-export PATH="$HOME/.local/bin:$PATH"
-
-# Google Cloud SDK (only add if it exists)
-if [[ -d "$HOME/google-cloud-sdk/bin" ]]; then
-    export PATH="$HOME/google-cloud-sdk/bin:$PATH"
-fi
-
-# Docker - usually provided by Docker Desktop / Orbstack / Colima.
-# Only add fallback if docker is not already in PATH.
-if ! command -v docker &>/dev/null; then
-    [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+else
+  echo "zsh: starship not found — install with: brew install starship" >&2
 fi
 
 
 # ═══════════════════════════════════════════════════════════════
 # Aliases
 # ═══════════════════════════════════════════════════════════════
-
-# --- General ---
 alias ll="ls -ahlF"
 alias la="ls -A"
 alias ls="ls -CF"
 alias y="yazi"
 
-# --- Git (Custom) ---
 alias gl="git log --graph --branches --pretty=format:'%C(yellow) %h%C(auto) -%d %s  %C(green)(%cr) %C(blue)<%an>%Creset'"
 alias ga="git add"
 alias gaa="git add -A"
@@ -93,19 +95,15 @@ alias greset="git checkout . && git clean -df"
 alias gchp="git cherry-pick"
 alias gdummy="git commit --allow-empty -m"
 
-# --- Dotfiles ---
 alias dot='git -C $HOME/.dotfiles'
 alias dot-add='$HOME/.dotfiles/bin/dot-add'
 
-# --- macOS ---
 alias add-divider="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"small-spacer-tile\";}'; killall Dock"
 
 
 # ═══════════════════════════════════════════════════════════════
 # Functions & Hooks
 # ═══════════════════════════════════════════════════════════════
-
-# Auto-load local .venv when changing directory
 autoload -U add-zsh-hook
 
 _load_local_venv() {
@@ -117,22 +115,21 @@ _load_local_venv() {
 }
 
 add-zsh-hook chpwd _load_local_venv
-_load_local_venv   # Run once on shell startup
+_load_local_venv
 
 
 # ═══════════════════════════════════════════════════════════════
 # Tool Initializations
 # ═══════════════════════════════════════════════════════════════
-
-# fzf history search (replaces default Ctrl+R)
-if command -v fzf &> /dev/null; then
-    source <(fzf --zsh 2>/dev/null) || true
-    bindkey '^R' fzf-history-widget
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh 2>/dev/null) || true
+  bindkey '^R' fzf-history-widget
 fi
 
-# zoxide
-eval "$(zoxide init zsh)"
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
-# uv shell completion (must be at the end)
-eval "$(uv generate-shell-completion zsh)"
-
+if command -v uv &>/dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
