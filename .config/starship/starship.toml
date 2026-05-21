@@ -30,7 +30,7 @@ symbol = ""
 
 # milo: %{$fg[yellow]%}(*)%{$reset_color%} — inline yellow; module style does not apply to \(\) groups
 [git_status]
-format = '(\( [$all_status$ahead_behind](yellow)\))'
+format = '(\([$all_status$ahead_behind](yellow)\))'
 style = "yellow"
 conflicted = "✖"
 ahead = "↑${count}"
