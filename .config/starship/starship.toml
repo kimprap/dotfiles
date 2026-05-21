@@ -1,33 +1,55 @@
 # ~/.config/starship/starship.toml
-# First draft - Two line prompt (pwd + git)
+# Clean two-line prompt (milo-inspired: path | git → arrow)
 
-# Main prompt format
+# ─────────────────────────────────────────────────────────────
+# Layout
+# ─────────────────────────────────────────────────────────────
+# Line 1: cwd | branch status
+# Line 2: prompt character
 format = """
-$directory$git_branch$git_status$fill$line_break$character"""
-# format = """
-# $directory$git_branch$git_status$line_break$character"""
+$directory$git_branch$git_status$line_break$character"""
+
+# Disable cloud modules (gcloud picks active `gcloud config` — not always wanted in prompt)
+[gcloud]
+disabled = true
+
+[aws]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[docker_context]
+disabled = true
 
 # ─────────────────────────────────────────────────────────────
 # Directory
 # ─────────────────────────────────────────────────────────────
+# truncate_to_repo: path relative to git root (not $HOME)
+# truncation_length: max path segments shown from repo root
+#
+# length=1 → yazi          (when deep in repo — very minimal)
+# length=2 → yazi/plugins  (common sweet spot)
+# length=3 → .config/yazi/plugins (current — fine for monorepos)
 [directory]
-truncation_length = 3
+truncation_length = 2
 truncate_to_repo = true
-style = "cyan bold"
+style = "bold cyan"
+read_only = " 🔒"
 
 # ─────────────────────────────────────────────────────────────
 # Git
 # ─────────────────────────────────────────────────────────────
 [git_branch]
+format = "| [$branch]($style)"
 symbol = ""
-style = "green"
-truncation_length = 20
 
 [git_status]
-style = "red bold"
+format = "([$all_status$ahead_behind]($style))"
+style = "bold red"
 conflicted = "✖"
-ahead = "↑"
-behind = "↓"
+ahead = "↑${count}"
+behind = "↓${count}"
 diverged = "⇅"
 untracked = "?"
 stashed = "≡"
@@ -35,26 +57,21 @@ modified = "!"
 staged = "+"
 renamed = "»"
 deleted = "✘"
-typechanged = ""
 
 # ─────────────────────────────────────────────────────────────
-# Character (second line prompt symbol)
+# Character (line 2)
 # ─────────────────────────────────────────────────────────────
 [character]
-success_symbol = "[❯](bold green)"
-error_symbol = "[❯](bold red)"
-vimcmd_symbol = "[❮](bold yellow)"
-# success_symbol = "[⇒](bold cyan)"
-# error_symbol = "[⇒](bold red)"
+success_symbol = "[⇒](bold cyan)"
+error_symbol = "[⇒](bold red)"
+vimcmd_symbol = "[⇐](bold yellow)"
 
-# Show virtualenv name
+# ─────────────────────────────────────────────────────────────
+# Python venv (only when active)
+# ─────────────────────────────────────────────────────────────
 [python]
-format = "($virtualenv) "
-style = "yellow"
+format = "([$virtualenv]($style)) "
+style = "bold yellow"
 
-# ─────────────────────────────────────────────────────────────
-# Fill (keeps things aligned nicely)
-# ─────────────────────────────────────────────────────────────
 [fill]
 symbol = " "
-
