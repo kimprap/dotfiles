@@ -14,7 +14,7 @@ FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Sourc
 # Symlink mappings (source → target)
 declare -A SYMLINKS=(
     ["$HOME/.dotfiles/.config/zsh"]="$HOME/.config/zsh"
-    ["$HOME/.dotfiles/.config/starship"]="$HOME/.config/starship"
+    ["$HOME/.dotfiles/.config/starship/starship.toml"]="$HOME/.config/starship.toml"
     ["$HOME/.dotfiles/.config/nvim"]="$HOME/.config/nvim"
     ["$HOME/.dotfiles/.config/ghostty"]="$HOME/.config/ghostty"
     ["$HOME/.dotfiles/.config/yazi"]="$HOME/.config/yazi"
@@ -72,6 +72,15 @@ for src in "${!SYMLINKS[@]}"; do
         echo "   Created symlink: $target → $src"
     fi
 done
+
+# Remove legacy directory symlink (Starship expects a file at ~/.config/starship.toml)
+if [[ -L "$HOME/.config/starship" && ! -f "$HOME/.config/starship.toml" ]]; then
+    rm "$HOME/.config/starship"
+    echo "   Removed legacy ~/.config/starship directory symlink"
+fi
+
+# Suppress macOS "Last login: ..." message
+touch "$HOME/.hushlogin"
 
 echo "✓ Symlinks setup complete."
 
