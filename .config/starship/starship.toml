@@ -1,7 +1,6 @@
 # ~/.config/starship/starship.toml
-# Preset A: tail-2 repo path | branch(status) → >
+# Preset A + miloshadzic colors
 
-# Single-line format avoids leading blank line from multiline strings
 format = "$python$directory$git_branch$git_status$line_break$character"
 add_newline = false
 
@@ -17,20 +16,22 @@ disabled = true
 [docker_context]
 disabled = true
 
+# milo: %{$fg[cyan]%}%1~
 [directory]
 truncation_length = 2
 truncate_to_repo = true
 style = "bold cyan"
 read_only = " 🔒"
 
+# milo: %{$fg[red]%}|%{$reset_color%} + green branch
 [git_branch]
-format = "| [$branch]($style)"
+format = "[|](bold red) [$branch](bold green)"
 symbol = ""
 
+# milo: %{$fg[yellow]%}(*)%{$reset_color%} — optional () omitted when clean
 [git_status]
-# Optional \(\) — omitted when clean; shows main(?) when dirty
 format = '(\($all_status$ahead_behind\))'
-style = "bold red"
+style = "bold yellow"
 conflicted = "✖"
 ahead = "↑${count}"
 behind = "↓${count}"
@@ -42,11 +43,13 @@ staged = "+"
 renamed = "»"
 deleted = "✘"
 
+# milo: %{$fg[cyan]%}⇒
 [character]
-success_symbol = "[>](bold green)"
+success_symbol = "[>](bold cyan)"
 error_symbol = "[>](bold red)"
 vimcmd_symbol = "[>](bold yellow)"
 
+# milo: %{$fg[yellow]%}(venv)%{$reset_color%}
 [python]
 format = '(\($virtualenv\) )'
 style = "bold yellow"
