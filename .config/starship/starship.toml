@@ -1,0 +1,60 @@
+# ~/.config/starship/starship.toml
+# First draft - Two line prompt (pwd + git)
+
+# Main prompt format
+format = """
+$directory$git_branch$git_status$fill$line_break$character"""
+# format = """
+# $directory$git_branch$git_status$line_break$character"""
+
+# ─────────────────────────────────────────────────────────────
+# Directory
+# ─────────────────────────────────────────────────────────────
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "cyan bold"
+
+# ─────────────────────────────────────────────────────────────
+# Git
+# ─────────────────────────────────────────────────────────────
+[git_branch]
+symbol = ""
+style = "green"
+truncation_length = 20
+
+[git_status]
+style = "red bold"
+conflicted = "✖"
+ahead = "↑"
+behind = "↓"
+diverged = "⇅"
+untracked = "?"
+stashed = "≡"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+typechanged = ""
+
+# ─────────────────────────────────────────────────────────────
+# Character (second line prompt symbol)
+# ─────────────────────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"
+# success_symbol = "[⇒](bold cyan)"
+# error_symbol = "[⇒](bold red)"
+
+# Show virtualenv name
+[python]
+format = "($virtualenv) "
+style = "yellow"
+
+# ─────────────────────────────────────────────────────────────
+# Fill (keeps things aligned nicely)
+# ─────────────────────────────────────────────────────────────
+[fill]
+symbol = " "
+

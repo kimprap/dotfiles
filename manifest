@@ -1,0 +1,10 @@
+.config/zsh
+.config/starship
+.config/nvim
+.config/ghostty
+.config/yazi
+.config/scripts
+bin
+README.md
+.gitignore
+manifest

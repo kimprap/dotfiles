@@ -1,0 +1,5 @@
+.DS_Store
+.config/nvim/nvim-pack-lock.json
+.config/nvim/lazy-lock.json
+.config/yazi/package.toml
+.config/yazi/.yazi/

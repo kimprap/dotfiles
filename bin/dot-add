@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="${DOTFILES_REPO:-$HOME/.dotfiles}"
+MANIFEST="$REPO/manifest"
+
+usage() {
+  cat <<'EOF'
+Usage: dot-add <name> [name...]
+
+Add paths to the dotfiles repo using the allow-list in manifest.
+
+Examples:
+  dot-add zsh
+  dot-add nvim ghostty
+  dot-add .config/starship
+EOF
+  exit 1
+}
+
+[[ $# -gt 0 ]] || usage
+[[ -f "$MANIFEST" ]] || { echo "error: manifest not found at $MANIFEST" >&2; exit 1; }
+
+resolve_path() {
+  local name="$1"
+  local path="$name"
+
+  case "$path" in
+    .config/*|README.md|.gitignore|manifest|bin|bin/*) ;;
+    *) path=".config/$path" ;;
+  esac
+
+  while IFS= read -r allowed; do
+    [[ -z "$allowed" || "$allowed" == \#* ]] && continue
+    if [[ "$path" == "$allowed" || "$path" == "$allowed"/* ]]; then
+      echo "$path"
+      return 0
+    fi
+  done < "$MANIFEST"
+
+  echo "error: '$name' is not in manifest ($MANIFEST)" >&2
+  exit 1
+}
+
+for name in "$@"; do
+  path="$(resolve_path "$name")"
+  target="$REPO/$path"
+  if [[ ! -e "$target" ]]; then
+    echo "error: path does not exist: $target" >&2
+    exit 1
+  fi
+  git -C "$REPO" add -- "$path"
+  echo "added: $path"
+done
