@@ -2,7 +2,7 @@
 # Preset A: tail-2 repo path | branch(status) → >
 
 # Single-line format avoids leading blank line from multiline strings
-format = "$directory$git_branch$git_status$line_break$character"
+format = "$python$directory$git_branch$git_status$line_break$character"
 add_newline = false
 
 [gcloud]
@@ -28,7 +28,8 @@ format = "| [$branch]($style)"
 symbol = ""
 
 [git_status]
-format = "([$all_status$ahead_behind]($style))"
+# Escaped parens — unescaped () are parsed as markup, producing "main?" not "main(?)"
+format = "\\([$all_status$ahead_behind\\)]($style)"
 style = "bold red"
 conflicted = "✖"
 ahead = "↑${count}"
@@ -47,7 +48,7 @@ error_symbol = "[>](bold red)"
 vimcmd_symbol = "[>](bold yellow)"
 
 [python]
-format = "([$virtualenv]($style)) "
+format = "\\([$virtualenv\\)]($style) "
 style = "bold yellow"
 
 [fill]
