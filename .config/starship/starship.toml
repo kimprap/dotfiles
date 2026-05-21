@@ -28,9 +28,9 @@ read_only = " 🔒"
 format = "[|](red) [$branch](green)"
 symbol = ""
 
-# milo: %{$fg[yellow]%}(*)%{$reset_color%} — optional () omitted when clean
+# milo: %{$fg[yellow]%}(*)%{$reset_color%} — inline yellow; module style does not apply to \(\) groups
 [git_status]
-format = '(\($all_status$ahead_behind\))'
+format = '(\( [$all_status$ahead_behind](yellow)\))'
 style = "yellow"
 conflicted = "✖"
 ahead = "↑${count}"
