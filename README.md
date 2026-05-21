@@ -46,7 +46,7 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 
 ## Working with the repo
 
-Use the `dot` alias (or `git -C ~/.dotfiles`):
+Use the `dot` and `dot-add` aliases (defined in `.config/zsh/zshrc`):
 
 ```bash
 dot status
@@ -57,7 +57,7 @@ dot commit -am "update starship prompt"
 **Never** run `dot add .config` or `dot add -A`. Only add paths listed in `manifest`:
 
 ```bash
-~/.dotfiles/bin/dot-add zsh
+dot-add zsh
 ```
 
 ## Adding a new tool
