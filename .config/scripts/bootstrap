@@ -76,6 +76,26 @@ done
 echo "✓ Symlinks setup complete."
 
 # ─────────────────────────────────────────────────────────────
+# 2b. Minimal ~/.zshrc entry point
+# ─────────────────────────────────────────────────────────────
+ZSHRC_ENTRY='# Entry point — config is managed in ~/.config/zsh/zshrc (dotfiles)
+[[ -f ~/.config/zsh/zshrc ]] && source ~/.config/zsh/zshrc
+'
+
+if [[ -f "$HOME/.zshrc" ]] && ! grep -q 'config/zsh/zshrc' "$HOME/.zshrc" 2>/dev/null; then
+    backup="$HOME/.zshrc.bak.$(date +%Y%m%d-%H%M%S)"
+    cp "$HOME/.zshrc" "$backup"
+    echo "   Backed up existing ~/.zshrc → $backup"
+fi
+
+if [[ ! -f "$HOME/.zshrc" ]] || ! grep -q 'config/zsh/zshrc' "$HOME/.zshrc" 2>/dev/null; then
+    printf '%s' "$ZSHRC_ENTRY" > "$HOME/.zshrc"
+    echo "   Wrote minimal ~/.zshrc entry point"
+else
+    echo "   ~/.zshrc entry point already configured"
+fi
+
+# ─────────────────────────────────────────────────────────────
 # 3. Install Homebrew (if missing)
 # ─────────────────────────────────────────────────────────────
 if ! command -v brew &> /dev/null; then
