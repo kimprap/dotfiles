@@ -1,0 +1,137 @@
+# ~/.config/zsh/zshrc
+# Main Zsh configuration (managed via dotfiles)
+
+# ═══════════════════════════════════════════════════════════════
+# Plugin Manager (Antidote)
+# ═══════════════════════════════════════════════════════════════
+if [[ ! -d ~/.antidote ]]; then
+    git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
+fi
+source ~/.antidote/antidote.zsh
+antidote load ~/.config/zsh/plugins.txt
+
+
+# ═══════════════════════════════════════════════════════════════
+# Keybindings
+# ═══════════════════════════════════════════════════════════════
+
+# zsh-autosuggestions
+bindkey '^l' autosuggest-accept
+bindkey '^k' autosuggest-clear
+bindkey '^j' forward-word
+
+
+# ═══════════════════════════════════════════════════════════════
+# Prompt
+# ═══════════════════════════════════════════════════════════════
+eval "$(starship init zsh)"
+
+
+# ═══════════════════════════════════════════════════════════════
+# History
+# ═══════════════════════════════════════════════════════════════
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+setopt SHARE_HISTORY
+
+
+# ═══════════════════════════════════════════════════════════════
+# Environment & PATH
+# ═══════════════════════════════════════════════════════════════
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# User-local binaries (portable)
+export PATH="$HOME/.local/bin:$PATH"
+
+# Google Cloud SDK (only add if it exists)
+if [[ -d "$HOME/google-cloud-sdk/bin" ]]; then
+    export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+fi
+
+# Docker - usually provided by Docker Desktop / Orbstack / Colima.
+# Only add fallback if docker is not already in PATH.
+if ! command -v docker &>/dev/null; then
+    [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
+fi
+
+
+# ═══════════════════════════════════════════════════════════════
+# Aliases
+# ═══════════════════════════════════════════════════════════════
+
+# --- General ---
+alias ll="ls -ahlF"
+alias la="ls -A"
+alias ls="ls -CF"
+alias y="yazi"
+
+# --- Git (Custom) ---
+alias gl="git log --graph --branches --pretty=format:'%C(yellow) %h%C(auto) -%d %s  %C(green)(%cr) %C(blue)<%an>%Creset'"
+alias ga="git add"
+alias gaa="git add -A"
+alias gb="git branch"
+alias gbl="git branch --list"
+alias gbm="git branch --merged | egrep -v '(master|develop)' | xargs git branch -d"
+alias gc="git commit"
+alias gca="git commit --amend"
+alias gcm="git commit -m"
+alias gco="git checkout"
+alias gco-="git checkout @{-1}"
+alias gd="git diff"
+alias gf="git pull"
+alias gpo="git push origin"
+alias grh="git reset --hard HEAD"
+alias gs="git status"
+alias gbd="git branch -D"
+alias gpd="git push --delete origin"
+alias gbnm="git branch --no-merged"
+alias greset="git checkout . && git clean -df"
+alias gchp="git cherry-pick"
+alias gdummy="git commit --allow-empty -m"
+
+# --- Dotfiles ---
+alias dot='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# --- macOS ---
+alias add-divider="defaults write com.apple.dock persistent-apps -array-add '{tile-data={}; tile-type=\"small-spacer-tile\";}'; killall Dock"
+
+
+# ═══════════════════════════════════════════════════════════════
+# Functions & Hooks
+# ═══════════════════════════════════════════════════════════════
+
+# Auto-load local .venv when changing directory
+autoload -U add-zsh-hook
+
+_load_local_venv() {
+  if [[ -f .venv/bin/activate ]] && [[ "$VIRTUAL_ENV" != "$PWD/.venv" ]]; then
+    source .venv/bin/activate
+  elif [[ -n "$VIRTUAL_ENV" ]] && [[ ! -f .venv/bin/activate ]] && [[ "$PWD/" != "$VIRTUAL_ENV/"* ]]; then
+    deactivate 2>/dev/null
+  fi
+}
+
+add-zsh-hook chpwd _load_local_venv
+_load_local_venv   # Run once on shell startup
+
+
+# ═══════════════════════════════════════════════════════════════
+# Tool Initializations
+# ═══════════════════════════════════════════════════════════════
+
+# fzf history search (replaces default Ctrl+R)
+if command -v fzf &> /dev/null; then
+    source <(fzf --zsh 2>/dev/null) || true
+    bindkey '^R' fzf-history-widget
+fi
+
+# zoxide
+eval "$(zoxide init zsh)"
+
+# uv shell completion (must be at the end)
+eval "$(uv generate-shell-completion zsh)"
+

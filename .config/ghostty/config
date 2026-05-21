@@ -1,0 +1,27 @@
+# === Theme ===
+theme = dark:Ghostty Default Style Dark, light:Atom One Light
+# theme = dark:Sonokai, light:Atom One Light
+# theme = dark:Everforest Dark Hard, light:Atom One Light
+# theme = dark:Kanagawabones, light:Atom One Light
+# theme = dark:One Dark Two, light:Atom One Light
+# theme = dark:Everblush, light:Atom One Light
+
+
+# === General ===
+font-family = "SauceCodePro Nerd Font"
+# font-family = JetBrains Mono
+
+font-size = 12
+font-thicken = true
+# bold-is-bright = true
+
+macos-option-as-alt = true
+mouse-scroll-multiplier = precision:3
+# background-opacity = 0.92
+shell-integration-features = ssh-terminfo,ssh-env
+
+
+# === keymaps ===
+keybind = cmd+k=text:clear\r
+
+

@@ -1,0 +1,138 @@
+#!/bin/bash
+set -e
+
+# ═══════════════════════════════════════════════════════════════
+# Configuration
+# ═══════════════════════════════════════════════════════════════
+
+DOTFILES_REPO="https://github.com/kimprap/dotfiles.git"
+GITHUB_USER="kimprap"
+
+FONT_NAME="SourceCodePro"
+FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/SourceCodePro.zip"
+
+# Symlink mappings (source → target)
+declare -A SYMLINKS=(
+    ["$HOME/.dotfiles/.config/zsh"]="$HOME/.config/zsh"
+    ["$HOME/.dotfiles/.config/starship"]="$HOME/.config/starship"
+    ["$HOME/.dotfiles/.config/nvim"]="$HOME/.config/nvim"
+    ["$HOME/.dotfiles/.config/ghostty"]="$HOME/.config/ghostty"
+    ["$HOME/.dotfiles/.config/yazi"]="$HOME/.config/yazi"
+)
+
+# ═══════════════════════════════════════════════════════════════
+# OS & Architecture Detection
+# ═══════════════════════════════════════════════════════════════
+OS_TYPE="$(uname -s)"
+
+if [[ "$OS_TYPE" == "Darwin" ]]; then
+    IS_MACOS=true
+else
+    IS_MACOS=false
+fi
+
+
+# ═══════════════════════════════════════════════════════════════
+# Bootstrap Script
+# ═══════════════════════════════════════════════════════════════
+
+echo "🚀 Starting dotfiles bootstrap..."
+
+# ─────────────────────────────────────────────────────────────
+# 1. Clone dotfiles repo (if not exists)
+# ─────────────────────────────────────────────────────────────
+if [[ ! -d "$HOME/.dotfiles/.git" ]]; then
+    echo "📁 Cloning dotfiles repository..."
+    git clone "$DOTFILES_REPO" "$HOME/.dotfiles"
+else
+    echo "📁 Dotfiles repository already exists. Skipping clone."
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 2. Create symlinks
+# ─────────────────────────────────────────────────────────────
+echo "→ Setting up symlinks..."
+
+mkdir -p "$HOME/.config"
+
+for src in "${!SYMLINKS[@]}"; do
+    target="${SYMLINKS[$src]}"
+
+    if [[ -L "$target" ]]; then
+        echo "   Already symlinked: $target"
+    elif [[ -e "$target" ]]; then
+        # Backup existing directory/file before overwriting
+        backup="${target}.bak.$(date +%Y%m%d-%H%M%S)"
+        mv "$target" "$backup"
+        echo "   Backed up existing: $target → $backup"
+        ln -sfn "$src" "$target"
+        echo "   Created symlink: $target → $src"
+    else
+        ln -sfn "$src" "$target"
+        echo "   Created symlink: $target → $src"
+    fi
+done
+
+echo "✓ Symlinks setup complete."
+
+# ─────────────────────────────────────────────────────────────
+# 3. Install Homebrew (if missing)
+# ─────────────────────────────────────────────────────────────
+if ! command -v brew &> /dev/null; then
+    echo "🍺 Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 4. Install required packages
+# ─────────────────────────────────────────────────────────────
+echo "📦 Installing packages..."
+
+brew install \
+    starship \
+    antidote \
+    yazi \
+    fd \
+    ripgrep \
+    fzf \
+    bat \
+    jq \
+    poppler \
+    ffmpegthumbnailer \
+    zoxide
+
+# Ghostty is macOS-only
+if [[ "$IS_MACOS" == true ]]; then
+    brew install --cask ghostty
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 5. Install Nerd Font
+# ─────────────────────────────────────────────────────────────
+echo "🔤 Installing Nerd Font ($FONT_NAME)..."
+
+
+if [[ "$IS_MACOS" == true ]]; then
+    FONT_DIR="$HOME/Library/Fonts"
+    FONT_ZIP="${FONT_NAME}.zip"
+
+    if [[ ! -f "$FONT_DIR/SauceCodeProNerdFont-Regular.ttf" ]]; then
+        curl -fsSL "$FONT_URL" -o "/tmp/$FONT_ZIP"
+        unzip -o "/tmp/$FONT_ZIP" -d "$FONT_DIR" "*.ttf"
+        rm -f "/tmp/$FONT_ZIP"
+        echo "✅ Nerd Font installed."
+    else
+        echo "✅ Nerd Font already installed. Skipping."
+    fi
+else
+    echo "⏭️  Skipping Nerd Font installation (not on macOS)."
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 6. Done
+# ─────────────────────────────────────────────────────────────
+echo ""
+echo "✅ Bootstrap complete!"
+echo ""
+echo "Please restart your terminal to apply changes."
+
