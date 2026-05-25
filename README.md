@@ -36,13 +36,23 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 
 ## Managed Tools
 
-| Tool       | Repo path                    | Live path              |
-|------------|------------------------------|------------------------|
-| Zsh        | `.config/zsh/`               | `~/.config/zsh/`       |
-| Starship   | `.config/starship/`          | `~/.config/starship/`  |
-| Neovim     | `.config/nvim/`              | `~/.config/nvim/`      |
-| Ghostty    | `.config/ghostty/`           | `~/.config/ghostty/`   |
-| Yazi       | `.config/yazi/`              | `~/.config/yazi/`      |
+| Tool       | Repo path                         | Live path                 |
+|------------|-----------------------------------|---------------------------|
+| Zsh        | `.config/zsh/`                    | `~/.config/zsh/`          |
+| Starship   | `.config/starship/starship.toml`  | `~/.config/starship.toml` |
+| Neovim     | `.config/nvim/`                   | `~/.config/nvim/`         |
+| Ghostty    | `.config/ghostty/`                | `~/.config/ghostty/`      |
+| Yazi       | `.config/yazi/`                   | `~/.config/yazi/`         |
+
+## Archive
+
+Reference-only snapshots (not symlinked or loaded):
+
+| Path              | Description                                      |
+|-------------------|--------------------------------------------------|
+| `archive/omz/`    | Pre-migration Oh My Zsh install + `zshrc.backup` |
+
+See `archive/omz/README.md` for details.
 
 ## Working with the repo
 
@@ -58,6 +68,7 @@ dot commit -am "update starship prompt"
 
 ```bash
 dot-add zsh
+dot-add archive
 ```
 
 ## Adding a new tool

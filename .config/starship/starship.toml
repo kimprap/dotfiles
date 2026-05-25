@@ -3,6 +3,7 @@
 
 format = "$python$directory$git_branch$git_status$line_break$character"
 add_newline = false
+command_timeout = 500
 
 [gcloud]
 disabled = true
@@ -17,9 +18,10 @@ disabled = true
 disabled = true
 
 # milo: %{$fg[cyan]%}%1~%{$reset_color%}
+# truncate_to_repo=false: skip git lookup on every prompt (big win outside repos)
 [directory]
 truncation_length = 2
-truncate_to_repo = true
+truncate_to_repo = false
 style = "cyan"
 read_only = " 🔒"
 
@@ -32,6 +34,7 @@ symbol = ""
 [git_status]
 format = '[(\($all_status$ahead_behind\))](yellow)'
 style = "yellow"
+ignore_submodules = true
 conflicted = "✖"
 ahead = "↑${count}"
 behind = "↓${count}"

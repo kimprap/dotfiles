@@ -13,6 +13,7 @@ fi
 export EDITOR="nvim"
 export VISUAL="nvim"
 export PATH="$HOME/.local/bin:$PATH"
+export GIT_OPTIONAL_LOCKS=0
 
 if [[ -d "$HOME/google-cloud-sdk/bin" ]]; then
   export PATH="$HOME/google-cloud-sdk/bin:$PATH"
@@ -22,14 +23,13 @@ if ! command -v docker &>/dev/null; then
   [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
 fi
 
-# Completions (required before uv/fzf compdef)
-autoload -Uz compinit
-compinit
-
 
 # ═══════════════════════════════════════════════════════════════
 # Plugin Manager (Antidote)
 # ═══════════════════════════════════════════════════════════════
+# history: ghost text from past commands; completion: ghost text from tab-complete (e.g. nvim <path>)
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
 if [[ ! -d ~/.antidote ]]; then
   git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
 fi
@@ -38,26 +38,23 @@ antidote load ~/.config/zsh/plugins.txt
 
 
 # ═══════════════════════════════════════════════════════════════
-# Keybindings
+# OMZ lib ports (native zsh config — no framework required)
 # ═══════════════════════════════════════════════════════════════
-bindkey '^l' autosuggest-accept
-bindkey '^k' autosuggest-clear
-bindkey '^j' forward-word
-
-
-# ═══════════════════════════════════════════════════════════════
-# History
-# ═══════════════════════════════════════════════════════════════
-HISTSIZE=10000
-SAVEHIST=10000
-HISTFILE=~/.zsh_history
-setopt SHARE_HISTORY
+for _zsh_config in \
+  history \
+  completion \
+  keybindings \
+  options \
+  appearance \
+  termsupport; do
+  source "${0:A:h}/${_zsh_config}.zsh"
+done
+unset _zsh_config
 
 
 # ═══════════════════════════════════════════════════════════════
 # Prompt (Starship)
 # ═══════════════════════════════════════════════════════════════
-# Starship reads ~/.config/starship.toml (not ~/.config/starship/starship.toml)
 export STARSHIP_CONFIG="${STARSHIP_CONFIG:-$HOME/.config/starship.toml}"
 
 if command -v starship &>/dev/null; then
@@ -70,9 +67,7 @@ fi
 # ═══════════════════════════════════════════════════════════════
 # Aliases
 # ═══════════════════════════════════════════════════════════════
-alias ll="ls -ahlF"
-alias la="ls -A"
-alias ls="ls -CF"
+# ls/ll/la defined in appearance.zsh
 alias y="yazi"
 
 alias gl="git log --graph --branches --pretty=format:'%C(yellow) %h%C(auto) -%d %s  %C(green)(%cr) %C(blue)<%an>%Creset'"
@@ -108,6 +103,8 @@ alias add-divider="defaults write com.apple.dock persistent-apps -array-add '{ti
 # Functions & Hooks
 # ═══════════════════════════════════════════════════════════════
 autoload -U add-zsh-hook
+
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 _load_local_venv() {
   if [[ -f .venv/bin/activate ]] && [[ "$VIRTUAL_ENV" != "$PWD/.venv" ]]; then
