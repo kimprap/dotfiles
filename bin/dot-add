@@ -26,7 +26,7 @@ resolve_path() {
   local path="$name"
 
   case "$path" in
-    .config/*|README.md|.gitignore|manifest|bin|bin/*) ;;
+    .config/*|archive|archive/*|README.md|.gitignore|manifest|bin|bin/*) ;;
     *) path=".config/$path" ;;
   esac
 
