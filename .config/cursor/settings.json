@@ -4,8 +4,8 @@
   // =============================================================================
   // "window.zoomLevel": 1.0,
   // "window.zoomLevel": -0.5,
-  "window.zoomLevel": -0.75,
-  // "window.zoomLevel": -1.0,
+  // "window.zoomLevel": -0.75,
+  "window.zoomLevel": -1.0,
   // "window.zoomLevel": -1.25,
   // "window.zoomLevel": -1.75,
 
@@ -282,5 +282,6 @@
   "cursor.composer.editorConversationDensity": "detailed",
   "cursor.cpp.disabledLanguages": ["plaintext"],
   "claudeCode.preferredLocation": "panel",
-  "claudeCode.selectedModel": "default",
+"claudeCode.selectedModel": "default",
+"cursor.composer.conversationDensity": "compact-ungrouped",
 }
