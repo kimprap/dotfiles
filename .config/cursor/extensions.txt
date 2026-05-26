@@ -1,0 +1,30 @@
+# Python
+ms-python.python
+charliermarsh.ruff
+astral-sh.ty
+
+# Git / remote
+eamodio.gitlens
+anysphere.remote-ssh
+
+# Editor / language support
+editorconfig.editorconfig
+tamasfe.even-better-toml
+ms-vscode.makefile-tools
+oliversturm.fix-json
+mechatroner.rainbow-csv
+mrmlnc.vscode-duplicate
+aaron-bond.better-comments
+alefragnani.project-manager
+
+# Icons / themes
+pkief.material-icon-theme
+geobomatic.dark-plus-one-monokai
+lakshits11.best-themes-redefined
+github.github-vscode-theme
+akamud.vscode-theme-onedark
+azemoh.one-monokai
+zhuangtongfa.material-theme
+
+# Niche
+newdatasystems.foxpro

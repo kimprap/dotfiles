@@ -4,6 +4,7 @@ archive
 .config/nvim
 .config/ghostty
 .config/yazi
+.config/cursor
 .config/scripts
 bin
 README.md

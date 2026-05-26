@@ -9,6 +9,7 @@ Personal dotfiles for macOS, managed as a normal Git repository at `~/.dotfiles`
 - Neovim configuration using `vim.pack`
 - Ghostty terminal configuration
 - Yazi file manager setup
+- Cursor editor settings, keybindings, and extension list
 - Useful tools: fzf, zoxide, fd, ripgrep, etc.
 
 ## Setup on a New Machine
@@ -43,6 +44,24 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 | Neovim     | `.config/nvim/`                   | `~/.config/nvim/`         |
 | Ghostty    | `.config/ghostty/`                | `~/.config/ghostty/`      |
 | Yazi       | `.config/yazi/`                   | `~/.config/yazi/`         |
+| Cursor     | `.config/cursor/`                 | `~/Library/Application Support/Cursor/User/profiles/<id>/` |
+
+## Cursor
+
+Settings and keybindings symlink into your Cursor profile (default UUID `344c8ea1`).
+Override on a new machine if the profile ID differs:
+
+```bash
+CURSOR_PROFILE=<your-profile-uuid> ~/.dotfiles/.config/scripts/bootstrap
+```
+
+Install extensions from the pinned list:
+
+```bash
+~/.dotfiles/.config/cursor/install-extensions.sh
+```
+
+Machine-specific settings (e.g. Project Manager base folders) stay local in Cursor UI, not in the shared `settings.json`.
 
 ## Archive
 
