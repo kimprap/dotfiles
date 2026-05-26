@@ -72,7 +72,6 @@ alias y="yazi"
 
 alias gl="git log --graph --branches --pretty=format:'%C(yellow) %h%C(auto) -%d %s  %C(green)(%cr) %C(blue)<%an>%Creset'"
 alias ga="git add"
-alias gb="git branch"
 alias gbl="git branch --list"
 alias gca="git commit --amend"
 alias gcm="git commit -m"
