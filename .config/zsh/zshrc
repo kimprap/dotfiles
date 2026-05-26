@@ -15,10 +15,6 @@ export VISUAL="nvim"
 export PATH="$HOME/.local/bin:$PATH"
 export GIT_OPTIONAL_LOCKS=0
 
-if [[ -d "$HOME/google-cloud-sdk/bin" ]]; then
-  export PATH="$HOME/google-cloud-sdk/bin:$PATH"
-fi
-
 if ! command -v docker &>/dev/null; then
   [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
 fi
