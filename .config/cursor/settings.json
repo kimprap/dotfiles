@@ -1,0 +1,286 @@
+{
+  // =============================================================================
+  // Zoom
+  // =============================================================================
+  // "window.zoomLevel": 1.0,
+  // "window.zoomLevel": -0.5,
+  "window.zoomLevel": -0.75,
+  // "window.zoomLevel": -1.0,
+  // "window.zoomLevel": -1.25,
+  // "window.zoomLevel": -1.75,
+
+  // =============================================================================
+  // Font sizes
+  // =============================================================================
+  "chat.fontSize": 16,
+  "editor.fontSize": 16,
+  "terminal.integrated.fontSize": 14,
+  "markdown.preview.fontSize": 16,
+  // "editor.fontSize": 18,
+  // "terminal.integrated.fontSize": 16,
+  // "chat.editor.fontSize": 18,
+
+  // =============================================================================
+  // Themes
+  // =============================================================================
+  "workbench.iconTheme": "material-icon-theme",
+  // "workbench.colorTheme": "Best Themes - One Monokai",
+  "workbench.colorTheme": "Dark+ One Monokai",
+  // "workbench.colorTheme": "One Monokai",
+  // "workbench.colorTheme": "GitHub Dark Dimmed",
+
+  // - Background more pale (dimmed) and more blue
+  // - Colored constants
+  // - High contrast lines (GitHub Dark Dimmed)
+  // - params syntax is orangeish brown (Best Themes - One Monokai)
+  // - bottom bar less saturated
+  // - function calls syntax highlight (GitHub Dark Dimmed)
+  // - constants syntax highlight (Default Dark Modern)
+
+  // "workbench.colorTheme": "Monokai",
+  // "workbench.colorTheme": "Default Dark Modern",
+  // "workbench.colorTheme": "GitHub Dark",
+  // "workbench.colorTheme": "Cursor Dark Midnight",
+
+  // =============================================================================
+  // Color customizations
+  // =============================================================================
+  // API docs:
+  // - https://gist.github.com/dcts/5b2af4c8b6918e7d35c4121f11d49fb1
+  // - https://code.visualstudio.com/api/references/theme-color
+  // - https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide
+  "workbench.colorCustomizations": {
+    // =================================================================================
+    // Experimental
+    // =================================================================================
+    // "editor.background": "#1E1E1E",
+    // "editor.background": "#222222",
+    "editor.background": "#252525",
+    // "editor.background": "#191c22",
+    // "editor.background": "#282c34",
+    // =================================================================================
+
+    "terminal.selectionBackground": "#f9fd00",
+    // "editor.selectionBackground": "#a0a0a05e",
+    "editor.findMatchBackground": "#f9fd00",
+    "editor.findMatchHighlightBackground": "#a7a7a77e",
+    "editorIndentGuide.activeBackground1": "#ffff00",
+    "editorWhitespace.foreground": "#464b53",
+    "tab.activeBackground": "#393f4b",
+    "tab.unfocusedActiveBackground": "#1f2227",
+    "tree.indentGuidesStroke": "#ffff00",
+    "list.inactiveSelectionBackground": "#393f4b",
+    "list.activeSelectionBackground": "#393f4b",
+    // "editorUnnecessaryCode.border": "#ff0000",
+    "editorUnnecessaryCode.border": "#bcbcbc",
+  },
+  "editor.tokenColorCustomizations": {
+    // "comments": "#808997",
+    // "comments": "#bd79a5eb",
+    "comments": "#bd79a5",
+  },
+
+  // =============================================================================
+  // Font family
+  // =============================================================================
+  // "editor.fontWeight": "300",
+  "editor.fontWeight": "400",
+  // "editor.fontWeight": "500",
+  // "editor.fontFamily": "Consolas",
+  "editor.fontFamily": "Source Code Pro",
+  // "editor.fontFamily": "JetBrains Mono",
+  // "editor.fontFamily": "Fira Code",
+  // "editor.fontFamily": "Cascadia Code",
+  // "editor.fontFamily": "DejaVu Sans Mono",
+  // "editor.fontFamily": "Hack",
+  // "editor.fontFamily": "IBM Plex Mono",
+  // "editor.fontFamily": "Menlo",
+  // "editor.fontFamily": "Hasklig",
+  // "editor.fontFamily": "Noto Sans Mono",
+  // "editor.fontFamily": "Victor Mono",
+  // "editor.fontFamily": "Red Hat Mono",
+  "editor.fontLigatures": true,
+
+  // =============================================================================
+  // Editor
+  // =============================================================================
+  "editor.smoothScrolling": true,
+  "editor.rulers": [88, 120],
+  "editor.renderWhitespace": "all",
+  "editor.renderControlCharacters": false,
+  "editor.detectIndentation": false,
+  "editor.hover.delay": 200,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.multiCursorPaste": "full",
+  "editor.inlineSuggest.enabled": true,
+  "editor.stickyTabStops": true,
+  "editor.find.seedSearchStringFromSelection": "never",
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.showSlider": "always",
+  "editor.minimap.size": "fill",
+  // "editor.glyphMargin": false,  // debugger margin
+  // "editor.formatOnSave": true,
+
+  // =============================================================================
+  // Diff editor
+  // =============================================================================
+  "diffEditor.ignoreTrimWhitespace": true,
+  "diffEditor.renderSideBySide": true,
+
+  // =============================================================================
+  // Workbench
+  // =============================================================================
+  "window.title": "${rootName}",
+  // "window.title": "${rootName}${separator}${activeEditorShort}",
+  "workbench.sideBar.location": "left",
+  "workbench.tree.indent": 20,
+  "workbench.tree.renderIndentGuides": "always",
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.editorActionsLocation": "hidden",
+  "workbench.editor.enablePreview": false,
+  "workbench.layoutControl.enabled": false,
+  "workbench.activityBar.orientation": "horizontal",
+  // "workbench.activityBar.orientation": "vertical",
+  "workbench.activityBar.location": "bottom",
+  "problems.decorations.enabled": true,
+
+  // =============================================================================
+  // Terminal
+  // =============================================================================
+  "terminal.integrated.scrollback": 3000,
+  "terminal.integrated.confirmOnKill": "always",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.automationProfile.osx": {
+    "path": "/bin/zsh",
+    "args": ["-il"],
+  },
+  "terminal.integrated.enableMultiLinePasteWarning": "auto",
+  "terminal.integrated.tabs.location": "left",
+  "terminal.integrated.cursorStyle": "line",
+
+  // =============================================================================
+  // Files
+  // =============================================================================
+  "files.associations": {
+    "*.js": "javascriptreact",
+    "*.env": "shellscript",
+  },
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+
+  // =============================================================================
+  // Explorer
+  // =============================================================================
+  "explorer.autoReveal": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmPasteNative": false,
+
+  // =============================================================================
+  // Git / GitLens
+  // =============================================================================
+  "git.openRepositoryInParentFolders": "always",
+  "gitlens.hovers.currentLine.over": "line",
+  "gitlens.codeLens.authors.enabled": false,
+  "gitlens.codeLens.recentChange.enabled": false,
+  "gitlens.views.commits.files.layout": "tree",
+  "gitlens.views.repositories.files.layout": "tree",
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "fileHistory": false,
+    "repositories": false,
+    "searchAndCompare": false,
+    "launchpad": false,
+  },
+
+  // =============================================================================
+  // Language-specific
+  // =============================================================================
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnType": false,
+  "editor.formatOnPaste": true,
+
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features",
+  },
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": true,
+  },
+  "[rust]": {
+    "editor.tabSize": 4,
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": false,
+  },
+  "[javascript][javascriptreact][typescript][typescriptreact][ini]": {
+    "editor.tabSize": 4,
+  },
+  "[makefile]": {
+    "editor.insertSpaces": false,
+    "editor.tabSize": 8,
+    "editor.detectIndentation": false,
+    "editor.formatOnType": true,
+  },
+  "[dockercompose]": {
+    "editor.codeLens": false,
+  },
+
+  // =============================================================================
+  // Python (Ruff + Ty)
+  // =============================================================================
+  "python.languageServer": "None",
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "ruff.enable": true,
+  "ruff.nativeServer": "on",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.tabSize": 4,
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+  },
+
+  // =============================================================================
+  // Extensions
+  // =============================================================================
+  "material-icon-theme.activeIconPack": "vue_vuex",
+  "material-icon-theme.hidesExplorerArrows": true,
+  "makefile.configureOnOpen": false,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "remote.autoForwardPortsSource": "hybrid",
+  "inlineChat.accessibleDiffView": "on",
+
+  // =============================================================================
+  // Cursor / Claude
+  // =============================================================================
+  "cursor.composer.textSizeScale": 1.15,
+  "cursor.composer.shouldAutoAcceptDiffs": false,
+  "cursor.composer.shouldChimeAfterChatFinishes": true,
+  "cursor.composer.queueMessageDefaultBehavior": "stop-and-send",
+  "cursor.composer.usageSummaryDisplay": "always",
+  "cursor.composer.editorConversationDensity": "detailed",
+  "cursor.cpp.disabledLanguages": ["plaintext"],
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.selectedModel": "default",
+}
