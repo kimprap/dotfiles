@@ -72,10 +72,18 @@ vim.opt.fixendofline = true
 
 -- Find and replace optimized
 vim.opt.inccommand = "split"
-vim.keymap.set("n", "*", "*<C-o>", { desc = "Search word under cursor (stay in place)" })
-vim.keymap.set("n", "#", "#<C-o>", { desc = "Search word under cursor backward (stay in place)" })
-vim.keymap.set("n", "g*", "g*<C-o>", { desc = "Search partial word (stay in place)" })
-vim.keymap.set("n", "g#", "g#<C-o>", { desc = "Search word under cursor backward (stay in place)" })
+
+local function search_word_stay(backward, partial)
+  local pos = vim.fn.getpos(".")
+  local cmd = (partial and (backward and "g#" or "g*") or (backward and "#" or "*"))
+  vim.cmd("keepjumps normal! " .. cmd)
+  vim.fn.setpos(".", pos)
+end
+
+vim.keymap.set("n", "*", function() search_word_stay(false, false) end, { desc = "Search word (stay in place)" })
+vim.keymap.set("n", "#", function() search_word_stay(true, false) end, { desc = "Search word backward (stay in place)" })
+vim.keymap.set("n", "g*", function() search_word_stay(false, true) end, { desc = "Search partial word (stay in place)" })
+vim.keymap.set("n", "g#", function() search_word_stay(true, true) end, { desc = "Search partial word backward (stay in place)" })
 
 -- ruler only in normal code files, hidden otherwise
 vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
@@ -225,15 +233,55 @@ map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
 -- Quick save
 -- ─────────────────────────────────────────────
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
-map("n", "<leader>q", ":q<CR>", { desc = "Quit" })
+map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
+map("n", "<leader>q", ":q<CR>", { desc = "Quit window" })
+map("n", "<leader>Q", ":q!<CR>", { desc = "Quit without saving" })
+
+-- Copy paths from the active buffer (no explorer needed; like VSCode "Copy Path")
+map("n", "<leader>yp", function()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == "" then
+    vim.notify("Not a file on disk", vim.log.levels.WARN)
+    return
+  end
+  path = vim.fn.fnamemodify(path, ":p")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. vim.fn.fnamemodify(path, ":~"), vim.log.levels.INFO)
+end, { desc = "Copy absolute path of current file" })
+
+map("n", "<leader>yd", function()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == "" then
+    vim.notify("Not a file on disk", vim.log.levels.WARN)
+    return
+  end
+  path = vim.fn.fnamemodify(path, ":p:h")
+  vim.fn.setreg("+", path)
+  vim.notify("Copied: " .. vim.fn.fnamemodify(path, ":~"), vim.log.levels.INFO)
+end, { desc = "Copy directory of current file" })
 
 
 -- ============================================
 -- Section 3: File Explorer + Finder
 -- ============================================
--- Primary File Explorer: oil.nvim
+local function will_restore_session()
+  local session_path = vim.fn.getcwd() .. "/Session.vim"
+  if vim.fn.filereadable(session_path) ~= 1 then
+    return false
+  end
+  if vim.fn.argc() == 0 then
+    return true
+  end
+  if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+    return true
+  end
+  return false
+end
+
+-- oil.nvim — default dir handler (`nvim ./dir`, yazi → dir)
 require("oil").setup({
-  default_file_explorer = true,
+  -- skip hijack when Session.vim will restore (otherwise oil wins over session)
+  default_file_explorer = not will_restore_session(),
   delete_to_trash = true,
   view_options = {
     show_hidden = true,
@@ -246,16 +294,45 @@ require("oil").setup({
   },
   lsp_file_methods = {
     autosave_changes = true,
-  }
+  },
+  keymaps = {
+    ["<Esc>"] = "actions.close",
+    q = "actions.close",
+  },
 })
 
-vim.keymap.set("n", "<leader>E", function()
-  require("oil").open()
-end, { desc = "Open file explorer (full screen)" })
-
--- Secondary: mini.files (popup style)
+-- mini.files — popup explorer + reveal (<leader>e)
 local MiniFiles = require("mini.files")
+
+local function mini_files_anchor_path()
+  local buf_name = vim.api.nvim_buf_get_name(0)
+  if buf_name ~= "" and vim.fn.filereadable(buf_name) == 1 then
+    return buf_name
+  end
+  local dir_name = vim.fn.fnamemodify(buf_name, ":p:h")
+  if vim.fn.isdirectory(dir_name) == 1 then
+    return dir_name
+  end
+  return vim.uv.cwd()
+end
+
+-- VSCode-style: toggle closed; when opening, reveal active file in its dir branch
+local function mini_files_toggle_reveal()
+  if MiniFiles.close() then
+    return
+  end
+  MiniFiles.open(mini_files_anchor_path(), false)
+end
+
 MiniFiles.setup({
+  options = {
+    use_as_default_explorer = false,
+    permanent_delete = false,
+  },
+  mappings = {
+    go_in = "", -- custom `l` = directories only; default `L` = go_in_plus
+    synchronize = "", -- use :w / :write in minifiles buffers instead of =
+  },
   windows = {
     preview = true,
     width_focus = 35,
@@ -263,36 +340,101 @@ MiniFiles.setup({
   },
 })
 
-vim.keymap.set("n", "<leader>e", function()
-  MiniFiles.open(vim.api.nvim_buf_get_name(0), true)
-end, { desc = "File Explorer (mini.files)" })
+vim.keymap.set("n", "<leader>e", mini_files_toggle_reveal, {
+  desc = "Toggle file explorer (reveal active file)",
+})
+
+vim.keymap.set("n", "<leader>E", function()
+  local buf_name = vim.api.nvim_buf_get_name(0)
+  if buf_name ~= "" and vim.fn.filereadable(buf_name) == 1 then
+    require("oil").open(vim.fn.fnamemodify(buf_name, ":p:h"))
+  else
+    require("oil").open(vim.uv.cwd())
+  end
+end, { desc = "Oil explorer (dir of active file, else cwd)" })
+
+-- :w applies mini.files edits (same as former = / synchronize)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "minifiles",
+  callback = function(event)
+    local buf_id = event.buf
+    if vim.b[buf_id].minifiles_write_mapped then
+      return
+    end
+    vim.b[buf_id].minifiles_write_mapped = true
+    local sync = function()
+      MiniFiles.synchronize()
+    end
+    vim.api.nvim_buf_create_user_command(buf_id, "Write", sync, {})
+    vim.api.nvim_buf_create_user_command(buf_id, "W", sync, {})
+  end,
+})
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "MiniFilesBufferCreate",
   callback = function(args)
-    local buf_id = args.data.buf_id
     vim.opt_local.colorcolumn = ""
+    vim.keymap.set("n", "<Esc>", MiniFiles.close, {
+      buffer = args.data.buf_id,
+      desc = "Close explorer",
+    })
+    local buf_id = args.data.buf_id
+    local function minifiles_move(delta)
+      local lnum = vim.api.nvim_win_get_cursor(0)[1]
+      local last = vim.api.nvim_buf_line_count(buf_id)
+      if last < 1 then
+        return
+      end
+      local n = lnum + delta
+      if n > last then
+        n = 1
+      elseif n < 1 then
+        n = last
+      end
+      vim.api.nvim_win_set_cursor(0, { n, 0 })
+    end
 
-    -- Close with <Esc> (in addition to q)
-    vim.keymap.set("n", "<Esc>", MiniFiles.close, { buffer = buf_id, desc = "Close explorer" })
-
-    -- CRUD (wrapped for reliability)
-    vim.keymap.set("n", "a", function() MiniFiles.create() end,        { buffer = buf_id, desc = "Create file/folder" })
-    vim.keymap.set("n", "r", function() MiniFiles.rename() end,       { buffer = buf_id, desc = "Rename" })
-    vim.keymap.set("n", "d", function() MiniFiles.delete() end,       { buffer = buf_id, desc = "Delete (with confirm)" })
-
-    -- Navigation
-    vim.keymap.set("n", "h", function() MiniFiles.go_out() end,       { buffer = buf_id, desc = "Go to parent dir" })
+    vim.keymap.set("n", "j", function() minifiles_move(1) end, { buffer = buf_id, desc = "Next entry (wrap)" })
+    vim.keymap.set("n", "k", function() minifiles_move(-1) end, { buffer = buf_id, desc = "Previous entry (wrap)" })
 
     vim.keymap.set("n", "l", function()
-      MiniFiles.go_in({ close_on_file = true })
-    end, { buffer = buf_id, desc = "Go in / Open file (close explorer)" })
+      local entry = MiniFiles.get_fs_entry()
+      if entry and entry.fs_type == "directory" then
+        MiniFiles.go_in()
+      end
+    end, { buffer = buf_id, desc = "Enter directory only" })
 
     vim.keymap.set("n", "<CR>", function()
       MiniFiles.go_in({ close_on_file = true })
-    end, { buffer = buf_id, desc = "Go in / Open file (close explorer)" })
+    end, { buffer = buf_id, desc = "Open file / enter dir (close on file)" })
   end,
 })
+
+-- mini.files has no macOS Trash API; bridge its trash dir → ~/.Trash (Finder)
+if vim.fn.has("mac") == 1 then
+  local function move_to_macos_trash(path)
+    local trash_dir = vim.fn.expand("~/.Trash")
+    local basename = vim.fn.fnamemodify(path, ":t")
+    local dest = trash_dir .. "/" .. basename
+    if vim.fn.filereadable(dest) == 1 or vim.fn.isdirectory(dest) == 1 then
+      basename = basename .. os.date(" %Y-%m-%dT%H-%M-%S")
+      dest = trash_dir .. "/" .. basename
+    end
+    if vim.fn.rename(path, dest) ~= 0 then
+      vim.notify("Failed to move to Trash: " .. path, vim.log.levels.ERROR)
+    end
+  end
+
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "MiniFilesActionDelete",
+    callback = function(event)
+      local to = event.data.to
+      if to and (vim.fn.filereadable(to) == 1 or vim.fn.isdirectory(to) == 1) then
+        move_to_macos_trash(to)
+      end
+    end,
+  })
+end
 
 -- Finders
 require("fzf-lua").setup()
@@ -352,8 +494,108 @@ end, { desc = "Grep anywhere (global)" })
 -- Phase 4: Tabs & Buffer Management
 -- ============================================================
 
+-- Restore open buffers per project (VSCode-like; bare `nvim` in project dir)
+vim.o.sessionoptions = "buffers,curdir,tabpages,winsize,globals,blank"
+
+local function is_oil_or_dir_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  if vim.bo[buf].filetype == "oil" then
+    return true
+  end
+  if vim.bo[buf].buftype ~= "" then
+    return false
+  end
+  local name = vim.api.nvim_buf_get_name(buf)
+  return name ~= "" and vim.fn.isdirectory(vim.fn.fnamemodify(name, ":p")) == 1
+end
+
+local function sessions_strip_oil_buffers()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if is_oil_or_dir_buffer(buf) then
+      pcall(vim.api.nvim_buf_delete, buf, { force = true })
+    end
+  end
+end
+
+-- `nvim .` puts the dir on the arglist; mksession persists it as $argadd → oil on restore
+local function sessions_strip_dir_args()
+  for i = vim.fn.argc() - 1, 0, -1 do
+    if vim.fn.isdirectory(vim.fn.fnamemodify(vim.fn.argv(i), ":p")) == 1 then
+      vim.cmd("silent " .. (i + 1) .. "argdelete")
+    end
+  end
+end
+
+local function sessions_refresh_buffer_syntax(buf)
+  if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_buf_is_loaded(buf) then
+    return
+  end
+  if vim.bo[buf].buftype ~= "" or vim.api.nvim_buf_get_name(buf) == "" then
+    return
+  end
+  if vim.bo[buf].filetype == "" then
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd("filetype detect")
+    end)
+  end
+  if vim.bo[buf].filetype ~= "" and vim.bo[buf].syntax == "" then
+    vim.bo[buf].syntax = vim.bo[buf].filetype
+  end
+end
+
+local function sessions_post_read()
+  sessions_strip_oil_buffers()
+  -- mksession restores the active buffer but often leaves syntax unset
+  vim.schedule(function()
+    vim.cmd("syntax enable")
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      sessions_refresh_buffer_syntax(buf)
+    end
+  end)
+end
+
+require("mini.sessions").setup({
+  autoread = false, -- custom VimEnter below (handles `nvim .` too)
+  autowrite = true,
+  file = "Session.vim", -- project root; add "Session.vim" to .gitignore
+  hooks = {
+    pre = {
+      write = function()
+        sessions_strip_oil_buffers()
+        sessions_strip_dir_args()
+      end,
+    },
+    post = {
+      read = sessions_post_read,
+    },
+  },
+})
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  desc = "Restore Session.vim when opening bare nvim or nvim <dir>",
+  once = true,
+  callback = function()
+    if not will_restore_session() then
+      return
+    end
+    pcall(MiniSessions.read, MiniSessions.config.file, { force = true, verbose = false })
+  end,
+})
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  desc = "Always update project Session.vim on quit",
+  callback = function()
+    if MiniSessions.config.file == "" then
+      return
+    end
+    pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = false })
+  end,
+})
+
 -- Clean buffer tabline (shows open buffers like VSCode tabs)
-require('mini.tabline').setup()
+require("mini.tabline").setup()
 
 -- Buffer navigation with <Tab> / <S-Tab> (as planned)
 vim.keymap.set('n', '<Tab>', '<cmd>bnext<CR>', { desc = 'Next buffer' })
@@ -363,13 +605,13 @@ vim.keymap.set("n", "<leader>`", "<C-^>", { desc = "Toggle last buffer" })
 -- Better buffer closing (keeps your window layout)
 require('mini.bufremove').setup()
 
-vim.keymap.set('n', '<leader>q', function()
-  require('mini.bufremove').delete(0, false)
-end, { desc = 'Delete buffer (keep layout)' })
+vim.keymap.set("n", "<C-q>", function()
+  require("mini.bufremove").delete(0, false)
+end, { desc = "Delete buffer (keep layout)" })
 
-vim.keymap.set('n', '<leader>Q', function()
-  require('mini.bufremove').delete(0, true)
-end, { desc = 'Force delete buffer' })
+vim.keymap.set("n", "<C-Q>", function()
+  require("mini.bufremove").delete(0, true)
+end, { desc = "Force delete buffer" })
 
 -- Reopen last closed buffer (like Ctrl+Shift+T in VSCode / browsers)
 local closed_buffers = {}
