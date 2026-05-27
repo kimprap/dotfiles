@@ -1,6 +1,10 @@
 -- ============================================
 -- Plugins
 -- ============================================
+-- oil + mini.files replace netrw; avoid ghost dir buffers on `nvim .`
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 vim.pack.add({
   -- Theme (uncomment when ready)
   { src = "https://github.com/sainnhe/sonokai.git" },
@@ -264,9 +268,31 @@ end, { desc = "Copy directory of current file" })
 -- ============================================
 -- Section 3: File Explorer + Finder
 -- ============================================
+-- Workspace helpers (shared with sessions below)
+local WORKSPACE_MARKER = ".nvim/workspace"
+local SESSION_FILE = ".nvim/Session.vim"
+
+local function workspace_marker_path(dir)
+  return (dir or vim.fn.getcwd()) .. "/" .. WORKSPACE_MARKER
+end
+
+local function session_file_path(dir)
+  return (dir or vim.fn.getcwd()) .. "/" .. SESSION_FILE
+end
+
+local function local_session_name()
+  return vim.fn.fnamemodify(SESSION_FILE, ":t")
+end
+
+local function is_workspace_dir(dir)
+  return vim.fn.filereadable(workspace_marker_path(dir)) == 1
+end
+
 local function will_restore_session()
-  local session_path = vim.fn.getcwd() .. "/Session.vim"
-  if vim.fn.filereadable(session_path) ~= 1 then
+  if not is_workspace_dir() then
+    return false
+  end
+  if vim.fn.filereadable(session_file_path()) ~= 1 then
     return false
   end
   if vim.fn.argc() == 0 then
@@ -278,10 +304,16 @@ local function will_restore_session()
   return false
 end
 
+local function should_oil_hijack_dir()
+  if not is_workspace_dir() or will_restore_session() then
+    return false
+  end
+  return vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+end
+
 -- oil.nvim — default dir handler (`nvim ./dir`, yazi → dir)
 require("oil").setup({
-  -- skip hijack when Session.vim will restore (otherwise oil wins over session)
-  default_file_explorer = not will_restore_session(),
+  default_file_explorer = should_oil_hijack_dir(),
   delete_to_trash = true,
   view_options = {
     show_hidden = true,
@@ -316,9 +348,18 @@ local function mini_files_anchor_path()
   return vim.uv.cwd()
 end
 
+-- Sync pending CRUD (confirm dialog) then close; returns true/false/nil like close()
+local function mini_files_close_sync()
+  if MiniFiles.synchronize() == false then
+    return false
+  end
+  return MiniFiles.close()
+end
+
 -- VSCode-style: toggle closed; when opening, reveal active file in its dir branch
 local function mini_files_toggle_reveal()
-  if MiniFiles.close() then
+  local closed = mini_files_close_sync()
+  if closed ~= nil then
     return
   end
   MiniFiles.open(mini_files_anchor_path(), false)
@@ -374,9 +415,9 @@ vim.api.nvim_create_autocmd("User", {
   pattern = "MiniFilesBufferCreate",
   callback = function(args)
     vim.opt_local.colorcolumn = ""
-    vim.keymap.set("n", "<Esc>", MiniFiles.close, {
+    vim.keymap.set("n", "<Esc>", mini_files_close_sync, {
       buffer = args.data.buf_id,
-      desc = "Close explorer",
+      desc = "Apply changes and close explorer",
     })
     local buf_id = args.data.buf_id
     local function minifiles_move(delta)
@@ -410,6 +451,27 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
+-- Line numbers only on mini.files file preview pane (not directory columns)
+local function minifiles_buf_path(buf_id)
+  local name = vim.api.nvim_buf_get_name(buf_id)
+  return name:match("^minifiles://%d+/(.+)$") or name
+end
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniFilesWindowUpdate",
+  callback = function(args)
+    local win_id = args.data.win_id
+    local buf_id = args.data.buf_id
+    if not win_id or not vim.api.nvim_win_is_valid(win_id) then
+      return
+    end
+    local path = minifiles_buf_path(buf_id)
+    local is_file_preview = path ~= "" and vim.fn.filereadable(path) == 1
+    vim.wo[win_id].number = is_file_preview
+    vim.wo[win_id].relativenumber = false
+  end,
+})
+
 -- mini.files has no macOS Trash API; bridge its trash dir → ~/.Trash (Finder)
 if vim.fn.has("mac") == 1 then
   local function move_to_macos_trash(path)
@@ -437,13 +499,29 @@ if vim.fn.has("mac") == 1 then
 end
 
 -- Finders
-require("fzf-lua").setup()
+require("fzf-lua").setup({
+  keymap = {
+    builtin = {
+      ["<C-d>"] = "preview-page-down",
+      ["<C-u>"] = "preview-page-up",
+    },
+  },
+  winopts = {
+    preview = {
+      winopts = {
+        number = true,
+        relativenumber = false,
+      },
+    },
+  },
+})
 
 require("fff").setup({
   prompt = "Files> ",
   max_results = 30,
   preview = {
     enabled = true,
+    line_numbers = true,
   },
   keymaps = {
     close = '<Esc>',
@@ -489,29 +567,41 @@ vim.keymap.set("n", "<leader>?", function()
   })
 end, { desc = "Grep anywhere (global)" })
 
+-- Recent files (VSCode Ctrl+R); uses v:oldfiles via fzf-lua — no extra plugin
+vim.keymap.set("n", "<C-r>", function()
+  require("fzf-lua").oldfiles({
+    prompt = "Recent> ",
+    winopts = { preview = { vertical = "up:45%" } },
+  })
+end, { desc = "Recent files" })
+
 
 -- ============================================================
--- Phase 4: Tabs & Buffer Management
+-- Phase 4: Sessions, Starter, Tabs & Buffer Management
 -- ============================================================
-
--- Restore open buffers per project (VSCode-like; bare `nvim` in project dir)
 vim.o.sessionoptions = "buffers,curdir,tabpages,winsize,globals,blank"
 
 local function is_oil_or_dir_buffer(buf)
   if not vim.api.nvim_buf_is_valid(buf) then
     return false
   end
-  if vim.bo[buf].filetype == "oil" then
+  if vim.bo[buf].filetype == "oil" or vim.bo[buf].filetype == "netrw" then
     return true
   end
   if vim.bo[buf].buftype ~= "" then
     return false
   end
   local name = vim.api.nvim_buf_get_name(buf)
-  return name ~= "" and vim.fn.isdirectory(vim.fn.fnamemodify(name, ":p")) == 1
+  if name == "" then
+    return false
+  end
+  if name:match("^oil://") then
+    return true
+  end
+  return vim.fn.isdirectory(vim.fn.fnamemodify(name, ":p")) == 1
 end
 
-local function sessions_strip_oil_buffers()
+local function sessions_strip_explorer_buffers()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if is_oil_or_dir_buffer(buf) then
       pcall(vim.api.nvim_buf_delete, buf, { force = true })
@@ -519,13 +609,19 @@ local function sessions_strip_oil_buffers()
   end
 end
 
--- `nvim .` puts the dir on the arglist; mksession persists it as $argadd → oil on restore
+-- `nvim .` / oil leave dirs on the arglist; mksession persists them → ghost explorer on restore
 local function sessions_strip_dir_args()
   for i = vim.fn.argc() - 1, 0, -1 do
-    if vim.fn.isdirectory(vim.fn.fnamemodify(vim.fn.argv(i), ":p")) == 1 then
+    local arg = vim.fn.argv(i)
+    if arg:match("^oil://") or vim.fn.isdirectory(vim.fn.fnamemodify(arg, ":p")) == 1 then
       vim.cmd("silent " .. (i + 1) .. "argdelete")
     end
   end
+end
+
+local function sessions_cleanup_explorers()
+  sessions_strip_dir_args()
+  sessions_strip_explorer_buffers()
 end
 
 local function sessions_refresh_buffer_syntax(buf)
@@ -546,9 +642,10 @@ local function sessions_refresh_buffer_syntax(buf)
 end
 
 local function sessions_post_read()
-  sessions_strip_oil_buffers()
-  -- mksession restores the active buffer but often leaves syntax unset
+  sessions_cleanup_explorers()
+  -- oil SessionLoadPost can finish loading after mini.sessions post hook
   vim.schedule(function()
+    sessions_cleanup_explorers()
     vim.cmd("syntax enable")
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       sessions_refresh_buffer_syntax(buf)
@@ -559,12 +656,11 @@ end
 require("mini.sessions").setup({
   autoread = false, -- custom VimEnter below (handles `nvim .` too)
   autowrite = true,
-  file = "Session.vim", -- project root; add "Session.vim" to .gitignore
+  file = SESSION_FILE,
   hooks = {
     pre = {
       write = function()
-        sessions_strip_oil_buffers()
-        sessions_strip_dir_args()
+        sessions_cleanup_explorers()
       end,
     },
     post = {
@@ -573,26 +669,103 @@ require("mini.sessions").setup({
   },
 })
 
+-- Welcome screen (mini.starter) when no session to restore
+local MiniStarter = require("mini.starter")
+MiniStarter.setup({
+  autoopen = false, -- hybrid VimEnter below
+  items = {
+    MiniStarter.sections.sessions(5, true),
+    MiniStarter.sections.builtin_actions(),
+  },
+})
+
+local function should_open_starter()
+  if will_restore_session() then
+    return false
+  end
+  -- `nvim file.ts` — skip starter
+  if vim.fn.argc() == 1 and vim.fn.filereadable(vim.fn.argv(0)) == 1 then
+    return false
+  end
+  if vim.fn.argc() > 1 then
+    return false
+  end
+  -- bare `nvim` or `nvim <dir>` without workspace restore
+  if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+    return true
+  end
+  local listed = vim.tbl_filter(function(buf)
+    return vim.fn.buflisted(buf) == 1
+  end, vim.api.nvim_list_bufs())
+  if #listed > 1 then
+    return false
+  end
+  if vim.bo.filetype ~= "" then
+    return false
+  end
+  local n_lines = vim.api.nvim_buf_line_count(0)
+  if n_lines > 1 then
+    return false
+  end
+  local first_line = vim.api.nvim_buf_get_lines(0, 0, 1, true)[1] or ""
+  return #first_line == 0
+end
+
 vim.api.nvim_create_autocmd("VimEnter", {
-  desc = "Restore Session.vim when opening bare nvim or nvim <dir>",
+  desc = "Restore Session.vim or open starter on bare nvim",
   once = true,
   callback = function()
-    if not will_restore_session() then
+    if will_restore_session() then
+      local ok, err = pcall(MiniSessions.read, local_session_name(), { force = true, verbose = false })
+      if not ok then
+        vim.notify("Session restore failed: " .. tostring(err), vim.log.levels.ERROR)
+      end
       return
     end
-    pcall(MiniSessions.read, MiniSessions.config.file, { force = true, verbose = false })
+    if should_open_starter() then
+      -- `nvim .` without workspace leaves a dir buffer on the arglist before starter
+      sessions_cleanup_explorers()
+      -- Reuse startup empty buffer (avoids a 2nd buffer when picking "Edit new buffer")
+      MiniStarter.open(vim.api.nvim_get_current_buf())
+    end
   end,
 })
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
-  desc = "Always update project Session.vim on quit",
+  desc = "Save workspace session on quit when marker exists",
   callback = function()
-    if MiniSessions.config.file == "" then
+    if MiniSessions.config.file == "" or not is_workspace_dir() then
       return
     end
+    -- Explicit save for marked workspaces; autowrite also saves when v:this_session is set
     pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = false })
   end,
 })
+
+map("n", "<leader>Sw", function()
+  local dir = vim.fn.getcwd()
+  vim.fn.mkdir(dir .. "/.nvim", "p")
+  local marker = workspace_marker_path(dir)
+  if vim.fn.filereadable(marker) ~= 1 then
+    vim.fn.writefile({ "" }, marker)
+  end
+  pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = true })
+  vim.notify("Workspace enabled: " .. vim.fn.fnamemodify(dir, ":~"), vim.log.levels.INFO)
+end, { desc = "Enable workspace session for cwd" })
+
+map("n", "<leader>Sd", function()
+  local dir = vim.fn.getcwd()
+  local marker = workspace_marker_path(dir)
+  if vim.fn.filereadable(marker) == 1 then
+    vim.fn.delete(marker)
+  end
+  local session = session_file_path(dir)
+  if vim.fn.filereadable(session) == 1 then
+    vim.fn.delete(session)
+  end
+  vim.v.this_session = ""
+  vim.notify("Workspace disabled: " .. vim.fn.fnamemodify(dir, ":~"), vim.log.levels.INFO)
+end, { desc = "Disable workspace session for cwd" })
 
 -- Clean buffer tabline (shows open buffers like VSCode tabs)
 require("mini.tabline").setup()
@@ -637,4 +810,3 @@ vim.keymap.set('n', '<leader>T', function()
   vim.cmd.edit(closed_buffers[1])
   table.remove(closed_buffers, 1)
 end, { desc = 'Reopen last closed buffer' })
-
