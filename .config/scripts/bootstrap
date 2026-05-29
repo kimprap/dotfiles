@@ -145,7 +145,9 @@ brew install \
     jq \
     poppler \
     ffmpegthumbnailer \
-    zoxide
+    zoxide \
+    lua-language-server \
+    stylua
 
 # Ghostty is macOS-only
 if [[ "$IS_MACOS" == true ]]; then
