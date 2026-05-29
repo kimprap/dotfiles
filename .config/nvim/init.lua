@@ -201,19 +201,18 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*",
   callback = function()
-    -- Save cursor position
-    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local undolevels = vim.bo.undolevels
+    vim.bo.undolevels = -1
+    local view = vim.fn.winsaveview()
 
-    -- Remove trailing whitespace
-    vim.cmd([[silent! %s/\s\+$//e]])
+    vim.cmd([[silent! keepjumps %s/\s\+$//e]])
 
-    -- Add final newline only if missing (safe method)
     if vim.fn.getline("$") ~= "" then
-      vim.fn.append("$", "")
+      vim.fn.append(vim.fn.line("$"), "")
     end
 
-    -- Restore cursor position
-    vim.api.nvim_win_set_cursor(0, cursor_pos)
+    vim.fn.winrestview(view)
+    vim.bo.undolevels = undolevels
   end,
 })
 
@@ -273,11 +272,17 @@ map("n", "<leader>c", function()
   refresh_search_scrollbar()
 end, { desc = "Clear search highlight" })
 
--- Better window navigation
+-- Window navigation (splits: <C-\> right, <C-w>s below; resize: <C-arrows>, equalize <C-S-=>)
 map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
 map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
 map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
+map("n", "<C-\\>", "<C-w>v", { desc = "Split right" })
+map("n", "<C-S-Left>", "<C-w><", { desc = "Narrower window" })
+map("n", "<C-S-Right>", "<C-w>>", { desc = "Wider window" })
+map("n", "<C-S-Up>", "<C-w>+", { desc = "Taller window" })
+map("n", "<C-S-Down>", "<C-w>-", { desc = "Shorter window" })
+map("n", "<C-S-=>", "<C-w>=", { desc = "Equalize window sizes" })
 
 -- Quote "around" without trailing whitespace (Vim's a" includes it by design; 2i" does not)
 for _, q in ipairs({ '"', "'", "`" }) do
@@ -336,13 +341,43 @@ map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
 -- ─────────────────────────────────────────────
 require("mini.bufremove").setup()
 
-local function delete_buffer(force)
-  require("mini.bufremove").delete(0, force)
+-- Close editor: drop buffer from tabs; close orphan split panes; keep layout when buffer is duplicated
+local function close_editor(force)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local buftype = vim.bo[bufnr].buftype
+  if buftype ~= "" and buftype ~= "acwrite" then
+    if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+      vim.api.nvim_win_close(0, true)
+    else
+      pcall(vim.cmd, "bdelete!")
+    end
+    return
+  end
+
+  local tab_wins = vim.api.nvim_tabpage_list_wins(0)
+  local buf_wins = vim.fn.win_findbuf(bufnr)
+
+  -- Same buffer in multiple panes: remove buffer everywhere, keep all panes (swap to alt)
+  if #buf_wins > 1 then
+    require("mini.bufremove").delete(bufnr, force)
+    return
+  end
+
+  -- Buffer only in this pane while other panes exist: close pane, then drop buffer
+  if #tab_wins > 1 then
+    vim.api.nvim_win_close(0, true)
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      require("mini.bufremove").delete(bufnr, force)
+    end
+    return
+  end
+
+  require("mini.bufremove").delete(bufnr, force)
 end
 
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
-map("n", "<leader>q", function() delete_buffer(false) end, { desc = "Delete buffer (keep layout)" })
+map("n", "<leader>q", function() close_editor(false) end, { desc = "Close editor (split + buffer)" })
 map("n", "<leader>Q", ":q!<CR>", { desc = "Quit without saving" })
 map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
 map("n", "<A-z>", function()
@@ -970,8 +1005,8 @@ vim.keymap.set("n", "<A-p>", "<Cmd>BufferPin<CR>", { desc = "Pin / unpin buffer"
 -- Space + backtick: explicit leader char avoids "<leader>`" parse issues in some terminals
 vim.keymap.set("n", "<Space>`", "<C-^>", { desc = "Toggle last buffer" })
 
-map("n", "<C-q>", function() delete_buffer(false) end, { desc = "Delete buffer (keep layout)" })
-map("n", "<C-Q>", function() delete_buffer(true) end, { desc = "Force delete buffer" })
+map("n", "<C-q>", function() close_editor(false) end, { desc = "Close editor (split + buffer)" })
+map("n", "<C-Q>", function() close_editor(true) end, { desc = "Force close editor" })
 
 -- Reopen last closed buffer (like Ctrl+Shift+T in VSCode / browsers)
 local closed_buffers = {}
@@ -1053,7 +1088,7 @@ require("gitsigns").setup({
   end,
 })
 
--- Right-side symbol outline: icon + name + line number per row
+-- Right-side symbol outline
 require("outline").setup({
   outline_window = {
     position = "right",
@@ -1066,20 +1101,26 @@ require("outline").setup({
   },
   outline_items = {
     show_symbol_details = false,
-    show_symbol_lineno = true,
-    highlight_hovered_item = false,
-    auto_set_cursor = false,
+    show_symbol_lineno = false,
+    highlight_hovered_item = true,
+    auto_set_cursor = true,
     auto_update_events = {
-      follow = {},
-      items = {},
+      follow = { "CursorMoved" },
+      items = { "LspAttach" },
     },
   },
   preview_window = {
     auto_preview = false,
   },
   symbol_folding = {
-    autofold_depth = 2,
+    autofold_depth = 1,
     auto_unfold = { hovered = false, only = false },
+  },
+  -- init.lua etc.: skip Variable/Object noise; show functions/methods only
+  symbols = {
+    filter = {
+      lua = { "Function", "Method", "Module", "Class", "Constructor" },
+    },
   },
   keymaps = {
     close = { "<Esc>", "q" },
@@ -1090,6 +1131,12 @@ require("outline").setup({
 
 map("n", "<leader>o", function()
   require("outline").toggle({ focus_outline = false })
+  vim.schedule(function()
+    local sidebar = require("outline")._get_sidebar()
+    if sidebar and sidebar.view:is_open() and #(sidebar.items or {}) == 0 then
+      sidebar:_refresh()
+    end
+  end)
 end, { desc = "Toggle symbol outline" })
 map("n", "<leader>of", function()
   require("outline").focus_outline()
@@ -1106,9 +1153,10 @@ map("n", "<leader>zc", "zM", { desc = "Close all folds" })
 require("scrollbar").setup({
   show = true,
   handle = {
-    text = "▐",
+    text = " ",
     color = "#9aa3b2",
     blend = 50,
+    highlight = "CursorColumn",
   },
   handlers = {
     cursor = false,
@@ -1290,17 +1338,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return
     end
 
-    if not client:supports_method("textDocument/willSaveWaitUntil")
-        and client:supports_method("textDocument/formatting") then
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        group = vim.api.nvim_create_augroup("user.lsp.fmt", { clear = false }),
-        buffer = bufnr,
-        callback = function()
-          vim.lsp.buf.format({ bufnr = bufnr, id = client.id, timeout_ms = 1000 })
-        end,
-      })
-    end
-
     if client:supports_method("textDocument/foldingRange") then
       vim.schedule(function()
         if not vim.api.nvim_buf_is_valid(bufnr) then
@@ -1338,3 +1375,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     nmap("<leader>Lm", "<cmd>Mason<CR>", "Mason installer")
   end,
 })
+
+-- Sourcing $MYVIMRC re-enables hlsearch; @/ keeps the last pattern → highlights return.
+-- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
+vim.cmd.nohlsearch()
+refresh_search_scrollbar()
+
