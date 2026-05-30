@@ -197,22 +197,20 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
   end,
 })
 
--- Remove trailing whitespace on save (VSCode-like behavior)
+-- Remove trailing whitespace on save (VSCode-like behavior).
+-- undojoin merges cleanup with the preceding edit so `:w` does not add a
+-- separate undo step (avoids EOF cursor jump on the first `u` after reopen).
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*",
   callback = function()
-    local undolevels = vim.bo.undolevels
-    vim.bo.undolevels = -1
     local view = vim.fn.winsaveview()
-
+    pcall(vim.cmd.undojoin)
     vim.cmd([[silent! keepjumps %s/\s\+$//e]])
-
+    -- Visible trailing blank line (fixendofline only writes \n on disk, no empty row)
     if vim.fn.getline("$") ~= "" then
       vim.fn.append(vim.fn.line("$"), "")
     end
-
     vim.fn.winrestview(view)
-    vim.bo.undolevels = undolevels
   end,
 })
 
@@ -283,6 +281,154 @@ map("n", "<C-S-Right>", "<C-w>>", { desc = "Wider window" })
 map("n", "<C-S-Up>", "<C-w>+", { desc = "Taller window" })
 map("n", "<C-S-Down>", "<C-w>-", { desc = "Shorter window" })
 map("n", "<C-S-=>", "<C-w>=", { desc = "Equalize window sizes" })
+
+-- Jump list: C-o/C-i stay in the active buffer (native jumps cross buffers).
+-- Native jumplist is snapshotted per window; keepjumps cursor() truncates it, so
+-- we track position + redo ourselves (vim.w cannot hold mutated tables).
+local jump_state = setmetatable({}, { __mode = "k" })
+
+local function jump_win_state(win)
+  local state = jump_state[win]
+  if not state then
+    state = { buf = nil, entries = {}, pos = nil, redo = {}, last_jump = nil }
+    jump_state[win] = state
+  end
+  return state
+end
+
+local function jump_buf_entries(buf)
+  local entries = {}
+  for _, entry in ipairs(vim.fn.getjumplist()[1] or {}) do
+    if entry.bufnr == buf then
+      entries[#entries + 1] = { entry.lnum, entry.col + 1 }
+    end
+  end
+  return entries
+end
+
+local function jump_here()
+  local pos = vim.fn.getpos(".")
+  return pos[2], pos[3]
+end
+
+local function jump_at(lnum, col, entry)
+  return entry[1] == lnum and entry[2] == col
+end
+
+local function jump_find_pos(entries, lnum, col)
+  for i = #entries, 1, -1 do
+    if jump_at(lnum, col, entries[i]) then
+      return i
+    end
+  end
+  return #entries + 1
+end
+
+local function jump_reset(state, buf)
+  state.buf = buf
+  state.entries = jump_buf_entries(buf)
+  state.pos = nil
+  state.redo = {}
+  state.last_jump = nil
+end
+
+local function jump_resync(state, buf)
+  state.entries = jump_buf_entries(buf)
+  local lnum, col = jump_here()
+  state.pos = jump_find_pos(state.entries, lnum, col)
+end
+
+local function jump_to(state, lnum, col)
+  state.last_jump = { lnum, col }
+  vim.w._jump_nav = true
+  vim.cmd(string.format("keepjumps call cursor(%d, %d)", lnum, col))
+  vim.schedule(function()
+    vim.w._jump_nav = false
+  end)
+end
+
+local function jump_in_buffer(forward)
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_get_current_buf()
+  local state = jump_win_state(win)
+
+  if state.buf ~= buf then
+    jump_reset(state, buf)
+  end
+  if #state.entries == 0 then
+    return
+  end
+
+  local lnum, col = jump_here()
+  local buf_pos = state.pos or jump_find_pos(state.entries, lnum, col)
+  local remaining = vim.v.count1
+
+  if forward then
+    while remaining > 0 do
+      if #state.redo > 0 then
+        local target = table.remove(state.redo)
+        jump_to(state, target[1], target[2])
+        state.pos = jump_find_pos(state.entries, target[1], target[2])
+        remaining = remaining - 1
+      elseif buf_pos < #state.entries then
+        buf_pos = buf_pos + 1
+        local target = state.entries[buf_pos]
+        jump_to(state, target[1], target[2])
+        state.pos = buf_pos
+        remaining = remaining - 1
+      else
+        return
+      end
+    end
+    return
+  end
+
+  while remaining > 0 do
+    lnum, col = jump_here()
+    local target_idx = buf_pos > #state.entries and #state.entries or (buf_pos - 1)
+    if target_idx < 1 then
+      return
+    end
+    local target = state.entries[target_idx]
+    state.redo[#state.redo + 1] = { lnum, col }
+    jump_to(state, target[1], target[2])
+    state.pos = target_idx
+    buf_pos = target_idx
+    remaining = remaining - 1
+  end
+end
+
+map("n", "<C-o>", function() jump_in_buffer(false) end, { desc = "Jump back (this buffer)" })
+map("n", "<C-i>", function() jump_in_buffer(true) end, { desc = "Jump forward (this buffer)" })
+
+vim.api.nvim_create_autocmd("CursorMoved", {
+  group = vim.api.nvim_create_augroup("user.jumplist", { clear = true }),
+  callback = function()
+    if vim.w._jump_nav then
+      return
+    end
+    local win = vim.api.nvim_get_current_win()
+    local state = jump_state[win]
+    if not state then
+      return
+    end
+    local buf = vim.api.nvim_get_current_buf()
+    local lnum, col = jump_here()
+    local lj = state.last_jump
+    if lj and lj[1] == lnum and lj[2] == col then
+      state.last_jump = nil
+      state.pos = jump_find_pos(state.entries, lnum, col)
+      return
+    end
+    state.last_jump = nil
+    state.redo = {}
+    if state.buf ~= buf then
+      jump_reset(state, buf)
+    else
+      jump_resync(state, buf)
+    end
+  end,
+})
 
 -- Quote "around" without trailing whitespace (Vim's a" includes it by design; 2i" does not)
 for _, q in ipairs({ '"', "'", "`" }) do
@@ -1298,7 +1444,7 @@ require("conform").setup({
     if vim.bo[bufnr].filetype == "" then
       return nil
     end
-    return { timeout_ms = 500, lsp_format = "fallback" }
+    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }
   end,
 })
 
@@ -1380,4 +1526,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
 vim.cmd.nohlsearch()
 refresh_search_scrollbar()
-
