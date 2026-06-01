@@ -940,5 +940,9 @@
   {
     "key": "shift+cmd+l",
     "command": "-composer.newAgentChat"
+  },
+  {
+    "key": "shift+cmd+h",
+    "command": "workbench.action.focusPreviousGroup"
   }
 ]

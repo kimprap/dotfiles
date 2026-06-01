@@ -10,7 +10,7 @@ vim.pack.add({
   { src = "https://github.com/sainnhe/sonokai.git" },
 
   -- Core
-  { src = "https://github.com/echasnovski/mini.nvim",      version = "stable" },
+  { src = "https://github.com/echasnovski/mini.nvim",                    version = "stable" },
 
   -- File Explorer
   { src = "https://github.com/stevearc/oil.nvim" },
@@ -27,7 +27,7 @@ vim.pack.add({
   { src = "https://github.com/petertriho/nvim-scrollbar" },
 
   -- LSP + completion
-  { src = "https://github.com/saghen/blink.cmp",           version = "v1" },
+  { src = "https://github.com/saghen/blink.cmp",                         version = "v1" },
   { src = "https://github.com/stevearc/conform.nvim" },
   { src = "https://github.com/mason-org/mason.nvim" },
   { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
@@ -66,6 +66,8 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 vim.opt.autoindent = true
 
+-- ignorecase + smartcase: lowercase `/pattern` is case-insensitive; any uppercase letter
+-- forces case-sensitive (e.g. `/Foo`). Toggle with <leader>ui; `\c`/`\C` in pattern override per-search.
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
@@ -268,6 +270,19 @@ map("n", "<leader>c", function()
   vim.cmd.nohlsearch()
   refresh_search_scrollbar()
 end, { desc = "Clear search highlight" })
+
+map("n", "<leader>ui", function()
+  vim.o.ignorecase = not vim.o.ignorecase
+  if vim.o.ignorecase then
+    vim.o.smartcase = true
+  else
+    vim.o.smartcase = false
+  end
+  vim.notify(
+    vim.o.ignorecase and "Search: ignore case" or "Search: match case",
+    vim.log.levels.INFO
+  )
+end, { desc = "Toggle search case sensitivity" })
 
 -- Window navigation (splits: <C-\> right, <C-w>s below; resize: <C-arrows>, equalize <C-S-=>)
 map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
@@ -481,37 +496,46 @@ map("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
 map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
 
 
+-- Copy line(s) down/up (VSCode: Alt+Shift+Down/Up). Alt+Shift+j/k is free:
+-- mini.move uses Alt+j/k (move, not copy); J is join, not Alt+Shift+j.
+local function copy_line(dir)
+  local pos = vim.fn.getcurpos()
+  vim.cmd(dir == "down" and "copy ." or "copy .-1")
+  vim.fn.cursor(pos[2], pos[3])
+end
+
+map("n", "<A-S-j>", function() copy_line("down") end, { desc = "Copy line down" })
+map("n", "<A-S-k>", function() copy_line("up") end, { desc = "Copy line up" })
+map("n", "<A-S-Down>", function() copy_line("down") end, { desc = "Copy line down" })
+map("n", "<A-S-Up>", function() copy_line("up") end, { desc = "Copy line up" })
+
+map("v", "<A-S-j>", ":t '><CR>gv=gv", { desc = "Copy selection down" })
+map("v", "<A-S-k>", ":t '<-1<CR>gv=gv", { desc = "Copy selection up" })
+map("v", "<A-S-Down>", ":t '><CR>gv=gv", { desc = "Copy selection down" })
+map("v", "<A-S-Up>", ":t '<-1<CR>gv=gv", { desc = "Copy selection up" })
+
 -- ─────────────────────────────────────────────
 -- Quick save / buffers
 -- ─────────────────────────────────────────────
 require("mini.bufremove").setup()
 
--- Close editor: drop buffer from tabs; close orphan split panes; keep layout when buffer is duplicated
+-- Close editor: close focused pane when splits exist; drop buffer only if nowhere else shown
 local function close_editor(force)
+  local winid = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
   local buftype = vim.bo[bufnr].buftype
   if buftype ~= "" and buftype ~= "acwrite" then
     if #vim.api.nvim_tabpage_list_wins(0) > 1 then
-      vim.api.nvim_win_close(0, true)
+      vim.api.nvim_win_close(winid, true)
     else
       pcall(vim.cmd, "bdelete!")
     end
     return
   end
 
-  local tab_wins = vim.api.nvim_tabpage_list_wins(0)
-  local buf_wins = vim.fn.win_findbuf(bufnr)
-
-  -- Same buffer in multiple panes: remove buffer everywhere, keep all panes (swap to alt)
-  if #buf_wins > 1 then
-    require("mini.bufremove").delete(bufnr, force)
-    return
-  end
-
-  -- Buffer only in this pane while other panes exist: close pane, then drop buffer
-  if #tab_wins > 1 then
-    vim.api.nvim_win_close(0, true)
-    if vim.api.nvim_buf_is_valid(bufnr) then
+  if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+    vim.api.nvim_win_close(winid, true)
+    if vim.api.nvim_buf_is_valid(bufnr) and #vim.fn.win_findbuf(bufnr) == 0 then
       require("mini.bufremove").delete(bufnr, force)
     end
     return
@@ -1283,6 +1307,8 @@ require("gitsigns").setup({
 })
 
 -- Symbol outline — https://github.com/hedyhli/outline.nvim
+-- LSP documentSymbol backend (marksman for markdown, language servers for code).
+-- Phase 7 treesitter adds syntax/textobjects; it does not replace this sidebar.
 -- Custom (intentional): exclude-noise filter, inline line numbers, manual sync keymaps
 --   <leader>o — toggle; when opening: sync to editor symbol + focus outline pane
 --   <leader>O — sync to editor symbol + focus outline (outline stays open if already open)
@@ -1574,9 +1600,13 @@ require("mini.statusline").setup({
 -- ============================================================
 -- LSP keymaps (buffer-local on attach): K hover, gd/gD/gr, <leader>L*
 -- Global: ]d/[d diagnostics, <Esc> close floats
+--
+-- Phase 7 (pending): nvim-treesitter — highlighting, indent, textobjects.
+--   Complements LSP; keep marksman (markdown), vtsls, etc. for symbols/diagnostics/format.
 
 -- Mason-managed CLI tools (explicit list — add packages when lsp/*.lua or formatters grow)
 -- Search: ripgrep + fzf are not in Mason; install via brew (`ripgrep`, `fzf`)
+-- Phase 7 treesitter: syntax/highlighting/textobjects — does not replace LSP servers here.
 local MASON_TOOLS = {
   "lua-language-server",
   "stylua",
@@ -1775,6 +1805,47 @@ vim.api.nvim_create_autocmd("LspDetach", {
       vim.wo.foldmethod = "indent"
       vim.wo.foldexpr = "0"
     end)
+  end,
+})
+
+-- Key hints (mini.clue — which-key alternative; setup last so LSP buffer maps take precedence)
+local MiniClue = require("mini.clue")
+MiniClue.setup({
+  triggers = {
+    { mode = "n", keys = "<Leader>" },
+    { mode = "x", keys = "<Leader>" },
+    { mode = "n", keys = "[" },
+    { mode = "n", keys = "]" },
+    { mode = "n", keys = "g" },
+    { mode = "x", keys = "g" },
+    { mode = "n", keys = "<C-w>" },
+  },
+  clues = {
+    MiniClue.gen_clues.g(),
+    MiniClue.gen_clues.z(),
+    MiniClue.gen_clues.windows(),
+    MiniClue.gen_clues.square_brackets(),
+    { mode = "n", keys = "<Leader>e", desc = "Explorer (mini.files)" },
+    { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
+    { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
+    { mode = "n", keys = "<Leader>F", desc = "Live grep (fff)" },
+    { mode = "n", keys = "<Leader>L", desc = "+LSP" },
+    { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
+    { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
+    { mode = "n", keys = "<Leader>S", desc = "+Session" },
+    { mode = "n", keys = "<Leader>h", desc = "+Git hunk" },
+    { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
+    { mode = "n", keys = "<Leader>z", desc = "+Folds" },
+    { mode = "n", keys = "<Leader>T", desc = "Find color" },
+    { mode = "n", keys = "]d",        desc = "Next diagnostic" },
+    { mode = "n", keys = "[d",        desc = "Prev diagnostic" },
+  },
+  window = { delay = 300 },
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    MiniClue.ensure_buf_triggers(args.buf)
   end,
 })
 
