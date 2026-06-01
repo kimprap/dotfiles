@@ -6,7 +6,7 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 vim.pack.add({
-  -- Theme (uncomment when ready)
+  -- Theme
   { src = "https://github.com/sainnhe/sonokai.git" },
 
   -- Core
@@ -30,11 +30,12 @@ vim.pack.add({
   { src = "https://github.com/saghen/blink.cmp",           version = "v1" },
   { src = "https://github.com/stevearc/conform.nvim" },
   { src = "https://github.com/mason-org/mason.nvim" },
+  { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 })
 
 
 -- ============================================
--- Section 1: Core Foundation
+-- Phase 1: Core Foundation
 -- ============================================
 vim.g.sonokai_style = "maia" -- "andromeda", "atlantis", "espresso", "maia", "shusia"
 vim.g.sonokai_enable_italic = 1
@@ -50,8 +51,8 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "line"
 -- Width for statuscolumn %%C (markers drawn in stc, not a separate foldcolumn gutter)
 vim.opt.foldcolumn = "auto:1"
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.lsp.foldexpr()"
+vim.opt.foldmethod = "indent"
+vim.opt.foldexpr = "0"
 vim.opt.foldlevel = 99
 vim.opt.foldminlines = 1
 vim.opt.wrap = false
@@ -216,7 +217,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 
 -- ============================================
--- mini.nvim
+-- Phase 2: mini.nvim + Keymaps + QoL
 -- ============================================
 require("mini.basics").setup({
   options = { basic = true },
@@ -259,9 +260,7 @@ require("mini.move").setup({
 require("mini.icons").setup()
 MiniIcons.tweak_lsp_kind()
 
--- ============================================
--- Section 2: Basic Keymaps + Motions + QOL
--- ============================================
+-- Phase 2 (continued): keymaps + motions
 local map = vim.keymap.set
 
 -- Clear search highlight
@@ -524,7 +523,7 @@ end
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
 map("n", "<leader>q", function() close_editor(false) end, { desc = "Close editor (split + buffer)" })
-map("n", "<leader>Q", ":q!<CR>", { desc = "Quit without saving" })
+map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Quit Neovim without saving" })
 map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
 map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
@@ -555,7 +554,7 @@ end, { desc = "Copy directory of current file" })
 
 
 -- ============================================
--- Section 3: File Explorer + Finder
+-- Phase 3: File Explorer + Finder
 -- ============================================
 -- Workspace helpers (shared with sessions below)
 local WORKSPACE_MARKER = ".nvim/workspace"
@@ -709,6 +708,12 @@ vim.api.nvim_create_autocmd("User", {
       desc = "Apply changes and close explorer",
     })
     local buf_id = args.data.buf_id
+
+    -- Same as mini.files `match_line_offset`: cursor belongs on filename, not icon/path id
+    local function minifiles_name_col(line)
+      return (line:match("^/.-/.-/()") or 1) - 1
+    end
+
     local function minifiles_move(delta)
       local lnum = vim.api.nvim_win_get_cursor(0)[1]
       local last = vim.api.nvim_buf_line_count(buf_id)
@@ -721,7 +726,8 @@ vim.api.nvim_create_autocmd("User", {
       elseif n < 1 then
         n = last
       end
-      vim.api.nvim_win_set_cursor(0, { n, 0 })
+      local line = vim.api.nvim_buf_get_lines(buf_id, n - 1, n, false)[1] or ""
+      vim.api.nvim_win_set_cursor(0, { n, minifiles_name_col(line) })
     end
 
     vim.keymap.set("n", "j", function() minifiles_move(1) end, { buffer = buf_id, desc = "Next entry (wrap)" })
@@ -756,6 +762,10 @@ vim.api.nvim_create_autocmd("User", {
     end
     local path = minifiles_buf_path(buf_id)
     local is_file_preview = path ~= "" and vim.fn.filereadable(path) == 1
+    if vim.w[win_id].minifiles_numbers == is_file_preview then
+      return
+    end
+    vim.w[win_id].minifiles_numbers = is_file_preview
     vim.wo[win_id].number = is_file_preview
     vim.wo[win_id].relativenumber = false
   end,
@@ -898,6 +908,36 @@ local function sessions_strip_explorer_buffers()
   end
 end
 
+local function is_outline_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  if vim.bo[buf].filetype == "Outline" then
+    return true
+  end
+  return vim.api.nvim_buf_get_name(buf):match("^OUTLINE_") ~= nil
+end
+
+local function sessions_close_outline()
+  local ok, outline = pcall(require, "outline")
+  if ok and outline.is_open() then
+    pcall(vim.cmd, "OutlineClose")
+  end
+end
+
+local function sessions_strip_outline_buffers()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if is_outline_buffer(buf) then
+      for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+        if vim.api.nvim_win_is_valid(win) then
+          pcall(vim.api.nvim_win_close, win, true)
+        end
+      end
+      pcall(vim.api.nvim_buf_delete, buf, { force = true })
+    end
+  end
+end
+
 -- `nvim .` / oil leave dirs on the arglist; mksession persists them → ghost explorer on restore
 local function sessions_strip_dir_args()
   for i = vim.fn.argc() - 1, 0, -1 do
@@ -911,6 +951,13 @@ end
 local function sessions_cleanup_explorers()
   sessions_strip_dir_args()
   sessions_strip_explorer_buffers()
+end
+
+local function sessions_cleanup_ephemeral()
+  -- Plugin UI (oil dirs, outline sidebar) — not workspace state; strip before save/after restore
+  sessions_cleanup_explorers()
+  sessions_close_outline()
+  sessions_strip_outline_buffers()
 end
 
 local function sessions_refresh_buffer_syntax(buf)
@@ -931,10 +978,10 @@ local function sessions_refresh_buffer_syntax(buf)
 end
 
 local function sessions_post_read()
-  sessions_cleanup_explorers()
+  sessions_cleanup_ephemeral()
   -- oil SessionLoadPost can finish loading after mini.sessions post hook
   vim.schedule(function()
-    sessions_cleanup_explorers()
+    sessions_cleanup_ephemeral()
     vim.cmd("syntax enable")
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       sessions_refresh_buffer_syntax(buf)
@@ -949,7 +996,7 @@ require("mini.sessions").setup({
   hooks = {
     pre = {
       write = function()
-        sessions_cleanup_explorers()
+        sessions_cleanup_ephemeral()
         vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
       end,
     },
@@ -1027,6 +1074,7 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
     if MiniSessions.config.file == "" or not is_workspace_dir() then
       return
     end
+    sessions_close_outline()
     -- Explicit save for marked workspaces; autowrite also saves when v:this_session is set
     pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = false })
   end,
@@ -1097,7 +1145,7 @@ require("barbar").setup({
     },
   },
   sidebar_filetypes = {
-    minifiles = { event = "BufWinLeave", text = "", align = "left" },
+    -- minifiles is a floating window (row below tabline) — do not offset tabs
     oil = { event = "BufWinLeave", text = "", align = "left" },
     Outline = { event = "BufWinLeave", text = "", align = "right" },
   },
@@ -1203,7 +1251,7 @@ end, { desc = "Reopen last closed buffer" })
 
 
 -- ============================================================
--- Phase 5: Gutter, Outline, Scrollbar
+-- Phase 5: Gutter, Outline, Scrollbar, Statusline
 -- ============================================================
 
 local gitsigns_signs = {
@@ -1234,62 +1282,186 @@ require("gitsigns").setup({
   end,
 })
 
--- Right-side symbol outline
+-- Symbol outline — https://github.com/hedyhli/outline.nvim
+-- Custom (intentional): exclude-noise filter, inline line numbers, manual sync keymaps
+--   <leader>o — toggle; when opening: sync to editor symbol + focus outline pane
+--   <leader>O — sync to editor symbol + focus outline (outline stays open if already open)
 require("outline").setup({
   outline_window = {
-    position = "right",
-    relative_width = false,
-    width = 36,
-    focus_on_open = false,
-    auto_close = false,
-    show_numbers = false,
-    show_cursorline = true,
+    focus_on_open = true,
+    width = 15,
   },
   outline_items = {
     show_symbol_details = false,
     show_symbol_lineno = false,
     highlight_hovered_item = true,
-    auto_set_cursor = true,
+    auto_set_cursor = false,
     auto_update_events = {
-      follow = { "CursorMoved" },
-      items = { "LspAttach" },
+      follow = false,
+      items = { "LspAttach", "BufWritePost" },
     },
-  },
-  preview_window = {
-    auto_preview = false,
   },
   symbol_folding = {
-    autofold_depth = 1,
     auto_unfold = { hovered = false, only = false },
   },
-  -- init.lua etc.: skip Variable/Object noise; show functions/methods only
+  -- Exclude literal/local noise; keep functions, modules, classes, namespaces, etc.
+  -- Note: LSP documentSymbol only lists definitions (functions, modules, …),
+  -- not bare statements like require("x").setup({}) or vim.api.nvim_create_autocmd(...).
   symbols = {
     filter = {
-      lua = { "Function", "Method", "Module", "Class", "Constructor" },
+      default = {
+        "String",
+        "Number",
+        "Boolean",
+        "Array",
+        "Object",
+        "Null",
+        "Variable",
+        "Field",
+        "Property",
+        "Constant",
+        "EnumMember",
+        "Key",
+        exclude = true,
+      },
     },
-  },
-  keymaps = {
-    close = { "<Esc>", "q" },
-    goto_location = "<CR>",
-    fold_toggle = "<Tab>",
   },
 })
 
-map("n", "<leader>o", function()
-  require("outline").toggle({ focus_outline = false })
-  vim.schedule(function()
-    local sidebar = require("outline")._get_sidebar()
-    if sidebar and sidebar.view:is_open() and #(sidebar.items or {}) == 0 then
-      sidebar:_refresh()
+-- Inline line numbers (one space after symbol name); manual sync keymaps above
+do
+  local outline_hl = require("outline.highlight")
+  local Sidebar = require("outline.sidebar")
+  local orig_build = Sidebar.build_outline
+
+  function outline_hl.linenos(bufnr, linenos, _)
+    for index, lineno in ipairs(linenos) do
+      local num = lineno:match("%S+$") or lineno
+      vim.api.nvim_buf_set_extmark(bufnr, outline_hl.ns.vt, index - 1, -1, {
+        virt_text = { { " " .. num, "OutlineLineno" } },
+        virt_text_pos = "eol",
+        hl_mode = "combine",
+      })
     end
-  end)
-end, { desc = "Toggle symbol outline" })
-map("n", "<leader>of", function()
-  require("outline").focus_outline()
-end, { desc = "Focus outline" })
-map("n", "<leader>oc", function()
-  require("outline").focus_code()
-end, { desc = "Focus editor" })
+  end
+
+  function Sidebar:build_outline(find_node)
+    local cursor = orig_build(self, find_node)
+    if self.view.buf and self.flats then
+      local linenos = {}
+      for _, node in ipairs(self.flats) do
+        linenos[#linenos + 1] = tostring(node.range_start + 1)
+      end
+      outline_hl.linenos(self.view.buf, linenos)
+    end
+    return cursor
+  end
+
+  local outline = require("outline")
+
+  local function outline_unfold_ancestors(items, target)
+    local function walk(nodes, path)
+      for _, node in ipairs(nodes or {}) do
+        if node == target then
+          for _, parent in ipairs(path) do
+            parent.folded = false
+          end
+          return true
+        end
+        if node.children then
+          local next_path = { unpack(path) }
+          next_path[#next_path + 1] = node
+          if walk(node.children, next_path) then
+            return true
+          end
+        end
+      end
+      return false
+    end
+    walk(items, {})
+  end
+
+  local function outline_deepest_symbol(items, lnum0)
+    local best
+    local function walk(nodes)
+      for _, node in ipairs(nodes or {}) do
+        if lnum0 >= node.range_start and lnum0 <= node.range_end then
+          if not best or node.depth > best.depth then
+            best = node
+          end
+          walk(node.children)
+        end
+      end
+    end
+    walk(items)
+    return best
+  end
+
+  --- Sync outline cursor/highlight to editor position (manual only).
+  local function outline_sync_to_code(focus_outline, code_win)
+    local sidebar = outline._get_sidebar(false)
+    if not sidebar or not sidebar.view:is_open() then
+      return false
+    end
+
+    code_win = code_win or sidebar.code.win
+    if not code_win or not vim.api.nvim_win_is_valid(code_win) then
+      return false
+    end
+
+    sidebar.code.win = code_win
+    sidebar.code.buf = vim.api.nvim_win_get_buf(code_win)
+    local lnum0 = vim.api.nvim_win_get_cursor(code_win)[1] - 1
+    local target = outline_deepest_symbol(sidebar.items, lnum0)
+    if target then
+      outline_unfold_ancestors(sidebar.items, target)
+    end
+
+    sidebar:_update_lines(true, target)
+
+    if focus_outline then
+      sidebar:focus()
+    end
+    return true
+  end
+
+  local function outline_when_open(fn, attempt)
+    attempt = attempt or 0
+    if outline.is_open() then
+      fn()
+    elseif attempt < 40 then
+      vim.defer_fn(function()
+        outline_when_open(fn, attempt + 1)
+      end, 50)
+    end
+  end
+
+  local function outline_open_and_sync(focus_outline)
+    local code_win = vim.api.nvim_get_current_win()
+
+    if outline.is_open() then
+      outline_sync_to_code(focus_outline, code_win)
+      return
+    end
+
+    outline.open({ focus_outline = false })
+    outline_when_open(function()
+      outline_sync_to_code(focus_outline, code_win)
+    end)
+  end
+
+  map("n", "<leader>o", function()
+    if outline.is_open() then
+      vim.cmd.OutlineClose()
+      return
+    end
+    outline_open_and_sync(true)
+  end, { desc = "Toggle outline (sync to symbol)", nowait = true })
+
+  map("n", "<leader>O", function()
+    outline_open_and_sync(true)
+  end, { desc = "Focus outline at symbol", nowait = true })
+end
 
 -- Folding (LSP-driven); VSCode-ish keymaps in addition to native za/zR/zM
 map("n", "<leader>zf", "za", { desc = "Toggle fold" })
@@ -1353,10 +1525,6 @@ vim.api.nvim_create_autocmd({ "CmdlineLeave", "SearchWrapped" }, {
 })
 
 
--- ============================================================
--- Phase 5b: Statusline
--- ============================================================
-
 require("mini.statusline").setup({
   use_icons = true,
   set_vim_settings = true,
@@ -1404,6 +1572,73 @@ require("mini.statusline").setup({
 -- ============================================================
 -- Phase 6: LSP + Completion
 -- ============================================================
+-- LSP keymaps (buffer-local on attach): K hover, gd/gD/gr, <leader>L*
+-- Global: ]d/[d diagnostics, <Esc> close floats
+
+-- Mason-managed CLI tools (explicit list — add packages when lsp/*.lua or formatters grow)
+-- Search: ripgrep + fzf are not in Mason; install via brew (`ripgrep`, `fzf`)
+local MASON_TOOLS = {
+  "lua-language-server",
+  "stylua",
+  "ty",
+  "vtsls",
+  "json-lsp",
+  "bash-language-server",
+  "ruff",
+  "prettier",
+  "taplo",
+  "yaml-language-server",
+  "yamlfmt",
+  "rust-analyzer",
+  "zls",
+  "marksman",
+  "dockerfile-language-server",
+  "html-lsp",
+  "css-lsp",
+  "tailwindcss-language-server",
+}
+
+require("mason").setup({
+  ui = {
+    border = "rounded",
+  },
+})
+
+-- Prefer Mason binaries for LSP/formatters/search without system installs
+vim.env.PATH = table.concat({
+  vim.fn.stdpath("data") .. "/mason/bin",
+  vim.env.PATH,
+}, vim.uv.os_sep)
+
+require("mason-tool-installer").setup({
+  ensure_installed = MASON_TOOLS,
+  auto_update = false,
+  run_on_start = true,
+})
+
+require("conform").setup({
+  formatters_by_ft = {
+    lua = { "stylua" },
+    python = { "ruff_format" },
+    javascript = { "prettier" },
+    javascriptreact = { "prettier" },
+    typescript = { "prettier" },
+    typescriptreact = { "prettier" },
+    json = { "prettier" },
+    jsonc = { "prettier" },
+    toml = { "taplo" },
+    yaml = { "yamlfmt" },
+    html = { "prettier" },
+    css = { "prettier" },
+    scss = { "prettier" },
+  },
+  format_on_save = function(bufnr)
+    if vim.bo[bufnr].filetype == "" then
+      return nil
+    end
+    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }
+  end,
+})
 
 vim.diagnostic.config({
   virtual_text = {
@@ -1428,24 +1663,7 @@ require("blink.cmp").setup({
   completion = {
     menu = { auto_show = true },
   },
-})
-
-require("mason").setup({
-  ui = {
-    border = "rounded",
-  },
-})
-
-require("conform").setup({
-  formatters_by_ft = {
-    lua = { "stylua" },
-  },
-  format_on_save = function(bufnr)
-    if vim.bo[bufnr].filetype == "" then
-      return nil
-    end
-    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }
-  end,
+  signature = { enabled = true },
 })
 
 vim.lsp.config("*", {
@@ -1464,6 +1682,13 @@ local function enable_lsp_servers()
 end
 
 enable_lsp_servers()
+
+map("n", "]d", function()
+  vim.diagnostic.jump({ count = 1 })
+end, { desc = "Next diagnostic" })
+map("n", "[d", function()
+  vim.diagnostic.jump({ count = -1 })
+end, { desc = "Previous diagnostic" })
 
 -- Close hover / other LSP floats with Esc
 map("n", "<Esc>", function()
@@ -1485,14 +1710,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     if client:supports_method("textDocument/foldingRange") then
+      vim.api.nvim_buf_call(bufnr, function()
+        vim.wo.foldmethod = "expr"
+        vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
+      end)
       vim.schedule(function()
         if not vim.api.nvim_buf_is_valid(bufnr) then
           return
         end
         vim.api.nvim_buf_call(bufnr, function()
-          if vim.wo.foldmethod == "expr" and vim.wo.foldexpr ~= "" then
-            vim.cmd("normal! zx")
-          end
+          vim.cmd("normal! zx")
         end)
       end)
     end
@@ -1517,8 +1744,37 @@ vim.api.nvim_create_autocmd("LspAttach", {
       require("fzf-lua").lsp_document_symbols()
     end, "Document symbols (picker)")
     nmap("<leader>La", vim.lsp.buf.code_action, "Code action")
+    nmap("<leader>Lf", function()
+      require("conform").format({ bufnr = bufnr, async = true })
+    end, "Format buffer")
     nmap("<leader>Lr", vim.lsp.buf.rename, "Rename")
+    nmap("<leader>Lh", function()
+      if not client:supports_method("textDocument/inlayHint") then
+        vim.notify("Inlay hints not supported for this buffer", vim.log.levels.WARN)
+        return
+      end
+      local enable = not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+      vim.lsp.inlay_hint.enable(enable, { bufnr = bufnr })
+      vim.notify(enable and "Inlay hints on" or "Inlay hints off", vim.log.levels.INFO)
+    end, "Toggle inlay hints")
     nmap("<leader>Lm", "<cmd>Mason<CR>", "Mason installer")
+  end,
+})
+
+vim.api.nvim_create_autocmd("LspDetach", {
+  group = vim.api.nvim_create_augroup("user.lsp", { clear = false }),
+  callback = function(args)
+    local bufnr = args.buf
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+      return
+    end
+    if #vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/foldingRange" }) > 0 then
+      return
+    end
+    vim.api.nvim_buf_call(bufnr, function()
+      vim.wo.foldmethod = "indent"
+      vim.wo.foldexpr = "0"
+    end)
   end,
 })
 

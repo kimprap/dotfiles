@@ -14,6 +14,12 @@ return {
       telemetry = {
         enable = false,
       },
+      hint = {
+        enable = true,
+        paramName = "All",
+        setType = true,
+        paramType = true,
+      },
     },
   },
 }
