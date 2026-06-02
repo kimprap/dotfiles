@@ -17,6 +17,8 @@ CURSOR_USER="$HOME/Library/Application Support/Cursor/User"
 
 # Symlink mappings (source → target)
 declare -A SYMLINKS=(
+    ["$HOME/.dotfiles/.prettierrc"]="$HOME/.prettierrc"
+    ["$HOME/.dotfiles/.stylua.toml"]="$HOME/.stylua.toml"
     ["$HOME/.dotfiles/.config/zsh"]="$HOME/.config/zsh"
     ["$HOME/.dotfiles/.config/starship/starship.toml"]="$HOME/.config/starship.toml"
     ["$HOME/.dotfiles/.config/nvim"]="$HOME/.config/nvim"

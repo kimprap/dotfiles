@@ -10,7 +10,7 @@ vim.pack.add({
   { src = "https://github.com/sainnhe/sonokai.git" },
 
   -- Core
-  { src = "https://github.com/echasnovski/mini.nvim",                    version = "stable" },
+  { src = "https://github.com/echasnovski/mini.nvim", version = "stable" },
 
   -- File Explorer
   { src = "https://github.com/stevearc/oil.nvim" },
@@ -29,12 +29,11 @@ vim.pack.add({
   { src = "https://github.com/karb94/neoscroll.nvim" },
 
   -- LSP + completion
-  { src = "https://github.com/saghen/blink.cmp",                         version = "v1" },
+  { src = "https://github.com/saghen/blink.cmp", version = "v1" },
   { src = "https://github.com/stevearc/conform.nvim" },
   { src = "https://github.com/mason-org/mason.nvim" },
   { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 })
-
 
 -- ============================================
 -- Phase 1: Core Foundation
@@ -94,7 +93,7 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.mouse = "a"
 vim.opt.fillchars = { eob = " " }
 vim.opt.iskeyword:append("-") -- Treat dash as part of a word (very useful for kebab-case, CSS, etc.)
-vim.opt.path:append("**")     -- Search in subdirectories with :find and gf
+vim.opt.path:append("**") -- Search in subdirectories with :find and gf
 vim.opt.encoding = "utf-8"
 vim.opt.endofline = true
 vim.opt.fixendofline = true
@@ -182,11 +181,18 @@ local function search_word_stay(backward, partial)
   refresh_search_scrollbar()
 end
 
-vim.keymap.set("n", "*", function() search_word_stay(false, false) end, { desc = "Search word (stay in place)" })
-vim.keymap.set("n", "#", function() search_word_stay(true, false) end, { desc = "Search word backward (stay in place)" })
-vim.keymap.set("n", "g*", function() search_word_stay(false, true) end, { desc = "Search partial word (stay in place)" })
-vim.keymap.set("n", "g#", function() search_word_stay(true, true) end,
-  { desc = "Search partial word backward (stay in place)" })
+vim.keymap.set("n", "*", function()
+  search_word_stay(false, false)
+end, { desc = "Search word (stay in place)" })
+vim.keymap.set("n", "#", function()
+  search_word_stay(true, false)
+end, { desc = "Search word backward (stay in place)" })
+vim.keymap.set("n", "g*", function()
+  search_word_stay(false, true)
+end, { desc = "Search partial word (stay in place)" })
+vim.keymap.set("n", "g#", function()
+  search_word_stay(true, true)
+end, { desc = "Search partial word backward (stay in place)" })
 
 -- ruler only in normal code files, hidden otherwise
 vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
@@ -202,23 +208,19 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
   end,
 })
 
--- Remove trailing whitespace on save (VSCode-like behavior).
--- undojoin merges cleanup with the preceding edit so `:w` does not add a
--- separate undo step (avoids EOF cursor jump on the first `u` after reopen).
+-- Save cleanup: trim before format; EOF blank line after conform (see below).
 vim.api.nvim_create_autocmd("BufWritePre", {
+  desc = "Trim trailing whitespace before save",
   pattern = "*",
   callback = function()
-    local view = vim.fn.winsaveview()
-    pcall(vim.cmd.undojoin)
-    vim.cmd([[silent! keepjumps %s/\s\+$//e]])
-    -- Visible trailing blank line (fixendofline only writes \n on disk, no empty row)
-    if vim.fn.getline("$") ~= "" then
-      vim.fn.append(vim.fn.line("$"), "")
+    if vim.bo.modifiable and vim.fn.search([[\s\+$]], "n") > 0 then
+      local view = vim.fn.winsaveview()
+      pcall(vim.cmd.undojoin)
+      vim.cmd([[silent! keepjumps %s/\s\+$//e]])
+      vim.fn.winrestview(view)
     end
-    vim.fn.winrestview(view)
   end,
 })
-
 
 -- ============================================
 -- Phase 2: mini.nvim + Keymaps + QoL
@@ -229,9 +231,9 @@ require("mini.basics").setup({
   autocommands = { basic = true },
 })
 
-require("mini.pairs").setup()      -- auto close brackets/quotes
-require("mini.comment").setup()    -- gc to comment
-require("mini.surround").setup()   -- ys, ds, cs for surrounding
+require("mini.pairs").setup() -- auto close brackets/quotes
+require("mini.comment").setup() -- gc to comment
+require("mini.surround").setup() -- ys, ds, cs for surrounding
 require("mini.cursorword").setup() -- highlight word under cursor
 
 require("mini.indentscope").setup({
@@ -248,7 +250,7 @@ require("mini.indentscope").setup({
 require("mini.pick").setup({
   mappings = {
     move_down = "<C-j>",
-    move_up   = "<C-k>",
+    move_up = "<C-k>",
   },
 })
 
@@ -280,10 +282,7 @@ map("n", "<leader>ui", function()
   else
     vim.o.smartcase = false
   end
-  vim.notify(
-    vim.o.ignorecase and "Search: ignore case" or "Search: match case",
-    vim.log.levels.INFO
-  )
+  vim.notify(vim.o.ignorecase and "Search: ignore case" or "Search: match case", vim.log.levels.INFO)
 end, { desc = "Toggle search case sensitivity" })
 
 -- Window navigation (splits: <C-\> right, <C-w>s below; resize: <C-arrows>, equalize <C-S-=>)
@@ -414,8 +413,12 @@ local function jump_in_buffer(forward)
   end
 end
 
-map("n", "<C-o>", function() jump_in_buffer(false) end, { desc = "Jump back (this buffer)" })
-map("n", "<C-i>", function() jump_in_buffer(true) end, { desc = "Jump forward (this buffer)" })
+map("n", "<C-o>", function()
+  jump_in_buffer(false)
+end, { desc = "Jump back (this buffer)" })
+map("n", "<C-i>", function()
+  jump_in_buffer(true)
+end, { desc = "Jump forward (this buffer)" })
 
 vim.api.nvim_create_autocmd("CursorMoved", {
   group = vim.api.nvim_create_augroup("user.jumplist", { clear = true }),
@@ -462,16 +465,6 @@ map("n", "n", "nzz", { desc = "Next search result (centered)" })
 map("n", "N", "Nzz", { desc = "Previous search result (centered)" })
 
 -- Smooth page scroll (pookie-style). C-y/C-e and zt/zz/zb stay native Vim.
-require("neoscroll").setup({
-  mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>" },
-  hide_cursor = false,
-  stop_eof = true,
-  easing = "quadratic",
-  duration_multiplier = 0.30,
-  post_hook = function()
-    vim.cmd("normal! zz")
-  end,
-})
 
 -- Line scroll (viewport only; cursor stays). Letter d/u — not <C-S-Down>/<C-S-Up> (window resize).
 map({ "n", "v" }, "<C-S-d>", "<C-e>", { remap = true, desc = "Scroll view down one line" })
@@ -491,7 +484,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-
 -- ─────────────────────────────────────────────
 -- Restore cursor position when reopening a file
 -- ─────────────────────────────────────────────
@@ -506,13 +498,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
-
 -- ─────────────────────────────────────────────
 -- Improved join lines (keeps cursor position)
 -- ─────────────────────────────────────────────
 map("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
 map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
-
 
 -- Copy line(s) down/up (VSCode: Alt+Shift+Down/Up). Alt+Shift+j/k is free:
 -- mini.move uses Alt+j/k (move, not copy); J is join, not Alt+Shift+j.
@@ -522,10 +512,18 @@ local function copy_line(dir)
   vim.fn.cursor(pos[2], pos[3])
 end
 
-map("n", "<A-S-j>", function() copy_line("down") end, { desc = "Copy line down" })
-map("n", "<A-S-k>", function() copy_line("up") end, { desc = "Copy line up" })
-map("n", "<A-S-Down>", function() copy_line("down") end, { desc = "Copy line down" })
-map("n", "<A-S-Up>", function() copy_line("up") end, { desc = "Copy line up" })
+map("n", "<A-S-j>", function()
+  copy_line("down")
+end, { desc = "Copy line down" })
+map("n", "<A-S-k>", function()
+  copy_line("up")
+end, { desc = "Copy line up" })
+map("n", "<A-S-Down>", function()
+  copy_line("down")
+end, { desc = "Copy line down" })
+map("n", "<A-S-Up>", function()
+  copy_line("up")
+end, { desc = "Copy line up" })
 
 map("v", "<A-S-j>", ":t '><CR>gv=gv", { desc = "Copy selection down" })
 map("v", "<A-S-k>", ":t '<-1<CR>gv=gv", { desc = "Copy selection up" })
@@ -562,10 +560,38 @@ local function close_editor(force)
   require("mini.bufremove").delete(bufnr, force)
 end
 
+local function quit_all_force()
+  local modified = {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modified then
+      local name = vim.api.nvim_buf_get_name(buf)
+      modified[#modified + 1] = name ~= "" and vim.fn.fnamemodify(name, ":~:.") or "[No Name]"
+    end
+  end
+
+  if #modified > 0 then
+    table.sort(modified)
+    local summary = table.concat(modified, ", ")
+    if #summary > 100 then
+      summary = summary:sub(1, 97) .. "..."
+    end
+    local choice = vim.fn.confirm(
+      string.format("Quit without saving %d buffer(s)?\n%s", #modified, summary),
+      "&Quit\n&Cancel",
+      2
+    )
+    if choice ~= 1 then
+      return
+    end
+  end
+
+  vim.cmd("qa!")
+end
+
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
 -- <leader>q mapped after CodeDiff setup (closes CodeDiff tab or editor pane/buffer)
-map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Quit Neovim without saving" })
+map("n", "<leader>Q", quit_all_force, { desc = "Quit Neovim without saving" })
 map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
 map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
@@ -593,7 +619,6 @@ map("n", "<leader>yd", function()
   vim.fn.setreg("+", path)
   vim.notify("Copied: " .. vim.fn.fnamemodify(path, ":~"), vim.log.levels.INFO)
 end, { desc = "Copy directory of current file" })
-
 
 -- ============================================
 -- Phase 3: File Explorer + Finder
@@ -701,7 +726,7 @@ MiniFiles.setup({
     permanent_delete = false,
   },
   mappings = {
-    go_in = "",       -- custom `l` = directories only; default `L` = go_in_plus
+    go_in = "", -- custom `l` = directories only; default `L` = go_in_plus
     synchronize = "", -- use :w / :write in minifiles buffers instead of =
   },
   windows = {
@@ -772,8 +797,12 @@ vim.api.nvim_create_autocmd("User", {
       vim.api.nvim_win_set_cursor(0, { n, minifiles_name_col(line) })
     end
 
-    vim.keymap.set("n", "j", function() minifiles_move(1) end, { buffer = buf_id, desc = "Next entry (wrap)" })
-    vim.keymap.set("n", "k", function() minifiles_move(-1) end, { buffer = buf_id, desc = "Previous entry (wrap)" })
+    vim.keymap.set("n", "j", function()
+      minifiles_move(1)
+    end, { buffer = buf_id, desc = "Next entry (wrap)" })
+    vim.keymap.set("n", "k", function()
+      minifiles_move(-1)
+    end, { buffer = buf_id, desc = "Previous entry (wrap)" })
 
     vim.keymap.set("n", "l", function()
       local entry = MiniFiles.get_fs_entry()
@@ -865,15 +894,15 @@ require("fff").setup({
     line_numbers = true,
   },
   keymaps = {
-    close         = '<Esc>',
-    select        = '<CR>',
-    select_split  = '<C-s>',
-    select_vsplit = '<C-v>',
+    close = "<Esc>",
+    select = "<CR>",
+    select_split = "<C-s>",
+    select_vsplit = "<C-v>",
     -- select_tab = '<C-t>',
 
     -- === Make Ctrl+j / Ctrl+k work like in mini.pick ===
-    move_up       = { '<Up>', '<C-p>', '<C-k>' },
-    move_down     = { '<Down>', '<C-n>', '<C-j>' },
+    move_up = { "<Up>", "<C-p>", "<C-k>" },
+    move_down = { "<Down>", "<C-n>", "<C-j>" },
   },
 })
 
@@ -915,7 +944,6 @@ vim.keymap.set("n", "<leader>r", function()
     winopts = { preview = { vertical = "up:45%" } },
   })
 end, { desc = "Recent files" })
-
 
 -- ============================================================
 -- Phase 4: Sessions, Starter, Tabs & Buffer Management
@@ -1241,8 +1269,12 @@ vim.keymap.set("n", "<A-p>", "<Cmd>BufferPin<CR>", { desc = "Pin / unpin buffer"
 -- Space + backtick: explicit leader char avoids "<leader>`" parse issues in some terminals
 vim.keymap.set("n", "<Space>`", "<C-^>", { desc = "Toggle last buffer" })
 
-map("n", "<C-q>", function() close_editor(false) end, { desc = "Close editor (split + buffer)" })
-map("n", "<C-Q>", function() close_editor(true) end, { desc = "Force close editor" })
+map("n", "<C-q>", function()
+  close_editor(false)
+end, { desc = "Close editor (split + buffer)" })
+map("n", "<C-Q>", function()
+  close_editor(true)
+end, { desc = "Force close editor" })
 
 -- Reopen last closed buffer (like Ctrl+Shift+T in VSCode / browsers)
 local closed_buffers = {}
@@ -1291,18 +1323,17 @@ vim.keymap.set("n", "<leader>T", function()
   end)
 end, { desc = "Reopen last closed buffer" })
 
-
 -- ============================================================
 -- Phase 5: Gutter, Outline, Scrollbar, Statusline
 -- ============================================================
 
 local gitsigns_signs = {
-  add          = { text = "▎" },
-  change       = { text = "▎" },
-  delete       = { text = "▁" },
-  topdelete    = { text = "▁" },
+  add = { text = "▎" },
+  change = { text = "▎" },
+  delete = { text = "▁" },
+  topdelete = { text = "▁" },
   changedelete = { text = "▎" },
-  untracked    = { text = "▎" },
+  untracked = { text = "▎" },
 }
 
 require("gitsigns").setup({
@@ -1444,12 +1475,60 @@ local function codediff_open(args, opts)
   end
 end
 
--- <leader>gv branch vs main (all files) | gp file vs HEAD~1 | gm file vs main
--- <leader>gu uncommitted | gL file/line history | <leader>q close CodeDiff tab
+--- Focus explorer sidebar or history panel from any CodeDiff buffer.
+local function codediff_focus_panel(tabpage)
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+  local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
+  if not ok then
+    return
+  end
+  local panel = lifecycle.get_explorer(tabpage)
+  if not panel then
+    return
+  end
+  local split = panel.split
+  if not split or not split.winid or not vim.api.nvim_win_is_valid(split.winid) then
+    local session = require("codediff.ui.lifecycle.session").get_active_diffs()[tabpage]
+    if session and session.mode == "explorer" then
+      require("codediff.ui.explorer").toggle_visibility(panel)
+    end
+  end
+  split = panel.split
+  if split and split.winid and vim.api.nvim_win_is_valid(split.winid) then
+    vim.api.nvim_set_current_win(split.winid)
+  end
+end
+
+-- Patch before codediff.setup(): setup loads side_by_side, which caches setup_all_keymaps.
+do
+  local lifecycle = require("codediff.ui.lifecycle")
+  local view_keymaps = require("codediff.ui.view.keymaps")
+  local setup_all_keymaps_orig = view_keymaps.setup_all_keymaps
+
+  function view_keymaps.setup_all_keymaps(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
+    setup_all_keymaps_orig(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
+    local session = lifecycle.get_session(tabpage)
+    if not session or (session.mode ~= "explorer" and session.mode ~= "history") then
+      return
+    end
+    lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
+      codediff_focus_panel(tabpage)
+    end, { desc = "Focus explorer/history panel" })
+  end
+end
+
+-- <leader>gv branch vs main (all files) | gp file vs HEAD | gm file vs main
+-- <leader>gu uncommitted | gL file/line history | <C-e> focus panel | <leader>q close CodeDiff tab
 require("codediff").setup({
+  explorer = {
+    width = 25, -- default 40
+  },
+  history = {
+    height = 5, -- default 15
+  },
   keymaps = {
     view = {
-      focus_explorer = "<leader>ge",
+      focus_explorer = false, -- bound in setup_all_keymaps hook (explorer + history)
       next_hunk = "<C-]>",
       prev_hunk = "<C-[>",
       stage_hunk = false,
@@ -1470,8 +1549,8 @@ map("n", "<leader>gv", function()
   codediff_open("main...")
 end, { desc = "Diff branch vs main (explorer)" })
 map("n", "<leader>gp", function()
-  codediff_open("file HEAD~1")
-end, { desc = "Diff file vs previous commit" })
+  codediff_open("file HEAD")
+end, { desc = "Diff file vs HEAD (uncommitted)" })
 map("n", "<leader>gm", function()
   codediff_open("file main...")
 end, { desc = "Diff file vs main" })
@@ -1673,7 +1752,9 @@ map("n", "<leader>zf", "za", { desc = "Toggle fold" })
 map("n", "<leader>zo", "zR", { desc = "Open all folds" })
 map("n", "<leader>zc", "zM", { desc = "Close all folds" })
 
-require("scrollbar").setup({
+local scrollbar = require("scrollbar")
+
+scrollbar.setup({
   show = true,
   handle = {
     text = " ",
@@ -1688,17 +1769,29 @@ require("scrollbar").setup({
     search = false,
   },
   marks = {
-    Search = { text = { "▮" }, color = "#ffeb3b", priority = 1 },
+    Search = { text = { "▮" }, color = "#fff700", priority = 1 },
     Error = { text = { "◆" }, color = "#ff3b3b", priority = 2 },
     Warn = { text = { "◆" }, color = "#ff9e3d", priority = 3 },
     Info = { text = { "▪" }, color = "#61afef", priority = 4 },
     Hint = { text = { "▪" }, color = "#d0b8ff", priority = 5 },
     GitAdd = { text = "┆", highlight = "GitSignsAdd", priority = 7 },
     GitChange = { text = "┆", highlight = "GitSignsChange", priority = 7 },
-    GitDelete = { text = "▁", highlight = "GitSignsDelete", priority = 7 },
+    GitDelete = { text = "┆", highlight = "GitSignsDelete", priority = 7 },
   },
 })
 require("scrollbar.handlers.gitsigns").setup()
+
+require("neoscroll").setup({
+  mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>" },
+  hide_cursor = false,
+  stop_eof = true,
+  easing = "quadratic",
+  duration_multiplier = 0.30,
+  post_hook = function()
+    vim.cmd("normal! zz")
+  end,
+})
+
 require("scrollbar.handlers").register("search", function(bufnr)
   if vim.v.hlsearch ~= 1 or vim.fn.getreg("/") == "" then
     return {}
@@ -1728,7 +1821,6 @@ vim.api.nvim_create_autocmd({ "CmdlineLeave", "SearchWrapped" }, {
     refresh_search_scrollbar()
   end,
 })
-
 
 require("mini.statusline").setup({
   use_icons = true,
@@ -1761,18 +1853,17 @@ require("mini.statusline").setup({
       local location = "%l|%L"
 
       return MiniStatusline.combine_groups({
-        { hl = mode_hl,                 strings = { mode } },
+        { hl = mode_hl, strings = { mode } },
         { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics } },
         "%<",
         { hl = "MiniStatuslineFilename", strings = { filename } },
         "%=",
         { hl = "MiniStatuslineFileinfo", strings = { filetype } },
-        { hl = mode_hl,                  strings = { location } },
+        { hl = mode_hl, strings = { location } },
       })
     end,
   },
 })
-
 
 -- ============================================================
 -- Phase 6: LSP + Completion
@@ -1817,7 +1908,7 @@ require("mason").setup({
 vim.env.PATH = table.concat({
   vim.fn.stdpath("data") .. "/mason/bin",
   vim.env.PATH,
-}, vim.uv.os_sep)
+}, vim.fn.has("win32") == 1 and ";" or ":")
 
 require("mason-tool-installer").setup({
   ensure_installed = MASON_TOOLS,
@@ -1846,6 +1937,24 @@ require("conform").setup({
       return nil
     end
     return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }
+  end,
+})
+
+-- After conform/stylua (registered later = runs after format): visible EOF blank line.
+vim.api.nvim_create_autocmd("BufWritePre", {
+  desc = "EOF blank line after format on save",
+  pattern = "*",
+  callback = function()
+    if not vim.bo.modifiable or vim.bo.buftype ~= "" then
+      return
+    end
+    if vim.fn.getline("$") == "" then
+      return
+    end
+    local view = vim.fn.winsaveview()
+    pcall(vim.cmd.undojoin)
+    vim.fn.append(vim.fn.line("$"), { "" })
+    vim.fn.winrestview(view)
   end,
 })
 
@@ -1880,11 +1989,12 @@ vim.lsp.config("*", {
 })
 
 local function enable_lsp_servers()
-  local servers = vim.iter(vim.api.nvim_get_runtime_file("lsp/*.lua", true))
-      :map(function(f)
-        return vim.fn.fnamemodify(f, ":t:r")
-      end)
-      :totable()
+  local servers = vim
+    .iter(vim.api.nvim_get_runtime_file("lsp/*.lua", true))
+    :map(function(f)
+      return vim.fn.fnamemodify(f, ":t:r")
+    end)
+    :totable()
   if #servers > 0 then
     vim.lsp.enable(servers)
   end
@@ -2035,10 +2145,10 @@ MiniClue.setup({
     { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
     { mode = "n", keys = "<Leader>z", desc = "+Folds" },
     { mode = "n", keys = "<Leader>T", desc = "Find color" },
-    { mode = "n", keys = "]d",        desc = "Next diagnostic" },
-    { mode = "n", keys = "[d",        desc = "Prev diagnostic" },
-    { mode = "n", keys = "<C-]>",     desc = "Next git hunk (editor)" },
-    { mode = "n", keys = "<C-[>",     desc = "Prev git hunk (editor)" },
+    { mode = "n", keys = "]d", desc = "Next diagnostic" },
+    { mode = "n", keys = "[d", desc = "Prev diagnostic" },
+    { mode = "n", keys = "<C-]>", desc = "Next git hunk (editor)" },
+    { mode = "n", keys = "<C-[>", desc = "Prev git hunk (editor)" },
   },
   window = { delay = 300 },
 })
@@ -2053,3 +2163,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
 vim.cmd.nohlsearch()
 refresh_search_scrollbar()
+
