@@ -86,8 +86,8 @@
   // "editor.fontWeight": "300",
   "editor.fontWeight": "400",
   // "editor.fontWeight": "500",
-  // "editor.fontFamily": "Consolas",
-  "editor.fontFamily": "Source Code Pro",
+  "editor.fontFamily": "SauceCodePro Nerd Font",
+  // "editor.fontFamily": "Source Code Pro",
   // "editor.fontFamily": "JetBrains Mono",
   // "editor.fontFamily": "Fira Code",
   // "editor.fontFamily": "Cascadia Code",
@@ -99,6 +99,7 @@
   // "editor.fontFamily": "Noto Sans Mono",
   // "editor.fontFamily": "Victor Mono",
   // "editor.fontFamily": "Red Hat Mono",
+  // "editor.fontFamily": "Consolas",
   "editor.fontLigatures": true,
 
   // =============================================================================
