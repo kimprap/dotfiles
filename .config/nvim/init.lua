@@ -23,6 +23,7 @@ vim.pack.add({
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
   { src = "https://github.com/romgrk/barbar.nvim" },
   { src = "https://github.com/lewis6991/gitsigns.nvim" },
+  { src = "https://github.com/esmuellert/codediff.nvim" },
   { src = "https://github.com/hedyhli/outline.nvim" },
   { src = "https://github.com/petertriho/nvim-scrollbar" },
 
@@ -462,7 +463,9 @@ map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
 map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
 
 -- Paste / Delete without yanking (black hole register)
-map({ "n", "v" }, "<leader>x", '"_d', { desc = "Delete without yanking" })
+-- Normal: <leader>X — <leader>x reserved for diagnostics prefix (see LSP section)
+map("n", "<leader>X", '"_d', { desc = "Delete without yanking" })
+map("v", "<leader>x", '"_d', { desc = "Delete without yanking" })
 map("x", "<leader>p", '"_dP', { desc = "Paste without yanking" })
 
 -- Highlight yanked text
@@ -546,7 +549,7 @@ end
 
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
-map("n", "<leader>q", function() close_editor(false) end, { desc = "Close editor (split + buffer)" })
+-- <leader>q mapped after CodeDiff setup (closes CodeDiff tab or editor pane/buffer)
 map("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Quit Neovim without saving" })
 map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
 map("n", "<A-z>", function()
@@ -1293,18 +1296,109 @@ require("gitsigns").setup({
   preview_config = {
     border = "rounded",
   },
-  on_attach = function(bufnr)
-    local gs = package.loaded.gitsigns
-    local function nmap(lhs, rhs, desc)
-      vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
-    end
-    nmap("]h", function() gs.nav_hunk("next") end, "Next git hunk")
-    nmap("[h", function() gs.nav_hunk("prev") end, "Previous git hunk")
-    nmap("<leader>hs", gs.stage_hunk, "Stage hunk")
-    nmap("<leader>hr", gs.reset_hunk, "Reset hunk")
-    nmap("<leader>hp", gs.preview_hunk, "Preview hunk")
-  end,
 })
+
+-- Git view — codediff (VSCode-style diffs)
+local function codediff_in_tab(tab)
+  tab = tab or vim.api.nvim_get_current_tabpage()
+  local ok, session_mod = pcall(require, "codediff.ui.lifecycle.session")
+  if ok and session_mod.get_active_diffs()[tab] then
+    return true
+  end
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+    if vim.w[win].codediff_restore then
+      return true
+    end
+  end
+  return false
+end
+
+--- Close active CodeDiff tab. Returns true if this tab was CodeDiff (handled or cancelled).
+local function codediff_close()
+  local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
+  if not ok then
+    return false
+  end
+  local session_mod = require("codediff.ui.lifecycle.session")
+  local tab = vim.api.nvim_get_current_tabpage()
+  if not codediff_in_tab(tab) then
+    return false
+  end
+  local active = session_mod.get_active_diffs()[tab]
+  if active and not lifecycle.confirm_close_with_unsaved(tab) then
+    return true
+  end
+  local tab_count = #vim.api.nvim_list_tabpages()
+  if active then
+    lifecycle.cleanup(tab)
+  end
+  if tab_count > 1 then
+    vim.cmd("tabclose")
+  else
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      if vim.w[win].codediff_restore and vim.api.nvim_win_is_valid(win) then
+        pcall(vim.api.nvim_win_close, win, true)
+      end
+    end
+  end
+  return true
+end
+
+local function codediff_open(args, opts)
+  opts = opts or {}
+  if codediff_in_tab() then
+    vim.notify("Already in CodeDiff — use <leader>q to close", vim.log.levels.INFO)
+    return
+  end
+  if opts.visual then
+    vim.cmd("'<,'>CodeDiff " .. args)
+  elseif args == "" then
+    vim.cmd("CodeDiff")
+  else
+    vim.cmd("CodeDiff " .. args)
+  end
+end
+
+-- <leader>gv branch vs main (all files) | gp file vs HEAD~1 | gm file vs main
+-- <leader>gu uncommitted | gL file/line history | <leader>q close CodeDiff tab
+require("codediff").setup({
+  keymaps = {
+    view = {
+      focus_explorer = "<leader>ge",
+      next_hunk = "<C-]>",
+      prev_hunk = "<C-[>",
+      stage_hunk = false,
+      unstage_hunk = false,
+      discard_hunk = false,
+      hunk_textobject = false,
+    },
+  },
+})
+
+map("n", "<leader>q", function()
+  if not codediff_close() then
+    close_editor(false)
+  end
+end, { desc = "Close editor or CodeDiff tab" })
+
+map("n", "<leader>gv", function()
+  codediff_open("main...")
+end, { desc = "Diff branch vs main (explorer)" })
+map("n", "<leader>gp", function()
+  codediff_open("file HEAD~1")
+end, { desc = "Diff file vs previous commit" })
+map("n", "<leader>gm", function()
+  codediff_open("file main...")
+end, { desc = "Diff file vs main" })
+map("n", "<leader>gu", function()
+  codediff_open("")
+end, { desc = "Diff uncommitted (explorer)" })
+map("n", "<leader>gL", function()
+  codediff_open("history %")
+end, { desc = "File history (codediff)" })
+map("v", "<leader>gL", function()
+  codediff_open("history", { visual = true })
+end, { desc = "Line history (codediff)" })
 
 -- Symbol outline — https://github.com/hedyhli/outline.nvim
 -- LSP documentSymbol backend (marksman for markdown, language servers for code).
@@ -1720,6 +1814,16 @@ map("n", "[d", function()
   vim.diagnostic.jump({ count = -1 })
 end, { desc = "Previous diagnostic" })
 
+map("n", "<leader>xd", function()
+  require("fzf-lua").diagnostics_document()
+end, { desc = "Diagnostics buffer (fzf)" })
+map("n", "<leader>xD", function()
+  require("fzf-lua").diagnostics_workspace()
+end, { desc = "Diagnostics workspace (fzf)" })
+map("n", "<leader>xl", function()
+  vim.diagnostic.setloclist({ open = true })
+end, { desc = "Diagnostics loclist" })
+
 -- Close hover / other LSP floats with Esc
 map("n", "<Esc>", function()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -1828,12 +1932,17 @@ MiniClue.setup({
     { mode = "n", keys = "<Leader>e", desc = "Explorer (mini.files)" },
     { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
     { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
-    { mode = "n", keys = "<Leader>F", desc = "Live grep (fff)" },
+    { mode = "n", keys = "<Leader>/", desc = "Grep project (fzf-lua)" },
+    { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
+    { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
+    { mode = "n", keys = "<Leader>r", desc = "Recent files" },
     { mode = "n", keys = "<Leader>L", desc = "+LSP" },
     { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
     { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
     { mode = "n", keys = "<Leader>S", desc = "+Session" },
-    { mode = "n", keys = "<Leader>h", desc = "+Git hunk" },
+    { mode = "n", keys = "<Leader>x", desc = "+Diagnostics" },
+    { mode = "n", keys = "<Leader>g", desc = "+Git view" },
+    { mode = "v", keys = "<Leader>g", desc = "+Git view" },
     { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
     { mode = "n", keys = "<Leader>z", desc = "+Folds" },
     { mode = "n", keys = "<Leader>T", desc = "Find color" },
