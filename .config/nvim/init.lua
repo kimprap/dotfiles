@@ -26,6 +26,7 @@ vim.pack.add({
   { src = "https://github.com/esmuellert/codediff.nvim" },
   { src = "https://github.com/hedyhli/outline.nvim" },
   { src = "https://github.com/petertriho/nvim-scrollbar" },
+  { src = "https://github.com/karb94/neoscroll.nvim" },
 
   -- LSP + completion
   { src = "https://github.com/saghen/blink.cmp",                         version = "v1" },
@@ -459,14 +460,28 @@ map("n", "G", "Gzz", { desc = "Go to bottom + center" })
 map("n", "gg", "ggzz", { desc = "Go to top + center" })
 map("n", "n", "nzz", { desc = "Next search result (centered)" })
 map("n", "N", "Nzz", { desc = "Previous search result (centered)" })
-map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
-map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
+
+-- Smooth page scroll (pookie-style). C-y/C-e and zt/zz/zb stay native Vim.
+require("neoscroll").setup({
+  mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>" },
+  hide_cursor = false,
+  stop_eof = true,
+  easing = "quadratic",
+  duration_multiplier = 0.30,
+  post_hook = function()
+    vim.cmd("normal! zz")
+  end,
+})
+
+-- Line scroll (viewport only; cursor stays). Letter d/u — not <C-S-Down>/<C-S-Up> (window resize).
+map({ "n", "v" }, "<C-S-d>", "<C-e>", { remap = true, desc = "Scroll view down one line" })
+map({ "n", "v" }, "<C-S-u>", "<C-y>", { remap = true, desc = "Scroll view up one line" })
 
 -- Paste / Delete without yanking (black hole register)
 -- Normal: <leader>X — <leader>x reserved for diagnostics prefix (see LSP section)
 map("n", "<leader>X", '"_d', { desc = "Delete without yanking" })
 map("v", "<leader>x", '"_d', { desc = "Delete without yanking" })
-map("x", "<leader>p", '"_dP', { desc = "Paste without yanking" })
+map("v", "<leader>p", '"_dP', { desc = "Paste over without yanking" })
 
 -- Highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -1298,6 +1313,14 @@ require("gitsigns").setup({
   },
 })
 
+-- Hunk navigation in normal buffers (CodeDiff tab uses buffer-local <C-]>/<C-[> instead)
+map("n", "<C-]>", function()
+  require("gitsigns").nav_hunk("next")
+end, { desc = "Next git hunk" })
+map("n", "<C-[>", function()
+  require("gitsigns").nav_hunk("prev")
+end, { desc = "Prev git hunk" })
+
 -- Git view — codediff (VSCode-style diffs)
 local function codediff_in_tab(tab)
   tab = tab or vim.api.nvim_get_current_tabpage()
@@ -1311,6 +1334,66 @@ local function codediff_in_tab(tab)
     end
   end
   return false
+end
+
+local function codediff_normalize_path(diff, path)
+  if not path or path == "" or path:match("^codediff://") then
+    return nil
+  end
+  path = vim.fs.normalize(path)
+  if vim.startswith(path, "/") then
+    return path
+  end
+  if diff.git_root then
+    return vim.fs.normalize(diff.git_root .. "/" .. path)
+  end
+  return path
+end
+
+--- Remember cursor in the working file before closing CodeDiff (restore in editor after).
+local function codediff_save_return_cursor(diff)
+  if not diff then
+    return
+  end
+  local win = diff.modified_win
+  if not win or not vim.api.nvim_win_is_valid(win) then
+    win = diff.original_win
+  end
+  if not win or not vim.api.nvim_win_is_valid(win) then
+    return
+  end
+  local cursor = vim.api.nvim_win_get_cursor(win)
+  local buf = vim.api.nvim_win_get_buf(win)
+  local path = codediff_normalize_path(diff, vim.api.nvim_buf_get_name(buf))
+  if not path then
+    path = codediff_normalize_path(diff, diff.modified_path)
+  end
+  if not path then
+    return
+  end
+  vim.g.codediff_return_pos = { path = path, lnum = cursor[1], col = cursor[2] }
+end
+
+local function codediff_restore_return_cursor()
+  local saved = vim.g.codediff_return_pos
+  vim.g.codediff_return_pos = nil
+  if not saved then
+    return
+  end
+  vim.schedule(function()
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_config(win).relative == "" then
+        local bufnr = vim.api.nvim_win_get_buf(win)
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        if name ~= "" and vim.fs.normalize(name) == saved.path and vim.bo[bufnr].buftype == "" then
+          vim.api.nvim_set_current_win(win)
+          pcall(vim.api.nvim_win_set_cursor, win, { saved.lnum, saved.col })
+          vim.cmd("normal! zz")
+          return
+        end
+      end
+    end
+  end)
 end
 
 --- Close active CodeDiff tab. Returns true if this tab was CodeDiff (handled or cancelled).
@@ -1328,6 +1411,7 @@ local function codediff_close()
   if active and not lifecycle.confirm_close_with_unsaved(tab) then
     return true
   end
+  codediff_save_return_cursor(active)
   local tab_count = #vim.api.nvim_list_tabpages()
   if active then
     lifecycle.cleanup(tab)
@@ -1341,6 +1425,7 @@ local function codediff_close()
       end
     end
   end
+  codediff_restore_return_cursor()
   return true
 end
 
@@ -1917,6 +2002,7 @@ local MiniClue = require("mini.clue")
 MiniClue.setup({
   triggers = {
     { mode = "n", keys = "<Leader>" },
+    { mode = "v", keys = "<Leader>" },
     { mode = "x", keys = "<Leader>" },
     { mode = "n", keys = "[" },
     { mode = "n", keys = "]" },
@@ -1940,7 +2026,10 @@ MiniClue.setup({
     { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
     { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
     { mode = "n", keys = "<Leader>S", desc = "+Session" },
+    { mode = "n", keys = "<Leader>X", desc = "Delete (no yank) + motion" },
     { mode = "n", keys = "<Leader>x", desc = "+Diagnostics" },
+    { mode = "v", keys = "<Leader>x", desc = "Delete selection (no yank)" },
+    { mode = "v", keys = "<Leader>p", desc = "Paste over (keep clipboard)" },
     { mode = "n", keys = "<Leader>g", desc = "+Git view" },
     { mode = "v", keys = "<Leader>g", desc = "+Git view" },
     { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
@@ -1948,6 +2037,8 @@ MiniClue.setup({
     { mode = "n", keys = "<Leader>T", desc = "Find color" },
     { mode = "n", keys = "]d",        desc = "Next diagnostic" },
     { mode = "n", keys = "[d",        desc = "Prev diagnostic" },
+    { mode = "n", keys = "<C-]>",     desc = "Next git hunk (editor)" },
+    { mode = "n", keys = "<C-[>",     desc = "Prev git hunk (editor)" },
   },
   window = { delay = 300 },
 })
