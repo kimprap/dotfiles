@@ -2063,14 +2063,20 @@ local function setup_treesitter()
 
   ts.install(TS_PARSERS)
 
+  local ts_parsers = require("nvim-treesitter.parsers")
+
   vim.api.nvim_create_autocmd("FileType", {
     desc = "Install treesitter parser on demand when missing",
     group = vim.api.nvim_create_augroup("user.treesitter_install", { clear = true }),
     callback = function(args)
-      local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
-      if lang then
-        ts.install({ lang })
+      if vim.bo[args.buf].buftype ~= "" then
+        return
       end
+      local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+      if not lang or not ts_parsers[lang] then
+        return
+      end
+      ts.install({ lang })
     end,
   })
 end

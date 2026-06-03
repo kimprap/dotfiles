@@ -1,3 +1,5 @@
 indent_type = "Spaces"
 indent_width = 2
+# init.lua uses Lua 5.2 `goto` / `::label::` (e.g. lsp_pick_server)
+syntax = "Lua52"
 
