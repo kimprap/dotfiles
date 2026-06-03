@@ -297,6 +297,53 @@ map("n", "<C-S-Up>", "<C-w>+", { desc = "Taller window" })
 map("n", "<C-S-Down>", "<C-w>-", { desc = "Shorter window" })
 map("n", "<C-S-=>", "<C-w>=", { desc = "Equalize window sizes" })
 
+-- Toggle zoom current split to full tab area; toggle again restores sizes
+local zoom_state = {}
+map("n", "<C-S-CR>", function()
+  local tab = vim.api.nvim_get_current_tabpage()
+  local key = tostring(tab)
+  local cur = vim.api.nvim_get_current_win()
+
+  if zoom_state[key] then
+    local saved = zoom_state[key]
+    for win, dim in pairs(saved.sizes) do
+      if vim.api.nvim_win_is_valid(win) then
+        pcall(vim.api.nvim_win_set_width, win, dim.width)
+        pcall(vim.api.nvim_win_set_height, win, dim.height)
+      end
+    end
+    if vim.api.nvim_win_is_valid(saved.win) then
+      vim.api.nvim_set_current_win(saved.win)
+    end
+    zoom_state[key] = nil
+    return
+  end
+
+  local wins = vim.api.nvim_tabpage_list_wins(tab)
+  if #wins <= 1 then
+    return
+  end
+
+  local sizes = {}
+  for _, win in ipairs(wins) do
+    sizes[win] = {
+      width = vim.api.nvim_win_get_width(win),
+      height = vim.api.nvim_win_get_height(win),
+    }
+  end
+
+  vim.api.nvim_set_current_win(cur)
+  vim.cmd("wincmd _")
+  vim.cmd("wincmd |")
+  zoom_state[key] = { win = cur, sizes = sizes }
+end, { desc = "Toggle zoom current window" })
+
+vim.api.nvim_create_autocmd("TabClosed", {
+  callback = function(ev)
+    zoom_state[tostring(ev.match)] = nil
+  end,
+})
+
 -- Jump list: C-o/C-i stay in the active buffer (native jumps cross buffers).
 -- Native jumplist is snapshotted per window; keepjumps cursor() truncates it, so
 -- we track position + redo ourselves (vim.w cannot hold mutated tables).
@@ -623,31 +670,41 @@ end, { desc = "Copy directory of current file" })
 -- ============================================
 -- Phase 3: File Explorer + Finder
 -- ============================================
--- Workspace helpers (shared with sessions below)
-local WORKSPACE_MARKER = ".nvim/workspace"
-local SESSION_FILE = ".nvim/Session.vim"
+-- Workspace sessions: global only (~/.local/share/nvim/session/<slug>.vim)
+local SESSION_DIR = vim.fn.stdpath("data") .. "/session"
 
-local function workspace_marker_path(dir)
-  return (dir or vim.fn.getcwd()) .. "/" .. WORKSPACE_MARKER
+local function workspace_path_label(path)
+  path = path or vim.fn.getcwd()
+  local norm = vim.fs.normalize(path)
+  local home = vim.fs.normalize(vim.env.HOME)
+  if norm:sub(1, #home) == home then
+    return "~" .. norm:sub(#home + 1)
+  end
+  return norm
 end
 
-local function session_file_path(dir)
-  return (dir or vim.fn.getcwd()) .. "/" .. SESSION_FILE
+local function workspace_session_slug(dir)
+  return workspace_path_label(dir):gsub("/", "__"):gsub(":", "_") .. ".vim"
 end
 
-local function local_session_name()
-  return vim.fn.fnamemodify(SESSION_FILE, ":t")
+local function workspace_session_slug_label(slug_name)
+  return slug_name:gsub("%.vim$", ""):gsub("__", "/")
 end
 
-local function is_workspace_dir(dir)
-  return vim.fn.filereadable(workspace_marker_path(dir)) == 1
+local function workspace_session_path(dir)
+  return SESSION_DIR .. "/" .. workspace_session_slug(dir)
+end
+
+local function has_workspace_session(dir)
+  return vim.fn.filereadable(workspace_session_path(dir)) == 1
+end
+
+local function is_workspace_session_file(name)
+  return type(name) == "string" and name:match("%.vim$") ~= nil
 end
 
 local function will_restore_session()
-  if not is_workspace_dir() then
-    return false
-  end
-  if vim.fn.filereadable(session_file_path()) ~= 1 then
+  if not has_workspace_session() then
     return false
   end
   if vim.fn.argc() == 0 then
@@ -660,7 +717,7 @@ local function will_restore_session()
 end
 
 local function should_oil_hijack_dir()
-  if not is_workspace_dir() or will_restore_session() then
+  if will_restore_session() then
     return false
   end
   return vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
@@ -1047,6 +1104,79 @@ local function sessions_refresh_buffer_syntax(buf)
   end
 end
 
+local function workspace_session_refresh_detected()
+  if MiniSessions and MiniSessions.get_latest then
+    MiniSessions.get_latest()
+  end
+end
+
+local function workspace_session_write()
+  sessions_cleanup_ephemeral()
+  pcall(MiniSessions.write, workspace_session_slug(), { force = true, verbose = false })
+  workspace_session_refresh_detected()
+end
+
+local function workspace_session_delete(dir)
+  local slug = workspace_session_slug(dir)
+  local path = workspace_session_path(dir)
+  if vim.fn.filereadable(path) == 1 then
+    vim.fn.delete(path)
+  end
+  if MiniSessions.detected[slug] then
+    MiniSessions.detected[slug] = nil
+  end
+end
+
+local function starter_workspace_sessions(n)
+  n = n or 5
+  return function()
+    if _G.MiniSessions == nil then
+      return { { name = [[mini.sessions is not set up]], action = "", section = "Sessions" } }
+    end
+    workspace_session_refresh_detected()
+
+    local items = {}
+    local cwd_slug = workspace_session_slug()
+
+    for name, session in pairs(MiniSessions.detected) do
+      if
+        session.type == "global"
+        and is_workspace_session_file(name)
+        and vim.fn.filereadable(session.path) == 1
+      then
+        local is_here = name == cwd_slug
+        items[#items + 1] = {
+          name = workspace_session_slug_label(name) .. (is_here and " (resume here)" or ""),
+          action = string.format([[lua MiniSessions.read(%q, { force = true })]], name),
+          section = "Sessions",
+          _mtime = session.modify_time,
+          _prio = is_here and 2 or 0,
+        }
+      end
+    end
+
+    table.sort(items, function(a, b)
+      if a._prio ~= b._prio then
+        return a._prio > b._prio
+      end
+      return a._mtime > b._mtime
+    end)
+
+    if #items == 0 then
+      return {
+        { name = "No saved workspace sessions", action = "", section = "Sessions" },
+        { name = "Save session here: <leader>Sw", action = "", section = "Sessions" },
+      }
+    end
+
+    return vim.tbl_map(function(x)
+      x._mtime = nil
+      x._prio = nil
+      return x
+    end, vim.list_slice(items, 1, n))
+  end
+end
+
 local function sessions_post_read()
   sessions_cleanup_ephemeral()
   -- oil SessionLoadPost can finish loading after mini.sessions post hook
@@ -1062,7 +1192,7 @@ end
 require("mini.sessions").setup({
   autoread = false, -- custom VimEnter below (handles `nvim .` too)
   autowrite = true,
-  file = SESSION_FILE,
+  file = "", -- global slug files only (see workspace_session_slug)
   hooks = {
     pre = {
       write = function()
@@ -1081,9 +1211,32 @@ local MiniStarter = require("mini.starter")
 MiniStarter.setup({
   autoopen = false, -- hybrid VimEnter below
   items = {
-    MiniStarter.sections.sessions(5, true),
+    starter_workspace_sessions(8),
     MiniStarter.sections.builtin_actions(),
   },
+  -- Avoid `.` as query key (macOS junk like .DS_Store in session dir used to match)
+  query_updaters = "abcdefghijklmnopqrstuvwxyz0123456789_-",
+  footer = table.concat({
+    "Type to filter  |  <C-j>/<C-k> move  |  <CR> open  |  <Esc> clear filter",
+  }, "\n"),
+})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniStarterOpened",
+  desc = "Starter: C-j/k to move (overrides global window maps)",
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    if vim.bo[buf].filetype ~= "ministarter" then
+      return
+    end
+    local opts = { buffer = buf, nowait = true, silent = true }
+    vim.keymap.set("n", "<C-j>", function()
+      MiniStarter.update_current_item("next")
+    end, vim.tbl_extend("force", opts, { desc = "Starter next item" }))
+    vim.keymap.set("n", "<C-k>", function()
+      MiniStarter.update_current_item("prev")
+    end, vim.tbl_extend("force", opts, { desc = "Starter previous item" }))
+  end,
 })
 
 local function should_open_starter()
@@ -1119,11 +1272,11 @@ local function should_open_starter()
 end
 
 vim.api.nvim_create_autocmd("VimEnter", {
-  desc = "Restore Session.vim or open starter on bare nvim",
+  desc = "Restore workspace session or open starter on bare nvim",
   once = true,
   callback = function()
     if will_restore_session() then
-      local ok, err = pcall(MiniSessions.read, local_session_name(), { force = true, verbose = false })
+      local ok, err = pcall(MiniSessions.read, workspace_session_slug(), { force = true, verbose = false })
       if not ok then
         vim.notify("Session restore failed: " .. tostring(err), vim.log.levels.ERROR)
       end
@@ -1139,41 +1292,31 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
-  desc = "Save workspace session on quit when marker exists",
+  desc = "Close outline before mini.sessions autowrite on quit",
   callback = function()
-    if MiniSessions.config.file == "" or not is_workspace_dir() then
-      return
+    if has_workspace_session() then
+      sessions_close_outline()
     end
-    sessions_close_outline()
-    -- Explicit save for marked workspaces; autowrite also saves when v:this_session is set
-    pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = false })
   end,
 })
 
 map("n", "<leader>Sw", function()
-  local dir = vim.fn.getcwd()
-  vim.fn.mkdir(dir .. "/.nvim", "p")
-  local marker = workspace_marker_path(dir)
-  if vim.fn.filereadable(marker) ~= 1 then
-    vim.fn.writefile({ "" }, marker)
-  end
-  pcall(MiniSessions.write, MiniSessions.config.file, { force = true, verbose = true })
-  vim.notify("Workspace enabled: " .. vim.fn.fnamemodify(dir, ":~"), vim.log.levels.INFO)
-end, { desc = "Enable workspace session for cwd" })
+  workspace_session_write()
+  vim.notify("Session saved: " .. workspace_path_label(), vim.log.levels.INFO)
+end, { desc = "Save workspace session for cwd" })
+
+map("n", "<leader>SS", function()
+  workspace_session_refresh_detected()
+  sessions_cleanup_explorers()
+  MiniStarter.open(vim.api.nvim_get_current_buf())
+end, { desc = "Open welcome / session picker" })
 
 map("n", "<leader>Sd", function()
-  local dir = vim.fn.getcwd()
-  local marker = workspace_marker_path(dir)
-  if vim.fn.filereadable(marker) == 1 then
-    vim.fn.delete(marker)
-  end
-  local session = session_file_path(dir)
-  if vim.fn.filereadable(session) == 1 then
-    vim.fn.delete(session)
-  end
+  workspace_session_delete()
   vim.v.this_session = ""
-  vim.notify("Workspace disabled: " .. vim.fn.fnamemodify(dir, ":~"), vim.log.levels.INFO)
-end, { desc = "Disable workspace session for cwd" })
+  workspace_session_refresh_detected()
+  vim.notify("Session deleted: " .. workspace_path_label(), vim.log.levels.INFO)
+end, { desc = "Delete workspace session for cwd" })
 
 -- Buffer tabline (barbar.nvim): reorderable tabs, pin with <A-p>
 vim.g.barbar_auto_setup = false
