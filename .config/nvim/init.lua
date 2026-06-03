@@ -316,6 +316,8 @@ map("n", "<C-S-CR>", function()
       vim.api.nvim_set_current_win(saved.win)
     end
     zoom_state[key] = nil
+    vim.t.is_zoomed = nil
+    vim.cmd.redrawstatus()
     return
   end
 
@@ -336,6 +338,8 @@ map("n", "<C-S-CR>", function()
   vim.cmd("wincmd _")
   vim.cmd("wincmd |")
   zoom_state[key] = { win = cur, sizes = sizes }
+  vim.t.is_zoomed = true
+  vim.cmd.redrawstatus()
 end, { desc = "Toggle zoom current window" })
 
 vim.api.nvim_create_autocmd("TabClosed", {
@@ -1995,8 +1999,13 @@ require("mini.statusline").setup({
       end)()
       local location = "%l|%L"
 
-      return MiniStatusline.combine_groups({
+      local groups = {
         { hl = mode_hl, strings = { mode } },
+      }
+      if vim.t.is_zoomed then
+        table.insert(groups, { hl = "DiagnosticWarn", strings = { " ZOOM " } })
+      end
+      vim.list_extend(groups, {
         { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics } },
         "%<",
         { hl = "MiniStatuslineFilename", strings = { filename } },
@@ -2004,6 +2013,7 @@ require("mini.statusline").setup({
         { hl = "MiniStatuslineFileinfo", strings = { filetype } },
         { hl = mode_hl, strings = { location } },
       })
+      return MiniStatusline.combine_groups(groups)
     end,
   },
 })
@@ -2145,6 +2155,315 @@ end
 
 enable_lsp_servers()
 
+-- Manual LSP per buffer (vim.b.lsp_manual: nil=auto, false=off, string=server name)
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("user.lsp.manual", { clear = true }),
+  callback = function(args)
+    local bufnr = args.buf
+    local manual = vim.b[bufnr].lsp_manual
+    if manual == nil then
+      return
+    end
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if not client then
+      return
+    end
+    if manual == false or client.name ~= manual then
+      vim.schedule(function()
+        pcall(vim.lsp.buf_detach_client, bufnr, client.id)
+      end)
+    end
+  end,
+})
+
+local LSP_FT_LABEL = {
+  bash = "Bash",
+  sh = "Shell",
+  markdown = "Markdown",
+  ["markdown.mdx"] = "Markdown MDX",
+  javascript = "JavaScript",
+  javascriptreact = "JavaScript React",
+  typescript = "TypeScript",
+  typescriptreact = "TypeScript React",
+  python = "Python",
+  lua = "Lua",
+  rust = "Rust",
+  yaml = "YAML",
+  ["yaml.docker-compose"] = "YAML (Docker Compose)",
+  ["yaml.gitlab"] = "YAML (GitLab CI)",
+  ["yaml.helm-values"] = "YAML (Helm values)",
+  toml = "TOML",
+  json = "JSON",
+  jsonc = "JSON with Comments",
+  dockerfile = "Dockerfile",
+  html = "HTML",
+  css = "CSS",
+  scss = "SCSS",
+  less = "LESS",
+  zig = "Zig",
+  zir = "Zig IR",
+}
+
+local function lsp_ft_label(ft)
+  if LSP_FT_LABEL[ft] then
+    return LSP_FT_LABEL[ft]
+  end
+  return (ft:gsub("[_.]", " "):gsub("(%a)([%w_%.]*)", function(a, rest)
+    return a:upper() .. rest
+  end))
+end
+
+local function lsp_detach_buffer(bufnr)
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+    pcall(vim.lsp.buf_detach_client, bufnr, client.id)
+  end
+end
+
+local function lsp_set_filetype(bufnr, ft)
+  if ft == "" then
+    return
+  end
+  -- Mirror manual pick: indexed buffer set (fires FileType) so statusline/icons refresh
+  vim.bo[bufnr].filetype = ft
+  vim.bo[bufnr].syntax = ft
+end
+
+local function lsp_root_dir(bufnr, server)
+  local markers = { ".git" }
+  local cfg = vim.lsp.config[server]
+  if type(cfg) == "table" and cfg.root_markers then
+    markers = cfg.root_markers
+  end
+  local root = vim.fs.root(bufnr, markers)
+  if root then
+    return root
+  end
+  local path = vim.api.nvim_buf_get_name(bufnr)
+  if path ~= "" then
+    return vim.fs.dirname(path)
+  end
+  return vim.fn.getcwd()
+end
+
+local function lsp_start_server(bufnr, server)
+  return vim.lsp.start({
+    name = server,
+    root_dir = lsp_root_dir(bufnr, server),
+  }, { bufnr = bufnr })
+end
+
+local function lsp_attach_for_filetype(bufnr, ft)
+  local filter = ft ~= "" and { filetype = ft } or { enabled = true }
+  for _, cfg in ipairs(vim.lsp.get_configs(filter)) do
+    if vim.lsp.is_enabled(cfg.name) then
+      lsp_start_server(bufnr, cfg.name)
+    end
+  end
+end
+
+local function lsp_refresh_ui(bufnr, ft)
+  vim.schedule(function()
+    if not vim.api.nvim_buf_is_valid(bufnr) then
+      return
+    end
+    if ft and ft ~= "" then
+      lsp_set_filetype(bufnr, ft)
+      vim.api.nvim_exec_autocmds("FileType", { buffer = bufnr, modeline = false })
+    end
+    vim.cmd.redrawstatus()
+  end)
+end
+
+-- Soft detect: only when filetype empty (picker open). Does not clear an existing filetype.
+local function lsp_soft_detect_filetype(bufnr)
+  if vim.bo[bufnr].filetype ~= "" then
+    return vim.bo[bufnr].filetype
+  end
+  vim.api.nvim_buf_call(bufnr, function()
+    pcall(vim.cmd, "filetype", "detect")
+  end)
+  local ft = vim.bo[bufnr].filetype
+  if ft == "" then
+    local path = vim.api.nvim_buf_get_name(bufnr)
+    if path ~= "" then
+      ft = vim.filetype.match({ buf = bufnr, filename = path }) or ""
+    end
+  end
+  if ft ~= "" then
+    lsp_set_filetype(bufnr, ft)
+  end
+  return ft
+end
+
+-- Hard detect: reset then detect (Auto restore).
+local function lsp_detect_filetype(bufnr)
+  vim.api.nvim_buf_call(bufnr, function()
+    vim.bo.filetype = ""
+    pcall(vim.cmd, "filetype", "detect")
+  end)
+  local ft = vim.bo[bufnr].filetype
+  if ft == "" then
+    local path = vim.api.nvim_buf_get_name(bufnr)
+    if path ~= "" then
+      ft = vim.filetype.match({ buf = bufnr, filename = path }) or ""
+    end
+  end
+  if ft ~= "" then
+    lsp_set_filetype(bufnr, ft)
+  end
+  return ft
+end
+
+local function lsp_restore_automatic(bufnr)
+  vim.b[bufnr].lsp_manual = nil
+  local ft = lsp_detect_filetype(bufnr)
+  lsp_detach_buffer(bufnr)
+  lsp_attach_for_filetype(bufnr, ft)
+  lsp_refresh_ui(bufnr, ft)
+  return ft
+end
+
+local function lsp_pick_apply(bufnr, pick_map, line)
+  local fzf_utils = require("fzf-lua.utils")
+  line = fzf_utils.strip_ansi_coloring(line or "")
+  if line == "" then
+    return
+  end
+
+  local pick = pick_map[line]
+  if pick and pick.auto then
+    local ft = lsp_restore_automatic(bufnr)
+    local msg = ft ~= "" and ("LSP: auto (%s)"):format(ft) or "LSP: auto (no filetype)"
+    vim.notify(msg, vim.log.levels.INFO)
+    return
+  end
+
+  if pick and pick.none then
+    vim.b[bufnr].lsp_manual = false
+    lsp_detach_buffer(bufnr)
+    lsp_refresh_ui(bufnr)
+    local ft = vim.bo[bufnr].filetype
+    local msg = ft ~= "" and ("LSP: none (keeps %s, no server)"):format(ft) or "LSP: none (no server)"
+    vim.notify(msg, vim.log.levels.INFO)
+    return
+  end
+
+  if not pick then
+    vim.notify("LSP: unknown picker entry", vim.log.levels.ERROR)
+    return
+  end
+
+  vim.b[bufnr].lsp_manual = pick.server
+  lsp_set_filetype(bufnr, pick.ft)
+  lsp_detach_buffer(bufnr)
+
+  local id = lsp_start_server(bufnr, pick.server)
+  if not id then
+    vim.notify(
+      ("LSP: could not start %s (%s)"):format(lsp_ft_label(pick.ft), pick.server),
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
+  lsp_refresh_ui(bufnr, pick.ft)
+  vim.notify(("LSP: %s (%s)"):format(lsp_ft_label(pick.ft), pick.server), vim.log.levels.INFO)
+end
+
+local function lsp_pick_marker(active)
+  return active and "●" or "○"
+end
+
+local function lsp_pick_language_active(bufnr, pick, attached)
+  local manual = vim.b[bufnr].lsp_manual
+  if manual == false or vim.bo[bufnr].filetype ~= pick.ft then
+    return false
+  end
+  if type(manual) == "string" then
+    return manual == pick.server
+  end
+  return attached[pick.server]
+end
+
+local function lsp_pick_server()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local ft = lsp_soft_detect_filetype(bufnr)
+  local attached = {}
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+    attached[client.name] = true
+  end
+
+  local entries = {}
+  local pick_map = {}
+  local manual = vim.b[bufnr].lsp_manual
+
+  local auto_line = string.format("%s Auto (detect filetype & LSP)", lsp_pick_marker(manual == nil))
+  entries[#entries + 1] = auto_line
+  pick_map[auto_line] = { auto = true }
+
+  local none_line = string.format("%s None (no LSP)", lsp_pick_marker(manual == false))
+  entries[#entries + 1] = none_line
+  pick_map[none_line] = { none = true }
+
+  local seen = {}
+  local picks = {}
+  for _, cfg in ipairs(vim.lsp.get_configs({ enabled = true })) do
+    local server = cfg.name
+    if not server then
+      goto continue
+    end
+    for _, cfg_ft in ipairs(cfg.filetypes or {}) do
+      local key = server .. "\0" .. cfg_ft
+      if seen[key] then
+        goto continue_ft
+      end
+      seen[key] = true
+      picks[#picks + 1] = {
+        priority = cfg_ft == ft and 0 or 1,
+        label = string.format("%s (%s)", lsp_ft_label(cfg_ft), cfg_ft),
+        server = server,
+        ft = cfg_ft,
+      }
+      ::continue_ft::
+    end
+    ::continue::
+  end
+
+  table.sort(picks, function(a, b)
+    if a.priority ~= b.priority then
+      return a.priority < b.priority
+    end
+    return a.label < b.label
+  end)
+
+  for _, pick in ipairs(picks) do
+    local line = string.format("%s %s", lsp_pick_marker(lsp_pick_language_active(bufnr, pick, attached)), pick.label)
+    entries[#entries + 1] = line
+    pick_map[line] = { server = pick.server, ft = pick.ft }
+  end
+
+  if #picks == 0 then
+    vim.notify("No enabled LSP configs found", vim.log.levels.WARN)
+    return
+  end
+
+  require("fzf-lua").fzf_exec(entries, {
+    prompt = ("LSP (%s)> "):format(ft ~= "" and ft or "no filetype"),
+    actions = {
+      ["default"] = function(selected)
+        if not selected or not selected[1] then
+          return
+        end
+        vim.schedule(function()
+          lsp_pick_apply(bufnr, pick_map, selected[1])
+        end)
+      end,
+    },
+  })
+end
+
+map("n", "<leader>Ll", lsp_pick_server, { desc = "Pick LSP server for buffer" })
+
 map("n", "]d", function()
   vim.diagnostic.jump({ count = 1 })
 end, { desc = "Next diagnostic" })
@@ -2230,6 +2549,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.notify(enable and "Inlay hints on" or "Inlay hints off", vim.log.levels.INFO)
     end, "Toggle inlay hints")
     nmap("<leader>Lm", "<cmd>Mason<CR>", "Mason installer")
+    nmap("<leader>Ll", lsp_pick_server, "Pick LSP server")
   end,
 })
 
@@ -2276,6 +2596,7 @@ MiniClue.setup({
     { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
     { mode = "n", keys = "<Leader>r", desc = "Recent files" },
     { mode = "n", keys = "<Leader>L", desc = "+LSP" },
+    { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
     { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
     { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
     { mode = "n", keys = "<Leader>S", desc = "+Session" },
