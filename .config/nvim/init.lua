@@ -586,7 +586,11 @@ map("v", "<A-S-Up>", ":t '<-1<CR>gv=gv", { desc = "Copy selection up" })
 -- ─────────────────────────────────────────────
 require("mini.bufremove").setup()
 
--- Close editor: close focused pane when splits exist; drop buffer only if nowhere else shown
+-- Close editor (split-aware):
+--   duplicate buffer in splits → close focused pane only
+--   modified/unnamed in one pane → delete buffer, keep layout (mini.bufremove)
+--   otherwise in splits → close pane, delete buffer if nowhere else shown
+--   single window → mini.bufremove.delete
 local function close_editor(force)
   local winid = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -600,7 +604,20 @@ local function close_editor(force)
     return
   end
 
-  if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+  local shown_in = vim.fn.win_findbuf(bufnr)
+  local splits = #vim.api.nvim_tabpage_list_wins(0) > 1
+
+  if splits and #shown_in > 1 then
+    vim.api.nvim_win_close(winid, true)
+    return
+  end
+
+  if splits and (vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == "") then
+    require("mini.bufremove").delete(bufnr, force)
+    return
+  end
+
+  if splits then
     vim.api.nvim_win_close(winid, true)
     if vim.api.nvim_buf_is_valid(bufnr) and #vim.fn.win_findbuf(bufnr) == 0 then
       require("mini.bufremove").delete(bufnr, force)
@@ -1418,7 +1435,7 @@ vim.keymap.set("n", "<Space>`", "<C-^>", { desc = "Toggle last buffer" })
 
 map("n", "<C-q>", function()
   close_editor(false)
-end, { desc = "Close editor (split + buffer)" })
+end, { desc = "Close editor (split-aware)" })
 map("n", "<C-Q>", function()
   close_editor(true)
 end, { desc = "Force close editor" })
