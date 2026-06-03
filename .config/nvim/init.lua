@@ -28,6 +28,10 @@ vim.pack.add({
   { src = "https://github.com/petertriho/nvim-scrollbar" },
   { src = "https://github.com/karb94/neoscroll.nvim" },
 
+  -- Treesitter parsers + sticky context (Phase 7; needs `brew install tree-sitter-cli`)
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
+
   -- LSP + completion
   { src = "https://github.com/saghen/blink.cmp", version = "v1" },
   { src = "https://github.com/stevearc/conform.nvim" },
@@ -92,6 +96,42 @@ vim.opt.timeoutlen = 500
 vim.opt.clipboard = "unnamedplus"
 vim.opt.mouse = "a"
 vim.opt.fillchars = { eob = " " }
+
+local gitsigns_signs = {
+  add = { text = "▎" },
+  change = { text = "▎" },
+  delete = { text = "▁" },
+  topdelete = { text = "▁" },
+  changedelete = { text = "▎" },
+  untracked = { text = "▎" },
+}
+
+local gitsigns_did_setup = false
+
+local function gitsigns_setup()
+  if gitsigns_did_setup then
+    return
+  end
+  require("gitsigns").setup({
+    signs = gitsigns_signs,
+    signs_staged = gitsigns_signs,
+    preview_config = {
+      border = "rounded",
+    },
+  })
+  gitsigns_did_setup = true
+end
+
+local function gitsigns_attach_loaded_buffers()
+  gitsigns_setup()
+  local gitsigns = require("gitsigns")
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) ~= "" then
+      gitsigns.attach({ bufnr = buf })
+    end
+  end
+end
+
 vim.opt.iskeyword:append("-") -- Treat dash as part of a word (very useful for kebab-case, CSS, etc.)
 vim.opt.path:append("**") -- Search in subdirectories with :find and gf
 vim.opt.encoding = "utf-8"
@@ -658,7 +698,9 @@ end
 
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
 map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
--- <leader>q mapped after CodeDiff setup (closes CodeDiff tab or editor pane/buffer)
+map("n", "<leader>q", function()
+  close_editor(false)
+end, { desc = "Close editor (split-aware)" })
 map("n", "<leader>Q", quit_all_force, { desc = "Quit Neovim without saving" })
 map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
 map("n", "<A-z>", function()
@@ -1200,6 +1242,7 @@ end
 
 local function sessions_post_read()
   sessions_cleanup_ephemeral()
+  gitsigns_attach_loaded_buffers()
   -- oil SessionLoadPost can finish loading after mini.sessions post hook
   vim.schedule(function()
     sessions_cleanup_ephemeral()
@@ -1301,13 +1344,15 @@ vim.api.nvim_create_autocmd("VimEnter", {
       if not ok then
         vim.notify("Session restore failed: " .. tostring(err), vim.log.levels.ERROR)
       end
-      return
-    end
-    if should_open_starter() then
+    elseif should_open_starter() then
       -- `nvim .` without workspace leaves a dir buffer on the arglist before starter
       sessions_cleanup_explorers()
       -- Reuse startup empty buffer (avoids a 2nd buffer when picking "Edit new buffer")
       MiniStarter.open(vim.api.nvim_get_current_buf())
+      gitsigns_setup()
+    else
+      -- `nvim path/to/file` and other non-session startups
+      gitsigns_attach_loaded_buffers()
     end
   end,
 })
@@ -1491,23 +1536,6 @@ end, { desc = "Reopen last closed buffer" })
 -- Phase 5: Gutter, Outline, Scrollbar, Statusline
 -- ============================================================
 
-local gitsigns_signs = {
-  add = { text = "▎" },
-  change = { text = "▎" },
-  delete = { text = "▁" },
-  topdelete = { text = "▁" },
-  changedelete = { text = "▎" },
-  untracked = { text = "▎" },
-}
-
-require("gitsigns").setup({
-  signs = gitsigns_signs,
-  signs_staged = gitsigns_signs,
-  preview_config = {
-    border = "rounded",
-  },
-})
-
 -- Hunk navigation in normal buffers (CodeDiff tab uses buffer-local <C-]>/<C-[> instead)
 map("n", "<C-]>", function()
   require("gitsigns").nav_hunk("next")
@@ -1531,103 +1559,10 @@ local function codediff_in_tab(tab)
   return false
 end
 
-local function codediff_normalize_path(diff, path)
-  if not path or path == "" or path:match("^codediff://") then
-    return nil
-  end
-  path = vim.fs.normalize(path)
-  if vim.startswith(path, "/") then
-    return path
-  end
-  if diff.git_root then
-    return vim.fs.normalize(diff.git_root .. "/" .. path)
-  end
-  return path
-end
-
---- Remember cursor in the working file before closing CodeDiff (restore in editor after).
-local function codediff_save_return_cursor(diff)
-  if not diff then
-    return
-  end
-  local win = diff.modified_win
-  if not win or not vim.api.nvim_win_is_valid(win) then
-    win = diff.original_win
-  end
-  if not win or not vim.api.nvim_win_is_valid(win) then
-    return
-  end
-  local cursor = vim.api.nvim_win_get_cursor(win)
-  local buf = vim.api.nvim_win_get_buf(win)
-  local path = codediff_normalize_path(diff, vim.api.nvim_buf_get_name(buf))
-  if not path then
-    path = codediff_normalize_path(diff, diff.modified_path)
-  end
-  if not path then
-    return
-  end
-  vim.g.codediff_return_pos = { path = path, lnum = cursor[1], col = cursor[2] }
-end
-
-local function codediff_restore_return_cursor()
-  local saved = vim.g.codediff_return_pos
-  vim.g.codediff_return_pos = nil
-  if not saved then
-    return
-  end
-  vim.schedule(function()
-    for _, win in ipairs(vim.api.nvim_list_wins()) do
-      if vim.api.nvim_win_get_config(win).relative == "" then
-        local bufnr = vim.api.nvim_win_get_buf(win)
-        local name = vim.api.nvim_buf_get_name(bufnr)
-        if name ~= "" and vim.fs.normalize(name) == saved.path and vim.bo[bufnr].buftype == "" then
-          vim.api.nvim_set_current_win(win)
-          pcall(vim.api.nvim_win_set_cursor, win, { saved.lnum, saved.col })
-          vim.cmd("normal! zz")
-          return
-        end
-      end
-    end
-  end)
-end
-
---- Close active CodeDiff tab. Returns true if this tab was CodeDiff (handled or cancelled).
-local function codediff_close()
-  local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
-  if not ok then
-    return false
-  end
-  local session_mod = require("codediff.ui.lifecycle.session")
-  local tab = vim.api.nvim_get_current_tabpage()
-  if not codediff_in_tab(tab) then
-    return false
-  end
-  local active = session_mod.get_active_diffs()[tab]
-  if active and not lifecycle.confirm_close_with_unsaved(tab) then
-    return true
-  end
-  codediff_save_return_cursor(active)
-  local tab_count = #vim.api.nvim_list_tabpages()
-  if active then
-    lifecycle.cleanup(tab)
-  end
-  if tab_count > 1 then
-    vim.cmd("tabclose")
-  else
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
-      if vim.w[win].codediff_restore and vim.api.nvim_win_is_valid(win) then
-        pcall(vim.api.nvim_win_close, win, true)
-      end
-    end
-  end
-  codediff_restore_return_cursor()
-  return true
-end
-
 local function codediff_open(args, opts)
   opts = opts or {}
   if codediff_in_tab() then
-    vim.notify("Already in CodeDiff — use <leader>q to close", vim.log.levels.INFO)
+    vim.notify("Already in CodeDiff — use q to close", vim.log.levels.INFO)
     return
   end
   if opts.visual then
@@ -1682,7 +1617,7 @@ do
 end
 
 -- <leader>gv branch vs main (all files) | gp file vs HEAD | gm file vs main
--- <leader>gu uncommitted | gL file/line history | <C-e> focus panel | <leader>q close CodeDiff tab
+-- <leader>gu uncommitted | gL file/line history | <C-e> focus panel | q close CodeDiff tab
 require("codediff").setup({
   explorer = {
     width = 25, -- default 40
@@ -1702,12 +1637,6 @@ require("codediff").setup({
     },
   },
 })
-
-map("n", "<leader>q", function()
-  if not codediff_close() then
-    close_editor(false)
-  end
-end, { desc = "Close editor or CodeDiff tab" })
 
 map("n", "<leader>gv", function()
   codediff_open("main...")
@@ -1730,7 +1659,7 @@ end, { desc = "Line history (codediff)" })
 
 -- Symbol outline — https://github.com/hedyhli/outline.nvim
 -- LSP documentSymbol backend (marksman for markdown, language servers for code).
--- Phase 7 treesitter adds syntax/textobjects; it does not replace this sidebar.
+-- Phase 7 treesitter-context for sticky scroll; outline stays LSP documentSymbol-based.
 -- Custom (intentional): exclude-noise filter, inline line numbers, manual sync keymaps
 --   <leader>o — toggle; when opening: sync to editor symbol + focus outline pane
 --   <leader>O — sync to editor symbol + focus outline (outline stays open if already open)
@@ -1951,8 +1880,12 @@ require("neoscroll").setup({
   stop_eof = true,
   easing = "quadratic",
   duration_multiplier = 0.30,
+  pre_hook = function()
+    require("scrollbar.utils").hide()
+  end,
   post_hook = function()
-    vim.cmd("normal! zz")
+    require("scrollbar.utils").show()
+    scrollbar.throttled_render()
   end,
 })
 
@@ -2036,17 +1969,129 @@ require("mini.statusline").setup({
 })
 
 -- ============================================================
+-- Phase 7: Treesitter (parsers) + sticky context
+-- ============================================================
+-- Vim syntax unchanged; parsers feed treesitter-context only (no TS highlight/indent/folds).
+-- Prereq: brew install tree-sitter-cli
+-- Maint: :TSContext toggle | :checkhealth nvim-treesitter | :TSUpdate
+
+local NVIM_TS_REPO = "https://github.com/nvim-treesitter/nvim-treesitter"
+
+local TS_PARSERS = {
+  "lua",
+  "python",
+  "rust",
+  "zig",
+  "bash",
+  "yaml",
+  "toml",
+  "json",
+  "markdown",
+  "dockerfile",
+  "typescript",
+  "javascript",
+  "css",
+  "html",
+}
+
+--- vim.pack clones legacy master; re-clone main when the plugin dir is missing or corrupt.
+local function ensure_nvim_treesitter_plugin()
+  local dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/nvim-treesitter"
+  local init_lua = dir .. "/lua/nvim-treesitter/init.lua"
+
+  if vim.fn.filereadable(init_lua) == 1 then
+    return true
+  end
+
+  if vim.fn.isdirectory(dir) == 1 then
+    vim.fn.delete(dir, "rf")
+  end
+
+  local clone = vim.system({
+    "git",
+    "clone",
+    "--depth",
+    "1",
+    "--branch",
+    "main",
+    NVIM_TS_REPO,
+    dir,
+  }, { text = true }):wait()
+
+  if clone.code ~= 0 or vim.fn.filereadable(init_lua) ~= 1 then
+    vim.notify(
+      "nvim-treesitter: failed to install plugin — " .. (clone.stderr or clone.stdout or "unknown error"),
+      vim.log.levels.ERROR
+    )
+    return false
+  end
+
+  package.loaded["nvim-treesitter"] = nil
+  vim.cmd("packadd nvim-treesitter")
+  return true
+end
+
+local function setup_treesitter()
+  for _, brew_bin in ipairs({ "/opt/homebrew/bin", "/usr/local/bin" }) do
+    if vim.fn.isdirectory(brew_bin) == 1 and not vim.env.PATH:find(brew_bin, 1, true) then
+      vim.env.PATH = brew_bin .. ":" .. vim.env.PATH
+    end
+  end
+
+  if not ensure_nvim_treesitter_plugin() then
+    return
+  end
+
+  local ts = require("nvim-treesitter")
+  ts.setup({ install_dir = vim.fn.stdpath("data") .. "/site" })
+
+  if type(ts.install) ~= "function" then
+    vim.notify_once(
+      "nvim-treesitter: stale install at site/pack/core/opt/nvim-treesitter — remove dir and restart",
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
+  if vim.fn.executable("tree-sitter") ~= 1 then
+    vim.notify_once(
+      "nvim-treesitter: run `brew install tree-sitter-cli` for sticky-context parsers",
+      vim.log.levels.WARN
+    )
+    return
+  end
+
+  ts.install(TS_PARSERS)
+
+  vim.api.nvim_create_autocmd("FileType", {
+    desc = "Install treesitter parser on demand when missing",
+    group = vim.api.nvim_create_augroup("user.treesitter_install", { clear = true }),
+    callback = function(args)
+      local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+      if lang then
+        ts.install({ lang })
+      end
+    end,
+  })
+end
+
+setup_treesitter()
+
+require("treesitter-context").setup({
+  enable = true,
+  max_lines = 0,
+  line_numbers = true,
+  multiline_threshold = 20,
+  mode = "cursor",
+})
+
+-- ============================================================
 -- Phase 6: LSP + Completion
 -- ============================================================
 -- LSP keymaps (buffer-local on attach): K hover, gd/gD/gr, <leader>L*
 -- Global: ]d/[d diagnostics, <Esc> close floats
---
--- Phase 7 (pending): nvim-treesitter — highlighting, indent, textobjects.
---   Complements LSP; keep marksman (markdown), vtsls, etc. for symbols/diagnostics/format.
 
 -- Mason-managed CLI tools (explicit list — add packages when lsp/*.lua or formatters grow)
--- Search: ripgrep + fzf are not in Mason; install via brew (`ripgrep`, `fzf`)
--- Phase 7 treesitter: syntax/highlighting/textobjects — does not replace LSP servers here.
 local MASON_TOOLS = {
   "lua-language-server",
   "stylua",
@@ -2644,4 +2689,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
 vim.cmd.nohlsearch()
 refresh_search_scrollbar()
-
