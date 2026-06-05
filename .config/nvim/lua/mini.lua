@@ -48,6 +48,17 @@ end
 function M.setup_statusline()
   local MiniStatusline = require("mini.statusline")
 
+  local function filename()
+    if vim.bo.buftype == "terminal" then
+      return "%t"
+    end
+    local path = vim.api.nvim_buf_get_name(0)
+    if path == "" then
+      return "[No Name]"
+    end
+    return vim.fn.fnamemodify(path, ":~:.")
+  end
+
   MiniStatusline.setup({
     use_icons = true,
     set_vim_settings = true,
@@ -66,16 +77,6 @@ function M.setup_statusline()
           local icon = select(1, MiniIcons.get("filetype", filetype))
           filetype = (icon or "") .. (icon and " " or "") .. filetype
         end
-        local filename = (function()
-          if vim.bo.buftype == "terminal" then
-            return "%t"
-          end
-          local path = vim.api.nvim_buf_get_name(0)
-          if path == "" then
-            return "[No Name]"
-          end
-          return vim.fn.fnamemodify(path, ":.")
-        end)()
         local location = "%l|%L"
 
         local groups = {
@@ -87,12 +88,15 @@ function M.setup_statusline()
         vim.list_extend(groups, {
           { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics } },
           "%<",
-          { hl = "MiniStatuslineFilename", strings = { filename } },
+          { hl = "MiniStatuslineFilename", strings = { filename() } },
           "%=",
           { hl = "MiniStatuslineFileinfo", strings = { filetype } },
           { hl = mode_hl, strings = { location } },
         })
         return MiniStatusline.combine_groups(groups)
+      end,
+      inactive = function()
+        return "%#MiniStatuslineInactive#" .. filename() .. "%="
       end,
     },
   })

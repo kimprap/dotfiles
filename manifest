@@ -1,5 +1,6 @@
 .prettierrc
 .stylua.toml
+.agents
 .config/zsh
 .config/starship
 archive

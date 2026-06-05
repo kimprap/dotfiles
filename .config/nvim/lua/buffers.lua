@@ -2,6 +2,25 @@ local map = require("map")
 
 local M = {}
 
+local function normal_windows()
+  return vim.tbl_filter(function(win)
+    return vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_config(win).relative == ""
+  end, vim.api.nvim_tabpage_list_wins(0))
+end
+
+local function primary_window()
+  local wins = normal_windows()
+  table.sort(wins, function(a, b)
+    local apos = vim.api.nvim_win_get_position(a)
+    local bpos = vim.api.nvim_win_get_position(b)
+    if apos[1] == bpos[1] then
+      return apos[2] < bpos[2]
+    end
+    return apos[1] < bpos[1]
+  end)
+  return wins[1]
+end
+
 local function barbar_buffer_index(bufnr)
   return require("barbar.utils.list").index_of(require("barbar.state").buffers, bufnr)
 end
@@ -26,7 +45,7 @@ function M.close_editor(force)
   local bufnr = vim.api.nvim_get_current_buf()
   local buftype = vim.bo[bufnr].buftype
   if buftype ~= "" and buftype ~= "acwrite" then
-    if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+    if #normal_windows() > 1 then
       vim.api.nvim_win_close(winid, true)
     else
       pcall(vim.cmd, "bdelete!")
@@ -35,7 +54,7 @@ function M.close_editor(force)
   end
 
   local shown_in = vim.fn.win_findbuf(bufnr)
-  local splits = #vim.api.nvim_tabpage_list_wins(0) > 1
+  local splits = #normal_windows() > 1
 
   if splits and #shown_in > 1 then
     vim.api.nvim_win_close(winid, true)
@@ -43,6 +62,11 @@ function M.close_editor(force)
   end
 
   if splits and (vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == "") then
+    require("mini.bufremove").delete(bufnr, force)
+    return
+  end
+
+  if splits and primary_window() == winid then
     require("mini.bufremove").delete(bufnr, force)
     return
   end
