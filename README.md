@@ -10,6 +10,7 @@ Personal dotfiles for macOS, managed as a normal Git repository at `~/.dotfiles`
 - Ghostty terminal configuration
 - Yazi file manager setup
 - Cursor editor settings, keybindings, and extension list
+- Global agent harness instructions and rules
 - Useful tools: fzf, zoxide, fd, ripgrep, etc.
 
 ## Setup on a New Machine
@@ -28,7 +29,7 @@ Personal dotfiles for macOS, managed as a normal Git repository at `~/.dotfiles`
 
 3. Restart your terminal.
 
-The script installs required packages, fonts, and creates symlinks from `~/.config/` into the repo.
+The script installs required packages, fonts, and creates symlinks from `~/.config/`, `~/.agents`, and app-specific locations into the repo.
 
 ## Requirements
 
@@ -45,6 +46,7 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 | Ghostty    | `.config/ghostty/`                | `~/.config/ghostty/`      |
 | Yazi       | `.config/yazi/`                   | `~/.config/yazi/`         |
 | Cursor     | `.config/cursor/`                 | `~/Library/Application Support/Cursor/User/profiles/<id>/` |
+| Agents     | `.config/agents/`                 | `~/.agents/`              |
 
 ## Cursor
 
