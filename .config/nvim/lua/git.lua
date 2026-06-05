@@ -121,14 +121,21 @@ end
 -- <leader>gu uncommitted | gL file/line history | <C-e> focus panel | q close CodeDiff tab
 require("codediff").setup({
   explorer = {
-    width = 25, -- default 40
+    width = 28,
+    view_mode = "tree",
+    flatten_dirs = true,
+    indent_markers = true,
+    initial_focus = "explorer",
+    focus_on_select = false,
   },
   history = {
     height = 5, -- default 15
+    view_mode = "tree",
   },
   keymaps = {
     view = {
       focus_explorer = false, -- bound in setup_all_keymaps hook (explorer + history)
+      close_on_open_in_prev_tab = true,
       next_hunk = "<C-]>",
       prev_hunk = "<C-[>",
       stage_hunk = false,
