@@ -59,6 +59,44 @@ function M.setup_statusline()
     return vim.fn.fnamemodify(path, ":~:.")
   end
 
+  local function buffer_flags_statusline()
+    local flags = {}
+    if vim.bo.modified then
+      table.insert(flags, "%#DiagnosticWarn#●")
+    end
+    if vim.bo.readonly then
+      table.insert(flags, "%#DiagnosticError#")
+    end
+    return table.concat(flags, " ")
+  end
+
+  local function diagnostic_count(severity)
+    local count = 0
+    for _ in ipairs(vim.diagnostic.get(0, { severity = severity })) do
+      count = count + 1
+    end
+    return count
+  end
+
+  local function diagnostic_statusline()
+    local severities = vim.diagnostic.severity
+    local items = {
+      { diagnostic_count(severities.ERROR), "DiagnosticError", "❌" },
+      { diagnostic_count(severities.WARN), "DiagnosticWarn", "⚠️" },
+      { diagnostic_count(severities.INFO), "DiagnosticInfo", "ℹ️" },
+      { diagnostic_count(severities.HINT), "DiagnosticHint", "💡" },
+    }
+
+    local parts = {}
+    for _, item in ipairs(items) do
+      local count, highlight, icon = item[1], item[2], item[3]
+      if count > 0 then
+        table.insert(parts, string.format("%%#%s#%s %d", highlight, icon, count))
+      end
+    end
+    return table.concat(parts, " ")
+  end
+
   MiniStatusline.setup({
     use_icons = true,
     set_vim_settings = true,
@@ -68,10 +106,6 @@ function M.setup_statusline()
         local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 9999 })
         local git = MiniStatusline.section_git({ trunc_width = 40 })
         local diff = vim.b.gitsigns_status or ""
-        local diagnostics = MiniStatusline.section_diagnostics({
-          trunc_width = 75,
-          signs = { E = "E", W = "W", I = "I", H = "H" },
-        })
         local filetype = vim.bo.filetype
         if filetype ~= "" and MiniIcons then
           local icon = select(1, MiniIcons.get("filetype", filetype))
@@ -86,10 +120,12 @@ function M.setup_statusline()
           table.insert(groups, { hl = "DiagnosticWarn", strings = { " ZOOM " } })
         end
         vim.list_extend(groups, {
-          { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics } },
+          { hl = "MiniStatuslineDevinfo", strings = { git, diff } },
           "%<",
           { hl = "MiniStatuslineFilename", strings = { filename() } },
+          buffer_flags_statusline(),
           "%=",
+          diagnostic_statusline(),
           { hl = "MiniStatuslineFileinfo", strings = { filetype } },
           { hl = mode_hl, strings = { location } },
         })
@@ -121,7 +157,7 @@ function M.setup_clue()
       MiniClue.gen_clues.z(),
       MiniClue.gen_clues.windows(),
       MiniClue.gen_clues.square_brackets(),
-      { mode = "n", keys = "<Leader>e", desc = "Explorer (mini.files)" },
+      { mode = "n", keys = "<Leader>e", desc = "Explorer (nvim-tree)" },
       { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
       { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
       { mode = "n", keys = "<Leader>/", desc = "Grep project (fzf-lua)" },

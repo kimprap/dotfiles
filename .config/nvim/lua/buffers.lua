@@ -121,7 +121,7 @@ require("barbar").setup({
     },
   },
   sidebar_filetypes = {
-    -- minifiles is a floating window (row below tabline) - do not offset tabs
+    -- nvim-tree is a floating window - do not offset tabs
     oil = { event = "BufWinLeave", text = "", align = "left" },
     Outline = { event = "BufWinLeave", text = "", align = "right" },
   },

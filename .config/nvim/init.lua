@@ -1,7 +1,7 @@
 -- ============================================
 -- Plugins
 -- ============================================
--- oil + mini.files replace netrw; avoid ghost dir buffers on `nvim .`
+-- oil + nvim-tree replace netrw; avoid ghost dir buffers on `nvim .`
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -14,6 +14,7 @@ vim.pack.add({
 
   -- File Explorer
   { src = "https://github.com/stevearc/oil.nvim" },
+  { src = "https://github.com/nvim-tree/nvim-tree.lua" },
 
   -- Finders
   { src = "https://github.com/ibhagwan/fzf-lua" },
@@ -61,7 +62,6 @@ require("keymaps")
 
 require("outline")
 
-
 require("treesitter")
 
 require("lsp")
@@ -74,3 +74,4 @@ mini.setup_clue()
 -- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
 vim.cmd.nohlsearch()
 require("ui").refresh_search_scrollbar()
+
