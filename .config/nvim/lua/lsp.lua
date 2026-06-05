@@ -464,27 +464,29 @@ local function diagnostic_scrollbar_show()
   end
 end
 
-local DIAGNOSTICS_PICKER_OPTS = {
-  winopts = {
-    on_create = diagnostic_scrollbar_hide,
-    on_close = diagnostic_scrollbar_show,
-    preview = {
-      -- Keep fzf-lua's single border scrollbar for diagnostics.
-      -- The global editor scrollbar is hidden while this picker is open.
-      scrollbar = "border",
+local function diagnostics_picker_opts()
+  return {
+    winopts = {
+      on_create = diagnostic_scrollbar_hide,
+      on_close = diagnostic_scrollbar_show,
+      preview = {
+        -- Keep fzf-lua's single border scrollbar for diagnostics.
+        -- The global editor scrollbar is hidden while this picker is open.
+        scrollbar = "border",
+      },
     },
-  },
-  fzf_opts = {
-    -- Avoid fzf's native terminal scrollbar competing with fzf-lua's overlay.
-    ["--no-scrollbar"] = true,
-  },
-}
+    fzf_opts = {
+      -- Avoid fzf's native terminal scrollbar competing with fzf-lua's overlay.
+      ["--no-scrollbar"] = true,
+    },
+  }
+end
 
 map("n", "<leader>xd", function()
-  require("fzf-lua").diagnostics_document(DIAGNOSTICS_PICKER_OPTS)
+  require("fzf-lua").diagnostics_document(diagnostics_picker_opts())
 end, { desc = "Diagnostics buffer (fzf)" })
 map("n", "<leader>xD", function()
-  require("fzf-lua").diagnostics_workspace(DIAGNOSTICS_PICKER_OPTS)
+  require("fzf-lua").diagnostics_workspace(diagnostics_picker_opts())
 end, { desc = "Diagnostics workspace (fzf)" })
 map("n", "<leader>xl", function()
   vim.diagnostic.setloclist({ open = true })
