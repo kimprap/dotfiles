@@ -444,11 +444,47 @@ map("n", "[d", function()
   vim.diagnostic.jump({ count = -1 })
 end, { desc = "Previous diagnostic" })
 
+local function diagnostic_scrollbar_hide()
+  require("scrollbar.config").get().show = false
+  local scrollbar = require("scrollbar")
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_call(win, scrollbar.clear)
+    end
+  end
+end
+
+local function diagnostic_scrollbar_show()
+  require("scrollbar.config").get().show = true
+  local scrollbar = require("scrollbar")
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_config(win).relative == "" then
+      vim.api.nvim_win_call(win, scrollbar.render)
+    end
+  end
+end
+
+local DIAGNOSTICS_PICKER_OPTS = {
+  winopts = {
+    on_create = diagnostic_scrollbar_hide,
+    on_close = diagnostic_scrollbar_show,
+    preview = {
+      -- Keep fzf-lua's single border scrollbar for diagnostics.
+      -- The global editor scrollbar is hidden while this picker is open.
+      scrollbar = "border",
+    },
+  },
+  fzf_opts = {
+    -- Avoid fzf's native terminal scrollbar competing with fzf-lua's overlay.
+    ["--no-scrollbar"] = true,
+  },
+}
+
 map("n", "<leader>xd", function()
-  require("fzf-lua").diagnostics_document()
+  require("fzf-lua").diagnostics_document(DIAGNOSTICS_PICKER_OPTS)
 end, { desc = "Diagnostics buffer (fzf)" })
 map("n", "<leader>xD", function()
-  require("fzf-lua").diagnostics_workspace()
+  require("fzf-lua").diagnostics_workspace(DIAGNOSTICS_PICKER_OPTS)
 end, { desc = "Diagnostics workspace (fzf)" })
 map("n", "<leader>xl", function()
   vim.diagnostic.setloclist({ open = true })

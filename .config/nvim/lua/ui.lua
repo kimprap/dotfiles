@@ -87,6 +87,24 @@ map("n", "<leader>zo", "zR", { desc = "Open all folds" })
 map("n", "<leader>zc", "zM", { desc = "Close all folds" })
 
 local scrollbar = require("scrollbar")
+local scrollbar_render = scrollbar.render
+local scrollbar_clear = scrollbar.clear
+
+local function current_win_is_float()
+  return vim.api.nvim_win_get_config(0).relative ~= ""
+end
+
+-- nvim-scrollbar has filetype/buftype excludes but no window-kind exclude.
+-- fzf-lua's builtin previewer already draws its own preview scrollbar; rendering
+-- the global editor scrollbar inside that floating preview creates overlapping
+-- handles, especially after <C-d>/<C-u> preview scrolls.
+function scrollbar.render()
+  if current_win_is_float() then
+    scrollbar_clear()
+    return
+  end
+  scrollbar_render()
+end
 
 scrollbar.setup({
   show = true,

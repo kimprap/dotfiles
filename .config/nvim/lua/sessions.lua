@@ -62,6 +62,29 @@ local function sessions_strip_outline_buffers()
   end
 end
 
+local function is_starter_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  if vim.bo[buf].filetype == "ministarter" then
+    return true
+  end
+  return vim.api.nvim_buf_get_name(buf):match("^ministarter://") ~= nil
+end
+
+local function sessions_strip_starter_buffers()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if is_starter_buffer(buf) then
+      for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+        if vim.api.nvim_win_is_valid(win) then
+          pcall(vim.api.nvim_win_close, win, true)
+        end
+      end
+      pcall(vim.api.nvim_buf_delete, buf, { force = true })
+    end
+  end
+end
+
 -- `nvim .` / oil leave dirs on the arglist; mksession persists them -> ghost explorer on restore
 local function sessions_strip_dir_args()
   for i = vim.fn.argc() - 1, 0, -1 do
@@ -78,10 +101,11 @@ local function sessions_cleanup_explorers()
 end
 
 local function sessions_cleanup_ephemeral()
-  -- Plugin UI (oil dirs, outline sidebar) is not workspace state; strip before save/after restore.
+  -- Plugin UI (oil dirs, outline sidebar, starter) is not workspace state; strip before save/after restore.
   sessions_cleanup_explorers()
   sessions_close_outline()
   sessions_strip_outline_buffers()
+  sessions_strip_starter_buffers()
 end
 
 local function sessions_refresh_buffer_syntax(buf)
@@ -136,11 +160,7 @@ local function starter_workspace_sessions(n)
     local cwd_slug = workspace.session_slug()
 
     for name, session in pairs(MiniSessions.detected) do
-      if
-        session.type == "global"
-        and workspace.is_session_file(name)
-        and vim.fn.filereadable(session.path) == 1
-      then
+      if session.type == "global" and workspace.is_session_file(name) and vim.fn.filereadable(session.path) == 1 then
         local is_here = name == cwd_slug
         items[#items + 1] = {
           name = workspace.session_slug_label(name) .. (is_here and " (resume here)" or ""),
@@ -234,6 +254,9 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<C-k>", function()
       MiniStarter.update_current_item("prev")
     end, vim.tbl_extend("force", opts, { desc = "Starter previous item" }))
+    vim.keymap.set("n", "q", function()
+      MiniStarter.close(buf)
+    end, vim.tbl_extend("force", opts, { desc = "Close welcome screen" }))
   end,
 })
 
@@ -305,11 +328,15 @@ map("n", "<leader>Sw", function()
   vim.notify("Session saved: " .. workspace.path_label(), vim.log.levels.INFO)
 end, { desc = "Save workspace session for cwd" })
 
-map("n", "<leader>SS", function()
+local function open_manual_starter()
   workspace_session_refresh_detected()
   sessions_cleanup_explorers()
-  MiniStarter.open(vim.api.nvim_get_current_buf())
-end, { desc = "Open welcome / session picker" })
+  sessions_strip_starter_buffers()
+  local buf = vim.api.nvim_create_buf(false, true)
+  MiniStarter.open(buf)
+end
+
+map("n", "<leader>SS", open_manual_starter, { desc = "Open welcome / session picker" })
 
 map("n", "<leader>Sd", function()
   workspace_session_delete()
