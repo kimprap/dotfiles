@@ -186,11 +186,9 @@ function M.setup_clue()
     window = { delay = 300 },
   })
 
-  vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(args)
-      MiniClue.ensure_buf_triggers(args.buf)
-    end,
-  })
+  require("lsp").on_attach(function(args)
+    MiniClue.ensure_buf_triggers(args.buf)
+  end)
 end
 
 return M

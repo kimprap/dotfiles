@@ -2,6 +2,8 @@ vim.g.sonokai_style = "maia" -- "andromeda", "atlantis", "espresso", "maia", "sh
 vim.g.sonokai_enable_italic = 1
 vim.cmd.colorscheme("sonokai")
 
+local options_augroup = vim.api.nvim_create_augroup("user.options", { clear = true })
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
@@ -60,6 +62,7 @@ vim.opt.inccommand = "split"
 
 -- ruler only in normal code files, hidden otherwise
 vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
+  group = options_augroup,
   callback = function()
     local bt = vim.bo.buftype
     local ft = vim.bo.filetype
@@ -74,6 +77,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 
 -- Save cleanup: trim before format; EOF blank line after conform (see lsp.lua).
 vim.api.nvim_create_autocmd("BufWritePre", {
+  group = options_augroup,
   desc = "Trim trailing whitespace before save",
   pattern = "*",
   callback = function()
@@ -87,6 +91,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", {
+  group = options_augroup,
   desc = "Highlight yanked text",
   callback = function()
     vim.hl.on_yank({ timeout = 200 })
@@ -94,6 +99,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
+  group = options_augroup,
   desc = "Restore cursor position",
   callback = function()
     local mark = vim.api.nvim_buf_get_mark(0, '"')

@@ -1,6 +1,7 @@
 -- File explorer and finder setup.
 -- fzf-lua setup intentionally lives here and is consumed lazily by lsp.lua pickers.
 
+local map = require("map")
 local workspace = require("workspace")
 
 local M = {}
@@ -69,14 +70,14 @@ require("nvim-tree").setup({
   },
 })
 
-vim.keymap.set("n", "<leader>e", function()
+map("n", "<leader>e", function()
   require("nvim-tree.api").tree.toggle({
     find_file = true,
     focus = true,
   })
 end, { desc = "Toggle file explorer (nvim-tree)" })
 
-vim.keymap.set("n", "<leader>E", function()
+map("n", "<leader>E", function()
   local buf_name = vim.api.nvim_buf_get_name(0)
   if buf_name ~= "" and vim.fn.filereadable(buf_name) == 1 then
     require("oil").open(vim.fn.fnamemodify(buf_name, ":p:h"))
@@ -124,20 +125,20 @@ require("fff").setup({
 })
 
 -- Project finders
-vim.keymap.set("n", "<leader>f", function()
+map("n", "<leader>f", function()
   require("fff").find_files()
 end, { desc = "Find files in project (fff)" })
 
-vim.keymap.set("n", "<leader>/", function()
+map("n", "<leader>/", function()
   require("fff").live_grep()
 end, { desc = "Grep in project (fff)" })
 
-vim.keymap.set("n", "<leader>,", function()
+map("n", "<leader>,", function()
   require("mini.pick").builtin.buffers()
 end, { desc = "Find open buffers" })
 
 -- Global finders
-vim.keymap.set("n", "<leader>F", function()
+map("n", "<leader>F", function()
   require("fzf-lua").files({
     cwd = vim.fn.expand("~"),
     prompt = "Global Files> ",
@@ -145,7 +146,7 @@ vim.keymap.set("n", "<leader>F", function()
   })
 end, { desc = "Find files anywhere (global)" })
 
-vim.keymap.set("n", "<leader>?", function()
+map("n", "<leader>?", function()
   require("fzf-lua").live_grep({
     cwd = vim.fn.expand("~"),
     prompt = "Global Grep> ",
@@ -155,7 +156,7 @@ vim.keymap.set("n", "<leader>?", function()
 end, { desc = "Grep anywhere (global)" })
 
 -- Recent files from v:oldfiles.
-vim.keymap.set("n", "<leader>r", function()
+map("n", "<leader>r", function()
   require("fzf-lua").oldfiles({
     prompt = "Recent> ",
     winopts = { preview = { vertical = "up:45%" } },

@@ -5,6 +5,12 @@ local env = require("env")
 local map = require("map")
 
 local M = {}
+local lsp_augroup = vim.api.nvim_create_augroup("user.lsp", { clear = true })
+local lsp_attach_callbacks = {}
+
+function M.on_attach(callback)
+  lsp_attach_callbacks[#lsp_attach_callbacks + 1] = callback
+end
 
 -- Mason-managed CLI tools (explicit list — add packages when lsp/*.lua or formatters grow)
 local MASON_TOOLS = {
@@ -69,6 +75,7 @@ require("conform").setup({
 
 -- After conform/stylua (registered later = runs after format): visible EOF blank line.
 vim.api.nvim_create_autocmd("BufWritePre", {
+  group = lsp_augroup,
   desc = "EOF blank line after format on save",
   pattern = "*",
   callback = function()
@@ -127,28 +134,23 @@ local function enable_lsp_servers()
   end
 end
 
-enable_lsp_servers()
 
--- Manual LSP per buffer (vim.b.lsp_manual: nil=auto, false=off, string=server name)
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("user.lsp.manual", { clear = true }),
-  callback = function(args)
-    local bufnr = args.buf
-    local manual = vim.b[bufnr].lsp_manual
-    if manual == nil then
-      return
-    end
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if not client then
-      return
-    end
-    if manual == false or client.name ~= manual then
-      vim.schedule(function()
-        pcall(vim.lsp.buf_detach_client, bufnr, client.id)
-      end)
-    end
-  end,
-})
+local function enforce_manual_lsp(args)
+  local bufnr = args.buf
+  local manual = vim.b[bufnr].lsp_manual
+  if manual == nil then
+    return
+  end
+  local client = vim.lsp.get_client_by_id(args.data.client_id)
+  if not client then
+    return
+  end
+  if manual == false or client.name ~= manual then
+    vim.schedule(function()
+      pcall(vim.lsp.buf_detach_client, bufnr, client.id)
+    end)
+  end
+end
 
 local LSP_FT_LABEL = {
   bash = "Bash",
@@ -500,70 +502,78 @@ map("n", "<Esc>", function()
   end
 end, { desc = "Close floating window" })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("user.lsp", { clear = true }),
-  callback = function(args)
-    local bufnr = args.buf
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if not client then
-      return
-    end
+local function configure_lsp_buffer(args)
+  local bufnr = args.buf
+  local client = vim.lsp.get_client_by_id(args.data.client_id)
+  if not client then
+    return
+  end
 
-    if client:supports_method("textDocument/foldingRange") then
-      vim.api.nvim_buf_call(bufnr, function()
-        vim.wo.foldmethod = "expr"
-        vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
-      end)
-      vim.schedule(function()
-        if not vim.api.nvim_buf_is_valid(bufnr) then
-          return
-        end
-        vim.api.nvim_buf_call(bufnr, function()
-          vim.cmd("normal! zx")
-        end)
-      end)
-    end
-
-    local function nmap(lhs, rhs, desc)
-      vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
-    end
-
-    nmap("K", function()
-      vim.lsp.buf.hover({ border = "rounded" })
-    end, "Hover")
-    nmap("gd", function()
-      require("fzf-lua").lsp_definitions({ jump1 = true })
-    end, "Go to definition")
-    nmap("gD", function()
-      require("fzf-lua").lsp_definitions({ jump1 = false })
-    end, "Peek definition")
-    nmap("gr", function()
-      require("fzf-lua").lsp_references()
-    end, "References")
-    nmap("<leader>Ls", function()
-      require("fzf-lua").lsp_document_symbols()
-    end, "Document symbols (picker)")
-    nmap("<leader>La", vim.lsp.buf.code_action, "Code action")
-    nmap("<leader>Lf", function()
-      require("conform").format({ bufnr = bufnr, async = true })
-    end, "Format buffer")
-    nmap("<leader>Lr", vim.lsp.buf.rename, "Rename")
-    nmap("<leader>Lh", function()
-      if not client:supports_method("textDocument/inlayHint") then
-        vim.notify("Inlay hints not supported for this buffer", vim.log.levels.WARN)
+  if client:supports_method("textDocument/foldingRange") then
+    vim.api.nvim_buf_call(bufnr, function()
+      vim.wo.foldmethod = "expr"
+      vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
+    end)
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(bufnr) then
         return
       end
-      local enable = not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
-      vim.lsp.inlay_hint.enable(enable, { bufnr = bufnr })
-      vim.notify(enable and "Inlay hints on" or "Inlay hints off", vim.log.levels.INFO)
-    end, "Toggle inlay hints")
-    nmap("<leader>Lm", "<cmd>Mason<CR>", "Mason installer")
-    nmap("<leader>Ll", lsp_pick_server, "Pick LSP server")
+      vim.api.nvim_buf_call(bufnr, function()
+        vim.cmd("normal! zx")
+      end)
+    end)
+  end
+
+  local function nmap(lhs, rhs, desc)
+    vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
+  end
+
+  nmap("K", function()
+    vim.lsp.buf.hover({ border = "rounded" })
+  end, "Hover")
+  nmap("gd", function()
+    require("fzf-lua").lsp_definitions({ jump1 = true })
+  end, "Go to definition")
+  nmap("gD", function()
+    require("fzf-lua").lsp_definitions({ jump1 = false })
+  end, "Peek definition")
+  nmap("gr", function()
+    require("fzf-lua").lsp_references()
+  end, "References")
+  nmap("<leader>Ls", function()
+    require("fzf-lua").lsp_document_symbols()
+  end, "Document symbols (picker)")
+  nmap("<leader>La", vim.lsp.buf.code_action, "Code action")
+  nmap("<leader>Lf", function()
+    require("conform").format({ bufnr = bufnr, async = true })
+  end, "Format buffer")
+  nmap("<leader>Lr", vim.lsp.buf.rename, "Rename")
+  nmap("<leader>Lh", function()
+    if not client:supports_method("textDocument/inlayHint") then
+      vim.notify("Inlay hints not supported for this buffer", vim.log.levels.WARN)
+      return
+    end
+    local enable = not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+    vim.lsp.inlay_hint.enable(enable, { bufnr = bufnr })
+    vim.notify(enable and "Inlay hints on" or "Inlay hints off", vim.log.levels.INFO)
+  end, "Toggle inlay hints")
+  nmap("<leader>Lm", "<cmd>Mason<CR>", "Mason installer")
+  nmap("<leader>Ll", lsp_pick_server, "Pick LSP server")
+end
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = lsp_augroup,
+  callback = function(args)
+    enforce_manual_lsp(args)
+    configure_lsp_buffer(args)
+    for _, callback in ipairs(lsp_attach_callbacks) do
+      callback(args)
+    end
   end,
 })
 
 vim.api.nvim_create_autocmd("LspDetach", {
-  group = vim.api.nvim_create_augroup("user.lsp", { clear = false }),
+  group = lsp_augroup,
   callback = function(args)
     local bufnr = args.buf
     vim.schedule(function()
@@ -580,5 +590,7 @@ vim.api.nvim_create_autocmd("LspDetach", {
     end)
   end,
 })
+
+enable_lsp_servers()
 
 return M

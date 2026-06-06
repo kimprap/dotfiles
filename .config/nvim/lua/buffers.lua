@@ -1,6 +1,7 @@
 local map = require("map")
 
 local M = {}
+local buffers_augroup = vim.api.nvim_create_augroup("user.buffers", { clear = true })
 
 local function normal_windows()
   return vim.tbl_filter(function(win)
@@ -160,20 +161,21 @@ end
 
 setup_barbar_tab_hl()
 vim.api.nvim_create_autocmd("ColorScheme", {
+  group = buffers_augroup,
   desc = "Re-apply barbar dirty-tab colors after theme load",
   callback = setup_barbar_tab_hl,
 })
 
 -- Buffer navigation with <Tab> / <S-Tab>
-vim.keymap.set("n", "<Tab>", "<Cmd>BufferNext<CR>", { desc = "Next buffer" })
-vim.keymap.set("n", "<S-Tab>", "<Cmd>BufferPrevious<CR>", { desc = "Previous buffer" })
+map("n", "<Tab>", "<Cmd>BufferNext<CR>", { desc = "Next buffer" })
+map("n", "<S-Tab>", "<Cmd>BufferPrevious<CR>", { desc = "Previous buffer" })
 -- Reorder tabs.
-vim.keymap.set("n", "<D-C-S-[>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer tab left" })
-vim.keymap.set("n", "<D-C-S-]>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer tab right" })
+map("n", "<D-C-S-[>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer tab left" })
+map("n", "<D-C-S-]>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer tab right" })
 -- Pin / unpin current buffer (BufferPin toggles)
-vim.keymap.set("n", "<A-p>", "<Cmd>BufferPin<CR>", { desc = "Pin / unpin buffer" })
+map("n", "<A-p>", "<Cmd>BufferPin<CR>", { desc = "Pin / unpin buffer" })
 -- Space + backtick: explicit leader char avoids "<leader>`" parse issues in some terminals
-vim.keymap.set("n", "<Space>`", "<C-^>", { desc = "Toggle last buffer" })
+map("n", "<Space>`", "<C-^>", { desc = "Toggle last buffer" })
 
 map("n", "<C-q>", function()
   M.close_editor(false)
@@ -186,6 +188,7 @@ end, { desc = "Force close editor" })
 local closed_buffers = {}
 
 vim.api.nvim_create_autocmd("BufDelete", {
+  group = buffers_augroup,
   desc = "Remember recently closed buffers so we can reopen them",
   callback = function(args)
     local name = vim.api.nvim_buf_get_name(args.buf)
@@ -209,7 +212,7 @@ vim.api.nvim_create_autocmd("BufDelete", {
   end,
 })
 
-vim.keymap.set("n", "<leader>T", function()
+map("n", "<leader>T", function()
   if #closed_buffers == 0 then
     vim.notify("No recently closed buffers to reopen", vim.log.levels.WARN)
     return

@@ -25,6 +25,8 @@ map("n", "<C-S-=>", "<C-w>=", { desc = "Equalize window sizes" })
 
 -- Toggle zoom current split to full tab area; toggle again restores sizes
 local zoom_state = {}
+local zoom_augroup = vim.api.nvim_create_augroup("user.zoom", { clear = true })
+
 map("n", "<C-S-CR>", function()
   local tab = vim.api.nvim_get_current_tabpage()
   local key = tostring(tab)
@@ -69,6 +71,7 @@ map("n", "<C-S-CR>", function()
 end, { desc = "Toggle zoom current window" })
 
 vim.api.nvim_create_autocmd("TabClosed", {
+  group = zoom_augroup,
   callback = function(ev)
     zoom_state[tostring(ev.match)] = nil
   end,

@@ -2,6 +2,8 @@ local git = require("git")
 local map = require("map")
 local workspace = require("workspace")
 
+local sessions_augroup = vim.api.nvim_create_augroup("user.sessions", { clear = true })
+
 vim.o.sessionoptions = "buffers,curdir,tabpages,winsize,globals,blank"
 
 local function is_oil_or_dir_buffer(buf)
@@ -240,6 +242,7 @@ MiniStarter.setup({
 })
 
 vim.api.nvim_create_autocmd("User", {
+  group = sessions_augroup,
   pattern = "MiniStarterOpened",
   desc = "Starter: C-j/k to move (overrides global window maps)",
   callback = function()
@@ -293,6 +296,7 @@ local function should_open_starter()
 end
 
 vim.api.nvim_create_autocmd("VimEnter", {
+  group = sessions_augroup,
   desc = "Restore workspace session or open starter on bare nvim",
   once = true,
   callback = function()
@@ -315,6 +319,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
+  group = sessions_augroup,
   desc = "Close outline before mini.sessions autowrite on quit",
   callback = function()
     if workspace.has_session() then
