@@ -1,5 +1,5 @@
 -- File explorer and finder setup.
--- fzf-lua setup intentionally lives here and is consumed lazily by lsp.lua pickers.
+-- Finder setup helpers are lazy; lsp.lua calls the fzf helper before picker use.
 
 local map = require("map")
 local workspace = require("workspace")
@@ -50,27 +50,59 @@ local function nvim_tree_float_config()
   }
 end
 
-require("nvim-tree").setup({
-  disable_netrw = false,
-  hijack_netrw = false,
-  hijack_directories = {
-    enable = false,
-  },
-  view = {
-    width = 30,
-    signcolumn = "no",
-    float = {
-      enable = true,
-      quit_on_focus_loss = true,
-      open_win_config = nvim_tree_float_config,
+local nvim_tree_did_setup = false
+
+local function setup_nvim_tree_once()
+  if nvim_tree_did_setup then
+    return
+  end
+  require("nvim-tree").setup({
+    disable_netrw = false,
+    hijack_netrw = false,
+    hijack_directories = {
+      enable = false,
     },
-  },
-  renderer = {
-    group_empty = true,
-  },
-})
+    view = {
+      width = 30,
+      signcolumn = "no",
+      float = {
+        enable = true,
+        quit_on_focus_loss = true,
+        open_win_config = nvim_tree_float_config,
+      },
+    },
+    renderer = {
+      group_empty = true,
+    },
+  })
+  nvim_tree_did_setup = true
+end
+
+M.setup_fzf = function()
+  if M.fzf_did_setup then
+    return
+  end
+  require("fzf-lua").setup({
+    keymap = {
+      builtin = {
+        ["<C-d>"] = "preview-page-down",
+        ["<C-u>"] = "preview-page-up",
+      },
+    },
+    winopts = {
+      preview = {
+        winopts = {
+          number = true,
+          relativenumber = false,
+        },
+      },
+    },
+  })
+  M.fzf_did_setup = true
+end
 
 map("n", "<leader>e", function()
+  setup_nvim_tree_once()
   require("nvim-tree.api").tree.toggle({
     find_file = true,
     focus = true,
@@ -85,24 +117,6 @@ map("n", "<leader>E", function()
     require("oil").open(vim.uv.cwd())
   end
 end, { desc = "Oil explorer (dir of active file, else cwd)" })
-
--- Finders
-require("fzf-lua").setup({
-  keymap = {
-    builtin = {
-      ["<C-d>"] = "preview-page-down",
-      ["<C-u>"] = "preview-page-up",
-    },
-  },
-  winopts = {
-    preview = {
-      winopts = {
-        number = true,
-        relativenumber = false,
-      },
-    },
-  },
-})
 
 require("fff").setup({
   prompt = "Files> ",
@@ -139,6 +153,7 @@ end, { desc = "Find open buffers" })
 
 -- Global finders
 map("n", "<leader>F", function()
+  M.setup_fzf()
   require("fzf-lua").files({
     cwd = vim.fn.expand("~"),
     prompt = "Global Files> ",
@@ -147,6 +162,7 @@ map("n", "<leader>F", function()
 end, { desc = "Find files anywhere (global)" })
 
 map("n", "<leader>?", function()
+  M.setup_fzf()
   require("fzf-lua").live_grep({
     cwd = vim.fn.expand("~"),
     prompt = "Global Grep> ",
@@ -157,6 +173,7 @@ end, { desc = "Grep anywhere (global)" })
 
 -- Recent files from v:oldfiles.
 map("n", "<leader>r", function()
+  M.setup_fzf()
   require("fzf-lua").oldfiles({
     prompt = "Recent> ",
     winopts = { preview = { vertical = "up:45%" } },

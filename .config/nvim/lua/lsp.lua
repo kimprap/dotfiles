@@ -136,6 +136,11 @@ local function enable_lsp_servers()
   end
 end
 
+local function fzf_lua()
+  require("explorer").setup_fzf()
+  return require("fzf-lua")
+end
+
 local function enforce_manual_lsp(args)
   local bufnr = args.buf
   local manual = vim.b[bufnr].lsp_manual
@@ -406,7 +411,7 @@ local function lsp_pick_server()
     return
   end
 
-  require("fzf-lua").fzf_exec(entries, {
+  fzf_lua().fzf_exec(entries, {
     prompt = ("LSP (%s)> "):format(ft ~= "" and ft or "no filetype"),
     actions = {
       ["default"] = function(selected)
@@ -469,10 +474,10 @@ local function diagnostics_picker_opts()
 end
 
 map("n", "<leader>xd", function()
-  require("fzf-lua").diagnostics_document(diagnostics_picker_opts())
+  fzf_lua().diagnostics_document(diagnostics_picker_opts())
 end, { desc = "Diagnostics buffer (fzf)" })
 map("n", "<leader>xD", function()
-  require("fzf-lua").diagnostics_workspace(diagnostics_picker_opts())
+  fzf_lua().diagnostics_workspace(diagnostics_picker_opts())
 end, { desc = "Diagnostics workspace (fzf)" })
 map("n", "<leader>xl", function()
   vim.diagnostic.setloclist({ open = true })
@@ -518,16 +523,16 @@ local function configure_lsp_buffer(args)
     vim.lsp.buf.hover({ border = "rounded" })
   end, "Hover")
   nmap("gd", function()
-    require("fzf-lua").lsp_definitions({ jump1 = true })
+    fzf_lua().lsp_definitions({ jump1 = true })
   end, "Go to definition")
   nmap("gD", function()
-    require("fzf-lua").lsp_definitions({ jump1 = false })
+    fzf_lua().lsp_definitions({ jump1 = false })
   end, "Peek definition")
   nmap("gr", function()
-    require("fzf-lua").lsp_references()
+    fzf_lua().lsp_references()
   end, "References")
   nmap("<leader>Ls", function()
-    require("fzf-lua").lsp_document_symbols()
+    fzf_lua().lsp_document_symbols()
   end, "Document symbols (picker)")
   nmap("<leader>La", vim.lsp.buf.code_action, "Code action")
   nmap("<leader>Lf", function()
