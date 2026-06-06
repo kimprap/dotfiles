@@ -14,84 +14,92 @@ local function load_outline_plugin()
   error("outline.nvim plugin module not found")
 end
 
--- Upstream line numbers use a left overlay column; keep compact EOL numbers.
-local outline_hl = require("outline.highlight")
-local Sidebar = require("outline.sidebar")
-local orig_build = Sidebar._dotfiles_build_outline_orig or Sidebar.build_outline
+local M = {}
+local outline
+local outline_did_setup = false
 
-Sidebar._dotfiles_build_outline_orig = orig_build
-
-function outline_hl.linenos(bufnr, linenos, _)
-  for index, lineno in ipairs(linenos) do
-    local num = lineno:match("%S+$") or lineno
-    vim.api.nvim_buf_set_extmark(bufnr, outline_hl.ns.vt, index - 1, -1, {
-      virt_text = { { " " .. num, "OutlineLineno" } },
-      virt_text_pos = "eol",
-      hl_mode = "combine",
-    })
+local function setup_outline_once()
+  if outline_did_setup then
+    return outline
   end
-end
 
-function Sidebar:build_outline(find_node)
-  local cursor = orig_build(self, find_node)
-  if self.view.buf and self.flats then
-    local linenos = {}
-    for _, node in ipairs(self.flats) do
-      linenos[#linenos + 1] = tostring(node.range_start + 1)
+  -- Upstream line numbers use a left overlay column; keep compact EOL numbers.
+  local outline_hl = require("outline.highlight")
+  local Sidebar = require("outline.sidebar")
+  local orig_build = Sidebar._dotfiles_build_outline_orig or Sidebar.build_outline
+
+  Sidebar._dotfiles_build_outline_orig = orig_build
+
+  function outline_hl.linenos(bufnr, linenos, _)
+    for index, lineno in ipairs(linenos) do
+      local num = lineno:match("%S+$") or lineno
+      vim.api.nvim_buf_set_extmark(bufnr, outline_hl.ns.vt, index - 1, -1, {
+        virt_text = { { " " .. num, "OutlineLineno" } },
+        virt_text_pos = "eol",
+        hl_mode = "combine",
+      })
     end
-    outline_hl.linenos(self.view.buf, linenos)
   end
-  return cursor
-end
 
-local outline = load_outline_plugin()
+  function Sidebar:build_outline(find_node)
+    local cursor = orig_build(self, find_node)
+    if self.view.buf and self.flats then
+      local linenos = {}
+      for _, node in ipairs(self.flats) do
+        linenos[#linenos + 1] = tostring(node.range_start + 1)
+      end
+      outline_hl.linenos(self.view.buf, linenos)
+    end
+    return cursor
+  end
 
-outline.setup({
-  outline_window = {
-    focus_on_open = true,
-    width = 20,
-  },
-  outline_items = {
-    show_symbol_details = false,
-    show_symbol_lineno = false,
-    highlight_hovered_item = true,
-    auto_set_cursor = false,
-    auto_update_events = {
-      follow = false,
-      items = { "LspAttach", "BufEnter", "BufWinEnter", "BufWritePost" },
+  outline = load_outline_plugin()
+
+  outline.setup({
+    outline_window = {
+      focus_on_open = true,
+      width = 20,
     },
-  },
-  symbol_folding = {
-    auto_unfold = { hovered = false, only = false },
-  },
-  -- Exclude literal/local noise; keep functions, modules, classes, namespaces, etc.
-  -- Note: LSP documentSymbol only lists definitions (functions, modules, …),
-  -- not bare statements like require("x").setup({}) or vim.api.nvim_create_autocmd(...).
-  symbols = {
-    filter = {
-      default = {
-        -- Show structural navigation targets; hide values, literals, params,
-        -- object fields/properties, and config/data keys.
-        "File",
-        "Module",
-        "Namespace",
-        "Package",
-        "Class",
-        "Constructor",
-        "Enum",
-        "Interface",
-        "Function",
-        "Method",
-        "Struct",
-        "TypeAlias",
-        "StaticMethod",
-        "Macro",
-        "Component",
-        "Fragment",
+    outline_items = {
+      show_symbol_details = false,
+      show_symbol_lineno = false,
+      highlight_hovered_item = true,
+      auto_set_cursor = false,
+      auto_update_events = {
+        follow = false,
+        items = { "LspAttach", "BufEnter", "BufWinEnter", "BufWritePost" },
       },
     },
-  },
-})
+    symbol_folding = {
+      auto_unfold = { hovered = false, only = false },
+    },
+    symbols = {
+      filter = {
+        default = {
+          "File",
+          "Module",
+          "Namespace",
+          "Package",
+          "Class",
+          "Constructor",
+          "Enum",
+          "Interface",
+          "Function",
+          "Method",
+          "Struct",
+          "TypeAlias",
+          "StaticMethod",
+          "Macro",
+          "Component",
+          "Fragment",
+        },
+      },
+    },
+  })
+
+  outline_did_setup = true
+  return outline
+end
 
 local function outline_unfold_ancestors(items, target)
   local function walk(nodes, path)
@@ -131,9 +139,9 @@ local function outline_deepest_symbol(items, lnum0)
   return best
 end
 
---- Sync outline cursor/highlight to editor position (manual only).
 local function outline_sync_to_code(focus_outline, code_win)
-  local sidebar = outline._get_sidebar(false)
+  local outline_api = setup_outline_once()
+  local sidebar = outline_api._get_sidebar(false)
   if not sidebar or not sidebar.view:is_open() then
     return false
   end
@@ -161,7 +169,7 @@ end
 
 local function outline_when_open(fn, attempt)
   attempt = attempt or 0
-  if outline.is_open() then
+  if outline and outline.is_open() then
     fn()
   elseif attempt < 40 then
     vim.defer_fn(function()
@@ -171,22 +179,33 @@ local function outline_when_open(fn, attempt)
 end
 
 local function outline_open_and_sync(focus_outline)
+  local outline_api = setup_outline_once()
   local code_win = vim.api.nvim_get_current_win()
 
-  if outline.is_open() then
+  if outline_api.is_open() then
     outline_sync_to_code(focus_outline, code_win)
     return
   end
 
-  outline.open({ focus_outline = false })
+  outline_api.open({ focus_outline = false })
   outline_when_open(function()
     outline_sync_to_code(focus_outline, code_win)
   end)
 end
 
+function M.is_open()
+  return outline ~= nil and outline.is_open()
+end
+
+function M.close_if_loaded()
+  if M.is_open() then
+    pcall(vim.cmd, "OutlineClose")
+  end
+end
+
 map("n", "<leader>o", function()
-  if outline.is_open() then
-    vim.cmd.OutlineClose()
+  if M.is_open() then
+    M.close_if_loaded()
     return
   end
   outline_open_and_sync(true)
@@ -196,4 +215,4 @@ map("n", "<leader>O", function()
   outline_open_and_sync(true)
 end, { desc = "Focus outline at symbol", nowait = true })
 
-return outline
+return M

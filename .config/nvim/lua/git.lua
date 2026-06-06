@@ -60,12 +60,91 @@ local function codediff_in_tab(tab)
   return false
 end
 
+local codediff_did_setup = false
+local codediff_focus_panel
+
+local function setup_codediff_once()
+  if codediff_did_setup then
+    return
+  end
+
+  -- Upstream only binds focus_explorer for explorer mode; bind it for history too.
+  local lifecycle = require("codediff.ui.lifecycle")
+  local view_keymaps = require("codediff.ui.view.keymaps")
+  local setup_all_keymaps_orig = view_keymaps._dotfiles_setup_all_keymaps_orig or view_keymaps.setup_all_keymaps
+
+  view_keymaps._dotfiles_setup_all_keymaps_orig = setup_all_keymaps_orig
+  view_keymaps.setup_all_keymaps = function(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
+    setup_all_keymaps_orig(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
+    local session = lifecycle.get_session(tabpage)
+    if not session or (session.mode ~= "explorer" and session.mode ~= "history") then
+      return
+    end
+    lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
+      codediff_focus_panel(tabpage)
+    end, { desc = "Focus explorer/history panel" })
+  end
+
+  require("codediff").setup({
+    explorer = {
+      width = 28,
+      view_mode = "tree",
+      flatten_dirs = true,
+      indent_markers = true,
+      initial_focus = "explorer",
+      focus_on_select = false,
+    },
+    history = {
+      height = 5,
+      view_mode = "tree",
+    },
+    keymaps = {
+      view = {
+        focus_explorer = false,
+        close_on_open_in_prev_tab = true,
+        next_hunk = "<C-]>",
+        prev_hunk = "<C-[>",
+        stage_hunk = false,
+        unstage_hunk = false,
+        discard_hunk = false,
+        hunk_textobject = false,
+      },
+    },
+  })
+
+  codediff_did_setup = true
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = vim.api.nvim_create_augroup("user.codediff_lazy", { clear = true }),
+  once = true,
+  desc = "Load CodeDiff config on first command use",
+  callback = function()
+    local command = vim.api.nvim_get_commands({})["CodeDiff"]
+    if not command or type(command.callback) ~= "function" then
+      return
+    end
+    local original_callback = command.callback
+    vim.api.nvim_create_user_command("CodeDiff", function(opts)
+      setup_codediff_once()
+      original_callback(opts)
+    end, {
+      nargs = "*",
+      bang = true,
+      range = true,
+      complete = command.complete,
+      desc = command.definition,
+    })
+  end,
+})
+
 local function codediff_open(args, opts)
   opts = opts or {}
   if codediff_in_tab() then
     vim.notify("Already in CodeDiff - use q to close", vim.log.levels.INFO)
     return
   end
+  setup_codediff_once()
   if opts.visual then
     vim.cmd("'<,'>CodeDiff " .. args)
   elseif args == "" then
@@ -76,7 +155,7 @@ local function codediff_open(args, opts)
 end
 
 --- Focus explorer sidebar or history panel from any CodeDiff buffer.
-local function codediff_focus_panel(tabpage)
+codediff_focus_panel = function(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
   if not ok then
@@ -98,54 +177,6 @@ local function codediff_focus_panel(tabpage)
     vim.api.nvim_set_current_win(split.winid)
   end
 end
-
--- Upstream only binds focus_explorer for explorer mode; bind it for history too.
-do
-  local lifecycle = require("codediff.ui.lifecycle")
-  local view_keymaps = require("codediff.ui.view.keymaps")
-  local setup_all_keymaps_orig = view_keymaps._dotfiles_setup_all_keymaps_orig or view_keymaps.setup_all_keymaps
-
-  view_keymaps._dotfiles_setup_all_keymaps_orig = setup_all_keymaps_orig
-  view_keymaps.setup_all_keymaps = function(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
-    setup_all_keymaps_orig(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
-    local session = lifecycle.get_session(tabpage)
-    if not session or (session.mode ~= "explorer" and session.mode ~= "history") then
-      return
-    end
-    lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
-      codediff_focus_panel(tabpage)
-    end, { desc = "Focus explorer/history panel" })
-  end
-end
-
--- <leader>gv branch vs main (all files) | gp file vs HEAD | gm file vs main
--- <leader>gu uncommitted | gL file/line history | <C-e> focus panel | q close CodeDiff tab
-require("codediff").setup({
-  explorer = {
-    width = 28,
-    view_mode = "tree",
-    flatten_dirs = true,
-    indent_markers = true,
-    initial_focus = "explorer",
-    focus_on_select = false,
-  },
-  history = {
-    height = 5, -- default 15
-    view_mode = "tree",
-  },
-  keymaps = {
-    view = {
-      focus_explorer = false, -- bound in setup_all_keymaps hook (explorer + history)
-      close_on_open_in_prev_tab = true,
-      next_hunk = "<C-]>",
-      prev_hunk = "<C-[>",
-      stage_hunk = false,
-      unstage_hunk = false,
-      discard_hunk = false,
-      hunk_textobject = false,
-    },
-  },
-})
 
 map("n", "<leader>gv", function()
   codediff_open("main...")

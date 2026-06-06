@@ -54,10 +54,8 @@ local function is_outline_buffer(buf)
 end
 
 local function sessions_close_outline()
-  local ok, outline = pcall(require, "outline")
-  if ok and outline.is_open() then
-    pcall(vim.cmd, "OutlineClose")
-  end
+  local outline = require("outline")
+  outline.close_if_loaded()
 end
 
 local function sessions_strip_outline_buffers()
