@@ -1,9 +1,9 @@
 -- Treesitter parsers for sticky context only; Vim syntax/highlighting stays native.
 -- Requires `tree-sitter` on PATH.
 
-local M = {}
+local env = require("env")
 
-local NVIM_TS_REPO = "https://github.com/nvim-treesitter/nvim-treesitter"
+local M = {}
 
 local TS_PARSERS = {
   "lua",
@@ -22,55 +22,9 @@ local TS_PARSERS = {
   "html",
 }
 
---- vim.pack clones legacy master; re-clone main when the plugin dir is missing or corrupt.
-local function ensure_nvim_treesitter_plugin()
-  local dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/nvim-treesitter"
-  local init_lua = dir .. "/lua/nvim-treesitter/init.lua"
-
-  if vim.fn.filereadable(init_lua) == 1 then
-    return true
-  end
-
-  if vim.fn.isdirectory(dir) == 1 then
-    vim.fn.delete(dir, "rf")
-  end
-
-  local clone = vim
-    .system({
-      "git",
-      "clone",
-      "--depth",
-      "1",
-      "--branch",
-      "main",
-      NVIM_TS_REPO,
-      dir,
-    }, { text = true })
-    :wait()
-
-  if clone.code ~= 0 or vim.fn.filereadable(init_lua) ~= 1 then
-    vim.notify(
-      "nvim-treesitter: failed to install plugin — " .. (clone.stderr or clone.stdout or "unknown error"),
-      vim.log.levels.ERROR
-    )
-    return false
-  end
-
-  package.loaded["nvim-treesitter"] = nil
-  vim.cmd("packadd nvim-treesitter")
-  return true
-end
-
 local function setup_treesitter()
-  for _, brew_bin in ipairs({ "/opt/homebrew/bin", "/usr/local/bin" }) do
-    if vim.fn.isdirectory(brew_bin) == 1 and not vim.env.PATH:find(brew_bin, 1, true) then
-      vim.env.PATH = brew_bin .. ":" .. vim.env.PATH
-    end
-  end
-
-  if not ensure_nvim_treesitter_plugin() then
-    return
-  end
+  env.prepend_existing_path("/usr/local/bin")
+  env.prepend_existing_path("/opt/homebrew/bin")
 
   local ts = require("nvim-treesitter")
   ts.setup({ install_dir = vim.fn.stdpath("data") .. "/site" })

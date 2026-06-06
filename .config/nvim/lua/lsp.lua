@@ -1,6 +1,7 @@
 -- LSP, completion, diagnostics, and format-on-save setup.
 -- fzf-lua setup intentionally lives in explorer.lua; picker use sites stay lazy here.
 
+local env = require("env")
 local map = require("map")
 
 local M = {}
@@ -33,11 +34,8 @@ require("mason").setup({
   },
 })
 
--- Prefer Mason binaries for LSP/formatters/search without system installs
-vim.env.PATH = table.concat({
-  vim.fn.stdpath("data") .. "/mason/bin",
-  vim.env.PATH,
-}, vim.fn.has("win32") == 1 and ";" or ":")
+-- Prefer Mason binaries for LSP/formatters/search without system installs.
+env.prepend_path(vim.fn.stdpath("data") .. "/mason/bin")
 
 require("mason-tool-installer").setup({
   ensure_installed = MASON_TOOLS,

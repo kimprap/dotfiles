@@ -86,6 +86,7 @@ Keep `init.lua` as a thin bootstrap: netrw disable, `vim.pack.add`, leader, orde
 |---|---|
 | `lua/map.lua` | Shared tiny `map()` wrapper for modules defining keymaps |
 | `lua/workspace.lua` | Workspace labels and session path/restore predicates shared by explorer and sessions |
+| `lua/env.lua` | Shared PATH prep helper for Homebrew and Mason binaries |
 | `lua/options.lua` | `vim.opt`, colorscheme, colorcolumn, trailing whitespace, yank highlight, cursor restore |
 | `lua/mini.lua` | mini.nvim plugins in one file: core basics/pairs/comment/surround/cursorword/indentscope/pick/move/icons/bufremove, plus late statusline and clue setup |
 | `lua/explorer.lua` | oil, nvim-tree, fff, fzf-lua, session-aware directory handling |
@@ -95,8 +96,8 @@ Keep `init.lua` as a thin bootstrap: netrw disable, `vim.pack.add`, leader, orde
 | `lua/ui.lua` | scrollbar, search-scrollbar handler/keymaps, neoscroll, fold keymaps |
 | `lua/keymaps.lua` | General keymaps plus keymap-driven state: custom jumplist, zoom, copy lines, save/quit, yank-path |
 | `lua/outline.lua` | outline.nvim setup + inline line-number monkey patch + manual sync keymaps |
-| `lua/treesitter.lua` | nvim-treesitter bootstrap, parser install guard, Homebrew PATH, treesitter-context |
-| `lua/lsp.lua` | Mason PATH/tools, blink, conform + EOF hook, diagnostics, LSP attach/detach, manual LSP picker, `<leader>L*`, `<leader>x*` |
+| `lua/treesitter.lua` | nvim-treesitter parser install guard, Homebrew PATH, treesitter-context |
+| `lua/lsp.lua` | Mason tools, blink, conform + EOF hook, diagnostics, LSP attach/detach, manual LSP picker, `<leader>L*`, `<leader>x*` |
 | `lsp/*.lua` | Per-server native configs |
 
 ## Plugin selection rule

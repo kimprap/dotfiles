@@ -27,7 +27,7 @@ vim.pack.add({
   { src = "https://github.com/karb94/neoscroll.nvim" },
 
   -- Treesitter parsers + sticky context.
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
 
   -- LSP + completion
