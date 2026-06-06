@@ -49,7 +49,7 @@ local outline = load_outline_plugin()
 outline.setup({
   outline_window = {
     focus_on_open = true,
-    width = 15,
+    width = 20,
   },
   outline_items = {
     show_symbol_details = false,
