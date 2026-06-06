@@ -14,12 +14,12 @@ local function load_outline_plugin()
   error("outline.nvim plugin module not found")
 end
 
--- Patch outline.nvim to render compact line numbers at end-of-line.
--- Must run before outline starts building sidebar lines.
--- Remove when upstream supports equivalent inline line numbers.
+-- Upstream line numbers use a left overlay column; keep compact EOL numbers.
 local outline_hl = require("outline.highlight")
 local Sidebar = require("outline.sidebar")
-local orig_build = Sidebar.build_outline
+local orig_build = Sidebar._dotfiles_build_outline_orig or Sidebar.build_outline
+
+Sidebar._dotfiles_build_outline_orig = orig_build
 
 function outline_hl.linenos(bufnr, linenos, _)
   for index, lineno in ipairs(linenos) do

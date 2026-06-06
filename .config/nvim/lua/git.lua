@@ -99,13 +99,14 @@ local function codediff_focus_panel(tabpage)
   end
 end
 
--- Patch before codediff.setup(): setup loads side_by_side, which caches setup_all_keymaps.
+-- Upstream only binds focus_explorer for explorer mode; bind it for history too.
 do
   local lifecycle = require("codediff.ui.lifecycle")
   local view_keymaps = require("codediff.ui.view.keymaps")
-  local setup_all_keymaps_orig = view_keymaps.setup_all_keymaps
+  local setup_all_keymaps_orig = view_keymaps._dotfiles_setup_all_keymaps_orig or view_keymaps.setup_all_keymaps
 
-  function view_keymaps.setup_all_keymaps(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
+  view_keymaps._dotfiles_setup_all_keymaps_orig = setup_all_keymaps_orig
+  view_keymaps.setup_all_keymaps = function(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
     setup_all_keymaps_orig(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
     local session = lifecycle.get_session(tabpage)
     if not session or (session.mode ~= "explorer" and session.mode ~= "history") then
