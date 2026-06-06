@@ -47,6 +47,8 @@ require("mason-tool-installer").setup({
   ensure_installed = MASON_TOOLS,
   auto_update = false,
   run_on_start = true,
+  start_delay = 3000,
+  debounce_hours = 24,
 })
 
 require("conform").setup({

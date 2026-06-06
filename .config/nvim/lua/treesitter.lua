@@ -6,20 +6,20 @@ local env = require("env")
 local M = {}
 
 local TS_PARSERS = {
-  "lua",
-  "python",
-  "rust",
-  "zig",
-  "bash",
-  "yaml",
-  "toml",
-  "json",
-  "markdown",
-  "dockerfile",
-  "typescript",
-  "javascript",
-  "css",
-  "html",
+  lua = true,
+  python = true,
+  rust = true,
+  zig = true,
+  bash = true,
+  yaml = true,
+  toml = true,
+  json = true,
+  markdown = true,
+  dockerfile = true,
+  typescript = true,
+  javascript = true,
+  css = true,
+  html = true,
 }
 
 local function setup_treesitter()
@@ -45,8 +45,6 @@ local function setup_treesitter()
     return
   end
 
-  ts.install(TS_PARSERS)
-
   local ts_parsers = require("nvim-treesitter.parsers")
 
   vim.api.nvim_create_autocmd("FileType", {
@@ -57,10 +55,13 @@ local function setup_treesitter()
         return
       end
       local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
-      if not lang or not ts_parsers[lang] then
+      if not lang or not TS_PARSERS[lang] or not ts_parsers[lang] then
         return
       end
-      ts.install({ lang })
+      local ok = vim.treesitter.language.add(lang)
+      if not ok then
+        ts.install({ lang })
+      end
     end,
   })
 end
