@@ -11,7 +11,7 @@ local function get_search_line_positions(bufnr)
   local positions = {}
   local seen_lines = {}
   for lnum = 1, vim.api.nvim_buf_line_count(bufnr) do
-    local line = (vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or "")
+    local line = vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or ""
     local start = 0
     while true do
       local match = vim.fn.matchstrpos(line, pattern, start)
@@ -20,7 +20,7 @@ local function get_search_line_positions(bufnr)
       end
       if not seen_lines[lnum] then
         seen_lines[lnum] = true
-        positions[#positions + 1] = { lnum }
+        positions[#positions + 1] = lnum
       end
       start = match[3]
     end
@@ -157,9 +157,9 @@ require("scrollbar.handlers").register("search", function(bufnr)
   end
   local config = require("scrollbar.config").get()
   local marks = {}
-  for _, result in ipairs(get_search_line_positions(bufnr)) do
+  for _, lnum in ipairs(get_search_line_positions(bufnr)) do
     marks[#marks + 1] = {
-      line = result[1] - 1,
+      line = lnum - 1,
       text = mark_text(config, "Search"),
       type = "Search",
       level = 1,

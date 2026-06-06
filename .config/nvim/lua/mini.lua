@@ -60,38 +60,27 @@ function M.setup_statusline()
   end
 
   local function buffer_flags_statusline()
-    local flags = {}
-    if vim.bo.modified then
-      table.insert(flags, "%#DiagnosticWarn#●")
+    local modified = vim.bo.modified and "%#DiagnosticWarn#●" or ""
+    local readonly = vim.bo.readonly and "%#DiagnosticError#" or ""
+    if modified ~= "" and readonly ~= "" then
+      return modified .. " " .. readonly
     end
-    if vim.bo.readonly then
-      table.insert(flags, "%#DiagnosticError#")
-    end
-    return table.concat(flags, " ")
+    return modified .. readonly
   end
 
-  local function diagnostic_count(severity)
-    local count = 0
-    for _ in ipairs(vim.diagnostic.get(0, { severity = severity })) do
-      count = count + 1
-    end
-    return count
-  end
+  local DIAGNOSTIC_STATUS = {
+    { vim.diagnostic.severity.ERROR, "DiagnosticError", "❌" },
+    { vim.diagnostic.severity.WARN, "DiagnosticWarn", "⚠️" },
+    { vim.diagnostic.severity.INFO, "DiagnosticInfo", "ℹ️" },
+    { vim.diagnostic.severity.HINT, "DiagnosticHint", "💡" },
+  }
 
   local function diagnostic_statusline()
-    local severities = vim.diagnostic.severity
-    local items = {
-      { diagnostic_count(severities.ERROR), "DiagnosticError", "❌" },
-      { diagnostic_count(severities.WARN), "DiagnosticWarn", "⚠️" },
-      { diagnostic_count(severities.INFO), "DiagnosticInfo", "ℹ️" },
-      { diagnostic_count(severities.HINT), "DiagnosticHint", "💡" },
-    }
-
     local parts = {}
-    for _, item in ipairs(items) do
-      local count, highlight, icon = item[1], item[2], item[3]
+    for _, item in ipairs(DIAGNOSTIC_STATUS) do
+      local count = #vim.diagnostic.get(0, { severity = item[1] })
       if count > 0 then
-        table.insert(parts, string.format("%%#%s#%s %d", highlight, icon, count))
+        parts[#parts + 1] = string.format("%%#%s#%s %d", item[2], item[3], count)
       end
     end
     return table.concat(parts, " ")
@@ -177,7 +166,7 @@ function M.setup_clue()
       { mode = "v", keys = "<Leader>g", desc = "+Git view" },
       { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
       { mode = "n", keys = "<Leader>z", desc = "+Folds" },
-      { mode = "n", keys = "<Leader>T", desc = "Find color" },
+      { mode = "n", keys = "<Leader>T", desc = "Reopen last closed buffer" },
       { mode = "n", keys = "]d", desc = "Next diagnostic" },
       { mode = "n", keys = "[d", desc = "Prev diagnostic" },
       { mode = "n", keys = "<C-]>", desc = "Next git hunk (editor)" },

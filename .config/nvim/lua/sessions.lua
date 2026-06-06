@@ -26,10 +26,19 @@ local function is_oil_or_dir_buffer(buf)
   return vim.fn.isdirectory(vim.fn.fnamemodify(name, ":p")) == 1
 end
 
-local function sessions_strip_explorer_buffers()
+local function close_and_delete_buffer(buf)
+  for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+    if vim.api.nvim_win_is_valid(win) then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+  pcall(vim.api.nvim_buf_delete, buf, { force = true })
+end
+
+local function strip_buffers(predicate)
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if is_oil_or_dir_buffer(buf) then
-      pcall(vim.api.nvim_buf_delete, buf, { force = true })
+    if predicate(buf) then
+      close_and_delete_buffer(buf)
     end
   end
 end
@@ -52,16 +61,7 @@ local function sessions_close_outline()
 end
 
 local function sessions_strip_outline_buffers()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if is_outline_buffer(buf) then
-      for _, win in ipairs(vim.fn.win_findbuf(buf)) do
-        if vim.api.nvim_win_is_valid(win) then
-          pcall(vim.api.nvim_win_close, win, true)
-        end
-      end
-      pcall(vim.api.nvim_buf_delete, buf, { force = true })
-    end
-  end
+  strip_buffers(is_outline_buffer)
 end
 
 local function is_starter_buffer(buf)
@@ -75,16 +75,7 @@ local function is_starter_buffer(buf)
 end
 
 local function sessions_strip_starter_buffers()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if is_starter_buffer(buf) then
-      for _, win in ipairs(vim.fn.win_findbuf(buf)) do
-        if vim.api.nvim_win_is_valid(win) then
-          pcall(vim.api.nvim_win_close, win, true)
-        end
-      end
-      pcall(vim.api.nvim_buf_delete, buf, { force = true })
-    end
-  end
+  strip_buffers(is_starter_buffer)
 end
 
 -- `nvim .` / oil leave dirs on the arglist; mksession persists them -> ghost explorer on restore
@@ -99,7 +90,7 @@ end
 
 local function sessions_cleanup_explorers()
   sessions_strip_dir_args()
-  sessions_strip_explorer_buffers()
+  strip_buffers(is_oil_or_dir_buffer)
 end
 
 local function sessions_cleanup_ephemeral()

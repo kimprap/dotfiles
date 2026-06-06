@@ -134,7 +134,6 @@ local function enable_lsp_servers()
   end
 end
 
-
 local function enforce_manual_lsp(args)
   local bufnr = args.buf
   local manual = vim.b[bufnr].lsp_manual
@@ -250,33 +249,18 @@ local function lsp_refresh_ui(bufnr, ft)
   end)
 end
 
--- Soft detect: only when filetype empty (picker open). Does not clear an existing filetype.
-local function lsp_soft_detect_filetype(bufnr)
-  if vim.bo[bufnr].filetype ~= "" then
+local function detect_filetype(bufnr, reset)
+  if not reset and vim.bo[bufnr].filetype ~= "" then
     return vim.bo[bufnr].filetype
   end
-  vim.api.nvim_buf_call(bufnr, function()
-    pcall(vim.cmd, "filetype", "detect")
-  end)
-  local ft = vim.bo[bufnr].filetype
-  if ft == "" then
-    local path = vim.api.nvim_buf_get_name(bufnr)
-    if path ~= "" then
-      ft = vim.filetype.match({ buf = bufnr, filename = path }) or ""
-    end
-  end
-  if ft ~= "" then
-    lsp_set_filetype(bufnr, ft)
-  end
-  return ft
-end
 
--- Hard detect: reset then detect (Auto restore).
-local function lsp_detect_filetype(bufnr)
   vim.api.nvim_buf_call(bufnr, function()
-    vim.bo.filetype = ""
+    if reset then
+      vim.bo.filetype = ""
+    end
     pcall(vim.cmd, "filetype", "detect")
   end)
+
   local ft = vim.bo[bufnr].filetype
   if ft == "" then
     local path = vim.api.nvim_buf_get_name(bufnr)
@@ -292,7 +276,7 @@ end
 
 local function lsp_restore_automatic(bufnr)
   vim.b[bufnr].lsp_manual = nil
-  local ft = lsp_detect_filetype(bufnr)
+  local ft = detect_filetype(bufnr, true)
   lsp_detach_buffer(bufnr)
   lsp_attach_for_filetype(bufnr, ft)
   lsp_refresh_ui(bufnr, ft)
@@ -360,7 +344,7 @@ end
 
 local function lsp_pick_server()
   local bufnr = vim.api.nvim_get_current_buf()
-  local ft = lsp_soft_detect_filetype(bufnr)
+  local ft = detect_filetype(bufnr, false)
   local attached = {}
   for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
     attached[client.name] = true
