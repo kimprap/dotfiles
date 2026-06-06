@@ -167,7 +167,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 -- Buffer navigation with <Tab> / <S-Tab>
 vim.keymap.set("n", "<Tab>", "<Cmd>BufferNext<CR>", { desc = "Next buffer" })
 vim.keymap.set("n", "<S-Tab>", "<Cmd>BufferPrevious<CR>", { desc = "Previous buffer" })
--- VSCode-style reorder: Cmd+Ctrl+Shift+[ / ]
+-- Reorder tabs.
 vim.keymap.set("n", "<D-C-S-[>", "<Cmd>BufferMovePrevious<CR>", { desc = "Move buffer tab left" })
 vim.keymap.set("n", "<D-C-S-]>", "<Cmd>BufferMoveNext<CR>", { desc = "Move buffer tab right" })
 -- Pin / unpin current buffer (BufferPin toggles)
@@ -182,7 +182,7 @@ map("n", "<C-Q>", function()
   M.close_editor(true)
 end, { desc = "Force close editor" })
 
--- Reopen last closed buffer (like Ctrl+Shift+T in VSCode / browsers)
+-- Reopen the most recently closed file buffer.
 local closed_buffers = {}
 
 vim.api.nvim_create_autocmd("BufDelete", {

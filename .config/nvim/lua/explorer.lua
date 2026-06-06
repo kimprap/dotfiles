@@ -123,20 +123,20 @@ require("fff").setup({
   },
 })
 
--- Finders - Project-wise
+-- Project finders
 vim.keymap.set("n", "<leader>f", function()
   require("fff").find_files()
 end, { desc = "Find files in project (fff)" })
 
 vim.keymap.set("n", "<leader>/", function()
   require("fff").live_grep()
-end, { desc = "Grep in project (fzf-lua)" })
+end, { desc = "Grep in project (fff)" })
 
 vim.keymap.set("n", "<leader>,", function()
   require("mini.pick").builtin.buffers()
 end, { desc = "Find open buffers" })
 
--- Finders - Global
+-- Global finders
 vim.keymap.set("n", "<leader>F", function()
   require("fzf-lua").files({
     cwd = vim.fn.expand("~"),
@@ -154,7 +154,7 @@ vim.keymap.set("n", "<leader>?", function()
   })
 end, { desc = "Grep anywhere (global)" })
 
--- Recent files; uses v:oldfiles via fzf-lua — no extra plugin
+-- Recent files from v:oldfiles.
 vim.keymap.set("n", "<leader>r", function()
   require("fzf-lua").oldfiles({
     prompt = "Recent> ",

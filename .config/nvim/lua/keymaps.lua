@@ -241,9 +241,7 @@ map("n", "gg", "ggzz", { desc = "Go to top + center" })
 map("n", "n", "nzz", { desc = "Next search result (centered)" })
 map("n", "N", "Nzz", { desc = "Previous search result (centered)" })
 
--- Smooth page scroll (pookie-style). C-y/C-e and zt/zz/zb stay native Vim.
-
--- Line scroll (viewport only; cursor stays). Letter d/u - not <C-S-Down>/<C-S-Up> (window resize).
+-- Line scroll keeps the cursor in place; native <C-y>/<C-e> remain available.
 local function scroll_view(keys)
   vim.cmd("normal! " .. vim.api.nvim_replace_termcodes(keys, true, false, true))
 end
@@ -270,8 +268,7 @@ map("v", "<leader>p", '"_dP', { desc = "Paste over without yanking" })
 map("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
 map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
 
--- Copy line(s) down/up (VSCode: Alt+Shift+Down/Up). Alt+Shift+j/k is free:
--- mini.move uses Alt+j/k (move, not copy); J is join, not Alt+Shift+j.
+-- Copy line or selection without moving it.
 local function copy_line(dir)
   local pos = vim.fn.getcurpos()
   vim.cmd(dir == "down" and "copy ." or "copy .-1")
@@ -332,7 +329,7 @@ map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
 end, { desc = "Toggle word wrap" })
 
--- Copy paths from the active buffer (no explorer needed; like VSCode "Copy Path")
+-- Copy paths from the active buffer.
 map("n", "<leader>yp", function()
   local path = vim.api.nvim_buf_get_name(0)
   if path == "" then

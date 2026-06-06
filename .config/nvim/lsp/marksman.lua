@@ -1,5 +1,4 @@
---- Markdown LSP — outline sidebar, diagnostics, completion (Phase 6).
---- Phase 7 treesitter adds markdown syntax/highlighting only; keep this server.
+--- Markdown LSP for diagnostics, completion, and outline symbols.
 ---@type vim.lsp.Config
 return {
   cmd = { "marksman", "server" },

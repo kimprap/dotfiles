@@ -1,7 +1,4 @@
--- ============================================
--- Plugins
--- ============================================
--- oil + nvim-tree replace netrw; avoid ghost dir buffers on `nvim .`
+-- Disable netrw before explorer plugins load.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -29,7 +26,7 @@ vim.pack.add({
   { src = "https://github.com/petertriho/nvim-scrollbar" },
   { src = "https://github.com/karb94/neoscroll.nvim" },
 
-  -- Treesitter parsers + sticky context (Phase 7; needs `brew install tree-sitter-cli`)
+  -- Treesitter parsers + sticky context.
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
 
@@ -51,9 +48,6 @@ require("options")
 mini.setup_core()
 
 require("explorer")
--- ============================================================
--- Phase 4: Sessions, Starter, Tabs & Buffer Management
--- ============================================================
 require("git")
 require("sessions")
 require("buffers")
@@ -67,11 +61,10 @@ require("treesitter")
 require("lsp")
 mini.setup_statusline()
 
--- Key hints (mini.clue — which-key alternative; setup last so LSP buffer maps take precedence)
+-- Configure key hints last so buffer-local LSP maps are included.
 mini.setup_clue()
 
 -- Sourcing $MYVIMRC re-enables hlsearch; @/ keeps the last pattern → highlights return.
 -- Clear visuals after load (pattern stays for n/N/cgn). <leader>c does the same on demand.
 vim.cmd.nohlsearch()
 require("ui").refresh_search_scrollbar()
-

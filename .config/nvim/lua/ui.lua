@@ -81,7 +81,7 @@ map("n", "<leader>c", function()
   M.refresh_search_scrollbar()
 end, { desc = "Clear search highlight" })
 
--- Folding (LSP-driven); VSCode-ish keymaps in addition to native za/zR/zM
+-- Fold keymaps in addition to native za/zR/zM.
 map("n", "<leader>zf", "za", { desc = "Toggle fold" })
 map("n", "<leader>zo", "zR", { desc = "Open all folds" })
 map("n", "<leader>zc", "zM", { desc = "Close all folds" })

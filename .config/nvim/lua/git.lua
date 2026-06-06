@@ -45,7 +45,7 @@ map("n", "<C-[>", function()
   require("gitsigns").nav_hunk("prev")
 end, { desc = "Prev git hunk" })
 
--- Git view: codediff (VSCode-style diffs)
+-- Git diff views.
 local function codediff_in_tab(tab)
   tab = tab or vim.api.nvim_get_current_tabpage()
   local ok, session_mod = pcall(require, "codediff.ui.lifecycle.session")

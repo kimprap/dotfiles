@@ -1,7 +1,5 @@
--- Treesitter parsers + sticky context.
--- Vim syntax unchanged; parsers feed treesitter-context only (no TS highlight/indent/folds).
--- Prereq: brew install tree-sitter-cli
--- Maint: :TSContext toggle | :checkhealth nvim-treesitter | :TSUpdate
+-- Treesitter parsers for sticky context only; Vim syntax/highlighting stays native.
+-- Requires `tree-sitter` on PATH.
 
 local M = {}
 

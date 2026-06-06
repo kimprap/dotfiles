@@ -15,7 +15,7 @@ Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `min
 
 - Using `vim.pack` (built-in, no lazy.nvim).
 - Primary explorer: `oil.nvim` (`default_file_explorer = true`).
-- Secondary explorer: `mini.files` (popup via `<leader>e`).
+- Secondary explorer: `nvim-tree` floating tree (`<leader>e`).
 - Project file finding: `fff.nvim`.
 - Project grep: `fff` (`live_grep`).
 - Global search: `fzf-lua`.
@@ -70,7 +70,7 @@ Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `min
 |---|---|---|---|
 | 1 | Core Foundation | Done | Options, theme, centering helpers |
 | 2 | Keymaps + Motions + QoL | Done | mini basics, yank highlight, mini.move, cursor restore, trailing whitespace, copy lines, search case toggle |
-| 3 | File Explorer & Finder | Done | oil + mini.files + fff + fzf-lua |
+| 3 | File Explorer & Finder | Done | oil + nvim-tree + fff + fzf-lua |
 | 4 | Tabs & Buffer Management | Done | barbar, `<Tab>`/`<S-Tab>`, mini.sessions, mini.starter, close/save keymaps, split-aware close |
 | 5 | Gutter, Outline, Scrollbar, Statusline | Done | gitsigns, outline, scrollbar, mini.statusline |
 | 6 | LSP + Completion | Done | blink.cmp, Mason, conform, `lsp/*.lua`, diagnostics, LSP folds, `<leader>L*` |
@@ -88,7 +88,7 @@ Keep `init.lua` as a thin bootstrap: netrw disable, `vim.pack.add`, leader, orde
 | `lua/workspace.lua` | Workspace labels and session path/restore predicates shared by explorer and sessions |
 | `lua/options.lua` | `vim.opt`, colorscheme, colorcolumn, trailing whitespace, yank highlight, cursor restore |
 | `lua/mini.lua` | mini.nvim plugins in one file: core basics/pairs/comment/surround/cursorword/indentscope/pick/move/icons/bufremove, plus late statusline and clue setup |
-| `lua/explorer.lua` | oil, mini.files, fff, fzf-lua, session-aware directory handling |
+| `lua/explorer.lua` | oil, nvim-tree, fff, fzf-lua, session-aware directory handling |
 | `lua/sessions.lua` | mini.sessions hooks, ephemeral cleanup, starter VimEnter, `<leader>S*` |
 | `lua/git.lua` | lazy gitsigns setup/attach, codediff setup + `<leader>g*` |
 | `lua/buffers.lua` | barbar, `<Tab>` nav, `close_editor`, buffer reopen, dirty-tab highlights |

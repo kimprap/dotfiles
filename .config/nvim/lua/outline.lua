@@ -1,7 +1,5 @@
--- Symbol outline — https://github.com/hedyhli/outline.nvim
--- LSP documentSymbol backend (marksman for markdown, language servers for code).
--- Phase 7 treesitter-context for sticky scroll; outline stays LSP documentSymbol-based.
--- Custom (intentional): exclude-noise filter, inline line numbers, manual sync keymaps.
+-- Symbol outline backed by LSP document symbols.
+-- Keeps the sidebar concise with filtered symbols, inline line numbers, and manual sync.
 
 local map = require("map")
 
@@ -16,11 +14,9 @@ local function load_outline_plugin()
   error("outline.nvim plugin module not found")
 end
 
--- Monkey patch target: outline.highlight.linenos and Sidebar:build_outline.
--- Why: render compact inline line numbers while keeping manual symbol sync behavior.
--- Ordering: must run before outline starts using Sidebar:build_outline.
--- Removal: drop when outline.nvim supports equivalent inline line numbers upstream.
--- Smoke test: <leader>o opens synced outline with one-space inline line numbers.
+-- Patch outline.nvim to render compact line numbers at end-of-line.
+-- Must run before outline starts building sidebar lines.
+-- Remove when upstream supports equivalent inline line numbers.
 local outline_hl = require("outline.highlight")
 local Sidebar = require("outline.sidebar")
 local orig_build = Sidebar.build_outline
