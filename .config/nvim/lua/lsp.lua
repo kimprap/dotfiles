@@ -51,6 +51,24 @@ require("mason-tool-installer").setup({
   debounce_hours = 24,
 })
 
+local function save_buffer_views(bufnr)
+  local views = {}
+  for _, win in ipairs(vim.fn.win_findbuf(bufnr)) do
+    if vim.api.nvim_win_is_valid(win) then
+      views[win] = vim.api.nvim_win_call(win, vim.fn.winsaveview)
+    end
+  end
+  return function()
+    for win, view in pairs(views) do
+      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == bufnr then
+        pcall(vim.api.nvim_win_call, win, function()
+          vim.fn.winrestview(view)
+        end)
+      end
+    end
+  end
+end
+
 require("conform").setup({
   formatters_by_ft = {
     lua = { "stylua" },
@@ -71,7 +89,10 @@ require("conform").setup({
     if vim.bo[bufnr].filetype == "" then
       return nil
     end
-    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }
+    local restore_views = save_buffer_views(bufnr)
+    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }, function()
+      restore_views()
+    end
   end,
 })
 

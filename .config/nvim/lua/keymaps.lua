@@ -27,12 +27,41 @@ map("n", "<C-S-=>", "<C-w>=", { desc = "Equalize window sizes" })
 local zoom_state = {}
 local zoom_augroup = vim.api.nvim_create_augroup("user.zoom", { clear = true })
 
+local function normal_windows(tab)
+  return vim.tbl_filter(function(win)
+    return vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_config(win).relative == ""
+  end, vim.api.nvim_tabpage_list_wins(tab))
+end
+
+local function clear_zoom(tab)
+  local key = tostring(tab)
+  if zoom_state[key] == nil and vim.t.is_zoomed == nil then
+    return
+  end
+  zoom_state[key] = nil
+  if tab == vim.api.nvim_get_current_tabpage() then
+    vim.t.is_zoomed = nil
+    vim.cmd.redrawstatus()
+  end
+end
+
+local function zoom_state_is_stale(tab, state)
+  if not state or not vim.api.nvim_win_is_valid(state.win) then
+    return true
+  end
+  return #normal_windows(tab) <= 1
+end
+
 map("n", "<C-S-CR>", function()
   local tab = vim.api.nvim_get_current_tabpage()
   local key = tostring(tab)
   local cur = vim.api.nvim_get_current_win()
 
   if zoom_state[key] then
+    if zoom_state_is_stale(tab, zoom_state[key]) then
+      clear_zoom(tab)
+      return
+    end
     local saved = zoom_state[key]
     for win, dim in pairs(saved.sizes) do
       if vim.api.nvim_win_is_valid(win) then
@@ -49,7 +78,7 @@ map("n", "<C-S-CR>", function()
     return
   end
 
-  local wins = vim.api.nvim_tabpage_list_wins(tab)
+  local wins = normal_windows(tab)
   if #wins <= 1 then
     return
   end
@@ -70,10 +99,19 @@ map("n", "<C-S-CR>", function()
   vim.cmd.redrawstatus()
 end, { desc = "Toggle zoom current window" })
 
-vim.api.nvim_create_autocmd("TabClosed", {
+vim.api.nvim_create_autocmd({ "TabClosed", "WinClosed" }, {
   group = zoom_augroup,
   callback = function(ev)
-    zoom_state[tostring(ev.match)] = nil
+    if ev.event == "TabClosed" then
+      zoom_state[tostring(ev.match)] = nil
+      return
+    end
+    vim.schedule(function()
+      local tab = vim.api.nvim_get_current_tabpage()
+      if zoom_state_is_stale(tab, zoom_state[tostring(tab)]) then
+        clear_zoom(tab)
+      end
+    end)
   end,
 })
 
@@ -322,7 +360,7 @@ local function quit_all_force()
 end
 
 map("n", "<leader>w", ":w<CR>", { desc = "Save file" })
-map("n", "<leader>W", ":wq<CR>", { desc = "Save and quit" })
+map("n", "<leader>W", ":wqa<CR>", { desc = "Save all and quit Neovim" })
 map("n", "<leader>q", function()
   buffers.close_editor(false)
 end, { desc = "Close editor (split-aware)" })
