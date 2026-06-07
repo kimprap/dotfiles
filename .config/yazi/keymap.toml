@@ -1,5 +1,6 @@
 [mgr]
 prepend_keymap = [
-  { on = "<Esc>", run = "quit", desc = "Quit Yazi" }
+  { on = "<Esc>", run = "quit", desc = "Quit Yazi" },
+  { on = "e", run = 'shell --block -- nvim .', desc = "Open cwd in Neovim" }
 ]
 
