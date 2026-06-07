@@ -313,7 +313,7 @@ map("v", "J", "Jgv", { desc = "Join selected lines and reselect" })
 local function copy_line(dir)
   local pos = vim.fn.getcurpos()
   vim.cmd(dir == "down" and "copy ." or "copy .-1")
-  vim.fn.cursor(pos[2], pos[3])
+  vim.fn.cursor(dir == "up" and pos[2] + 1 or pos[2], pos[3])
 end
 
 map("n", "<A-S-j>", function()
