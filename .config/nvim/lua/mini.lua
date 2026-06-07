@@ -60,7 +60,7 @@ function M.setup_statusline()
   end
 
   local function buffer_flags_statusline()
-    local modified = vim.bo.modified and "%#DiagnosticWarn#●" or ""
+    local modified = vim.bo.modified and "%#DiagnosticWarn#[+]" or ""
     local readonly = vim.bo.readonly and "%#DiagnosticError#" or ""
     if modified ~= "" and readonly ~= "" then
       return modified .. " " .. readonly
@@ -69,10 +69,10 @@ function M.setup_statusline()
   end
 
   local DIAGNOSTIC_STATUS = {
-    { vim.diagnostic.severity.ERROR, "DiagnosticError", "❌" },
-    { vim.diagnostic.severity.WARN, "DiagnosticWarn", "⚠️" },
-    { vim.diagnostic.severity.INFO, "DiagnosticInfo", "ℹ️" },
-    { vim.diagnostic.severity.HINT, "DiagnosticHint", "💡" },
+    { vim.diagnostic.severity.ERROR, "DiagnosticError", "" },
+    { vim.diagnostic.severity.WARN, "DiagnosticWarn", "󰀪" },
+    { vim.diagnostic.severity.INFO, "DiagnosticInfo", "󰋽" },
+    { vim.diagnostic.severity.HINT, "DiagnosticHint", "󰌶" },
   }
 
   local function diagnostic_statusline()
