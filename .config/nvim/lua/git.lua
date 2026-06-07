@@ -20,6 +20,7 @@ function M.setup()
   require("gitsigns").setup({
     signs = gitsigns_signs,
     signs_staged = gitsigns_signs,
+    attach_to_untracked = true,
     preview_config = {
       border = "rounded",
     },
@@ -63,6 +64,72 @@ end
 local codediff_did_setup = false
 local codediff_focus_panel
 
+local function codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
+  local lifecycle = require("codediff.ui.lifecycle")
+  local session = lifecycle.get_session(tabpage)
+  if not session then
+    return
+  end
+
+  local current_buf = vim.api.nvim_get_current_buf()
+  local side
+  if current_buf == original_bufnr then
+    side = "original"
+  elseif current_buf == modified_bufnr then
+    side = "modified"
+  else
+    return
+  end
+
+  local original_path, modified_path = lifecycle.get_paths(tabpage)
+  local rel_path = side == "original" and original_path or modified_path
+  local target_file
+  if rel_path and rel_path ~= "" and session.git_root then
+    target_file = session.git_root .. "/" .. rel_path
+  else
+    target_file = vim.api.nvim_buf_get_name(current_buf)
+  end
+  if not target_file or target_file == "" then
+    vim.notify("Buffer has no associated file path", vim.log.levels.WARN)
+    return
+  end
+
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local current_tab = vim.api.nvim_get_current_tabpage()
+  local tabs = vim.api.nvim_list_tabpages()
+  local current_index
+  for i, tab in ipairs(tabs) do
+    if tab == current_tab then
+      current_index = i
+      break
+    end
+  end
+
+  local target_tab
+  if current_index and current_index > 1 then
+    target_tab = tabs[current_index - 1]
+  else
+    vim.cmd("tabnew")
+    target_tab = vim.api.nvim_get_current_tabpage()
+    vim.cmd("tabmove 0")
+  end
+  if vim.api.nvim_get_current_tabpage() ~= target_tab then
+    vim.api.nvim_set_current_tabpage(target_tab)
+  end
+
+  local ok, err = pcall(vim.cmd, "edit " .. vim.fn.fnameescape(target_file))
+  if not ok then
+    vim.notify("Failed to open file: " .. err, vim.log.levels.ERROR)
+    return
+  end
+  pcall(vim.api.nvim_win_set_cursor, vim.api.nvim_get_current_win(), cursor)
+
+  if vim.api.nvim_tabpage_is_valid(current_tab) then
+    vim.api.nvim_set_current_tabpage(current_tab)
+    vim.cmd("tabclose")
+  end
+end
+
 local function setup_codediff_once()
   if codediff_did_setup then
     return
@@ -83,6 +150,9 @@ local function setup_codediff_once()
     lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
       codediff_focus_panel(tabpage)
     end, { desc = "Focus explorer/history panel" })
+    lifecycle.set_tab_keymap(tabpage, "n", "gf", function()
+      codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
+    end, { desc = "Open file in previous tab" })
   end
 
   require("codediff").setup({
@@ -95,7 +165,8 @@ local function setup_codediff_once()
       focus_on_select = false,
     },
     history = {
-      height = 5,
+      position = "left",
+      width = 28,
       view_mode = "tree",
     },
     keymaps = {
@@ -190,11 +261,14 @@ end, { desc = "Diff file vs main" })
 map("n", "<leader>gu", function()
   codediff_open("")
 end, { desc = "Diff uncommitted (explorer)" })
-map("n", "<leader>gL", function()
+map("n", "<leader>gl", function()
   codediff_open("history %")
 end, { desc = "Current file history (codediff)" })
-map("v", "<leader>gL", function()
+map("v", "<leader>gl", function()
   codediff_open("history", { visual = true })
 end, { desc = "Line history (codediff)" })
+map("n", "<leader>gL", function()
+  codediff_open("history")
+end, { desc = "Project history (codediff)" })
 
 return M
