@@ -29,6 +29,7 @@ vim.pack.add({
   -- Treesitter parsers + sticky context.
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
+  { src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 
   -- LSP + completion
   { src = "https://github.com/saghen/blink.cmp", version = "v1" },
@@ -57,6 +58,7 @@ require("keymaps")
 require("outline")
 
 require("treesitter")
+require("markdown")
 
 require("lsp")
 mini.setup_statusline()
