@@ -1,0 +1,1552 @@
+{
+    "global": {
+        "show_in_menu_bar": false
+    },
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "Escape: tap = esc, hold = modifier (escape_held; enables built-in esc+opt+* app shortcuts)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "escape",
+                                    "modifiers": {
+                                        "optional": ["any"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "set_variable": {
+                                            "name": "escape_held",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "to_after_key_up": [
+                                    {
+                                        "set_variable": {
+                                            "name": "escape_held",
+                                            "value": 0
+                                        }
+                                    }
+                                ],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Karabiner Json",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "escape",
+                                    "modifiers": {
+                                        "mandatory": ["option", "shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/.config/karabiner/karabiner.json'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Activity Monitor",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "escape",
+                                    "modifiers": {
+                                        "mandatory": ["left_control", "left_shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/System/Applications/Utilities/Activity Monitor.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Brave Browser - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "1",
+                                    "modifiers": {
+                                        "mandatory": ["left_option", "left_shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Brave Browser.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Brave Browser - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "1",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Brave Browser.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Ghostty - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "2",
+                                    "modifiers": {
+                                        "mandatory": ["left_option", "left_shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Ghostty.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Ghostty - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "2",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Ghostty.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Grok - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "3",
+                                    "modifiers": {
+                                        "mandatory": ["left_option", "left_shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Grok - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "3",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Claude - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "5",
+                                    "modifiers": {
+                                        "mandatory": ["left_option", "left_shift"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Claude - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "5",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Downloads - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "d",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Users/kim/Downloads"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Downloads - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "d",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Users/kim/Downloads"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Finder - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /System/Library/CoreServices/Finder.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Finder - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /System/Library/CoreServices/Finder.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Cursor - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Applications/'Cursor'.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Cursor - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "v",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Applications/'Cursor'.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Line - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Applications/Line.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Line - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /Applications/Line.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Spotify - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "y",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Spotify - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "y",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "YouTube Music - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "u",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "YouTube Music - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "u",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Notion - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "n"
+                                        }
+                                    ]
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Notion - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "n"
+                                        }
+                                    ]
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Stickies - built-in (hold esc + opt + k)",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": {
+                                        "mandatory": ["left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /System/Applications/Stickies.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Stickies - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open /System/Applications/Stickies.app"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Instagram - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Instagram - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Twitter - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Twitter - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "t",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Gmail - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Gmail - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "g",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "G Calendar - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "G Calendar - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "c",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "G Photos - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "p",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "G Photos - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "p",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Parallel - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "0",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Parallels Desktop.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Parallel - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "0",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Parallels Desktop.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "1Password - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "q",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/1Password.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "1Password - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "q",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/1Password.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Bitwarden - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Bitwarden.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Bitwarden - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "w",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/Applications/Bitwarden.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Passwords - built-in",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 0,
+                                                "vendor_id": 0
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "e",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift", "left_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/System/Applications/Passwords.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Passwords - bluetooth",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 591,
+                                                "vendor_id": 1452
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "e",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift", "right_option"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "open '/System/Applications/Passwords.app'"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "devices": [
+                {
+                    "identifiers": {
+                        "is_keyboard": true
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "caps_lock"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "escape"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "left_control"
+                            },
+                            "to": [
+                                {
+                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 842,
+                        "vendor_id": 1008
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "left_command"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_option"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "left_option"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_command"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 591,
+                        "vendor_id": 1452
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "consumer_key_code": "dictation"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "f5"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "caps_lock"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "escape"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "right_control"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "right_command"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "right_command"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "right_option"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
+                                "key_code": "left_control"
+                            },
+                            "to": [
+                                {
+                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "fn_function_keys": [
+                {
+                    "from": {
+                        "key_code": "f4"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f4"
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f5"
+                        }
+                    ]
+                }
+            ],
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "keyboard_type_v2": "ansi"
+            }
+        }
+    ]
+}
+

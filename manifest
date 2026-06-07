@@ -9,6 +9,7 @@ archive
 .config/ghostty
 .config/yazi
 .config/cursor
+.config/karabiner
 .config/scripts
 bin
 README.md
