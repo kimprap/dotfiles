@@ -5,6 +5,33 @@ local map = require("map")
 local workspace = require("workspace")
 
 local M = {}
+local explorer_augroup = vim.api.nvim_create_augroup("user.explorer", { clear = true })
+
+local function sync_nvim_tree_background()
+  local normal_bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
+  local normal_float = vim.api.nvim_get_hl(0, { name = "NormalFloat" })
+  local border = vim.api.nvim_get_hl(0, { name = "FloatBorder" })
+
+  vim.api.nvim_set_hl(0, "NvimTreeNormal", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "NvimTreeNormalFloat", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "NvimTreeEndOfBuffer", { fg = normal_bg, bg = normal_bg })
+  vim.api.nvim_set_hl(0, "NvimTreeSignColumn", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { link = "WinSeparator" })
+  vim.api.nvim_set_hl(0, "NvimTreeCursorLine", { link = "CursorLine" })
+  vim.api.nvim_set_hl(0, "NvimTreeFloatBorder", {
+    fg = border.fg or normal_float.fg,
+    bg = normal_bg,
+  })
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = explorer_augroup,
+  desc = "Match nvim-tree background to editor",
+  callback = sync_nvim_tree_background,
+})
+sync_nvim_tree_background()
+
 
 local function should_oil_hijack_dir()
   if workspace.will_restore_session() then
@@ -78,6 +105,38 @@ local function setup_nvim_tree_once()
   nvim_tree_did_setup = true
 end
 
+local function cleanup_hidden_fzf_buffers()
+  local function cleanup()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if
+        vim.api.nvim_buf_is_valid(buf)
+        and #vim.fn.win_findbuf(buf) == 0
+        and (vim.bo[buf].filetype == "fzf" or vim.api.nvim_buf_get_name(buf):match("term://.*fzf"))
+      then
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end
+    end
+  end
+  for _, delay in ipairs({ 250, 1000, 3000 }) do
+    vim.defer_fn(cleanup, delay)
+  end
+end
+
+local function fzf_file_edit_and_cleanup(selected, opts)
+  require("fzf-lua.actions").file_edit_or_qf(selected, opts)
+  cleanup_hidden_fzf_buffers()
+end
+
+local function fzf_file_actions()
+  local actions = require("fzf-lua.actions")
+  return {
+    ["enter"] = fzf_file_edit_and_cleanup,
+    ["ctrl-s"] = actions.file_split,
+    ["ctrl-v"] = actions.file_vsplit,
+    ["ctrl-t"] = actions.file_tabedit,
+  }
+end
+
 M.setup_fzf = function()
   if M.fzf_did_setup then
     return
@@ -87,9 +146,11 @@ M.setup_fzf = function()
       builtin = {
         ["<C-d>"] = "preview-page-down",
         ["<C-u>"] = "preview-page-up",
+        ["<M-Esc>"] = false,
       },
     },
     winopts = {
+      on_close = cleanup_hidden_fzf_buffers,
       preview = {
         winopts = {
           number = true,
@@ -157,6 +218,7 @@ map("n", "<leader>F", function()
   require("fzf-lua").files({
     cwd = vim.fn.expand("~"),
     prompt = "Global Files> ",
+    actions = fzf_file_actions(),
     winopts = { preview = { vertical = "up:45%" } },
   })
 end, { desc = "Find files anywhere (global)" })

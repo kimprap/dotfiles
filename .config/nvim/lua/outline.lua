@@ -58,19 +58,27 @@ local function setup_outline_once()
   outline.setup({
     outline_window = {
       focus_on_open = true,
-      width = 20,
+      width = 32,
+      auto_width = {
+        enabled = true,
+        max_width = 32,
+        include_symbol_details = false,
+      },
+      relative_width = false,
+      show_cursorline = "focus_in_outline",
     },
     outline_items = {
       show_symbol_details = false,
       show_symbol_lineno = false,
       highlight_hovered_item = true,
-      auto_set_cursor = false,
+      auto_set_cursor = true,
       auto_update_events = {
-        follow = false,
+        follow = { "CursorMoved" },
         items = { "LspAttach", "BufEnter", "BufWinEnter", "BufWritePost" },
       },
     },
     symbol_folding = {
+      autofold_depth = 1,
       auto_unfold = { hovered = false, only = false },
     },
     symbols = {
@@ -84,6 +92,11 @@ local function setup_outline_once()
           "Constructor",
           "Enum",
           "Interface",
+          "Property",
+          "Field",
+          "Variable",
+          "Boolean",
+          "Array",
           "Function",
           "Method",
           "Struct",
@@ -93,6 +106,15 @@ local function setup_outline_once()
           "Component",
           "Fragment",
         },
+      },
+      icons = {
+        Function = { icon = "ƒ", hl = "Function" },
+        Method = { icon = "ƒ", hl = "Function" },
+        StaticMethod = { icon = "ƒ", hl = "Function" },
+        Constructor = { icon = "ƒ", hl = "Special" },
+        Variable = { icon = "𝓥", hl = "Constant" },
+        Boolean = { icon = "𝓑", hl = "Boolean" },
+        Array = { icon = "[]", hl = "Identifier" },
       },
     },
   })
@@ -167,6 +189,12 @@ local function outline_sync_to_code(focus_outline, code_win)
   return true
 end
 
+local function equalize_windows_soon()
+  vim.defer_fn(function()
+    pcall(vim.cmd, "wincmd =")
+  end, 80)
+end
+
 local function outline_when_open(fn, attempt)
   attempt = attempt or 0
   if outline and outline.is_open() then
@@ -184,12 +212,14 @@ local function outline_open_and_sync(focus_outline)
 
   if outline_api.is_open() then
     outline_sync_to_code(focus_outline, code_win)
+    equalize_windows_soon()
     return
   end
 
   outline_api.open({ focus_outline = false })
   outline_when_open(function()
     outline_sync_to_code(focus_outline, code_win)
+    equalize_windows_soon()
   end)
 end
 
@@ -200,6 +230,7 @@ end
 function M.close_if_loaded()
   if M.is_open() then
     pcall(vim.cmd, "OutlineClose")
+    equalize_windows_soon()
   end
 end
 
@@ -216,3 +247,4 @@ map("n", "<leader>O", function()
 end, { desc = "Focus outline at symbol", nowait = true })
 
 return M
+
