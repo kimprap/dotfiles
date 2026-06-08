@@ -32,7 +32,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 sync_nvim_tree_background()
 
-
 local function should_oil_hijack_dir()
   if workspace.will_restore_session() then
     return false

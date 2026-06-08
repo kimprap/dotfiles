@@ -247,4 +247,3 @@ map("n", "<leader>O", function()
 end, { desc = "Focus outline at symbol", nowait = true })
 
 return M
-

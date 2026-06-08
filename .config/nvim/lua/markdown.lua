@@ -39,7 +39,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 sync_render_markdown_highlights()
 
-
 require("render-markdown").setup({
   completions = { lsp = { enabled = true } },
   code = {
