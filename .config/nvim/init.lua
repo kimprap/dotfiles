@@ -14,28 +14,29 @@ vim.pack.add({
   { src = "https://github.com/nvim-tree/nvim-tree.lua" },
 
   -- Finders
-  { src = "https://github.com/ibhagwan/fzf-lua" },
-  { src = "https://github.com/dmtrKovalenko/fff.nvim" },
+  { src = "https://github.com/ibhagwan/fzf-lua", version = "main" },
+  { src = "https://github.com/dmtrKovalenko/fff.nvim", version = "main" },
 
   -- Tabs + Git + UI decorations
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
   { src = "https://github.com/romgrk/barbar.nvim" },
-  { src = "https://github.com/lewis6991/gitsigns.nvim" },
-  { src = "https://github.com/esmuellert/codediff.nvim" },
-  { src = "https://github.com/hedyhli/outline.nvim" },
-  { src = "https://github.com/petertriho/nvim-scrollbar" },
+  { src = "https://github.com/lewis6991/gitsigns.nvim", version = "main" },
+  { src = "https://github.com/esmuellert/codediff.nvim", version = "main" },
+  { src = "https://github.com/hedyhli/outline.nvim", version = "main" },
+  { src = "https://github.com/petertriho/nvim-scrollbar", version = "main" },
   { src = "https://github.com/karb94/neoscroll.nvim" },
+  { src = "https://github.com/akinsho/toggleterm.nvim", version = "main" },
 
   -- Treesitter parsers + sticky context.
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
-  { src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
+  { src = "https://github.com/MeanderingProgrammer/render-markdown.nvim", version = "main" },
 
   -- LSP + completion
   { src = "https://github.com/saghen/blink.cmp", version = "v1" },
   { src = "https://github.com/stevearc/conform.nvim" },
-  { src = "https://github.com/mason-org/mason.nvim" },
-  { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
+  { src = "https://github.com/mason-org/mason.nvim", version = "main" },
+  { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim", version = "main" },
 })
 require("pack")
 vim.g.mapleader = " "
@@ -53,10 +54,10 @@ require("git")
 require("sessions")
 require("buffers")
 require("ui")
+require("terminal")
 require("keymaps")
 
 require("outline")
-
 require("treesitter")
 require("markdown")
 
