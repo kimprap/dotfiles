@@ -37,7 +37,7 @@ vim.pack.add({
   { src = "https://github.com/mason-org/mason.nvim" },
   { src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 })
-
+require("pack")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
