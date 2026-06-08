@@ -349,9 +349,7 @@ local function quit_all_force()
     if #summary > 100 then
       summary = summary:sub(1, 97) .. "..."
     end
-    local choice =
-      vim.fn.confirm(string.format("Quit without saving %d buffer(s)?\n%s", #modified, summary), "&Quit\n&Cancel", 2)
-    if choice ~= 1 then
+    if not buffers.confirm_discard_unsaved(#modified, summary) then
       return
     end
   end

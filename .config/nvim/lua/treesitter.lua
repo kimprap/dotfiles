@@ -75,5 +75,4 @@ require("treesitter-context").setup({
   multiline_threshold = 20,
   mode = "cursor",
 })
-
 return M

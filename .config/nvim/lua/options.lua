@@ -66,7 +66,6 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
   callback = function()
     local bt = vim.bo.buftype
     local ft = vim.bo.filetype
-
     if bt == "" and ft ~= "" and ft ~= "fzf" then
       vim.opt_local.colorcolumn = "120"
     else

@@ -40,7 +40,28 @@ local function barbar_move_buffer_to_index(bufnr, target_index)
     require("barbar.api").move_buffer(bufnr, steps)
   end
 end
-
+function M.confirm_discard_unsaved(count, summary)
+  local title = string.format("Quit without saving %d buffer(s)?", count or 1)
+  if summary and summary ~= "" then
+    title = title .. "\n" .. summary
+  end
+  local choice = vim.fn.confirm(title, "&Quit\n&Cancel", 2)
+  return choice == 1
+end
+local function delete_buffer(bufnr, force)
+  if not force then
+    local is_dirty = vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == ""
+    if is_dirty then
+      local name = vim.api.nvim_buf_get_name(bufnr)
+      local shown = name ~= "" and vim.fn.fnamemodify(name, ":~:.") or "[No Name]"
+      if not M.confirm_discard_unsaved(1, shown) then
+        return
+      end
+      force = true
+    end
+  end
+  require("mini.bufremove").delete(bufnr, force)
+end
 function M.close_editor(force)
   local winid = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -53,34 +74,28 @@ function M.close_editor(force)
     end
     return
   end
-
   local shown_in = vim.fn.win_findbuf(bufnr)
   local splits = #normal_windows() > 1
-
   if splits and #shown_in > 1 then
     vim.api.nvim_win_close(winid, true)
     return
   end
-
   if splits and (vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == "") then
-    require("mini.bufremove").delete(bufnr, force)
+    delete_buffer(bufnr, force)
     return
   end
-
   if splits and primary_window() == winid then
-    require("mini.bufremove").delete(bufnr, force)
+    delete_buffer(bufnr, force)
     return
   end
-
   if splits then
     vim.api.nvim_win_close(winid, true)
     if vim.api.nvim_buf_is_valid(bufnr) and #vim.fn.win_findbuf(bufnr) == 0 then
-      require("mini.bufremove").delete(bufnr, force)
+      delete_buffer(bufnr, force)
     end
     return
   end
-
-  require("mini.bufremove").delete(bufnr, force)
+  delete_buffer(bufnr, force)
 end
 
 vim.g.barbar_auto_setup = false
