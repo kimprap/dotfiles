@@ -18,18 +18,54 @@ local M = {}
 local outline
 local outline_did_setup = false
 
+-- Captured before any outline cursor changes; restored on leave.
+local original_guicursor = vim.o.guicursor
+
+local function force_transparent_outline_cursor()
+  local cline = vim.api.nvim_get_hl(0, { name = "CursorLine", link = false })
+  local bg = cline.bg
+  if not bg then
+    local norm = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+    bg = norm.bg or "NONE"
+  end
+  vim.api.nvim_set_hl(0, "OutlineTransparentCursor", {
+    fg = bg,
+    bg = bg,
+    blend = 100,
+  })
+  local gc = vim.o.guicursor or ""
+  gc = gc:gsub(",?n:[^,]*", "")
+  gc = gc:gsub(",+", ","):gsub("^,", ""):gsub(",$", "")
+  if gc ~= "" then gc = gc .. "," end
+  gc = gc .. "n:hor1-OutlineTransparentCursor"
+  vim.opt.guicursor = gc
+end
+
 local function setup_outline_once()
   if outline_did_setup then
     return outline
   end
 
-  -- Upstream line numbers use a left overlay column; keep compact EOL numbers.
   local outline_hl = require("outline.highlight")
   local Sidebar = require("outline.sidebar")
-  local orig_build = Sidebar._dotfiles_build_outline_orig or Sidebar.build_outline
+  local orig_build = Sidebar.build_outline
 
-  Sidebar._dotfiles_build_outline_orig = orig_build
+  -- Col 0 so the item's fold marker / first symbol is under the (transparent) cursor.
+  function Sidebar:update_cursor_pos(current)
+    if not current or not self.view.win or not vim.api.nvim_win_is_valid(self.view.win) then
+      return
+    end
+    vim.api.nvim_win_set_cursor(self.view.win, { current.line_in_outline, 0 })
+  end
 
+  -- Use our transparent hor1 instead of the plugin's -Cursorline append.
+  local orig_update_cursor_style = Sidebar.update_cursor_style
+  function Sidebar:update_cursor_style()
+    orig_update_cursor_style(self)
+    force_transparent_outline_cursor()
+  end
+
+  -- Right-side line numbers via eol virt_text (no left gutter).
   function outline_hl.linenos(bufnr, linenos, _)
     for index, lineno in ipairs(linenos) do
       local num = lineno:match("%S+$") or lineno
@@ -43,7 +79,17 @@ local function setup_outline_once()
 
   function Sidebar:build_outline(find_node)
     local cursor = orig_build(self, find_node)
+    -- Keep only the deepest node highlighted; re-apply hovers + line numbers.
+    if cursor and self.hovered and #self.hovered > 1 then
+      for _, node in ipairs(self.flats or {}) do
+        node.hovered = node == cursor
+      end
+      self.hovered = { cursor }
+    end
     if self.view.buf and self.flats then
+      outline_hl.clear_hovers(self.view.buf)
+      outline_hl.hovers(self.view.buf, self.flats)
+
       local linenos = {}
       for _, node in ipairs(self.flats) do
         linenos[#linenos + 1] = tostring(node.range_start + 1)
@@ -57,7 +103,7 @@ local function setup_outline_once()
 
   outline.setup({
     outline_window = {
-      focus_on_open = true,
+      focus_on_open = false,
       width = 32,
       auto_width = {
         enabled = true,
@@ -65,21 +111,27 @@ local function setup_outline_once()
         include_symbol_details = false,
       },
       relative_width = false,
-      show_cursorline = "focus_in_outline",
+      show_cursorline = true,
+      hide_cursor = true,
     },
     outline_items = {
       show_symbol_details = false,
       show_symbol_lineno = false,
       highlight_hovered_item = true,
-      auto_set_cursor = true,
+      auto_set_cursor = false,
       auto_update_events = {
-        follow = { "CursorMoved" },
-        items = { "LspAttach", "BufEnter", "BufWinEnter", "BufWritePost" },
+        follow = { "CursorMoved", "WinScrolled" },
+        items = { "BufEnter", "BufWinEnter", "BufWritePost" },
       },
     },
     symbol_folding = {
-      autofold_depth = 1,
+      autofold_depth = 2,
       auto_unfold = { hovered = false, only = false },
+    },
+    providers = {
+      lsp = {
+        blacklist_clients = { "marksman" },
+      },
     },
     symbols = {
       filter = {
@@ -106,6 +158,7 @@ local function setup_outline_once()
           "Component",
           "Fragment",
         },
+        markdown = { "String" },
       },
       icons = {
         Function = { icon = "ƒ", hl = "Function" },
@@ -150,7 +203,11 @@ local function outline_deepest_symbol(items, lnum0)
   local function walk(nodes)
     for _, node in ipairs(nodes or {}) do
       if lnum0 >= node.range_start and lnum0 <= node.range_end then
-        if not best or node.depth > best.depth then
+        if
+          not best
+          or node.depth > best.depth
+          or (node.depth == best.depth and node.range_start > best.range_start)
+        then
           best = node
         end
         walk(node.children)
@@ -239,11 +296,97 @@ map("n", "<leader>o", function()
     M.close_if_loaded()
     return
   end
-  outline_open_and_sync(true)
+  outline_open_and_sync(false)
 end, { desc = "Toggle outline (sync to symbol)", nowait = true })
 
 map("n", "<leader>O", function()
   outline_open_and_sync(true)
 end, { desc = "Focus outline at symbol", nowait = true })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "Outline",
+  group = vim.api.nvim_create_augroup("user.outline-keys", { clear = true }),
+  callback = function(args)
+    vim.b.miniindentscope_disable = true
+    vim.b.minicursorword_disable = true
+
+    -- Remove gutter so first-level icons sit tight to the border.
+    local function kill_outline_gutter()
+      local w = vim.fn.bufwinid(args.buf)
+      if w ~= -1 then
+        vim.api.nvim_win_call(w, function()
+          vim.opt_local.statuscolumn = ""
+          vim.opt_local.signcolumn = "no"
+          vim.opt_local.foldcolumn = "0"
+          vim.opt_local.number = false
+          vim.opt_local.relativenumber = false
+        end)
+      end
+    end
+    kill_outline_gutter()
+    vim.api.nvim_create_autocmd("BufWinEnter", {
+      buffer = args.buf,
+      callback = kill_outline_gutter,
+    })
+
+    force_transparent_outline_cursor()
+
+    vim.api.nvim_create_autocmd("BufLeave", {
+      buffer = args.buf,
+      callback = function()
+        if original_guicursor then
+          vim.o.guicursor = original_guicursor
+        end
+      end,
+    })
+
+    vim.keymap.set("n", "o", function()
+      outline_sync_to_code(false)
+    end, { buffer = args.buf, desc = "Sync outline to current code location" })
+
+    local function get_sb()
+      local api = setup_outline_once()
+      return api and api._get_sidebar and api._get_sidebar(false)
+    end
+
+    vim.keymap.set("n", "<LeftMouse>", function()
+      vim.cmd("normal! <LeftMouse>")
+      vim.schedule(function()
+        local sb = get_sb()
+        if sb and sb.__goto_location then
+          sb:__goto_location(true)
+        end
+      end)
+    end, { buffer = args.buf, desc = "Go to symbol (m1)" })
+
+    vim.keymap.set("n", "<RightMouse>", function()
+      vim.cmd("normal! <LeftMouse>")
+      vim.schedule(function()
+        local sb = get_sb()
+        if sb and sb.__goto_location then
+          sb:__goto_location(false)
+        end
+      end)
+    end, { buffer = args.buf, desc = "Peek symbol (m2)" })
+
+    -- Keep cursor at col 0 of the current outline item.
+    vim.api.nvim_create_autocmd({ "CursorMoved", "WinEnter" }, {
+      buffer = args.buf,
+      callback = function()
+        local win = vim.fn.bufwinid(args.buf)
+        if win == -1 or vim.api.nvim_get_current_win() ~= win then
+          return
+        end
+        local row = vim.api.nvim_win_get_cursor(0)[1]
+        vim.api.nvim_win_call(win, function()
+          if vim.api.nvim_win_get_cursor(0)[2] ~= 0 then
+            vim.api.nvim_win_set_cursor(0, { row, 0 })
+          end
+        end)
+      end,
+    })
+  end,
+})
+
 return M
+
