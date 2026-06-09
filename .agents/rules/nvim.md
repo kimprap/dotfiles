@@ -1,5 +1,5 @@
 ---
-description: Use when editing or discussing the Neovim config, UX decisions, plugin choices, or Phase 8 config split.
+description: Use when editing or discussing the Neovim config, UX decisions, or plugin choices.
 alwaysApply: false
 globs:
   - ".config/nvim/**"
@@ -7,9 +7,20 @@ globs:
 
 # Neovim context
 
-## Goal
+## Overview
 
-Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `mini.nvim` where possible for core UX.
+Lean Neovim config using built-in `vim.pack` (no lazy.nvim). Strong preference for `mini.nvim`. Custom code is minimal and targeted.
+
+Important layout notes:
+- `init.lua` is a thin bootstrap (vim.pack + specific require order: core → options → ui modules → outline/markdown → lsp → `mini.setup_clue()` last).
+- Most logic lives in `lua/`. `ftplugin/` is intentionally thin (simple opts + delegation comments only).
+- `lua/options.lua` sets global defaults (e.g. `foldmethod=indent`, statuscolumn with signs) that frequently need local overrides.
+- Non-trivial custom behavior is concentrated in `lua/outline.lua` and `lua/markdown.lua`.
+
+Key files with custom logic:
+- `lua/outline.lua`: targeted monkey-patches (cursor col 0, transparent style, gutter kill, single-hover sanitize).
+- `lua/markdown.lua`: custom ATX foldexpr + chunk foldtext (preserves heading colors on collapse).
+- `ftplugin/markdown.lua`: delegation only.
 
 ## Current decisions
 
@@ -22,7 +33,8 @@ Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `min
 - Buffers: `mini.pick` (`<leader>,`).
 - Buffer tabs: `barbar.nvim`; buffer navigation: `<Tab>` / `<S-Tab>`.
 - Icons: `mini.icons` + `MiniIcons.tweak_lsp_kind()`.
-- Outline: `outline.nvim` with exclude-noise filter, inline line numbers, manual sync via `<leader>o` / `<leader>O`; not restored in sessions.
+- Outline: `outline.nvim` (marksman blacklisted). Uses targeted monkey-patches on `Sidebar` (col 0 cursor, transparent hor1+blend style, single deepest hover sanitize, eol linenos) + FileType autocmd for gutter kill, transparent cursor + original restore, direct mouse handling, and col-0 enforcement. Key config: `hide_cursor=true`, `auto_set_cursor=false`, `highlight_hovered_item=true` + WinScrolled follow. Stripped from sessions. Cursor must never obscure the item symbol.
+- Markdown: `render-markdown.nvim` with custom heading colors. All heading fold logic lives in `lua/markdown.lua`: custom ATX `foldexpr` (headers >N, content inherits level) + `foldtext` chunk table so collapsed headers stay visible and keep `RenderMarkdownH*` color. `toggle_heading_level` uses `target = level-1` so m1 collapses content under visible H1, m2 shows H1+H2 headers (content collapsed). `ftplugin/markdown.lua` is minimal + delegates. Buf-local + global `<leader>mN` maps; buf-local silent `<C-S-[/]>` cycle via `vim.fn.search`.
 - Sessions: `mini.sessions` per workspace (`.nvim/workspace` marker); strips oil + outline on save/restore.
 - Copy lines: normal `copy .` / `copy .-1` with cursor restored; visual `:t '>` / `:t '<-1` + `gv=gv` (`<A-S-j>` / `<A-S-k>`).
 - Search case: `ignorecase` + `smartcase`; `<leader>ui` toggles; `\c` / `\C` per-pattern in `/` and `?`.
@@ -36,7 +48,7 @@ Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `min
 - Close editor (`<leader>q` / `<C-q>`): split-aware close pane/buffer; CodeDiff uses plugin default `q`.
 - No winbar.
 
-## Reference configs
+## Reference configs (style examples only)
 
 1. [radleylewis/nvim-lite](https://github.com/radleylewis/nvim-lite/blob/master/init.lua)
 2. [MariaSolOs/dotfiles](https://github.com/MariaSolOs/dotfiles/tree/main/.config/nvim)
@@ -64,41 +76,16 @@ Lean Neovim config on Ghostty using `vim.pack`. Minimal plugins. Prioritize `min
 - Trailing whitespace removal + final newline on save.
 - Static indent guides (`mini.indentscope` with no animation).
 
-## Phase progress
+## Implementation patterns & invariants (critical for edits)
 
-| Phase | Focus | Status | Notes |
-|---|---|---|---|
-| 1 | Core Foundation | Done | Options, theme, centering helpers |
-| 2 | Keymaps + Motions + QoL | Done | mini basics, yank highlight, mini.move, cursor restore, trailing whitespace, copy lines, search case toggle |
-| 3 | File Explorer & Finder | Done | oil + nvim-tree + fff + fzf-lua |
-| 4 | Tabs & Buffer Management | Done | barbar, `<Tab>`/`<S-Tab>`, mini.sessions, mini.starter, close/save keymaps, split-aware close |
-| 5 | Gutter, Outline, Scrollbar, Statusline | Done | gitsigns, outline, scrollbar, mini.statusline |
-| 6 | LSP + Completion | Done | blink.cmp, Mason, conform, `lsp/*.lua`, diagnostics, LSP folds, `<leader>L*` |
-| 6b | Git view + diagnostics UX | Done | codediff `<leader>g*`, diagnostic `<leader>x*`, CodeDiff close via `q` |
-| 7 | Polish & Treesitter | Done | context-only treesitter + sticky scroll; Vim syntax kept |
-| 8 | Config Split | Pass A Done | `init.lua` is thin bootstrap; modules extracted; Lean Pass candidates pending approval |
-
-## Phase 8 split plan
-
-Keep `init.lua` as a thin bootstrap: netrw disable, `vim.pack.add`, leader, ordered module requires, late `mini.statusline`/`mini.clue`, final `nohlsearch()` + scrollbar refresh.
-
-| File | Contents |
-|---|---|
-| `lua/map.lua` | Shared tiny `map()` wrapper for modules defining keymaps |
-| `lua/workspace.lua` | Workspace labels and session path/restore predicates shared by explorer and sessions |
-| `lua/env.lua` | Shared PATH prep helper for Homebrew and Mason binaries |
-| `lua/options.lua` | `vim.opt`, colorscheme, colorcolumn, trailing whitespace, yank highlight, cursor restore |
-| `lua/mini.lua` | mini.nvim plugins in one file: core basics/pairs/comment/surround/cursorword/indentscope/pick/move/icons/bufremove, plus late statusline and clue setup |
-| `lua/explorer.lua` | oil, nvim-tree, fff, fzf-lua, session-aware directory handling |
-| `lua/sessions.lua` | mini.sessions hooks, ephemeral cleanup, starter VimEnter, `<leader>S*` |
-| `lua/git.lua` | lazy gitsigns setup/attach, codediff setup + `<leader>g*` |
-| `lua/buffers.lua` | barbar, `<Tab>` nav, `close_editor`, buffer reopen, dirty-tab highlights |
-| `lua/ui.lua` | scrollbar, search-scrollbar handler/keymaps, neoscroll, fold keymaps |
-| `lua/keymaps.lua` | General keymaps plus keymap-driven state: custom jumplist, zoom, copy lines, save/quit, yank-path |
-| `lua/outline.lua` | outline.nvim setup + inline line-number monkey patch + manual sync keymaps |
-| `lua/treesitter.lua` | nvim-treesitter parser install guard, Homebrew PATH, treesitter-context |
-| `lua/lsp.lua` | Mason tools, blink, conform + EOF hook, diagnostics, LSP attach/detach, manual LSP picker, `<leader>L*`, `<leader>x*` |
-| `lsp/*.lua` | Per-server native configs |
+- **ftplugin convention**: Keep `ftplugin/*.lua` minimal (local `wo.` opts + 1-line delegation comment). All complex logic lives in `lua/*.lua`.
+- **Folding**: Global `foldmethod=indent` + `foldexpr=0` (plus statuscolumn with signs) in `lua/options.lua`. Override per-window only. Markdown uses custom ATX `heading_foldexpr` (headers emit >N; content inherits nearest header level) + `foldtext` returning a chunk table so collapsed headers remain visible and keep their `RenderMarkdownH*` color (Folded group only styles trailing dots). Treesitter foldexpr is deliberately avoided for markdown headings.
+- **Outline sidebar discipline**: Cursor is forced to col 0 of each item (never obscures the leading fold marker or symbol); transparent guicursor (hor1 + blend=100) while the Outline buffer is focused; original guicursor is captured early and restored on BufLeave. All gutter columns are killed on FileType + BufWinEnter. Only minimal targeted monkey-patches are used.
+- **Keymap layering**: Buf-local maps for filetype-specific behavior (markdown folds/cycle, outline mouse/"o"). Globals are also registered for `mini.clue` visibility. Buf-local maps win (e.g. over gitsigns or mini square brackets). Header cycling uses plain `vim.fn.search` to avoid tag/LSP identifier errors.
+- **Monkey-patches & comments**: Targeted post-load overrides (after `require("outline")` etc.) are acceptable when the plugin's public surface is insufficient. Keep them narrow. In `lua/outline.lua` and `lua/markdown.lua`, all comments must be generic and concise — no historical explanations, no "fixed X", no "as requested".
+- **Provider & session hygiene**: Noisy providers are blacklisted per-context (marksman for outline symbols). `mini.sessions` explicitly strips outline (and oil) buffers. `.marksman.toml` is intentionally absent.
+- **Globals before mangling**: Always capture originals (e.g. `guicursor`, fold settings) at module load time before any overrides.
+- **Edit philosophy**: Small, targeted, boring changes preferred. Preserve the concrete UX invariants (header text stays visible + colored under m1/m2; outline cursor position never hides the item symbol). When in doubt, favor the simplest change that maintains current behavior over "improvements". Reference configs in this file only for style, not as targets to match.
 
 ## Plugin selection rule
 
