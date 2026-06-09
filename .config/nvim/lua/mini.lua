@@ -10,6 +10,29 @@ function M.setup_core()
   require("mini.pairs").setup() -- auto close brackets/quotes
   require("mini.comment").setup() -- gc to comment
   require("mini.surround").setup() -- ys, ds, cs for surrounding
+
+  local ai = require("mini.ai")
+  ai.setup({
+    n_lines = 50,
+    search_method = "cover_or_next",
+    silent = true,
+
+    mappings = {
+      around_next = "",
+      inside_next = "",
+      around_last = "",
+      inside_last = "",
+    },
+
+    custom_textobjects = {
+      ["="] = {
+        "(%S.-)%s*=%s*().-()%s*[,;}\n]",
+        "=%s*().-()%s*[,;}\n]",
+      },
+      [","] = ai.gen_spec.argument({ brackets = { "%b()", "%b[]", "%b{}" } }),
+    },
+  })
+
   require("mini.cursorword").setup() -- highlight word under cursor
 
   require("mini.indentscope").setup({
@@ -41,6 +64,20 @@ function M.setup_core()
 
   require("mini.icons").setup()
   MiniIcons.tweak_lsp_kind()
+
+  local hipatterns = require("mini.hipatterns")
+  hipatterns.setup({
+    highlighters = {
+      fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+      bug = { pattern = "%f[%w]()BUG()%f[%W]", group = "MiniHipatternsFixme" },
+      hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+      todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+      note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+      debug = { pattern = "%f[%w]()DEBUG()%f[%W]", group = "MiniHipatternsHack" },
+      xxx = { pattern = "%f[%w]()XXX()%f[%W]", group = "MiniHipatternsFixme" },
+      hex_color = hipatterns.gen_highlighter.hex_color(),
+    },
+  })
 
   require("mini.bufremove").setup()
 end
@@ -166,6 +203,12 @@ function M.setup_clue()
       { mode = "v", keys = "<Leader>g", desc = "+Git view" },
       { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
       { mode = "n", keys = "<Leader>z", desc = "+Folds" },
+      { mode = "n", keys = "<Leader>m1", desc = "Toggle markdown H1 folds" },
+      { mode = "n", keys = "<Leader>m2", desc = "Toggle markdown H2 folds" },
+      { mode = "n", keys = "<Leader>m3", desc = "Toggle markdown H3 folds" },
+      { mode = "n", keys = "<Leader>m4", desc = "Toggle markdown H4 folds" },
+      { mode = "n", keys = "<Leader>m5", desc = "Toggle markdown H5 folds" },
+      { mode = "n", keys = "<Leader>m6", desc = "Toggle markdown H6 folds" },
       { mode = "n", keys = "<Leader>T", desc = "Reopen last closed buffer" },
       { mode = "n", keys = "]d", desc = "Next diagnostic" },
       { mode = "n", keys = "[d", desc = "Prev diagnostic" },
@@ -181,3 +224,4 @@ function M.setup_clue()
 end
 
 return M
+

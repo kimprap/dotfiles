@@ -267,10 +267,8 @@ vim.api.nvim_create_autocmd("CursorMoved", {
   end,
 })
 
--- Quote "around" without trailing whitespace (Vim's a" includes it by design; 2i" does not)
-for _, q in ipairs({ '"', "'", "`" }) do
-  map({ "o", "x" }, "a" .. q, "2i" .. q, { remap = true, desc = "Around " .. q .. " (no trailing space)" })
-end
+-- Quote textobjects are provided by mini.ai (a"/i" etc.).
+-- next/last variants (an/in/al/il) are disabled globally in mini.ai.
 
 -- Indent and keep visual selection
 map("v", ">", ">gv", { desc = "Indent right and keep selection" })

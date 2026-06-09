@@ -606,3 +606,4 @@ vim.api.nvim_create_autocmd("LspDetach", {
 enable_lsp_servers()
 
 return M
+
