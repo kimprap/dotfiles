@@ -124,15 +124,140 @@ function M.setup_statusline()
     return table.concat(parts, " ")
   end
 
+  -- Git diff counts (the changes group in the shade progression).
+  -- Prefixes: [+] added, [~] changed, [·] removed. Full token colored via GitStatus*.
+  local function git_diff_statusline()
+    local d = vim.b.gitsigns_status_dict
+    if not d then
+      return ""
+    end
+    local parts = {}
+    if (d.added or 0) > 0 then
+      parts[#parts + 1] = string.format("%%#GitStatusAdd#[+]%d", d.added)
+    end
+    if (d.changed or 0) > 0 then
+      parts[#parts + 1] = string.format("%%#GitStatusChange#[~]%d", d.changed)
+    end
+    if (d.removed or 0) > 0 then
+      parts[#parts + 1] = string.format("%%#GitStatusRemove#[·]%d", d.removed)
+    end
+    return table.concat(parts, " ")
+  end
+
+  local function to_hex(c)
+    if not c then return nil end
+    if type(c) == "string" then return c end
+    return string.format("#%06x", c)
+  end
+
+  local function darken(c, factor)
+    local hex = to_hex(c)
+    if not hex or hex:find("NONE") then return nil end
+    local r = tonumber(hex:sub(2, 3), 16) or 0
+    local g = tonumber(hex:sub(4, 5), 16) or 0
+    local b = tonumber(hex:sub(6, 7), 16) or 0
+    r = math.max(0, math.floor(r * (1 - factor)))
+    g = math.max(0, math.floor(g * (1 - factor)))
+    b = math.max(0, math.floor(b * (1 - factor)))
+    return string.format("#%02x%02x%02x", r, g, b)
+  end
+
+  local function lighten(c, factor)
+    local hex = to_hex(c)
+    if not hex or hex:find("NONE") then return nil end
+    local r = tonumber(hex:sub(2, 3), 16) or 0
+    local g = tonumber(hex:sub(4, 5), 16) or 0
+    local b = tonumber(hex:sub(6, 7), 16) or 0
+    r = math.min(255, math.floor(r + (255 - r) * factor))
+    g = math.min(255, math.floor(g + (255 - g) * factor))
+    b = math.min(255, math.floor(b + (255 - b) * factor))
+    return string.format("#%02x%02x%02x", r, g, b)
+  end
+
+  local function setup_statusline_hls()
+    -- Increasing darkness: branch (light) → changes (medium) → path (dark).
+    -- Branch brightened for visible steps. Path uses the stronger dark tone.
+    -- GitStatus* inherit changes bg so counts render on the changes shade.
+    -- NC (outside cwd) uses path bg + italic.
+    -- Derived from theme's own bgs; runs after setup + on ColorScheme.
+    local devinfo = vim.api.nvim_get_hl(0, { name = "MiniStatuslineDevinfo", link = false })
+    local filename = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFilename", link = false })
+    local status = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false })
+
+    local base_bg = (filename and filename.bg)
+      or (status and status.bg)
+      or (devinfo and devinfo.bg)
+
+    local dev_fg = devinfo and devinfo.fg
+    local fname_fg = filename and filename.fg
+
+    local BRANCH_LIGHT = 0.12
+    local CHANGES_DARK = 0.10
+    local PATH_DARK    = 0.20
+
+    local branch_bg, changes_bg, path_bg
+    if base_bg then
+      branch_bg  = lighten(base_bg, BRANCH_LIGHT)
+      changes_bg = darken(base_bg, CHANGES_DARK)
+      path_bg    = darken(base_bg, PATH_DARK)
+    end
+
+    if changes_bg then
+      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", {
+        bg = branch_bg or base_bg, fg = dev_fg, default = true,
+      })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDiff", {
+        bg = changes_bg, fg = dev_fg, default = true,
+      })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilename", {
+        bg = path_bg, fg = fname_fg, default = true,
+      })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", {
+        bg = path_bg, fg = fname_fg, italic = true, default = true,
+      })
+
+      local function with_bg(base_name, target_name)
+        local base = vim.api.nvim_get_hl(0, { name = base_name, link = false })
+        vim.api.nvim_set_hl(0, target_name, {
+          fg = base and base.fg, bg = changes_bg, default = true,
+        })
+      end
+      with_bg("Added", "GitStatusAdd")
+      with_bg("Changed", "GitStatusChange")
+      with_bg("Removed", "GitStatusRemove")
+    else
+      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo",   { link = "MiniStatuslineDevinfo", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDiff",      { link = "MiniStatuslineDevinfo", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilename",  { link = "MiniStatuslineFilename", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", { link = "MiniStatuslineFilename", italic = true, default = true })
+      vim.api.nvim_set_hl(0, "GitStatusAdd",    { link = "Added", default = true })
+      vim.api.nvim_set_hl(0, "GitStatusChange", { link = "Changed", default = true })
+      vim.api.nvim_set_hl(0, "GitStatusRemove", { link = "Removed", default = true })
+    end
+  end
+  vim.api.nvim_create_autocmd("ColorScheme", {
+    group = vim.api.nvim_create_augroup("user.statusline_hl", { clear = true }),
+    callback = setup_statusline_hls,
+  })
+
+  local function filename_hl()
+    local path = vim.api.nvim_buf_get_name(0)
+    if path == "" then
+      return "MiniStatuslineFilename"
+    end
+    local rel = vim.fn.fnamemodify(path, ":~:.")
+    local outside = rel:match("^%.%./") or rel:match("^/") or rel:match("^~")
+    return outside and "MiniStatuslineFilenameNC" or "MiniStatuslineFilename"
+  end
+
   MiniStatusline.setup({
     use_icons = true,
     set_vim_settings = true,
     content = {
       active = function()
-        -- trunc_width huge -> always use short mode letter (N/I/V/...)
         local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 9999 })
-        local git = MiniStatusline.section_git({ trunc_width = 40 })
-        local diff = vim.b.gitsigns_status or ""
+        local git = vim.trim(MiniStatusline.section_git({ trunc_width = 40 }) or "")
+        local diff = git_diff_statusline()
         local filetype = vim.bo.filetype
         if filetype ~= "" and MiniIcons then
           local icon = select(1, MiniIcons.get("filetype", filetype))
@@ -147,9 +272,15 @@ function M.setup_statusline()
           table.insert(groups, { hl = "DiagnosticWarn", strings = { " ZOOM " } })
         end
         vim.list_extend(groups, {
-          { hl = "MiniStatuslineDevinfo", strings = { git, diff } },
+          { hl = "MiniStatuslineDevinfo", strings = { git } },
+        })
+        if diff ~= "" then
+          -- Changes group (medium shade in branch→changes→path darkness progression).
+          groups[#groups + 1] = { hl = "MiniStatuslineDiff", strings = { diff } }
+        end
+        vim.list_extend(groups, {
           "%<",
-          { hl = "MiniStatuslineFilename", strings = { filename() } },
+          { hl = filename_hl(), strings = { filename() } },
           buffer_flags_statusline(),
           "%=",
           diagnostic_statusline(),
@@ -163,6 +294,9 @@ function M.setup_statusline()
       end,
     },
   })
+
+  -- Call after mini has set up its base groups so the custom increasing-darkness shades (and NC italic) stick.
+  setup_statusline_hls()
 end
 
 function M.setup_clue()

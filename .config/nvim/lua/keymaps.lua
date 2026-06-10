@@ -16,7 +16,13 @@ map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
 map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
 map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
-map("n", "<C-\\>", "<C-w>v", { desc = "Split right" })
+map("n", "<C-\\>", function()
+  local ft = vim.bo.filetype
+  if ft == "NvimTree" or ft == "Outline" then
+    return -- disabled in explorer/outline (no split from these panes)
+  end
+  vim.cmd("wincmd v")
+end, { desc = "Split right" })
 map("n", "<C-S-Left>", "<C-w><", { desc = "Narrower window" })
 map("n", "<C-S-Right>", "<C-w>>", { desc = "Wider window" })
 map("n", "<C-S-Up>", "<C-w>+", { desc = "Taller window" })
