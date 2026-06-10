@@ -75,4 +75,37 @@ require("treesitter-context").setup({
   multiline_threshold = 20,
   mode = "cursor",
 })
+
+-- Reserve the rightmost column for nvim-scrollbar (right_align extmarks) under
+-- sticky context. The context float is full-width with no upstream option, so we
+-- post-shrink it by 1 column after each render.open.
+local CONTEXT_MARKER = "treesitter_context"
+local RESERVE_COLS = 1
+
+local render = require("treesitter-context.render")
+local orig_open = render.open
+render.open = function(winid, ctx_ranges, ctx_lines, force_hl_update)
+  orig_open(winid, ctx_ranges, ctx_lines, force_hl_update)
+  vim.schedule(function()
+    if not vim.api.nvim_win_is_valid(winid) then return end
+    local gutter = vim.fn.getwininfo(winid)[1].textoff or 0
+    local target = math.max(1, vim.api.nvim_win_get_width(winid) - gutter - RESERVE_COLS)
+    for _, w in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_is_valid(w) then
+        local ok, is_ctx = pcall(function()
+          return vim.w[w][CONTEXT_MARKER]
+        end)
+        if ok and is_ctx then
+          local cfg = vim.api.nvim_win_get_config(w)
+          if cfg.relative == "win" and cfg.win == winid
+            and (cfg.width or 0) > 1 and cfg.width ~= target then
+            cfg.width = target
+            pcall(vim.api.nvim_win_set_config, w, cfg)
+          end
+        end
+      end
+    end
+  end)
+end
+
 return M
