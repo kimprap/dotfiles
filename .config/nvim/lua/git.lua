@@ -72,20 +72,27 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
   end
 
   local current_buf = vim.api.nvim_get_current_buf()
-  local side
-  if current_buf == original_bufnr then
-    side = "original"
-  elseif current_buf == modified_bufnr then
-    side = "modified"
-  else
+  if current_buf ~= original_bufnr and current_buf ~= modified_bufnr then
     return
   end
 
   local original_path, modified_path = lifecycle.get_paths(tabpage)
-  local rel_path = side == "original" and original_path or modified_path
+  -- Canonical file ref independent of `side` (left/right pane). Prefer "current"
+  -- (modified) path for the on-disk file so gf from either pane uses same target.
+  -- Relativize when plugin stored an absolute path so both land on same short name.
+  local file_ref = (modified_path and modified_path ~= "") and modified_path or original_path
   local target_file
-  if rel_path and rel_path ~= "" and session.git_root then
-    target_file = session.git_root .. "/" .. rel_path
+  if file_ref and file_ref ~= "" and session and session.git_root then
+    local root = session.git_root:gsub("[/\\]$", "")
+    if file_ref:match("^/") or file_ref:match("^%a:") then
+      if file_ref:sub(1, #root) == root then
+        target_file = file_ref:sub(#root + 2)
+      else
+        target_file = file_ref
+      end
+    else
+      target_file = file_ref
+    end
   else
     target_file = vim.api.nvim_buf_get_name(current_buf)
   end
@@ -94,7 +101,7 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
     return
   end
 
-  target_file = vim.fn.fnamemodify(target_file, ":p")
+  local load_target = vim.fn.fnamemodify(target_file, ":p")
 
   local cursor = vim.api.nvim_win_get_cursor(0)
   local current_tab = vim.api.nvim_get_current_tabpage()
@@ -127,10 +134,13 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
 
   local bufnr_to_attach
   if is_special then
-    bufnr_to_attach = vim.fn.bufadd(target_file)
+    bufnr_to_attach = vim.fn.bufadd(load_target)
     vim.bo[bufnr_to_attach].buflisted = true
     vim.bo[bufnr_to_attach].buftype = ""
     vim.fn.bufload(bufnr_to_attach)
+    if target_file and target_file ~= "" then
+      pcall(vim.api.nvim_buf_set_name, bufnr_to_attach, target_file)
+    end
   else
     bufnr_to_attach = current_buf
     vim.bo[bufnr_to_attach].buflisted = true
