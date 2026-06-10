@@ -19,7 +19,58 @@ local fff_backdrop_buf = nil
 local fff_backdrop_win = nil
 local fff_picker_ui = nil
 
--- Backdrop helpers are defined early (autocmds below close over them).
+-- Shared setup for manual backdrops (Black + offset blend to match fzf-lua darkness).
+local function setup_backdrop_win(win)
+  vim.w[win].is_backdrop = true
+  local winblend = math.max(0, math.min(99, BACKDROP_BLEND - 15))
+  vim.api.nvim_set_option_value("winblend", winblend, { win = win })
+  vim.api.nvim_set_option_value(
+    "winhighlight",
+    "Normal:FzfLuaBackdrop,EndOfBuffer:FzfLuaBackdrop",
+    { win = win }
+  )
+  vim.api.nvim_set_option_value("number", false, { win = win })
+  vim.api.nvim_set_option_value("relativenumber", false, { win = win })
+  vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
+  vim.api.nvim_set_option_value("foldcolumn", "0", { win = win })
+end
+
+local function apply_nvim_tree_winhighlight(win)
+  vim.api.nvim_set_option_value(
+    "winhighlight",
+    "Normal:NvimTreeNormal,NormalNC:NvimTreeNormalNC,FloatBorder:NvimTreeFloatBorder,FloatTitle:Title",
+    { win = win }
+  )
+end
+
+-- Cached nvim-tree modules (one-time pcall, resilient).
+local nvim_tree_api, nvim_tree_core
+
+local function get_nvim_tree_api()
+  if not nvim_tree_api then
+    local ok, mod = pcall(require, "nvim-tree.api")
+    if ok and mod then nvim_tree_api = mod end
+  end
+  return nvim_tree_api
+end
+
+local function get_nvim_tree_core()
+  if not nvim_tree_core then
+    local ok, mod = pcall(require, "nvim-tree.core")
+    if ok and mod then nvim_tree_core = mod end
+  end
+  return nvim_tree_core
+end
+
+-- Double schedule yields to nvim-tree (and similar) so its open/close + draw settle
+-- before we inspect has_window() or touch its windows/backdrop.
+local function schedule_2x(fn)
+  vim.schedule(function()
+    vim.schedule(fn)
+  end)
+end
+
+-- nvim-tree editor dim (z=49, below the float at ~50).
 local function create_nvim_tree_backdrop()
   if nvim_tree_backdrop_win and not vim.api.nvim_win_is_valid(nvim_tree_backdrop_win) then
     nvim_tree_backdrop_win = nil
@@ -32,7 +83,7 @@ local function create_nvim_tree_backdrop()
     vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = nvim_tree_backdrop_buf })
   end
 
-  -- z=49 so nvim-tree float (rounded border+title) layers above the dim.
+  -- z=49 so nvim-tree float sits above the dim.
   local ok, win = pcall(vim.api.nvim_open_win, nvim_tree_backdrop_buf, false, {
     relative = "editor",
     width = vim.o.columns,
@@ -49,19 +100,7 @@ local function create_nvim_tree_backdrop()
   end
 
   nvim_tree_backdrop_win = win
-  vim.w[win].is_backdrop = true
-  -- Stronger blend (offset) so manual dim matches fzf-lua visual darkness at same BACKDROP_BLEND.
-  local winblend = math.max(0, math.min(99, BACKDROP_BLEND - 15))
-  vim.api.nvim_set_option_value("winblend", winblend, { win = nvim_tree_backdrop_win })
-  vim.api.nvim_set_option_value(
-    "winhighlight",
-    "Normal:FzfLuaBackdrop,EndOfBuffer:FzfLuaBackdrop",
-    { win = nvim_tree_backdrop_win }
-  )
-  vim.api.nvim_set_option_value("number", false, { win = nvim_tree_backdrop_win })
-  vim.api.nvim_set_option_value("relativenumber", false, { win = nvim_tree_backdrop_win })
-  vim.api.nvim_set_option_value("signcolumn", "no", { win = nvim_tree_backdrop_win })
-  vim.api.nvim_set_option_value("foldcolumn", "0", { win = nvim_tree_backdrop_win })
+  setup_backdrop_win(win)
 end
 
 local function destroy_nvim_tree_backdrop()
@@ -71,7 +110,97 @@ local function destroy_nvim_tree_backdrop()
   nvim_tree_backdrop_win = nil
 end
 
--- fff manual backdrop (no native option; matches fzf-lua via same hl+blend).
+-- nvim-tree visibility (fast api path; buf+win scan fallback when api not ready).
+local function has_nvim_tree_window()
+  local api = get_nvim_tree_api()
+  if api and api.tree and api.tree.is_visible then
+    return api.tree.is_visible()
+  end
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "NvimTree" then
+      if #vim.fn.win_findbuf(buf) > 0 then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+local function get_nvim_tree_display_root()
+  -- If the tree is visible, trust its live root (post update_root/find_file or user cd/u inside it).
+  -- This preserves stable re-open while the explorer is showing a particular workspace.
+  if has_nvim_tree_window() then
+    local core = get_nvim_tree_core()
+    if core and core.get_cwd then
+      local c = core.get_cwd()
+      if type(c) == "string" and #c > 0 then
+        return c
+      end
+    end
+  end
+
+  -- Not visible (or first open): derive a contextual root from the editing target so that
+  -- `nvim /any/where/file.md` (regardless of $PWD) or `nvim dir` yields a sensible title/root.
+  -- Use vim.fs.root to promote to nearest project ancestor (.git etc.) when present; this
+  -- makes the explorer title the workspace root rather than a deep subdir.
+  local start
+  local buf = vim.api.nvim_buf_get_name(0)
+  if buf ~= "" and vim.fn.filereadable(buf) == 1 then
+    start = vim.fn.fnamemodify(buf, ":p:h")
+  elseif vim.fn.argc() > 0 then
+    local a0 = vim.fn.argv(0)
+    if type(a0) == "string" and a0 ~= "" then
+      if vim.fn.isdirectory(a0) == 1 then
+        start = vim.fn.fnamemodify(a0, ":p")
+      elseif vim.fn.filereadable(a0) == 1 then
+        start = vim.fn.fnamemodify(a0, ":p:h")
+      end
+    end
+  end
+  if not start or start == "" then
+    start = vim.uv.cwd() or vim.fn.getcwd()
+  end
+
+  local markers = { ".git", ".jj", "package.json", "Cargo.toml", "pyproject.toml", "go.mod", "Makefile" }
+  return vim.fs.root(start, markers) or start
+end
+
+local function nvim_tree_title(root)
+  return " " .. workspace.path_label(root) .. " "
+end
+
+local function refresh_nvim_tree_title()
+  if not has_nvim_tree_window() then
+    return
+  end
+  local root = get_nvim_tree_display_root()
+  local title = nvim_tree_title(root)
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "NvimTree" then
+      for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+        if vim.api.nvim_win_is_valid(win) then
+          apply_nvim_tree_winhighlight(win)
+          pcall(vim.api.nvim_win_set_config, win, { title = title, title_pos = "left" })
+        end
+      end
+      break -- at most one NvimTree buffer
+    end
+  end
+end
+
+local function schedule_nvim_tree_backdrop_cleanup()
+  schedule_2x(function()
+    if
+      nvim_tree_backdrop_win
+      and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win)
+      and not has_nvim_tree_window()
+    then
+      destroy_nvim_tree_backdrop()
+    end
+  end)
+end
+
+-- fff editor dim (no native backdrop; matches fzf-lua darkness via same hl+blend).
 local function create_fff_backdrop()
   if fff_backdrop_win and not vim.api.nvim_win_is_valid(fff_backdrop_win) then
     fff_backdrop_win = nil
@@ -100,19 +229,7 @@ local function create_fff_backdrop()
   end
 
   fff_backdrop_win = win
-  vim.w[win].is_backdrop = true
-  -- Stronger blend (offset) so manual dim matches fzf-lua visual darkness at same BACKDROP_BLEND.
-  local winblend = math.max(0, math.min(99, BACKDROP_BLEND - 15))
-  vim.api.nvim_set_option_value("winblend", winblend, { win = fff_backdrop_win })
-  vim.api.nvim_set_option_value(
-    "winhighlight",
-    "Normal:FzfLuaBackdrop,EndOfBuffer:FzfLuaBackdrop",
-    { win = fff_backdrop_win }
-  )
-  vim.api.nvim_set_option_value("number", false, { win = fff_backdrop_win })
-  vim.api.nvim_set_option_value("relativenumber", false, { win = fff_backdrop_win })
-  vim.api.nvim_set_option_value("signcolumn", "no", { win = fff_backdrop_win })
-  vim.api.nvim_set_option_value("foldcolumn", "0", { win = fff_backdrop_win })
+  setup_backdrop_win(win)
 end
 
 local function destroy_fff_backdrop()
@@ -120,23 +237,6 @@ local function destroy_fff_backdrop()
     pcall(vim.api.nvim_win_close, fff_backdrop_win, true)
   end
   fff_backdrop_win = nil
-end
-
--- Prefer nvim-tree's own visibility check (authoritative + non-racy).
--- Falls back to a buf+win scan only if api not yet available.
-local function has_nvim_tree_window()
-  local ok, api = pcall(require, "nvim-tree.api")
-  if ok and api and api.tree and api.tree.is_visible then
-    return api.tree.is_visible()
-  end
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "NvimTree" then
-      if #vim.fn.win_findbuf(buf) > 0 then
-        return true
-      end
-    end
-  end
-  return false
 end
 
 local function sync_nvim_tree_background()
@@ -203,9 +303,9 @@ require("oil").setup({
 local function nvim_tree_float_config()
   local width = 40
   local height = math.min(vim.o.lines - 6, 35)
-  local cwd = vim.fn.fnamemodify(vim.uv.cwd() or "", ":~")
-  -- Cwd in the top border; first row inside is the first child.
-  local title = " " .. cwd .. " "
+  local root = get_nvim_tree_display_root()
+  local title = nvim_tree_title(root)
+  -- Only valid nvim_open_win keys here (title/title_pos ok; win* options must be set post-create).
   return {
     relative = "editor",
     border = "rounded",
@@ -243,11 +343,33 @@ local function setup_nvim_tree_once()
       group_empty = true,
       root_folder_label = false,
     },
+    on_attach = function(bufnr)
+      local api = require("nvim-tree.api")
+      api.config.mappings.default_on_attach(bufnr)
+      -- q can race with TreeClose/WinClosed for dim cleanup; force it explicitly.
+      vim.keymap.set("n", "q", function()
+        api.tree.close()
+        schedule_nvim_tree_backdrop_cleanup()
+      end, { buffer = bufnr, desc = "Close" })
+    end,
   })
   nvim_tree_did_setup = true
+
+  local ok, events = pcall(require, "nvim-tree.events")
+  if ok and events and events.Event then
+    if events.Event.TreeClose then
+      events.subscribe(events.Event.TreeClose, schedule_nvim_tree_backdrop_cleanup)
+    end
+    if events.Event.TreeOpen then
+      -- Buf reuse on re-toggle skips FileType; use TreeOpen to (re)apply title + winhighlight.
+      events.subscribe(events.Event.TreeOpen, function()
+        vim.schedule(refresh_nvim_tree_title)
+      end)
+    end
+  end
 end
 
--- nvim-tree float: pin clean border hl, create backdrop, and one-shot per-win WinClosed to destroy it.
+-- First NvimTree buf creation: style the float, create dim, and arm a per-win close hook.
 vim.api.nvim_create_autocmd("FileType", {
   group = explorer_augroup,
   pattern = "NvimTree",
@@ -255,17 +377,13 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.schedule(function()
       for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
         if vim.api.nvim_win_is_valid(win) then
-          vim.api.nvim_set_option_value(
-            "winhighlight",
-            "Normal:NvimTreeNormal,NormalNC:NvimTreeNormalNC,FloatBorder:NvimTreeFloatBorder,FloatTitle:Title",
-            { win = win }
-          )
           create_nvim_tree_backdrop()
+          refresh_nvim_tree_title()
           vim.api.nvim_create_autocmd("WinClosed", {
             group = explorer_augroup,
             pattern = tostring(win),
             once = true,
-            callback = destroy_nvim_tree_backdrop,
+            callback = schedule_nvim_tree_backdrop_cleanup,
           })
         end
       end
@@ -273,21 +391,17 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Safety net for nvim-tree close paths (toggle, focus loss, etc): if no tree window left, drop backdrop.
+-- Global safety net for dim cleanup when no NvimTree window remains.
 vim.api.nvim_create_autocmd({ "WinClosed", "BufWinLeave" }, {
   group = explorer_augroup,
-  callback = function()
-    if nvim_tree_backdrop_win and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win) and not has_nvim_tree_window() then
-      vim.schedule(destroy_nvim_tree_backdrop)
-    end
-  end,
+  callback = schedule_nvim_tree_backdrop_cleanup,
 })
 
 -- Resize active manual backdrops with the editor.
 vim.api.nvim_create_autocmd("VimResized", {
   group = explorer_augroup,
   callback = function()
-    -- nvim-tree: keep backdrop sized while the tree is open
+    -- Keep nvim-tree backdrop sized while open.
     if has_nvim_tree_window() and nvim_tree_backdrop_win and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win) then
       pcall(vim.api.nvim_win_set_config, nvim_tree_backdrop_win, {
         relative = "editor",
@@ -298,7 +412,7 @@ vim.api.nvim_create_autocmd("VimResized", {
       })
     end
 
-    -- fff (patched picker_ui)
+    -- fff: resize or recreate on demand (F2 etc).
     if fff_picker_ui and fff_picker_ui.state and fff_picker_ui.state.active then
       if fff_backdrop_win and vim.api.nvim_win_is_valid(fff_backdrop_win) then
         pcall(vim.api.nvim_win_set_config, fff_backdrop_win, {
@@ -376,20 +490,16 @@ end
 
 map("n", "<leader>e", function()
   setup_nvim_tree_once()
-  require("nvim-tree.api").tree.toggle({ find_file = true, focus = true })
+  require("nvim-tree.api").tree.toggle({ find_file = true, focus = true, update_root = true })
 
-  -- Post-toggle reconcile using the authoritative has_nvim_tree_window().
-  -- Double schedule yields to nvim-tree's internal (possibly scheduled) open/close work
-  -- so the check sees the final visibility state. This makes <leader>e open+close
-  -- reliably create/destroy the dim without leaks.
-  vim.schedule(function()
-    vim.schedule(function()
-      if has_nvim_tree_window() then
-        create_nvim_tree_backdrop()
-      else
-        destroy_nvim_tree_backdrop()
-      end
-    end)
+  -- Reconcile dim + title (and destroy on close) after the toggle settles.
+  schedule_2x(function()
+    if has_nvim_tree_window() then
+      create_nvim_tree_backdrop()
+      refresh_nvim_tree_title()
+    else
+      destroy_nvim_tree_backdrop()
+    end
   end)
 end, { desc = "Toggle file explorer (nvim-tree)" })
 
@@ -428,8 +538,8 @@ require("fff").setup({
   },
 })
 
--- Minimal monkey for fff dim: wrap open/close to manage the editor backdrop (z=50).
--- Schedule + active guard handles F2 (internal close/reopen) and other toggles.
+-- Minimal fff dim monkey: wrap open/close for editor backdrop (no native support).
+-- Schedule guard handles F2 toggles etc.
 local ok_fff, pu = pcall(require, "fff.picker_ui")
 if ok_fff and pu then
   fff_picker_ui = pu
@@ -504,4 +614,3 @@ map("n", "<leader>r", function()
 end, { desc = "Recent files" })
 
 return M
-
