@@ -76,6 +76,50 @@ local function sessions_strip_starter_buffers()
   strip_buffers(is_starter_buffer)
 end
 
+-- CodeDiff (from <leader>g*): special tabs with .codediff_restore on the side-by-side
+-- original/modified windows + scratch "CodeDiff N" buffers. Must not persist across
+-- <leader>Q / restarts (would restore as broken diff layouts instead of real buffers).
+local function is_codediff_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  local name = vim.api.nvim_buf_get_name(buf)
+  if name:match("^CodeDiff ") or name:match("codediff://") then
+    return true
+  end
+  for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+    if vim.api.nvim_win_is_valid(win) and vim.w[win] and vim.w[win].codediff_restore then
+      return true
+    end
+  end
+  return false
+end
+
+local function sessions_strip_codediff_buffers()
+  strip_buffers(is_codediff_buffer)
+end
+
+local function sessions_close_codediff()
+  -- Collect first (tab list can shift on close).
+  local to_close = {}
+  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      if vim.api.nvim_win_is_valid(win) and vim.w[win] and vim.w[win].codediff_restore then
+        table.insert(to_close, tab)
+        break
+      end
+    end
+  end
+  for _, tab in ipairs(to_close) do
+    if vim.api.nvim_tabpage_is_valid(tab) then
+      if vim.api.nvim_get_current_tabpage() ~= tab then
+        pcall(vim.api.nvim_set_current_tabpage, tab)
+      end
+      pcall(vim.cmd, "tabclose")
+    end
+  end
+end
+
 -- `nvim .` / oil leave dirs on the arglist; mksession persists them -> ghost explorer on restore
 local function sessions_strip_dir_args()
   for i = vim.fn.argc() - 1, 0, -1 do
@@ -92,7 +136,9 @@ local function sessions_cleanup_explorers()
 end
 
 local function sessions_cleanup_ephemeral()
-  -- Plugin UI (oil dirs, outline sidebar, starter) is not workspace state; strip before save/after restore.
+  -- Plugin UI (oil dirs, outline, starter, codediff tabs) is ephemeral; strip before save/after restore.
+  sessions_close_codediff()
+  sessions_strip_codediff_buffers()
   sessions_cleanup_explorers()
   sessions_close_outline()
   sessions_strip_outline_buffers()
@@ -296,6 +342,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
       end
     elseif should_open_starter() then
       -- `nvim .` without workspace leaves a dir buffer on the arglist before starter
+      sessions_close_codediff()
       sessions_cleanup_explorers()
       -- Reuse startup empty buffer (avoids a 2nd buffer when picking "Edit new buffer")
       MiniStarter.open(vim.api.nvim_get_current_buf())
@@ -309,10 +356,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
   group = sessions_augroup,
-  desc = "Close outline before mini.sessions autowrite on quit",
+  desc = "Close ephemeral UIs (outline, codediff) before mini.sessions autowrite on quit",
   callback = function()
     if workspace.has_session() then
       sessions_close_outline()
+      sessions_close_codediff()
     end
   end,
 })
@@ -324,6 +372,7 @@ end, { desc = "Save workspace session for cwd" })
 
 local function open_manual_starter()
   workspace_session_refresh_detected()
+  sessions_close_codediff()
   sessions_cleanup_explorers()
   sessions_strip_starter_buffers()
   local buf = vim.api.nvim_create_buf(false, true)

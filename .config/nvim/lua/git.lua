@@ -47,6 +47,9 @@ map("n", "<C-[>", function()
 end, { desc = "Prev git hunk" })
 
 -- Git diff views.
+local codediff_did_setup = false
+local codediff_focus_panel
+
 local function codediff_in_tab(tab)
   tab = tab or vim.api.nvim_get_current_tabpage()
   local ok, session_mod = pcall(require, "codediff.ui.lifecycle.session")
@@ -60,9 +63,6 @@ local function codediff_in_tab(tab)
   end
   return false
 end
-
-local codediff_did_setup = false
-local codediff_focus_panel
 
 local function codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
   local lifecycle = require("codediff.ui.lifecycle")
@@ -94,6 +94,8 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
     return
   end
 
+  target_file = vim.fn.fnamemodify(target_file, ":p")
+
   local cursor = vim.api.nvim_win_get_cursor(0)
   local current_tab = vim.api.nvim_get_current_tabpage()
   local tabs = vim.api.nvim_list_tabpages()
@@ -117,17 +119,58 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
     vim.api.nvim_set_current_tabpage(target_tab)
   end
 
-  local ok, err = pcall(vim.cmd, "edit " .. vim.fn.fnameescape(target_file))
-  if not ok then
-    vim.notify("Failed to open file: " .. err, vim.log.levels.ERROR)
-    return
+  local target_win = vim.api.nvim_get_current_win()
+
+  local this_name = vim.api.nvim_buf_get_name(current_buf)
+  local this_buftype = vim.bo[current_buf].buftype
+  local is_special = (this_buftype == "nofile" or this_name:match("^CodeDiff ") or this_name:match("codediff://") or this_name == "")
+
+  local bufnr_to_attach
+  if is_special then
+    bufnr_to_attach = vim.fn.bufadd(target_file)
+    vim.bo[bufnr_to_attach].buflisted = true
+    vim.bo[bufnr_to_attach].buftype = ""
+    vim.fn.bufload(bufnr_to_attach)
+  else
+    bufnr_to_attach = current_buf
+    vim.bo[bufnr_to_attach].buflisted = true
+    vim.bo[bufnr_to_attach].buftype = ""
+    local cur_nm = vim.api.nvim_buf_get_name(bufnr_to_attach)
+    if cur_nm ~= target_file then
+      pcall(vim.api.nvim_buf_set_name, bufnr_to_attach, target_file)
+    end
   end
-  pcall(vim.api.nvim_win_set_cursor, vim.api.nvim_get_current_win(), cursor)
+
+  vim.api.nvim_win_set_buf(target_win, bufnr_to_attach)
+
+  local lcount = vim.api.nvim_buf_line_count(bufnr_to_attach)
+  local lnum = math.min(math.max(cursor[1], 1), lcount)
+  pcall(vim.api.nvim_win_set_cursor, target_win, { lnum, cursor[2] })
 
   if vim.api.nvim_tabpage_is_valid(current_tab) then
     vim.api.nvim_set_current_tabpage(current_tab)
     vim.cmd("tabclose")
   end
+
+  -- Unlist only ephemeral codediff side bufs left behind (skip the landed one).
+  -- Preserves the plugin's native 2-pane bufferlist + focus highlighting inside the diff.
+  for _, b in ipairs({ original_bufnr, modified_bufnr }) do
+    if vim.api.nvim_buf_is_valid(b) and b ~= bufnr_to_attach then
+      local nm = vim.api.nvim_buf_get_name(b)
+      local bt = vim.bo[b].buftype
+      if bt == "nofile" or nm:match("^CodeDiff ") or nm:match("codediff://") then
+        vim.bo[b].buflisted = false
+      end
+    end
+  end
+
+  vim.schedule(function()
+    local cur = vim.api.nvim_get_current_buf()
+    if vim.api.nvim_buf_is_valid(cur) then
+      vim.bo[cur].buflisted = true
+      pcall(function() require("barbar.ui.render").update() end)
+    end
+  end)
 end
 
 local function setup_codediff_once()
@@ -135,7 +178,8 @@ local function setup_codediff_once()
     return
   end
 
-  -- Upstream only binds focus_explorer for explorer mode; bind it for history too.
+  -- Wrap to inject <C-e> (for history) + our gf handler using the plugin's set_tab_keymap
+  -- (handles re-apply on tab switch and keymap cleanup).
   local lifecycle = require("codediff.ui.lifecycle")
   local view_keymaps = require("codediff.ui.view.keymaps")
   local setup_all_keymaps_orig = view_keymaps._dotfiles_setup_all_keymaps_orig or view_keymaps.setup_all_keymaps
@@ -144,15 +188,16 @@ local function setup_codediff_once()
   view_keymaps.setup_all_keymaps = function(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
     setup_all_keymaps_orig(tabpage, original_bufnr, modified_bufnr, is_explorer_mode)
     local session = lifecycle.get_session(tabpage)
-    if not session or (session.mode ~= "explorer" and session.mode ~= "history") then
-      return
+    if session and (session.mode == "explorer" or session.mode == "history") then
+      lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
+        codediff_focus_panel(tabpage)
+      end, { desc = "Focus explorer/history panel" })
     end
-    lifecycle.set_tab_keymap(tabpage, "n", "<C-e>", function()
-      codediff_focus_panel(tabpage)
-    end, { desc = "Focus explorer/history panel" })
-    lifecycle.set_tab_keymap(tabpage, "n", "gf", function()
-      codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
-    end, { desc = "Open file in previous tab" })
+    if original_bufnr and modified_bufnr then
+      lifecycle.set_tab_keymap(tabpage, "n", "gf", function()
+        codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
+      end, { desc = "Open file in previous tab" })
+    end
   end
 
   require("codediff").setup({
