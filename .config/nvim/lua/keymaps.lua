@@ -343,10 +343,7 @@ local function quit_all_force()
 
   if #modified > 0 then
     table.sort(modified)
-    local summary = table.concat(modified, ", ")
-    if #summary > 100 then
-      summary = summary:sub(1, 97) .. "..."
-    end
+    local summary = table.concat(modified, "\n")
     if not buffers.confirm_discard_unsaved(#modified, summary) then
       return
     end

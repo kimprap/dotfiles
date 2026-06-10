@@ -248,3 +248,4 @@ map("n", "<leader>T", function()
 end, { desc = "Reopen last closed buffer" })
 
 return M
+

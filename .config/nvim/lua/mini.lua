@@ -9,7 +9,7 @@ function M.setup_core()
 
   require("mini.pairs").setup() -- auto close brackets/quotes
   require("mini.comment").setup() -- gc to comment
-  require("mini.surround").setup() -- ys, ds, cs for surrounding
+  require("mini.surround").setup({ n_lines = 0, search_method = "cover_or_next", silent = true }) -- ys, ds, cs for surrounding
 
   local ai = require("mini.ai")
   ai.setup({
@@ -30,6 +30,7 @@ function M.setup_core()
         "=%s*().-()%s*[,;}\n]",
       },
       [","] = ai.gen_spec.argument({ brackets = { "%b()", "%b[]", "%b{}" } }),
+      [":"] = false,
     },
   })
 

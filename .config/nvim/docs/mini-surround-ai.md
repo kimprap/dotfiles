@@ -1,10 +1,10 @@
 # mini.surround + mini.ai — Quick Reference
 
 **Your setup (minimal & practical)**
-- `mini.surround`: stock defaults
+- `mini.surround`: `n_lines=0`, `search_method="cover_or_next"`, `silent=true`
 - `mini.ai`: defaults for quotes, brackets, function calls, arguments, tags + custom `a=`/`i=`
 - Next/last variants (`an`/`in`/`al`/`il`) **disabled**
-- `search_method = "cover_or_next"`, `silent = true`
+- `search_method = "cover_or_next"`, `silent = true` (ai)
 
 ---
 
@@ -69,7 +69,7 @@ Use with `d`, `c`, `y`, `v`, or directly with surround (`sa`/`sd`/`sr`).
 
 **Notes for your config**
 - Next/last variants (`an`/`in` etc.) are disabled.
-- Only custom textobject is `=` (very useful for config/code).
+- Only custom textobject is `=`. `:` is disabled (avoids default punctuation separator behavior).
 - Everything else uses mini.ai's strong defaults.
 - Plays extremely well with your `mini.surround`.
 
