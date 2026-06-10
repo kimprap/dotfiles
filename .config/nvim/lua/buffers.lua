@@ -48,12 +48,18 @@ function M.confirm_discard_unsaved(count, summary)
   local choice = vim.fn.confirm(title, "&Quit\n&Cancel", 2)
   return choice == 1
 end
+
+function M.buffer_display_name(bufnr)
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  if name ~= "" then
+    return vim.fn.fnamemodify(name, ":~:.")
+  end
+  return '[Buffer ' .. bufnr .. ']'
+end
 local function delete_buffer(bufnr, force)
   if not force then
-    local is_dirty = vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == ""
-    if is_dirty then
-      local name = vim.api.nvim_buf_get_name(bufnr)
-      local shown = name ~= "" and vim.fn.fnamemodify(name, ":~:.") or "[No Name]"
+    if vim.bo[bufnr].modified then
+      local shown = M.buffer_display_name(bufnr)
       if not M.confirm_discard_unsaved(1, shown) then
         return
       end
@@ -80,7 +86,7 @@ function M.close_editor(force)
     vim.api.nvim_win_close(winid, true)
     return
   end
-  if splits and (vim.bo[bufnr].modified or vim.api.nvim_buf_get_name(bufnr) == "") then
+  if splits and vim.bo[bufnr].modified then
     delete_buffer(bufnr, force)
     return
   end

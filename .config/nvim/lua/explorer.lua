@@ -19,6 +19,8 @@ local fff_backdrop_buf = nil
 local fff_backdrop_win = nil
 local fff_picker_ui = nil
 
+local nvim_tree_did_setup = false
+
 -- Shared setup for manual backdrops (Black + offset blend to match fzf-lua darkness).
 local function setup_backdrop_win(win)
   vim.w[win].is_backdrop = true
@@ -112,6 +114,9 @@ end
 
 -- nvim-tree visibility (fast api path; buf+win scan fallback when api not ready).
 local function has_nvim_tree_window()
+  if not nvim_tree_did_setup then
+    return false
+  end
   local api = get_nvim_tree_api()
   if api and api.tree and api.tree.is_visible then
     return api.tree.is_visible()
@@ -318,8 +323,6 @@ local function nvim_tree_float_config()
   }
 end
 
-local nvim_tree_did_setup = false
-
 local function setup_nvim_tree_once()
   if nvim_tree_did_setup then
     return
@@ -343,6 +346,13 @@ local function setup_nvim_tree_once()
       group_empty = true,
       root_folder_label = false,
     },
+    actions = {
+      open_file = {
+        -- Always close the (float) tree after opening a file via <CR>/o etc.
+        -- Prevents dim overlay lingering when the target file was already open in the editor.
+        quit_on_open = true,
+      },
+    },
     on_attach = function(bufnr)
       local api = require("nvim-tree.api")
       api.config.mappings.default_on_attach(bufnr)
@@ -351,6 +361,19 @@ local function setup_nvim_tree_once()
         api.tree.close()
         schedule_nvim_tree_backdrop_cleanup()
       end, { buffer = bufnr, desc = "Close" })
+
+      -- Refined: for <CR>/enter (and o) on an already-open file, explicitly close tree + cleanup.
+      -- quit_on_open + focus_loss don't always suffice for the "focus same file" case; this guarantees dim is torn down.
+      -- Avoids overcomplicating global logic or more autocmds.
+      local function open_then_close()
+        api.node.open.edit()
+        vim.schedule(function()
+          pcall(api.tree.close)
+          schedule_nvim_tree_backdrop_cleanup()
+        end)
+      end
+      vim.keymap.set("n", "<CR>", open_then_close, { buffer = bufnr, desc = "Open file (close tree + dim)" })
+      vim.keymap.set("n", "o", open_then_close, { buffer = bufnr, desc = "Open file (close tree + dim)" })
     end,
   })
   nvim_tree_did_setup = true

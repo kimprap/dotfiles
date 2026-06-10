@@ -336,8 +336,7 @@ local function quit_all_force()
   local modified = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].modified then
-      local name = vim.api.nvim_buf_get_name(buf)
-      modified[#modified + 1] = name ~= "" and vim.fn.fnamemodify(name, ":~:.") or "[No Name]"
+      modified[#modified + 1] = buffers.buffer_display_name(buf)
     end
   end
 
@@ -358,7 +357,14 @@ map("n", "<leader>q", function()
   buffers.close_editor(false)
 end, { desc = "Close editor (split-aware)" })
 map("n", "<leader>Q", quit_all_force, { desc = "Quit Neovim without saving" })
-map("n", "<leader>n", ":enew<CR>", { desc = "New empty buffer" })
+map("n", "<leader>n", function()
+  local buf = vim.api.nvim_create_buf(true, false)
+  vim.api.nvim_win_set_buf(0, buf)
+  vim.bo[buf].buflisted = true
+  vim.schedule(function()
+    pcall(require("barbar.ui.render").update)
+  end)
+end, { desc = "New empty buffer" })
 map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
 end, { desc = "Toggle word wrap" })

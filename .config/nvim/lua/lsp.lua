@@ -115,22 +115,70 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
+-- Same glyphs as used in statusline (mini.lua DIAGNOSTIC_STATUS) for gutter signs.
+local diagnostic_sign_glyphs = {
+  [vim.diagnostic.severity.ERROR] = "",
+  [vim.diagnostic.severity.WARN] = "󰀪",
+  [vim.diagnostic.severity.INFO] = "󰋽",
+  [vim.diagnostic.severity.HINT] = "󰌶",
+}
+
+-- Only emit virtual text (glyph + message) for the most severe diagnostic on each line.
+local function primary_glyph(d)
+  local diags = vim.diagnostic.get(d.bufnr, { lnum = d.lnum })
+  local min = d.severity
+  for _, diag in ipairs(diags) do
+    if diag.severity < min then
+      min = diag.severity
+    end
+  end
+  if d.severity ~= min then
+    return nil
+  end
+  return diagnostic_sign_glyphs[d.severity]
+end
+
 vim.diagnostic.config({
   virtual_text = {
-    prefix = "",
+    prefix = primary_glyph,
     spacing = 2,
     source = false,
     format = function(diagnostic)
+      if not primary_glyph(diagnostic) then
+        return nil
+      end
       return diagnostic.message
     end,
   },
-  signs = true,
+  signs = {
+    text = diagnostic_sign_glyphs,
+    texthl = {
+      [vim.diagnostic.severity.ERROR] = "DiagnosticError",
+      [vim.diagnostic.severity.WARN] = "DiagnosticWarn",
+      [vim.diagnostic.severity.INFO] = "DiagnosticInfo",
+      [vim.diagnostic.severity.HINT] = "DiagnosticHint",
+    },
+  },
   update_in_insert = false,
   severity_sort = true,
   float = {
     border = "rounded",
     source = "if_many",
   },
+})
+
+-- Subtle inline virtual text colors (glyphs come from primary diagnostic; toned down to not fight code/comments).
+local function setup_diagnostic_highlights()
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#c85c5c", italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#d4b070", italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo", { fg = "#6a9cc8", italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#9a7cc8", italic = true })
+end
+setup_diagnostic_highlights()
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = lsp_augroup,
+  desc = "Re-apply subtle inline diagnostic virtual text colors after theme change",
+  callback = setup_diagnostic_highlights,
 })
 
 require("blink.cmp").setup({
