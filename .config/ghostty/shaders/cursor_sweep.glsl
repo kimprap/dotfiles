@@ -8,9 +8,9 @@ vec3 sRGBToLinear(vec3 c) {
 vec4 TRAIL_COLOR = vec4(sRGBToLinear(iCurrentCursorColor.rgb), iCurrentCursorColor.a); // custom e.g. vec4(0.3, 0.4, 0.9, 0.7) (sRGBToLinear)
 
 // --- CONFIGURATION (tuned) ---
-const float DURATION = 0.15;
-const float TRAIL_LENGTH = 0.5;
-const float BLUR = 1.5;
+const float DURATION = 0.13;
+const float TRAIL_LENGTH = 0.3;
+const float BLUR = 1.3;
 
 // Active easing: EaseOutCubic (smooth)
 float ease(float x) {
