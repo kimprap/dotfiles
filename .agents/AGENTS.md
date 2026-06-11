@@ -31,19 +31,23 @@ Primary areas: Neovim, Zsh, Starship, Ghostty, Yazi, Cursor, helper scripts, and
 
 ## Dotfiles git workflow
 
-Aliases:
+Interactive shells define:
 
 | Alias | Definition |
 |---|---|
 | `dot` | `git -C $HOME/.dotfiles` |
 | `dot-add` | `$HOME/.dotfiles/bin/dot-add` |
 
-Staging rules:
+Staging rules (all contexts):
 
-- Always stage with `dot-add <name> [name...]`; never use `dot add .`, `dot add -A`, or broad raw staging.
-- `dot-add` only stages paths listed in `manifest`.
-- Short names map to `.config/<name>`; exceptions include `archive`, `bin`, `manifest`, `README.md`, and explicit `.config/...` paths.
-- If `dot-add` reports a path is not in `manifest`, update `manifest` first or leave it unstaged; do not bypass with broad raw Git commands.
+- Stage only via the `dot-add` script; never raw `git add .`, `git add -A`, `dot add .config`, or other broad staging.
+- The script (or its direct equivalent) only stages paths listed in `manifest`.
+- When aliases are available, use `dot-add <name> [name...]`.
+- Otherwise (non-interactive shells, agents, automation), use the expanded forms:
+  - `git -C ~/.dotfiles` (or `git -C .` when cwd is the repo root)
+  - `~/.dotfiles/bin/dot-add <name>` (or `./bin/dot-add <name>` when cwd is the repo root)
+- Short names map to `.config/<name>`; other directly allowed paths include `bin`, `manifest`, `README.md`, `archive`, and explicit `.config/...`.
+- If the adder rejects a path, update `manifest` first. Do not bypass the allow-list.
 - Push only when explicitly requested.
 
 ## Code conventions
