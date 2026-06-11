@@ -37,6 +37,10 @@ setopt auto_pushd
 setopt pushd_ignore_dups
 setopt pushdminus
 
+# Show dotfiles (.*) in tab completion for paths (and * globs).
+# Consistent with `la`. Tradeoff: bare * now matches dotfiles too.
+setopt globdots
+
 alias -g ...='../..'
 alias -g ....='../../..'
 alias -g .....='../../../..'
