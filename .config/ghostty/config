@@ -25,3 +25,8 @@ shell-integration-features = ssh-terminfo,ssh-env
 keybind = cmd+k=text:clear\r
 
 
+# === Cursor shaders ===
+# cursor_sweep (tuned) from https://github.com/sahaj-b/ghostty-cursor-shaders
+custom-shader = ~/.config/ghostty/shaders/cursor_sweep.glsl
+custom-shader-animation = always
+
