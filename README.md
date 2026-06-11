@@ -9,6 +9,7 @@ Personal dotfiles for macOS, managed as a normal Git repository at `~/.dotfiles`
 - Neovim configuration using `vim.pack`
 - Ghostty terminal configuration
 - Yazi file manager setup
+- Lazygit TUI git client (delta pager)
 - Cursor editor settings, keybindings, and extension list
 - Global agent harness instructions and rules
 - Useful tools: fzf, zoxide, fd, ripgrep, etc.
@@ -45,6 +46,7 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 | Neovim     | `.config/nvim/`                   | `~/.config/nvim/`         |
 | Ghostty    | `.config/ghostty/`                | `~/.config/ghostty/`      |
 | Yazi       | `.config/yazi/`                   | `~/.config/yazi/`         |
+| Lazygit    | `.config/lazygit/config.yml`      | `~/Library/Application Support/lazygit/config.yml` |
 | Cursor     | `.config/cursor/`                 | `~/Library/Application Support/Cursor/User/profiles/<id>/` |
 | Agents     | `.config/agents/`                 | `~/.agents/`              |
 

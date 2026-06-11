@@ -15,6 +15,9 @@ FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Sourc
 CURSOR_PROFILE="${CURSOR_PROFILE:-344c8ea1}"
 CURSOR_USER="$HOME/Library/Application Support/Cursor/User"
 
+# Lazygit uses macOS Application Support (not XDG on Darwin)
+LAZYGIT_DIR="$HOME/Library/Application Support/lazygit"
+
 # Symlink mappings (source → target)
 declare -A SYMLINKS=(
     ["$HOME/.dotfiles/.prettierrc"]="$HOME/.prettierrc"
@@ -28,6 +31,7 @@ declare -A SYMLINKS=(
     ["$HOME/.dotfiles/.config/karabiner/karabiner.json"]="$HOME/.config/karabiner/karabiner.json"
     ["$HOME/.dotfiles/.config/cursor/settings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/settings.json"
     ["$HOME/.dotfiles/.config/cursor/keybindings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/keybindings.json"
+    ["$HOME/.dotfiles/.config/lazygit/config.yml"]="$LAZYGIT_DIR/config.yml"
 )
 
 # ═══════════════════════════════════════════════════════════════
@@ -66,6 +70,7 @@ echo "→ Setting up symlinks..."
 mkdir -p "$HOME/.config"
 mkdir -p "$CURSOR_USER/profiles/$CURSOR_PROFILE"
 mkdir -p "$HOME/.config/karabiner"
+mkdir -p "$LAZYGIT_DIR"
 
 for src in "${!SYMLINKS[@]}"; do
     target="${SYMLINKS[$src]}"
@@ -152,7 +157,9 @@ brew install \
     ffmpegthumbnailer \
     zoxide \
     lua-language-server \
-    stylua
+    stylua \
+    lazygit \
+    git-delta
 
 # Ghostty is macOS-only
 if [[ "$IS_MACOS" == true ]]; then
