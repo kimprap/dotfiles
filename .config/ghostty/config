@@ -11,7 +11,7 @@ theme = dark:Ghostty Default Style Dark, light:Atom One Light
 font-family = "SauceCodePro Nerd Font"
 # font-family = JetBrains Mono
 
-font-size = 12
+font-size = 14
 font-thicken = true
 # bold-is-bright = true
 
@@ -21,8 +21,18 @@ mouse-scroll-multiplier = precision:3
 shell-integration-features = ssh-terminfo,ssh-env
 
 
+# === Splits / Panes ===
+# Stronger visual distinction for the active pane (default dimming is subtle with dense text).
+unfocused-split-opacity = 0.5
+unfocused-split-fill = #1e1e2e
+split-divider-color = #7f849c
+
+
 # === keymaps ===
 keybind = cmd+k=text:clear\r
+
+# Font zoom controls (Cmd+0 resets to your configured font-size)
+keybind = cmd+0=reset_font_size
 
 
 # === Cursor shaders ===
