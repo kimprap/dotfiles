@@ -16,6 +16,7 @@ vim.pack.add({
   -- Finders
   { src = "https://github.com/ibhagwan/fzf-lua", version = "main" },
   { src = "https://github.com/dmtrKovalenko/fff.nvim", version = "main" },
+  { src = "https://github.com/MagicDuck/grug-far.nvim", version = "main" },
 
   -- Tabs + Git + UI decorations
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
@@ -49,6 +50,7 @@ local mini = require("mini")
 require("options")
 mini.setup_core()
 
+-- Primary UI surfaces and core editing tools
 require("explorer")
 require("git")
 require("sessions")
@@ -57,6 +59,7 @@ require("ui")
 require("terminal")
 require("keymaps")
 
+-- Language features and secondary UIs
 require("outline")
 require("treesitter")
 require("markdown")

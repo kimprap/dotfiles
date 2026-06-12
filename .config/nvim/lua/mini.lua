@@ -58,7 +58,7 @@ function M.setup_core()
   -- Keep mini.cmdline inert (if it was ever set up earlier in this process)
   -- and prevent the built-in wildmenu from stealing <Tab>.
   pcall(vim.api.nvim_del_augroup_by_name, "MiniCmdline")
-  vim.opt.wildchar = 26   -- <Tab> no longer triggers native wild; blink owns it
+  vim.opt.wildchar = 26 -- <Tab> no longer triggers native wild; blink owns it
 
   require("mini.move").setup({
     mappings = {
@@ -351,6 +351,7 @@ function M.setup_clue()
       { mode = "n", keys = "<Leader>/", desc = "Grep project (fff)" },
       { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
       { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
+      { mode = "n", keys = "<Leader>sr", desc = "Search + replace (grug-far, --hidden --follow)" },
       { mode = "n", keys = "<Leader>r", desc = "Recent files" },
       { mode = "n", keys = "<Leader>L", desc = "+LSP" },
       { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
@@ -386,3 +387,4 @@ function M.setup_clue()
 end
 
 return M
+

@@ -11,6 +11,58 @@ map("n", "<leader>ui", function()
   vim.notify(vim.o.ignorecase and "Search: ignore case" or "Search: match case", vim.log.levels.INFO)
 end, { desc = "Toggle search case sensitivity" })
 
+-- Grug-far (find & replace across the project, VSCode-style).
+-- <leader>sr pre-fills the current word + --hidden --follow (important for dotfiles).
+-- The loader is defensive: the plugin is only fetched on first use via :PackUpdate.
+local grug_far
+
+local function load_grug_far()
+  if grug_far then
+    return grug_far
+  end
+  local ok
+  ok, grug_far = pcall(require, "grug-far")
+  if not ok then
+    -- Try activating the opt pack (in case :PackUpdate ran in this session).
+    pcall(vim.cmd, "packadd! grug-far.nvim")
+    ok, grug_far = pcall(require, "grug-far")
+  end
+  if not ok or not grug_far then
+    vim.notify("grug-far.nvim not installed yet.\nRun :PackUpdate (then restart if needed).", vim.log.levels.WARN)
+    grug_far = nil
+    return nil
+  end
+  grug_far.setup()
+  return grug_far
+end
+
+map({ "n", "v" }, "<leader>sr", function()
+  local g = load_grug_far()
+  if g then
+    g.open({
+      prefills = {
+        search = vim.fn.expand("<cword>"),
+        flags = "--hidden --follow",
+      },
+    })
+  end
+end, { desc = "Search + replace (grug-far)" })
+
+-- Safe wrappers for the native commands (they become fully featured once the real plugin loads).
+vim.api.nvim_create_user_command("GrugFar", function()
+  local g = load_grug_far()
+  if g then
+    g.open()
+  end
+end, { desc = "Open grug-far (search/replace)" })
+
+vim.api.nvim_create_user_command("GrugFarWithin", function(opts)
+  local g = load_grug_far()
+  if g then
+    g.open({ visualSelectionUsage = "operate-within-range" })
+  end
+end, { range = "%", desc = "grug-far within visual range or buffer" })
+
 -- Window navigation (splits: <C-\> right, <C-w>s below; resize: <C-arrows>, equalize <C-S-=>)
 map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
 map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
