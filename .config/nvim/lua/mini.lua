@@ -61,6 +61,12 @@ function M.setup_core()
     },
   })
 
+  vim.keymap.set("c", "<C-j>", "<C-n>", { desc = "Next cmdline completion" })
+  vim.keymap.set("c", "<C-k>", "<C-p>", { desc = "Previous cmdline completion" })
+  vim.keymap.set("c", "<Tab>", function()
+    return vim.fn.wildmenumode() == 1 and "<C-y>" or "<Tab>"
+  end, { expr = true, desc = "Accept cmdline completion" })
+
   map("n", "<leader>:", function()
     require("mini.extra").pickers.commands()
   end, { desc = "Find commands" })
