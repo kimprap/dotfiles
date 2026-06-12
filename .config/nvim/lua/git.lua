@@ -21,6 +21,7 @@ function M.setup()
     signs = gitsigns_signs,
     signs_staged = gitsigns_signs,
     attach_to_untracked = true,
+    watch_gitdir = { enable = true },
     preview_config = {
       border = "rounded",
     },
@@ -36,6 +37,17 @@ function M.attach_loaded_buffers()
       gitsigns.attach({ bufnr = buf })
     end
   end
+end
+
+--- Refresh gitsigns (signs + scrollbar marks) after external git changes.
+--- Safe wrapper; ensures setup.
+function M.refresh()
+  if not gitsigns_did_setup then
+    M.setup()
+  end
+  pcall(function()
+    require("gitsigns").refresh()
+  end)
 end
 
 -- Hunk navigation in normal buffers (CodeDiff tab uses buffer-local <C-]>/<C-[> instead)

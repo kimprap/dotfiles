@@ -61,6 +61,16 @@ function M.setup()
         end
       end, 120)
     end,
+    on_close = function()
+      -- After lazygit (discard/stage/etc.): checktime for content + git.refresh() for signs.
+      vim.schedule(function()
+        vim.cmd("checktime")
+        local ok, git = pcall(require, "git")
+        if ok and git.refresh then
+          git.refresh()
+        end
+      end)
+    end,
   })
 
   map("n", "<leader>gg", function()

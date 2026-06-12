@@ -45,6 +45,7 @@ vim.opt.splitright = true
 vim.opt.undofile = true
 vim.opt.swapfile = false
 vim.opt.backup = false
+vim.opt.autoread = true
 vim.opt.updatetime = 300
 vim.opt.timeoutlen = 500
 vim.opt.clipboard = "unnamedplus"
@@ -106,6 +107,16 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       vim.api.nvim_win_set_cursor(0, mark)
     end
+  end,
+})
+
+-- Autoread + checktime on focus/term events: reload buffer content on external changes
+-- (edits, git restore, etc.). Lazygit on_close adds explicit gitsigns refresh for signs.
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "TermClose" }, {
+  group = options_augroup,
+  desc = "External file change detection (with autoread)",
+  callback = function()
+    vim.cmd("checktime")
   end,
 })
 
