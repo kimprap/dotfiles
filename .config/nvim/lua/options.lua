@@ -3,6 +3,11 @@ vim.g.sonokai_enable_italic = 1
 vim.cmd.colorscheme("sonokai")
 
 local options_augroup = vim.api.nvim_create_augroup("user.options", { clear = true })
+vim.filetype.add({
+  pattern = {
+    [".*/%.config/cursor/.*%.json"] = "jsonc",
+  },
+})
 
 vim.opt.number = true
 vim.opt.relativenumber = true

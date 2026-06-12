@@ -652,4 +652,3 @@ map("n", "<leader>r", function()
   })
 end, { desc = "Recent files" })
 return M
-
