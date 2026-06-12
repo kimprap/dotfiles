@@ -40,6 +40,14 @@ local function apply_nvim_tree_winhighlight(win)
     { win = win }
   )
 end
+local function apply_nvim_tree_window_options(win)
+  apply_nvim_tree_winhighlight(win)
+  vim.api.nvim_set_option_value("statuscolumn", "", { win = win })
+  vim.api.nvim_set_option_value("number", false, { win = win })
+  vim.api.nvim_set_option_value("relativenumber", false, { win = win })
+  vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
+  vim.api.nvim_set_option_value("foldcolumn", "0", { win = win })
+end
 
 -- Cached nvim-tree modules (one-time pcall, resilient).
 local nvim_tree_api, nvim_tree_core
@@ -191,7 +199,7 @@ local function refresh_nvim_tree_title()
     if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "NvimTree" then
       for _, win in ipairs(vim.fn.win_findbuf(buf)) do
         if vim.api.nvim_win_is_valid(win) then
-          apply_nvim_tree_winhighlight(win)
+          apply_nvim_tree_window_options(win)
           pcall(vim.api.nvim_win_set_config, win, { title = title, title_pos = "left" })
         end
       end
@@ -349,6 +357,7 @@ local function setup_nvim_tree_once()
     renderer = {
       group_empty = true,
       root_folder_label = false,
+      indent_width = 1.5,
     },
     actions = {
       open_file = {
@@ -642,5 +651,5 @@ map("n", "<leader>r", function()
     winopts = fzf_winopts(),
   })
 end, { desc = "Recent files" })
-
 return M
+
