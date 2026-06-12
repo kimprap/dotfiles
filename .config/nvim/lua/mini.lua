@@ -1,4 +1,5 @@
 local M = {}
+local map = require("map")
 
 function M.setup_core()
   require("mini.basics").setup({
@@ -53,6 +54,16 @@ function M.setup_core()
       move_up = "<C-k>",
     },
   })
+  require("mini.extra").setup()
+  require("mini.cmdline").setup({
+    autocorrect = {
+      enable = false,
+    },
+  })
+
+  map("n", "<leader>:", function()
+    require("mini.extra").pickers.commands()
+  end, { desc = "Find commands" })
 
   require("mini.move").setup({
     mappings = {
@@ -325,6 +336,7 @@ function M.setup_clue()
       { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
       { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
       { mode = "n", keys = "<Leader>r", desc = "Recent files" },
+      { mode = "n", keys = "<Leader>:", desc = "Find commands" },
       { mode = "n", keys = "<Leader>L", desc = "+LSP" },
       { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
       { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
