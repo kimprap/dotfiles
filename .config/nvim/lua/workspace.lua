@@ -36,13 +36,11 @@ function M.will_restore_session()
   if not M.has_session() then
     return false
   end
-  if vim.fn.argc() == 0 then
-    return true
+  -- Auto-restore only for bare nvim; explicit file/dir targets open directly.
+  if vim.fn.argc() ~= 0 then
+    return false
   end
-  if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-    return true
-  end
-  return false
+  return true
 end
 
 return M

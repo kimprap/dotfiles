@@ -14,6 +14,74 @@ vim.opt.foldmethod = "indent"
 vim.opt.foldexpr = "0"
 vim.opt.foldlevel = 99
 vim.opt.foldminlines = 1
+
+-- Foldtext for indent/LSP folds. Keep the source line's indentation and highlighting,
+-- then append the folded-line count with the Folded group. Markdown overrides this.
+local function line_hl_at(lnum, col)
+  local ok, captures = pcall(vim.treesitter.get_captures_at_pos, 0, lnum - 1, col - 1)
+  if ok and captures and #captures > 0 then
+    local capture = captures[#captures].capture
+    if capture and capture ~= "" then
+      return "@" .. capture
+    end
+  end
+
+  local id = vim.fn.synID(lnum, col, 1)
+  local name = vim.fn.synIDattr(vim.fn.synIDtrans(id), "name")
+  if name and name ~= "" then
+    return name
+  end
+
+  return "Normal"
+end
+
+local function build_hl_chunks(text, lnum)
+  local len = #text
+  if len == 0 then
+    return {}
+  end
+
+  local chunks = {}
+  local current_hl = line_hl_at(lnum, 1)
+  local current_start = 1
+
+  for col = 2, len do
+    local hl = line_hl_at(lnum, col)
+    if hl ~= current_hl then
+      table.insert(chunks, { text:sub(current_start, col - 1), current_hl })
+      current_hl = hl
+      current_start = col
+    end
+  end
+
+  table.insert(chunks, { text:sub(current_start), current_hl })
+  return chunks
+end
+
+_G.UserFoldText = function()
+  local lnum = vim.v.foldstart or 0
+  local endlnum = vim.v.foldend or lnum
+  local count = math.max(1, endlnum - lnum + 1)
+
+  if lnum < 1 then
+    lnum = 1
+  end
+
+  local line_count = vim.api.nvim_buf_line_count(0)
+  if line_count > 0 and lnum > line_count then
+    lnum = line_count
+  end
+
+  local ok, chunks = pcall(build_hl_chunks, vim.fn.getline(lnum), lnum)
+  if not ok or type(chunks) ~= "table" then
+    chunks = { { vim.fn.getline(lnum), "Normal" } }
+  end
+
+  table.insert(chunks, { "  +-- " .. count .. " lines", "Folded" })
+  return chunks
+end
+
+vim.opt.foldtext = "v:lua.UserFoldText()"
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
 vim.opt.sidescrolloff = 8

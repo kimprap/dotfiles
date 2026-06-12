@@ -120,7 +120,7 @@ local function sessions_close_codediff()
   end
 end
 
--- `nvim .` / oil leave dirs on the arglist; mksession persists them -> ghost explorer on restore
+-- Strip dir/oil args so sessions don't restore ghost explorers.
 local function sessions_strip_dir_args()
   for i = vim.fn.argc() - 1, 0, -1 do
     local arg = vim.fn.argv(i)
@@ -136,7 +136,7 @@ local function sessions_cleanup_explorers()
 end
 
 local function sessions_cleanup_ephemeral()
-  -- Plugin UI (oil dirs, outline, starter, codediff tabs) is ephemeral; strip before save/after restore.
+  -- Plugin UI is ephemeral; strip it before save and after restore.
   sessions_close_codediff()
   sessions_strip_codediff_buffers()
   sessions_cleanup_explorers()
@@ -302,16 +302,9 @@ local function should_open_starter()
   if workspace.will_restore_session() then
     return false
   end
-  -- `nvim file.ts` - skip starter
-  if vim.fn.argc() == 1 and vim.fn.filereadable(vim.fn.argv(0)) == 1 then
+  -- Explicit file/dir targets open directly; bare nvim without a session opens starter.
+  if vim.fn.argc() >= 1 then
     return false
-  end
-  if vim.fn.argc() > 1 then
-    return false
-  end
-  -- bare `nvim` or `nvim <dir>` without workspace restore
-  if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-    return true
   end
   local listed = vim.tbl_filter(function(buf)
     return vim.fn.buflisted(buf) == 1
@@ -332,7 +325,7 @@ end
 
 vim.api.nvim_create_autocmd("VimEnter", {
   group = sessions_augroup,
-  desc = "Restore workspace session or open starter on bare nvim",
+  desc = "Restore session or open starter for bare nvim",
   once = true,
   callback = function()
     if workspace.will_restore_session() then
@@ -341,14 +334,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
         vim.notify("Session restore failed: " .. tostring(err), vim.log.levels.ERROR)
       end
     elseif should_open_starter() then
-      -- `nvim .` without workspace leaves a dir buffer on the arglist before starter
       sessions_close_codediff()
       sessions_cleanup_explorers()
       -- Reuse startup empty buffer (avoids a 2nd buffer when picking "Edit new buffer")
       MiniStarter.open(vim.api.nvim_get_current_buf())
       git.setup()
     else
-      -- `nvim path/to/file` and other non-session startups
+      -- Explicit targets and other non-session startups.
       git.attach_loaded_buffers()
     end
   end,

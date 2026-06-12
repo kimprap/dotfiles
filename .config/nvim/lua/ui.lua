@@ -81,8 +81,23 @@ map("n", "<leader>c", function()
   M.refresh_search_scrollbar()
 end, { desc = "Clear search highlight" })
 
--- Fold keymaps in addition to native za/zR/zM.
-map("n", "<leader>zf", "za", { desc = "Toggle fold" })
+-- Fold keymaps in addition to native za/zR/zM. Indent folds often start on the
+-- first child line, so retry there while keeping the cursor on the parent.
+map("n", "<leader>zf", function()
+  local lnum = vim.fn.line(".")
+  if vim.fn.foldclosed(lnum) ~= -1 then
+    vim.cmd("silent! normal! zo")
+    return
+  end
+
+  vim.cmd("silent! normal! za")
+  if vim.fn.foldclosed(lnum) == -1 and lnum < vim.fn.line("$") then
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    vim.api.nvim_win_set_cursor(0, { lnum + 1, 0 })
+    vim.cmd("silent! normal! za")
+    vim.api.nvim_win_set_cursor(0, cursor)
+  end
+end, { desc = "Toggle fold" })
 map("n", "<leader>zo", "zR", { desc = "Open all folds" })
 map("n", "<leader>zc", "zM", { desc = "Close all folds" })
 

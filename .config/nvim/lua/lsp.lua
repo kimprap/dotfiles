@@ -123,7 +123,7 @@ local diagnostic_sign_glyphs = {
   [vim.diagnostic.severity.HINT] = "󰌶",
 }
 
--- Only emit virtual text (glyph + message) for the most severe diagnostic on each line.
+-- Only the worst diagnostic on a line gets inline virtual text.
 local function primary_glyph(d)
   local diags = vim.diagnostic.get(d.bufnr, { lnum = d.lnum })
   local min = d.severity
@@ -167,17 +167,18 @@ vim.diagnostic.config({
   },
 })
 
--- Subtle inline virtual text colors (glyphs come from primary diagnostic; toned down to not fight code/comments).
+-- Inline diagnostic virtual text: quiet foregrounds on a small message-only background.
 local function setup_diagnostic_highlights()
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#c85c5c", italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#d4b070", italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo", { fg = "#6a9cc8", italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#9a7cc8", italic = true })
+  local bg = "#323232"
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#c85c5c", bg = bg, italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#d4b070", bg = bg, italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo", { fg = "#6a9cc8", bg = bg, italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#9a7cc8", bg = bg, italic = true })
 end
 setup_diagnostic_highlights()
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = lsp_augroup,
-  desc = "Re-apply subtle inline diagnostic virtual text colors after theme change",
+  desc = "Re-apply inline diagnostic virtual text colors (incl. bg) after theme change",
   callback = setup_diagnostic_highlights,
 })
 
@@ -658,4 +659,3 @@ vim.api.nvim_create_autocmd("LspDetach", {
 enable_lsp_servers()
 
 return M
-

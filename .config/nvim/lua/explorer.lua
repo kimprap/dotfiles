@@ -26,11 +26,7 @@ local function setup_backdrop_win(win)
   vim.w[win].is_backdrop = true
   local winblend = math.max(0, math.min(99, BACKDROP_BLEND - 15))
   vim.api.nvim_set_option_value("winblend", winblend, { win = win })
-  vim.api.nvim_set_option_value(
-    "winhighlight",
-    "Normal:FzfLuaBackdrop,EndOfBuffer:FzfLuaBackdrop",
-    { win = win }
-  )
+  vim.api.nvim_set_option_value("winhighlight", "Normal:FzfLuaBackdrop,EndOfBuffer:FzfLuaBackdrop", { win = win })
   vim.api.nvim_set_option_value("number", false, { win = win })
   vim.api.nvim_set_option_value("relativenumber", false, { win = win })
   vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
@@ -51,7 +47,9 @@ local nvim_tree_api, nvim_tree_core
 local function get_nvim_tree_api()
   if not nvim_tree_api then
     local ok, mod = pcall(require, "nvim-tree.api")
-    if ok and mod then nvim_tree_api = mod end
+    if ok and mod then
+      nvim_tree_api = mod
+    end
   end
   return nvim_tree_api
 end
@@ -59,7 +57,9 @@ end
 local function get_nvim_tree_core()
   if not nvim_tree_core then
     local ok, mod = pcall(require, "nvim-tree.core")
-    if ok and mod then nvim_tree_core = mod end
+    if ok and mod then
+      nvim_tree_core = mod
+    end
   end
   return nvim_tree_core
 end
@@ -144,14 +144,21 @@ local function get_nvim_tree_display_root()
     end
   end
 
-  -- Not visible (or first open): derive a contextual root from the editing target so that
-  -- `nvim /any/where/file.md` (regardless of $PWD) or `nvim dir` yields a sensible title/root.
-  -- Use vim.fs.root to promote to nearest project ancestor (.git etc.) when present; this
-  -- makes the explorer title the workspace root rather than a deep subdir.
+  -- Derive a contextual root when nvim-tree is hidden or opening for the first time.
+  -- Prefer the active file/dir (including oil://), then promote to a project root.
   local start
   local buf = vim.api.nvim_buf_get_name(0)
-  if buf ~= "" and vim.fn.filereadable(buf) == 1 then
+  local oil_path = buf:match("^oil://(.+)")
+  if oil_path then
+    if vim.fn.isdirectory(oil_path) == 1 then
+      start = vim.fn.fnamemodify(oil_path, ":p")
+    else
+      start = vim.fn.fnamemodify(oil_path, ":p:h")
+    end
+  elseif buf ~= "" and vim.fn.filereadable(buf) == 1 then
     start = vim.fn.fnamemodify(buf, ":p:h")
+  elseif buf ~= "" and vim.fn.isdirectory(buf) == 1 then
+    start = vim.fn.fnamemodify(buf, ":p")
   elseif vim.fn.argc() > 0 then
     local a0 = vim.fn.argv(0)
     if type(a0) == "string" and a0 ~= "" then
@@ -195,11 +202,7 @@ end
 
 local function schedule_nvim_tree_backdrop_cleanup()
   schedule_2x(function()
-    if
-      nvim_tree_backdrop_win
-      and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win)
-      and not has_nvim_tree_window()
-    then
+    if nvim_tree_backdrop_win and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win) and not has_nvim_tree_window() then
       destroy_nvim_tree_backdrop()
     end
   end)
@@ -282,7 +285,8 @@ local function should_oil_hijack_dir()
   return vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
 end
 
--- oil.nvim — default dir handler (`nvim ./dir`, yazi → dir)
+-- oil.nvim — default dir handler for `nvim ./dir` (and yazi handoff). Bare nvim in a workspace
+-- with saved session skips hijack (session restore takes precedence and opens real files).
 require("oil").setup({
   default_file_explorer = should_oil_hijack_dir(),
   delete_to_trash = true,
@@ -513,7 +517,10 @@ end
 
 map("n", "<leader>e", function()
   setup_nvim_tree_once()
-  require("nvim-tree.api").tree.toggle({ find_file = true, focus = true, update_root = true })
+  local root = get_nvim_tree_display_root()
+  local api = require("nvim-tree.api")
+  -- Explicit path keeps oil:// and argv directory startups rooted in the target workspace.
+  api.tree.toggle({ path = root, find_file = true, focus = true, update_root = true })
 
   -- Reconcile dim + title (and destroy on close) after the toggle settles.
   schedule_2x(function()
