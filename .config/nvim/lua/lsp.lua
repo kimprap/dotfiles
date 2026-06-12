@@ -188,6 +188,28 @@ require("blink.cmp").setup({
     menu = { auto_show = true },
   },
   signature = { enabled = true },
+
+  -- Cmdline completion via blink (rich fuzzy, icons/prefixes, good matching).
+  -- We configure custom keys here so C-j/k cycle and Tab accepts (and closes the menu).
+  cmdline = {
+    enabled = true,
+    keymap = {
+      -- Avoid the 'cmdline' preset's defaults for Tab; we want explicit control.
+      ['<C-j>'] = { 'select_next', 'fallback' },
+      ['<C-k>'] = { 'select_prev', 'fallback' },
+      ['<Tab>'] = { 'accept', 'fallback' },
+      -- <C-i> is usually sent as Tab by terminals; the <Tab> binding above covers it.
+    },
+    sources = { 'buffer', 'cmdline' },
+    completion = {
+      -- Show the menu as you type in normal cmdline (not just the cmdline window).
+      menu = { auto_show = true },
+      -- Behave more like "noselect": don't pre-insert the first match.
+      list = {
+        selection = { preselect = false, auto_insert = false },
+      },
+    },
+  },
 })
 
 vim.lsp.config("*", {

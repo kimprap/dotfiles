@@ -1,5 +1,4 @@
 local M = {}
-local map = require("map")
 
 function M.setup_core()
   require("mini.basics").setup({
@@ -54,22 +53,12 @@ function M.setup_core()
       move_up = "<C-k>",
     },
   })
-  require("mini.extra").setup()
-  require("mini.cmdline").setup({
-    autocorrect = {
-      enable = false,
-    },
-  })
 
-  vim.keymap.set("c", "<C-j>", "<C-n>", { desc = "Next cmdline completion" })
-  vim.keymap.set("c", "<C-k>", "<C-p>", { desc = "Previous cmdline completion" })
-  vim.keymap.set("c", "<Tab>", function()
-    return vim.fn.wildmenumode() == 1 and "<C-y>" or "<Tab>"
-  end, { expr = true, desc = "Accept cmdline completion" })
-
-  map("n", "<leader>:", function()
-    require("mini.extra").pickers.commands()
-  end, { desc = "Find commands" })
+  -- Cmdline completion is handled by blink.cmp (see lsp.lua).
+  -- Keep mini.cmdline inert (if it was ever set up earlier in this process)
+  -- and prevent the built-in wildmenu from stealing <Tab>.
+  pcall(vim.api.nvim_del_augroup_by_name, "MiniCmdline")
+  vim.opt.wildchar = 26   -- <Tab> no longer triggers native wild; blink owns it
 
   require("mini.move").setup({
     mappings = {
@@ -162,14 +151,20 @@ function M.setup_statusline()
   end
 
   local function to_hex(c)
-    if not c then return nil end
-    if type(c) == "string" then return c end
+    if not c then
+      return nil
+    end
+    if type(c) == "string" then
+      return c
+    end
     return string.format("#%06x", c)
   end
 
   local function darken(c, factor)
     local hex = to_hex(c)
-    if not hex or hex:find("NONE") then return nil end
+    if not hex or hex:find("NONE") then
+      return nil
+    end
     local r = tonumber(hex:sub(2, 3), 16) or 0
     local g = tonumber(hex:sub(4, 5), 16) or 0
     local b = tonumber(hex:sub(6, 7), 16) or 0
@@ -181,7 +176,9 @@ function M.setup_statusline()
 
   local function lighten(c, factor)
     local hex = to_hex(c)
-    if not hex or hex:find("NONE") then return nil end
+    if not hex or hex:find("NONE") then
+      return nil
+    end
     local r = tonumber(hex:sub(2, 3), 16) or 0
     local g = tonumber(hex:sub(4, 5), 16) or 0
     local b = tonumber(hex:sub(6, 7), 16) or 0
@@ -201,53 +198,66 @@ function M.setup_statusline()
     local filename = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFilename", link = false })
     local status = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false })
 
-    local base_bg = (filename and filename.bg)
-      or (status and status.bg)
-      or (devinfo and devinfo.bg)
+    local base_bg = (filename and filename.bg) or (status and status.bg) or (devinfo and devinfo.bg)
 
     local dev_fg = devinfo and devinfo.fg
     local fname_fg = filename and filename.fg
 
     local BRANCH_LIGHT = 0.12
     local CHANGES_DARK = 0.10
-    local PATH_DARK    = 0.20
+    local PATH_DARK = 0.20
 
     local branch_bg, changes_bg, path_bg
     if base_bg then
-      branch_bg  = lighten(base_bg, BRANCH_LIGHT)
+      branch_bg = lighten(base_bg, BRANCH_LIGHT)
       changes_bg = darken(base_bg, CHANGES_DARK)
-      path_bg    = darken(base_bg, PATH_DARK)
+      path_bg = darken(base_bg, PATH_DARK)
     end
 
     if changes_bg then
       vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", {
-        bg = branch_bg or base_bg, fg = dev_fg, default = true,
+        bg = branch_bg or base_bg,
+        fg = dev_fg,
+        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineDiff", {
-        bg = changes_bg, fg = dev_fg, default = true,
+        bg = changes_bg,
+        fg = dev_fg,
+        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineFilename", {
-        bg = path_bg, fg = fname_fg, default = true,
+        bg = path_bg,
+        fg = fname_fg,
+        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", {
-        bg = path_bg, fg = fname_fg, italic = true, default = true,
+        bg = path_bg,
+        fg = fname_fg,
+        italic = true,
+        default = true,
       })
 
       local function with_bg(base_name, target_name)
         local base = vim.api.nvim_get_hl(0, { name = base_name, link = false })
         vim.api.nvim_set_hl(0, target_name, {
-          fg = base and base.fg, bg = changes_bg, default = true,
+          fg = base and base.fg,
+          bg = changes_bg,
+          default = true,
         })
       end
       with_bg("Added", "GitStatusAdd")
       with_bg("Changed", "GitStatusChange")
       with_bg("Removed", "GitStatusRemove")
     else
-      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo",   { link = "MiniStatuslineDevinfo", default = true })
-      vim.api.nvim_set_hl(0, "MiniStatuslineDiff",      { link = "MiniStatuslineDevinfo", default = true })
-      vim.api.nvim_set_hl(0, "MiniStatuslineFilename",  { link = "MiniStatuslineFilename", default = true })
-      vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", { link = "MiniStatuslineFilename", italic = true, default = true })
-      vim.api.nvim_set_hl(0, "GitStatusAdd",    { link = "Added", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", { link = "MiniStatuslineDevinfo", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDiff", { link = "MiniStatuslineDevinfo", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilename", { link = "MiniStatuslineFilename", default = true })
+      vim.api.nvim_set_hl(
+        0,
+        "MiniStatuslineFilenameNC",
+        { link = "MiniStatuslineFilename", italic = true, default = true }
+      )
+      vim.api.nvim_set_hl(0, "GitStatusAdd", { link = "Added", default = true })
       vim.api.nvim_set_hl(0, "GitStatusChange", { link = "Changed", default = true })
       vim.api.nvim_set_hl(0, "GitStatusRemove", { link = "Removed", default = true })
     end
@@ -342,7 +352,6 @@ function M.setup_clue()
       { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
       { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
       { mode = "n", keys = "<Leader>r", desc = "Recent files" },
-      { mode = "n", keys = "<Leader>:", desc = "Find commands" },
       { mode = "n", keys = "<Leader>L", desc = "+LSP" },
       { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
       { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
@@ -377,4 +386,3 @@ function M.setup_clue()
 end
 
 return M
-

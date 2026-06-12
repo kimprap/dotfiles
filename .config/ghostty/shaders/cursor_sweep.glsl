@@ -9,7 +9,7 @@ vec4 TRAIL_COLOR = vec4(sRGBToLinear(iCurrentCursorColor.rgb), iCurrentCursorCol
 
 // --- CONFIGURATION (tuned) ---
 const float DURATION = 0.13;
-const float TRAIL_LENGTH = 0.3;
+const float TRAIL_LENGTH = 0.75;
 const float BLUR = 1.3;
 
 // Active easing: EaseOutCubic (smooth)

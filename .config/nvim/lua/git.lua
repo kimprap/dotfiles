@@ -142,7 +142,12 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
 
   local this_name = vim.api.nvim_buf_get_name(current_buf)
   local this_buftype = vim.bo[current_buf].buftype
-  local is_special = (this_buftype == "nofile" or this_name:match("^CodeDiff ") or this_name:match("codediff://") or this_name == "")
+  local is_special = (
+    this_buftype == "nofile"
+    or this_name:match("^CodeDiff ")
+    or this_name:match("codediff://")
+    or this_name == ""
+  )
 
   local bufnr_to_attach
   if is_special then
@@ -190,7 +195,9 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
     local cur = vim.api.nvim_get_current_buf()
     if vim.api.nvim_buf_is_valid(cur) then
       vim.bo[cur].buflisted = true
-      pcall(function() require("barbar.ui.render").update() end)
+      pcall(function()
+        require("barbar.ui.render").update()
+      end)
     end
   end)
 end
