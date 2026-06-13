@@ -76,47 +76,15 @@ local function codediff_in_tab(tab)
   return false
 end
 
-local function codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
-  local lifecycle = require("codediff.ui.lifecycle")
-  local session = lifecycle.get_session(tabpage)
-  if not session then
-    return
-  end
+--- Execute `fn(target_win)` after switching to the tab before `codediff_tabpage`
+--- (creating a new tab at the start if this is the first tab). After `fn` returns,
+--- switch back and close the codediff tab. This centralizes the tab dance used
+--- by custom openers like our gf handler.
+local function with_codediff_prev_tab(codediff_tabpage, fn)
+  -- Snapshot the reference tab (prefer the explicit codediff one when valid).
+  local current_tab = (codediff_tabpage and vim.api.nvim_tabpage_is_valid(codediff_tabpage)) and codediff_tabpage
+    or vim.api.nvim_get_current_tabpage()
 
-  local current_buf = vim.api.nvim_get_current_buf()
-  if current_buf ~= original_bufnr and current_buf ~= modified_bufnr then
-    return
-  end
-
-  local original_path, modified_path = lifecycle.get_paths(tabpage)
-  -- Canonical file ref independent of `side` (left/right pane). Prefer "current"
-  -- (modified) path for the on-disk file so gf from either pane uses same target.
-  -- Relativize when plugin stored an absolute path so both land on same short name.
-  local file_ref = (modified_path and modified_path ~= "") and modified_path or original_path
-  local target_file
-  if file_ref and file_ref ~= "" and session and session.git_root then
-    local root = session.git_root:gsub("[/\\]$", "")
-    if file_ref:match("^/") or file_ref:match("^%a:") then
-      if file_ref:sub(1, #root) == root then
-        target_file = file_ref:sub(#root + 2)
-      else
-        target_file = file_ref
-      end
-    else
-      target_file = file_ref
-    end
-  else
-    target_file = vim.api.nvim_buf_get_name(current_buf)
-  end
-  if not target_file or target_file == "" then
-    vim.notify("Buffer has no associated file path", vim.log.levels.WARN)
-    return
-  end
-
-  local load_target = vim.fn.fnamemodify(target_file, ":p")
-
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local current_tab = vim.api.nvim_get_current_tabpage()
   local tabs = vim.api.nvim_list_tabpages()
   local current_index
   for i, tab in ipairs(tabs) do
@@ -139,50 +107,20 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
   end
 
   local target_win = vim.api.nvim_get_current_win()
-
-  local this_name = vim.api.nvim_buf_get_name(current_buf)
-  local this_buftype = vim.bo[current_buf].buftype
-  local is_special = (
-    this_buftype == "nofile"
-    or this_name:match("^CodeDiff ")
-    or this_name:match("codediff://")
-    or this_name == ""
-  )
-
-  local bufnr_to_attach
-  if is_special then
-    bufnr_to_attach = vim.fn.bufadd(load_target)
-    vim.bo[bufnr_to_attach].buflisted = true
-    vim.bo[bufnr_to_attach].buftype = ""
-    vim.fn.bufload(bufnr_to_attach)
-    if target_file and target_file ~= "" then
-      pcall(vim.api.nvim_buf_set_name, bufnr_to_attach, target_file)
-    end
-  else
-    bufnr_to_attach = current_buf
-    vim.bo[bufnr_to_attach].buflisted = true
-    vim.bo[bufnr_to_attach].buftype = ""
-    local cur_nm = vim.api.nvim_buf_get_name(bufnr_to_attach)
-    if cur_nm ~= target_file then
-      pcall(vim.api.nvim_buf_set_name, bufnr_to_attach, target_file)
-    end
-  end
-
-  vim.api.nvim_win_set_buf(target_win, bufnr_to_attach)
-
-  local lcount = vim.api.nvim_buf_line_count(bufnr_to_attach)
-  local lnum = math.min(math.max(cursor[1], 1), lcount)
-  pcall(vim.api.nvim_win_set_cursor, target_win, { lnum, cursor[2] })
+  fn(target_win)
 
   if vim.api.nvim_tabpage_is_valid(current_tab) then
     vim.api.nvim_set_current_tabpage(current_tab)
     vim.cmd("tabclose")
   end
+end
 
-  -- Unlist only ephemeral codediff side bufs left behind (skip the landed one).
-  -- Preserves the plugin's native 2-pane bufferlist + focus highlighting inside the diff.
-  for _, b in ipairs({ original_bufnr, modified_bufnr }) do
-    if vim.api.nvim_buf_is_valid(b) and b ~= bufnr_to_attach then
+--- Unlist any of the given buffers that look like ephemeral codediff side-buffers
+--- (scratch "CodeDiff N" or codediff:// virtual buffers). Real file buffers that
+--- the plugin may have reused for the "modified" pane are left listed.
+local function unlist_ephemeral_codediff_buffers(bufs)
+  for _, b in ipairs(bufs or {}) do
+    if vim.api.nvim_buf_is_valid(b) then
       local nm = vim.api.nvim_buf_get_name(b)
       local bt = vim.bo[b].buftype
       if bt == "nofile" or nm:match("^CodeDiff ") or nm:match("codediff://") then
@@ -190,6 +128,54 @@ local function codediff_open_current_file_in_previous_tab(tabpage, original_bufn
       end
     end
   end
+end
+
+local function codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
+  local lifecycle = require("codediff.ui.lifecycle")
+  local session = lifecycle.get_session(tabpage)
+  if not session then
+    return
+  end
+
+  local current_buf = vim.api.nvim_get_current_buf()
+  if current_buf ~= original_bufnr and current_buf ~= modified_bufnr then
+    return
+  end
+
+  local original_path, modified_path = lifecycle.get_paths(tabpage)
+  -- Prefer modified_path (the "current"/on-disk side) so `gf` is consistent
+  -- whether invoked from the left or right pane of the codediff tab.
+  local file_ref = (modified_path and modified_path ~= "") and modified_path or original_path
+  if not file_ref or file_ref == "" then
+    vim.notify("Buffer has no associated file path", vim.log.levels.WARN)
+    return
+  end
+
+  local git_root = session.git_root
+  local target_file = file_ref
+  if git_root and git_root ~= "" and not (file_ref:match("^/") or file_ref:match("^%a:")) then
+    local root = git_root:gsub("[/\\]$", "")
+    local rel = file_ref:gsub("^[/\\]", "")
+    target_file = root .. "/" .. rel
+  end
+  target_file = vim.fn.fnamemodify(target_file, ":p")
+
+  local cursor = vim.api.nvim_win_get_cursor(0)
+
+  with_codediff_prev_tab(tabpage, function(target_win)
+    local ok, err = pcall(vim.cmd, "edit " .. vim.fn.fnameescape(target_file))
+    if not ok then
+      vim.notify("Failed to open file in previous tab: " .. tostring(err), vim.log.levels.ERROR)
+      return
+    end
+
+    local buf = vim.api.nvim_win_get_buf(target_win)
+    local lcount = vim.api.nvim_buf_line_count(buf)
+    local lnum = math.min(math.max(cursor[1], 1), lcount)
+    pcall(vim.api.nvim_win_set_cursor, target_win, { lnum, cursor[2] })
+  end)
+
+  unlist_ephemeral_codediff_buffers({ original_bufnr, modified_bufnr })
 
   vim.schedule(function()
     local cur = vim.api.nvim_get_current_buf()
@@ -346,3 +332,4 @@ map("n", "<leader>gL", function()
 end, { desc = "Project history (codediff)" })
 
 return M
+
