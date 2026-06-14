@@ -62,6 +62,24 @@ local function sessions_strip_outline_buffers()
   strip_buffers(is_outline_buffer)
 end
 
+local function is_grug_far_buffer(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return false
+  end
+  return vim.bo[buf].filetype == "grug-far"
+end
+
+local function sessions_close_grug_far()
+  local ok, grug = pcall(require, "grug-far")
+  if ok and grug and grug.kill_instance then
+    pcall(grug.kill_instance, 0)
+  end
+end
+
+local function sessions_strip_grug_far_buffers()
+  strip_buffers(is_grug_far_buffer)
+end
+
 local function is_starter_buffer(buf)
   if not vim.api.nvim_buf_is_valid(buf) then
     return false
@@ -142,6 +160,8 @@ local function sessions_cleanup_ephemeral()
   sessions_cleanup_explorers()
   sessions_close_outline()
   sessions_strip_outline_buffers()
+  sessions_close_grug_far()
+  sessions_strip_grug_far_buffers()
   sessions_strip_starter_buffers()
 end
 
@@ -336,6 +356,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     elseif should_open_starter() then
       sessions_close_codediff()
       sessions_cleanup_explorers()
+      sessions_close_grug_far()
       -- Reuse startup empty buffer (avoids a 2nd buffer when picking "Edit new buffer")
       MiniStarter.open(vim.api.nvim_get_current_buf())
       git.setup()
@@ -348,11 +369,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 vim.api.nvim_create_autocmd("VimLeavePre", {
   group = sessions_augroup,
-  desc = "Close ephemeral UIs (outline, codediff) before mini.sessions autowrite on quit",
+  desc = "Close ephemeral UIs (outline, codediff, grug-far) before mini.sessions autowrite on quit",
   callback = function()
     if workspace.has_session() then
       sessions_close_outline()
       sessions_close_codediff()
+      sessions_close_grug_far()
     end
   end,
 })
@@ -366,6 +388,7 @@ local function open_manual_starter()
   workspace_session_refresh_detected()
   sessions_close_codediff()
   sessions_cleanup_explorers()
+  sessions_close_grug_far()
   sessions_strip_starter_buffers()
   local buf = vim.api.nvim_create_buf(false, true)
   MiniStarter.open(buf)

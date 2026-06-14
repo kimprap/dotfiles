@@ -123,19 +123,62 @@ local diagnostic_sign_glyphs = {
   [vim.diagnostic.severity.HINT] = "󰌶",
 }
 
--- Only the worst diagnostic on a line gets inline virtual text.
-local function primary_glyph(d)
-  local diags = vim.diagnostic.get(d.bufnr, { lnum = d.lnum })
-  local min = d.severity
-  for _, diag in ipairs(diags) do
-    if diag.severity < min then
-      min = diag.severity
-    end
-  end
-  if d.severity ~= min then
+-- Pick representative diag per line for virtual text: worst severity, then leftmost col,
+-- then tightest range (short "undefined foo" over long messages). Ensures one glyph+msg/line.
+local function get_representative_diagnostic(bufnr, lnum)
+  bufnr = bufnr or 0
+  local diags = vim.diagnostic.get(bufnr, { lnum = lnum })
+  if #diags == 0 then
     return nil
   end
-  return diagnostic_sign_glyphs[d.severity]
+  local worst_sev = math.huge
+  for _, d in ipairs(diags) do
+    if d.severity < worst_sev then
+      worst_sev = d.severity
+    end
+  end
+  local best = nil
+  local best_col = math.huge
+  local best_range = math.huge
+  local best_len = math.huge
+  for _, d in ipairs(diags) do
+    if d.severity == worst_sev then
+      local c = d.col or 0
+      local ec = d.end_col or (c + 1)
+      local r = math.max(0, ec - c)
+      local ml = #(d.message or "")
+      local better = false
+      if c < best_col then
+        better = true
+      elseif c == best_col then
+        if r < best_range then
+          better = true
+        elseif r == best_range and ml < best_len then
+          better = true
+        end
+      end
+      if better then
+        best_col = c
+        best_range = r
+        best_len = ml
+        best = d
+      end
+    end
+  end
+  return best
+end
+
+-- Glyph only for the representative (worst+leftmost) diag on the line; used as virtual_text.prefix.
+local function primary_glyph(d)
+  local bufnr = d.bufnr or 0
+  local chosen = get_representative_diagnostic(bufnr, d.lnum)
+  if not chosen then
+    return nil
+  end
+  if (d.col or 0) == (chosen.col or 0) and d.message == chosen.message then
+    return diagnostic_sign_glyphs[chosen.severity]
+  end
+  return nil
 end
 
 vim.diagnostic.config({
@@ -167,19 +210,31 @@ vim.diagnostic.config({
   },
 })
 
--- Inline diagnostic virtual text: quiet foregrounds on a small message-only background.
+-- Inline virtual text: quiet fg on subtle bg + glyph prefix. italic + nocombine for visual weight
+-- (no per-group font scaling support).
 local function setup_diagnostic_highlights()
   local bg = "#323232"
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#c85c5c", bg = bg, italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#d4b070", bg = bg, italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo", { fg = "#6a9cc8", bg = bg, italic = true })
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#9a7cc8", bg = bg, italic = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#c85c5c", bg = bg, italic = true, nocombine = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#d4b070", bg = bg, italic = true, nocombine = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextInfo", { fg = "#6a9cc8", bg = bg, italic = true, nocombine = true })
+  vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { fg = "#9a7cc8", bg = bg, italic = true, nocombine = true })
 end
+
+-- Brighter qfLineNr (for the "N|" numbers in loclist) so inactive <leader>xl is readable.
+-- sonokai dims LineNr; this only affects the number column.
+local function setup_qf_highlights()
+  vim.api.nvim_set_hl(0, "qfLineNr", { fg = "#8a92a0", bg = "NONE" })
+end
+
 setup_diagnostic_highlights()
+setup_qf_highlights()
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = lsp_augroup,
-  desc = "Re-apply inline diagnostic virtual text colors (incl. bg) after theme change",
-  callback = setup_diagnostic_highlights,
+  desc = "Re-apply inline diagnostic virtual text colors + qf list highlights after theme change",
+  callback = function()
+    setup_diagnostic_highlights()
+    setup_qf_highlights()
+  end,
 })
 
 require("blink.cmp").setup({
@@ -195,12 +250,12 @@ require("blink.cmp").setup({
     enabled = true,
     keymap = {
       -- Avoid the 'cmdline' preset's defaults for Tab; we want explicit control.
-      ['<C-j>'] = { 'select_next', 'fallback' },
-      ['<C-k>'] = { 'select_prev', 'fallback' },
-      ['<Tab>'] = { 'accept', 'fallback' },
+      ["<C-j>"] = { "select_next", "fallback" },
+      ["<C-k>"] = { "select_prev", "fallback" },
+      ["<Tab>"] = { "accept", "fallback" },
       -- <C-i> is usually sent as Tab by terminals; the <Tab> binding above covers it.
     },
-    sources = { 'buffer', 'cmdline' },
+    sources = { "buffer", "cmdline" },
     completion = {
       -- Show the menu as you type in normal cmdline (not just the cmdline window).
       menu = { auto_show = true },
@@ -230,7 +285,23 @@ end
 
 local function fzf_lua()
   require("explorer").setup_fzf()
-  return require("fzf-lua")
+  local fzf = require("fzf-lua")
+  if not fzf.__diag_lcol_patched then
+    local me = require("fzf-lua.make_entry")
+    local orig_lcol = me.lcol
+    me.lcol = function(entry, opts)
+      if opts and opts.no_diag_col then
+        local saved = entry.col
+        entry.col = nil
+        local res = orig_lcol(entry, opts)
+        entry.col = saved
+        return res
+      end
+      return orig_lcol(entry, opts)
+    end
+    fzf.__diag_lcol_patched = true
+  end
+  return fzf
 end
 
 local function enforce_manual_lsp(args)
@@ -565,15 +636,154 @@ local function diagnostics_picker_opts()
   }
 end
 
+-- Shared sort for <leader>xl / xd / xD: by file, then line, severity (errors first), col.
+local function sort_diagnostics_by_location(diags)
+  table.sort(diags, function(a, b)
+    local na = vim.api.nvim_buf_get_name(a.bufnr) or ""
+    local nb = vim.api.nvim_buf_get_name(b.bufnr) or ""
+    if na ~= nb then
+      return na < nb
+    end
+    if a.lnum ~= b.lnum then
+      return a.lnum < b.lnum
+    end
+    if a.severity ~= b.severity then
+      return a.severity < b.severity
+    end
+    return (a.col or 0) < (b.col or 0)
+  end)
+  return diags
+end
+
+local function diagnostics_fzf_opts()
+  return vim.tbl_deep_extend("force", diagnostics_picker_opts(), {
+    diag_source = false, -- strip "[Lua Syntax Check]" / "[Lua Diagnostics]" etc.
+    no_diag_col = true, -- omit :col: via the lcol patch (row/line only)
+    color_headings = true, -- preserve error-level coloring on paths
+    previewer = false, -- disable preview pane by default
+    sort = sort_diagnostics_by_location,
+  })
+end
+
+local function flash_diagnostic_location(bufnr, lnum, duration)
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return
+  end
+  local ns = vim.api.nvim_create_namespace("user.diag_loclist_flash")
+  vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+  vim.api.nvim_buf_set_extmark(bufnr, ns, lnum - 1, 0, {
+    end_row = lnum,
+    hl_group = "Visual",
+    priority = 200,
+  })
+  vim.defer_fn(function()
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      pcall(vim.api.nvim_buf_clear_namespace, bufnr, ns, 0, -1)
+    end
+  end, duration or 350)
+end
+
+local function enhance_diagnostics_loclist()
+  vim.schedule(function()
+    local loc_info = vim.fn.getloclist(0, { winid = 0 })
+    local loc_win = loc_info.winid
+    if not loc_win or loc_win == 0 then
+      return
+    end
+    local loc_buf = vim.api.nvim_win_get_buf(loc_win)
+
+    -- `o` (like Outline): jump target window to item + flash, keep focus in loclist.
+    -- Uses line('.') (not getloclist .idx) so it works for any cursor position in the list.
+    vim.keymap.set(
+      "n",
+      "o",
+      function()
+        local lnum_in_list = vim.fn.line(".")
+        local items = vim.fn.getloclist(0, { items = 1 }).items or {}
+        local item = items[lnum_in_list]
+        if not item or not item.bufnr or item.bufnr == 0 or not vim.api.nvim_buf_is_valid(item.bufnr) then
+          return
+        end
+
+        local current_loc_win = vim.api.nvim_get_current_win()
+
+        local target = nil
+        for _, w in ipairs(vim.api.nvim_list_wins()) do
+          if w ~= current_loc_win and vim.api.nvim_win_get_config(w).relative == "" then
+            target = w
+            break
+          end
+        end
+        if not target or not vim.api.nvim_win_is_valid(target) then
+          return
+        end
+
+        local tbuf = vim.api.nvim_win_get_buf(target)
+        if tbuf ~= item.bufnr then
+          pcall(vim.api.nvim_win_set_buf, target, item.bufnr)
+        end
+        local jump_col = (item._orig_col or item.col or 1)
+        pcall(vim.api.nvim_win_set_cursor, target, { item.lnum or 1, math.max(0, jump_col - 1) })
+        flash_diagnostic_location(item.bufnr, item.lnum or 1)
+
+        if vim.api.nvim_get_current_win() ~= current_loc_win then
+          pcall(vim.api.nvim_set_current_win, current_loc_win)
+        end
+      end,
+      { buffer = loc_buf, desc = "Update target window cursor + brief highlight (like Outline o); keep focus in list" }
+    )
+  end)
+end
+
 map("n", "<leader>xd", function()
-  fzf_lua().diagnostics_document(diagnostics_picker_opts())
+  fzf_lua().diagnostics_document(diagnostics_fzf_opts())
 end, { desc = "Diagnostics buffer (fzf)" })
 map("n", "<leader>xD", function()
-  fzf_lua().diagnostics_workspace(diagnostics_picker_opts())
+  fzf_lua().diagnostics_workspace(diagnostics_fzf_opts())
 end, { desc = "Diagnostics workspace (fzf)" })
 map("n", "<leader>xl", function()
-  vim.diagnostic.setloclist({ open = true })
-end, { desc = "Diagnostics loclist" })
+  local diags = vim.diagnostic.get(0)
+  if #diags == 0 then
+    vim.notify("No diagnostics", vim.log.levels.INFO)
+    return
+  end
+  sort_diagnostics_by_location(diags) -- by filename (noop for document), line, severity, col -- matches xd/xD and previous xl intent
+
+  local items = {}
+  local sev_label = { [1] = "error", [2] = "warning", [3] = "info", [4] = "hint" }
+  for _, d in ipairs(diags) do
+    local label = sev_label[d.severity] or "diag"
+    -- Message only in .text (no col info) so qf display stays clean; stash real col as _orig_col
+    -- for 'o' and jumps.
+    local text = string.format("%s: %s", label, d.message)
+    table.insert(items, {
+      bufnr = d.bufnr,
+      lnum = d.lnum + 1,
+      col = d.col + 1,
+      text = text,
+    })
+  end
+  vim.fn.setloclist(0, items, " ")
+  vim.cmd.lopen()
+  enhance_diagnostics_loclist()
+
+  -- Zero .col on items (prevents "col N-N" in display); keep original in _orig_col for navigation.
+  vim.schedule(function()
+    local qf = vim.fn.getloclist(0, { items = 1 })
+    local qf_items = qf.items or {}
+    for _, it in ipairs(qf_items) do
+      if it.col and it.col > 0 and not it._orig_col then
+        it._orig_col = it.col
+        it.col = 0
+      end
+    end
+    if #qf_items > 0 then
+      vim.fn.setloclist(0, qf_items, "r")
+    end
+  end)
+end, {
+  desc = "Diagnostics loclist (sorted by line; columns omitted; o: preview+highlight in target keep focus; <CR> jumps+focuses)",
+})
 
 -- Close hover / other LSP floats with Esc
 map("n", "<Esc>", function()
