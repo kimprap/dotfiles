@@ -85,3 +85,4 @@ No mode keyword → standard.
 Always read `references/plan-template.md` and `.config/agents/rules/plans.md` before writing any plan (standard or deep).
 
 This skill is mode-aware: quick is fast/direct; standard/deep yield reusable structured plans.
+

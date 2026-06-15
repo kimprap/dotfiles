@@ -18,29 +18,6 @@ local M = {}
 local outline
 local outline_did_setup = false
 
--- Captured before any outline cursor changes; restored on leave.
-local original_guicursor = vim.o.guicursor
-
-local function force_transparent_outline_cursor()
-  local cline = vim.api.nvim_get_hl(0, { name = "CursorLine", link = false })
-  local bg = cline.bg
-  if not bg then
-    local norm = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
-    bg = norm.bg or "NONE"
-  end
-  vim.api.nvim_set_hl(0, "OutlineTransparentCursor", {
-    fg = bg,
-    bg = bg,
-    blend = 100,
-  })
-  local gc = vim.o.guicursor or ""
-  gc = gc:gsub(",?n:[^,]*", "")
-  gc = gc:gsub(",+", ","):gsub("^,", ""):gsub(",$", "")
-  if gc ~= "" then gc = gc .. "," end
-  gc = gc .. "n:hor1-OutlineTransparentCursor"
-  vim.opt.guicursor = gc
-end
-
 local function setup_outline_once()
   if outline_did_setup then
     return outline
@@ -50,19 +27,12 @@ local function setup_outline_once()
   local Sidebar = require("outline.sidebar")
   local orig_build = Sidebar.build_outline
 
-  -- Col 0 so the item's fold marker / first symbol is under the (transparent) cursor.
+  -- Col 0 so the item's fold marker / first symbol is at the left edge.
   function Sidebar:update_cursor_pos(current)
     if not current or not self.view.win or not vim.api.nvim_win_is_valid(self.view.win) then
       return
     end
     vim.api.nvim_win_set_cursor(self.view.win, { current.line_in_outline, 0 })
-  end
-
-  -- Use our transparent hor1 instead of the plugin's -Cursorline append.
-  local orig_update_cursor_style = Sidebar.update_cursor_style
-  function Sidebar:update_cursor_style()
-    orig_update_cursor_style(self)
-    force_transparent_outline_cursor()
   end
 
   -- Right-side line numbers via eol virt_text (no left gutter).
@@ -112,7 +82,7 @@ local function setup_outline_once()
       },
       relative_width = false,
       show_cursorline = true,
-      hide_cursor = true,
+      hide_cursor = false,
     },
     outline_items = {
       show_symbol_details = false,
@@ -329,17 +299,6 @@ vim.api.nvim_create_autocmd("FileType", {
       callback = kill_outline_gutter,
     })
 
-    force_transparent_outline_cursor()
-
-    vim.api.nvim_create_autocmd("BufLeave", {
-      buffer = args.buf,
-      callback = function()
-        if original_guicursor then
-          vim.o.guicursor = original_guicursor
-        end
-      end,
-    })
-
     vim.keymap.set("n", "o", function()
       outline_sync_to_code(false)
     end, { buffer = args.buf, desc = "Sync outline to current code location" })
@@ -389,4 +348,3 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 return M
-

@@ -24,6 +24,7 @@ Direct user/architect instructions override this file. Layered project files ove
 - **No regressions.** Understand existing behavior before changing it, then verify the changed behavior.
 - **Safety boundaries.** Ask before destructive or hard-to-reverse actions: deletes, migrations, deploys, credential use, force-pushes, resets, rebases, or branch removal.
 - **Overfit guard.** Do not solve a broader or easier problem than the one asked. Deliver exactly the requested outcome, or clarify the blocker.
+- **Concise reporting.** When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
 
 ## Interaction protocols
 
