@@ -52,10 +52,10 @@ end
 
 -- Hunk navigation in normal buffers (CodeDiff tab uses buffer-local <C-]>/<C-[> instead)
 map("n", "<C-]>", function()
-  require("gitsigns").nav_hunk("next")
+  require("gitsigns").nav_hunk("next", { wrap = false })
 end, { desc = "Next git hunk" })
 map("n", "<C-[>", function()
-  require("gitsigns").nav_hunk("prev")
+  require("gitsigns").nav_hunk("prev", { wrap = false })
 end, { desc = "Prev git hunk" })
 
 -- Git diff views.
@@ -216,6 +216,9 @@ local function setup_codediff_once()
   end
 
   require("codediff").setup({
+    diff = {
+      cycle_next_hunk = false,
+    },
     explorer = {
       width = 28,
       view_mode = "tree",
@@ -332,4 +335,3 @@ map("n", "<leader>gL", function()
 end, { desc = "Project history (codediff)" })
 
 return M
-

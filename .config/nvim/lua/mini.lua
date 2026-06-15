@@ -104,8 +104,9 @@ function M.setup_statusline()
   end
 
   local function buffer_flags_statusline()
-    local modified = vim.bo.modified and "%#DiagnosticWarn#[+]" or ""
-    local readonly = vim.bo.readonly and "%#DiagnosticError#" or ""
+    -- Use custom groups carrying path_bg so +/lock sit on the dark filename section (not light devinfo bg).
+    local modified = vim.bo.modified and "%#StatuslineModified#[+]" or ""
+    local readonly = vim.bo.readonly and "%#StatuslineReadOnly#" or ""
     if modified ~= "" and readonly ~= "" then
       return modified .. " " .. readonly
     end
@@ -121,10 +122,14 @@ function M.setup_statusline()
 
   local function diagnostic_statusline()
     local parts = {}
+    local first = true
     for _, item in ipairs(DIAGNOSTIC_STATUS) do
       local count = #vim.diagnostic.get(0, { severity = item[1] })
       if count > 0 then
-        parts[#parts + 1] = string.format("%%#%s#%s %d", item[2], item[3], count)
+        -- Single-space prefix only on first glyph (inside its %#...#) for subtle right-side padding after %=.
+        local prefix = first and " " or ""
+        first = false
+        parts[#parts + 1] = string.format("%%#%s#%s%s %d", item[2], prefix, item[3], count)
       end
     end
     return table.concat(parts, " ")
@@ -232,6 +237,18 @@ function M.setup_statusline()
       vim.api.nvim_set_hl(0, "GitStatusAdd", { fg = "#a3e635", bg = branch_bg })
       vim.api.nvim_set_hl(0, "GitStatusChange", { fg = "#67e8f9", bg = branch_bg })
       vim.api.nvim_set_hl(0, "GitStatusRemove", { fg = "#f87171", bg = branch_bg })
+
+      -- Give StatuslineModified/ReadOnly explicit path_bg + vivid fg so +/lock stay on dark filename bg.
+      local mod_hl = vim.api.nvim_get_hl(0, { name = "DiagnosticWarn", link = false })
+      local ro_hl = vim.api.nvim_get_hl(0, { name = "DiagnosticError", link = false })
+      vim.api.nvim_set_hl(0, "StatuslineModified", {
+        fg = mod_hl and mod_hl.fg or nil,
+        bg = path_bg,
+      })
+      vim.api.nvim_set_hl(0, "StatuslineReadOnly", {
+        fg = ro_hl and ro_hl.fg or nil,
+        bg = path_bg,
+      })
     else
       vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", { link = "MiniStatuslineDevinfo" })
       vim.api.nvim_set_hl(0, "MiniStatuslineDiff", { link = "MiniStatuslineDevinfo" })
@@ -240,6 +257,8 @@ function M.setup_statusline()
       vim.api.nvim_set_hl(0, "GitStatusAdd", { fg = "#a3e635" })
       vim.api.nvim_set_hl(0, "GitStatusChange", { fg = "#67e8f9" })
       vim.api.nvim_set_hl(0, "GitStatusRemove", { fg = "#f87171" })
+      vim.api.nvim_set_hl(0, "StatuslineModified", { link = "DiagnosticWarn" })
+      vim.api.nvim_set_hl(0, "StatuslineReadOnly", { link = "DiagnosticError" })
     end
   end
   vim.api.nvim_create_autocmd("ColorScheme", {
@@ -272,6 +291,8 @@ function M.setup_statusline()
         end
         local location = "%l|%L"
 
+        local diags = diagnostic_statusline()
+
         local groups = {
           { hl = mode_hl, strings = { mode } },
         }
@@ -290,7 +311,7 @@ function M.setup_statusline()
           { hl = filename_hl(), strings = { filename() } },
           buffer_flags_statusline(),
           "%=",
-          diagnostic_statusline(),
+          diags,
           { hl = "MiniStatuslineFileinfo", strings = { filetype } },
           { hl = mode_hl, strings = { location } },
         })

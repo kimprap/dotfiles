@@ -11,6 +11,12 @@ map("n", "<leader>ui", function()
   vim.notify(vim.o.ignorecase and "Search: ignore case" or "Search: match case", vim.log.levels.INFO)
 end, { desc = "Toggle search case sensitivity" })
 
+-- Insert-mode shell-like deletes (respect 'iskeyword' with the - append).
+map("i", "<C-d>", "<Del>", { desc = "Delete char forward (shell C-d)" })
+map("i", "<M-BS>", "<C-w>", { desc = "Delete word backward (Alt/Option+Backspace like shell)" })
+map("i", "<M-d>", "<C-o>dw", { desc = "Delete word forward (Option+D like shell kill-word)" })
+map("i", "<C-S-d>", "<C-o>dw", { desc = "Delete word forward (C-S-d like right-side Alt+Backspace)" })
+
 -- Grug-far (find & replace across the project, VSCode-style).
 -- <leader>sr pre-fills the current word + --hidden --follow (important for dotfiles).
 -- The loader is defensive: the plugin is only fetched on first use via :PackUpdate.

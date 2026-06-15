@@ -218,6 +218,10 @@ local function lighten(c, factor)
   return string.format("#%02x%02x%02x", r, g, b)
 end
 
+-- Cursor row (more subtle) vs visual select highlight factors (tweak to taste).
+local CURSOR_ROW_LIGHT_FACTOR = 0.10
+local VISUAL_SELECT_LIGHT_FACTOR = 0.26
+
 local function setup_lighter_grey_highlights()
   local normal = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
   local base = normal and normal.bg
@@ -244,14 +248,14 @@ local function setup_lighter_grey_highlights()
     return string.format("#%02x%02x%02x", r, g, b)
   end
 
-  -- Active row (CursorLine): lighter greyish-blue, subtle step.
-  local row = to_lighter_cool_grey(base, 0.13)
+  -- Active row (CursorLine): greyish-blue. Factor tuned for subtlety (see CURSOR_ROW_LIGHT_FACTOR).
+  local row = to_lighter_cool_grey(base, CURSOR_ROW_LIGHT_FACTOR)
   if row then
     vim.api.nvim_set_hl(0, "CursorLine", { bg = row })
   end
 
-  -- Visual selection: even lighter greyish-blue, more pronounced step (same cool family).
-  local sel = to_lighter_cool_grey(base, 0.22)
+  -- Visual selection: even lighter greyish-blue, more pronounced (VISUAL_SELECT_LIGHT_FACTOR kept as-is).
+  local sel = to_lighter_cool_grey(base, VISUAL_SELECT_LIGHT_FACTOR)
   if sel then
     vim.api.nvim_set_hl(0, "Visual", { bg = sel })
     vim.api.nvim_set_hl(0, "VisualNOS", { bg = sel })
@@ -283,3 +287,4 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 setup_lighter_grey_highlights()
 
 return {}
+
