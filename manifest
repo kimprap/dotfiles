@@ -16,4 +16,7 @@ bin
 README.md
 .gitignore
 manifest
+.grok
+.cursor
+AGENTS.md
 

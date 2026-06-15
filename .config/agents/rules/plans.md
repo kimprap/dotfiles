@@ -1,6 +1,6 @@
 ---
-description: Generic conventions for plan files under .agents/plan/. Triggers on creation, update, or completion (CRUD) of any plan file.
-condition: ".agents/plan/|plans/|plans\\\\b"
+description: Generic conventions for plan files under .agents/plans/. Triggers on creation, update, or completion (CRUD) of any plan file.
+condition: ".agents/plans/|plans/|plans\\\\b"
 scope:
   - "tool:bash"
   - "tool:write"
@@ -11,7 +11,7 @@ interruptMode: "tool-only"
 
 # Plan File Conventions
 
-This is a generic rule for **any** plan file created, updated, or completed under the `.agents/plan/` directory. It applies regardless of how the plan was generated.
+This is a generic rule for **any** plan file created, updated, or completed under the `.agents/plans/` directory. It applies regardless of how the plan was generated.
 
 ## Naming
 All plan files **must** use the format:
@@ -45,15 +45,15 @@ When the **last task** in the Combined Tasks section is marked as complete:
 - Do not delete, overwrite, or alter prior sections of the plan.
 
 Once a plan is fully completed (every task shows as checked with its completion timestamp + the Completion Summary has been added):
-- Move the plan file into `.agents/plan/archive/` using the `mv` command **only**.
+- Move the plan file into `.agents/plans/archive/` using the `mv` command **only**.
 - Never use copy + delete, `rm`, or any other pattern that risks data loss.
-- Example: `mv .agents/plan/2026-06-14-1505_security-audit.md .agents/plan/archive/`
-- Create the `.agents/plan/archive/` directory if it does not already exist.
+- Example: `mv .agents/plans/2026-06-14-1505_security-audit.md .agents/plans/archive/`
+- Create the `.agents/plans/archive/` directory if it does not already exist.
 
 ## Location and Hygiene
-- All active plans must reside directly in `.agents/plan/` at the root of the current working directory.
-- Do not create plans in other locations (root `plans/`, subdirectories outside `.agents/plan/`, docs/, etc.).
-- Completed plans belong exclusively in `.agents/plan/archive/` (via `mv` as described above).
-- The `.agents/plan/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
+- All active plans must reside directly in `.agents/plans/` at the root of the current working directory.
+- Do not create plans in other locations (root `plans/`, subdirectories outside `.agents/plans/`, docs/, etc.).
+- Completed plans belong exclusively in `.agents/plans/archive/` (via `mv` as described above).
+- The `.agents/plans/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
 
-When performing any creation, edit, or deletion involving paths under `plans/`, these conventions must be followed. A standard plan layout (including the required Combined Tasks section) should be used for new plans.
+When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), these conventions must be followed. A standard plan layout (including the required Combined Tasks section) should be used for new plans.
