@@ -130,7 +130,7 @@ function M.setup_statusline()
     return table.concat(parts, " ")
   end
 
-  -- Git diff counts (the changes group in the shade progression).
+  -- Git diff counts (share the devinfo/branch background).
   -- Prefixes: [+] added, [~] changed, [·] removed. Full token colored via GitStatus*.
   local function git_diff_statusline()
     local d = vim.b.gitsigns_status_dict
@@ -189,11 +189,8 @@ function M.setup_statusline()
   end
 
   local function setup_statusline_hls()
-    -- Increasing darkness: branch (light) → changes (medium) → path (dark).
-    -- Branch brightened for visible steps. Path uses the stronger dark tone.
-    -- GitStatus* inherit changes bg so counts render on the changes shade.
-    -- NC (outside cwd) uses path bg + italic.
-    -- Derived from theme's own bgs; runs after setup + on ColorScheme.
+    -- Branch+diff share one lightened bg; path gets a darker tone. NC uses path+italic.
+    -- Derived from theme bgs; runs after mini setup + on ColorScheme.
     local devinfo = vim.api.nvim_get_hl(0, { name = "MiniStatuslineDevinfo", link = false })
     local filename = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFilename", link = false })
     local status = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false })
@@ -203,63 +200,46 @@ function M.setup_statusline()
     local dev_fg = devinfo and devinfo.fg
     local fname_fg = filename and filename.fg
 
-    local BRANCH_LIGHT = 0.12
-    local CHANGES_DARK = 0.10
-    local PATH_DARK = 0.20
+    local BRANCH_LIGHT = 0.12 -- tuned lighter band for branch + diff section (unified bg)
+    local PATH_DARK = 0.20 -- darker for filename area
 
-    local branch_bg, changes_bg, path_bg
+    local branch_bg, path_bg
     if base_bg then
       branch_bg = lighten(base_bg, BRANCH_LIGHT)
-      changes_bg = darken(base_bg, CHANGES_DARK)
       path_bg = darken(base_bg, PATH_DARK)
     end
 
-    if changes_bg then
+    if branch_bg then
       vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", {
-        bg = branch_bg or base_bg,
+        bg = branch_bg,
         fg = dev_fg,
-        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineDiff", {
-        bg = changes_bg,
+        bg = branch_bg,
         fg = dev_fg,
-        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineFilename", {
         bg = path_bg,
         fg = fname_fg,
-        default = true,
       })
       vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", {
         bg = path_bg,
         fg = fname_fg,
         italic = true,
-        default = true,
       })
 
-      local function with_bg(base_name, target_name)
-        local base = vim.api.nvim_get_hl(0, { name = base_name, link = false })
-        vim.api.nvim_set_hl(0, target_name, {
-          fg = base and base.fg,
-          bg = changes_bg,
-          default = true,
-        })
-      end
-      with_bg("Added", "GitStatusAdd")
-      with_bg("Changed", "GitStatusChange")
-      with_bg("Removed", "GitStatusRemove")
+      -- Theme-agnostic vivid fgs for the git counts; share the (light) branch/devinfo bg.
+      vim.api.nvim_set_hl(0, "GitStatusAdd", { fg = "#a3e635", bg = branch_bg })
+      vim.api.nvim_set_hl(0, "GitStatusChange", { fg = "#67e8f9", bg = branch_bg })
+      vim.api.nvim_set_hl(0, "GitStatusRemove", { fg = "#f87171", bg = branch_bg })
     else
-      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", { link = "MiniStatuslineDevinfo", default = true })
-      vim.api.nvim_set_hl(0, "MiniStatuslineDiff", { link = "MiniStatuslineDevinfo", default = true })
-      vim.api.nvim_set_hl(0, "MiniStatuslineFilename", { link = "MiniStatuslineFilename", default = true })
-      vim.api.nvim_set_hl(
-        0,
-        "MiniStatuslineFilenameNC",
-        { link = "MiniStatuslineFilename", italic = true, default = true }
-      )
-      vim.api.nvim_set_hl(0, "GitStatusAdd", { link = "Added", default = true })
-      vim.api.nvim_set_hl(0, "GitStatusChange", { link = "Changed", default = true })
-      vim.api.nvim_set_hl(0, "GitStatusRemove", { link = "Removed", default = true })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo", { link = "MiniStatuslineDevinfo" })
+      vim.api.nvim_set_hl(0, "MiniStatuslineDiff", { link = "MiniStatuslineDevinfo" })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilename", { link = "MiniStatuslineFilename" })
+      vim.api.nvim_set_hl(0, "MiniStatuslineFilenameNC", { link = "MiniStatuslineFilename", italic = true })
+      vim.api.nvim_set_hl(0, "GitStatusAdd", { fg = "#a3e635" })
+      vim.api.nvim_set_hl(0, "GitStatusChange", { fg = "#67e8f9" })
+      vim.api.nvim_set_hl(0, "GitStatusRemove", { fg = "#f87171" })
     end
   end
   vim.api.nvim_create_autocmd("ColorScheme", {
@@ -302,7 +282,7 @@ function M.setup_statusline()
           { hl = "MiniStatuslineDevinfo", strings = { git } },
         })
         if diff ~= "" then
-          -- Changes group (medium shade in branch→changes→path darkness progression).
+          -- Shares devinfo (branch) bg; no separate changes shade.
           groups[#groups + 1] = { hl = "MiniStatuslineDiff", strings = { diff } }
         end
         vim.list_extend(groups, {
@@ -387,4 +367,3 @@ function M.setup_clue()
 end
 
 return M
-

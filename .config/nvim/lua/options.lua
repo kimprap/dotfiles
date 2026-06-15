@@ -193,4 +193,93 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
   end,
 })
 
+-- Theme-agnostic CursorLine/Visual (greyish-blue) + Search (bright fg). Derives live from Normal.bg on ColorScheme + init.
+local function to_hex(c)
+  if not c then
+    return nil
+  end
+  if type(c) == "string" then
+    return c
+  end
+  return string.format("#%06x", c)
+end
+
+local function lighten(c, factor)
+  local hex = to_hex(c)
+  if not hex or hex:find("NONE") then
+    return nil
+  end
+  local r = tonumber(hex:sub(2, 3), 16) or 0
+  local g = tonumber(hex:sub(4, 5), 16) or 0
+  local b = tonumber(hex:sub(6, 7), 16) or 0
+  r = math.min(255, math.floor(r + (255 - r) * factor))
+  g = math.min(255, math.floor(g + (255 - g) * factor))
+  b = math.min(255, math.floor(b + (255 - b) * factor))
+  return string.format("#%02x%02x%02x", r, g, b)
+end
+
+local function setup_lighter_grey_highlights()
+  local normal = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+  local base = normal and normal.bg
+  if not base then
+    return
+  end
+
+  local function to_lighter_cool_grey(base, factor)
+    -- Lighten theme's Normal (keeps cool cast) + mild desat + blue bias → greyish-blue row/select.
+    local lit = lighten(base, factor)
+    if not lit then
+      return nil
+    end
+    local r = tonumber(lit:sub(2, 3), 16) or 0
+    local g = tonumber(lit:sub(4, 5), 16) or 0
+    local b = tonumber(lit:sub(6, 7), 16) or 0
+    local avg = math.floor((r + g + b) / 3 + 0.5)
+    local pull = 0.30 -- mild desat; keeps some source tone
+    r = math.floor(r + (avg - r) * pull)
+    g = math.floor(g + (avg - g) * pull)
+    b = math.floor(b + (avg - b) * pull)
+    b = math.min(255, b + 4) -- blue bias (greyish-blue, not warm)
+    r = math.max(0, r - 1)
+    return string.format("#%02x%02x%02x", r, g, b)
+  end
+
+  -- Active row (CursorLine): lighter greyish-blue, subtle step.
+  local row = to_lighter_cool_grey(base, 0.13)
+  if row then
+    vim.api.nvim_set_hl(0, "CursorLine", { bg = row })
+  end
+
+  -- Visual selection: even lighter greyish-blue, more pronounced step (same cool family).
+  local sel = to_lighter_cool_grey(base, 0.22)
+  if sel then
+    vim.api.nvim_set_hl(0, "Visual", { bg = sel })
+    vim.api.nvim_set_hl(0, "VisualNOS", { bg = sel })
+  end
+
+  -- Search text: force near-white fg for higher contrast on match highlights.
+  local bright = "#f8fafc"
+  local function whiten_search(name)
+    local s = vim.api.nvim_get_hl(0, { name = name, link = false })
+    if not s then
+      return
+    end
+    local hl = { fg = bright }
+    if s.bg then
+      hl.bg = s.bg
+    end
+    vim.api.nvim_set_hl(0, name, hl)
+  end
+  whiten_search("Search")
+  whiten_search("IncSearch")
+  whiten_search("CurSearch")
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = options_augroup,
+  desc = "Re-apply lighter greyish-blue CursorLine/Visual + Search highlights after theme",
+  callback = setup_lighter_grey_highlights,
+})
+setup_lighter_grey_highlights()
+
 return {}
