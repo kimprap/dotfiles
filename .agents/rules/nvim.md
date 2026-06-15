@@ -1,8 +1,15 @@
 ---
-description: Use when editing or discussing the Neovim config, UX decisions, or plugin choices.
+description: Use when editing or discussing the Neovim config, UX decisions, or plugin choices. See nvim-testing.md for headless verification patterns.
 alwaysApply: false
 globs:
   - ".config/nvim/**"
+condition: "\\.config/nvim/|nvim.*--headless|UserFoldText|foldtext|foldmethod|heading_foldexpr"
+scope:
+  - "tool:bash"
+  - "tool:read"
+  - "tool:write"
+  - "tool:edit"
+interruptMode: "tool-only"
 ---
 
 # Neovim context
@@ -39,7 +46,7 @@ Key files with custom logic:
 - Buffer tabs: `barbar.nvim`; buffer navigation: `<Tab>` / `<S-Tab>`.
 - Icons: `mini.icons` + `MiniIcons.tweak_lsp_kind()`.
 - Outline: `outline.nvim` (marksman blacklisted). Uses targeted monkey-patches on `Sidebar` (col 0 cursor, transparent hor1+blend style, single deepest hover sanitize, eol linenos) + FileType autocmd for gutter kill, transparent cursor + original restore, direct mouse handling, and col-0 enforcement. Key config: `hide_cursor=true`, `auto_set_cursor=false`, `highlight_hovered_item=true` + WinScrolled follow. Stripped from sessions. Cursor must never obscure the item symbol.
-- Markdown: `render-markdown.nvim` with custom heading colors. All heading fold logic lives in `lua/markdown.lua`: custom ATX `foldexpr` (headers >N, content inherits level) + `foldtext` chunk table so collapsed headers stay visible and keep `RenderMarkdownH*` color. `toggle_heading_level` uses `target = level-1` so m1 collapses content under visible H1, m2 shows H1+H2 headers (content collapsed). `ftplugin/markdown.lua` is minimal + delegates. Buf-local + global `<leader>mN` maps; buf-local silent `<C-S-[/]>` cycle via `vim.fn.search`.
+- Markdown: `render-markdown.nvim` with custom heading colors. All heading fold logic lives in `lua/markdown.lua`: custom ATX `foldexpr` (headers >N, content inherits level) + `foldtext` chunk table so collapsed headers stay visible and keep their `RenderMarkdownH*` color. `toggle_heading_level` uses `target = level-1` so m1 collapses content under visible H1, m2 shows H1+H2 headers (content collapsed). `ftplugin/markdown.lua` is minimal + delegates. Buf-local + global `<leader>mN` maps; buf-local silent `<C-S-[/]>` cycle via `vim.fn.search`.
 - Layout/chrome: statusline (mini.statusline) and sticky headers (treesitter-context) have custom derivations and a width-reserve monkey-patch respectively (see key files and invariants below). Explorers and pickers maintain dim parity and nvim-tree has extra guard/cleanup logic.
 - Sessions: `mini.sessions` per workspace (`.nvim/workspace` marker); strips oil + outline on save/restore.
 - Copy lines: normal `copy .` / `copy .-1` with cursor restored; visual `:t '>` / `:t '<-1` + `gv=gv` (`<A-S-j>` / `<A-S-k>`).
@@ -78,7 +85,7 @@ Key files with custom logic:
 - Line movement (`mini.move`), improved `J`.
 - Copy line up/down, normal and visual.
 - Search case (`ignorecase`/`smartcase`, `<leader>ui`, `\c`/`\C`).
-- Restore cursor position, `>gv` / `<gv`.
+- Restore cursor position, `>gv` / `<gv>`.
 - Trailing whitespace removal + final newline on save.
 - Static indent guides (`mini.indentscope` with no animation).
 
@@ -102,3 +109,9 @@ Key files with custom logic:
 ## Plugin selection rule
 
 Only add when built-in cannot do it or requires complex setup. Priority: fewer dependencies, then performance, then intuitiveness.
+
+## Headless testing
+
+For patterns and guidelines when running or writing headless Neovim scripts (folds, `foldtext`/`UserFoldText`, syntax, window-local options, etc.), see the dedicated rule `nvim-testing.md` in this directory.
+
+The detailed advice and precise trigger conditions live in `nvim-testing.md` (its frontmatter provides the harder, condition-based enforcement for when the rule should surface).
