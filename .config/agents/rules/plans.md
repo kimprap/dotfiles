@@ -24,8 +24,27 @@ All plan files **must** use the format:
 
 Avoid generic names like `plan.md` or undated files.
 
+## Header Metadata
+
+Plans include a metadata block immediately after the H1 title and before the first `##` section. Use this format with bold keys:
+
+```
+**Datetime**: 2026-06-14-1505
+**Scope**: <bounded area of the work>
+**Summary**: <one or two sentences on the plan's intent>
+**Status**: PENDING
+```
+
+- Generate Datetime with `date +%Y-%m-%d-%H%M`. It should match the filename prefix.
+- Start every new plan with `Status: PENDING`.
+- Update Status as the work moves forward:
+  - Switch to `IN_PROGRESS` once you begin the first task.
+  - Switch to `DONE` after the last task is checked (with its `completed <timestamp>` line) and you append the Completion Summary.
+  - Use `CLOSED` only when the user explicitly asks to close the plan without completing the tasks.
+- Include the header in all plans so agents and harnesses can see the basics at a glance. Older plans without the block are legacy.
+
 ## Required Structure
-Every plan file **must** contain (in addition to any findings, context, or background):
+A plan file contains the header metadata block above plus (in addition to any findings, context, or background):
 
 ## Tasks
 **This is the todo checklist for the plan.** Group related items that can reasonably be executed together in focused batches (best estimate under ~100k agent tokens per batch). Order the groups and items within them by priority (highest first).
@@ -75,4 +94,4 @@ Once a plan is fully completed (every task shows as checked with its completion 
 - Completed plans belong exclusively in `.agents/plans/archive/` (via `mv` as described above).
 - The `.agents/plans/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
 
-When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), these conventions must be followed. A standard plan layout (including the required Tasks section and recommended Verification / Done criteria) should be used for new plans.
+When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), follow these conventions. Use a consistent plan layout that includes the header metadata block (with Status), the Tasks todo checklist, and the recommended Verification / Done criteria for new plans.

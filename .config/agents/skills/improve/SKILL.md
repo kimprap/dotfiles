@@ -62,7 +62,7 @@ Apply in all modes (depth varies):
 **standard mode (creates dated plan):**
 - Balanced audit of scope using core criteria.
 - Write one dated plan named `plans/YYYY-MM-DD-HHMM_IMPROVE_<variant>.md` (use `date +%Y-%m-%d-%H%M`; <variant> is the effective mode or focus from the invocation, e.g. `IMPROVE_deep`, `IMPROVE_security`, `IMPROVE_standard`).
-- Follow layout in `references/plan-template.md` (includes required **Tasks** todo checklist per the plans rule).
+- Follow layout in `references/plan-template.md` (includes the header metadata block + **Tasks** todo checklist per the plans rule).
 - Verify plan realism + coverage of main findings.
 - Present plan location. Do not execute unless told.
 
@@ -76,7 +76,7 @@ No mode keyword → standard.
 ## Guardrails
 
 - Quick: never write plans or do heavy full-repo audit/verification.
-- Standard/deep: always produce a dated plan in `plans/` using the improve naming convention (`IMPROVE_<variant>` slug) + Tasks (todo checklist) per the plans rule.
+- Standard/deep: always produce a dated plan in `plans/` using the improve naming convention (`IMPROVE_<variant>` slug) + the header metadata block + Tasks (todo checklist) per the plans rule.
 - Never destructive actions.
 - Respect current changes; do not ignore the actual diff for unrelated work.
 - If ambiguous (scope/mode), clarify briefly.
