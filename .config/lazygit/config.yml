@@ -1,4 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+
 git:
   pagers:
     - colorArg: always
       pager: delta --paging=never --line-numbers --diff-highlight
+
+# Guarded p/P: confirmation popups before push/pull.
+# Replaces the direct-fire actions (files pushFiles/pullFiles + localBranches branch push/pull).
+customCommands:
+  # p: pull via `git pull` (respects pull.* from git config)
+  - key: "p"
+    context: "localBranches, files"
+    description: "Pull"
+    prompts:
+      - type: "confirm"
+        title: "Pull"
+        body: "Are you sure you want to pull changes?"
+    command: "git pull"
+    loadingText: "Pulling..."
+    after:
+      checkForConflicts: true
+
+  # P: push the selected local branch. Uses upstream remote/branch when configured;
+  # otherwise sets upstream on origin for the branch (first-push case).
+  - key: "P"
+    context: "localBranches, files"
+    description: "Push"
+    prompts:
+      - type: "confirm"
+        title: "Push"
+        body: "Are you sure you want to push?"
+    command: "git push {{if .SelectedLocalBranch.UpstreamRemote}}{{.SelectedLocalBranch.UpstreamRemote}} {{.SelectedLocalBranch.UpstreamBranch}}{{else}}-u origin {{.SelectedLocalBranch.Name}}{{end}}"
+    loadingText: "Pushing..."
+
+# Disable legacy direct mappings for these keys; customs above supply the confirmed behavior.
+keybinding:
+  files:
+    pushFiles: <disabled>
+    pullFiles: <disabled>
