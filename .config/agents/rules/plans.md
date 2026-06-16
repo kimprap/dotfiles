@@ -43,6 +43,9 @@ Plans include a metadata block immediately after the H1 title and before the fir
   - Use `CLOSED` only when the user explicitly asks to close the plan without completing the tasks.
 - Include the header in all plans so agents and harnesses can see the basics at a glance. Older plans without the block are legacy.
 
+## Proportionality
+Plan detail must scale with risk and scope. Required sections stay required, but supporting context should be the minimum a fresh executor needs. Prefer file:line references and short excerpts over copying large blocks. Include full command scripts, long excerpts, category-by-category audits, or extended rationale only when they materially reduce execution risk.
+
 ## Required Structure
 A plan file contains the header metadata block above plus (in addition to any findings, context, or background):
 
