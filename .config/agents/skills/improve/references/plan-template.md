@@ -1,6 +1,6 @@
 # Improvement Plan
 
-Read `.config/agents/rules/plans.md` first. It owns naming (`YYYY-MM-DD-HHMM_<slug>.md`), the precise `## Combined Tasks` checkbox + `completed <ts>` format, Completion Summary append on last task, and archive mv. This template supplies only the structure for self-contained, executable plans (no rule duplication).
+Read `.config/agents/rules/plans.md` first. It owns naming (`YYYY-MM-DD-HHMM_<slug>.md`), the precise `## Tasks` (todo checklist) checkbox + `completed <ts>` format, the recommended `## Verification / Done criteria`, Completion Summary append on last task, and archive mv. This template supplies only the structure for self-contained, executable plans (no rule duplication).
 
 When used by the /improve skill, the `<slug>` must follow the skill's convention: `IMPROVE_<mode-or-params>` (e.g. `2026-06-14-1530_IMPROVE_deep.md`, `..._IMPROVE_security.md`, `..._IMPROVE_standard`). Use `date +%Y-%m-%d-%H%M` for the prefix.
 
@@ -64,9 +64,9 @@ Plans target a fresh executor (zero session context). Key properties (adapted fr
 ### Other Quality / Correctness
 - ...
 
-## Combined Tasks
+## Tasks
 
-Group related work that can execute together (target practical batches, e.g. <~100k tokens). Order groups and items inside by priority (highest first). Use the exact checkbox format and `completed <ts>` rule from `plans.md`. This section is the execution order.
+**This is the todo checklist.** Group related work that can execute together (target practical batches, e.g. <~100k tokens). Order groups and items inside by priority (highest first). Use the exact checkbox format and `completed <ts>` rule from `plans.md`. This section is the execution order.
 
 - [ ] ...
 
@@ -104,6 +104,6 @@ Stop and report (do not improvise) if:
 - Every non-trivial step or criteria has a concrete command + expected result.
 - STOP conditions are plan-specific risks, not boilerplate.
 - All findings cite `file:line`; excerpts are fresh direct reads.
-- Follows plans.md for Combined Tasks and file lifecycle.
+- Follows plans.md for Tasks (todo checklist), recommended Verification / Done criteria, and file lifecycle.
 - No secret material.
 ```

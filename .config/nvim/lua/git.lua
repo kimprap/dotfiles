@@ -76,6 +76,57 @@ local function codediff_in_tab(tab)
   return false
 end
 
+--- Get the codediff explorer panel win (if present in the tab).
+local function get_codediff_explorer_win(tabpage)
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+  local ok, lifecycle = pcall(require, "codediff.ui.lifecycle")
+  if not ok then
+    return nil
+  end
+  local panel = lifecycle.get_explorer(tabpage)
+  if panel and panel.split and panel.split.winid and vim.api.nvim_win_is_valid(panel.split.winid) then
+    return panel.split.winid
+  end
+  return nil
+end
+
+--- Pin explorer pane viewport (topline=1) so "Changes (...)" etc. stay at the top row.
+--- Uses winrestview to change only scroll, leaving the plugin's selection cursor intact.
+local function pin_codediff_explorer_view(tabpage)
+  local ewin = get_codediff_explorer_win(tabpage)
+  if not ewin then
+    return
+  end
+  pcall(vim.api.nvim_win_call, ewin, function()
+    local v = vim.fn.winsaveview()
+    if v.topline ~= 1 then
+      v.topline = 1
+      vim.fn.winrestview(v)
+    end
+  end)
+end
+
+--- Force codediff diff panes (wins with codediff_restore) to line 1 + zt.
+local function pin_codediff_diff_views(tabpage)
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+    if vim.api.nvim_win_is_valid(win) and vim.w[win] and vim.w[win].codediff_restore then
+      pcall(vim.api.nvim_win_set_cursor, win, { 1, 0 })
+      pcall(vim.api.nvim_win_call, win, function()
+        vim.cmd("silent! normal! zt")
+      end)
+    end
+  end
+end
+
+--- Pin both diff panes to top and explorer header (called after open/select and on WinScrolled in diff wins).
+local function pin_codediff_views(tabpage)
+  pin_codediff_diff_views(tabpage)
+  vim.schedule(function()
+    pin_codediff_explorer_view(tabpage)
+  end)
+end
+
 --- Execute `fn(target_win)` after switching to the tab before `codediff_tabpage`
 --- (creating a new tab at the start if this is the first tab). After `fn` returns,
 --- switch back and close the codediff tab. This centralizes the tab dance used
@@ -213,11 +264,17 @@ local function setup_codediff_once()
         codediff_open_current_file_in_previous_tab(tabpage, original_bufnr, modified_bufnr)
       end, { desc = "Open file in previous tab" })
     end
+    -- After the plugin has wired everything (keymaps, renders, sessions), force stable initial views:
+    -- diff panes at line 1 (no auto first-hunk), explorer pane header pinned at top (no reveal offsets).
+    vim.schedule(function()
+      pin_codediff_views(tabpage)
+    end)
   end
 
   require("codediff").setup({
     diff = {
       cycle_next_hunk = false,
+      jump_to_first_change = false, -- do not auto-focus first hunk; we force line 1 explicitly for stability
     },
     explorer = {
       width = 28,
@@ -247,6 +304,33 @@ local function setup_codediff_once()
   })
 
   codediff_did_setup = true
+
+  -- Stability: when activity (hunk cycle <C-]>/<C-[>, cursor moves, zz from nav, renders) happens in a
+  -- diff pane, re-pin the explorer pane view. This counters the plugin's internal "reveal current file"
+  -- (temp set_current_win + win_set_cursor on the explorer win in actions.navigate_*) which scrolls
+  -- the tree so the selected file node is at top of the explorer pane (hiding "Changes (...)" header etc.).
+  -- We only react to scroll in the *diff* panes (identified by w.codediff_restore) and only adjust the
+  -- explorer viewport (topline=1 via winrestview, preserving the highlight lnum).
+  vim.api.nvim_create_autocmd("WinScrolled", {
+    group = vim.api.nvim_create_augroup("user.codediff_stability", { clear = true }),
+    desc = "Keep codediff explorer pane header stable (no offset) when diff panes change view",
+    callback = function(ev)
+      local winid = tonumber(ev.match)
+      if not winid or not vim.api.nvim_win_is_valid(winid) then
+        return
+      end
+      if not (vim.w[winid] and vim.w[winid].codediff_restore) then
+        return
+      end
+      local tab = vim.api.nvim_win_get_tabpage(winid)
+      if not codediff_in_tab(tab) then
+        return
+      end
+      vim.schedule(function()
+        pin_codediff_explorer_view(tab)
+      end)
+    end,
+  })
 end
 
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -286,6 +370,11 @@ local function codediff_open(args, opts)
   else
     vim.cmd("CodeDiff " .. args)
   end
+  -- Ensure stable views (line 1 in diffs, pinned header in explorer) after the tab + panels settle.
+  vim.schedule(function()
+    local tab = vim.api.nvim_get_current_tabpage()
+    pin_codediff_views(tab)
+  end)
 end
 
 --- Focus explorer sidebar or history panel from any CodeDiff buffer.

@@ -175,6 +175,14 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   group = options_augroup,
   desc = "Restore cursor position",
   callback = function()
+    -- In CodeDiff diff panes (identified by the plugin's window marker), always start at line 1
+    -- (top of file, including frontmatter like leading "---"). Ignore historical '"' mark and any
+    -- plugin/mark-driven jumps so that file opens in gv/gu etc. are stable at the very top.
+    local win = vim.api.nvim_get_current_win()
+    if vim.w[win] and vim.w[win].codediff_restore then
+      pcall(vim.api.nvim_win_set_cursor, win, { 1, 0 })
+      return
+    end
     local mark = vim.api.nvim_buf_get_mark(0, '"')
     local lcount = vim.api.nvim_buf_line_count(0)
     if mark[1] > 0 and mark[1] <= lcount then

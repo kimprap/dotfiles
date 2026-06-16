@@ -27,8 +27,10 @@ Avoid generic names like `plan.md` or undated files.
 ## Required Structure
 Every plan file **must** contain (in addition to any findings, context, or background):
 
-## Combined Tasks
-Group related todo items that can reasonably be executed together (best estimate under ~100k agent tokens per batch). Order the groups and items within them by priority (highest first).
+## Tasks
+**This is the todo checklist for the plan.** Group related items that can reasonably be executed together in focused batches (best estimate under ~100k agent tokens per batch). Order the groups and items within them by priority (highest first).
+
+Alternate names considered (for making the "todo checklist" nature more explicit): `## Task Checklist`, `## Execution Tasks`, `## Todo Checklist`, `## Action Items`, `## Work Items`. Standardized on the short `## Tasks` (the prose + batching guidance preserve the original "combined/grouped execution" intent). The prior heading `## Combined Tasks` is now legacy.
 
 - Tasks **must** always be created as unchecked markdown checkboxes:
   `- [ ] Task description here`
@@ -37,9 +39,26 @@ Group related todo items that can reasonably be executed together (best estimate
   - [x] Task description here
     completed 2026-06-14-1505
   ```
-- This section takes precedence for execution planning. Keep batches focused and self-contained. Note any dependencies or rough token estimates where helpful.
+- This section is the primary driver for execution planning. Keep batches focused and self-contained. Note any dependencies or rough token estimates where helpful.
 
-When the **last task** in the Combined Tasks section is marked as complete:
+It is recommended (for robustness, especially on non-trivial/generic plans) to also include a dedicated section immediately after Tasks:
+
+## Verification / Done criteria
+Objective, preferably machine-checkable criteria (commands + expected results, or clear observable behaviors) that must hold for the plan to be considered complete. This is distinct from the execution steps and batching in the Tasks section.
+
+Use a checkbox list or assertion list. All criteria should pass before marking the final task in Tasks complete.
+
+Example (recommended shape):
+
+```
+## Verification / Done criteria
+
+- [ ] `stylua --check .config/nvim` exits 0
+- [ ] `git status --porcelain` reports only in-scope paths
+- The new behavior X is present and old misbehavior Y is gone (spot check or test)
+```
+
+When the **last task** in the Tasks section is marked as complete:
 - Append a short **Completion Summary** section at the very end of the plan file (after all other content).
 - The summary must be concise and cover: key findings, triage decisions made, what was delivered, any residual risks, and overall outcome.
 - Do not delete, overwrite, or alter prior sections of the plan.
@@ -56,4 +75,4 @@ Once a plan is fully completed (every task shows as checked with its completion 
 - Completed plans belong exclusively in `.agents/plans/archive/` (via `mv` as described above).
 - The `.agents/plans/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
 
-When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), these conventions must be followed. A standard plan layout (including the required Combined Tasks section) should be used for new plans.
+When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), these conventions must be followed. A standard plan layout (including the required Tasks section and recommended Verification / Done criteria) should be used for new plans.
