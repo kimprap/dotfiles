@@ -1,9 +1,9 @@
 ---
 name: skill-craft
 description: >
-  Create, update, evaluate, and clean up agent skills. Use when authoring SKILL.md files,
-  refining skill frontmatter or descriptions, adding evals/scripts/references, auditing
-  duplicate or stale skills, or deciding whether to merge, delete, or keep existing skills.
+  Create, update, evaluate, and clean up agent skills. Use for skill authoring,
+  cleanup, refining skill frontmatter or descriptions, adding evals/scripts/references,
+  auditing duplicates or stale skills, or deciding whether to merge, delete, or keep existing skills.
 compatibility: >
   Agent Skills compatible; optimized for OMP, Claude Code, Codex/OpenClaw-style skill roots,
   VS Code/GitHub Copilot Agent Skills, and similar Markdown-skill harnesses.
@@ -134,10 +134,10 @@ Do not create a script for a one-off command, unstable environment detail, or lo
 
 ## Done criteria
 
-For created or updated skills:
+For created, updated, evaluated, or cleaned skills:
 
 - Frontmatter is valid and minimal for the target harnesses.
 - `name` matches the directory and the description triggers the intended use without broad false positives.
 - Body is concise, imperative, and conditional-section-free unless the section earns its place.
 - References/scripts/assets/evals exist only when they reduce future work or errors.
-- Verification matches the change: frontmatter checks for metadata edits, realistic prompts for behavior, trigger queries for descriptions, and cleanup proof before deletion.
+- Verification matches the workflow: frontmatter checks for metadata edits, realistic prompts for behavior, trigger queries for descriptions, and loaded/kept-copy proof before cleanup deletion.

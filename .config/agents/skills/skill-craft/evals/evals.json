@@ -14,13 +14,13 @@
     },
     {
       "id": 2,
-      "prompt": "Update the csv-report skill, scripts. In this session the agent has repeatedly run the same three commands to normalize CSV headers, validate row counts, and emit a JSON summary.",
-      "expected_output": "A review of the existing skill that treats scripts as a scoped review, then creates or proposes a script only if the repeated command chain is durable and worth maintaining.",
+      "prompt": "Update the csv-report skill, scripts and references. In this session the agent has repeatedly run the same three commands to normalize CSV headers, validate row counts, and emit a JSON summary, and has repeatedly pasted the same column-mapping notes before editing.",
+      "expected_output": "A review of the existing skill that treats scripts and references as scoped candidate reviews, then creates or proposes either artifact only if the repeated command chain or repeated context is durable and worth maintaining.",
       "files": [],
       "assertions": [
-        "The response treats scripts as a candidate review rather than an automatic requirement",
-        "The recommendation uses current-session repeated tool calls as evidence",
-        "The response can reject script creation if the pattern is not durable"
+        "The response treats scripts and references as candidate reviews rather than automatic requirements",
+        "The recommendation uses current-session repeated tool calls or repeated context as evidence",
+        "The response can reject script or reference creation if the pattern is not durable"
       ]
     },
     {
