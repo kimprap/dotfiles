@@ -1,0 +1,9 @@
+# User remaps for omp. Action IDs documented in omp://keybindings.md.
+# Ctrl+D cannot currently be mapped to delete-word-forward in the main omp prompt:
+# CustomEditor handles app.exit before base editor bindings, while delete-word-forward
+# is hardcoded to Alt+D / Alt+Delete in the base editor.
+# Keep Ctrl+D non-exiting and useful: forward-delete one character.
+app.exit: []
+tui.editor.deleteCharForward:
+  - Delete
+  - Ctrl+D
