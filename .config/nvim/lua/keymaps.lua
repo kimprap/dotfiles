@@ -1,4 +1,5 @@
 local buffers = require("buffers")
+local git = require("git")
 local map = require("map")
 
 map("n", "<leader>ui", function()
@@ -431,6 +432,11 @@ map("n", "<leader>n", function()
 end, { desc = "New empty buffer" })
 map("n", "<A-z>", function()
   vim.wo.wrap = not vim.wo.wrap
+  local win = vim.api.nvim_get_current_win()
+  if vim.w[win] and vim.w[win].codediff_restore then
+    vim.w[win].codediff_wrap = vim.wo[win].wrap
+    vim.schedule(git.enforce_codediff_diff_options)
+  end
 end, { desc = "Toggle word wrap" })
 
 -- Copy paths from the active buffer.

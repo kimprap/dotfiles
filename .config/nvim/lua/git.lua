@@ -106,7 +106,33 @@ local function pin_codediff_explorer_view(tabpage)
   end)
 end
 
---- Force codediff diff panes (wins with codediff_restore) to line 1 + zt.
+--- Re-apply sticky per-pane options (e.g. user-chosen wrap) on codediff diff panes.
+--- Does not touch cursor or scroll position. Safe for repeated runtime calls.
+local function enforce_codediff_diff_options(tabpage)
+  tabpage = tabpage or vim.api.nvim_get_current_tabpage()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+    if vim.api.nvim_win_is_valid(win) and vim.w[win] and vim.w[win].codediff_restore then
+      if vim.w[win].codediff_wrap == nil then
+        vim.w[win].codediff_wrap = vim.wo[win].wrap
+      end
+      local desired = vim.w[win].codediff_wrap
+      if desired ~= nil and vim.wo[win].wrap ~= desired then
+        pcall(vim.api.nvim_win_set_option, win, "wrap", desired)
+      end
+    end
+  end
+end
+
+M.enforce_codediff_diff_options = enforce_codediff_diff_options
+
+local function schedule_enforce(tabpage)
+  vim.schedule(function()
+    enforce_codediff_diff_options(tabpage)
+  end)
+end
+
+--- Force codediff diff panes (wins with codediff_restore) to line 1 + zt on initial open.
+--- (Prevents plugin auto-jump to first hunk.) Also enforces sticky options.
 local function pin_codediff_diff_views(tabpage)
   tabpage = tabpage or vim.api.nvim_get_current_tabpage()
   for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
@@ -117,9 +143,10 @@ local function pin_codediff_diff_views(tabpage)
       end)
     end
   end
+  enforce_codediff_diff_options(tabpage)
 end
 
---- Pin both diff panes to top and explorer header (called after open/select and on WinScrolled in diff wins).
+--- Pin diff panes to top (initial open only) + explorer header.
 local function pin_codediff_views(tabpage)
   pin_codediff_diff_views(tabpage)
   vim.schedule(function()
@@ -305,15 +332,12 @@ local function setup_codediff_once()
 
   codediff_did_setup = true
 
-  -- Stability: when activity (hunk cycle <C-]>/<C-[>, cursor moves, zz from nav, renders) happens in a
-  -- diff pane, re-pin the explorer pane view. This counters the plugin's internal "reveal current file"
-  -- (temp set_current_win + win_set_cursor on the explorer win in actions.navigate_*) which scrolls
-  -- the tree so the selected file node is at top of the explorer pane (hiding "Changes (...)" header etc.).
-  -- We only react to scroll in the *diff* panes (identified by w.codediff_restore) and only adjust the
-  -- explorer viewport (topline=1 via winrestview, preserving the highlight lnum).
+  local stability_group = vim.api.nvim_create_augroup("user.codediff_stability", { clear = true })
+
+  -- Protect explorer header and re-apply wrap on diff-pane activity (counters plugin reveal/scroll).
   vim.api.nvim_create_autocmd("WinScrolled", {
-    group = vim.api.nvim_create_augroup("user.codediff_stability", { clear = true }),
-    desc = "Keep codediff explorer pane header stable (no offset) when diff panes change view",
+    group = stability_group,
+    desc = "Protect explorer header + re-apply wrap on codediff diff activity",
     callback = function(ev)
       local winid = tonumber(ev.match)
       if not winid or not vim.api.nvim_win_is_valid(winid) then
@@ -327,8 +351,59 @@ local function setup_codediff_once()
         return
       end
       vim.schedule(function()
+        enforce_codediff_diff_options(tab)
         pin_codediff_explorer_view(tab)
       end)
+    end,
+  })
+
+  -- Re-assert stored wrap on OptionSet (plugin side-by-side sync resets after toggles or activity).
+  vim.api.nvim_create_autocmd("OptionSet", {
+    group = stability_group,
+    pattern = "wrap",
+    desc = "Re-assert stored wrap on codediff diff panes after sets/resets",
+    callback = function()
+      local win = vim.api.nvim_get_current_win()
+      if vim.w[win] and vim.w[win].codediff_restore then
+        schedule_enforce()
+        vim.defer_fn(function()
+          enforce_codediff_diff_options()
+        end, 10)
+      end
+    end,
+  })
+
+  -- Re-apply per-pane wrap after FocusGained (app switch return; plugin may re-sync).
+  vim.api.nvim_create_autocmd("FocusGained", {
+    group = stability_group,
+    desc = "Re-apply codediff wrap after external focus return",
+    callback = function()
+      local tab = vim.api.nvim_get_current_tabpage()
+      if not codediff_in_tab(tab) then
+        return
+      end
+      vim.schedule(function()
+        enforce_codediff_diff_options(tab)
+        pin_codediff_explorer_view(tab)
+        vim.defer_fn(function()
+          enforce_codediff_diff_options(tab)
+        end, 15)
+      end)
+    end,
+  })
+
+  -- Re-assert per-pane wrap on WinEnter (cross-pane focus triggers plugin re-sync of scrollbound pair).
+  vim.api.nvim_create_autocmd("WinEnter", {
+    group = stability_group,
+    desc = "Re-apply per-pane wrap when entering a codediff diff pane",
+    callback = function()
+      local win = vim.api.nvim_get_current_win()
+      if vim.w[win] and vim.w[win].codediff_restore then
+        schedule_enforce()
+        vim.defer_fn(function()
+          enforce_codediff_diff_options()
+        end, 5)
+      end
     end,
   })
 end

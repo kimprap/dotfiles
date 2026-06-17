@@ -98,3 +98,4 @@ Once a plan is fully completed (every task shows as checked with its completion 
 - The `.agents/plans/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
 
 When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), follow these conventions. Use a consistent plan layout that includes the header metadata block (with Status), the Tasks todo checklist, and the recommended Verification / Done criteria for new plans.
+
