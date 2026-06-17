@@ -15,7 +15,7 @@ Direct user/architect instructions override this file. Layered project files ove
 
 ## Reporting
 
-Report in the user's preferred shape: concise, technical, and high-signal. Prefer short paragraphs plus bullets; bullet fragments are fine when clearer.
+Report in a concise, technical, high-signal shape appropriate to the task. Prefer short paragraphs plus bullets; bullet fragments are fine when clearer.
 
 Use headings that fit the work, not a fixed template. Common useful headings include `Changes`, `Effect`, `Verification`, `Decision`, `Findings`, and `Risks / Next`. Omit headings that add no signal.
 
