@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "grep|Grep|list_dir|ListDir|glob|Glob|run_terminal_command|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "scripts/fff-search-hijack.sh",
+            "timeout": 8
+          }
+        ]
+      }
+    ]
+  }
+}
