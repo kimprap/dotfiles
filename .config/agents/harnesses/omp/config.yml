@@ -1,20 +1,42 @@
-theme: 
+theme:
   dark: dark-swamp
   light: light
-statusLine: 
-  preset: ascii
+statusLine:
+  preset: custom
   separator: none
   sessionAccent: true
   transparent: true
+  leftSegments:
+    - path
+    # - git
+    - model
+    - mode
+    - token_total
+    - context_pct
+  rightSegments:
+    - session_name
+  segmentOptions:
+    model:
+      showThinkingLevel: true
+      path:
+        abbreviate: true
+        maxLength: 40
+        stripWorkPrefix: true
+      git:
+        showBranch: true
+        showStaged: true
+        showUnstaged: true
+        showUntracked: true
 symbolPreset: nerd
 defaultThinkingLevel: medium
-memory: 
+memory:
   backend: hindsight
-lsp: 
+lsp:
   formatOnWrite: true
 setupVersion: 1
-display: 
+display:
   showTokenUsage: true
-task: 
+task:
   showResolvedModelBadge: true
 hideThinkingBlock: true
+
