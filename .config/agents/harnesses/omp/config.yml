@@ -1,0 +1,20 @@
+theme: 
+  dark: dark-swamp
+  light: light
+statusLine: 
+  preset: ascii
+  separator: none
+  sessionAccent: true
+  transparent: true
+symbolPreset: nerd
+defaultThinkingLevel: medium
+memory: 
+  backend: hindsight
+lsp: 
+  formatOnWrite: true
+setupVersion: 1
+display: 
+  showTokenUsage: true
+task: 
+  showResolvedModelBadge: true
+hideThinkingBlock: true
