@@ -37,6 +37,10 @@ Avoid generic openers/closers, restating the ask, and "let me know" filler.
 
 ## Interaction protocols
 
+### Scope escalation
+
+If the work proves materially larger or riskier than the request implied, pause broad changes and ask the user or designated architect before expanding scope. State the new blast radius, why it changed, the safest options, and any low-risk work already completed. Read-only investigation may continue when it clarifies the decision.
+
 ### Assumption surfacing
 
 Use before non-trivial work only when the assumption materially affects the solution:
