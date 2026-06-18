@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+    echo "usage: open-app <path>" >&2
+    exit 64
+fi
+
+target="$1"
+/usr/bin/open "$target"
+
+case "$target" in
+    *.app) ;;
+    *) exit 0 ;;
+esac
+
+info_plist="$target/Contents/Info.plist"
+if [[ ! -f "$info_plist" ]]; then
+    exit 0
+fi
+
+bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$info_plist" 2>/dev/null || true)"
+if [[ -z "$bundle_id" ]]; then
+    exit 0
+fi
+
+activate() {
+    /usr/bin/osascript - "$bundle_id" >/dev/null <<'APPLESCRIPT'
+on run argv
+    tell application id (item 1 of argv) to activate
+end run
+APPLESCRIPT
+}
+
+# First activation is fast for warm apps; second catches slower Space/app focus races.
+/bin/sleep 0.02
+activate
+/bin/sleep 0.02
+activate

@@ -41,7 +41,7 @@
                                     "key_code": "escape",
                                     "modifiers": { "mandatory": ["option", "shift"] }
                                 },
-                                "to": [{ "shell_command": "open '/Users/kim/.config/karabiner/karabiner.json'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/.config/karabiner/karabiner.json" }],
                                 "type": "basic"
                             }
                         ]
@@ -54,9 +54,7 @@
                                     "key_code": "escape",
                                     "modifiers": { "mandatory": ["left_control", "left_shift"] }
                                 },
-                                "to": [
-                                    { "shell_command": "open '/System/Applications/Utilities/Activity Monitor.app'" }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/System/Applications/Utilities/Activity Monitor.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -85,7 +83,7 @@
                                     "key_code": "1",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Brave Browser.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -109,7 +107,7 @@
                                     "key_code": "1",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Brave Browser.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -138,7 +136,7 @@
                                     "key_code": "2",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Ghostty.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -162,7 +160,7 @@
                                     "key_code": "2",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Ghostty.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -191,11 +189,7 @@
                                     "key_code": "3",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -219,11 +213,7 @@
                                     "key_code": "3",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -252,11 +242,7 @@
                                     "key_code": "5",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -280,11 +266,7 @@
                                     "key_code": "5",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -313,7 +295,7 @@
                                     "key_code": "d",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open /Users/kim/Downloads" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads" }],
                                 "type": "basic"
                             }
                         ]
@@ -337,7 +319,7 @@
                                     "key_code": "d",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open /Users/kim/Downloads" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads" }],
                                 "type": "basic"
                             }
                         ]
@@ -366,7 +348,7 @@
                                     "key_code": "f",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open /System/Library/CoreServices/Finder.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -390,7 +372,7 @@
                                     "key_code": "f",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open /System/Library/CoreServices/Finder.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -419,7 +401,7 @@
                                     "key_code": "v",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open /Applications/'Cursor'.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -443,7 +425,7 @@
                                     "key_code": "v",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open /Applications/'Cursor'.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -472,7 +454,7 @@
                                     "key_code": "l",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open /Applications/Line.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -496,7 +478,7 @@
                                     "key_code": "l",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open /Applications/Line.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -525,11 +507,7 @@
                                     "key_code": "y",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -553,11 +531,7 @@
                                     "key_code": "y",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -586,11 +560,7 @@
                                     "key_code": "u",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -614,11 +584,7 @@
                                     "key_code": "u",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -647,11 +613,7 @@
                                     "modifiers": { "mandatory": ["option"] },
                                     "simultaneous": [{ "key_code": "n" }]
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -675,11 +637,7 @@
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] },
                                     "simultaneous": [{ "key_code": "n" }]
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -708,7 +666,7 @@
                                     "key_code": "k",
                                     "modifiers": { "mandatory": ["left_option"] }
                                 },
-                                "to": [{ "shell_command": "open /System/Applications/Stickies.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -732,7 +690,7 @@
                                     "key_code": "k",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open /System/Applications/Stickies.app" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -761,11 +719,7 @@
                                     "key_code": "i",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -789,11 +743,7 @@
                                     "key_code": "i",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -822,11 +772,7 @@
                                     "key_code": "t",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -850,11 +796,7 @@
                                     "key_code": "t",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -883,11 +825,7 @@
                                     "key_code": "g",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -911,11 +849,7 @@
                                     "key_code": "g",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -944,11 +878,7 @@
                                     "key_code": "c",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -972,11 +902,7 @@
                                     "key_code": "c",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1005,11 +931,7 @@
                                     "key_code": "p",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1033,11 +955,7 @@
                                     "key_code": "p",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1066,7 +984,7 @@
                                     "key_code": "0",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Parallels Desktop.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1090,7 +1008,7 @@
                                     "key_code": "0",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Parallels Desktop.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1119,7 +1037,7 @@
                                     "key_code": "q",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/1Password.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1143,7 +1061,7 @@
                                     "key_code": "q",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/1Password.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1172,7 +1090,7 @@
                                     "key_code": "w",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Bitwarden.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1196,7 +1114,7 @@
                                     "key_code": "w",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/Applications/Bitwarden.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1225,7 +1143,7 @@
                                     "key_code": "e",
                                     "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [{ "shell_command": "open '/System/Applications/Passwords.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1249,7 +1167,7 @@
                                     "key_code": "e",
                                     "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [{ "shell_command": "open '/System/Applications/Passwords.app'" }],
+                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -1410,4 +1328,3 @@
         }
     ]
 }
-

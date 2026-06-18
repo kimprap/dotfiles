@@ -9,6 +9,7 @@
 .config/karabiner/*
 !.config/karabiner/
 !.config/karabiner/karabiner.json
+!.config/karabiner/open-app
 
 # Python caches (generated when running hook scripts, skills, etc.)
 __pycache__/
