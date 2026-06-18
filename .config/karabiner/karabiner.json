@@ -1353,7 +1353,7 @@
                         ]
                     },
                     {
-                        "description": "Caps Lock: tap = esc, caps + semicolon = ctrl+b (herdr cli prefix)",
+                        "description": "Caps Lock: tap = esc, hold = esc layer, caps + semicolon = ctrl+b (herdr cli prefix)",
                         "manipulators": [
                             {
                                 "from": {
@@ -1368,12 +1368,24 @@
                                             "name": "caps_lock_held",
                                             "value": 1
                                         }
+                                    },
+                                    {
+                                        "set_variable": {
+                                            "name": "escape_held",
+                                            "value": 1
+                                        }
                                     }
                                 ],
                                 "to_after_key_up": [
                                     {
                                         "set_variable": {
                                             "name": "caps_lock_held",
+                                            "value": 0
+                                        }
+                                    },
+                                    {
+                                        "set_variable": {
+                                            "name": "escape_held",
                                             "value": 0
                                         }
                                     }

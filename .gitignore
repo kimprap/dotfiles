@@ -5,3 +5,13 @@
 .config/yazi/package.toml
 .config/yazi/.yazi/
 
+# Karabiner writes backups/assets next to karabiner.json.
+.config/karabiner/*
+!.config/karabiner/
+!.config/karabiner/karabiner.json
+
+# Python caches (generated when running hook scripts, skills, etc.)
+__pycache__/
+*.py[cod]
+*$py.class
+
