@@ -1,7 +1,5 @@
 {
-    "global": {
-        "show_in_menu_bar": false
-    },
+    "global": { "show_in_menu_bar": false },
     "profiles": [
         {
             "complex_modifications": {
@@ -12,9 +10,7 @@
                             {
                                 "from": {
                                     "key_code": "escape",
-                                    "modifiers": {
-                                        "optional": ["any"]
-                                    }
+                                    "modifiers": { "optional": ["any"] }
                                 },
                                 "to": [
                                     {
@@ -32,11 +28,7 @@
                                         }
                                     }
                                 ],
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ],
+                                "to_if_alone": [{ "key_code": "escape" }],
                                 "type": "basic"
                             }
                         ]
@@ -47,15 +39,9 @@
                             {
                                 "from": {
                                     "key_code": "escape",
-                                    "modifiers": {
-                                        "mandatory": ["option", "shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["option", "shift"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Users/kim/.config/karabiner/karabiner.json'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Users/kim/.config/karabiner/karabiner.json'" }],
                                 "type": "basic"
                             }
                         ]
@@ -66,14 +52,10 @@
                             {
                                 "from": {
                                     "key_code": "escape",
-                                    "modifiers": {
-                                        "mandatory": ["left_control", "left_shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["left_control", "left_shift"] }
                                 },
                                 "to": [
-                                    {
-                                        "shell_command": "open '/System/Applications/Utilities/Activity Monitor.app'"
-                                    }
+                                    { "shell_command": "open '/System/Applications/Utilities/Activity Monitor.app'" }
                                 ],
                                 "type": "basic"
                             }
@@ -92,19 +74,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "1",
-                                    "modifiers": {
-                                        "mandatory": ["left_option", "left_shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Brave Browser.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Brave Browser.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -126,15 +107,9 @@
                                 ],
                                 "from": {
                                     "key_code": "1",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Brave Browser.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Brave Browser.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -152,19 +127,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "2",
-                                    "modifiers": {
-                                        "mandatory": ["left_option", "left_shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Ghostty.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Ghostty.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -186,15 +160,9 @@
                                 ],
                                 "from": {
                                     "key_code": "2",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Ghostty.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Ghostty.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -212,13 +180,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "3",
-                                    "modifiers": {
-                                        "mandatory": ["left_option", "left_shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -246,9 +217,7 @@
                                 ],
                                 "from": {
                                     "key_code": "3",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -272,13 +241,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "5",
-                                    "modifiers": {
-                                        "mandatory": ["left_option", "left_shift"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -306,9 +278,7 @@
                                 ],
                                 "from": {
                                     "key_code": "5",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -332,19 +302,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "d",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Users/kim/Downloads"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Users/kim/Downloads" }],
                                 "type": "basic"
                             }
                         ]
@@ -366,15 +335,9 @@
                                 ],
                                 "from": {
                                     "key_code": "d",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Users/kim/Downloads"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Users/kim/Downloads" }],
                                 "type": "basic"
                             }
                         ]
@@ -392,19 +355,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "f",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /System/Library/CoreServices/Finder.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /System/Library/CoreServices/Finder.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -426,15 +388,9 @@
                                 ],
                                 "from": {
                                     "key_code": "f",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /System/Library/CoreServices/Finder.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /System/Library/CoreServices/Finder.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -452,19 +408,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "v",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Applications/'Cursor'.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Applications/'Cursor'.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -486,15 +441,9 @@
                                 ],
                                 "from": {
                                     "key_code": "v",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Applications/'Cursor'.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Applications/'Cursor'.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -512,19 +461,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "l",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Applications/Line.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Applications/Line.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -546,15 +494,9 @@
                                 ],
                                 "from": {
                                     "key_code": "l",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /Applications/Line.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /Applications/Line.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -572,13 +514,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "y",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -606,9 +551,7 @@
                                 ],
                                 "from": {
                                     "key_code": "y",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -632,13 +575,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "u",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -666,9 +612,7 @@
                                 ],
                                 "from": {
                                     "key_code": "u",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -692,17 +636,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    },
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "n"
-                                        }
-                                    ]
+                                    "modifiers": { "mandatory": ["option"] },
+                                    "simultaneous": [{ "key_code": "n" }]
                                 },
                                 "to": [
                                     {
@@ -729,14 +672,8 @@
                                     }
                                 ],
                                 "from": {
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    },
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "n"
-                                        }
-                                    ]
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] },
+                                    "simultaneous": [{ "key_code": "n" }]
                                 },
                                 "to": [
                                     {
@@ -769,15 +706,9 @@
                                 ],
                                 "from": {
                                     "key_code": "k",
-                                    "modifiers": {
-                                        "mandatory": ["left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["left_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /System/Applications/Stickies.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /System/Applications/Stickies.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -799,15 +730,9 @@
                                 ],
                                 "from": {
                                     "key_code": "k",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open /System/Applications/Stickies.app"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open /System/Applications/Stickies.app" }],
                                 "type": "basic"
                             }
                         ]
@@ -825,13 +750,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "i",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -859,9 +787,7 @@
                                 ],
                                 "from": {
                                     "key_code": "i",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -885,13 +811,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "t",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -919,9 +848,7 @@
                                 ],
                                 "from": {
                                     "key_code": "t",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -945,13 +872,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "g",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -979,9 +909,7 @@
                                 ],
                                 "from": {
                                     "key_code": "g",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -1005,13 +933,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "c",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -1039,9 +970,7 @@
                                 ],
                                 "from": {
                                     "key_code": "c",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -1065,13 +994,16 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "p",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
                                 "to": [
                                     {
@@ -1099,9 +1031,7 @@
                                 ],
                                 "from": {
                                     "key_code": "p",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
                                 "to": [
                                     {
@@ -1125,19 +1055,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "0",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Parallels Desktop.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Parallels Desktop.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1159,15 +1088,9 @@
                                 ],
                                 "from": {
                                     "key_code": "0",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Parallels Desktop.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Parallels Desktop.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1185,19 +1108,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "q",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/1Password.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/1Password.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1219,15 +1141,9 @@
                                 ],
                                 "from": {
                                     "key_code": "q",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/1Password.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/1Password.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1245,19 +1161,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "w",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Bitwarden.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Bitwarden.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1279,15 +1194,9 @@
                                 ],
                                 "from": {
                                     "key_code": "w",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/Applications/Bitwarden.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/Applications/Bitwarden.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1305,19 +1214,18 @@
                                             }
                                         ],
                                         "type": "device_if"
+                                    },
+                                    {
+                                        "name": "escape_held",
+                                        "type": "variable_if",
+                                        "value": 1
                                     }
                                 ],
                                 "from": {
                                     "key_code": "e",
-                                    "modifiers": {
-                                        "mandatory": ["left_shift", "left_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/System/Applications/Passwords.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/System/Applications/Passwords.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1339,15 +1247,9 @@
                                 ],
                                 "from": {
                                     "key_code": "e",
-                                    "modifiers": {
-                                        "mandatory": ["right_shift", "right_option"]
-                                    }
+                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
                                 },
-                                "to": [
-                                    {
-                                        "shell_command": "open '/System/Applications/Passwords.app'"
-                                    }
-                                ],
+                                "to": [{ "shell_command": "open '/System/Applications/Passwords.app'" }],
                                 "type": "basic"
                             }
                         ]
@@ -1358,9 +1260,7 @@
                             {
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": {
-                                        "optional": ["any"]
-                                    }
+                                    "modifiers": { "optional": ["any"] }
                                 },
                                 "to": [
                                     {
@@ -1390,11 +1290,7 @@
                                         }
                                     }
                                 ],
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ],
+                                "to_if_alone": [{ "key_code": "escape" }],
                                 "type": "basic"
                             },
                             {
@@ -1407,9 +1303,7 @@
                                 ],
                                 "from": {
                                     "key_code": "semicolon",
-                                    "modifiers": {
-                                        "optional": ["any"]
-                                    }
+                                    "modifiers": { "optional": ["any"] }
                                 },
                                 "to": [
                                     {
@@ -1425,29 +1319,15 @@
             },
             "devices": [
                 {
-                    "identifiers": {
-                        "is_keyboard": true
-                    },
+                    "identifiers": { "is_keyboard": true },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "apple_vendor_top_case_key_code": "keyboard_fn"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+                            "to": [{ "key_code": "left_control" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_control"
-                            },
-                            "to": [
-                                {
-                                    "apple_vendor_top_case_key_code": "keyboard_fn"
-                                }
-                            ]
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
                         }
                     ]
                 },
@@ -1459,44 +1339,20 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "apple_vendor_top_case_key_code": "keyboard_fn"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+                            "to": [{ "key_code": "left_control" }]
                         },
                         {
-                            "from": {
-                                "key_code": "fn"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "key_code": "fn" },
+                            "to": [{ "key_code": "left_control" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_command"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_option"
-                                }
-                            ]
+                            "from": { "key_code": "left_command" },
+                            "to": [{ "key_code": "left_option" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_option"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_command"
-                                }
-                            ]
+                            "from": { "key_code": "left_option" },
+                            "to": [{ "key_code": "left_command" }]
                         }
                     ]
                 },
@@ -1508,85 +1364,41 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "consumer_key_code": "dictation"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "f5"
-                                }
-                            ]
+                            "from": { "consumer_key_code": "dictation" },
+                            "to": [{ "key_code": "f5" }]
                         },
                         {
-                            "from": {
-                                "key_code": "right_control"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "right_command"
-                                }
-                            ]
+                            "from": { "key_code": "right_command" },
+                            "to": [{ "key_code": "right_option" }]
                         },
                         {
-                            "from": {
-                                "key_code": "right_command"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "right_option"
-                                }
-                            ]
+                            "from": { "key_code": "right_control" },
+                            "to": [{ "key_code": "right_command" }]
                         }
                     ]
                 },
                 {
-                    "identifiers": {
-                        "is_keyboard": true
-                    },
+                    "identifiers": { "is_keyboard": true },
                     "simple_modifications": [
                         {
-                            "from": {
-                                "apple_vendor_top_case_key_code": "keyboard_fn"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_control"
-                                }
-                            ]
+                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
+                            "to": [{ "key_code": "left_control" }]
                         },
                         {
-                            "from": {
-                                "key_code": "left_control"
-                            },
-                            "to": [
-                                {
-                                    "apple_vendor_top_case_key_code": "keyboard_fn"
-                                }
-                            ]
+                            "from": { "key_code": "left_control" },
+                            "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
                         }
                     ]
                 }
             ],
             "fn_function_keys": [
                 {
-                    "from": {
-                        "key_code": "f4"
-                    },
-                    "to": [
-                        {
-                            "key_code": "f4"
-                        }
-                    ]
+                    "from": { "key_code": "f4" },
+                    "to": [{ "key_code": "f4" }]
                 },
                 {
-                    "from": {
-                        "key_code": "f5"
-                    },
-                    "to": [
-                        {
-                            "key_code": "f5"
-                        }
-                    ]
+                    "from": { "key_code": "f5" },
+                    "to": [{ "key_code": "f5" }]
                 }
             ],
             "name": "Default profile",
