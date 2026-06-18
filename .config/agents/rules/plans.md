@@ -44,15 +44,17 @@ Plans include a metadata block immediately after the H1 title and before the fir
 - Include the header in all plans so agents and harnesses can see the basics at a glance. Older plans without the block are legacy.
 
 ## Proportionality
-Plan detail must scale with risk and scope. Required sections stay required, but supporting context should be the minimum a fresh executor needs. Prefer file:line references and short excerpts over copying large blocks. Include full command scripts, long excerpts, category-by-category audits, or extended rationale only when they materially reduce execution risk.
+Plans are execution contracts, not transcripts. Detail must scale with risk and scope:
+- Keep required sections, but include only the supporting context a fresh executor needs.
+- Prefer file:line references and 1-3 line excerpts over copied blocks.
+- Include full command scripts, long excerpts, category-by-category audits, or extended rationale only when they materially reduce execution risk.
+- Small/default plans should stay compact; deep, high-risk, or multi-subsystem plans may be longer.
 
 ## Required Structure
-A plan file contains the header metadata block above plus (in addition to any findings, context, or background):
+A plan file contains the header metadata block above plus the required execution checklist:
 
 ## Tasks
-**This is the todo checklist for the plan.** Group related items that can reasonably be executed together in focused batches (best estimate under ~100k agent tokens per batch). Order the groups and items within them by priority (highest first).
-
-Alternate names considered (for making the "todo checklist" nature more explicit): `## Task Checklist`, `## Execution Tasks`, `## Todo Checklist`, `## Action Items`, `## Work Items`. Standardized on the short `## Tasks` (the prose + batching guidance preserve the original "combined/grouped execution" intent). The prior heading `## Combined Tasks` is now legacy.
+**This is the todo checklist and primary execution order.** Group related work into focused, self-contained batches ordered by priority. Note dependencies when they matter.
 
 - Tasks **must** always be created as unchecked markdown checkboxes:
   `- [ ] Task description here`
@@ -61,7 +63,7 @@ Alternate names considered (for making the "todo checklist" nature more explicit
   - [x] Task description here
     completed 2026-06-14-1505
   ```
-- This section is the primary driver for execution planning. Keep batches focused and self-contained. Note any dependencies or rough token estimates where helpful.
+- This section is the primary driver for execution planning; keep supporting detail in findings, notes, or verification sections.
 
 It is recommended (for robustness, especially on non-trivial/generic plans) to also include a dedicated section immediately after Tasks:
 

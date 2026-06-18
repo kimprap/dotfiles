@@ -16,8 +16,8 @@ Use Conventional Commits:
 type(scope): subject
 ```
 
-- `type`: `feat`, `fix`, `refactor`, `style`, `chore`, or `docs`.
-- `scope`: affected area when useful, e.g. `nvim`, `zsh`, `starship`, `cursor`, `ghostty`, `yazi`, `scripts`.
+- `type`: `feat`, `fix`, `refactor`, `style`, `test`, `docs`, or `chore`; use `build`, `ci`, or `perf` only when exact.
+- `scope`: affected subsystem when useful; omit when the change is broad or the scope would be noise.
 - `subject`: imperative, lowercase after the colon, no trailing period, <=72 chars.
 - Add a short body only when the why/impact is not obvious; do not use the body as a file list.
 - Mark breaking changes with `type(scope)!: subject` only when truly breaking.
@@ -32,8 +32,9 @@ chore(nvim): ignore nvim-pack-lock churn
 
 ## Safe git workflow
 
-- Inspect status and diffs before staging or committing.
-- Stage only intended paths; never broad-stage unrelated user work.
-- Do not amend, rebase, reset, force-push, or delete branches unless explicitly requested.
-- Do not push unless the user explicitly asks.
-- Do not commit secrets or machine-local/private config.
+- Inspect status and relevant diffs before staging or committing.
+- Stage only intended paths; prefer documented staging helpers, never broad-stage unrelated work.
+- Keep commits scoped to one logical change unless the user asks for a batch commit.
+- Before committing, inspect the staged diff and ensure it contains no secrets or machine-local/private config.
+- Run targeted verification when repo conventions or the change require it; do not suppress failures.
+- Do not stash, amend, rebase, reset, force-push, delete branches, or push unless explicitly requested.

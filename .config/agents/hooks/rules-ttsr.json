@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "run_terminal_command|search_replace|read_file|list_dir|grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/ttsr-guard.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
