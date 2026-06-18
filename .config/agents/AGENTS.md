@@ -48,8 +48,10 @@ Use before non-trivial work only when the assumption materially affects the solu
 ```text
 ASSUMPTIONS:
 1. [statement]
-IMPACT IF WRONG: [consequence]
-REQUEST: Confirm or correct before proceeding.
+IMPACT IF WRONG:
+- [consequences]
+REQUEST:
+- Confirm or correct before proceeding.
 ```
 
 ### Options
@@ -76,3 +78,4 @@ Recurring corrections become one durable line in the nearest appropriate scoped 
 Subagents and skills inherit this baseline. Do not duplicate it in project or specialist files; layer only what is more specific.
 
 Every line earns its place. Loaded in every applicable agent session.
+
