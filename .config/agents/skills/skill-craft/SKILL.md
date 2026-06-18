@@ -46,7 +46,7 @@ Field catalog for cross-harness compatibility:
 | Field | Use |
 |---|---|
 | `name` | Required. Kebab-case, <=64 chars, no leading/trailing/consecutive hyphens, and match the directory. Preserve on update. |
-| `description` | Required. <=1024 chars. Primary trigger: include what it does, when to use it, trigger nouns, and near-boundary contexts. |
+| `description` | Required for model-invoked skills. <=1024 chars. Primary trigger: state what it does and one trigger per distinct branch; collapse synonyms for the same branch. |
 | `license` | Optional. Add only when the repo/user provides a real license or bundled license file. |
 | `compatibility` | Optional. Add only for real product, tool, OS, package, network, or permission requirements. |
 | `metadata` | Optional key-value map for version, owner, tags, source, or harness-specific metadata. |
@@ -54,9 +54,9 @@ Field catalog for cross-harness compatibility:
 | `globs` | Optional OMP metadata for related paths; useful but not required for activation. |
 | `alwaysApply` | Usually omit or `false`; use `true` only for tiny universal guidance. |
 | `hide` | Optional OMP metadata; hides from prompt lists while keeping manual access. |
-| `disableModelInvocation` / `disable-model-invocation` | Optional hide-equivalent compatibility spellings. |
+| `disableModelInvocation` / `disable-model-invocation` | Optional hide-equivalent compatibility spellings. Use for user-invoked skills that should not spend context load unless explicitly called. |
 
-Emit only fields with signal. A simple CLI-use skill may need only `name`, `description`, and a short body.
+Emit only fields with signal. Keep model invocation only when the agent or another skill should discover the skill; otherwise prefer user-invoked to avoid context load. A simple CLI-use skill may need only `name`, `description`, and a short body.
 
 ## Choose the workflow
 
@@ -117,12 +117,14 @@ For description-only tuning, use positive and near-miss negative trigger prompts
 
 ## Authoring rules
 
+- Optimize for predictable process, not identical output.
 - Add what the model lacks: project conventions, non-obvious APIs, edge cases, exact commands, gotchas, output templates, validation loops.
 - Omit what the model already knows: generic concepts, motivational text, exhaustive alternatives, and empty section templates.
 - Prefer one default. Mention alternatives only as escape hatches.
 - Explain why fragile constraints exist; this is less brittle than long `always/never` lists.
 - Keep activation-critical gotchas inline in `SKILL.md`; put bulky conditional details in one-level references.
-- Link every reference directly from `SKILL.md` and state when to read it.
+- Each ordered step should end with a checkable completion criterion.
+- Link every reference directly from `SKILL.md` and state exactly when to read it; pointer wording decides whether the reference gets used.
 
 ## Scripts policy
 

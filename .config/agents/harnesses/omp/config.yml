@@ -8,7 +8,6 @@ statusLine:
   transparent: true
   leftSegments:
     - path
-    # - git
     - model
     - mode
     - token_total
