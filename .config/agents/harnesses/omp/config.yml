@@ -29,7 +29,19 @@ statusLine:
 symbolPreset: nerd
 defaultThinkingLevel: medium
 memory:
-  backend: hindsight
+  backend: mnemopi
+mnemopi:
+  scoping: per-project-tagged
+  dbPath: ""
+  bank: ""
+  embeddingVariant: en
+  polyphonicRecall: false
+  enhancedRecall: true
+  embeddingModel: nvidia/llama-nemotron-embed-vl-1b-v2:free
+  embeddingApiUrl: https://openrouter.ai/api/v1
+  llmMode: remote
+  llmBaseUrl: https://openrouter.ai/api/v1
+  llmModel: nvidia/nemotron-3-ultra-550b-a55b:free
 lsp:
   formatOnWrite: true
 setupVersion: 1
@@ -38,4 +50,10 @@ display:
 task:
   showResolvedModelBadge: true
 hideThinkingBlock: true
+providers:
+  memoryModel: online
+github:
+  enabled: true
+modelRoles:
+  task: xai-oauth/grok-build-0.1
 

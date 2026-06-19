@@ -1,0 +1,221 @@
+#!/usr/bin/env python3
+"""Report Mnemopi bank embedding cleanup status."""
+
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import sqlite3
+import sys
+import time
+from pathlib import Path
+from urllib.parse import quote
+
+DEFAULT_INTERVAL_SECONDS = 5.0
+DEFAULT_TIMEOUT_SECONDS = 180.0
+
+SQL = """
+SELECT 'working_memory_total' AS metric, COUNT(*) AS value FROM working_memory
+UNION ALL SELECT 'working_memory_active', COUNT(*) FROM working_memory WHERE valid_until IS NULL
+UNION ALL SELECT 'working_memory_invalidated', COUNT(*) FROM working_memory WHERE valid_until IS NOT NULL
+UNION ALL SELECT 'memory_embeddings', COUNT(*) FROM memory_embeddings
+UNION ALL SELECT 'active_unembedded', COUNT(*)
+  FROM working_memory wm LEFT JOIN memory_embeddings me ON me.memory_id = wm.id
+  WHERE wm.valid_until IS NULL AND me.memory_id IS NULL
+UNION ALL SELECT 'orphan_or_stale_embeddings', COUNT(*)
+  FROM memory_embeddings me LEFT JOIN working_memory wm ON wm.id = me.memory_id
+  WHERE wm.id IS NULL OR wm.valid_until IS NOT NULL
+UNION ALL SELECT 'facts', COUNT(*) FROM facts
+UNION ALL SELECT 'episodic_memory', COUNT(*) FROM episodic_memory;
+"""
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Check whether a Mnemopi SQLite bank has finished embedding active memories.",
+    )
+    parser.add_argument(
+        "db",
+        nargs="?",
+        help="Path to mnemopi.db. If omitted, auto-detects a single banks/*/mnemopi.db under the current directory.",
+    )
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        help="Poll until clean, stale/orphan embeddings appear, or timeout expires.",
+    )
+    parser.add_argument(
+        "--interval",
+        type=float,
+        default=DEFAULT_INTERVAL_SECONDS,
+        help=f"Polling interval in seconds for --watch (default: {DEFAULT_INTERVAL_SECONDS:g}).",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=DEFAULT_TIMEOUT_SECONDS,
+        help=f"Maximum watch duration in seconds (default: {DEFAULT_TIMEOUT_SECONDS:g}).",
+    )
+    parser.add_argument(
+        "--forever",
+        action="store_true",
+        help="Watch without a timeout. Use explicitly; default watch exits after 3 minutes.",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit JSON objects instead of key=value text.",
+    )
+    args = parser.parse_args()
+
+    if args.interval <= 0:
+        parser.error("--interval must be > 0")
+    if args.timeout <= 0:
+        parser.error("--timeout must be > 0")
+    return args
+
+
+def discover_db() -> Path:
+    candidates = [Path(p) for p in glob.glob("banks/*/mnemopi.db")]
+    candidates = [p for p in candidates if p.is_file()]
+    if not candidates:
+        raise SystemExit("No mnemopi.db path given and no banks/*/mnemopi.db found under the current directory.")
+    if len(candidates) > 1:
+        rendered = "\n".join(f"  {p}" for p in candidates)
+        raise SystemExit(f"Multiple Mnemopi banks found; pass one explicitly:\n{rendered}")
+    return candidates[0]
+
+
+def open_readonly(db_path: Path) -> sqlite3.Connection:
+    absolute = db_path.expanduser().resolve()
+    if not absolute.is_file():
+        raise SystemExit(f"Mnemopi DB not found: {absolute}")
+    uri = f"file:{quote(str(absolute))}?mode=ro"
+    try:
+        return sqlite3.connect(uri, uri=True)
+    except sqlite3.Error as exc:
+        raise SystemExit(f"Failed to open SQLite DB read-only: {absolute}: {exc}") from exc
+
+
+def read_counts(db_path: Path) -> dict[str, int | str]:
+    try:
+        with open_readonly(db_path) as conn:
+            rows = conn.execute(SQL).fetchall()
+    except sqlite3.Error as exc:
+        raise RuntimeError(f"Failed to query expected Mnemopi schema: {exc}") from exc
+
+    counts: dict[str, int | str] = {metric: int(value) for metric, value in rows}
+    counts["db"] = str(db_path.expanduser().resolve())
+    counts["status"] = status_for(counts)
+    return counts
+
+
+def status_for(counts: dict[str, int | str]) -> str:
+    stale = int(counts["orphan_or_stale_embeddings"])
+    pending = int(counts["active_unembedded"])
+    if stale > 0:
+        return "stale_orphan_embeddings"
+    if pending > 0:
+        return "pending_embeddings"
+    return "clean"
+
+
+def exit_code_for(counts: dict[str, int | str]) -> int:
+    status = counts["status"]
+    if status == "clean":
+        return 0
+    if status == "stale_orphan_embeddings":
+        return 3
+    return 1
+
+
+def emit(counts: dict[str, int | str], *, as_json: bool, compact: bool) -> None:
+    if as_json:
+        payload = dict(counts)
+        if compact:
+            payload["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%S%z")
+        print(json.dumps(payload, sort_keys=True), flush=True)
+        return
+
+    if compact:
+        print(
+            " ".join(
+                [
+                    f"time={time.strftime('%H:%M:%S')}",
+                    f"active={counts['working_memory_active']}",
+                    f"embeddings={counts['memory_embeddings']}",
+                    f"active_unembedded={counts['active_unembedded']}",
+                    f"orphan_or_stale_embeddings={counts['orphan_or_stale_embeddings']}",
+                    f"status={counts['status']}",
+                ]
+            ),
+            flush=True,
+        )
+        return
+
+    ordered = [
+        "db",
+        "working_memory_total",
+        "working_memory_active",
+        "working_memory_invalidated",
+        "memory_embeddings",
+        "active_unembedded",
+        "orphan_or_stale_embeddings",
+        "facts",
+        "episodic_memory",
+        "status",
+    ]
+    for key in ordered:
+        print(f"{key}={counts[key]}")
+
+
+def run_once(db_path: Path, *, as_json: bool) -> int:
+    counts = read_counts(db_path)
+    emit(counts, as_json=as_json, compact=False)
+    return exit_code_for(counts)
+
+
+def run_watch(db_path: Path, *, interval: float, timeout: float, forever: bool, as_json: bool) -> int:
+    deadline = time.monotonic() + timeout
+    while True:
+        counts = read_counts(db_path)
+        emit(counts, as_json=as_json, compact=True)
+        code = exit_code_for(counts)
+        if code in (0, 3):
+            return code
+
+        if not forever:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                print(
+                    f"Timed out after {timeout:g}s with active_unembedded={counts['active_unembedded']}.",
+                    file=sys.stderr,
+                )
+                return 1
+            sleep_for = min(interval, remaining)
+        else:
+            sleep_for = interval
+        time.sleep(sleep_for)
+
+
+def main() -> int:
+    args = parse_args()
+    db_path = Path(args.db).expanduser() if args.db else discover_db()
+    try:
+        if args.watch:
+            return run_watch(
+                db_path,
+                interval=args.interval,
+                timeout=args.timeout,
+                forever=args.forever,
+                as_json=args.json,
+            )
+        return run_once(db_path, as_json=args.json)
+    except RuntimeError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

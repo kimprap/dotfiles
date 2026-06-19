@@ -19,6 +19,11 @@ if ! command -v docker &>/dev/null; then
   [[ -x "/usr/local/bin/docker" ]] && export PATH="/usr/local/bin/docker:$PATH"
 fi
 
+# === Mise (tools + env) ===
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 
 # ═══════════════════════════════════════════════════════════════
 # Plugin Manager (Antidote)
