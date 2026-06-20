@@ -369,15 +369,61 @@ local function setup_nvim_tree_once()
     on_attach = function(bufnr)
       local api = require("nvim-tree.api")
       api.config.mappings.default_on_attach(bufnr)
+
+      local tree_opts = function(desc)
+        return { buffer = bufnr, desc = "nvim-tree: " .. desc, silent = true }
+      end
+
+      -- Default `y`/`Y` use nowait and would steal `yp`/`yd`; keep default `d`/`D` intact.
+      pcall(vim.keymap.del, "n", "y", { buffer = bufnr })
+      pcall(vim.keymap.del, "n", "Y", { buffer = bufnr })
+
+      local function copy_node_path(kind)
+        return function()
+          local node = api.tree.get_node_under_cursor()
+          if not node or node.name == ".." then
+            vim.notify("No file or folder under cursor", vim.log.levels.WARN)
+            return
+          end
+          local path = node.absolute_path
+          local label
+          if kind == "rel_file" then
+            label = "relative file"
+          elseif kind == "abs_file" then
+            label = "absolute file"
+          elseif kind == "rel_folder" then
+            label = "relative folder"
+            if vim.fn.isdirectory(path) ~= 1 then
+              path = vim.fn.fnamemodify(path, ":h")
+            end
+          else
+            label = "absolute folder"
+            if vim.fn.isdirectory(path) ~= 1 then
+              path = vim.fn.fnamemodify(path, ":h")
+            end
+          end
+          local modifier = (kind == "rel_file" or kind == "rel_folder") and ":." or ":p"
+          local p = vim.fn.fnamemodify(path, modifier)
+          vim.fn.setreg("+", p)
+          local display = p
+          if p:sub(1, 1) == "/" then
+            display = vim.fn.fnamemodify(p, ":~")
+          end
+          vim.notify(string.format("Copied %s: %s", label, display), vim.log.levels.INFO)
+        end
+      end
+
+      vim.keymap.set("n", "yp", copy_node_path("rel_file"), tree_opts("Copy relative file path"))
+      vim.keymap.set("n", "yP", copy_node_path("abs_file"), tree_opts("Copy absolute file path"))
+      vim.keymap.set("n", "yd", copy_node_path("rel_folder"), tree_opts("Copy relative folder path"))
+      vim.keymap.set("n", "yD", copy_node_path("abs_folder"), tree_opts("Copy absolute folder path"))
+
       -- q can race with TreeClose/WinClosed for dim cleanup; force it explicitly.
       vim.keymap.set("n", "q", function()
         api.tree.close()
         schedule_nvim_tree_backdrop_cleanup()
-      end, { buffer = bufnr, desc = "Close" })
+      end, tree_opts("Close"))
 
-      -- Refined: for <CR>/enter (and o) on an already-open file, explicitly close tree + cleanup.
-      -- quit_on_open + focus_loss don't always suffice for the "focus same file" case; this guarantees dim is torn down.
-      -- Avoids overcomplicating global logic or more autocmds.
       local function open_then_close()
         api.node.open.edit()
         vim.schedule(function()
@@ -385,8 +431,27 @@ local function setup_nvim_tree_once()
           schedule_nvim_tree_backdrop_cleanup()
         end)
       end
-      vim.keymap.set("n", "<CR>", open_then_close, { buffer = bufnr, desc = "Open file (close tree + dim)" })
-      vim.keymap.set("n", "o", open_then_close, { buffer = bufnr, desc = "Open file (close tree + dim)" })
+      vim.keymap.set("n", "<CR>", open_then_close, tree_opts("Open file (close tree + dim)"))
+      vim.keymap.set("n", "o", open_then_close, tree_opts("Open file (close tree + dim)"))
+
+      vim.keymap.set("n", "gf", function()
+        local node = api.tree.get_node_under_cursor()
+        if not node or node.name == ".." then
+          vim.notify("No file or folder under cursor", vim.log.levels.WARN)
+          return
+        end
+        local path = node.absolute_path
+        if vim.fn.isdirectory(path) == 1 then
+          vim.ui.open(path)
+          return
+        end
+        local job = vim.fn.jobstart({ "open", "-R", path }, { detach = true })
+        if job <= 0 then
+          vim.notify("Failed to reveal in Finder: " .. path, vim.log.levels.WARN)
+        end
+      end, tree_opts("Reveal in Finder"))
+
+      vim.keymap.set("n", "go", "<Nop>", tree_opts("Disabled in tree"))
     end,
   })
   nvim_tree_did_setup = true
