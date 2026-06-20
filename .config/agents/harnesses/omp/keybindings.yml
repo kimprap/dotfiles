@@ -2,6 +2,9 @@
 # Ctrl+Shift+D is remapped away from Debug Tools by extensions/key-remaps.js.
 # Use it for macOS-style forward word deletion; keep Ctrl+D as forward-delete
 # without exiting.
+app.interrupt: []
+app.session.tree:
+  - Alt+T
 app.exit: []
 tui.editor.deleteCharForward:
   - Delete

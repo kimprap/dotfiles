@@ -1160,7 +1160,7 @@
                         ]
                     },
                     {
-                        "description": "Caps Lock: tap = esc, hold = esc layer + ctrl-cmd shortcuts; caps+; = ctrl+b (herdr prefix)",
+                        "description": "Caps Lock: tap = esc, hold = Herdr prefix-free layer; caps+; = ctrl+b (herdr prefix)",
                         "manipulators": [
                             {
                                 "from": {
@@ -1232,9 +1232,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "1",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "1" }
                                 ],
                                 "type": "basic"
                             },
@@ -1252,9 +1253,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "2",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "2" }
                                 ],
                                 "type": "basic"
                             },
@@ -1272,9 +1274,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "3",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "3" }
                                 ],
                                 "type": "basic"
                             },
@@ -1292,9 +1295,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "4",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "4" }
                                 ],
                                 "type": "basic"
                             },
@@ -1312,9 +1316,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "5",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "5" }
                                 ],
                                 "type": "basic"
                             },
@@ -1332,9 +1337,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "6",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "6" }
                                 ],
                                 "type": "basic"
                             },
@@ -1352,9 +1358,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "7",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "7" }
                                 ],
                                 "type": "basic"
                             },
@@ -1372,9 +1379,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "8",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "8" }
                                 ],
                                 "type": "basic"
                             },
@@ -1392,9 +1400,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "9",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "9" }
                                 ],
                                 "type": "basic"
                             },
@@ -1406,260 +1415,141 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "h"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "h",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "j"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "j",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "k"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "k",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "l"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "l",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "c"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "c",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "v"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "v",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "r"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "r",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "t"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "t",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "p"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "p",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "g"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "g",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "w"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "w",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "s"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "s",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "e"
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "e",
-                                        "modifiers": ["control", "command"]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "conditions": [
-                                    {
-                                        "name": "caps_lock_held",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "b"
-                                },
+                                "from": { "key_code": "h" },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "h" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "j" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "j" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "k" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "k" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "l" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "l" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "c" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "c" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "v" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "v" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "r" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "r" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "t" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    {
+                                        "key_code": "t",
+                                        "modifiers": ["shift"]
                                     }
                                 ],
                                 "type": "basic"
@@ -1672,14 +1562,124 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "o"
-                                },
+                                "from": { "key_code": "p" },
                                 "to": [
                                     {
-                                        "key_code": "o",
-                                        "modifiers": ["control", "command"]
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    {
+                                        "key_code": "p",
+                                        "modifiers": ["shift"]
                                     }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "g" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "g" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "w" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "w" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "s" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "s" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "e" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "e" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "b" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "b" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": { "key_code": "o" },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "o" }
                                 ],
                                 "type": "basic"
                             },
@@ -1697,8 +1697,12 @@
                                 },
                                 "to": [
                                     {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    {
                                         "key_code": "slash",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": ["shift"]
                                     }
                                 ],
                                 "type": "basic"
@@ -1717,9 +1721,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "hyphen",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "hyphen" }
                                 ],
                                 "type": "basic"
                             },
@@ -1731,14 +1736,13 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "return_or_enter"
-                                },
+                                "from": { "key_code": "return_or_enter" },
                                 "to": [
                                     {
-                                        "key_code": "return_or_enter",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "z" }
                                 ],
                                 "type": "basic"
                             },
@@ -1756,9 +1760,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "open_bracket",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "p" }
                                 ],
                                 "type": "basic"
                             },
@@ -1776,9 +1781,10 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "close_bracket",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "n" }
                                 ],
                                 "type": "basic"
                             },
@@ -1790,9 +1796,7 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "left_arrow"
-                                },
+                                "from": { "key_code": "left_arrow" },
                                 "to": [
                                     {
                                         "key_code": "left_arrow",
@@ -1809,9 +1813,7 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "right_arrow"
-                                },
+                                "from": { "key_code": "right_arrow" },
                                 "to": [
                                     {
                                         "key_code": "right_arrow",
@@ -1828,9 +1830,7 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "up_arrow"
-                                },
+                                "from": { "key_code": "up_arrow" },
                                 "to": [
                                     {
                                         "key_code": "up_arrow",
@@ -1847,9 +1847,7 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "down_arrow"
-                                },
+                                "from": { "key_code": "down_arrow" },
                                 "to": [
                                     {
                                         "key_code": "down_arrow",
@@ -1866,14 +1864,13 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "x"
-                                },
+                                "from": { "key_code": "x" },
                                 "to": [
                                     {
-                                        "key_code": "x",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "x" }
                                 ],
                                 "type": "basic"
                             },
@@ -1885,14 +1882,13 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": {
-                                    "key_code": "tab"
-                                },
+                                "from": { "key_code": "tab" },
                                 "to": [
                                     {
-                                        "key_code": "tab",
-                                        "modifiers": ["control", "command"]
-                                    }
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "tab" }
                                 ],
                                 "type": "basic"
                             }
