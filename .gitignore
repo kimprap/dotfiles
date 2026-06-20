@@ -11,6 +11,13 @@
 !.config/karabiner/karabiner.json
 !.config/karabiner/open-app
 
+# Herdr writes logs/session state next to config.toml.
+.config/herdr/*
+!.config/herdr/
+!.config/herdr/config.toml
+!.config/herdr/bin/
+!.config/herdr/bin/numbered-panes
+
 # Python caches (generated when running hook scripts, skills, etc.)
 __pycache__/
 *.py[cod]

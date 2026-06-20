@@ -29,6 +29,7 @@ declare -A SYMLINKS=(
     ["$HOME/.dotfiles/.config/ghostty"]="$HOME/.config/ghostty"
     ["$HOME/.dotfiles/.config/yazi"]="$HOME/.config/yazi"
     ["$HOME/.dotfiles/.config/karabiner"]="$HOME/.config/karabiner"
+    ["$HOME/.dotfiles/.config/herdr"]="$HOME/.config/herdr"
     ["$HOME/.dotfiles/.config/cursor/settings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/settings.json"
     ["$HOME/.dotfiles/.config/cursor/keybindings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/keybindings.json"
     ["$HOME/.dotfiles/.config/lazygit/config.yml"]="$LAZYGIT_DIR/config.yml"

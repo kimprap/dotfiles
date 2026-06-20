@@ -10,6 +10,7 @@ archive
 .config/yazi
 .config/cursor
 .config/karabiner
+.config/herdr
 .config/lazygit
 .config/scripts
 bin

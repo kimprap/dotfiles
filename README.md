@@ -47,6 +47,7 @@ The script installs required packages, fonts, and creates symlinks from `~/.conf
 | Ghostty    | `.config/ghostty/`                | `~/.config/ghostty/`      |
 | Yazi       | `.config/yazi/`                   | `~/.config/yazi/`         |
 | Lazygit    | `.config/lazygit/config.yml`      | `~/Library/Application Support/lazygit/config.yml` |
+| Herdr      | `.config/herdr/config.toml`        | `~/.config/herdr/`       |
 | Cursor     | `.config/cursor/`                 | `~/Library/Application Support/Cursor/User/profiles/<id>/` |
 | Agents     | `.config/agents/`                 | `~/.agents/`              |
 
