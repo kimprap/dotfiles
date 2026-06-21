@@ -335,6 +335,7 @@ local function setup_codediff_once()
   local stability_group = vim.api.nvim_create_augroup("user.codediff_stability", { clear = true })
 
   -- Protect explorer header and re-apply wrap on diff-pane activity (counters plugin reveal/scroll).
+  -- If drift returns, keep any stronger guard scoped to diff panes; never block explorer scrolling.
   vim.api.nvim_create_autocmd("WinScrolled", {
     group = stability_group,
     desc = "Protect explorer header + re-apply wrap on codediff diff activity",
