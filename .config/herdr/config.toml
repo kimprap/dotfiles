@@ -45,28 +45,28 @@ rename_pane = "prefix+shift+p"
 [[keys.command]]
 key = "prefix+c"
 type = "shell"
-command = "~/.config/herdr/bin/numbered-panes new-tab"
+command = "~/.config/herdr/bin/herdr-actions.py new-tab"
 description = "new tab"
 
 
 [[keys.command]]
 key = "prefix+v"
 type = "shell"
-command = "~/.config/herdr/bin/numbered-panes split right"
+command = "~/.config/herdr/bin/herdr-actions.py split right"
 description = "split right"
 
 
 [[keys.command]]
 key = "prefix+minus"
 type = "shell"
-command = "~/.config/herdr/bin/numbered-panes split down"
+command = "~/.config/herdr/bin/herdr-actions.py split down"
 description = "split down"
 
 
 [[keys.command]]
 key = "prefix+x"
 type = "shell"
-command = "~/.config/herdr/bin/numbered-panes close"
+command = "~/.config/herdr/bin/herdr-actions.py close"
 description = "close pane"
 
 

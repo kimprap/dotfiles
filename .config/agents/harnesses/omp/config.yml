@@ -44,7 +44,6 @@ mnemopi:
   llmModel: nvidia/nemotron-3-ultra-550b-a55b:free
 extensions:
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
-
 lsp:
   formatOnWrite: true
 setupVersion: 1
@@ -62,4 +61,6 @@ github:
   enabled: true
 modelRoles:
   task: xai-oauth/grok-build-0.1
+  default: openai-codex/gpt-5.4
+  slow: openai-codex/gpt-5.5
 
