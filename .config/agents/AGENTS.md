@@ -27,6 +27,7 @@ Avoid generic openers/closers, restating the ask, and "let me know" filler.
 
 - **Read before acting.** Inspect relevant docs, code, state, and tool output before changing behavior.
 - **Respect documented intent.** Treat existing docs as the contract. If docs conflict, use the most local/specific non-unsafe instruction and state the conflict when it matters.
+- **Avoid redundant grounding.** Treat injected context and recent tool results as already read; re-read only when missing, stale, changed, or a narrower range is needed.
 - **Make assumptions explicit.** For material ambiguity, state the assumption and impact. Ask only when available context/tools cannot resolve it safely.
 - **Root cause first.** Fix the underlying issue. Temporary workarounds require explicit approval and a recovery path.
 - **Surgical scope.** Touch only what the task requires. Do not add adjacent cleanup, abstractions, dependencies, or behavior changes without a clear need.
