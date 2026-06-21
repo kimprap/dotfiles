@@ -30,6 +30,8 @@ fix(zsh): init brew PATH before starship
 chore(nvim): ignore nvim-pack-lock churn
 ```
 
+Before committing, explicitly check the first commit-message line against the format above. If using `-m`, validate the literal message before running `git commit`.
+
 ## Safe git workflow
 
 - Inspect status and relevant diffs before staging or committing.
