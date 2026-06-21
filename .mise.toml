@@ -1,0 +1,35 @@
+[tools]
+"aqua:starship/starship" = "1.25.1"
+"aqua:sharkdp/fd" = "10.4.2"
+"aqua:BurntSushi/ripgrep" = "15.1.0"
+"aqua:junegunn/fzf" = "0.73.1"
+"aqua:sharkdp/bat" = "0.26.1"
+"aqua:jqlang/jq" = "1.8.1"
+"aqua:ajeetdsouza/zoxide" = "0.9.9"
+"aqua:LuaLS/lua-language-server" = "3.18.2"
+"aqua:JohnnyMorganz/StyLua" = "2.5.2"
+"aqua:jesseduffield/lazygit" = "0.62.2"
+"aqua:dandavison/delta" = "0.19.2"
+"aqua:sxyazi/yazi" = "26.5.6"
+node = "26.3.1"
+"npm:prettier" = "3.8.4"
+
+[tasks.verify-bootstrap]
+description = "Syntax-check the dotfiles bootstrap script"
+run = "bash -n .config/scripts/bootstrap"
+
+[tasks.verify-zsh]
+description = "Syntax-check the zsh entrypoint"
+run = "zsh -n .config/zsh/zshrc"
+
+[tasks.fmt-nvim]
+description = "Format Neovim Lua config"
+run = "stylua .config/nvim"
+
+[tasks.fmt-cursor]
+description = "Format Cursor JSONC config"
+run = "prettier --write .config/cursor/settings.json .config/cursor/keybindings.json"
+
+[tasks.verify-nvim-workspace]
+description = "Smoke-test the Neovim workspace helper"
+run = "nvim --headless +\"lua require('workspace').session_slug('~/x')\" +qa"

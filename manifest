@@ -1,8 +1,10 @@
+.mise.toml
 .prettierrc
 .stylua.toml
 .agents
 .config/agents
 .config/zsh
+.config/mise
 .config/starship
 archive
 .config/nvim

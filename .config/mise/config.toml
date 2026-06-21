@@ -1,0 +1,5 @@
+redactions = ["*_API_KEY", "OPENROUTER_API_KEY"]
+
+[env]
+MNEMOPI_EMBEDDINGS_VIA_API = "1"
+_.file = { path = "~/.config/mise/.env", redact = true }

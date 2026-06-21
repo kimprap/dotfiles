@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 # ═══════════════════════════════════════════════════════════════
 # Configuration
@@ -18,21 +18,22 @@ CURSOR_USER="$HOME/Library/Application Support/Cursor/User"
 # Lazygit uses macOS Application Support (not XDG on Darwin)
 LAZYGIT_DIR="$HOME/Library/Application Support/lazygit"
 
-# Symlink mappings (source → target)
-declare -A SYMLINKS=(
-    ["$HOME/.dotfiles/.prettierrc"]="$HOME/.prettierrc"
-    ["$HOME/.dotfiles/.stylua.toml"]="$HOME/.stylua.toml"
-    ["$HOME/.dotfiles/.config/agents"]="$HOME/.agents"
-    ["$HOME/.dotfiles/.config/zsh"]="$HOME/.config/zsh"
-    ["$HOME/.dotfiles/.config/starship/starship.toml"]="$HOME/.config/starship.toml"
-    ["$HOME/.dotfiles/.config/nvim"]="$HOME/.config/nvim"
-    ["$HOME/.dotfiles/.config/ghostty"]="$HOME/.config/ghostty"
-    ["$HOME/.dotfiles/.config/yazi"]="$HOME/.config/yazi"
-    ["$HOME/.dotfiles/.config/karabiner"]="$HOME/.config/karabiner"
-    ["$HOME/.dotfiles/.config/herdr"]="$HOME/.config/herdr"
-    ["$HOME/.dotfiles/.config/cursor/settings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/settings.json"
-    ["$HOME/.dotfiles/.config/cursor/keybindings.json"]="$CURSOR_USER/profiles/$CURSOR_PROFILE/keybindings.json"
-    ["$HOME/.dotfiles/.config/lazygit/config.yml"]="$LAZYGIT_DIR/config.yml"
+# Symlink mappings (source|target)
+SYMLINKS=(
+    "$HOME/.dotfiles/.prettierrc|$HOME/.prettierrc"
+    "$HOME/.dotfiles/.stylua.toml|$HOME/.stylua.toml"
+    "$HOME/.dotfiles/.config/agents|$HOME/.agents"
+    "$HOME/.dotfiles/.config/zsh|$HOME/.config/zsh"
+    "$HOME/.dotfiles/.config/mise/config.toml|$HOME/.config/mise/config.toml"
+    "$HOME/.dotfiles/.config/starship/starship.toml|$HOME/.config/starship.toml"
+    "$HOME/.dotfiles/.config/nvim|$HOME/.config/nvim"
+    "$HOME/.dotfiles/.config/ghostty|$HOME/.config/ghostty"
+    "$HOME/.dotfiles/.config/yazi|$HOME/.config/yazi"
+    "$HOME/.dotfiles/.config/karabiner|$HOME/.config/karabiner"
+    "$HOME/.dotfiles/.config/herdr|$HOME/.config/herdr"
+    "$HOME/.dotfiles/.config/cursor/settings.json|$CURSOR_USER/profiles/$CURSOR_PROFILE/settings.json"
+    "$HOME/.dotfiles/.config/cursor/keybindings.json|$CURSOR_USER/profiles/$CURSOR_PROFILE/keybindings.json"
+    "$HOME/.dotfiles/.config/lazygit/config.yml|$LAZYGIT_DIR/config.yml"
 )
 
 # ═══════════════════════════════════════════════════════════════
@@ -69,12 +70,14 @@ fi
 echo "→ Setting up symlinks..."
 
 mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.config/mise"
 mkdir -p "$CURSOR_USER/profiles/$CURSOR_PROFILE"
 mkdir -p "$HOME/.config/karabiner"
 mkdir -p "$LAZYGIT_DIR"
 
-for src in "${!SYMLINKS[@]}"; do
-    target="${SYMLINKS[$src]}"
+for mapping in "${SYMLINKS[@]}"; do
+    src="${mapping%%|*}"
+    target="${mapping#*|}"
 
     if [[ -L "$target" ]]; then
         echo "   Already symlinked: $target"
@@ -143,24 +146,13 @@ fi
 # ─────────────────────────────────────────────────────────────
 # 4. Install required packages
 # ─────────────────────────────────────────────────────────────
-echo "📦 Installing packages..."
+echo "📦 Installing bootstrap packages..."
 
 brew install \
-    starship \
+    mise \
     antidote \
-    yazi \
-    fd \
-    ripgrep \
-    fzf \
-    bat \
-    jq \
     poppler \
-    ffmpegthumbnailer \
-    zoxide \
-    lua-language-server \
-    stylua \
-    lazygit \
-    git-delta
+    ffmpegthumbnailer
 
 # Ghostty is macOS-only
 if [[ "$IS_MACOS" == true ]]; then
@@ -190,7 +182,18 @@ else
 fi
 
 # ─────────────────────────────────────────────────────────────
-# 6. Done
+# 6. Install mise-managed tools
+# ─────────────────────────────────────────────────────────────
+if command -v mise &> /dev/null; then
+    echo "🧰 Installing mise-managed tools..."
+    mise trust "$HOME/.dotfiles/.config/mise/config.toml"
+    (cd "$HOME/.dotfiles" && mise install)
+else
+    echo "⏭️  Skipping mise-managed tools (mise not found)."
+fi
+
+# ─────────────────────────────────────────────────────────────
+# 7. Done
 # ─────────────────────────────────────────────────────────────
 echo ""
 echo "✅ Bootstrap complete!"

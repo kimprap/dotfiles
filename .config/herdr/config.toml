@@ -98,7 +98,7 @@ command = "herdr pane resize --direction down --amount 0.05"
 description = "resize down"
 
 [theme]
-name = "gruvbox"
+name = "vesper"
 
 [ui]
 agent_panel_scope = "all"
