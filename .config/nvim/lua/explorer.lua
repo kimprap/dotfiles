@@ -7,6 +7,48 @@ local workspace = require("workspace")
 local M = {}
 local explorer_augroup = vim.api.nvim_create_augroup("user.explorer", { clear = true })
 
+-- Copy helpers for yp/yP/yd/yD (nvim-tree nodes + current buffer).
+local function notify_copied(label, p)
+  local display = p
+  if p:sub(1, 1) == "/" then
+    display = vim.fn.fnamemodify(p, ":~")
+  end
+  vim.notify(string.format("Copied %s: %s", label, display), vim.log.levels.INFO)
+end
+
+local function copy_path(full_path, kind)
+  if not full_path or full_path == "" then
+    vim.notify("No file or folder", vim.log.levels.WARN)
+    return
+  end
+  local path = vim.fn.fnamemodify(full_path, ":p")
+  local is_rel = (kind == "rel_file" or kind == "rel_folder")
+  local is_folder = (kind == "rel_folder" or kind == "abs_folder")
+  local label = is_rel and (is_folder and "relative folder" or "relative file")
+    or (is_folder and "absolute folder" or "absolute file")
+  if is_folder and vim.fn.isdirectory(path) ~= 1 then
+    path = vim.fn.fnamemodify(path, ":h")
+  end
+  local modifier = is_rel and ":." or ":p"
+  local p = vim.fn.fnamemodify(path, modifier)
+  vim.fn.setreg("+", p)
+  notify_copied(label, p)
+end
+
+M.copy_current_buffer_path = function(kind)
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local oil = bufname:match("^oil://(.+)")
+  if oil then
+    bufname = oil
+  end
+  local bt = vim.bo.buftype
+  if bufname == "" or (not oil and bt ~= "" and bt ~= "acwrite") then
+    vim.notify("Not a file on disk", vim.log.levels.WARN)
+    return
+  end
+  copy_path(bufname, kind)
+end
+
 -- Single source for dim level. fzf-lua uses directly as `backdrop`.
 -- Manual (nvim-tree/fff) use FzfLuaBackdrop (bg=Black) + winblend offset for parity.
 -- Higher = darker. Valid 0-99.
@@ -385,31 +427,7 @@ local function setup_nvim_tree_once()
             vim.notify("No file or folder under cursor", vim.log.levels.WARN)
             return
           end
-          local path = node.absolute_path
-          local label
-          if kind == "rel_file" then
-            label = "relative file"
-          elseif kind == "abs_file" then
-            label = "absolute file"
-          elseif kind == "rel_folder" then
-            label = "relative folder"
-            if vim.fn.isdirectory(path) ~= 1 then
-              path = vim.fn.fnamemodify(path, ":h")
-            end
-          else
-            label = "absolute folder"
-            if vim.fn.isdirectory(path) ~= 1 then
-              path = vim.fn.fnamemodify(path, ":h")
-            end
-          end
-          local modifier = (kind == "rel_file" or kind == "rel_folder") and ":." or ":p"
-          local p = vim.fn.fnamemodify(path, modifier)
-          vim.fn.setreg("+", p)
-          local display = p
-          if p:sub(1, 1) == "/" then
-            display = vim.fn.fnamemodify(p, ":~")
-          end
-          vim.notify(string.format("Copied %s: %s", label, display), vim.log.levels.INFO)
+          copy_path(node.absolute_path, kind)
         end
       end
 
@@ -716,4 +734,5 @@ map("n", "<leader>r", function()
     winopts = fzf_winopts(),
   })
 end, { desc = "Recent files" })
+
 return M

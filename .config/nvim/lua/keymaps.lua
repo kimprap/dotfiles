@@ -1,6 +1,7 @@
 local buffers = require("buffers")
 local git = require("git")
 local map = require("map")
+local explorer = require("explorer")
 
 map("n", "<leader>ui", function()
   vim.o.ignorecase = not vim.o.ignorecase
@@ -439,27 +440,38 @@ map("n", "<A-z>", function()
   end
 end, { desc = "Toggle word wrap" })
 
--- Copy paths from the active buffer.
+-- Yank path of current buffer (yp/yP/yd/yD match nvim-tree conventions).
+-- Bare chords for editor normal mode; leader variants for discoverability.
+map("n", "yp", function()
+  explorer.copy_current_buffer_path("rel_file")
+end, { desc = "Copy relative file path of current buffer" })
+
+map("n", "yP", function()
+  explorer.copy_current_buffer_path("abs_file")
+end, { desc = "Copy absolute file path of current buffer" })
+
+map("n", "yd", function()
+  explorer.copy_current_buffer_path("rel_folder")
+end, { desc = "Copy relative folder path of current buffer" })
+
+map("n", "yD", function()
+  explorer.copy_current_buffer_path("abs_folder")
+end, { desc = "Copy absolute folder path of current buffer" })
+
 map("n", "<leader>yp", function()
-  local path = vim.api.nvim_buf_get_name(0)
-  if path == "" then
-    vim.notify("Not a file on disk", vim.log.levels.WARN)
-    return
-  end
-  path = vim.fn.fnamemodify(path, ":p")
-  vim.fn.setreg("+", path)
-  vim.notify("Copied: " .. vim.fn.fnamemodify(path, ":~"), vim.log.levels.INFO)
-end, { desc = "Copy absolute path of current file" })
+  explorer.copy_current_buffer_path("rel_file")
+end, { desc = "Copy relative file path of current buffer" })
+
+map("n", "<leader>yP", function()
+  explorer.copy_current_buffer_path("abs_file")
+end, { desc = "Copy absolute file path of current buffer" })
 
 map("n", "<leader>yd", function()
-  local path = vim.api.nvim_buf_get_name(0)
-  if path == "" then
-    vim.notify("Not a file on disk", vim.log.levels.WARN)
-    return
-  end
-  path = vim.fn.fnamemodify(path, ":p:h")
-  vim.fn.setreg("+", path)
-  vim.notify("Copied: " .. vim.fn.fnamemodify(path, ":~"), vim.log.levels.INFO)
-end, { desc = "Copy directory of current file" })
+  explorer.copy_current_buffer_path("rel_folder")
+end, { desc = "Copy relative folder path of current buffer" })
+
+map("n", "<leader>yD", function()
+  explorer.copy_current_buffer_path("abs_folder")
+end, { desc = "Copy absolute folder path of current buffer" })
 
 return {}
