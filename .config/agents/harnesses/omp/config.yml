@@ -54,6 +54,9 @@ task:
   showResolvedModelBadge: true
 hideThinkingBlock: true
 providers:
+  webSearch: codex
+  webSearchExclude:
+    - perplexity
   memoryModel: online
 github:
   enabled: true
