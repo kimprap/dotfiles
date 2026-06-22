@@ -174,9 +174,9 @@ local function outline_deepest_symbol(items, lnum0)
     for _, node in ipairs(nodes or {}) do
       if lnum0 >= node.range_start and lnum0 <= node.range_end then
         if
-          not best
-          or node.depth > best.depth
-          or (node.depth == best.depth and node.range_start > best.range_start)
+            not best
+            or node.depth > best.depth
+            or (node.depth == best.depth and node.range_start > best.range_start)
         then
           best = node
         end
@@ -327,8 +327,18 @@ vim.api.nvim_create_autocmd("FileType", {
         end
       end)
     end, { buffer = args.buf, desc = "Peek symbol (m2)" })
-
-    -- Keep cursor at col 0 of the current outline item.
+    -- j/k always land at col 0 (outline list nav invariant).
+    vim.keymap.set("n", "j", function()
+      vim.cmd("normal! j")
+      local r = vim.api.nvim_win_get_cursor(0)[1]
+      vim.api.nvim_win_set_cursor(0, { r, 0 })
+    end, { buffer = args.buf, desc = "Next line (col 0)" })
+    vim.keymap.set("n", "k", function()
+      vim.cmd("normal! k")
+      local r = vim.api.nvim_win_get_cursor(0)[1]
+      vim.api.nvim_win_set_cursor(0, { r, 0 })
+    end, { buffer = args.buf, desc = "Prev line (col 0)" })
+    -- col 0 except while search is active (allows / + n/N to land on matches).
     vim.api.nvim_create_autocmd({ "CursorMoved", "WinEnter" }, {
       buffer = args.buf,
       callback = function()
@@ -338,7 +348,9 @@ vim.api.nvim_create_autocmd("FileType", {
         end
         local row = vim.api.nvim_win_get_cursor(0)[1]
         vim.api.nvim_win_call(win, function()
-          if vim.api.nvim_win_get_cursor(0)[2] ~= 0 then
+          local col = vim.api.nvim_win_get_cursor(0)[2]
+          local searching = vim.v.hlsearch == 1 and vim.fn.getreg("/") ~= ""
+          if col ~= 0 and not searching then
             vim.api.nvim_win_set_cursor(0, { row, 0 })
           end
         end)
