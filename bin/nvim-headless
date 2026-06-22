@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+#
+# bin/nvim-headless - safe headless Neovim runner for targeted Lua verification.
+#
+# Usage:
+#   bin/nvim-headless /path/to/test.lua
+#   bin/nvim-headless --lua 'print("ok")'
+#   printf '%s\n' 'print("ok")' | bin/nvim-headless -
+#   bin/nvim-headless --clean --lua 'print("isolated")'
+#
+# Notes:
+# - Default mode loads this repo's Neovim config, which keeps plugins available.
+# - --clean switches to an isolated runtime and only appends this repo's .config/nvim to runtimepath.
+# - Only Lua input is supported.
+# - The helper exits with qa! after the script returns.
+# - If the script itself needs async work, do the wait inside the script before returning.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CFG_DIR="$REPO_ROOT/.config/nvim"
+SOURCE_SCRIPT=""
+SOURCE_IS_TEMP=0
+LAUNCHER=""
+MODE="config"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  bin/nvim-headless /path/to/test.lua
+  bin/nvim-headless --lua 'print("ok")'
+  bin/nvim-headless -    # read Lua from stdin
+  bin/nvim-headless --clean --lua 'print("isolated")'
+
+Use plain `nvim --headless +qa` for the smallest full-config smoke test.
+EOF
+}
+
+cleanup() {
+  if [[ "$SOURCE_IS_TEMP" == "1" && -n "$SOURCE_SCRIPT" && -f "$SOURCE_SCRIPT" ]]; then
+    rm -f "$SOURCE_SCRIPT"
+  fi
+  if [[ -n "$LAUNCHER" && -f "$LAUNCHER" ]]; then
+    rm -f "$LAUNCHER"
+  fi
+}
+trap cleanup EXIT
+
+make_temp_lua() {
+  local tmp
+  tmp="$(mktemp "${TMPDIR:-/tmp}/nvim-headless.XXXXXX")"
+  mv "$tmp" "$tmp.lua"
+  printf '%s\n' "$tmp.lua"
+}
+
+make_launcher() {
+  local target="$1"
+  LAUNCHER="$(make_temp_lua)"
+  cat >"$LAUNCHER" <<EOF
+local ok, err = xpcall(function()
+  dofile([=[$target]=])
+end, debug.traceback)
+
+if not ok then
+  vim.api.nvim_err_writeln(err)
+  vim.cmd("cquit 1")
+  return
+end
+
+vim.cmd("qa!")
+EOF
+}
+
+if [[ $# -eq 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+if [[ "${1:-}" == "--clean" ]]; then
+  MODE="clean"
+  shift
+fi
+
+if [[ $# -eq 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+case "$1" in
+  -h|--help)
+    [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+    usage
+    exit 0
+    ;;
+  --lua|-c)
+    [[ $# -eq 2 ]] || { usage >&2; exit 2; }
+    SOURCE_SCRIPT="$(make_temp_lua)"
+    SOURCE_IS_TEMP=1
+    printf '%s\n' "$2" >"$SOURCE_SCRIPT"
+    ;;
+  -)
+    [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+    SOURCE_SCRIPT="$(make_temp_lua)"
+    SOURCE_IS_TEMP=1
+    cat >"$SOURCE_SCRIPT"
+    ;;
+  *)
+    [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+    [[ -f "$1" ]] || { echo "nvim-headless: file not found: $1" >&2; exit 2; }
+    SOURCE_SCRIPT="$1"
+    ;;
+esac
+
+make_launcher "$SOURCE_SCRIPT"
+
+if [[ "$MODE" == "clean" ]]; then
+  nvim \
+    --headless \
+    --clean \
+    -u NONE \
+    -i NONE \
+    --noplugin \
+    --cmd "set rtp+=$CFG_DIR" \
+    -S "$LAUNCHER"
+  exit $?
+fi
+
+nvim \
+  --headless \
+  -u "$CFG_DIR/init.lua" \
+  -i NONE \
+  --cmd "set rtp^=$CFG_DIR" \
+  -S "$LAUNCHER"

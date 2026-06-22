@@ -1,9 +1,9 @@
 ---
-description: Headless Neovim verification patterns for folds, syntax, foldtext (UserFoldText), and related UI-sensitive Lua behavior.
+description: Reliable headless Neovim verification patterns for repo-local Lua modules and UI-sensitive behavior.
 alwaysApply: false
 globs:
   - ".config/nvim/**"
-condition: "nvim.*--headless|--clean.*-u NONE|UserFoldText|foldtext|heading_foldexpr|vim\\.wo\\.fold|foldmethod.*=.*(indent|expr)|dofile.*\\.config/nvim/lua|headless.*lua|qa!.*nvim"
+condition: "nvim.*--headless|bin/nvim-headless|UserFoldText|foldtext|heading_foldexpr|vim\\.wo\\.fold|foldmethod.*=.*(indent|expr)|dofile.*\\.config/nvim/lua|headless.*lua|qa!.*nvim"
 scope:
   - "tool:bash"
   - "tool:write"
@@ -13,51 +13,84 @@ interruptMode: "tool-only"
 
 # Headless Neovim testing
 
-Command-line `+lua 'multi; statements'` (and chains of `+"lua ..."` args) after `--clean -u NONE` are fragile. They commonly produce E5107 parse errors because of shell quoting interacting with nvim's single-line Ex `lua` command handling. Never rely on them for non-trivial checks.
+Use two lanes:
 
-## Real window requirement
+1. **Config smoke test** — load the real config and exit:
+   ```bash
+   nvim --headless +qa
+   ```
+2. **Targeted module verification** — run a small Lua script through the repo helper:
+   ```bash
+   ./bin/nvim-headless /tmp/test.lua
+   ./bin/nvim-headless --lua 'print("ok")'
+   ```
 
-`vim.wo` options, manual fold creation (`:N,Mfold`), `synID`, treesitter position queries, and custom `foldtext` implementations that read highlighting only behave correctly when the buffer is displayed in an actual window.
+## Never do these
 
-- `nvim_create_buf(false, true)` followed by `set_current_buf` alone does not provide this context in headless mode.
-- Immediately follow with a window-creating command such as `vim.cmd('split')` (or `enew | buffer <nr>`).
-- Address the specific window when setting options: `vim.wo[win].foldmethod = 'indent'`, `vim.wo[win].foldtext = ...`, etc.
-- Without a real window, fold commands raise E350.
+- `nvim --headless -c 'lua <<EOF ... EOF'`
+- complex `+"lua ..."` / `-c "lua ..."` multi-statement checks
+- `vim.cmd("set buftype=terminal")`
+- `vim.cmd("qa")` without `!`
 
-## Testing custom foldtext directly
+Observed failures:
 
-The goal for most verification of `UserFoldText` (in `options.lua`) or the markdown chunk-returning foldtext (in `markdown.lua`) is to exercise the return value (plain string or chunk table), not to exercise the full fold creation machinery.
+- `E5107: Lua: [string ":lua"]:1: unexpected symbol near '<'`
+- `E474: Invalid argument: buftype=terminal`
 
-- Populate a buffer with representative content and make it the current buffer inside a real window (when `synID` or treesitter captures are involved).
-- Set `vim.v.foldstart` and `vim.v.foldend` to the logical fold range.
-- Call the function: `_G.UserFoldText()` or `vim.fn.foldtext()` (after ensuring `&foldtext` points at the lua expression).
-- Creating the fold object itself with `vim.cmd` is unnecessary for renderer testing and is the most common source of headless failures.
+Root causes:
 
-## Managing side effects and ensuring exit
+- Neovim's Ex `:lua` entrypoint is a poor transport for multi-line scripts.
+- `buftype=terminal` is not a user-settable simulation flag; terminal buffers are created internally.
 
-Requiring high-level modules (`require('options')`, `require('lsp')`, etc.) registers autocmds, runs ColorScheme callbacks, and can launch background work (timers, LSP, Mason).
+## Helper contract
 
-- In test scripts, require only what is strictly needed for the behavior under test.
-- After any buffer mutation + option changes (filetype, syntax, foldexpr, etc.), run `vim.cmd('redraw')` or `normal! zx` to drive computation.
-- Every headless script must hard-terminate: `vim.cmd('qa!')`. Using plain `qa` can wait for input or leave the process running.
-- For anything that attaches asynchronously, a bounded `vim.wait(..., cond, 10)` is acceptable; always have a final hard `qa!` after the wait.
+`bin/nvim-headless` is the preferred targeted-test entrypoint.
 
-## Reliable invocation template
+It supports two modes:
 
-Use a sourced file rather than inline `+lua`:
+- default: loads this repo's Neovim config, so plugin-backed modules still work
+- `--clean`: starts `nvim --headless --clean -u NONE -i NONE --noplugin` and appends this repo's `.config/nvim` to `runtimepath`
 
-```bash
-nvim --headless --clean -u NONE -i NONE --noplugin \
-  --cmd 'set rtp+=/absolute/path/to/.config/nvim' \
-  -S /tmp/headless_foo.lua 2>&1 | cat
-```
+Both modes:
 
-The script should contain the setup, any assertions via `print`, and end with `vim.cmd('qa!')`.
+- run Lua from a file, stdin (`-`), or `--lua`
+- hard-exit with `qa!` after the script returns
+- turn script failures into a non-zero exit
 
-This pattern is independent of the calling shell or harness.
+This keeps verification independent of the calling agent or shell harness.
 
-## When to apply this rule
+## Window-local and UI-sensitive behavior
 
-Surface these patterns whenever the agent is about to execute a `nvim --headless` command (or equivalent) while the working set includes `.config/nvim/lua/options.lua`, `markdown.lua`, `lsp.lua`, or other code that touches `fold*`, syntax, or window-local settings. The recommended flow is: write (or update) a small test script, run it, examine output, then edit the implementation.
+`vim.wo[...]`, folds, `foldtext`, `synID`, and many treesitter position checks require a displayed buffer in a real window.
 
-Keep the test script minimal and checked in temporarily if it helps future verification of the same area.
+- `nvim_create_buf()` + `set_current_buf()` alone is not enough.
+- Create or reuse a real window before setting window-local options:
+  - `vim.cmd("split")`
+  - `vim.cmd("sbuffer " .. buf)`
+- Set options against the target window: `vim.wo[win].foldmethod = "expr"`, etc.
+- After changing filetype/options/content, force recomputation with `vim.cmd("redraw")` or `vim.cmd("normal! zx")`.
+
+## Non-file and terminal cases
+
+When the code path only needs “not a normal file buffer”, prefer:
+
+- unnamed buffers
+- `nofile` buffers
+
+Do **not** fake terminal state with `set buftype=terminal`.
+
+If the behavior truly depends on terminal buffers, create a real terminal buffer with `vim.fn.termopen(...)` or `:terminal`, then use a bounded `vim.wait(...)` inside the script before asserting.
+
+## Keep targeted scripts minimal
+
+- Require only the module under test.
+- Avoid loading high-level modules like `options` or `lsp` unless the test is specifically about their side effects.
+- Keep throwaway scripts untracked unless they are likely to be reused.
+
+## Recommended flow
+
+1. Pick the smallest meaningful check.
+2. For a smoke test, run plain `nvim --headless +qa`.
+3. For most targeted logic, run a tiny Lua script through `./bin/nvim-headless`.
+4. Use `./bin/nvim-headless --clean ...` only when you explicitly want an isolated runtime.
+5. Read the output, then edit the implementation.
