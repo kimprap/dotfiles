@@ -1,36 +1,36 @@
-theme:
+theme: 
   dark: dark-swamp
   light: light
-statusLine:
+statusLine: 
   preset: custom
   separator: none
   sessionAccent: true
   transparent: true
-  leftSegments:
+  leftSegments: 
     - path
     - model
     - mode
     - token_total
     - context_pct
-  rightSegments:
+  rightSegments: 
     - session_name
-  segmentOptions:
-    model:
+  segmentOptions: 
+    model: 
       showThinkingLevel: true
-      path:
+      path: 
         abbreviate: true
         maxLength: 40
         stripWorkPrefix: true
-      git:
+      git: 
         showBranch: true
         showStaged: true
         showUnstaged: true
         showUntracked: true
 symbolPreset: nerd
 defaultThinkingLevel: medium
-memory:
+memory: 
   backend: mnemopi
-mnemopi:
+mnemopi: 
   scoping: per-project-tagged
   dbPath: ""
   bank: ""
@@ -42,25 +42,26 @@ mnemopi:
   llmMode: remote
   llmBaseUrl: https://openrouter.ai/api/v1
   llmModel: nvidia/nemotron-3-ultra-550b-a55b:free
-extensions:
+extensions: 
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
-lsp:
+lsp: 
   formatOnWrite: true
 setupVersion: 1
-display:
+display: 
   showTokenUsage: true
-task:
+task: 
   showResolvedModelBadge: true
 hideThinkingBlock: true
-providers:
+providers: 
   webSearch: codex
-  webSearchExclude:
+  webSearchExclude: 
     - perplexity
   memoryModel: online
-github:
+github: 
   enabled: true
-modelRoles:
-  task: xai-oauth/grok-build-0.1
+modelRoles: 
+  task: xai-oauth/grok-build
   default: openai-codex/gpt-5.4
   slow: openai-codex/gpt-5.5
-
+  plan: openai-codex/gpt-5.5
+  designer: openai-codex/gpt-5.4
