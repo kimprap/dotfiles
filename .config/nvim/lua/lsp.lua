@@ -67,6 +67,28 @@ local function save_buffer_views(bufnr)
   end
 end
 
+local FORMAT_BASE = {
+  timeout_ms = 500,
+  lsp_format = "fallback",
+  undojoin = true,
+}
+
+local function do_format(bufnr)
+  if bufnr == nil or bufnr == 0 then
+    bufnr = vim.api.nvim_get_current_buf()
+  end
+  local restore_views = save_buffer_views(bufnr)
+  require("conform").format(
+    vim.tbl_extend("force", FORMAT_BASE, {
+      bufnr = bufnr,
+      async = true,
+    }),
+    function()
+      restore_views()
+    end
+  )
+end
+
 require("conform").setup({
   formatters_by_ft = {
     lua = { "stylua" },
@@ -88,13 +110,18 @@ require("conform").setup({
       return nil
     end
     local restore_views = save_buffer_views(bufnr)
-    return { timeout_ms = 500, lsp_format = "fallback", undojoin = true }, function()
+    return vim.deepcopy(FORMAT_BASE), function()
       restore_views()
     end
   end,
 })
 
--- After conform/stylua (registered later = runs after format): visible EOF blank line.
+-- Global <leader>Lf stays available without attaching a client.
+-- Uses the same base options as format_on_save.
+map("n", "<leader>Lf", function()
+  do_format()
+end, { desc = "Format buffer" })
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = lsp_augroup,
   desc = "EOF blank line after format on save",
@@ -840,9 +867,6 @@ local function configure_lsp_buffer(args)
     fzf_lua().lsp_document_symbols()
   end, "Document symbols (picker)")
   nmap("<leader>La", vim.lsp.buf.code_action, "Code action")
-  nmap("<leader>Lf", function()
-    require("conform").format({ bufnr = bufnr, async = true })
-  end, "Format buffer")
   nmap("<leader>Lr", vim.lsp.buf.rename, "Rename")
   nmap("<leader>Lh", function()
     if not client:supports_method("textDocument/inlayHint") then

@@ -1,13 +1,11 @@
 ---
 description: Reliable headless Neovim verification patterns for repo-local Lua modules and UI-sensitive behavior.
 alwaysApply: false
-globs:
-  - ".config/nvim/**"
 condition: "nvim.*--headless|bin/nvim-headless|UserFoldText|foldtext|heading_foldexpr|vim\\.wo\\.fold|foldmethod.*=.*(indent|expr)|dofile.*\\.config/nvim/lua|headless.*lua|qa!.*nvim"
 scope:
   - "tool:bash"
-  - "tool:write"
-  - "tool:edit"
+  - "tool:write(.config/nvim/**)"
+  - "tool:edit(.config/nvim/**)"
 interruptMode: "tool-only"
 ---
 
@@ -19,32 +17,40 @@ Use two lanes:
    ```bash
    nvim --headless +qa
    ```
+   Use this only for “does the config boot?” checks. No assertions, temp files, waits, or buffer mutations.
 2. **Targeted module verification** — run a small Lua script through the repo helper:
    ```bash
    ./bin/nvim-headless /tmp/test.lua
    ./bin/nvim-headless --lua 'print("ok")'
    ```
+   Switch to this lane as soon as the check needs assertions, writes, temp files, mappings, `vim.wait(...)`, or buffer/window state.
 
 ## Never do these
 
 - `nvim --headless -c 'lua <<EOF ... EOF'`
 - complex `+"lua ..."` / `-c "lua ..."` multi-statement checks
+- targeted assertions crammed into a shell-quoted one-liner
 - `vim.cmd("set buftype=terminal")`
-- `vim.cmd("qa")` without `!`
+- `vim.cmd("qa")` without `!` after mutating buffers
 
 Observed failures:
 
 - `E5107: Lua: [string ":lua"]:1: unexpected symbol near '<'`
 - `E474: Invalid argument: buftype=terminal`
+- `E37` / `E162` on quit after a scripted buffer change
+- harness-level timeouts when a headless one-liner never reaches a clean exit
 
 Root causes:
 
 - Neovim's Ex `:lua` entrypoint is a poor transport for multi-line scripts.
+- `qa` is not robust once the script has modified buffers.
 - `buftype=terminal` is not a user-settable simulation flag; terminal buffers are created internally.
 
 ## Helper contract
 
 `bin/nvim-headless` is the preferred targeted-test entrypoint.
+
+Prefer it even for small checks once the script does more than print a value. It owns the Lua transport, failure propagation, and quit path.
 
 It supports two modes:
 
@@ -56,8 +62,6 @@ Both modes:
 - run Lua from a file, stdin (`-`), or `--lua`
 - hard-exit with `qa!` after the script returns
 - turn script failures into a non-zero exit
-
-This keeps verification independent of the calling agent or shell harness.
 
 ## Window-local and UI-sensitive behavior
 
@@ -91,6 +95,6 @@ If the behavior truly depends on terminal buffers, create a real terminal buffer
 
 1. Pick the smallest meaningful check.
 2. For a smoke test, run plain `nvim --headless +qa`.
-3. For most targeted logic, run a tiny Lua script through `./bin/nvim-headless`.
+3. If the check asserts anything or mutates editor state, write a tiny Lua script and run it through `./bin/nvim-headless`.
 4. Use `./bin/nvim-headless --clean ...` only when you explicitly want an isolated runtime.
 5. Read the output, then edit the implementation.

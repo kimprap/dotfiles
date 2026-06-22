@@ -30,6 +30,12 @@ run = "stylua .config/nvim"
 description = "Format Cursor JSONC config"
 run = "prettier --write .config/cursor/settings.json .config/cursor/keybindings.json"
 
+
+[tasks.fmt]
+description = "Format Neovim Lua config and Cursor JSONC configs"
+depends = ["fmt-nvim", "fmt-cursor"]
+run = "echo 'All formatting complete.'"
+
 [tasks.verify-nvim-workspace]
 description = "Smoke-test the Neovim workspace helper"
 run = "nvim --headless +\"lua require('workspace').session_slug('~/x')\" +qa"
