@@ -170,9 +170,13 @@ if [[ "$IS_MACOS" == true ]]; then
     FONT_ZIP="${FONT_NAME}.zip"
 
     if [[ ! -f "$FONT_DIR/SauceCodeProNerdFont-Regular.ttf" ]]; then
-        curl -fsSL "$FONT_URL" -o "/tmp/$FONT_ZIP"
-        unzip -o "/tmp/$FONT_ZIP" -d "$FONT_DIR" "*.ttf"
-        rm -f "/tmp/$FONT_ZIP"
+        (
+            temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/${FONT_NAME}.XXXXXX")"
+            trap 'rm -rf "$temp_dir"' EXIT
+            font_zip="$temp_dir/$FONT_ZIP"
+            curl -fsSL "$FONT_URL" -o "$font_zip"
+            unzip -o "$font_zip" -d "$FONT_DIR" "*.ttf"
+        )
         echo "✅ Nerd Font installed."
     else
         echo "✅ Nerd Font already installed. Skipping."

@@ -119,9 +119,7 @@ function termsupport_preexec {
   fi
 
   local CMD="${1[(wr)^(*=*|sudo|ssh|mosh|rake|-*)]:gs/%/%%}"
-  local LINE="${2:gs/%/%%}"
-
-  title "$CMD" "%100>...>${LINE}%<<"
+  title "$CMD" "$CMD"
 }
 
 autoload -Uz add-zsh-hook

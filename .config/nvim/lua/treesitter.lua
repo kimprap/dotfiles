@@ -48,7 +48,7 @@ local function setup_treesitter()
   local ts_parsers = require("nvim-treesitter.parsers")
 
   vim.api.nvim_create_autocmd("FileType", {
-    desc = "Install treesitter parser on demand when missing",
+    desc = "Warn when treesitter parser is missing",
     group = vim.api.nvim_create_augroup("user.treesitter_install", { clear = true }),
     callback = function(args)
       if vim.bo[args.buf].buftype ~= "" then
@@ -60,7 +60,10 @@ local function setup_treesitter()
       end
       local ok = vim.treesitter.language.add(lang)
       if not ok then
-        ts.install({ lang })
+        vim.notify_once(
+          "nvim-treesitter: missing parser for " .. lang .. "; install manually with :TSInstall " .. lang,
+          vim.log.levels.WARN
+        )
       end
     end,
   })
@@ -98,7 +101,7 @@ render.open = function(winid, ctx_ranges, ctx_lines, force_hl_update)
         if ok and is_ctx then
           local cfg = vim.api.nvim_win_get_config(w)
           if cfg.relative == "win" and cfg.win == winid
-            and (cfg.width or 0) > 1 and cfg.width ~= target then
+              and (cfg.width or 0) > 1 and cfg.width ~= target then
             cfg.width = target
             pcall(vim.api.nvim_win_set_config, w, cfg)
           end

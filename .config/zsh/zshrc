@@ -31,11 +31,16 @@ fi
 # history: ghost text from past commands; completion: ghost text from tab-complete (e.g. nvim <path>)
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-if [[ ! -d ~/.antidote ]]; then
-  git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
+if [[ -f /opt/homebrew/opt/antidote/share/antidote/antidote.zsh ]]; then
+  source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+elif [[ -f /usr/local/opt/antidote/share/antidote/antidote.zsh ]]; then
+  source /usr/local/opt/antidote/share/antidote/antidote.zsh
+else
+  echo "zsh: antidote not found — install with: brew install antidote" >&2
 fi
-source ~/.antidote/antidote.zsh
-antidote load ~/.config/zsh/plugins.txt
+if (( $+functions[antidote] )); then
+  antidote load ~/.config/zsh/plugins.txt
+fi
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -97,21 +102,7 @@ alias add-divider="defaults write com.apple.dock persistent-apps -array-add '{ti
 # ═══════════════════════════════════════════════════════════════
 # Functions & Hooks
 # ═══════════════════════════════════════════════════════════════
-autoload -U add-zsh-hook
-
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-
-_load_local_venv() {
-  if [[ -f .venv/bin/activate ]] && [[ "$VIRTUAL_ENV" != "$PWD/.venv" ]]; then
-    source .venv/bin/activate
-  elif [[ -n "$VIRTUAL_ENV" ]] && [[ ! -f .venv/bin/activate ]] && [[ "$PWD/" != "$VIRTUAL_ENV/"* ]]; then
-    deactivate 2>/dev/null
-  fi
-}
-
-add-zsh-hook chpwd _load_local_venv
-_load_local_venv
-
 
 # ═══════════════════════════════════════════════════════════════
 # Tool Initializations
