@@ -7,8 +7,8 @@ function M.setup_core()
     autocommands = { basic = true },
   })
 
-  require("mini.pairs").setup() -- auto close brackets/quotes
-  require("mini.comment").setup() -- gc to comment
+  require("mini.pairs").setup()                                                                   -- auto close brackets/quotes
+  require("mini.comment").setup()                                                                 -- gc to comment
   require("mini.surround").setup({ n_lines = 0, search_method = "cover_or_next", silent = true }) -- ys, ds, cs for surrounding
 
   local ai = require("mini.ai")
@@ -194,9 +194,10 @@ function M.setup_statusline()
   end
 
   local function setup_statusline_hls()
-    -- Branch+diff share one lightened bg; path gets a darker tone. NC uses path+italic.
+    -- Branch+diff match fileinfo bg; path gets a darker tone. NC uses path+italic.
     -- Derived from theme bgs; runs after mini setup + on ColorScheme.
     local devinfo = vim.api.nvim_get_hl(0, { name = "MiniStatuslineDevinfo", link = false })
+    local fileinfo = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFileinfo", link = false })
     local filename = vim.api.nvim_get_hl(0, { name = "MiniStatuslineFilename", link = false })
     local status = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false })
 
@@ -205,13 +206,15 @@ function M.setup_statusline()
     local dev_fg = devinfo and devinfo.fg
     local fname_fg = filename and filename.fg
 
-    local BRANCH_LIGHT = 0.12 -- tuned lighter band for branch + diff section (unified bg)
     local PATH_DARK = 0.20 -- darker for filename area
 
-    local branch_bg, path_bg
+    local branch_bg = fileinfo and fileinfo.bg
+    local path_bg
     if base_bg then
-      branch_bg = lighten(base_bg, BRANCH_LIGHT)
       path_bg = darken(base_bg, PATH_DARK)
+    end
+    if not branch_bg and base_bg then
+      branch_bg = base_bg
     end
 
     if branch_bg then
@@ -233,7 +236,7 @@ function M.setup_statusline()
         italic = true,
       })
 
-      -- Theme-agnostic vivid fgs for the git counts; share the (light) branch/devinfo bg.
+      -- Theme-agnostic vivid fgs for the git counts; share the fileinfo/branch bg.
       vim.api.nvim_set_hl(0, "GitStatusAdd", { fg = "#a3e635", bg = branch_bg })
       vim.api.nvim_set_hl(0, "GitStatusChange", { fg = "#67e8f9", bg = branch_bg })
       vim.api.nvim_set_hl(0, "GitStatusRemove", { fg = "#f87171", bg = branch_bg })
@@ -308,12 +311,12 @@ function M.setup_statusline()
         end
         vim.list_extend(groups, {
           "%<",
-          { hl = filename_hl(), strings = { filename() } },
+          { hl = filename_hl(),            strings = { filename() } },
           buffer_flags_statusline(),
           "%=",
           diags,
           { hl = "MiniStatuslineFileinfo", strings = { filetype } },
-          { hl = mode_hl, strings = { location } },
+          { hl = mode_hl,                  strings = { location } },
         })
         return MiniStatusline.combine_groups(groups)
       end,
@@ -346,38 +349,38 @@ function M.setup_clue()
       MiniClue.gen_clues.z(),
       MiniClue.gen_clues.windows(),
       MiniClue.gen_clues.square_brackets(),
-      { mode = "n", keys = "<Leader>e", desc = "Explorer (nvim-tree)" },
-      { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
-      { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
-      { mode = "n", keys = "<Leader>/", desc = "Grep project (fff)" },
-      { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
-      { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
+      { mode = "n", keys = "<Leader>e",  desc = "Explorer (nvim-tree)" },
+      { mode = "n", keys = "<Leader>E",  desc = "Explorer (oil)" },
+      { mode = "n", keys = "<Leader>f",  desc = "Find files (fff)" },
+      { mode = "n", keys = "<Leader>/",  desc = "Grep project (fff)" },
+      { mode = "n", keys = "<Leader>F",  desc = "Find files anywhere (global)" },
+      { mode = "n", keys = "<Leader>?",  desc = "Grep anywhere (global)" },
       { mode = "n", keys = "<Leader>sr", desc = "Search + replace (grug-far, --hidden --follow)" },
-      { mode = "n", keys = "<Leader>r", desc = "Recent files" },
-      { mode = "n", keys = "<Leader>L", desc = "+LSP" },
+      { mode = "n", keys = "<Leader>r",  desc = "Recent files" },
+      { mode = "n", keys = "<Leader>L",  desc = "+LSP" },
       { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
-      { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
-      { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
-      { mode = "n", keys = "<Leader>S", desc = "+Session" },
-      { mode = "n", keys = "<Leader>X", desc = "Delete (no yank) + motion" },
-      { mode = "n", keys = "<Leader>x", desc = "+Diagnostics" },
-      { mode = "v", keys = "<Leader>x", desc = "Delete selection (no yank)" },
-      { mode = "v", keys = "<Leader>p", desc = "Paste over (keep clipboard)" },
-      { mode = "n", keys = "<Leader>g", desc = "+Git view" },
-      { mode = "v", keys = "<Leader>g", desc = "+Git view" },
-      { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
-      { mode = "n", keys = "<Leader>z", desc = "+Folds" },
+      { mode = "n", keys = "<Leader>o",  desc = "Outline toggle (sync)" },
+      { mode = "n", keys = "<Leader>O",  desc = "Outline focus at symbol" },
+      { mode = "n", keys = "<Leader>S",  desc = "+Session" },
+      { mode = "n", keys = "<Leader>X",  desc = "Delete (no yank) + motion" },
+      { mode = "n", keys = "<Leader>x",  desc = "+Diagnostics" },
+      { mode = "v", keys = "<Leader>x",  desc = "Delete selection (no yank)" },
+      { mode = "v", keys = "<Leader>p",  desc = "Paste over (keep clipboard)" },
+      { mode = "n", keys = "<Leader>g",  desc = "+Git view" },
+      { mode = "v", keys = "<Leader>g",  desc = "+Git view" },
+      { mode = "n", keys = "<Leader>y",  desc = "+Yank path" },
+      { mode = "n", keys = "<Leader>z",  desc = "+Folds" },
       { mode = "n", keys = "<Leader>m1", desc = "Toggle markdown H1 folds" },
       { mode = "n", keys = "<Leader>m2", desc = "Toggle markdown H2 folds" },
       { mode = "n", keys = "<Leader>m3", desc = "Toggle markdown H3 folds" },
       { mode = "n", keys = "<Leader>m4", desc = "Toggle markdown H4 folds" },
       { mode = "n", keys = "<Leader>m5", desc = "Toggle markdown H5 folds" },
       { mode = "n", keys = "<Leader>m6", desc = "Toggle markdown H6 folds" },
-      { mode = "n", keys = "<Leader>T", desc = "Reopen last closed buffer" },
-      { mode = "n", keys = "]d", desc = "Next diagnostic" },
-      { mode = "n", keys = "[d", desc = "Prev diagnostic" },
-      { mode = "n", keys = "<C-]>", desc = "Next git hunk (editor)" },
-      { mode = "n", keys = "<C-[>", desc = "Prev git hunk (editor)" },
+      { mode = "n", keys = "<Leader>T",  desc = "Reopen last closed buffer" },
+      { mode = "n", keys = "]d",         desc = "Next diagnostic" },
+      { mode = "n", keys = "[d",         desc = "Prev diagnostic" },
+      { mode = "n", keys = "<C-]>",      desc = "Next git hunk (editor)" },
+      { mode = "n", keys = "<C-[>",      desc = "Prev git hunk (editor)" },
     },
     window = { delay = 300 },
   })
