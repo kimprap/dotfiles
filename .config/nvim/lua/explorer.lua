@@ -62,6 +62,102 @@ local fff_backdrop_win = nil
 local fff_picker_ui = nil
 
 local nvim_tree_did_setup = false
+local fff_did_setup = false
+local nvim_tree_cleanup_pending = false
+local FFF_CONFIG = {
+  prompt = "Files> ",
+  max_results = 30,
+  preview = {
+    enabled = true,
+    line_numbers = true,
+  },
+  keymaps = {
+    close = "<Esc>",
+    select = "<CR>",
+    select_split = "<C-s>",
+    select_vsplit = "<C-v>",
+    -- select_tab = '<C-t>',
+
+    -- Bottom-prompt FFF renders results above the prompt, so C-j/C-k should
+    -- follow visual down/up movement in the picker input.
+    move_up = { "<Up>", "<C-p>", "<C-k>" },
+    move_down = { "<Down>", "<C-n>", "<C-j>" },
+  },
+  -- fff float colors (own windows); monkey below adds the editor-wide dim (no native backdrop).
+  hl = {
+    normal = "Normal",
+    border = "FloatBorder",
+    winhl = "Normal:NormalFloat,FloatBorder:FloatBorder,FloatTitle:Title",
+  },
+}
+
+vim.g.fff = vim.tbl_deep_extend("force", vim.g.fff or {}, FFF_CONFIG)
+
+local function apply_fff_config()
+  vim.g.fff = vim.tbl_deep_extend("force", vim.g.fff or {}, FFF_CONFIG)
+
+  local ok, conf = pcall(require, "fff.conf")
+  if not ok then
+    return
+  end
+
+  local config = conf.get()
+  config.prompt = FFF_CONFIG.prompt
+  config.max_results = FFF_CONFIG.max_results
+  config.preview = vim.tbl_deep_extend("force", config.preview or {}, FFF_CONFIG.preview)
+  config.keymaps = vim.tbl_deep_extend("force", config.keymaps or {}, FFF_CONFIG.keymaps)
+  config.hl = vim.tbl_deep_extend("force", config.hl or {}, FFF_CONFIG.hl)
+end
+
+local function reinforce_fff_navigation_keymaps()
+  if not (fff_picker_ui and fff_picker_ui.state) then
+    return
+  end
+
+  local function set_nav(buf, mode, lhs, rhs, desc)
+    if not (buf and vim.api.nvim_buf_is_valid(buf)) then
+      return
+    end
+    vim.keymap.set(mode, lhs, rhs, {
+      buffer = buf,
+      noremap = true,
+      silent = true,
+      desc = desc,
+    })
+  end
+
+  local function invoke_list_motion(lhs)
+    local list_buf = fff_picker_ui.state.list_buf
+    if not (list_buf and vim.api.nvim_buf_is_valid(list_buf)) then
+      return
+    end
+
+    vim.api.nvim_buf_call(list_buf, function()
+      local map = vim.fn.maparg(lhs, "n", false, true)
+      if type(map) == "table" and type(map.callback) == "function" then
+        map.callback()
+      end
+    end)
+  end
+
+  local next_item = function()
+    if fff_picker_ui and fff_picker_ui.state and fff_picker_ui.state.active then
+      invoke_list_motion("k")
+    end
+  end
+  local prev_item = function()
+    if fff_picker_ui and fff_picker_ui.state and fff_picker_ui.state.active then
+      invoke_list_motion("j")
+    end
+  end
+
+  set_nav(fff_picker_ui.state.input_buf, { "i", "n" }, "<C-j>", next_item, "FFF next item")
+  set_nav(fff_picker_ui.state.input_buf, { "i", "n" }, "<C-k>", prev_item, "FFF previous item")
+  set_nav(fff_picker_ui.state.list_buf, "n", "<C-j>", next_item, "FFF next item")
+  set_nav(fff_picker_ui.state.list_buf, "n", "<C-k>", prev_item, "FFF previous item")
+  set_nav(fff_picker_ui.state.preview_buf, "n", "<C-j>", next_item, "FFF next item")
+  set_nav(fff_picker_ui.state.preview_buf, "n", "<C-k>", prev_item, "FFF previous item")
+end
 
 -- Shared setup for manual backdrops (Black + offset blend to match fzf-lua darkness).
 local function setup_backdrop_win(win)
@@ -251,7 +347,14 @@ local function refresh_nvim_tree_title()
 end
 
 local function schedule_nvim_tree_backdrop_cleanup()
+  if
+    nvim_tree_cleanup_pending or not (nvim_tree_backdrop_win and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win))
+  then
+    return
+  end
+  nvim_tree_cleanup_pending = true
   schedule_2x(function()
+    nvim_tree_cleanup_pending = false
     if nvim_tree_backdrop_win and vim.api.nvim_win_is_valid(nvim_tree_backdrop_win) and not has_nvim_tree_window() then
       destroy_nvim_tree_backdrop()
     end
@@ -400,6 +503,10 @@ local function setup_nvim_tree_once()
       group_empty = true,
       root_folder_label = false,
       indent_width = 1.5,
+      indent_markers = {
+        enable = false,
+        inline_arrows = false,
+      },
     },
     actions = {
       open_file = {
@@ -634,63 +741,57 @@ map("n", "<leader>E", function()
   end
 end, { desc = "Oil explorer (dir of active file, else cwd)" })
 
-require("fff").setup({
-  prompt = "Files> ",
-  max_results = 30,
-  preview = {
-    enabled = true,
-    line_numbers = true,
-  },
-  keymaps = {
-    close = "<Esc>",
-    select = "<CR>",
-    select_split = "<C-s>",
-    select_vsplit = "<C-v>",
-    -- select_tab = '<C-t>',
-
-    -- === Make Ctrl+j / Ctrl+k work like in mini.pick ===
-    move_up = { "<Up>", "<C-p>", "<C-k>" },
-    move_down = { "<Down>", "<C-n>", "<C-j>" },
-  },
-  -- fff float colors (own windows); monkey below adds the editor-wide dim (no native backdrop).
-  hl = {
-    normal = "Normal",
-    border = "FloatBorder",
-    winhl = "Normal:NormalFloat,FloatBorder:FloatBorder,FloatTitle:Title",
-  },
-})
-
--- Minimal fff dim monkey: wrap open/close for editor backdrop (no native support).
--- Schedule guard handles F2 toggles etc.
-local ok_fff, pu = pcall(require, "fff.picker_ui")
-if ok_fff and pu then
-  fff_picker_ui = pu
-  local orig_open = fff_picker_ui.open
-  local orig_close = fff_picker_ui.close
-
-  fff_picker_ui.open = function(opts)
-    create_fff_backdrop()
-    return orig_open(opts)
+local function setup_fff_once()
+  if fff_did_setup then
+    return
   end
 
-  fff_picker_ui.close = function()
-    local ret = orig_close()
-    vim.schedule(function()
-      if not (fff_picker_ui.state and fff_picker_ui.state.active) then
-        destroy_fff_backdrop()
+  apply_fff_config()
+
+  -- Minimal fff dim monkey: wrap open/close for editor backdrop (no native support).
+  -- Schedule guard handles F2 toggles etc.
+  local ok_fff, pu = pcall(require, "fff.picker_ui")
+  if ok_fff and pu then
+    fff_picker_ui = pu
+    if not fff_picker_ui.__dotfiles_backdrop_patched then
+      local orig_open = fff_picker_ui.open
+      local orig_close = fff_picker_ui.close
+
+      fff_picker_ui.open = function(opts)
+        create_fff_backdrop()
+        local ret = orig_open(opts)
+        reinforce_fff_navigation_keymaps()
+        return ret
       end
-    end)
-    return ret
+
+      fff_picker_ui.close = function()
+        local ret = orig_close()
+        vim.schedule(function()
+          if not (fff_picker_ui.state and fff_picker_ui.state.active) then
+            destroy_fff_backdrop()
+          end
+        end)
+        return ret
+      end
+
+      fff_picker_ui.__dotfiles_backdrop_patched = true
+    end
   end
+
+  fff_did_setup = true
 end
 
 -- Project finders
 map("n", "<leader>f", function()
+  setup_fff_once()
   require("fff").find_files()
 end, { desc = "Find files in project (fff)" })
 
 map("n", "<leader>/", function()
-  require("fff").live_grep()
+  setup_fff_once()
+  require("fff").live_grep({
+    prompt = "Grep> ",
+  })
 end, { desc = "Grep in project (fff)" })
 
 map("n", "<leader>,", function()

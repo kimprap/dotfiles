@@ -2,16 +2,36 @@ local map = require("map")
 
 local M = {}
 
+local search_line_cache = {}
+
+local function search_cache_key(bufnr)
+  return table.concat({
+    bufnr,
+    vim.b[bufnr].changedtick or 0,
+    vim.fn.getreg("/"),
+    vim.o.ignorecase and "1" or "0",
+    vim.o.smartcase and "1" or "0",
+    vim.o.magic and "1" or "0",
+  }, "\n")
+end
+
 local function get_search_line_positions(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local pattern = vim.fn.getreg("/")
   if pattern == "" then
     return {}
   end
+
+  local key = search_cache_key(bufnr)
+  local cached = search_line_cache[bufnr]
+  if cached and cached.key == key then
+    return cached.positions
+  end
+
   local positions = {}
   local seen_lines = {}
-  for lnum = 1, vim.api.nvim_buf_line_count(bufnr) do
-    local line = vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1] or ""
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  for lnum, line in ipairs(lines) do
     local start = 0
     while true do
       local match = vim.fn.matchstrpos(line, pattern, start)
@@ -23,8 +43,13 @@ local function get_search_line_positions(bufnr)
         positions[#positions + 1] = lnum
       end
       start = match[3]
+      if start <= match[2] then
+        start = match[2] + 1
+      end
     end
   end
+
+  search_line_cache[bufnr] = { key = key, positions = positions }
   return positions
 end
 
@@ -170,6 +195,9 @@ require("scrollbar.handlers").register("search", function(bufnr)
   if bufnr ~= vim.api.nvim_get_current_buf() then
     return {}
   end
+  if vim.bo[bufnr].buftype ~= "" then
+    return {}
+  end
   local config = require("scrollbar.config").get()
   local marks = {}
   for _, lnum in ipairs(get_search_line_positions(bufnr)) do
@@ -190,6 +218,13 @@ vim.api.nvim_create_autocmd({ "CmdlineLeave", "SearchWrapped" }, {
       return
     end
     M.refresh_search_scrollbar()
+  end,
+})
+
+vim.api.nvim_create_autocmd({ "BufWipeout", "BufDelete" }, {
+  group = vim.api.nvim_create_augroup("user.scrollbar_search_cache", { clear = true }),
+  callback = function(args)
+    search_line_cache[args.buf] = nil
   end,
 })
 

@@ -1,6 +1,9 @@
 -- Disable netrw before explorer plugins load.
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+-- render-markdown.nvim's plugin entrypoint self-initializes eagerly; suppress it
+-- so markdown.lua can do first-use setup instead.
+vim.g.loaded_render_markdown = true
 
 vim.pack.add({
   -- Theme

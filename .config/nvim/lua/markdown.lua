@@ -6,6 +6,7 @@ local M = {}
 local markdown_augroup = vim.api.nvim_create_augroup("user.markdown", { clear = true })
 
 local fold_cache = {}
+local render_markdown_did_setup = false
 
 local function parse_fence(line)
   local ws, fence, rest = line:match("^(%s?%s?%s?)([`~]+)(.*)$")
@@ -169,24 +170,36 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 sync_render_markdown_highlights()
 
-require("render-markdown").setup({
-  completions = { lsp = { enabled = true } },
-  code = {
-    width = "block",
-    right_pad = 1,
-  },
-  dash = {
-    width = function(ctx)
-      return math.max(ctx.width - 2, 0)
-    end,
-  },
-})
+local function setup_render_markdown_once()
+  if render_markdown_did_setup then
+    return
+  end
+
+  require("render-markdown").setup({
+    completions = { lsp = { enabled = true } },
+    code = {
+      width = "block",
+      right_pad = 1,
+    },
+    dash = {
+      width = function(ctx)
+        return math.max(ctx.width - 2, 0)
+      end,
+    },
+  })
+  require("render-markdown.core.colors").init()
+  require("render-markdown.core.command").init()
+  require("render-markdown.core.log").init()
+  require("render-markdown.core.manager").init()
+  render_markdown_did_setup = true
+end
 
 vim.api.nvim_create_autocmd("FileType", {
   group = markdown_augroup,
   pattern = { "markdown", "markdown.mdx" },
   callback = function(args)
     vim.api.nvim_buf_call(args.buf, apply_markdown_folds)
+    setup_render_markdown_once()
     for h = 1, 6 do
       vim.keymap.set("n", "<leader>m" .. h, function()
         M.toggle_heading_level(h)
@@ -224,10 +237,25 @@ for heading = 1, 6 do
   end, { nowait = true, desc = "Toggle markdown H" .. heading .. " folds" })
 end
 
-map("n", "<leader>mt", "<cmd>RenderMarkdown buf_toggle<CR>", { desc = "Toggle markdown render" })
-map("n", "<leader>mT", "<cmd>RenderMarkdown toggle<CR>", { desc = "Toggle markdown render globally" })
-map("n", "<leader>mp", "<cmd>RenderMarkdown preview<CR>", { desc = "Preview rendered markdown" })
-map("n", "<leader>me", "<cmd>RenderMarkdown expand<CR>", { desc = "Expand markdown raw margin" })
-map("n", "<leader>mc", "<cmd>RenderMarkdown contract<CR>", { desc = "Contract markdown raw margin" })
+map("n", "<leader>mt", function()
+  setup_render_markdown_once()
+  vim.cmd("RenderMarkdown buf_toggle")
+end, { desc = "Toggle markdown render" })
+map("n", "<leader>mT", function()
+  setup_render_markdown_once()
+  vim.cmd("RenderMarkdown toggle")
+end, { desc = "Toggle markdown render globally" })
+map("n", "<leader>mp", function()
+  setup_render_markdown_once()
+  vim.cmd("RenderMarkdown preview")
+end, { desc = "Preview rendered markdown" })
+map("n", "<leader>me", function()
+  setup_render_markdown_once()
+  vim.cmd("RenderMarkdown expand")
+end, { desc = "Expand markdown raw margin" })
+map("n", "<leader>mc", function()
+  setup_render_markdown_once()
+  vim.cmd("RenderMarkdown contract")
+end, { desc = "Contract markdown raw margin" })
 
 return M

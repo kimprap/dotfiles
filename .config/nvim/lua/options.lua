@@ -295,4 +295,3 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 setup_lighter_grey_highlights()
 
 return {}
-

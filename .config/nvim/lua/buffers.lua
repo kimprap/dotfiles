@@ -54,7 +54,7 @@ function M.buffer_display_name(bufnr)
   if name ~= "" then
     return vim.fn.fnamemodify(name, ":~:.")
   end
-  return '[Buffer ' .. bufnr .. ']'
+  return "[Buffer " .. bufnr .. "]"
 end
 local function delete_buffer(bufnr, force)
   if not force then
@@ -254,4 +254,3 @@ map("n", "<leader>T", function()
 end, { desc = "Reopen last closed buffer" })
 
 return M
-

@@ -11,6 +11,7 @@ map("n", "<leader>ui", function()
     vim.o.smartcase = false
   end
   vim.notify(vim.o.ignorecase and "Search: ignore case" or "Search: match case", vim.log.levels.INFO)
+  require("ui").refresh_search_scrollbar()
 end, { desc = "Toggle search case sensitivity" })
 
 -- Insert-mode shell-like deletes (respect 'iskeyword' with the - append).

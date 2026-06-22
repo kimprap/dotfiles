@@ -296,16 +296,25 @@ vim.lsp.config("*", {
   capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
 
+local LSP_SERVERS = {
+  "bashls",
+  "cssls",
+  "dockerls",
+  "html",
+  "jsonls",
+  "lua_ls",
+  "marksman",
+  "rust_analyzer",
+  "tailwindcss",
+  "taplo",
+  "ty",
+  "vtsls",
+  "yamlls",
+  "zls",
+}
+
 local function enable_lsp_servers()
-  local servers = vim
-    .iter(vim.api.nvim_get_runtime_file("lsp/*.lua", true))
-    :map(function(f)
-      return vim.fn.fnamemodify(f, ":t:r")
-    end)
-    :totable()
-  if #servers > 0 then
-    vim.lsp.enable(servers)
-  end
+  vim.lsp.enable(LSP_SERVERS)
 end
 
 local function fzf_lua()

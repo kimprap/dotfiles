@@ -22,7 +22,6 @@ return {
     "postcss.config.js",
     "postcss.config.mjs",
     "postcss.config.ts",
-    ".git",
   },
   settings = {
     tailwindCSS = {

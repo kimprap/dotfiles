@@ -7,8 +7,8 @@ function M.setup_core()
     autocommands = { basic = true },
   })
 
-  require("mini.pairs").setup()                                                                   -- auto close brackets/quotes
-  require("mini.comment").setup()                                                                 -- gc to comment
+  require("mini.pairs").setup() -- auto close brackets/quotes
+  require("mini.comment").setup() -- gc to comment
   require("mini.surround").setup({ n_lines = 0, search_method = "cover_or_next", silent = true }) -- ys, ds, cs for surrounding
 
   local ai = require("mini.ai")
@@ -121,15 +121,25 @@ function M.setup_statusline()
   }
 
   local function diagnostic_statusline()
+    local counts
+    if vim.diagnostic.count then
+      counts = vim.diagnostic.count(0)
+    else
+      counts = {}
+      for _, diagnostic in ipairs(vim.diagnostic.get(0)) do
+        counts[diagnostic.severity] = (counts[diagnostic.severity] or 0) + 1
+      end
+    end
+
     local parts = {}
     local first = true
     for _, item in ipairs(DIAGNOSTIC_STATUS) do
-      local count = #vim.diagnostic.get(0, { severity = item[1] })
+      local count = counts[item[1]] or 0
       if count > 0 then
         -- Single-space prefix only on first glyph (inside its %#...#) for subtle right-side padding after %=.
         local prefix = first and " " or ""
         first = false
-        parts[#parts + 1] = string.format("%%#%s#%s%s %d", item[2], prefix, item[3], count)
+        parts[#parts + 1] = "%#" .. item[2] .. "#" .. prefix .. item[3] .. " " .. count
       end
     end
     return table.concat(parts, " ")
@@ -144,13 +154,13 @@ function M.setup_statusline()
     end
     local parts = {}
     if (d.added or 0) > 0 then
-      parts[#parts + 1] = string.format("%%#GitStatusAdd#[+]%d", d.added)
+      parts[#parts + 1] = "%#GitStatusAdd#[+]" .. d.added
     end
     if (d.changed or 0) > 0 then
-      parts[#parts + 1] = string.format("%%#GitStatusChange#[~]%d", d.changed)
+      parts[#parts + 1] = "%#GitStatusChange#[~]" .. d.changed
     end
     if (d.removed or 0) > 0 then
-      parts[#parts + 1] = string.format("%%#GitStatusRemove#[·]%d", d.removed)
+      parts[#parts + 1] = "%#GitStatusRemove#[·]" .. d.removed
     end
     return table.concat(parts, " ")
   end
@@ -279,6 +289,8 @@ function M.setup_statusline()
     return outside and "MiniStatuslineFilenameNC" or "MiniStatuslineFilename"
   end
 
+  local filetype_icon_cache = {}
+
   MiniStatusline.setup({
     use_icons = true,
     set_vim_settings = true,
@@ -289,8 +301,13 @@ function M.setup_statusline()
         local diff = git_diff_statusline()
         local filetype = vim.bo.filetype
         if filetype ~= "" and MiniIcons then
-          local icon = select(1, MiniIcons.get("filetype", filetype))
-          filetype = (icon or "") .. (icon and " " or "") .. filetype
+          local display = filetype_icon_cache[filetype]
+          if not display then
+            local icon = select(1, MiniIcons.get("filetype", filetype))
+            display = (icon or "") .. (icon and " " or "") .. filetype
+            filetype_icon_cache[filetype] = display
+          end
+          filetype = display
         end
         local location = "%l|%L"
 
@@ -311,12 +328,12 @@ function M.setup_statusline()
         end
         vim.list_extend(groups, {
           "%<",
-          { hl = filename_hl(),            strings = { filename() } },
+          { hl = filename_hl(), strings = { filename() } },
           buffer_flags_statusline(),
           "%=",
           diags,
           { hl = "MiniStatuslineFileinfo", strings = { filetype } },
-          { hl = mode_hl,                  strings = { location } },
+          { hl = mode_hl, strings = { location } },
         })
         return MiniStatusline.combine_groups(groups)
       end,
@@ -349,38 +366,38 @@ function M.setup_clue()
       MiniClue.gen_clues.z(),
       MiniClue.gen_clues.windows(),
       MiniClue.gen_clues.square_brackets(),
-      { mode = "n", keys = "<Leader>e",  desc = "Explorer (nvim-tree)" },
-      { mode = "n", keys = "<Leader>E",  desc = "Explorer (oil)" },
-      { mode = "n", keys = "<Leader>f",  desc = "Find files (fff)" },
-      { mode = "n", keys = "<Leader>/",  desc = "Grep project (fff)" },
-      { mode = "n", keys = "<Leader>F",  desc = "Find files anywhere (global)" },
-      { mode = "n", keys = "<Leader>?",  desc = "Grep anywhere (global)" },
+      { mode = "n", keys = "<Leader>e", desc = "Explorer (nvim-tree)" },
+      { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
+      { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
+      { mode = "n", keys = "<Leader>/", desc = "Grep project (fff)" },
+      { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
+      { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
       { mode = "n", keys = "<Leader>sr", desc = "Search + replace (grug-far, --hidden --follow)" },
-      { mode = "n", keys = "<Leader>r",  desc = "Recent files" },
-      { mode = "n", keys = "<Leader>L",  desc = "+LSP" },
+      { mode = "n", keys = "<Leader>r", desc = "Recent files" },
+      { mode = "n", keys = "<Leader>L", desc = "+LSP" },
       { mode = "n", keys = "<Leader>Ll", desc = "Pick LSP server" },
-      { mode = "n", keys = "<Leader>o",  desc = "Outline toggle (sync)" },
-      { mode = "n", keys = "<Leader>O",  desc = "Outline focus at symbol" },
-      { mode = "n", keys = "<Leader>S",  desc = "+Session" },
-      { mode = "n", keys = "<Leader>X",  desc = "Delete (no yank) + motion" },
-      { mode = "n", keys = "<Leader>x",  desc = "+Diagnostics" },
-      { mode = "v", keys = "<Leader>x",  desc = "Delete selection (no yank)" },
-      { mode = "v", keys = "<Leader>p",  desc = "Paste over (keep clipboard)" },
-      { mode = "n", keys = "<Leader>g",  desc = "+Git view" },
-      { mode = "v", keys = "<Leader>g",  desc = "+Git view" },
-      { mode = "n", keys = "<Leader>y",  desc = "+Yank path" },
-      { mode = "n", keys = "<Leader>z",  desc = "+Folds" },
+      { mode = "n", keys = "<Leader>o", desc = "Outline toggle (sync)" },
+      { mode = "n", keys = "<Leader>O", desc = "Outline focus at symbol" },
+      { mode = "n", keys = "<Leader>S", desc = "+Session" },
+      { mode = "n", keys = "<Leader>X", desc = "Delete (no yank) + motion" },
+      { mode = "n", keys = "<Leader>x", desc = "+Diagnostics" },
+      { mode = "v", keys = "<Leader>x", desc = "Delete selection (no yank)" },
+      { mode = "v", keys = "<Leader>p", desc = "Paste over (keep clipboard)" },
+      { mode = "n", keys = "<Leader>g", desc = "+Git view" },
+      { mode = "v", keys = "<Leader>g", desc = "+Git view" },
+      { mode = "n", keys = "<Leader>y", desc = "+Yank path" },
+      { mode = "n", keys = "<Leader>z", desc = "+Folds" },
       { mode = "n", keys = "<Leader>m1", desc = "Toggle markdown H1 folds" },
       { mode = "n", keys = "<Leader>m2", desc = "Toggle markdown H2 folds" },
       { mode = "n", keys = "<Leader>m3", desc = "Toggle markdown H3 folds" },
       { mode = "n", keys = "<Leader>m4", desc = "Toggle markdown H4 folds" },
       { mode = "n", keys = "<Leader>m5", desc = "Toggle markdown H5 folds" },
       { mode = "n", keys = "<Leader>m6", desc = "Toggle markdown H6 folds" },
-      { mode = "n", keys = "<Leader>T",  desc = "Reopen last closed buffer" },
-      { mode = "n", keys = "]d",         desc = "Next diagnostic" },
-      { mode = "n", keys = "[d",         desc = "Prev diagnostic" },
-      { mode = "n", keys = "<C-]>",      desc = "Next git hunk (editor)" },
-      { mode = "n", keys = "<C-[>",      desc = "Prev git hunk (editor)" },
+      { mode = "n", keys = "<Leader>T", desc = "Reopen last closed buffer" },
+      { mode = "n", keys = "]d", desc = "Next diagnostic" },
+      { mode = "n", keys = "[d", desc = "Prev diagnostic" },
+      { mode = "n", keys = "<C-]>", desc = "Next git hunk (editor)" },
+      { mode = "n", keys = "<C-[>", desc = "Prev git hunk (editor)" },
     },
     window = { delay = 300 },
   })
