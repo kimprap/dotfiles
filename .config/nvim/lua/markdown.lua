@@ -5,49 +5,124 @@ local map = require("map")
 local M = {}
 local markdown_augroup = vim.api.nvim_create_augroup("user.markdown", { clear = true })
 
--- ATX-only foldexpr for <leader>m1/m2. Headers report >N (fold start);
--- content lines inherit the nearest preceding header level. Paired with
--- custom foldtext (below) so collapsed headers keep their RenderMarkdownH*
--- color while Folded styles any trailing dots.
+local fold_cache = {}
+
+local function parse_fence(line)
+  local ws, fence, rest = line:match("^(%s?%s?%s?)([`~]+)(.*)$")
+  if not ws or #fence < 3 then
+    return nil
+  end
+  local char = fence:sub(1, 1)
+  if (char == "`" and fence:find("[^`]")) or (char == "~" and fence:find("[^~]")) then
+    return nil
+  end
+  return char, #fence, rest
+end
+
+-- ATX-only foldexpr for <leader>m1/m2. Real headings outside fenced code
+-- blocks start folds; content inherits the nearest heading level.
 function M.heading_foldexpr(lnum)
-  local line = vim.fn.getline(lnum)
-  local hashes = line:match("^%s*(#+)%s")
-  if hashes then
-    return ">" .. #hashes
+  local bufnr = vim.api.nvim_get_current_buf()
+  if lnum < 1 then
+    return 0
   end
-  for i = lnum - 1, 1, -1 do
-    local h = vim.fn.getline(i):match("^%s*(#+)%s")
-    if h then
-      return #h
+  local tick = vim.b[bufnr].changedtick or 0
+  local cache = fold_cache[bufnr]
+  if not cache or cache.tick ~= tick then
+    cache = {
+      tick = tick,
+      computed_until = 0,
+      last_level = 0,
+      in_fence = false,
+      fence_char = nil,
+      fence_len = 0,
+      levels = {},
+    }
+    fold_cache[bufnr] = cache
+  end
+
+  if cache.levels[lnum] ~= nil then
+    return cache.levels[lnum]
+  end
+
+  if lnum > cache.computed_until then
+    local start = cache.computed_until + 1
+    local buf_lines = vim.api.nvim_buf_get_lines(bufnr, start - 1, lnum, false)
+    local last_level = cache.last_level
+    local in_fence = cache.in_fence
+    local fence_char = cache.fence_char
+    local fence_len = cache.fence_len
+    for i, line in ipairs(buf_lines) do
+      local cur = start + i - 1
+      local hashes = nil
+      if not in_fence then
+        local ws, h = line:match("^(%s?%s?%s?)(#+)%s")
+        if ws and h then
+          hashes = h
+        end
+      end
+      if hashes then
+        local lev = #hashes
+        cache.levels[cur] = ">" .. lev
+        last_level = lev
+      else
+        cache.levels[cur] = last_level
+      end
+      local char, len, rest = parse_fence(line)
+      if char then
+        if not in_fence then
+          in_fence = true
+          fence_char = char
+          fence_len = len
+        elseif char == fence_char and len >= fence_len and rest:match("^%s*$") then
+          in_fence = false
+          fence_char = nil
+          fence_len = 0
+        end
+      end
     end
+    cache.last_level = last_level
+    cache.in_fence = in_fence
+    cache.fence_char = fence_char
+    cache.fence_len = fence_len
+    cache.computed_until = lnum
   end
-  return 0
+  return cache.levels[lnum] or 0
 end
 
 vim.t.markdown_heading_foldexpr = M.heading_foldexpr
 
-local function apply_markdown_folds()
-  vim.t.markdown_heading_foldexpr = M.heading_foldexpr
-  vim.wo.foldmethod = "expr"
-  vim.wo.foldexpr = "v:lua.vim.t.markdown_heading_foldexpr(v:lnum)"
-  vim.wo.foldenable = true
-
-  -- foldtext returns a chunk so the header keeps its RenderMarkdownH* color;
-  -- trailing dots/fill use the Folded group (grey).
-  vim.t.markdown_foldtext = function()
-    local header = vim.fn.getline(vim.v.foldstart)
-    local level = vim.v.foldlevel
-    local hl = "RenderMarkdownH" .. math.min(level, 6)
-    return { { header, hl } }
-  end
-  vim.wo.foldtext = "v:lua.vim.t.markdown_foldtext()"
+function M.markdown_foldtext()
+  local header = vim.fn.getline(vim.v.foldstart)
+  local level = vim.v.foldlevel
+  local hl = "RenderMarkdownH" .. math.min(level, 6)
+  return { { header, hl } }
 end
 
+vim.t.markdown_foldtext = M.markdown_foldtext
+
+local function apply_markdown_folds()
+  vim.t.markdown_heading_foldexpr = M.heading_foldexpr
+  vim.t.markdown_foldtext = M.markdown_foldtext
+
+  local desired_expr = "v:lua.vim.t.markdown_heading_foldexpr(v:lnum)"
+  local desired_text = "v:lua.vim.t.markdown_foldtext()"
+  if
+    vim.wo.foldmethod ~= "expr"
+    or vim.wo.foldexpr ~= desired_expr
+    or vim.wo.foldenable ~= true
+    or vim.wo.foldtext ~= desired_text
+  then
+    vim.wo.foldmethod = "expr"
+    vim.wo.foldexpr = desired_expr
+    vim.wo.foldenable = true
+    vim.wo.foldtext = desired_text
+  end
+end
 function M.toggle_heading_level(level)
   vim.api.nvim_buf_call(0, function()
     apply_markdown_folds()
-    -- m1 (target 0) collapses everything under H1 (headers stay visible+colored);
-    -- m2 shows H1+H2 headers (colored) but collapses their content.
+    -- m1: target foldlevel 0 (H1+ visible); m2: target 1 (H1+H2 visible)
     local target = math.max(level - 1, 0)
     if vim.wo.foldlevel == target then
       vim.wo.foldlevel = 99
@@ -132,17 +207,12 @@ vim.api.nvim_create_autocmd("FileType", {
     end, { buffer = args.buf, desc = "Previous markdown header" })
   end,
 })
-
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd({ "BufWipeout", "BufDelete" }, {
   group = markdown_augroup,
   callback = function(args)
-    local ft = vim.bo[args.buf].filetype
-    if ft == "markdown" or ft == "markdown.mdx" then
-      vim.api.nvim_buf_call(args.buf, apply_markdown_folds)
-    end
+    fold_cache[args.buf] = nil
   end,
 })
-
 -- Global maps (so mini.clue shows them and they work even without buffer-local).
 for heading = 1, 6 do
   map("n", "<leader>m" .. heading, function()
@@ -161,4 +231,3 @@ map("n", "<leader>me", "<cmd>RenderMarkdown expand<CR>", { desc = "Expand markdo
 map("n", "<leader>mc", "<cmd>RenderMarkdown contract<CR>", { desc = "Contract markdown raw margin" })
 
 return M
-

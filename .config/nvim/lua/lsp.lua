@@ -298,11 +298,11 @@ vim.lsp.config("*", {
 
 local function enable_lsp_servers()
   local servers = vim
-      .iter(vim.api.nvim_get_runtime_file("lsp/*.lua", true))
-      :map(function(f)
-        return vim.fn.fnamemodify(f, ":t:r")
-      end)
-      :totable()
+    .iter(vim.api.nvim_get_runtime_file("lsp/*.lua", true))
+    :map(function(f)
+      return vim.fn.fnamemodify(f, ":t:r")
+    end)
+    :totable()
   if #servers > 0 then
     vim.lsp.enable(servers)
   end
@@ -682,10 +682,10 @@ end
 
 local function diagnostics_fzf_opts()
   return vim.tbl_deep_extend("force", diagnostics_picker_opts(), {
-    diag_source = false,   -- strip "[Lua Syntax Check]" / "[Lua Diagnostics]" etc.
-    no_diag_col = true,    -- omit :col: via the lcol patch (row/line only)
+    diag_source = false, -- strip "[Lua Syntax Check]" / "[Lua Diagnostics]" etc.
+    no_diag_col = true, -- omit :col: via the lcol patch (row/line only)
     color_headings = true, -- preserve error-level coloring on paths
-    previewer = false,     -- disable preview pane by default
+    previewer = false, -- disable preview pane by default
     sort = sort_diagnostics_by_location,
   })
 end
@@ -807,8 +807,7 @@ map("n", "<leader>xl", function()
     end
   end)
 end, {
-  desc =
-  "Diagnostics loclist (sorted by line; columns omitted; o: preview+highlight in target keep focus; <CR> jumps+focuses)",
+  desc = "Diagnostics loclist (sorted by line; columns omitted; o: preview+highlight in target keep focus; <CR> jumps+focuses)",
 })
 
 -- Close hover / other LSP floats with Esc
@@ -833,18 +832,21 @@ local function configure_lsp_buffer(args)
   end
 
   if client:supports_method("textDocument/foldingRange") then
-    vim.api.nvim_buf_call(bufnr, function()
-      vim.wo.foldmethod = "expr"
-      vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
-    end)
-    vim.schedule(function()
-      if not vim.api.nvim_buf_is_valid(bufnr) then
-        return
-      end
+    local ft = vim.bo[bufnr].filetype
+    if ft ~= "markdown" and ft ~= "markdown.mdx" then
       vim.api.nvim_buf_call(bufnr, function()
-        vim.cmd("normal! zx")
+        vim.wo.foldmethod = "expr"
+        vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
       end)
-    end)
+      vim.schedule(function()
+        if not vim.api.nvim_buf_is_valid(bufnr) then
+          return
+        end
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.cmd("normal! zx")
+        end)
+      end)
+    end
   end
 
   local function nmap(lhs, rhs, desc)
@@ -898,6 +900,10 @@ vim.api.nvim_create_autocmd("LspDetach", {
     local bufnr = args.buf
     vim.schedule(function()
       if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+      end
+      local ft = vim.bo[bufnr].filetype
+      if ft == "markdown" or ft == "markdown.mdx" then
         return
       end
       if #vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/foldingRange" }) > 0 then
