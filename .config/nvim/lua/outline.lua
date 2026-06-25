@@ -76,7 +76,7 @@ local function setup_outline_once()
       focus_on_open = false,
       width = 32,
       auto_width = {
-        enabled = true,
+        enabled = false,
         max_width = 32,
         include_symbol_details = false,
       },
@@ -239,14 +239,12 @@ local function outline_open_and_sync(focus_outline)
 
   if outline_api.is_open() then
     outline_sync_to_code(focus_outline, code_win)
-    equalize_windows_soon()
     return
   end
 
   outline_api.open({ focus_outline = false })
   outline_when_open(function()
     outline_sync_to_code(focus_outline, code_win)
-    equalize_windows_soon()
   end)
 end
 
@@ -290,6 +288,12 @@ vim.api.nvim_create_autocmd("FileType", {
           vim.opt_local.foldcolumn = "0"
           vim.opt_local.number = false
           vim.opt_local.relativenumber = false
+        end)
+        vim.schedule(function()
+          local win = vim.fn.bufwinid(args.buf)
+          if win ~= -1 then
+            vim.wo[win].winfixwidth = false
+          end
         end)
       end
     end
