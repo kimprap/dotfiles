@@ -60,7 +60,7 @@ providers:
 github:
   enabled: true
 modelRoles:
-  task: xai-oauth/grok-build-0.1
+  task: xai-oauth/grok-build
   default: openai-codex/gpt-5.4:high
   slow: openai-codex/gpt-5.5
   plan: openai-codex/gpt-5.5
