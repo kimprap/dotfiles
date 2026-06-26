@@ -2,7 +2,10 @@
 # Ctrl+Shift+D is remapped away from Debug Tools by extensions/key-remaps.js.
 # Use it for macOS-style forward word deletion; keep Ctrl+D as forward-delete
 # without exiting.
-app.interrupt: []
+# Esc stays unbound; Ctrl+C remains OMP's hard-exit path, so use Alt+C to abort
+# the active agent turn without leaving the TUI.
+app.interrupt:
+  - Alt+C
 app.session.tree:
   - Alt+T
 app.exit: []
