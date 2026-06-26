@@ -1,5 +1,5 @@
 ---
-name: summarize-sources
+name: digest
 description: >
   Summarize one or more public URLs into concise agent-readable Markdown notes.
   Use when the user provides links to articles, blog posts, docs, GitHub repos,
@@ -8,13 +8,13 @@ description: >
 disableModelInvocation: true
 ---
 
-# summarize-sources
+# digest
 
 Turn links into compact source notes that future agents can scan fast.
 
 Default output root: `local://source-summaries/<YYYY-MM-DD>/` unless the caller gives a path.
 
-Suggested manual invocation: `/summarize-sources <url...>`
+Suggested manual invocation: `/digest <url...>`
 
 ## Read first
 
@@ -26,7 +26,7 @@ Use lowercase kebab-case tags in `facet/value` form.
 
 Required facets:
 
-- exactly one `domain/<broad-domain>`
+- exactly one `domain/<broad-domain>` — broad field or vertical (agentic, robotics, healthcare, finance, climate, ...)
 - at least one `topic/<specific-topic>`
 - exactly one `kind/<resource-kind>`
 
@@ -41,21 +41,34 @@ Optional facets when they add retrieval value:
 Examples:
 
 - `domain/agentic`
+- `domain/robotics`
+- `domain/healthcare`
+- `domain/finance`
 - `topic/programmatic-agents`
-- `topic/agents-memory`
-- `topic/frontend-design-skills`
+- `topic/crispr-off-target`
+- `topic/factor-investing`
 - `kind/x-thread`
+- `kind/paper`
+- `kind/github-repo`
 - `method/multi-agent`
 - `system/anthropic`
 - `signal/high`
 
+## Canonical source types
+
+Use exactly one `source_type` value:
+
+`article | blog-post | docs | github-repo | paper | x-post | x-thread | video | podcast | other`
+
+Use `other` only when nothing fits.
+
 ## Checklist
 
-- [ ] Normalize the input into one canonical URL per source. Skip duplicates.
+- [ ] Normalize the input into one canonical URL per source. Skip duplicates. Prefer `https`, drop obvious tracking params, resolve `x.com` / `twitter.com` aliases, and use the project landing page instead of a raw blob when the target is the GitHub repo itself.
 - [ ] Fetch the cleanest readable version first. Prefer official Markdown pages, `llms.txt` / `llms-full.txt`, GitHub README/docs, or reader-mode extraction. Use a browser only when static reads are incomplete.
 - [ ] For X posts or threads, capture the visible post text, engagement counts if visible, and any high-signal replies you can actually read. Do not invent hidden replies behind login walls.
-- [ ] Extract source metadata: title, source URL, author or org, source type, published date if visible.
-- [ ] Set `coverage` accurately: `complete`, `partial`, or `metadata-only`. If the fetch was incomplete or blocked, lower `confidence` and say why.
+- [ ] Extract source metadata: title, source URL, author or org, canonical `source_type`, published date if visible.
+- [ ] Set `coverage` accurately: `complete`, `partial`, or `metadata-only`. If the fetch was incomplete or blocked, lower `confidence`, say why, and note the reason in `Caveats / open questions`.
 - [ ] Assign 3-8 tags using the required facets first. Prefer retrieval value over cleverness.
 - [ ] Write one summary file per URL using the template. Keep the TL;DR to 1-2 sentences and the rest dense, concrete, and skimmable.
 - [ ] Preserve specifics that matter later: named systems, options, comparisons, metrics, dates, caveats, and links the source relies on.
@@ -87,6 +100,8 @@ Unless the caller specifies otherwise, write files under:
 Use:
 
 `<kind>--<slug>.md`
+
+Derive `<slug>` from the title or clearest claim: lowercase kebab-case, drop articles and prepositions, keep 4-8 distinctive words, and omit dates or other filename noise.
 
 Examples:
 
