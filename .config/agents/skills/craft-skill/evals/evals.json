@@ -1,5 +1,5 @@
 {
-  "skill_name": "skill-craft",
+  "skill_name": "craft-skill",
   "evals": [
     {
       "id": 1,
@@ -32,6 +32,17 @@
         "The response audits loaded or kept copies before deletion",
         "The response suggests cleanup before applying destructive changes",
         "The response preserves useful trigger nouns when compacting descriptions"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Create a small wrapper skill called deploy-preview-review that mostly runs grilling with deployment-review context and a short checklist.",
+      "expected_output": "A recommendation for a thin orchestrator skill that delegates to the reusable discipline instead of copying the full grilling procedure into a sibling skill.",
+      "files": [],
+      "assertions": [
+        "The response names the thin-orchestrator principle for wrapper skills",
+        "The response prefers a short wrapper over copied boilerplate from the underlying skill",
+        "The response preserves reusable discipline in the underlying skill rather than duplicating it"
       ]
     }
   ]

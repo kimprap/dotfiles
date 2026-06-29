@@ -1,0 +1,38 @@
+{
+  "skill_name": "craft-rule",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a TTSR rule for local://*-plan.md writes so the model remembers plan-file conventions when writing plan artifacts.",
+      "expected_output": "A rule design that uses scope/path matching for the write target instead of trying to detect the destination path from the write body.",
+      "files": [],
+      "assertions": [
+        "The response chooses scope or path matching over content regex for local://*-plan.md writes",
+        "The response treats the rule as TTSR-capable rather than always-apply by default",
+        "The response mentions at least one negative or near-miss trigger check"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Refine a rule that currently triggers on plans?\\b and keeps interrupting incidental prose about plans.",
+      "expected_output": "A refinement that narrows condition and scope, and explicitly validates both positive and negative trigger cases.",
+      "files": [],
+      "assertions": [
+        "The response narrows the over-broad plans?\\b trigger",
+        "The response requires at least one negative case or near-miss check",
+        "The response reviews condition and scope together rather than only editing regex text"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Clean up duplicate plan rules across OMP and Cursor providers after a migration.",
+      "expected_output": "A cleanup plan that verifies provider precedence and the kept copy before deleting or disabling duplicates.",
+      "files": [],
+      "assertions": [
+        "The response verifies provider precedence or kept copy before deletion",
+        "The response avoids deleting duplicates before confirming which copy wins",
+        "The response preserves the active rule path or name while removing stale duplicates"
+      ]
+    }
+  ]
+}

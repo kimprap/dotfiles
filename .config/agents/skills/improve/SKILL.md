@@ -86,14 +86,14 @@ No mode keyword → standard plan. `direct` or `no-plan` suppresses plan creatio
 ## Guardrails
 
 - Quick and direct/no-plan: never write plans; quick stays shallow, direct/no-plan uses standard-depth review before editing.
-- Standard/deep: always produce a dated plan in `.agents/plans/` using the improve naming convention (`IMPROVE_<variant>` slug) + the header metadata block + Tasks checklist per the plans rule.
+- Standard/deep: always produce a dated plan in `.agents/plans/` using the improve naming convention (`IMPROVE_<variant>` slug) + the header metadata block + Tasks checklist per the base plan rule.
 - Never destructive actions.
 - Respect current changes; do not ignore the actual diff for unrelated work.
 - If scope or mode remains ambiguous after parsing keywords, clarify briefly.
 - Plans are for review/execution. Do not auto-apply them.
 - If `direct`/`no-plan` conflicts with `deep`, ask once before doing broad direct edits.
 
-Always read `references/plan-template.md` and `.config/agents/rules/plans.md` before writing any plan (standard or deep).
+Always read `references/plan-template.md` and `.config/agents/rules/plan.md` before writing any plan (standard or deep).
 
 This skill is mode-aware: quick is fast/direct; direct/no-plan is standard-depth direct; standard/deep yield proportional structured plans.
 

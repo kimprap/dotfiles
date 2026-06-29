@@ -1,6 +1,6 @@
 ---
 description: Generic conventions for plan files under .agents/plans/. Triggers on creation, update, or completion (CRUD) of any plan file.
-condition: ".agents/plans/|plans/|plans\\\\b"
+condition: ".agents/plans/|plan\\.md|plans?\\b"
 scope:
   - "tool:bash"
   - "tool:write"
@@ -25,7 +25,6 @@ All plan files **must** use the format:
 Avoid generic names like `plan.md` or undated files.
 
 ## Header Metadata
-
 Plans include a metadata block immediately after the H1 title and before the first `##` section. Use this format with bold keys:
 
 ```
@@ -50,17 +49,26 @@ Plans are execution contracts, not transcripts. Detail must scale with risk and 
 - Include full command scripts, long excerpts, category-by-category audits, or extended rationale only when they materially reduce execution risk.
 - Small/default plans should stay compact; deep, high-risk, or multi-subsystem plans may be longer.
 
+## Completeness bar
+A plan must be decision-complete for its intended executor. If a reasonable executor would need to invent a material choice, the plan is incomplete.
+
+- Add supporting sections only when they remove executor guesswork; omit them when they only make the document look thorough.
+- When the work is implementation-heavy, handoff-critical, or otherwise demands zero design decisions from the executor, apply `.config/agents/rules/plan-impl-spec.md` in addition to this base rule.
+- Keep this base rule generic: it governs durable plan-file shape and lifecycle, not every domain-specific body schema.
+
 ## Required Structure
 A plan file contains the header metadata block above plus the required execution checklist:
 
 ## Tasks
 **This is the todo checklist and primary execution order.** Group related work into focused, self-contained batches ordered by priority. Note dependencies when they matter.
 
+- Every task **must** begin with a short stable reference code. Default to `T1`, `T2`, `T3`, ... unless another simple monotonic scheme is clearly better for the document.
+- Task codes do not need embedded meaning, but they must stay stable once written so the plan, verification notes, and completion summary can reference them unambiguously.
 - Tasks **must** always be created as unchecked markdown checkboxes:
-  `- [ ] Task description here`
+  `- [ ] T1. Task description here`
 - When marking a task complete, change it to checked and immediately add the completion timestamp on the following line indented under the task:
   ```
-  - [x] Task description here
+  - [x] T1. Task description here
     completed 2026-06-14-1505
   ```
 - This section is the primary driver for execution planning; keep supporting detail in findings, notes, or verification sections.
@@ -79,12 +87,13 @@ Example (recommended shape):
 
 - [ ] `stylua --check .config/nvim` exits 0
 - [ ] `git status --porcelain` reports only in-scope paths
-- The new behavior X is present and old misbehavior Y is gone (spot check or test)
+- [ ] The new behavior X is present and old misbehavior Y is gone (spot check or test)
 ```
 
 When the **last task** in the Tasks section is marked as complete:
 - Append a short **Completion Summary** section at the very end of the plan file (after all other content).
 - The summary must be concise and cover: key findings, triage decisions made, what was delivered, any residual risks, and overall outcome.
+- Reference task codes when it helps a fresh reader map the summary back to completed work.
 - Do not delete, overwrite, or alter prior sections of the plan.
 
 Once a plan is fully completed (every task shows as checked with its completion timestamp + the Completion Summary has been added):
@@ -99,5 +108,4 @@ Once a plan is fully completed (every task shows as checked with its completion 
 - Completed plans belong exclusively in `.agents/plans/archive/` (via `mv` as described above).
 - The `.agents/plans/` directory (and its archive subfolder) is reserved strictly for deliberate plan documents. It must not be used for scratch notes, temporary files, or unrelated artifacts.
 
-When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), follow these conventions. Use a consistent plan layout that includes the header metadata block (with Status), the Tasks todo checklist, and the recommended Verification / Done criteria for new plans.
-
+When performing any creation, edit, or deletion involving paths under `.agents/plans/` (or legacy `plans/`), follow these conventions. Use a consistent plan layout that includes the header metadata block (with Status), stable task reference codes, the Tasks todo checklist, and the recommended Verification / Done criteria for new plans.

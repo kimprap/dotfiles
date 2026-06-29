@@ -79,7 +79,11 @@ Never delete broadly by timestamp alone. Recent enqueue output can contain both 
 
 ## Prevention handoff
 
-For old-session import curation, use `mnemopi-retain` first. If `/memory enqueue` is run afterward, use this cleanup workflow immediately to remove raw transcript noise, malformed facts, duplicates, and stale/orphan embeddings.
+For old-session import curation, use `mnemopi-retain` first. `mnemopi-cleanup` is the repair path, not the primary quality mechanism.
+
+If `/memory enqueue` is run afterward, use this cleanup workflow immediately to remove raw transcript noise, malformed facts, duplicates, and stale/orphan embeddings.
+
+If cleanup removed transcript or meta chatter, explicitly recommend `mnemopi-retain` for future sessions so durable facts are captured before broad transcript retention pollutes recall again.
 
 ## Reporting
 

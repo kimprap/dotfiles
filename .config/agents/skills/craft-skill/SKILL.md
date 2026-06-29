@@ -1,5 +1,5 @@
 ---
-name: skill-craft
+name: craft-skill
 description: >
   Create, update, evaluate, and clean up agent skills. Use for skill authoring,
   cleanup, refining skill frontmatter or descriptions, adding evals/scripts/references,
@@ -19,12 +19,11 @@ hide: false
 disableModelInvocation: false
 disable-model-invocation: false
 metadata:
-  version: "0.1.0"
   tags: "agent-skills,skill-authoring,skill-evals,skill-cleanup"
   sources: "OMP docs; Agent Skills spec/docs; Anthropic skill-creator; Warp update-skill; steipete skill-cleaner"
 ---
 
-# skill-craft
+# craft-skill
 
 Create, refine, evaluate, and clean up agent skills without turning simple skills into boilerplate.
 
@@ -49,7 +48,7 @@ Field catalog for cross-harness compatibility:
 | `description` | Required for model-invoked skills. <=1024 chars. Primary trigger: state what it does and one trigger per distinct branch; collapse synonyms for the same branch. |
 | `license` | Optional. Add only when the repo/user provides a real license or bundled license file. |
 | `compatibility` | Optional. Add only for real product, tool, OS, package, network, or permission requirements. |
-| `metadata` | Optional key-value map for version, owner, tags, source, or harness-specific metadata. |
+| `metadata` | Optional key-value map for owner, tags, source, or harness-specific metadata. Avoid frontmatter version numbers. |
 | `allowed-tools` | Optional and security-sensitive. Add only with narrow justification; unsupported elsewhere does not make broad grants safe. |
 | `globs` | Optional OMP metadata for related paths; useful but not required for activation. |
 | `alwaysApply` | Usually omit or `false`; use `true` only for tiny universal guidance. |
@@ -69,6 +68,14 @@ Infer intent from the invocation and current conversation.
 - Mixed: preserve existing skill identity first; analyze cleanup candidates before deletion; ask only when a destructive choice cannot be inferred safely.
 
 Modifiers like `scripts` or `references` narrow review scope. They do not force creation.
+
+## Thin orchestrator principle
+
+- A user-invoked skill that mostly runs another skill with context should be a thin orchestrator.
+- A model-invoked skill should hold reusable discipline, vocabulary, or process.
+- Do not duplicate the same operational procedure across sibling skills; extract the reusable discipline once and have wrappers point to it.
+- If a requested skill mostly says “do X, but with Y context”, prefer a short wrapper over copying X.
+- If the requested artifact is a rule file under `.config/agents/rules/`, `.agents/rules/`, `.omp/rules/`, `.cursor/rules/`, `.windsurf/rules/`, or `.clinerules`, use `craft-rule` instead of applying skill frontmatter guidance.
 
 ## Create a skill
 
@@ -91,14 +98,14 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 4. Review candidates before writing them. Deny `scripts/` or `references/` creation when the pattern is one-off, too environment-specific, cheaper inline, or not durable.
 5. Make targeted edits: tighten descriptions, remove unused instructions, add missing gotchas, move bulky conditional detail to references, or bundle repeated deterministic work as a script.
 6. Prefer cuts and clarifications over more rules. Exact sequences belong only where order is fragile.
-7. If improving quality, compare against the old behavior or prior version when practical.
+7. If improving quality, compare against the old behavior or a prior snapshot when practical.
 
 ## Evaluate a skill
 
 Start small, then scale only if useful.
 
 1. Create 2-3 realistic prompts first, with at least one edge case or near miss.
-2. For a new skill, compare with no skill when practical. For an existing skill, compare with the previous version or snapshot.
+2. For a new skill, compare with no skill when practical. For an existing skill, compare with a previous snapshot or saved baseline.
 3. Add objective assertions after seeing outputs; do not invent brittle wording checks.
 4. Grade with evidence from files, outputs, or transcripts.
 5. Read traces for wasted steps, ignored guidance, false triggers, and repeated work.

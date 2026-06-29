@@ -1,6 +1,6 @@
 # Improvement Plan
 
-Read `.config/agents/rules/plans.md` first. It owns plan filenames, active/archive locations, the core header metadata block (`Datetime`/`Scope`/`Summary`/`Status`), `## Tasks` checkbox rules, completion timestamps, Completion Summary, and archive moves. This template adds `/improve`-specific `Mode` plus proportional standard/deep plan shapes.
+Read `.config/agents/rules/plan.md` first. It owns plan filenames, active/archive locations, the core header metadata block (`Datetime`/`Scope`/`Summary`/`Status`), `## Tasks` checkbox rules, stable task reference codes, completion timestamps, Completion Summary, and archive moves. This template adds `/improve`-specific `Mode` plus proportional standard/deep plan shapes.
 
 When used by `/improve`, the `<slug>` must follow `IMPROVE_<mode-or-params>` (e.g. `2026-06-14-1530_IMPROVE_deep.md`, `..._IMPROVE_security.md`, `..._IMPROVE_standard`). Use `date +%Y-%m-%d-%H%M` for the prefix.
 
@@ -42,8 +42,8 @@ Use this shape for default `/improve` unless the audit finds broad or risky work
 
 ## Tasks
 
-- [ ] <focused execution batch>
-- [ ] <verification/review batch if separate>
+- [ ] T1. <focused execution batch>
+- [ ] T2. <verification/review batch if separate>
 
 ## Verification / Done criteria
 
@@ -115,6 +115,6 @@ Use these sections for `/improve deep`, larger refactors, migrations, security w
 - Every task has enough file/path detail to act without re-discovering the whole problem.
 - Verification is concrete and targeted.
 - STOP conditions are plan-specific risks, not boilerplate.
-- The plan follows `plans.md` for header metadata, `## Tasks`, completion timestamps, Completion Summary, and archive lifecycle.
+- The plan follows `plan.md` for header metadata, stable task reference codes, `## Tasks`, completion timestamps, Completion Summary, and archive lifecycle.
 - The plan is proportional: small standard plans stay short; deep plans carry enough detail to avoid unsafe guessing.
 - No secret material.
