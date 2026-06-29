@@ -22,4 +22,5 @@ manifest
 .grok
 .cursor
 AGENTS.md
+WATCHDOG.yml
 
