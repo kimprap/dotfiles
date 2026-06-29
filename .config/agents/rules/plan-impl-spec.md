@@ -1,5 +1,5 @@
 ---
-description: Implementation-grade companion to plan.md. Use when creating or refining a durable plan for code, agent-harness, architecture, debugging, TDD, prototype-to-production, or other execution work where a fresh executor must make zero material decisions.
+description: Companion to plan.md for drafting or revising handoff-grade coding implementation plans. Apply only while writing a durable future-execution plan for code or agent-behavior changes; skip verification-only, investigation-only, cleanup-only, or direct-execution work.
 ---
 
 # Implementation Plan Companion
@@ -7,9 +7,9 @@ description: Implementation-grade companion to plan.md. Use when creating or ref
 Read .config/agents/rules/plan.md first; this rule only adds implementation-grade body requirements.
 
 ## When to apply this rule
-- Apply it when an engineering skill is producing or reshaping a durable implementation plan.
-- Do not apply it just because an engineering skill is invoked for direct execution. Examples: direct `eng-tdd` work that writes tests now, direct `eng-diagnosing-bugs` repro construction, or an exploratory `eng-prototype` can skip it unless the result is being converted into a plan.
-- Apply it for handoff-critical plans, architecture refactor plans, TDD feature plans, debugging fix plans, prototype-to-production plans, and agent-harness changes involving skills/rules/agents/vaults where a fresh executor should not invent decisions.
+- Apply it when authoring or rewriting a durable implementation plan whose later executor will change code or agent behavior.
+- Do not apply it for verification-only, investigation-only, cleanup-only, or direct-execution work just because an engineering skill is active.
+- Apply it for handoff-critical coding plans, architecture refactor plans, TDD feature or fix plans, debugging fix implementation plans, prototype-to-production implementation plans, and agent-harness implementation plans that will change skills, rules, agents, or vault wiring.
 
 ## Execution intent
 State the exact end state and what must be true when the work is done.
