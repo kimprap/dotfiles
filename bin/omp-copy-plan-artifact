@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# bin/omp-copy-plan-artifact
+#
+# Mirror a session-local OMP plan artifact into .agents/plans/ while keeping the
+# target filename compliant with the local plans rule.
+#
+# Usage:
+#   omp-copy-plan-artifact --slug SLUG --datetime YYYY-MM-DD-HHMM [--content-file FILE]
+#
+# If --content-file is omitted, or is '-' or '/dev/stdin', content is read from stdin.
+# Copying is atomic at the target path: we stage into a temp file under the target
+# directory, then mv into place.
+
+set -euo pipefail
+
+TARGET_BASE=".agents/plans"
+SLUG=""
+DATETIME=""
+CONTENT_FILE=""
+STAGING_FILE=""
+TARGET_TMP=""
+
+usage() {
+  cat >&2 <<'EOF'
+Usage: omp-copy-plan-artifact --slug SLUG --datetime YYYY-MM-DD-HHMM [--content-file FILE]
+       Content may be supplied on stdin when --content-file is omitted, '-', or '/dev/stdin'.
+EOF
+}
+
+cleanup() {
+  [[ -n "$STAGING_FILE" ]] && rm -f "$STAGING_FILE" 2>/dev/null || true
+  [[ -n "$TARGET_TMP" ]] && rm -f "$TARGET_TMP" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --slug)
+      SLUG="${2:-}"; shift 2 ;;
+    --datetime)
+      DATETIME="${2:-}"; shift 2 ;;
+    --content-file)
+      CONTENT_FILE="${2:-}"; shift 2 ;;
+    -h|--help)
+      usage; exit 0 ;;
+    *)
+      echo "ERROR: unknown argument: $1" >&2
+      usage
+      exit 2 ;;
+  esac
+done
+
+if [[ -z "$SLUG" || -z "$DATETIME" ]]; then
+  echo "ERROR: --slug and --datetime are required" >&2
+  usage
+  exit 2
+fi
+
+if [[ ! "$DATETIME" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{4}$ ]]; then
+  echo "ERROR: datetime '$DATETIME' must match YYYY-MM-DD-HHMM" >&2
+  exit 2
+fi
+
+if [[ ! "$SLUG" =~ ^[A-Za-z0-9_-]+$ ]]; then
+  echo "ERROR: slug '$SLUG' may contain only letters, numbers, underscores, and hyphens" >&2
+  exit 2
+fi
+
+TARGET_DIR="$TARGET_BASE"
+TARGET_FILE="$TARGET_DIR/${DATETIME}_${SLUG}.md"
+
+if ! mkdir -p "$TARGET_DIR"; then
+  echo "ERROR: failed to mkdir -p $TARGET_DIR" >&2
+  exit 1
+fi
+
+STAGING_FILE="$(mktemp "${TMPDIR:-/tmp}/omp-plan-copy.XXXXXX")"
+TARGET_TMP="$(mktemp "$TARGET_DIR/.${DATETIME}_${SLUG}.XXXXXX.tmp")"
+
+if [[ -z "$CONTENT_FILE" || "$CONTENT_FILE" == "-" || "$CONTENT_FILE" == "/dev/stdin" ]]; then
+  if ! cat > "$STAGING_FILE"; then
+    echo "ERROR: failed to read plan content from stdin" >&2
+    exit 1
+  fi
+else
+  if [[ ! -e "$CONTENT_FILE" ]]; then
+    echo "ERROR: --content-file does not exist: $CONTENT_FILE" >&2
+    exit 1
+  fi
+  if ! cp "$CONTENT_FILE" "$STAGING_FILE"; then
+    echo "ERROR: failed to stage content file: $CONTENT_FILE" >&2
+    exit 1
+  fi
+fi
+
+if [[ ! -s "$STAGING_FILE" ]]; then
+  echo "ERROR: refusing to sync an empty plan artifact" >&2
+  exit 1
+fi
+
+if ! cp "$STAGING_FILE" "$TARGET_TMP"; then
+  echo "ERROR: cp failed while writing target temp file: $TARGET_FILE" >&2
+  exit 1
+fi
+
+if ! mv "$TARGET_TMP" "$TARGET_FILE"; then
+  echo "ERROR: failed to finalize plan artifact at $TARGET_FILE" >&2
+  exit 1
+fi
+TARGET_TMP=""
+
+echo "plan-artifact-synced: $TARGET_FILE"
+exit 0

@@ -39,11 +39,11 @@ mnemopi:
   enhancedRecall: true
   embeddingModel: nvidia/llama-nemotron-embed-vl-1b-v2:free
   embeddingApiUrl: https://openrouter.ai/api/v1
-  llmMode: remote
-  llmBaseUrl: https://openrouter.ai/api/v1
-  llmModel: nvidia/nemotron-3-ultra-550b-a55b:free
+  llmMode: smol
+  autoRetain: true
 extensions:
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
+  - ~/.dotfiles/.config/agents/harnesses/omp/extensions/plan-artifact-sync.js
 lsp:
   formatOnWrite: true
 setupVersion: 1
@@ -53,7 +53,7 @@ task:
   showResolvedModelBadge: true
 hideThinkingBlock: true
 providers:
-  webSearch: codex
+  webSearch: tavily
   webSearchExclude:
     - perplexity
   memoryModel: online
@@ -66,3 +66,11 @@ modelRoles:
   plan: openai-codex/gpt-5.5
   designer: openai-codex/gpt-5.4
   smol: xai-oauth/grok-build
+  advisor: xai-oauth/grok-build
+vault:
+  enabled: true
+browser:
+  enabled: true
+web_search:
+  enabled: true
+
