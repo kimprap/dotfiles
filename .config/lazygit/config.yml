@@ -1,12 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
-
 git:
   pagers:
     - colorArg: always
       pager: delta --paging=never --line-numbers --diff-highlight
-
 # Guarded p/P: confirmation popups before push/pull.
-# Replaces the direct-fire actions (files pushFiles/pullFiles + localBranches branch push/pull).
+# Replaces the direct-fire actions (files pushFiles/pullFiles + localBranches + commits panels).
 customCommands:
   # p: pull via `git pull` (respects pull.* from git config)
   - key: "p"
@@ -20,7 +18,6 @@ customCommands:
     loadingText: "Pulling..."
     after:
       checkForConflicts: true
-
   # P: push the selected local branch. Uses upstream remote/branch when configured;
   # otherwise sets upstream on origin for the branch (first-push case).
   - key: "P"
@@ -32,9 +29,21 @@ customCommands:
         body: "Are you sure you want to push?"
     command: "git push {{if .SelectedLocalBranch.UpstreamRemote}}{{.SelectedLocalBranch.UpstreamRemote}} {{.SelectedLocalBranch.UpstreamBranch}}{{else}}-u origin {{.SelectedLocalBranch.Name}}{{end}}"
     loadingText: "Pushing..."
-
+  # P from commits panel (e.g. "[4] Commits"): same guarded push
+  - key: "P"
+    context: "commits"
+    description: "Push"
+    prompts:
+      - type: "confirm"
+        title: "Push"
+        body: "Are you sure you want to push?"
+    command: "git push {{if .SelectedLocalBranch.UpstreamRemote}}{{.SelectedLocalBranch.UpstreamRemote}} {{.SelectedLocalBranch.UpstreamBranch}}{{else}}-u origin {{.SelectedLocalBranch.Name}}{{end}}"
+    loadingText: "Pushing..."
 # Disable legacy direct mappings for these keys; customs above supply the confirmed behavior.
 keybinding:
   files:
     pushFiles: <disabled>
     pullFiles: <disabled>
+  commits:
+    push: <disabled>
+

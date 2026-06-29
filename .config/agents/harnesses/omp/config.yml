@@ -60,13 +60,13 @@ providers:
 github:
   enabled: true
 modelRoles:
-  task: xai-oauth/grok-build
-  default: openai-codex/gpt-5.4:high
+  default: openai-codex/gpt-5.4
   slow: openai-codex/gpt-5.5
   plan: openai-codex/gpt-5.5
-  designer: openai-codex/gpt-5.4
-  smol: xai-oauth/grok-build
-  advisor: xai-oauth/grok-build
+  smol: xai-oauth/grok-build-0.1
+  advisor: xai-oauth/grok-build-0.1
+  tiny: openai-codex/gpt-5.4-mini:high
+  task: xai-oauth/grok-build-0.1
 vault:
   enabled: true
 browser:
