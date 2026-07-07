@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "pyright": {
+      "disabled": true
+    },
+    "basedpyright": {
+      "disabled": false
+    },
+    "pylsp": {
+      "disabled": true
+    },
+    "ruff": {
+      "disabled": false
+    }
+  },
+  "idleTimeoutMs": 300000
+}
