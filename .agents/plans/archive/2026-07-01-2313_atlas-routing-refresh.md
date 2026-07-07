@@ -3,7 +3,7 @@
 **Datetime**: 2026-07-01-2313
 **Scope**: Update the Atlas implementation plan so routing, freshness, registry ownership, optional SQLite, and workflow control are deterministic and 12-Factor-first.
 **Summary**: Execute this plan before implementing `.agents/plans/2026-06-30-1339_research-framework-vault.md`. The output is a revised first Atlas plan that uses Markdown artifacts and Markdown registries as Phase 1 canonical state, defers SQLite to a later derived-index phase, makes routing/dirty-refresh behavior deterministic, and treats Atlas workflows as 12-Factor-style reducers around small focused agents.
-**Status**: PENDING
+**Status**: DONE
 
 ## Context
 
@@ -29,6 +29,25 @@ Implement the two Atlas plans as one ordered chain, not as two parallel implemen
 3. **After the routing-refresh edits are verified, mark `.agents/plans/2026-07-01-2313_atlas-routing-refresh.md` DONE and archive it** using the local plan conventions for completed plans. Its decisions have then been absorbed into the first implementation plan.
 4. **Execute the revised first implementation plan next** (`.agents/plans/2026-06-30-1339_research-framework-vault.md`). Run its tasks top-to-bottom after revision: verify `vault://atlas/` and `vault://atlas/todos/`; create `vault://atlas/ARCHITECTURE.md`; update the legacy `digest` skill; update the source template; create the research-library template asset; create starter vault files including `VOCAB.md`, `TOPICS.md`, and `RELATIONS.md`; then run the registry/source/research smoke checks.
 5. **Keep Phase 1 Markdown-only.** The revised first plan must not implement SQLite. SQLite appears only as a later optional Phase 4 derived registry cache behind `.config/agents/skills/atlas-index/scripts/atlas-registry.py`.
+
+## Tasks
+
+- [x] T1. Make execution order explicit before changing architecture
+  completed 2026-07-02-1457
+- [x] T2. Choose Markdown canonical state and defer SQLite
+  completed 2026-07-02-1457
+- [x] T3. Prioritize 12-Factor Agents as the architecture basis
+  completed 2026-07-02-1635
+- [x] T4. Add the Markdown registry layer to the foundation plan
+  completed 2026-07-02-1635
+- [x] T5. Update source contracts and route-source reducer behavior
+  completed 2026-07-02-1704
+- [x] T6. Define dirty state, quick-answer behavior, and persisted delta refresh
+  completed 2026-07-02-1704
+- [x] T7. Update slash command contracts, hooks policy, phases, and SQLite adapter timing
+  completed 2026-07-02-1709
+- [x] T8. Replace verification in the foundation plan
+  completed 2026-07-02-1709
 
 ## Approach
 
@@ -447,3 +466,7 @@ No shell command is required to verify this local plan. Use `read`/`grep` tools;
 - The repo-local routing-refresh file `.agents/plans/2026-07-01-2313_atlas-routing-refresh.md` is an auto-mirrored artifact of `local://atlas-routing-refresh-plan.md`; planning edits happen only in `local://atlas-routing-refresh-plan.md`.
 - If later execution discovers the mirror filename changed by datetime, update the precedence reference to the latest `.agents/plans/*_atlas-routing-refresh.md` mirror and continue; do not duplicate routing-refresh plans.
 - Existing local SQLite code is read-only and Mnemopi-specific. It provides script style only, not reusable Atlas CRUD logic.
+
+## Completion Summary
+
+T1-T8 were applied to `.agents/plans/2026-06-30-1339_research-framework-vault.md`. The foundation plan now has explicit routing-refresh precedence, Markdown-first canonical state, deferred SQLite policy, 12-Factor workflow basis, Markdown registry schemas, source routing and dirty-refresh reducer contracts, slash-command ownership, hook guardrail policy, phased rollout, and revised verification. SQLite remains out of Phase 1 and appears only as an optional Phase 4 derived registry cache behind `.config/agents/skills/atlas-index/scripts/atlas-registry.py`. No vault runtime files, skill files, templates, SQLite files, or Atlas scripts were created while applying this routing-refresh plan. The foundation plan T1 is marked complete; execute the revised foundation plan from T2 next.

@@ -53,24 +53,26 @@ task:
   showResolvedModelBadge: true
 hideThinkingBlock: true
 providers:
-  webSearch: tavily
+  webSearch: brave
   webSearchExclude:
     - perplexity
   memoryModel: online
 github:
   enabled: true
 modelRoles:
-  default: openai-codex/gpt-5.4
+  default: openai-codex/gpt-5.4:xhigh
   slow: openai-codex/gpt-5.5
-  plan: openai-codex/gpt-5.5
-  smol: xai-oauth/grok-build-0.1
-  advisor: xai-oauth/grok-build-0.1
+  plan: openai-codex/gpt-5.5:xhigh
+  smol: xai-oauth/grok-build
+  advisor: openai-codex/gpt-5.4:xhigh
   tiny: openai-codex/gpt-5.4-mini:high
-  task: xai-oauth/grok-build-0.1
+  task: xai-oauth/grok-build
 vault:
   enabled: true
 browser:
   enabled: true
 web_search:
   enabled: true
+disabledProviders:
+  - codex
 
