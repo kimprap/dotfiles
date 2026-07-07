@@ -336,6 +336,21 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 
 -- Quote textobjects are provided by mini.ai (a"/i" etc.).
 -- next/last variants (an/in/al/il) are disabled globally in mini.ai.
+local function visual_line_end()
+  if vim.fn.mode() ~= "v" then
+    local prefix = vim.v.count > 0 and tostring(vim.v.count) or ""
+    vim.cmd.normal({ args = { prefix .. "$" }, bang = true })
+    return
+  end
+
+  local target = math.min(vim.fn.line(".") + vim.v.count1 - 1, vim.fn.line("$"))
+  local text = vim.fn.getline(target)
+  local chars = vim.fn.strchars(text)
+  local col = chars > 0 and vim.str_byteindex(text, chars - 1) or 0
+  vim.api.nvim_win_set_cursor(0, { target, col })
+end
+
+map("x", "$", visual_line_end, { desc = "Visual end of line without EOL" })
 
 -- Indent and keep visual selection
 map("v", ">", ">gv", { desc = "Indent right and keep selection" })
