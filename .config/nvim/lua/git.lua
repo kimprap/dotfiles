@@ -330,6 +330,59 @@ local function setup_codediff_once()
     },
   })
 
+  -- Patch prepare_node (called by render for every visible item) so we can:
+  --  * normalize "??" untracked -> "A" (more intuitive "added")
+  --  * place the status marker on the LEFT right after indent (before file icon)
+  --    This guarantees the marker is visible in the narrow explorer (width=28) and
+  --    for long filenames.
+  local ok, nodes = pcall(require, "codediff.ui.explorer.nodes")
+  if ok and nodes and nodes.prepare_node then
+    local orig_prepare = nodes.prepare_node
+    nodes.prepare_node = function(node, max_width, selected_path, selected_group)
+      local data = node.data or {}
+      local sym = data.status_symbol
+      if data.status == "??" or sym == "??" then
+        sym = "A"
+        data.status_symbol = sym
+        data.status_color = "CodeDiffStatusAdded"
+      end
+
+      local line = orig_prepare(node, max_width, selected_path, selected_group)
+
+      local do_move = sym and sym ~= "" and data.type ~= "group" and data.type ~= "directory"
+      if do_move then
+        local segs = line._segments or {}
+        -- remove trailing right-margin spaces
+        while #segs > 0 and segs[#segs].hl == "Normal" and (segs[#segs].text or ""):match("^ +$") do
+          table.remove(segs)
+        end
+        -- remove the status seg (orig appended it on right with correct hl)
+        if #segs > 0 and segs[#segs].text == sym then
+          local status_seg = table.remove(segs)
+          -- remove padding spaces that were before it (for right align)
+          while #segs > 0 and segs[#segs].hl == "Normal" and (segs[#segs].text or ""):match("^ +$") do
+            table.remove(segs)
+          end
+          -- insert after indent markers only (before icon)
+          local ins = 1
+          while
+            ins <= #segs
+            and (
+              segs[ins].hl == "NeoTreeIndentMarker"
+              or (segs[ins].hl == "Normal" and (segs[ins].text or ""):match("^[ │├└ ]+$"))
+            )
+          do
+            ins = ins + 1
+          end
+          table.insert(segs, ins, status_seg)
+          table.insert(segs, ins + 1, { text = " ", hl = "Normal" })
+        end
+        -- if no match, status stays on right (graceful)
+      end
+      return line
+    end
+  end
+
   codediff_did_setup = true
 
   local stability_group = vim.api.nvim_create_augroup("user.codediff_stability", { clear = true })
