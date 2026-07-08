@@ -92,7 +92,7 @@ Example (recommended shape):
 
 When the **last task** in the Tasks section is marked as complete:
 - Append a short **Completion Summary** section at the very end of the plan file (after all other content).
-- The summary must be concise and cover: key findings, triage decisions made, what was delivered, any residual risks, and overall outcome.
+- Write the Completion Summary in concise (terse), bulleted format. Cover key findings, triage decisions made, what was delivered, any residual risks, and overall outcome.
 - Reference task codes when it helps a fresh reader map the summary back to completed work.
 - Do not delete, overwrite, or alter prior sections of the plan.
 
