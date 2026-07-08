@@ -1,5 +1,5 @@
 # User remaps for omp. Action IDs documented in omp://keybindings.md.
-# Ctrl+Shift+D is remapped away from Debug Tools by extensions/key-remaps.js.
+# Ctrl+Shift+D is remapped by ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js; Ctrl+Shift+G opens Debug Tools.
 # Use it for macOS-style forward word deletion; keep Ctrl+D as forward-delete
 # without exiting.
 # Esc stays unbound; Ctrl+C remains OMP's hard-exit path, so use Alt+C to abort

@@ -336,6 +336,12 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 
 -- Quote textobjects are provided by mini.ai (a"/i" etc.).
 -- next/last variants (an/in/al/il) are disabled globally in mini.ai.
+local function line_end_col(lnum)
+  local text = vim.fn.getline(lnum)
+  local chars = vim.fn.strchars(text)
+  return chars > 0 and vim.str_byteindex(text, chars - 1) or 0
+end
+
 local function visual_line_end()
   if vim.fn.mode() ~= "v" then
     local prefix = vim.v.count > 0 and tostring(vim.v.count) or ""
@@ -344,13 +350,39 @@ local function visual_line_end()
   end
 
   local target = math.min(vim.fn.line(".") + vim.v.count1 - 1, vim.fn.line("$"))
-  local text = vim.fn.getline(target)
-  local chars = vim.fn.strchars(text)
-  local col = chars > 0 and vim.str_byteindex(text, chars - 1) or 0
-  vim.api.nvim_win_set_cursor(0, { target, col })
+  vim.api.nvim_win_set_cursor(0, { target, line_end_col(target) })
+end
+
+local function set_charwise_yank(text)
+  vim.fn.setreg('"', text, "v")
+  vim.fn.setreg("0", text, "v")
+
+  local clipboard = vim.opt.clipboard:get()
+  if vim.tbl_contains(clipboard, "unnamedplus") then
+    vim.fn.setreg("+", text, "v")
+  end
+  if vim.tbl_contains(clipboard, "unnamed") then
+    vim.fn.setreg("*", text, "v")
+  end
+end
+
+local function yank_line_contents()
+  local origin = vim.api.nvim_win_get_cursor(0)
+  local target = math.min(origin[1] + vim.v.count1 - 1, vim.fn.line("$"))
+
+  if target == origin[1] and vim.fn.getline(origin[1]) == "" then
+    set_charwise_yank("")
+    return
+  end
+
+  vim.cmd.normal({ args = { "0v" }, bang = true })
+  vim.api.nvim_win_set_cursor(0, { target, line_end_col(target) })
+  vim.cmd.normal({ args = { "y" }, bang = true })
+  vim.api.nvim_win_set_cursor(0, origin)
 end
 
 map("x", "$", visual_line_end, { desc = "Visual end of line without EOL" })
+map("n", "yy", yank_line_contents, { desc = "Yank line contents without EOL" })
 
 -- Indent and keep visual selection
 map("v", ">", ">gv", { desc = "Indent right and keep selection" })
