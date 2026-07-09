@@ -24,6 +24,10 @@ switch_tab   = "prefix+1..9"
 previous_tab = "prefix+p"
 next_tab     = "prefix+n"
 
+# Workspace cycle (Caps+Shift+[ / ] via Karabiner → prefix+[ / ])
+previous_workspace = "prefix+["
+next_workspace     = "prefix+]"
+
 new_tab = []
 
 # Use wrapper commands for pane/tab creation/closing so panes are numbered per tab.

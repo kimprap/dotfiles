@@ -1160,7 +1160,7 @@
                         ]
                     },
                     {
-                        "description": "Caps Lock: tap = esc, hold = Herdr prefix-free layer; caps+; = ctrl+b (herdr prefix)",
+                        "description": "Caps Lock: tap = esc, hold = Herdr prefix-free layer; caps+; = ctrl+b; caps+shift+[ / ] = workspace cycle",
                         "manipulators": [
                             {
                                 "from": {
@@ -1756,7 +1756,48 @@
                                 ],
                                 "from": {
                                     "key_code": "open_bracket",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": { "mandatory": ["shift"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "open_bracket" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": { "mandatory": ["shift"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "close_bracket" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket"
                                 },
                                 "to": [
                                     {
@@ -1776,8 +1817,7 @@
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "close_bracket",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "key_code": "close_bracket"
                                 },
                                 "to": [
                                     {
