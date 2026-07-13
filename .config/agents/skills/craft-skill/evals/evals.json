@@ -44,6 +44,32 @@
         "The response prefers a short wrapper over copied boilerplate from the underlying skill",
         "The response preserves reusable discipline in the underlying skill rather than duplicating it"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "A skill has a strong name and description but sets disableModelInvocation: true. Natural-language requests never load it, while an explicit slash-command wrapper does and the skill then executes correctly. Diagnose and refine the setup.",
+      "expected_output": "A diagnosis that separates filesystem existence, model discoverability, explicit wrapper transport, and post-load execution; manual invocation remains a deliberate choice rather than being replaced with alwaysApply.",
+      "files": [],
+      "assertions": [
+        "The response distinguishes skill existence from loaded or live activation",
+        "The response explains that disabled model invocation prevents natural-language auto-loading",
+        "The response treats the slash-command wrapper as an explicit invocation transport",
+        "The response evaluates execution behavior only after the skill is loaded",
+        "The response rejects alwaysApply as the automatic fix"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Expose one reusable release-check process through an OMP skill invocation and a Grok CLI slash invocation without maintaining two versions of the workflow.",
+      "expected_output": "One portable Agent Skills body containing the process, with only thin harness transport adapters where needed and separate discovery/invocation checks for each host.",
+      "files": [],
+      "assertions": [
+        "The response keeps one reusable SKILL.md body as the process source of truth",
+        "The response limits harness adapters to discovery, invocation, or metadata differences",
+        "The response does not duplicate the operational process across OMP and Grok CLI",
+        "The response prefers each host's native skill invocation before creating a wrapper",
+        "The response verifies discovery, invocation timing, and post-load behavior per transport"
+      ]
     }
   ]
 }

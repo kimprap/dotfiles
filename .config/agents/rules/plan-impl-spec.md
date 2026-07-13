@@ -4,7 +4,7 @@ description: Companion to plan.md for drafting or revising handoff-grade coding 
 
 # Implementation Plan Companion
 
-Read .config/agents/rules/plan.md first; this rule only adds implementation-grade body requirements.
+Apply the base `plan.md` execution-plan contract first; this rule only adds implementation-grade body requirements.
 
 ## When to apply this rule
 - Apply it when authoring or rewriting a durable implementation plan whose later executor will change code or agent behavior.

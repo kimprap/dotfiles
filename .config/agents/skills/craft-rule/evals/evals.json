@@ -3,24 +3,26 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Create a TTSR rule for local://*-plan.md writes so the model remembers plan-file conventions when writing plan artifacts.",
-      "expected_output": "A rule design that uses scope/path matching for the write target instead of trying to detect the destination path from the write body.",
+      "prompt": "Design rules for one durable execution-plan content contract that must shape drafting in both repository files and harness- or session-local plan artifacts, while repository naming and archival apply only under .agents/plans/.",
+      "expected_output": "A portable description-only semantic base that is available before drafting, plus a repository-storage companion; the cross-transport contract is not hidden behind TTSR or a path guard.",
       "files": [],
       "assertions": [
-        "The response chooses scope or path matching over content regex for local://*-plan.md writes",
-        "The response treats the rule as TTSR-capable rather than always-apply by default",
-        "The response mentions at least one negative or near-miss trigger check"
+        "The response chooses a description-only relevance-loaded base for the portable semantic contract",
+        "The response isolates .agents/plans naming and archival in a repository-storage companion",
+        "The response rejects putting the cross-transport contract behind TTSR or a path guard",
+        "The response validates repository, harness-local, and neighboring non-plan surfaces"
       ]
     },
     {
       "id": 2,
-      "prompt": "Refine a rule that currently triggers on plans?\\b and keeps interrupting incidental prose about plans.",
-      "expected_output": "A refinement that narrows condition and scope, and explicitly validates both positive and negative trigger cases.",
+      "prompt": "Refine an OMP rule whose condition uses plans?\\b and keeps interrupting incidental prose. Some of its guidance may need to shape drafting before the first tool call.",
+      "expected_output": "A refinement that decides the required injection timing and whether TTSR is appropriate before changing the matcher; if TTSR remains justified, it narrows condition and scope and validates positive and near-miss cases.",
       "files": [],
       "assertions": [
-        "The response narrows the over-broad plans?\\b trigger",
-        "The response requires at least one negative case or near-miss check",
-        "The response reviews condition and scope together rather than only editing regex text"
+        "The response decides whether pre-reasoning availability or stream-time correction is required before tuning plans?\\b",
+        "The response uses a relevance-loaded rule when guidance must shape drafting before tools",
+        "If TTSR remains appropriate, the response narrows condition and scope together",
+        "The response validates positive and negative or near-miss cases"
       ]
     },
     {
@@ -32,6 +34,18 @@
         "The response verifies provider precedence or kept copy before deletion",
         "The response avoids deleting duplicates before confirming which copy wins",
         "The response preserves the active rule path or name while removing stale duplicates"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "An OMP rule has a condition and tool scope, but its policy must shape the model's first draft before any tool call. It never affects initial reasoning. Fix the activation failure.",
+      "expected_output": "A diagnosis that adding condition classified the rule as TTSR and moved it too late, followed by a relevance-loaded semantic rule rather than another regex adjustment.",
+      "files": [],
+      "assertions": [
+        "The response diagnoses a rule-bucket or injection-timing mismatch caused by condition",
+        "The response moves the pre-draft semantic policy to a description-only relevance-loaded rule",
+        "The response does not treat broader or narrower regex as the primary fix",
+        "The response verifies availability timing separately from behavior after activation"
       ]
     }
   ]

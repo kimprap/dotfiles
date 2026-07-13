@@ -2,25 +2,14 @@
 name: craft-skill
 description: >
   Create, update, evaluate, and clean up agent skills. Use for skill authoring,
-  cleanup, refining skill frontmatter or descriptions, adding evals/scripts/references,
-  auditing duplicates or stale skills, or deciding whether to merge, delete, or keep existing skills.
+  frontmatter or description refinement, scripts/references/evals, discovery or invocation
+  failures, harness transports, duplicate/stale audits, or merge/delete decisions.
 compatibility: >
-  Agent Skills compatible; optimized for OMP, Claude Code, Codex/OpenClaw-style skill roots,
-  VS Code/GitHub Copilot Agent Skills, and similar Markdown-skill harnesses.
-globs:
-  - "**/SKILL.md"
-  - "**/skills/**"
-  - ".agents/skills/**"
-  - ".agent/skills/**"
-  - ".omp/skills/**"
-  - ".config/agents/skills/**"
-alwaysApply: false
-hide: false
-disableModelInvocation: false
-disable-model-invocation: false
+  Uses the Agent Skills standard and runs in OMP, Grok CLI, Claude Code, Codex,
+  and similar hosts. Provider-specific transports and invocation metadata are optional adapters.
 metadata:
   tags: "agent-skills,skill-authoring,skill-evals,skill-cleanup"
-  sources: "OMP docs; Agent Skills spec/docs; Anthropic skill-creator; Warp update-skill; steipete skill-cleaner"
+  sources: "Agent Skills spec; OMP docs; Grok CLI docs; Codex docs; Anthropic skill-creator"
 ---
 
 # craft-skill
@@ -40,22 +29,22 @@ description: >
 ---
 ```
 
-Field catalog for cross-harness compatibility:
+Portable fields follow the Agent Skills standard; invocation and path hints are provider extensions. Confirm target-harness support before emitting an extension.
 
 | Field | Use |
 |---|---|
 | `name` | Required. Kebab-case, <=64 chars, no leading/trailing/consecutive hyphens, and match the directory. Preserve on update. |
-| `description` | Required for model-invoked skills. <=1024 chars. Primary trigger: state what it does and one trigger per distinct branch; collapse synonyms for the same branch. |
+| `description` | Required. <=1024 chars. Primary discovery signal: state what the skill does, when to use it, and one trigger per distinct branch. |
 | `license` | Optional. Add only when the repo/user provides a real license or bundled license file. |
 | `compatibility` | Optional. Add only for real product, tool, OS, package, network, or permission requirements. |
-| `metadata` | Optional key-value map for owner, tags, source, or harness-specific metadata. Avoid frontmatter version numbers. |
-| `allowed-tools` | Optional and security-sensitive. Add only with narrow justification; unsupported elsewhere does not make broad grants safe. |
-| `globs` | Optional OMP metadata for related paths; useful but not required for activation. |
-| `alwaysApply` | Usually omit or `false`; use `true` only for tiny universal guidance. |
-| `hide` | Optional OMP metadata; hides from prompt lists while keeping manual access. |
-| `disableModelInvocation` / `disable-model-invocation` | Optional hide-equivalent compatibility spellings. Use for user-invoked skills that should not spend context load unless explicitly called. |
+| `metadata` | Optional key-value map for owner, tags, source, or namespaced harness notes. Avoid frontmatter version numbers. |
+| `allowed-tools` | Optional and security-sensitive. Add only with narrow justification; support varies between harnesses. |
+| `globs` | Provider extension describing related paths. Useful for routing where supported, but not proof of activation. |
+| `alwaysApply` | Provider extension. Omit unless the guidance is tiny, universal, and worth loading every turn. |
+| `hide` | Provider extension controlling prompt-list visibility where supported; it does not by itself disable model invocation. |
+| `disableModelInvocation` / `disable-model-invocation` | Provider spellings that prevent automatic/model invocation. Use only when a user, command, parent skill, or wrapper loads the skill explicitly. |
 
-Emit only fields with signal. Keep model invocation only when the agent or another skill should discover the skill; otherwise prefer user-invoked to avoid context load. A simple CLI-use skill may need only `name`, `description`, and a short body.
+Emit only fields with signal, and never assume extension spellings are equivalent across harnesses. A simple portable skill usually needs only `name`, `description`, and a short body.
 
 ## Choose the workflow
 
@@ -76,6 +65,13 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 - Do not duplicate the same operational procedure across sibling skills; extract the reusable discipline once and have wrappers point to it.
 - If a requested skill mostly says “do X, but with Y context”, prefer a short wrapper over copying X.
 - If the requested artifact is a rule file under `.config/agents/rules/`, `.agents/rules/`, `.omp/rules/`, `.cursor/rules/`, `.windsurf/rules/`, or `.clinerules`, use `craft-rule` instead of applying skill frontmatter guidance.
+
+## Activation and transport
+
+- Keep the portable process in the skill body. Slash commands, wrappers, globs, and harness metadata are discovery or invocation transports.
+- Prefer each host's native skill invocation over a new wrapper; verify syntax from live inventory. Current verified forms are OMP `/skill:<name>` and Grok CLI `/<name>`; other hosts adapt only this seam.
+- If natural-language work must be shaped before action, keep the skill model-discoverable or have an already-loaded parent explicitly load it.
+- Keep genuinely manual skills manual; do not compensate with `alwaysApply` or a duplicated body.
 
 ## Create a skill
 
@@ -102,16 +98,17 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 
 ## Evaluate a skill
 
-Start small, then scale only if useful.
+Start small, then scale only when evidence warrants it.
 
-1. Create 2-3 realistic prompts first, with at least one edge case or near miss.
-2. For a new skill, compare with no skill when practical. For an existing skill, compare with a previous snapshot or saved baseline.
-3. Add objective assertions after seeing outputs; do not invent brittle wording checks.
-4. Grade with evidence from files, outputs, or transcripts.
-5. Read traces for wasted steps, ignored guidance, false triggers, and repeated work.
-6. Iterate by generalizing from failures, not by overfitting to the prompt text.
+1. Verify the live inventory and provider precedence; filesystem presence is fallback context, not proof that a skill loaded.
+2. Test discoverability and invocation timing for each supported transport, such as natural-language matching, explicit user/slash invocation, or a parent wrapper.
+3. Verify execution behavior and output after loading separately from discovery.
+4. Include at least one positive and one near-miss transport case.
+5. Compare a new skill with no skill, or an updated skill with a saved baseline, when practical.
+6. Grade objective behavior from files, outputs, or traces; avoid exact-prose assertions.
+7. Generalize from failures rather than overfitting descriptions or bodies to eval wording.
 
-For description-only tuning, use positive and near-miss negative trigger prompts. Keep the best description by validation behavior, not by train-set overfit.
+For description tuning, keep the best description by observed discovery behavior, not filesystem presence or train-set fit.
 
 ## Clean up skills
 

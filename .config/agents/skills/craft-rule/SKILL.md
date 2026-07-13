@@ -2,20 +2,11 @@
 name: craft-rule
 description: >
   Create, update, evaluate, and clean up agent rule files. Use for rule authoring,
-  TTSR condition/scope tuning, always-apply versus rulebook decisions, false trigger audits,
-  layered base/companion/harness-specific rule design, or rule cleanup.
+  activation/injection timing, TTSR condition/scope tuning, false-trigger audits,
+  layered base/companion/harness adapters, always-apply decisions, or rule cleanup.
 compatibility: >
-  Optimized for OMP Markdown rules; also useful for Markdown rule files used by
-  agents, Cursor, Windsurf, Cline, and similar harnesses when unsupported OMP metadata can be ignored.
-globs:
-  - "**/rules/*.md"
-  - ".config/agents/rules/**"
-  - ".agents/rules/**"
-  - ".omp/rules/**"
-  - ".cursor/rules/**"
-  - ".windsurf/rules/**"
-  - ".clinerules/**"
-alwaysApply: false
+  Runs as an Agent Skill in OMP, Grok CLI, and other Agent Skills hosts.
+  Rule output stays portable; OMP TTSR metadata is optional and provider-specific.
 metadata:
   tags: "agent-rules,ttsr,rule-authoring,agent-harness-engineering"
 ---
@@ -109,10 +100,13 @@ Infer intent from the requested rule work and the current failure mode.
 - If a harness silently compacts or rebuilds context, keep only the durable universal contract in the core rule and make heavier guidance load on demand.
 
 ## Choose the enforcement surface
-- Use a rulebook rule when the guidance is descriptive and only needed when the task naturally touches that domain.
-- Use TTSR when you need stream-time correction on a prompt, tool call, or write target and you can define a narrow trigger.
+- Identify the target harness and required injection time before choosing its syntax. Keep semantic policy portable; add only verified provider metadata or transport adapters.
+- Use a relevance-loaded rulebook rule when guidance must shape reasoning or drafting before any tool call. In OMP, keep that portable base description-only.
+- Use TTSR only when prompt or tool arguments expose enough evidence, late interruption is safe, and stream-time correction is the requirement.
+- Adding `condition` or `astCondition` changes the OMP rule bucket and injection timing. If guidance is needed pre-draft, remove that trigger metadata rather than tuning regex or using `alwaysApply` as a workaround.
+- Separate universal semantic contracts, repository storage companions, and harness transport shims. Never hide a cross-transport content contract behind a path guard.
 - Use always-apply only for tiny universal invariants that must survive every turn.
-- Prefer tooling, config, linters, tests, or file templates over prose rules when the behavior can be enforced deterministically.
+- Prefer tooling, config, linters, tests, or templates when behavior can be enforced deterministically.
 
 ## Create a rule
 
@@ -131,10 +125,13 @@ Infer intent from the requested rule work and the current failure mode.
 
 ## Evaluate a rule
 
-1. Test 2–3 positive trigger prompts/tool arguments and at least one near-miss negative.
-2. Check neighboring surfaces too: wrong file path, similar wording, or adjacent tool call that should not fire.
-3. For TTSR, verify that `scope` is doing most of the narrowing work; regex should refine, not carry the whole filter.
-4. For core or always-apply rules, check that the content is small enough to justify being present every turn.
+1. Verify expected availability and injection time: before reasoning, or only at prompt/tool time.
+2. Test the matcher on its actual observable surface—intent, content, destination path, AST, or tool arguments—with positive and near-miss cases.
+3. Verify resulting behavior after activation; a matcher hit alone is not success.
+4. For portable contracts, cover a repository path, a harness- or session-local artifact, and a neighboring non-target surface.
+5. Treat filesystem or provider presence as inventory evidence, not proof that the rule loaded or won precedence; inspect live inventory or traces when available.
+6. For TTSR, require scope to do most of the narrowing; regex should refine rather than carry the filter.
+7. For core or always-apply rules, justify their always-present context cost.
 
 ## Cleanup
 
