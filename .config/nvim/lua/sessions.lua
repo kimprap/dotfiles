@@ -188,10 +188,58 @@ local function workspace_session_refresh_detected()
   end
 end
 
-local function workspace_session_write()
+--- Session file names encode the workspace path; keep getcwd() aligned on write.
+local function sessions_chdir_for_data(data)
+  if type(data) ~= "table" or type(data.name) ~= "string" then
+    return
+  end
+  local dir = workspace.dir_from_session_name(data.name)
+  if not dir or vim.fn.isdirectory(dir) ~= 1 then
+    return
+  end
+  if vim.fs.normalize(vim.fn.getcwd()) ~= dir then
+    vim.fn.chdir(dir)
+  end
+end
+
+local function sessions_repair_cd(data)
+  if type(data) ~= "table" or type(data.path) ~= "string" or type(data.name) ~= "string" then
+    return
+  end
+  local dir = workspace.dir_from_session_name(data.name)
+  if dir then
+    workspace.ensure_session_file_cd(data.path, dir)
+  end
+end
+
+--- Read a workspace session, repairing a stale/wrong `cd` line first.
+--- Session file names encode the workspace path; relative `badd`/`edit` paths
+--- only resolve correctly when the file's `cd` matches that workspace.
+local function sessions_read(name, opts)
+  opts = opts or { force = true, verbose = false }
+  if type(name) == "string" and workspace.is_session_file(name) then
+    local dir = workspace.dir_from_session_name(name)
+    local path = workspace.session_dir .. "/" .. name
+    if dir and vim.fn.filereadable(path) == 1 then
+      workspace.ensure_session_file_cd(path, dir)
+    end
+  end
+  return MiniSessions.read(name, opts)
+end
+
+local function workspace_session_write(dir)
+  dir = dir and vim.fs.normalize(dir) or vim.fs.normalize(vim.fn.getcwd())
   sessions_cleanup_ephemeral()
-  pcall(MiniSessions.write, workspace.session_slug(), { force = true, verbose = false })
+  if vim.fn.isdirectory(dir) == 1 and vim.fs.normalize(vim.fn.getcwd()) ~= dir then
+    vim.fn.chdir(dir)
+  end
+  local slug = workspace.session_slug(dir)
+  local ok = pcall(MiniSessions.write, slug, { force = true, verbose = false })
+  if ok then
+    workspace.ensure_session_file_cd(workspace.session_path(dir), dir)
+  end
   workspace_session_refresh_detected()
+  return ok
 end
 
 local function workspace_session_delete(dir)
@@ -221,7 +269,7 @@ local function starter_workspace_sessions(n)
         local is_here = name == cwd_slug
         items[#items + 1] = {
           name = workspace.session_slug_label(name) .. (is_here and " (resume here)" or ""),
-          action = string.format([[lua MiniSessions.read(%q, { force = true })]], name),
+          action = string.format([[lua require("sessions").read(%q)]], name),
           section = "Sessions",
           _mtime = session.modify_time,
           _prio = is_here and 2 or 0,
@@ -251,7 +299,8 @@ local function starter_workspace_sessions(n)
   end
 end
 
-local function sessions_post_read()
+local function sessions_post_read(data)
+  sessions_chdir_for_data(data)
   sessions_cleanup_ephemeral()
   git.attach_loaded_buffers()
   -- oil SessionLoadPost can finish loading after mini.sessions post hook
@@ -270,16 +319,25 @@ require("mini.sessions").setup({
   file = "", -- global slug files only (see workspace.session_slug)
   hooks = {
     pre = {
-      write = function()
+      write = function(data)
         sessions_cleanup_ephemeral()
+        sessions_chdir_for_data(data)
         vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
       end,
     },
     post = {
+      write = sessions_repair_cd,
       read = sessions_post_read,
     },
   },
 })
+
+-- Heal workspace session files whose mksession `cd` drifted from the slug path.
+for name, session in pairs(MiniSessions.detected) do
+  if session.type == "global" and workspace.is_session_file(name) then
+    sessions_repair_cd(session)
+  end
+end
 
 -- Welcome screen (mini.starter) when no session to restore
 local MiniStarter = require("mini.starter")
@@ -345,11 +403,12 @@ end
 
 vim.api.nvim_create_autocmd("VimEnter", {
   group = sessions_augroup,
-  desc = "Restore session or open starter for bare nvim",
+  desc = "Restore session or open starter for bare nvim / nvim .",
   once = true,
   callback = function()
-    if workspace.will_restore_session() then
-      local ok, err = pcall(MiniSessions.read, workspace.session_slug(), { force = true, verbose = false })
+    local restore_dir = workspace.restore_dir()
+    if restore_dir then
+      local ok, err = pcall(sessions_read, workspace.session_slug(restore_dir), { force = true, verbose = false })
       if not ok then
         vim.notify("Session restore failed: " .. tostring(err), vim.log.levels.ERROR)
       end
@@ -403,4 +462,7 @@ map("n", "<leader>Sd", function()
   vim.notify("Session deleted: " .. workspace.path_label(), vim.log.levels.INFO)
 end, { desc = "Delete workspace session for cwd" })
 
-return {}
+local M = {}
+M.read = sessions_read
+M.write = workspace_session_write
+return M
