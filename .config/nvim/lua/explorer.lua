@@ -60,6 +60,8 @@ local nvim_tree_backdrop_win = nil
 local fff_backdrop_buf = nil
 local fff_backdrop_win = nil
 local fff_picker_ui = nil
+-- Assigned later with fzf helpers; FFF keymaps call it on open.
+local fff_bridge_to_fzf_files
 
 local nvim_tree_did_setup = false
 local fff_did_setup = false
@@ -157,6 +159,21 @@ local function reinforce_fff_navigation_keymaps()
   set_nav(fff_picker_ui.state.list_buf, "n", "<C-k>", prev_item, "FFF previous item")
   set_nav(fff_picker_ui.state.preview_buf, "n", "<C-j>", next_item, "FFF next item")
   set_nav(fff_picker_ui.state.preview_buf, "n", "<C-k>", prev_item, "FFF previous item")
+
+  -- FFF never indexes gitignored paths; Alt-i/h hand off to fzf-lua (query kept).
+  -- Prefer Alt over Ctrl: Ctrl-I is Tab and Ctrl-H is Backspace in terminal Nvim.
+  for _, buf in ipairs({
+    fff_picker_ui.state.input_buf,
+    fff_picker_ui.state.list_buf,
+    fff_picker_ui.state.preview_buf,
+  }) do
+    set_nav(buf, { "i", "n" }, "<M-i>", function()
+      fff_bridge_to_fzf_files({ no_ignore = true })
+    end, "FFF → fzf (include gitignored)")
+    set_nav(buf, { "i", "n" }, "<M-h>", function()
+      fff_bridge_to_fzf_files({ hidden = true })
+    end, "FFF → fzf (include hidden)")
+  end
 end
 
 -- Shared setup for manual backdrops (Black + offset blend to match fzf-lua darkness).
@@ -677,6 +694,8 @@ local function fzf_file_edit_and_cleanup(selected, opts)
   cleanup_hidden_fzf_buffers()
 end
 
+-- Re-declare file actions (setup overrides the defaults table). Keep alt-i/h
+-- toggles; ctrl-i/h only work when the terminal does not map them to Tab/BS.
 local function fzf_file_actions()
   local actions = require("fzf-lua.actions")
   return {
@@ -684,7 +703,107 @@ local function fzf_file_actions()
     ["ctrl-s"] = actions.file_split,
     ["ctrl-v"] = actions.file_vsplit,
     ["ctrl-t"] = actions.file_tabedit,
+    ["alt-i"] = { fn = actions.toggle_ignore, reuse = true, header = false },
+    ["alt-h"] = { fn = actions.toggle_hidden, reuse = true, header = false },
+    ["ctrl-i"] = { fn = actions.toggle_ignore, reuse = true, header = false },
+    ["ctrl-h"] = { fn = actions.toggle_hidden, reuse = true, header = false },
   }
+end
+
+local function fzf_winopts(preview_opts)
+  return vim.tbl_deep_extend("force", {
+    border = "rounded",
+    backdrop = BACKDROP_BLEND,
+    preview = { vertical = "up:45%" },
+  }, preview_opts or {})
+end
+
+--- Capture typed FFF query before close (state first, then input buffer).
+local function fff_current_query()
+  if not (fff_picker_ui and fff_picker_ui.state) then
+    return ""
+  end
+  local state = fff_picker_ui.state
+  local query = state.query
+  if type(query) == "string" and query ~= "" then
+    return query
+  end
+  local buf = state.input_buf
+  if not (buf and vim.api.nvim_buf_is_valid(buf)) then
+    return type(query) == "string" and query or ""
+  end
+  local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
+  local prompt = ""
+  local conf_ok, conf = pcall(require, "fff.conf")
+  if conf_ok then
+    prompt = conf.get().prompt or ""
+  end
+  if prompt ~= "" and line:sub(1, #prompt) == prompt then
+    return line:sub(#prompt + 1)
+  end
+  return line
+end
+
+--- Project files via fzf-lua (walk-based; supports no_ignore / hidden).
+---@param opts? { no_ignore?: boolean, hidden?: boolean, query?: string, cwd?: string }
+local function open_project_files_fzf(opts)
+  opts = opts or {}
+  M.setup_fzf()
+  local flags = {}
+  if opts.no_ignore then
+    table.insert(flags, "no-ignore")
+  end
+  if opts.hidden then
+    table.insert(flags, "hidden")
+  end
+  local prompt = "Project Files> "
+  if #flags > 0 then
+    prompt = prompt .. "[" .. table.concat(flags, " ") .. "] "
+  end
+  local fzf_opts = {
+    cwd = opts.cwd or vim.uv.cwd(),
+    prompt = prompt,
+    query = opts.query or "",
+    actions = fzf_file_actions(),
+    winopts = fzf_winopts(),
+  }
+  -- Only set toggles when true so fzf-lua keeps its defaults otherwise
+  -- (files default hidden=true; no_ignore off).
+  if opts.no_ignore then
+    fzf_opts.no_ignore = true
+  end
+  if opts.hidden then
+    fzf_opts.hidden = true
+  end
+  require("fzf-lua").files(fzf_opts)
+end
+
+--- Close FFF and open fzf-lua with the same query + index root as cwd.
+---@param flags { no_ignore?: boolean, hidden?: boolean }
+fff_bridge_to_fzf_files = function(flags)
+  local query = fff_current_query()
+  local cwd = vim.uv.cwd()
+  if fff_picker_ui and fff_picker_ui.state then
+    local conf_ok, conf = pcall(require, "fff.conf")
+    if conf_ok then
+      local base = conf.get().base_path
+      if type(base) == "string" and base ~= "" then
+        cwd = base
+      end
+    end
+    if fff_picker_ui.state.active then
+      pcall(fff_picker_ui.close)
+    end
+  end
+  -- Defer so FFF close + backdrop teardown settle first.
+  vim.schedule(function()
+    open_project_files_fzf({
+      cwd = cwd,
+      query = query,
+      no_ignore = flags.no_ignore,
+      hidden = flags.hidden,
+    })
+  end)
 end
 
 M.setup_fzf = function()
@@ -698,6 +817,9 @@ M.setup_fzf = function()
         ["<C-u>"] = "preview-page-up",
         ["<M-Esc>"] = false,
       },
+    },
+    actions = {
+      files = fzf_file_actions(),
     },
     winopts = {
       on_close = cleanup_hidden_fzf_buffers,
@@ -785,7 +907,7 @@ end
 map("n", "<leader>f", function()
   setup_fff_once()
   require("fff").find_files()
-end, { desc = "Find files in project (fff)" })
+end, { desc = "Find files in project (fff; Alt-i → fzf +gitignored)" })
 
 map("n", "<leader>/", function()
   setup_fff_once()
@@ -799,14 +921,6 @@ map("n", "<leader>,", function()
 end, { desc = "Find open buffers" })
 
 -- Global finders (fzf-lua for native backdrop + border treatment)
-local function fzf_winopts(preview_opts)
-  return vim.tbl_deep_extend("force", {
-    border = "rounded",
-    backdrop = BACKDROP_BLEND,
-    preview = { vertical = "up:45%" },
-  }, preview_opts or {})
-end
-
 map("n", "<leader>F", function()
   M.setup_fzf()
   require("fzf-lua").files({

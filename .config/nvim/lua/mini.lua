@@ -368,7 +368,7 @@ function M.setup_clue()
       MiniClue.gen_clues.square_brackets(),
       { mode = "n", keys = "<Leader>e", desc = "Explorer (nvim-tree)" },
       { mode = "n", keys = "<Leader>E", desc = "Explorer (oil)" },
-      { mode = "n", keys = "<Leader>f", desc = "Find files (fff)" },
+      { mode = "n", keys = "<Leader>f", desc = "Find files (fff; Alt-i → fzf +ignored)" },
       { mode = "n", keys = "<Leader>/", desc = "Grep project (fff)" },
       { mode = "n", keys = "<Leader>F", desc = "Find files anywhere (global)" },
       { mode = "n", keys = "<Leader>?", desc = "Grep anywhere (global)" },
