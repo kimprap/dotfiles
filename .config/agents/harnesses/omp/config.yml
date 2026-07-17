@@ -65,8 +65,8 @@ modelRoles:
   plan: openai-codex/gpt-5.6-sol:xhigh
   smol: xai-oauth/grok-4.5:xhigh
   advisor: openai-codex/gpt-5.6-sol:xhigh
-  tiny: openai-codex/gpt-5.4-mini:high
   task: xai-oauth/grok-4.5:xhigh
+  tiny: xai-oauth/grok-4.5:medium
 vault:
   enabled: true
 browser:

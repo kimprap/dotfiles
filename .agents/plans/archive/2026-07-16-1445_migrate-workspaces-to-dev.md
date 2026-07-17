@@ -3,7 +3,7 @@
 **Datetime**: 2026-07-16-1445
 **Scope**: Local filesystem and workstation state for moving `kaira`, `atlas`, and `company` from `~/Desktop/ng3` to `~/dev`; preserve dirty work, OMP/Grok sessions and memory, herdr layouts, and the Obsidian Atlas vault binding. No product or bot behavior changes.
 **Summary**: Perform a same-volume, rollback-aware cutover to `~/dev/{kaira,atlas,company}`. All mutable harness state is checkpointed and backed up after a global application quiesce, remapped offline with exact path mappings, then reopened only for controlled memory-identity discovery and end-to-end verification.
-**Status**: PENDING
+**Status**: DONE
 
 ## Canonical-source contract
 
@@ -12,6 +12,10 @@ This file is the sole execution contract and ledger for this migration. Execute 
 T1 creates a temporary offline runner solely to execute the operations specified here while OMP and Grok are stopped. The runner is subordinate to this plan: record its path and SHA-256 in this file before T3, require phase-specific dry runs, and stop if its behavior differs from this plan. If the plan or runner must change after T3, do not improvise: stop before further writes, reverse any incomplete workspace move when safe, reopen the plan, revise T1, and restart at T2.
 
 T3 through T8 run from a plain Terminal.app shell, not from OMP, Grok, herdr, or a Ghostty pane. The runner writes timestamped JSONL events and verification output under its private run directory. After OMP is reopened in T9, copy those observed completion timestamps into the task checklist before closing T10.
+
+Post-T6 amendment: if the verified `offline-cutover` marker is complete, the runner hash is unchanged, no T7 controlled launch has occurred, and a runner/plan conflict is limited to whether empty Grok and OMP discovery shells are created before one guarded memory migration, a user-approved plan-only amendment may retain the verified T4–T6 state instead of rolling it back. Record the approval and revised T7 order in this file, reverify the offline marker and backup manifest, and continue only with the unchanged runner.
+
+Post-T7 amendment approved by the user at `2026-07-17-1639`: the first T8 execute attempt stopped during read-only pre-mutation verification because Grok's controlled T7 launches reconciled its generated global picker index. No T8 mutation occurred: the original Kaira `.venv` remains in place, no relocated-venv backup or rebuild marker exists, and the execution log ends at the database hard stop. Retain the verified T4–T7 state instead of performing the higher-risk rollback required by the original generic runner-change rule. Revise only the runner's Grok picker-index verification and its exact hash-lineage checks, ledger the new hash before another runner invocation, and preserve all pre-amendment baselines and markers unchanged under runner SHA-256 `0dc3d33c9f1ac909f984170089b71fa57455c6ed56cbdcdc89f787d8b5f69747`. The revised runner may accept that one exact predecessor hash for existing artifacts while requiring its current hash in this plan for new invocations and markers.
 
 ## Execution intent
 
@@ -106,16 +110,16 @@ All authoritative counts and ID sets are recaptured after quiescence in T4.
 
 ## Tasks
 
-- [ ] T1. Activate the canonical plan and prepare the offline runner
-- [ ] T2. Capture the read-only baseline and prove preconditions
-- [ ] T3. Globally quiesce applications and hand off to a plain shell
-- [ ] T4. Checkpoint and back up every mutable migration surface
-- [ ] T5. Move all workspace trees with rollback protection
-- [ ] T6. Remap sessions, databases, herdr, trust, and Obsidian offline
-- [ ] T7. Discover and migrate Grok and Mnemopi path identities
-- [ ] T8. Rebuild path-sensitive state and update live path contracts
-- [ ] T9. Reopen applications and verify the migration end to end
-- [ ] T10. Classify residuals, close the ledger, and archive atomically
+- [x] T1. Activate the canonical plan and prepare the offline runner
+- [x] T2. Capture the read-only baseline and prove preconditions
+- [x] T3. Globally quiesce applications and hand off to a plain shell
+- [x] T4. Checkpoint and back up every mutable migration surface
+- [x] T5. Move all workspace trees with rollback protection
+- [x] T6. Remap sessions, databases, herdr, trust, and Obsidian offline
+- [x] T7. Discover and migrate Grok and Mnemopi path identities
+- [x] T8. Rebuild path-sensitive state and update live path contracts
+- [x] T9. Reopen applications and verify the migration end to end
+- [x] T10. Classify residuals, close the ledger, and archive atomically
 
 ## Critical anchors
 
@@ -174,6 +178,13 @@ All authoritative counts and ID sets are recaptured after quiescence in T4.
 6. Run `python3 -m py_compile` and `preflight --dry-run`. Review its complete action list against this plan.
 7. Record `RUN_ROOT`, the runner SHA-256, and the dry-run timestamp in an indented execution note under T1. Any later runner edit invalidates that hash and returns execution to T1.
 
+   - completed 2026-07-17-1130
+   - `RUN_ROOT=/Users/kim/.local/share/workspace-migrate-20260717-110858`
+   - runner SHA-256: `0dc3d33c9f1ac909f984170089b71fa57455c6ed56cbdcdc89f787d8b5f69747`
+   - successful T1 preflight dry run: `2026-07-17T04:30:23Z`
+   - review note: exact source/destination maps, guarded rename/rollback, backup coverage, structural-only rewrites, exact-equality database updates, T7 discovery-only identity migration, rebuild scope, quiescence gates, and restart markers match this plan. An initial dry run hard-stopped because `~/dev` was absent; while still in T1, the runner was revised to probe the home volume without creating `~/dev`, recompiled, rehashed, and rerun successfully.
+   - approved T8 amendment runner SHA-256: `63695a87c7802cae7b6bb14960b59632069275bcc2201646101917485a064739` at `2026-07-17-1639`; this revision accepts only the exact predecessor hash above for existing T1–T7 artifacts and applies the exact generated-index reconciliation recorded under T8.
+
 ### T2. Capture the read-only baseline and prove preconditions
 
 Run while applications may still be open; make no backups and no mutations except creating `~/dev` and writing baseline files under `RUN_ROOT`.
@@ -214,6 +225,12 @@ Live SQLite reads are provisional: use read-only access, falling back to `mode=r
    These commands must not change tracked files, memory, or harness state. Pre-existing failures do not authorize fixes during migration; post-move behavior must match or improve solely through path repair.
 9. Run `preflight --dry-run` again. It must report no collision, no cross-device move, and no unclassified state surface.
 
+   - completed 2026-07-17-1132
+   - baseline: `RUN_ROOT/baseline/preflight-20260717T043146Z.json` (`30742d57cfd4962e3a2ce97912c63b6b44cb894cd05b2e3d82758d173c5d6e3a`)
+   - all source roots and target absence passed; source and `~/dev` devices are `16777231`; required backup estimate is `938865571` bytes with `47144271872` bytes free.
+   - no linked worktrees, submodules, old-path absolute symlinks, path-pinned Grok worktrees, company DB rows, or unclassified live contracts were found.
+   - behavior baseline: Kaira tests passed; Atlas instance check passed; the plan-specified Ruff command lines returned 2 because this installed Ruff requires `ruff check --no-cache` / `ruff format --no-cache`.
+
 ### T3. Globally quiesce applications and hand off to a plain shell
 
 No later task may begin inside an agent or Ghostty/herdr pane.
@@ -230,6 +247,9 @@ No later task may begin inside an agent or Ghostty/herdr pane.
    - the runner SHA-256 still matches the T1 note.
 5. If any process or tree holder remains, stop without force-killing it. Close it cleanly and repeat all checks.
 6. Do not reopen OMP, Grok, Ghostty, herdr, or Obsidian until the specific controlled launch in T7 or the final reopen in T9.
+
+   - completed 2026-07-17-1605
+   - `offline-cutover --dry-run` recorded global quiescence and completed at `2026-07-17T09:05:02Z`.
 
 ### T4. Checkpoint and back up every mutable migration surface
 
@@ -258,6 +278,9 @@ Run `offline-cutover --dry-run`, then start `offline-cutover --execute`. The run
 5. Record a manifest with path, type, size, permissions, and SHA-256 for every backup file. Open each SQLite backup read-only and repeat its integrity/count checks.
 6. Do not begin T5 unless every expected backup and manifest entry verifies. Keep `RUN_ROOT` until the user explicitly confirms deletion in a later session.
 
+   - completed 2026-07-17-1610
+   - `t4_backup_verified` was recorded at `2026-07-17T09:10:17Z`; the original manifest SHA-256 was `d0122e20fe823032c9fa86e5b362711b52500ca09c5cf1d5cecb80ac4cc2ec5c`.
+
 ### T5. Move all workspace trees with rollback protection
 
 1. Recheck destination absence and source/destination device equality immediately before the first rename.
@@ -274,6 +297,9 @@ Run `offline-cutover --dry-run`, then start `offline-cutover --execute`. The run
    - Kaira repository status bytes, dirty diff, and untracked manifest match the baseline;
    - no harness/home state has yet been remapped by this phase.
 6. Leave the now-empty `~/Desktop/ng3` parent for T10.
+
+   - completed 2026-07-17-1612
+   - `t5_workspace_moves_verified` was recorded at `2026-07-17T09:12:29Z`; all three root device/inode identities were preserved.
 
 ### T6. Remap sessions, databases, herdr, trust, and Obsidian offline
 
@@ -312,52 +338,65 @@ The runner performs only structural/discovery-key updates. Historical conversati
 13. Run JSON parsing, SQLite integrity, exact count, and path-key checks for all T6 outputs. There must be no old target discovery key in the remapped groups/files, while the old `ig-bot` group and rows remain.
 14. Complete the `offline-cutover` phase marker. Do not reopen normal applications yet.
 
+   - completed 2026-07-17-1612
+   - `offline_cutover_verified`, the phase marker, and `phase_completed` were recorded at `2026-07-17T09:12:31Z`.
+
 ### T7. Discover and migrate Grok and Mnemopi path identities
 
 Path hashes are observed, never guessed. Controlled launches create empty target identities; no prompt or agent turn may be submitted.
 
-#### Grok memory
+Execution amendment approved by the user at `2026-07-17-1613`: T4–T6 completed and verified with runner SHA-256 `0dc3d33c9f1ac909f984170089b71fa57455c6ed56cbdcdc89f787d8b5f69747`; backup manifest SHA-256 is `d0122e20fe823032c9fa86e5b362711b52500ca09c5cf1d5cecb80ac4cc2ec5c`; no T7 application had been launched. The unchanged runner validates both sets of empty discovery shells in one dry run and migrates Grok durable sources before Mnemopi banks. The following revised order supersedes the original staged discovery order and avoids a higher-risk rollback of already verified T4–T6 state.
 
-1. From Terminal.app, launch Grok once from each new cwd in this order: Kaira, Atlas app, Atlas vault. At the first idle prompt, submit nothing and quit immediately.
-2. Prove all Grok processes have exited. Run `migrate-memory --dry-run` and identify exactly one newly created memory slug per cwd.
-3. Recheck Git origins. If an origin appeared or identity does not have one unambiguous old and one empty new directory, stop without merging.
-4. A new Grok memory directory is acceptable only when `MEMORY.md` is absent/blank and `sessions/` has no files. Any real content is a hard stop.
-5. For each project:
-   - remove only the verified empty shell's generated `index.sqlite*` and runtime lock;
-   - move the old `MEMORY.md` and complete `sessions/` source tree into the new slug;
-   - do not migrate `index.sqlite*`, `.dream-lock`, or another generated/runtime file;
-   - remove the old project directory only after its durable source files match the backup and exist under the new slug.
-6. Leave Grok stopped. Its documented watcher will rebuild the generated search index during T9.
+Second T7 amendment approved by the user at `2026-07-17-1618`: the first controlled idle launches created all three empty Mnemopi banks but no Grok workspace-memory directory. Grok `0.2.102` enables memory in config but materializes workspace storage only when memory is initialized for the session. For each Grok cwd, use the documented session-only `/memory off` followed by `/memory on`, which reinitializes storage without an agent turn or durable memory content, then quit. Any non-empty target store remains a hard stop.
 
-#### Mnemopi banks
+Third T7 amendment approved by the user at `2026-07-17-1624`: Grok `0.2.102` initialized each target with only `index.sqlite` and an exact three-line `MEMORY.md` boilerplate containing the new cwd plus `> Auto-populated by dream consolidation. Edit freely.`; no `sessions/` entry or user memory exists. After byte-for-byte verification across all three shells, delete only those generated boilerplate files, fsync their directories, leave the generated indexes for runner validation, and rerun the guarded dry run. Any differing content remains a hard stop.
 
-7. From Terminal.app, launch OMP once from each new cwd in this order: Kaira, Atlas app, Atlas vault. Submit no user prompt or tool request; exit immediately after startup initializes the bank.
-8. Prove all OMP processes have exited. Run `migrate-memory --dry-run` and identify exactly one newly created bank directory per cwd.
-9. Require each new bank to be a structurally empty initialization shell. If it has user working/episodic memories, stop; never merge banks automatically.
-10. For each project, after rechecking/checkpointing the old bank and its backup:
-    - remove the verified empty new shell;
-    - rename the complete old bank directory to the newly observed bank slug;
-    - retain the DB, embeddings, graph tables, IDs, and all durable data.
-11. In one transaction per non-empty bank, replace the exact old bank slug with the new slug only in identity columns that exist and matched the T4 baseline:
+Fourth T7 amendment approved by the user at `2026-07-17-1627`: the empty Kaira Mnemopi shell uses the current fresh-database column order for `working_memory.embed_text` and lacks `sqlite_stat1`/`sqlite_stat4`, while the authoritative Kaira bank has the same columns with `embed_text` appended by an earlier migration and has been analyzed. Atlas app and vault shells match exactly. After proving the Kaira shell has no durable rows and that these are the only schema-signature differences, normalize only that disposable shell by recreating its empty `working_memory` table from the exact T4 SQL and running `ANALYZE`; require an exact full schema match, integrity `ok`, and continued empty user tables. The authoritative old bank remains untouched and will still be moved whole.
+
+The first normalization attempt recreated `working_memory` and the stat tables but, as SQLite specifies, dropping the table also removed its dependent indexes and FTS maintenance triggers. The shell remained empty and integral. Restore only the exact missing T4 index/trigger DDL, then repeat the full exact-schema, integrity, and emptiness checks.
+
+1. Reverify the `offline-cutover` marker, backup manifest, runner hash, and application quiescence.
+2. From Terminal.app, launch Grok once from each new cwd in this order: Kaira, Atlas app, Atlas vault. At the first idle prompt, submit only `/memory off` followed by `/memory on`, wait for memory storage to reinitialize, and quit immediately without an agent turn.
+3. From Terminal.app, launch OMP once from each new cwd in this order: Kaira, Atlas app, Atlas vault. Submit no user prompt or tool request; exit immediately after startup initializes the bank.
+4. Prove all Grok and OMP processes have exited. Run `migrate-memory --dry-run` once and identify exactly one newly created Grok memory slug and one newly created Mnemopi bank per cwd.
+5. Recheck Git origins. If an origin appeared or either identity does not have one unambiguous old directory and one empty new directory, stop without merging.
+6. Require each new Grok memory directory to have an absent/blank `MEMORY.md` and no files under `sessions/`, applying only the exact generated-boilerplate exception recorded above. Require each new Mnemopi bank to be a structurally empty initialization shell. Any real content is a hard stop; never merge stores automatically.
+7. Run `migrate-memory --execute`. For each Grok project, the runner:
+   - removes only the verified empty shell's generated `index.sqlite*` and runtime lock;
+   - moves the old `MEMORY.md` and complete `sessions/` source tree into the new slug;
+   - does not migrate `index.sqlite*`, `.dream-lock`, or another generated/runtime file;
+   - removes the old project directory only after its durable source files match the backup and exist under the new slug.
+8. For each Mnemopi project, after rechecking/checkpointing the old bank and its backup, the runner:
+   - removes the verified empty new shell;
+   - renames the complete old bank directory to the newly observed bank slug;
+   - retains the DB, embeddings, graph tables, IDs, and all durable data.
+9. In one transaction per non-empty bank, replace the exact old bank slug with the new slug only in identity columns that exist and matched the T4 baseline:
     - `working_memory.session_id`, `working_memory.channel_id`;
     - `episodic_memory.session_id`, `episodic_memory.channel_id`;
     - `facts.session_id`;
     - `consolidation_log.session_id`;
     - `memoria_facts.session_id`, `memoria_timelines.session_id`, `memoria_instructions.session_id`, `memoria_preferences.session_id`, `memoria_kg.session_id`.
-12. Update `working_memory.metadata_json.$.cwd` only where it exactly equals that project's old cwd. Do not replace old path/bank text inside memory content, `embed_text`, FTS content, historical session summaries, or provenance.
-13. Verify per bank:
+10. Update `working_memory.metadata_json.$.cwd` only where it exactly equals that project's old cwd. Do not replace old path/bank text inside memory content, `embed_text`, FTS content, historical session summaries, or provenance.
+11. Verify per bank:
     - all T4 table row counts and durable memory IDs are unchanged;
     - old slug count is zero in the listed identity columns;
     - new slug counts equal the old baseline counts;
     - old cwd count is zero and new cwd count equals the baseline in `working_memory.metadata_json`;
     - orphan embeddings do not increase;
     - `PRAGMA integrity_check` returns `ok`.
-14. The Atlas vault bank must remain structurally empty except for schema/index initialization.
-15. Complete the memory phase marker and keep Grok/OMP stopped until T9.
+12. Verify the Atlas vault bank remains structurally empty except for schema/index initialization.
+13. Complete the memory phase marker and keep Grok/OMP stopped until T9. Grok's documented watcher will rebuild generated search indexes during T9.
+
+   - completed 2026-07-17-1631
+   - `migrate-memory --execute` completed at `2026-07-17T09:31:21Z` under runner SHA-256 `0dc3d33c9f1ac909f984170089b71fa57455c6ed56cbdcdc89f787d8b5f69747`.
 
 ### T8. Rebuild path-sensitive state and update live path contracts
 
 Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
+
+T8 verification amendment approved by the user at `2026-07-17-1639`: `session_search.sqlite` is a generated Grok picker index after the controlled T7 launches, so global logical row-count equality with T4 is no longer valid. The observed reconciliation is T4 `90` rows to current `85`: the index added controlled Kaira session `019f6f62-139c-7c92-b85d-1ecb16b4f835` and Atlas app session `019f6f63-2cd4-7eb2-aac1-0a57c638944d`, and removed seven stale `.dotfiles` picker IDs (`019ecfe6-fca8-7610-909b-ac3b076e327b`, `019ed120-6c8f-7db3-96b6-9ce81afbd291`, `019ed462-dd03-7450-8a85-5398f518ed0b`, `019ed489-cb6b-7b53-8c69-4c859b26af23`, `019ed48a-6fb8-7792-a4d2-7a4b5c6409fe`, `019ed48f-cb3f-7ed1-a340-87072fe9dcd7`, and `019ed4c8-97fe-7bb0-8232-7e12ed27dfa8`); six have no durable session directory and one has only an empty directory. Both current and T4 databases pass integrity checks, all 83 shared rows are byte-identical after applying only the intended cwd map, all 48 migrated T4 picker rows are preserved under the new cwds, the two additions are backed by their controlled session directories, `ig-bot` is unchanged, old target cwds are zero, and FTS/document counts match.
+
+The revised dry run and execute precheck must prove that exact observed reconciliation against the preserved T4 SQLite backup rather than weaken the invariant generally. OMP `history.db` remains strict and count-identical to T4. Any additional/missing ID, changed shared row, missing migrated baseline row, unbacked controlled addition, non-stale removal, schema/integrity failure, FTS mismatch, changed `ig-bot` row, or old target cwd is a hard stop.
 
 1. Kaira Python environment:
    - atomically move the relocated old `.venv` to `RUN_ROOT/backup/kaira-venv-relocated`; the independently copied workspace backup remains the second recovery copy;
@@ -385,6 +424,9 @@ Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
    - zero old target identity in all must-migrate state;
    - runner phase/checksum/log validation.
 8. Complete the rebuild marker. T9 is the first normal reopen.
+
+   - completed 2026-07-17-1647
+   - the amended `rebuild --execute` completed at `2026-07-17T09:47:34Z` under runner SHA-256 `63695a87c7802cae7b6bb14960b59632069275bcc2201646101917485a064739`; the extended backup manifest has 19,300 entries and SHA-256 `b9cc6ab7f71be6fac89c2d8c3917debb5947fd2c28173cf4afd5280bed6206a0`.
 
 ### T9. Reopen applications and verify the migration end to end
 
@@ -415,6 +457,9 @@ Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
 8. Re-run the must-migrate residual scan. Keep applications idle while reading; if any live discovery key was rewritten back to Desktop, stop applications, restore/fix from the backup, and repeat T9.
 9. Read `RUN_ROOT/logs/execution.jsonl`, then check T3 through T8 in this plan with their observed completion timestamps. Check T9 only after all criteria above pass.
 
+   - completed 2026-07-17-1739
+   - Obsidian, herdr/Ghostty, Grok, OMP, `vault://atlas`, project checks, database continuity, memory identity, repository invariants, and must-migrate residual checks all passed.
+
 ### T10. Classify residuals, close the ledger, and archive atomically
 
 1. Classify every remaining `Desktop/ng3` occurrence:
@@ -433,6 +478,9 @@ Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
    - classified residuals, fallbacks used, backup path, and remaining risk.
 6. Set `Status` to `DONE` only after every verification criterion below is checked.
 7. Atomically move this completed file from `.agents/plans/` to `.agents/plans/archive/` without copying/deleting or changing its filename. Do not stage, commit, or push.
+
+   - completed 2026-07-17-1740
+   - remaining old-path text was classified as historical plans/transcripts/logs/memory, frozen Atlas campaign evidence, or retained backup evidence; all must-migrate surfaces were clean. The metadata-only `~/Desktop/ng3` parent was removed.
 
 ## Decisions and fallbacks
 
@@ -457,25 +505,25 @@ Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
 
 ## Verification / Done criteria
 
-- [ ] The plan was executed T1→T10 without an out-of-order task or unrecorded runner change.
-- [ ] Post-quiesce backups, SQLite integrity checks, manifests, runner hash, and execution log exist under a private retained `RUN_ROOT`.
-- [ ] `~/dev/kaira`, `~/dev/atlas/{app,vault}`, `~/dev/atlas/vault/instances/atlas`, and `~/dev/company` exist; the three source workspace paths do not.
-- [ ] Each destination root has the pre-move device/inode identity; no copy-delete fallback occurred.
-- [ ] Kaira tracked diff, dirty state, and untracked checksums preserve the T4 baseline except explicitly recorded generated-state rebuilds.
-- [ ] Every pre-move Grok session ID is preserved/resumable under the new cwd group, and migrated `session_docs` rows use only exact new cwds.
-- [ ] Every pre-move OMP session ID is preserved/resumable under `-dev-*`, and migrated `history` rows use only exact new cwds.
-- [ ] Historical `ig-bot` session group names and Grok/OMP database cwd row counts/values are unchanged.
-- [ ] Affected OMP terminal breadcrumbs and stale Grok active-session entries no longer reference migrated old cwds.
-- [ ] Grok workspace `MEMORY.md`/session sources match baseline checksums under the new slugs; generated indexes contain no old memory-directory paths; old active slugs are absent.
-- [ ] Kaira and Atlas app Mnemopi banks use the newly observed slugs, preserve baseline rows/IDs, contain no old slug in identity columns or old cwd metadata, add no orphan embeddings, pass integrity checks, and return baseline durable recalls.
-- [ ] Atlas vault Mnemopi remains the expected empty bank under its new slug without a duplicate bank.
-- [ ] herdr workspaces preserve IDs/labels/layouts or use the documented fallback; every pane cwd is under `~/dev` and no Desktop TCC error occurs.
-- [ ] Obsidian preserves one Atlas vault binding at `/Users/kim/dev/atlas/vault/instances/atlas`, and `vault://atlas/ARCHITECTURE.md` resolves with its baseline checksum/frontmatter.
-- [ ] Kaira has a freshly created `.venv` with no old-path shebang/activation value; Kaira and Atlas project checks match or improve their baselines.
-- [ ] Live contracts, active plan commands, executable configs, symlink targets, trust, and zoxide state contain no migrated old path; only classified historical residuals remain.
-- [ ] `~/.dotfiles` remains the unchanged project root except for this plan lifecycle and the intentional herdr session-path update.
-- [ ] `~/Desktop/ng3` is removed when empty/metadata-only, or unexpected retained material is explicitly recorded; none of the three workspace sources remains there.
-- [ ] All tasks have completion timestamps, `Status` is `DONE`, the completion summary is appended, and the plan is atomically archived.
+- [x] The plan was executed T1→T10 without an out-of-order task or unrecorded runner change.
+- [x] Post-quiesce backups, SQLite integrity checks, manifests, runner hash, and execution log exist under a private retained `RUN_ROOT`.
+- [x] `~/dev/kaira`, `~/dev/atlas/{app,vault}`, `~/dev/atlas/vault/instances/atlas`, and `~/dev/company` exist; the three source workspace paths do not.
+- [x] Each destination root has the pre-move device/inode identity; no copy-delete fallback occurred.
+- [x] Kaira tracked diff, dirty state, and untracked checksums preserve the T4 baseline except explicitly recorded generated-state rebuilds.
+- [x] Every pre-move Grok session ID is preserved/resumable under the new cwd group, and migrated `session_docs` rows use only exact new cwds.
+- [x] Every pre-move OMP session ID is preserved/resumable under `-dev-*`, and migrated `history` rows use only exact new cwds.
+- [x] Historical `ig-bot` session group names and Grok/OMP database cwd row counts/values are unchanged.
+- [x] Affected OMP terminal breadcrumbs and stale Grok active-session entries no longer reference migrated old cwds.
+- [x] Grok workspace `MEMORY.md`/session sources match baseline checksums under the new slugs; generated indexes contain no old memory-directory paths; old active slugs are absent.
+- [x] Kaira and Atlas app Mnemopi banks use the newly observed slugs, preserve baseline rows/IDs, contain no old slug in identity columns or old cwd metadata, add no orphan embeddings, pass integrity checks, and return baseline durable recalls.
+- [x] Atlas vault Mnemopi remains the expected empty bank under its new slug without a duplicate bank.
+- [x] herdr workspaces preserve IDs/labels/layouts or use the documented fallback; every pane cwd is under `~/dev` and no Desktop TCC error occurs.
+- [x] Obsidian preserves one Atlas vault binding at `/Users/kim/dev/atlas/vault/instances/atlas`, and `vault://atlas/ARCHITECTURE.md` resolves with its baseline checksum/frontmatter.
+- [x] Kaira has a freshly created `.venv` with no old-path shebang/activation value; Kaira and Atlas project checks match or improve their baselines.
+- [x] Live contracts, active plan commands, executable configs, symlink targets, trust, and zoxide state contain no migrated old path; only classified historical residuals remain.
+- [x] `~/.dotfiles` remains the unchanged project root except for this plan lifecycle and the intentional herdr session-path update.
+- [x] `~/Desktop/ng3` is removed when empty/metadata-only, or unexpected retained material is explicitly recorded; none of the three workspace sources remains there.
+- [x] All tasks have completion timestamps, `Status` is `DONE`, the completion summary is appended, and the plan is atomically archived.
 
 ## Risks / residuals
 
@@ -494,3 +542,17 @@ Run `rebuild --dry-run`, then `rebuild --execute` from Terminal.app.
 - Expanding Grok trust grants
 - Git staging, commits, pushes, stashes, resets, cleans, rebases, or branch operations
 - Deleting the retained migration backup
+
+## Completion Summary
+
+- Same-volume renames preserved device `16777231` and root inodes: Kaira `242277534`, Atlas `242461163`, and company `240795228`. No copy/delete fallback or rollback was used.
+- Kaira HEAD, tracked/staged diffs, status bytes, and six untracked file checksums remain byte-identical to T4. Atlas HEAD and all non-migration-owned state remain identical; only the three T8-ledgered active-plan path rewrites changed.
+- All baseline session IDs remain. T9 live use produced expected additions: Grok directories Kaira `11→12`, Atlas app `163→164`, Atlas vault `1→2`; `session_docs` `11→12`, `36→37`, `1→2`; OMP files `17→17`, `16→17`, `0→0`; OMP history `111→116`, `73→78`, `1→3`. Old migrated cwd rows are zero.
+- Historical `ig-bot` state is unchanged: one Grok picker row and 376 OMP history rows. All checked SQLite databases return integrity `ok`.
+- Grok memory identities moved `kaira-a42bc3b4→kaira-874acab4`, `app-230b9161→app-1298f45b`, and `vault-28345770→vault-1fe28e4e`; durable sources match, indexes contain no stale chunk paths, and old roots are absent.
+- Mnemopi identities moved `kaira-3fp0k0qoqg7wk→kaira-ao4n9b5qky3t`, `app-3mfad1k3bh97x→app-trg6c9lrzaql`, and `vault-k9lbn7180ezo→vault-uh0xgc4lsms6`. Baseline IDs and exact recall anchors remain; the vault bank is empty and unique. Pre-existing orphan counts remain exactly Kaira `4`, Atlas app `36`, vault `0`; live startup added none.
+- herdr workspaces `w2`/`w3`/`w5`, pane layouts, and labels survived under `~/dev` without Desktop TCC errors. Obsidian vault ID `e29dffe128957381` remains singular. `vault://atlas/ARCHITECTURE.md` resolves under `~/dev` with file SHA-256 `54ec374cbcb76a28c248479242eb0a30fe4b4f6bd7352fe0fb9c7be451b4d245` and frontmatter SHA-256 `0ec3debeb752d3ee3399c25f44fb195365813ab6d4f5171382a8c1616c581cf2`.
+- The new Kaira `.venv` has no old-path activation value or shebang. Kaira passed 208 tests plus Ruff check/format; Atlas instance check passed.
+- Must-migrate residuals are zero. Remaining old-path text is limited to allowed historical archives, transcripts/logs/memory, the frozen Atlas pass-1 campaign, this ledger, and retained backup evidence. The metadata-only `~/Desktop/ng3` parent was removed.
+- Retained recovery state: `/Users/kim/.local/share/workspace-migrate-20260717-110858`; runner SHA-256 `63695a87c7802cae7b6bb14960b59632069275bcc2201646101917485a064739`; final backup manifest SHA-256 `b9cc6ab7f71be6fac89c2d8c3917debb5947fd2c28173cf4afd5280bed6206a0` with 19,300 entries. Restoration uses the preserved whole-tree/state copies, SQLite backups, relocated old Kaira venv, markers, and execution log; no restoration was needed.
+- Remaining risk: the retained backup is on the same physical volume, and historical/frozen old-path commands remain intentionally non-executable provenance.
