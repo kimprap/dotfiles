@@ -1160,7 +1160,7 @@
                         ]
                     },
                     {
-                        "description": "Caps Lock: tap = esc, hold = Herdr prefix-free layer; caps+; = ctrl+b; caps+shift+[ / ] = workspace cycle",
+                        "description": "Caps Lock: tap = esc, hold = Herdr prefix-free layer; caps+; = ctrl+b; caps+shift+[ / ] = workspace cycle; caps+ctrl+[ / ] = agent cycle",
                         "manipulators": [
                             {
                                 "from": {
@@ -1743,6 +1743,48 @@
                                         "modifiers": ["control"]
                                     },
                                     { "key_code": "z" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "open_bracket",
+                                    "modifiers": { "mandatory": ["control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "u" }
+                                ],
+                                "type": "basic"
+                            },
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "caps_lock_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "close_bracket",
+                                    "modifiers": { "mandatory": ["control"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "b",
+                                        "modifiers": ["control"]
+                                    },
+                                    { "key_code": "i" }
                                 ],
                                 "type": "basic"
                             },

@@ -12,9 +12,18 @@ Direct user/architect instructions override this file. Layered project files ove
 
 Report in a concise, technical, high-signal shape appropriate to the task. Prefer short paragraphs plus bullets; bullet fragments are fine when clearer.
 
-Use headings that fit the work, not a fixed template. Common useful headings include `Changes`, `Effect`, `Verification`, `Decision`, `Findings`, and `Risks / Next`. Omit headings that add no signal.
+Use headings that fit the work, not a fixed template. Common useful headings include `Changes`, `Effect`, `Verification`, `Decisions`, `Findings`, and `Risks / Next`. Omit headings that add no signal.
 
-For completed coding/config tasks, usually report changed artifacts, observable effect, verification, and real residual risk. Expand only to clarify decisions, surprises, or trade-offs.
+For completed coding/config tasks, usually report changed artifacts, observable effect, verification, and real residual risk. Expand only to clarify surprises or residual trade-offs.
+
+### Decisions
+
+When the work required non-trivial choices (underspecified intent, competing approaches, workarounds, scope expansion, irreversible steps, or low confidence), end the report with a short `Decisions` list.
+
+- One line per choice: what was chosen, and why or how uncertain.
+- Prefer low-confidence and irreversible choices first.
+- Omit mechanical steps and anything already obvious from the rest of the report.
+- Omit the section when there were no material forks.
 
 Mark any claim not directly observed or established as `[INFERENCE]`.
 
