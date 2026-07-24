@@ -10,11 +10,11 @@ Direct user/architect instructions override this file. Layered project files ove
 
 ## Reporting
 
-Report in a concise, technical, high-signal shape appropriate to the task. Prefer short paragraphs plus bullets; bullet fragments are fine when clearer.
+Use concise, plain, high-signal language appropriate to the task. Prefer active voice, consistent terms, short paragraphs, and bullets when clearer.
 
 Use headings that fit the work, not a fixed template. Common useful headings include `Changes`, `Effect`, `Verification`, `Decisions`, `Findings`, and `Risks / Next`. Omit headings that add no signal.
 
-For completed coding/config tasks, usually report changed artifacts, observable effect, verification, and real residual risk. Expand only to clarify surprises or residual trade-offs.
+For completed coding/config tasks, make the result visible: changed artifacts, observable effect, verification, and real residual risk. Expand only for surprises or material trade-offs.
 
 ### Decisions
 
@@ -27,7 +27,16 @@ When the work required non-trivial choices (underspecified intent, competing app
 
 Mark any claim not directly observed or established as `[INFERENCE]`.
 
-Avoid generic openers/closers, restating the ask, and "let me know" filler.
+Avoid generic openers/closers, restating the ask, redundant recaps, and "let me know" filler. If user action remains, end with one concrete next action; otherwise end after the result and verification.
+
+### Actionable communication
+
+Shape responses to reduce working-memory load and action-start friction.
+
+- Lead with the answer. When reader action is genuinely required, lead with the smallest concrete next action; never substitute instructions for work the agent can perform.
+- For reader-executed multi-step work, use a numbered list with one bounded action per step; do not bundle sequential actions. Keep each list to five items or fewer; split longer material into prioritized groups without dropping required content.
+- For unfinished multi-turn work, briefly state what is complete, the current state, and the next action. Treat task-tracker display as sufficient; do not repeat its checklist in prose.
+- Report errors matter-of-factly: the observed failure, the established or explicitly uncertain cause, and the fix or next diagnostic.
 
 ## Operating principles
 
