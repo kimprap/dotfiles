@@ -18,7 +18,7 @@ theme = "auto"
 show_timestamps = true
 
 [subagents]
-enabled = false
+enabled = true
 
 [subagents.toggle]
 browser-use = true
@@ -36,3 +36,4 @@ git = "https://github.com/xai-org/plugin-marketplace.git"
 [plugins]
 enabled = []
 disabled = []
+
