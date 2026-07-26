@@ -10,13 +10,13 @@ Surface architectural friction and propose **deepening opportunities** — refac
 
 This command is _informed_ by the project's domain model and built on a shared design vocabulary:
 
-- Run the `/eng-codebase-design` skill for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion — don't drift into "component," "service," "API," or "boundary."
+- Use the `eng-codebase-design` skill for the architecture vocabulary (**module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**) and its principles (the deletion test, "the interface is the test surface", "one adapter = hypothetical seam, two = real"). Use these terms exactly in every suggestion — don't drift into "component," "service," "API," or "boundary."
 - The domain language in `CONTEXT.md` gives names to good seams; ADRs in `docs/adr/` record decisions this command should not re-litigate.
 
-## Local agent-harness adaptation
+## Agent-harness reviews
 
 - This skill may review agent-harness architecture, not only traditional app code.
-- For harness reviews, candidate areas include skill directories, rule layering, OMP extensions/hooks, vault organization, memory-bank placement, agent persona boundaries, and research framework file layout.
+- For harness reviews, candidate areas include skill directories, rule layering, extensions/hooks, vault organization, memory-bank placement, agent persona boundaries, and research framework file layout.
 - When reviewing vault design, evaluate whether the structure exposes a small, stable navigation contract for agents and humans, avoids scattered duplicated concepts, and makes related research artifacts easy to find.
 - Continue using `eng-codebase-design` vocabulary; use `domain-modeling` when the issue is terminology/context modeling, and use `craft-skill` or `craft-rule` when the chosen fix edits skills or rules.
 
@@ -24,9 +24,14 @@ This command is _informed_ by the project's domain model and built on a shared d
 
 ### 1. Explore
 
+**Scope before you scan — YAGNI.** Deepening a module pays off by making future changes to it easier, so put extra weight on the parts of the codebase that have recently changed. Decide _where_ to look before you look:
+
+- If the user named a direction — a module, subsystem, or pain point — take it and skip the inference below.
+- Otherwise, inspect a meaningful stretch of commit history (`git log --oneline`) for hot spots — files and areas that keep changing — and let those paths pull your attention first. Widen the net only when the changes are scattered with no clear hot spot.
+
 Read the project's domain glossary (`CONTEXT.md`) and any ADRs in the area you're touching first.
 
-Then use the `task` tool with `agent: "explore"` and focused assignments to walk the codebase. Don't follow rigid heuristics — explore organically and note where you experience friction:
+Explore the scoped areas with the host's available read-only codebase tools. When the scope contains independent areas and the host supports subagents, delegate focused explorations in parallel; otherwise explore them directly. Don't follow rigid heuristics — explore organically and note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow** — interface nearly as complex as the implementation?
@@ -53,7 +58,7 @@ For each candidate, render a card with:
 
 End the report with a **Top recommendation** section: which candidate you'd tackle first and why.
 
-**Use CONTEXT.md vocabulary for the domain, and the `/eng-codebase-design` vocabulary for the architecture.** If `CONTEXT.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
+**Use CONTEXT.md vocabulary for the domain, and the `eng-codebase-design` vocabulary for the architecture.** If `CONTEXT.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly in the card (e.g. a warning callout: _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
@@ -63,11 +68,11 @@ Do NOT propose interfaces yet. After the file is written, ask the user: "Which o
 
 ### 3. Grilling loop
 
-Once the user picks a candidate, run the `/grilling` skill to walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
+Once the user picks a candidate, use the `grilling` skill to walk the decision tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
 
-Side effects happen inline as decisions crystallize — run the `/domain-modeling` skill to keep the domain model current as you go:
+Side effects happen inline as decisions crystallize — use the `domain-modeling` skill to keep the domain model current as you go:
 
 - **Naming a deepened module after a concept not in `CONTEXT.md`?** Add the term to `CONTEXT.md`. Create the file lazily if it doesn't exist.
 - **Sharpening a fuzzy term during the conversation?** Update `CONTEXT.md` right there.
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones.
-- **Want to explore alternative interfaces for the deepened module?** Run the `/eng-codebase-design` skill and use its design-it-twice parallel sub-agent pattern.
+- **Want to explore alternative interfaces for the deepened module?** Use the `eng-codebase-design` skill and its design-it-twice parallel-worker pattern.
