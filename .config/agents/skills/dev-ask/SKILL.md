@@ -1,11 +1,10 @@
 ---
 name: dev-ask
 description: >
-  Classify and route an engineering request through the smallest safe lifecycle,
-  present a seven-field Route Overview, and obtain exact approval before
-  executable or routed work. Use as the default engineering entry point; keep
-  expert skill requests available, and never perform stage work or persist
-  execution state.
+  Route engineering work that needs lifecycle judgment: ambiguous, consequential, or cross-cutting
+  changes; explicit planning or approval; or a requested Route Overview. Skip settled, bounded
+  direct edits and read-only answers unless the user explicitly asks to route them. Keep expert skill
+  requests available; never perform stage work or persist execution state.
 ---
 
 # Engineering Flow
