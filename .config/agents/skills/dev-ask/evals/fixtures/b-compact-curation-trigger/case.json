@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A settled compact task satisfies every compact eligibility condition and declares one Learning Candidate with source evidence. Its approved Task Contract binds one implementation owner, same non-implementer identity for ordered verifier/reviewer attempts, and qualifying-trigger-only curation. The backend must dispatch bounded dev-continual-learning after review, account for its existing terminal outcome, and never create a new curation outcome or lifecycle state."
+  },
+  "scripted_replies": []
+}

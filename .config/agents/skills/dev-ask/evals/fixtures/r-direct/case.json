@@ -1,9 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "bounded read-only question with sufficient current evidence. After the approved Route Overview, emit a distinct answer-delivered event containing the evidence-backed answer; classification alone is not answer delivery."
+    "request": "bounded read-only question with sufficient current evidence. Emit the informational Route Overview and a distinct evidence-backed answer-delivered event in the same response; classification alone is not answer delivery."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

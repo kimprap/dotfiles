@@ -21,7 +21,7 @@ Reject stale, conflicting, or unapproved requirements. Return material product q
 
 1. Bind the specification to exact governing revisions and approvals. Record superseded revisions without treating them as current.
 2. Inspect the current system and reuse its terminology, modules, interfaces, state ownership, and test conventions. Preserve unexpected work.
-3. Define the smallest coherent architecture: capability boundaries, interfaces, data/state ownership, error behavior, compatibility, migration and rollback, security/privacy, reliability/performance, and operational effects that the requirements demand.
+3. Define the smallest coherent architecture: capability boundaries, interfaces, data/state ownership, error behavior, compatibility, migration and rollback, security/privacy, reliability/performance, operational effects, and degraded-operation design that implement the approved requirements. Do not choose new observable fallback, default, retry, alternate-path, or hard-failure behavior. Missing observable policy returns to `dev-requirements`; settled policy with unsafe or ambiguous technical design stops in `dev-specification`.
 4. Identify the highest viable observable test seams before implementation. For every acceptance criterion, state the falsifiable claim, conditions/input, expected behavior or threshold, minimum proof class, target surface/environment, and whether baseline/treatment comparison is required.
 5. Resolve engineering decisions inside the approved scope. Stop for product, destructive, scope, or materially different architecture choices that require human authority.
 6. Draft one revision-bound Engineering Specification. Link authority instead of copying it and mark all material assumptions.
@@ -35,13 +35,13 @@ Reject stale, conflicting, or unapproved requirements. Return material product q
 ## Authority
 - Governing artifacts, exact revisions, and approvals
 ## Current system
-- Relevant modules, interfaces, state, constraints, and preservation boundary
+- Relevant modules, interfaces, state, constraints, observed baseline, and preservation boundary
 ## Architecture
 - Chosen design, alternatives rejected, and decision owners
 ## Interfaces and data
-- Public/internal contracts, ownership, errors, compatibility, and migrations
+- Public/internal contracts, ownership, errors, compatibility, migrations, and approved cutover or removal
 ## Security and operations
-- Security, privacy, reliability, performance, rollout, rollback, and external effects
+- Security, privacy, reliability, performance, rollout, rollback, external effects, and required degraded trigger → response → recovery design
 ## Test seams
 - Acceptance criterion → proof class → scenario/environment → expected evidence
 ## Implementation boundaries

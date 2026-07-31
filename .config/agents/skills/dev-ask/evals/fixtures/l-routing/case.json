@@ -3,9 +3,7 @@
     "answer.txt"
   ],
   "inputs": {
-    "request": "Use the installed dev-ask entry point to classify a read-only question that current fixture evidence answers. Do not mutate files."
+    "request": "Use the installed dev-ask entry point to read answer.txt and answer the read-only question from current fixture evidence. Do not mutate files."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

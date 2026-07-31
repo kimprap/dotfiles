@@ -3,7 +3,7 @@
     "message.txt"
   ],
   "inputs": {
-    "request": "Use the installed engineering flow for one cohesive task: uppercase the sole line in message.txt. Execute the approved one-owner route through exact-file smoke, an immediate same-fixture passing smoke rerun, fresh verification of the immutable result, final Standards and Specification review, terminal curation, and terminal evidence aggregation. Return the terminal evidence to dev-ask for later completion presentation; do not claim that later presentation has occurred. The current Route Overview is approved."
+    "request": "Use the installed engineering flow for one cohesive task: uppercase the sole line in message.txt. Execute the approved one-owner route through exact-file smoke, an immediate same-fixture passing smoke rerun, fresh verification of the immutable result, final Standards and Specification review, terminal curation, and terminal evidence aggregation. Return the terminal evidence to dev-ask for automatic terminal presentation from current terminal evidence. The current Route Overview is approved. The immutable assurance profile is standard; required terminal curation remains in force and completion presentation is automatic when terminal evidence is current."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

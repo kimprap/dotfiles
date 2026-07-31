@@ -4,7 +4,7 @@
     "b.txt"
   ],
   "inputs": {
-    "request": "A current approved executable Task Contract authorizes a bounded batch. Worker A counts nonblank lines in a.txt and worker B counts nonblank lines in b.txt as genuinely independent read-only slices. Combination task C depends on current independently verified Handoffs from both. Execute the two-worker independent frontier (or a disclosed contract-equivalent sequential projection with identical task and Handoff boundaries), prove C remained blocked until both proofs existed, combine the counts, complete final review and terminal curation, aggregate terminal evidence, and return it to dev-ask for later completion presentation. The current Route Overview and bounded topology are approved."
+    "request": "A current approved executable Task Contract authorizes a bounded batch. Worker A counts nonblank lines in a.txt and worker B counts nonblank lines in b.txt as genuinely independent read-only slices. Combination task C depends on current independently verified Handoffs from both. Execute the two-worker independent frontier (or a disclosed contract-equivalent sequential projection with identical task and Handoff boundaries), prove C remained blocked until both proofs existed, combine the counts, complete final review and terminal curation, aggregate terminal evidence, and return it to dev-ask for automatic terminal presentation from current terminal evidence. The current Route Overview and bounded topology are approved. The immutable assurance profile is standard; required terminal curation remains in force and completion presentation is automatic when terminal evidence is current."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

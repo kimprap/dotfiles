@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The user asks only to survey the codebase for deepening opportunities. The selected opportunity and its downstream implementation lane are intentionally unknown until survey evidence and human selection exist, so the current route returns from dev-improve-codebase-architecture only to dev-ask for recomputation; do not invent downstream stage owners. Name human selection, recomputed Route Overview approval, and eventual completion Route Overview approval as downstream gates."
+    "request": "The user asks only to survey the codebase for deepening opportunities. The selected opportunity and its downstream implementation lane are intentionally unknown until survey evidence and human selection exist, so the current route returns from dev-improve-codebase-architecture only to dev-ask for recomputation; do not invent downstream stage owners. Name human selection and recomputed Route Overview approval as downstream gates. A future terminal presentation uses current terminal evidence without a separate approval."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

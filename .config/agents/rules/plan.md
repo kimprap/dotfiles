@@ -10,9 +10,9 @@ Skip this contract for informal suggestions, conversational checklists, subscrip
 
 ## Transport precedence
 
-- A harness-mandated path or filename overrides only storage and naming conventions. The metadata, task, verification, and status lifecycle below still applies.
-- Do not copy a harness- or session-local plan into a repository unless the user explicitly requests materialization there.
-- Keep repository location, filename, and archive mechanics in a repository storage companion rather than this portable contract.
+- A harness-assigned artifact path or filename overrides only storage and naming conventions. The metadata, task, verification, and status lifecycle below still applies.
+- Harness copies and forks preserve the complete header metadata block. Execution and later overrides update that authoritative harness artifact; its repository projection never becomes authority.
+- Keep repository identity, location, byte-exact projection, and archive mechanics in a repository storage companion rather than this portable contract.
 
 ## Required content
 
@@ -28,6 +28,7 @@ Place these fields immediately after the H1 and before the first `##` section:
 ```
 
 - Start every new plan at `PENDING`.
+- `Datetime` is immutable plan-identity metadata after creation, including in harness copies and forks.
 - Approval alone does not change status.
 - Change status to `IN_PROGRESS` when execution of `T1` begins.
 - Use `CLOSED` only when the user explicitly cancels the plan.
@@ -46,7 +47,7 @@ Place these fields immediately after the H1 and before the first `##` section:
 - Leave each criterion unchecked until it has actually been observed.
 - Do not complete the final task until every required verification criterion passes.
 - Set `Status: DONE` only after every task is checked with a completion timestamp and a concise `## Completion Summary` has been appended at the end.
-- In the Completion Summary, record material findings, decisions, delivered behavior, residual risks, and later user overrides. Append later overrides instead of rewriting historical task outcomes.
+- In the Completion Summary, record material findings, decisions, delivered behavior, residual risks, and later user overrides. Append later overrides without changing identity or rewriting historical task outcomes.
 
 ## Proportionality and decision completeness
 

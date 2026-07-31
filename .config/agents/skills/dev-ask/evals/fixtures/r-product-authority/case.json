@@ -3,7 +3,5 @@
   "inputs": {
     "request": "new product request lacks target customer and product success Expose the required resume input and continuation explicitly: an approved product brief/PRD revision or explicit settled product decision returns to dev-ask for a recomputed Route Overview."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

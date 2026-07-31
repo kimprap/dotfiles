@@ -3,7 +3,5 @@
   "inputs": {
     "request": "Current evidence already establishes an unresolved pricing decision at initial classification. Pricing requires human product authority. Route directly to PRODUCT AUTHORITY REQUIRED with no dev-research owner, research artifact, identity recheck, or dispatch."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

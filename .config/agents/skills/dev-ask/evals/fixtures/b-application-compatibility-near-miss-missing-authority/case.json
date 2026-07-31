@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "An approved implementation intake identifies possible existing application degraded behavior for an unavailable upstream but supplies neither observable baseline evidence nor approved policy deciding preservation, clean cutover/removal, hard failure, or an alternate path. This is an application-policy authority gap, not an adapter capability or topology fallback problem. Show only backend-owned accepted then blocked, return the missing observable policy to dev-requirements, and make no task ready."
+  },
+  "scripted_replies": []
+}

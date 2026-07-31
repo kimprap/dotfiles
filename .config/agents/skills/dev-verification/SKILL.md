@@ -19,19 +19,22 @@ Require:
 - the current Task Contract or approved acceptance authority;
 - for each criterion: falsifiable claim, condition/input, expected behavior or metric/threshold, minimum proof class, target surface/environment, and baseline/treatment requirement;
 - bounded fixtures and declared dependency Handoffs; and
+- the immutable applicable-project-rule manifest: canonical artifacts, exact revisions, and scope, or backend-bound `none` with its bounded check; and
 - an allowed receiver.
+- whenever the target can affect an existing observable contract or failure mode, the Task Contract's bound Compatibility and degraded behavior block.
 
-Reject stale authority, a moving or unnamed target, missing criteria, invalid/confounded evidence, or a request to repair the target.
+Return `INCONCLUSIVE` for stale authority, a moving or unnamed target, missing criteria, invalid/confounded evidence, an absent or contradictory project-rule manifest, a missing compatibility/degraded-behavior authority block when required, or a request to repair the target. Missing authority is not proof of incompatibility. Missing, stale, or invalid applicability evidence for a field-level `none`, without an established target contradiction, returns `INCONCLUSIVE` for renewed authority and criteria.
 
 Proof classes are `live-behavior`, `targeted-test`, `regression-suite`, `measurement`, `build-typecheck`, `static-inspection`, `external-observation`, and `identity-check`. They describe the required evidence kind, not a universal strength ranking.
 
 ## Procedure
 
-1. Establish independence: do not consume worker reasoning or conclusions as authority. Use only current criteria, immutable target, bounded context, and observable evidence.
+1. Establish independence: do not consume worker reasoning or conclusions as authority. Use only current criteria, immutable target, bound project-rule manifest, bounded context, and observable evidence; never infer rule absence from filesystem discovery.
 2. Recheck the target identity before the first criterion. If it changed, reject the run as stale.
-3. Exercise each criterion at its declared proof class and environment. Reproduce the original red-capable scenario for bugs; compare like-for-like baseline/treatment for performance; exercise the user-visible surface for UI, API, CLI, or system behavior when available.
+3. Exercise each criterion at its declared proof class and environment. Map every declared preserved caller, data, protocol, or behavior and every required degraded trigger → observable response → recovery boundary to its criterion, fixture, exact scenario, observed evidence, and verdict. Reproduce the original red-capable scenario for bugs; compare like-for-like baseline/treatment for performance; exercise the user-visible surface for UI, API, CLI, or system behavior when available.
 4. Record exact scenario, environment, fixtures, inputs, expected and observed result, meaningful output/artifact/measurement reference, flake rerun status, and uncertainty.
 5. Recheck target and fixture identities after evidence collection. Any target change invalidates the entire verdict until impact and required reruns are established.
+Observed behavior that contradicts a bound preservation, degraded path, approved removal, or field-level `none` criterion is `NOT VERIFIED`.
 6. Emit a criterion verdict and one aggregate verdict. Do not repair, reformat, stage, merge, or mutate the target.
 7. Return the verification Handoff to `dev-implementation`, or to `dev-integration` for a named verified lineage.
 
@@ -53,7 +56,9 @@ Use the common `dev-handoff` structure and include:
 ## Verification
 - Exact target revision and environment
 - Criterion → proof class → scenario → expected/observed → evidence reference → verdict
+- Bound compatibility/degraded behavior: preserved caller/data/protocol/behavior or required trigger → response → recovery boundary → criterion → fixture → exact scenario → observed evidence → verdict, including applicability evidence for each field-level `none`
 - Fixture identities and pre/post target identities
+- Bound project-rule manifest and its consumption
 - Reproduction and flake-rerun status
 - Aggregate verdict: VERIFIED | NOT VERIFIED | INCONCLUSIVE
 - Invalidated or reusable prior evidence with explicit impact analysis
@@ -67,4 +72,4 @@ Skip only demonstrably nonbehavioral prose/comments, formatting-only changes, or
 
 ## Stop and next owner
 
-Stop with `INCONCLUSIVE` when the required target, environment, permission, fixture, proof, or independent context is unavailable. Return `NOT VERIFIED` evidence to the backend for a new authorized repair task; do not repair it here. Return `VERIFIED` only to the named backend or integration receiver.
+Stop with `INCONCLUSIVE` when the required target, environment, permission, fixture, proof, independent context, or project-rule manifest is unavailable or contradictory. Return `NOT VERIFIED` evidence to the backend for a new authorized repair task; do not repair it here. Return `VERIFIED` only to the named backend or integration receiver.

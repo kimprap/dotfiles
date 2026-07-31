@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A hard intermittent regression has settled expected behavior and unknown cause. The complete intended route is exactly dev-diagnosing-bugs → dev-implementation → dev-ask completion presentation. Diagnosis returns evidence and a bounded fix contract without applying the fix. Name the downstream completion Route Overview approval and promised terminal evidence, but simulate only the first dispatch to dev-diagnosing-bugs."
+    "request": "A hard intermittent regression has settled expected behavior and unknown cause. The complete intended route is exactly dev-diagnosing-bugs → dev-implementation → dev-ask completion presentation. Diagnosis returns evidence and a bounded fix contract without applying the fix. Promise terminal evidence for automatic presentation, but simulate only the first dispatch to dev-diagnosing-bugs."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

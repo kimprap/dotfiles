@@ -1,29 +1,30 @@
 ---
 name: dev-continual-learning
 description: >
-  Run one neutral terminal assessment of settled high-signal engineering outcomes
-  and optionally curate a narrow existing project-owned guidance destination.
-  Use after verified/reviewed completion or another settled durable decision;
-  never accumulate in the background or modify user-level AGENTS.md.
+  Run one neutral terminal assessment only after required or trigger-driven
+  backend dispatch from a settled engineering outcome, and optionally curate a
+  narrow existing project-owned guidance destination. Never accumulate in the
+  background or modify user-level AGENTS.md.
 ---
 
 # Engineering Continual Learning
 
-Own the terminal curation gate:
+Own the terminal curation gate after backend dispatch:
 
 ```text
 settled high-signal outcome
+→ required or qualifying-trigger dispatch
 → one neutral assessment
 → optional narrow project-guidance update
 → targeted validation and independent review
 → terminal evidence
 ```
 
-A write is optional; the assessment is required.
+A write is optional. The assessment is required when dispatched; compact work reaches this skill only after the backend trigger screen selects it.
 
 ## Trigger
 
-Run after a human-confirmed resolved decision, approved PRD/specification/ticket set, verified/integrated/reviewed implementation, settled severe postmortem, or explicit durable project correction. Do not run after every message, worker, one-off observation, hypothesis, or transient failure.
+For standard and high-consequence work, the backend dispatches this assessment after verified/integrated/reviewed implementation or another settled durable decision. For compact work, the backend dispatches only when its post-review screen finds a Learning Candidate, explicit durable correction or decision, repeated settled process evidence, or a severe qualifying incident; otherwise it records `curation not triggered` and checked trigger facts in terminal evidence without a curation Handoff. Do not run after every message, worker, one-off observation, hypothesis, or transient failure.
 
 Any role may report a non-authoritative Learning Candidate containing the proposed durable statement, project scope and destination, exact source revisions, evidence and verification, recurrence or severity, prevention relationship, sensitivity/redaction, and conflicts or supersession.
 
@@ -85,4 +86,4 @@ CURATED | NO DURABLE LEARNING | BLOCKED
 
 ## Stop and next owner
 
-`CURATED` and `NO DURABLE LEARNING` satisfy the terminal gate. `BLOCKED` preserves the verified implementation but prevents adaptive-workflow completion until the blocker is resolved or a human changes scope. Return the curation Handoff to `dev-implementation`; do not ship or declare completion here.
+`CURATED` and `NO DURABLE LEARNING` satisfy a required or triggered terminal gate. `BLOCKED` preserves the verified implementation but prevents adaptive-workflow completion until the blocker is resolved or a human changes scope. Return the curation Handoff to `dev-implementation`; do not ship or declare completion here.

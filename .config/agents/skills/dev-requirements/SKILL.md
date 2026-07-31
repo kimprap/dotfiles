@@ -20,6 +20,7 @@ Accept one of:
 - a bounded non-product objective such as a bug, security repair, migration, maintenance, refactor, reliability, architecture, or internal-tooling change.
 
 Own only observable behavior and outcomes, already-authorized actors and context, acceptance and failure boundaries, engineering scope and non-goals, applicable constraints, evidence, explicit assumptions, and engineering questions with owners.
+For every change that can affect existing observable behavior, bind evidenced current callers, data, protocols, normal behavior, and failure/degraded behavior that remain in contract. Changing that contract through a compatibility break, removal, clean cutover, new hard-failure path, or new fallback requires explicit approved authority. Missing evidence or authority is a blocking engineering question; it authorizes neither a breaking change nor a graceful fallback. Do not authorize speculative compatibility layers, defaults, retries, or alternate paths; preserve only evidenced existing or explicitly required behavior.
 
 Do not decide customers, market, positioning, pricing, business model, roadmap, launch, growth, product scope, product success, architecture, interfaces, or implementation. When any product decision is unresolved, return exactly:
 
@@ -68,6 +69,7 @@ Do not interview around that stop or create a substitute PRD.
 ## Next owner
 - Direct implementation or engineering specification
 ```
+For compatibility and degraded behavior, `Observable behavior` names actor/context/input, normal behavior, and each failure/degraded trigger → observable response → recovery boundary. `Constraints` names preserved callers, data, protocols, and behavior plus every approved break, removal, clean-cutover, or hard-failure condition. `Evidence and assumptions` identifies the observed baseline. Preservation may be `none` only with baseline evidence that no existing observable contract is affected; required degraded behavior may be `none` only when approved failure-boundary authority says no degraded path is required; approved breaks, removals, clean cutovers, and hard failures may be `none` only when authority approves no such change.
 
 Do not create `CONTEXT.md`, `CONTEXT-MAP.md`, or an ADR. A real domain term or qualifying architectural decision may be written only after human confirmation through `dev-domain-modeling`.
 
