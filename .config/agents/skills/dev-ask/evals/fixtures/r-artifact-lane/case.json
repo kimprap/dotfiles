@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A shared-interface migration has current human-approved product authority and a current human-approved Engineering Requirements Brief. It needs multiple owners, durable recovery, and neutral fan-in, and has no approved Engineering Specification or ticket set. The exact route is dev-specification → dev-ticketing → dev-implementation → dev-ask completion presentation; do not insert an intermediate dev-ask owner between ticketing and implementation. Route first to dev-specification and name specification approval, ticket approval, and completion Route Overview approval as downstream gates."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Native delegation is unavailable and strict independent concurrency is a hard acceptance invariant. No contract-equivalent concurrent adapter or transport exists; a sequential fallback would violate the hard invariant."
+  },
+  "scripted_replies": []
+}

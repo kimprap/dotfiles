@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The current Route Overview routes to dev-research with dev-research as its named first owner; all authority and target identities remain current. The user gives an unambiguous affirmative tied exactly to that overview. Record the immediately-pre-dispatch identity recheck as an explicit event."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The same bounded question requires factual lookup. The complete route is exactly dev-research → dev-ask for the approved answer; direct answer is not a downstream route segment. List only Route Overview approval in gates, and represent cited research evidence as an artifact rather than a gate."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

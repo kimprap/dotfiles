@@ -1,6 +1,6 @@
 ---
 name: improve
-description: "Improve current changes or a codebase. quick=lightweight direct edits; direct/no-plan=standard-depth direct edits; standard(default)=compact dated plan; deep=broader dated plan. Use for quality/security/perf/tests/refactor/tooling audits."
+description: "Improve current changes or a codebase. quick=lightweight direct edits; direct/no-plan=standard-depth direct edits; standard(default)=compact dated plan; deep=broader dated plan. Use only when explicitly invoked by exact skill name; do not auto-activate for ordinary quality, security, performance, test, refactor, tooling, architecture, review, or learning requests."
 ---
 
 # /improve
@@ -8,6 +8,8 @@ description: "Improve current changes or a codebase. quick=lightweight direct ed
 Use the configured model to improve current changes or audit a scope. Quick and direct/no-plan modes edit directly; standard/deep produce executable plans.
 
 Works in any repository, clean or dirty. Respects direct execution vs plan modes.
+
+Before any state capture, read, plan, or edit, reject a scope that names `/Users/kim/.agents/AGENTS.md` or its repository-backed target `/Users/kim/.dotfiles/.config/agents/AGENTS.md`: that user-level policy file is outside this skill's authority. Never create, edit, append, merge, deduplicate, reformat, or delete either path.
 
 ## Invocation variants
 

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A source-check task can disprove a shared assumption used by a descendant, while another branch is provably independent. Show transitive dependency handling in a small local batch. At initial dispatch, the source-check and independent branch are the only ready slices and are genuinely independent under settled interfaces, disjoint state ownership, concrete acceptance, low contention, declared fan-in, and observable coordination. The descendant declares source-check as a blocking dependency and remains pending; it never runs. When source-check fails, cancel the dependent cone and mark every pending/projected descendant output stale and non-consumable. Stop after the independent branch is freshly verified and the failed cone is returned blocked; do not simulate review, curation, or completion. In the ready event, enumerate that the independent branch is demonstrably unaffected in authority, inputs, safety, ownership, and eventual integration target. End with an explicit backend blocked event returning the shared-assumption defect to its named authority owner."
+  },
+  "scripted_replies": []
+}

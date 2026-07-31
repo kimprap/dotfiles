@@ -1,0 +1,11 @@
+{
+  "additional_files": [
+    "counter.txt"
+  ],
+  "inputs": {
+    "request": "Use the installed engineering flow for one cohesive task: change counter.txt from 1 to 2. Execute the approved one-owner route through exact-file smoke, an immediate same-fixture passing smoke rerun, fresh verification of the immutable result, final Standards and Specification review, terminal curation, and terminal evidence aggregation. Return the terminal evidence to dev-ask for later completion presentation; do not claim that later presentation has occurred. The current Route Overview is approved."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

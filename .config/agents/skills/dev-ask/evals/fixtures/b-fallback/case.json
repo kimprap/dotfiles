@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Native delegation is unavailable for two pending tasks. Task A preserves every hard invariant through a disclosed contract-equivalent sequential projection and may become ready; the ready event refers only to Task A. Task B requires independent isolation with no contract-equivalent route and must remain blocked. After recording Task A ready, stop the approved run at a backend-owned blocked event for Task B before any task dispatch, mutation, verification, integration, review, shipping, or curation."
+  },
+  "scripted_replies": []
+}

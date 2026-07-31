@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A worker reports smoke success on one immutable target. Show independent criterion proof and target-mutation invalidation. dev-verification must own verifying and verified evidence; backend only initiates/invalidates. Do not invent an invalidated lifecycle state. After target mutation, emit a backend-owned state:blocked transition whose output records the old verdict as historical and non-consumable and requires a new task revision."
+  },
+  "scripted_replies": []
+}

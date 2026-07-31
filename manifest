@@ -2,6 +2,7 @@
 .prettierrc
 .stylua.toml
 .agents
+.scratch
 .config/agents
 .config/zsh
 .config/mise

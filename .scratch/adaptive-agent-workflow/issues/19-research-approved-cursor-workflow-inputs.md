@@ -1,0 +1,102 @@
+Type: research
+Parent: [Portable adaptive agent implementation workflow](../map.md)
+Status: resolved
+
+## Question
+
+Which durable, harness-neutral behaviors should the workflow selectively adapt from Cursor's agent-swarm model-economics article, public `orchestrate` plugin, `cursor-team-kit/skills`, `continual-learning`, and any other directly relevant public Cursor plugin directory? Inventory exact source paths, boundaries, overlaps with installed Matt-derived skills, provider-specific details to exclude, and license or attribution requirements. Exclude `pstack` from candidate inputs because it is a separate end-to-end workflow reserved for comparison after this workflow is decision-complete; do not use government product-development sources. Prefer small durable disciplines for implementation, smoke proof, verification, CI recovery, review, integration, shipping, and learning rather than importing every skill or reproducing Cursor's unpublished internal swarm.
+
+## Answer
+
+### Source snapshot and boundary
+
+- Public repository: [`cursor/plugins` at `91be0f994b5de7a75f4d6f2b3b00958126d9195e`](https://github.com/cursor/plugins/commit/91be0f994b5de7a75f4d6f2b3b00958126d9195e), the observed `main` tip on 2026-07-28. The latest commit touches the separately excluded `pstack`; all candidate links below are pinned to this repository revision.
+- Article: Wilson Lin, Cursor, [“Agent swarms and the new model economics”](https://cursor.com/blog/agent-swarm-model-economics), published 2026-07-20. The page has no immutable public revision; cite the canonical URL and access date.
+- Current repository catalog and plugin boundaries: [`README.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/README.md).
+- `pstack` was excluded from candidate inspection/comparison by policy. No government product-development sources were used. No claim is made about Cursor's unpublished swarm/VCS implementation.
+
+The durable result is selective behavioral adaptation, not wholesale plugin import.
+
+### Exact recommended source inventory
+
+| Workflow need | Exact primary source paths | Smallest durable behavior to adapt | Boundary |
+|---|---|---|---|
+| Work graph and decomposition | [`orchestrate/skills/orchestrate/references/planner.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/references/planner.md), [`prompts/subplanner.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/prompts/subplanner.md), [`prompts/worker.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/prompts/worker.md), [`schemas/plan.schema.json`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/schemas/plan.schema.json) | Planner owns decomposition/meaning; workers own bounded deliverables; use a few broad independently ownable slices with explicit scope, dependencies, acceptance, and proof. | Apply only after executable authority is settled and only when decomposition has real leverage. Provider models, Git refs, PR flags, and Cursor spawn metadata are not portable task semantics. |
+| Runtime/recovery evidence | [`schemas/state.schema.json`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/schemas/state.schema.json), [`references/handoffs.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/references/handoffs.md) | Preserve attempts, dependencies, output identity, evidence, blockers/failure class, and one compact terminal handoff per ownership boundary. A failed/silent worker still leaves recovery evidence. | Use the portable Task Contract/Handoff already decided by this map; do not copy Cursor's state files, taxonomy, paths, or IDs as the shared schema. |
+| Independent verification | [`prompts/verifier.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/prompts/verifier.md), [`references/handoffs.md#verifier-handoffs`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/references/handoffs.md), [`cursor-team-kit/skills/verify-this/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/verify-this/SKILL.md) | A non-implementer checks the smallest observable falsifiable claim against the exact target, records per-criterion execution evidence, and distinguishes proof, disproof, and environmental inconclusiveness from weak compile-only evidence. | Diff reading is review, not behavioral proof. The verification-policy ticket must reconcile claim verdict with evidence strength instead of copying either Cursor vocabulary unchanged. |
+| Implementer smoke proof | [`cursor-team-kit/skills/run-smoke-tests/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/run-smoke-tests/SKILL.md) | Exercise the narrow end-to-end changed path, inspect real failure evidence, fix the root cause, use deterministic assertions/waits, and rerun a passing fix to expose flakiness. | Fold this into the worker/backend completion contract; do not make Playwright, a full suite, or this shallow skill a universal requirement. |
+| CI recovery | [`cursor-team-kit/skills/loop-on-ci/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/loop-on-ci/SKILL.md) | Re-evaluate the complete required-check set after each scoped repair; fix one established cause at a time; distinguish deterministic failure from flake; report remaining evidence. | GitHub/`gh`, PR lookup, logs, watch, push, and check-provider semantics are adapter-owned. Do not bypass hooks or mutate/push without repository/user authority. |
+| Final review and reviewer handoff | [`cursor-team-kit/skills/review-and-ship/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/review-and-ship/SKILL.md), [`cursor-team-kit/skills/make-pr-easy-to-review/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/make-pr-easy-to-review/SKILL.md) | Compare actual change with intent, check correctness/security/regression risk, rerun affected proof after critical fixes, and give reviewers a behavior-preserving summary of intent, important files, risk, coverage, rollout/migration, and gaps. | Split review from shipping mutation. Commit, push, PR creation/update, history rewrite, force-push, and rollout are explicit user/repository-gated adapter actions—not automatic workflow completion. |
+| Neutral integration | [`orchestrate/references/handoffs.md#merges-are-tasks`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/references/handoffs.md), article [“Merge conflicts”](https://cursor.com/blog/agent-swarm-model-economics#merge-conflicts) | Convergence is separately owned: name exact inputs, allowed conflict policy, combined output, and post-integration acceptance/evidence. A neutral owner avoids either implementation lineage silently winning. | Use only when multiple independent lineages converge. Git/worktree/merge commands and the article's internal VCS are transports/evidence, not portable behavior. |
+| Continual learning | [`continual-learning/agents/agents-memory-updater.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/continual-learning/agents/agents-memory-updater.md), [`continual-learning/hooks/continual-learning-stop.ts`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/continual-learning/hooks/continual-learning-stop.ts) | Inspect only new/changed evidence; keep recurring preferences and stable workspace facts; update/deduplicate in place; cap guidance; reject secrets, one-offs, process noise, and unsupported claims; run only after source advancement plus a cadence/rate gate. | Reuse the curation discipline, not Cursor transcript paths, mtimes, hooks, state files, section names, or automatic `AGENTS.md` placement. The settled user-level `AGENTS.md` prohibition remains absolute. |
+| Bounded shared operational learning | Article [“Letting agents shape the environment”](https://cursor.com/blog/agent-swarm-model-economics#letting-agents-shape-the-environment) | Optionally retain a small curated project guide of recurring surprise-derived operational knowledge whose future value exceeds its context cost. | Experimental input only. Do not require automatic injection, Cursor's “Field Guide” name/layout, or unpublished curation machinery. The continual-learning placement ticket owns the final design. |
+
+### Article behaviors worth retaining
+
+- Planner/worker trees can separate design/decomposition context from bounded execution context without making swarming the default. [Trees and leaves](https://cursor.com/blog/agent-swarm-model-economics#trees-and-leaves) · [What the tree does for memory](https://cursor.com/blog/agent-swarm-model-economics#what-the-tree-does-for-memory)
+- Split-brain design and planner contention justify one named owner for each decision and declared dependency-carried context instead of sibling negotiation. [Split-brain design](https://cursor.com/blog/agent-swarm-model-economics#split-brain-design) · [Contention between planners](https://cursor.com/blog/agent-swarm-model-economics#contention-between-planners)
+- “Specs as prompts” supports progressively lowering approved intent into explicit task authority without asking workers to reconstruct product decisions. [Specs as prompts](https://cursor.com/blog/agent-swarm-model-economics#specs-as-prompts)
+- Multiple decorrelated review lenses support independent review/verification where consequence warrants it; they do not prove that every task needs a swarm of reviewers. [Review lenses](https://cursor.com/blog/agent-swarm-model-economics#review-lenses)
+- Worker-heavy token use and large cost differences across model mixes support capability/risk-based role binding rather than one expensive model everywhere. They do not establish portable model IDs, prices, or numeric routing thresholds. [Model economics](https://cursor.com/blog/agent-swarm-model-economics#model-economics)
+
+Article-only mechanisms—the high-throughput internal VCS, reconciler, compiler-checked design references, Field Guide injection, and reported thousand-commit throughput—are design evidence only. The public sources do not expose a reusable implementation contract for them.
+
+### Overlap with Matt-derived and installed local disciplines
+
+The current Matt source inventory and lifecycle boundaries are recorded in [Research current Matt workflow skills](01-research-current-matt-workflow-skills.md). The observed local inventory contains adapted [`eng-tdd`](../../../.config/agents/skills/eng-tdd/SKILL.md), [`eng-diagnosing-bugs`](../../../.config/agents/skills/eng-diagnosing-bugs/SKILL.md), [`eng-prototype`](../../../.config/agents/skills/eng-prototype/SKILL.md), [`wayfinder`](../../../.config/agents/skills/wayfinder/SKILL.md), `grilling`, and domain/codebase disciplines, but no installed directories named `implement`, `research`, `handoff`, `code-review`, or `resolving-merge-conflicts`.
+
+| Cursor input | Direct overlap | Distinct contribution to keep |
+|---|---|---|
+| Orchestrate planner/worker graph | Matt `to-tickets`, `implement`, and `handoff`; local Wayfinder handles decision planning only | Backend execution topology, explicit runtime ownership/dependency context, terminal handoff and recovery state |
+| `run-smoke-tests` | Local `eng-tdd` behavior seams and local `eng-diagnosing-bugs` feedback loops | Require a user-facing/end-to-end worker smoke scenario and a rerun for flake risk; fold rather than duplicate |
+| `verify-this` plus Orchestrate verifier | Local TDD/diagnosis already constructs red-capable checks; Matt `code-review` checks Standards/Spec | A small claim-first proof interface, honest negative/inconclusive verdict, exact target revision, and independent evidence strength |
+| `loop-on-ci` | Local diagnosis establishes cause and tight feedback; Matt implementation runs checks | Treat the full changing CI check set as the feedback surface and re-evaluate it after every repair |
+| `review-and-ship` | Matt `code-review` supplies stronger separate Standards/Spec axes; Matt `implement` already invokes review | Reviewer-facing intent/risk/coverage handoff and a distinct shipping gate; do not import its bundled auto-commit/push/PR procedure |
+| `make-pr-easy-to-review` | Matt handoff/review and repository-specific Git practice | Behavior-preserving reviewer guidance; history rewrite remains destructive and explicit-only |
+| Orchestrate merge task/article resolver | Matt `resolving-merge-conflicts` traces both intents and verifies | Make fan-in a neutral named task with exact verified inputs and post-integration evidence |
+| Continual learning | No current Matt engineering-lifecycle equivalent | Incremental evidence window, one neutral curator, dedupe/update-in-place, cadence/noise/size gates, and project-versus-user scope discipline |
+
+**Selection rule:** merge direct overlaps into the existing or planned Matt-derived discipline instead of creating parallel skills. Preserve only distinct seams: adaptive backend orchestration, claim-level verification, CI recovery, neutral integration, explicit shipping/reviewer handoff, and terminal continual-learning curation.
+
+### Provider-specific details to exclude from shared skills
+
+- Cursor SDK/cloud-agent spawning, `CURSOR_API_KEY`, dashboard/VM behavior, provider model catalogs/prices, agent/run IDs, and concrete error strings. [Orchestrate skill](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/SKILL.md)
+- Git clones, branches, worktrees, `startingRef`, `.orchestrate`, `plan.json`, `state.json`, handoff/state paths, commit/push/PR commands, GitHub CLI/Actions, and merge commands. [Orchestrate planner](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/skills/orchestrate/references/planner.md) · [CI loop](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/loop-on-ci/SKILL.md)
+- Slack bot scopes/tokens, thread mirroring, Andon emoji/reaction handling, retry queues, and `attention.log`.
+- Playwright command names, npm scripts, project-specific suites, fixed timeouts, and browser choice from `run-smoke-tests`.
+- Cursor plugin manifests/frontmatter, transcript locations, hook lifecycle/timing, generation IDs, incremental-index paths, and the exact Cursor `AGENTS.md` section layout. [Continual-learning manifest](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/continual-learning/.cursor-plugin/plugin.json)
+- Automatic commit, push, PR creation/update, force-push, history rewriting, check-provider selection, and deployment/rollout mechanics.
+
+These belong to thin harness/repository adapters and execution metadata under the already-settled adapter contract.
+
+### Inspected/relevant candidates rejected or folded
+
+| Candidate | Disposition | Reason |
+|---|---|---|
+| [`cursor-team-kit/skills/check-compiler-errors`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/check-compiler-errors/SKILL.md) | Reject standalone | A compile/type-check is one project verification command, not a durable workflow discipline. |
+| [`cursor-team-kit/skills/fix-ci`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/skills/fix-ci/SKILL.md) | Reject | Superseded by the richer complete-check-set loop in `loop-on-ci`. |
+| [`thermos/skills/thermo-nuclear-code-quality-review`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/thermos/skills/thermo-nuclear-code-quality-review/SKILL.md) | Reject | Duplicate of the team-kit review body and direct review overlap. |
+| [`thermos/skills/thermo-nuclear-review`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/thermos/skills/thermo-nuclear-review/SKILL.md) | Reject | Strong but broad Cursor PR audit; Matt's Standards/Spec review contract is a cleaner portable authority split. |
+| [`agent-compatibility/agents/validation-review.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/agent-compatibility/agents/validation-review.md) | Reject | Repository compatibility scoring/scanning is a domain-specific audit, while smoke/claim verification supplies the reusable loop. |
+| [`continual-learning/skills/continual-learning/SKILL.md`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/continual-learning/skills/continual-learning/SKILL.md) | Fold | It is a thin delegating parent; retain the updater's curation contract and keep hook transport in the adapter. |
+| [`cli-for-agent`](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cli-for-agent/README.md) | Reject from this workflow | Useful CLI product-design guidance, but not an end-to-end implementation stage; its noninteractive/idempotent/dry-run script rules already fit `craft-skill`'s script policy. |
+| `create-plugin`, `pr-review-canvas`, `docs-canvas`, `cursor-sdk` | Reject from shared behavior | Plugin authoring, Cursor Canvas presentation, and Cursor SDK transport are not portable implementation-flow disciplines. See the [repository catalog](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/README.md). |
+| `pstack` | Excluded, not evaluated | Separate end-to-end workflow reserved for comparison only after this map is decision-complete. |
+
+No additional public plugin directory clears the specific, nonredundant durable-discipline bar beyond `orchestrate`, `cursor-team-kit`, and `continual-learning`.
+
+### License and attribution
+
+- The repository root declares MIT and each target is a standalone plugin. [Repository README](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/README.md)
+- `orchestrate`, `cursor-team-kit`, and `continual-learning` each have the same MIT notice: Copyright © 2026 Cursor. Copies or substantial portions must include the copyright and permission notice; the work is provided “AS IS.” [Orchestrate LICENSE](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/orchestrate/LICENSE) · [Cursor Team Kit LICENSE](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/cursor-team-kit/LICENSE) · [Continual Learning LICENSE](https://github.com/cursor/plugins/blob/91be0f994b5de7a75f4d6f2b3b00958126d9195e/continual-learning/LICENSE)
+- Prefer independently expressed behavioral adaptation. If later implementation copies substantial source text or code, retain the applicable Cursor MIT notice with the copied material. Keep research citations even when only paraphrasing.
+- The repository MIT notice does not establish a license for separately hosted article prose or graphics; do not copy them substantially without separate permission.
+
+### Downstream ownership
+
+- [Decide verification, review, and integration policy](12-decide-verification-review-and-integration-policy.md) owns the final verdict/evidence vocabulary and when independent verification is required.
+- [Choose exact portable skill inventory](09-choose-exact-portable-skill-inventory.md) owns whether `verify-this`, CI recovery, review/shipping, smoke behavior, and orchestration become separate `eng-` skills or merge into existing/planned skills.
+- [Place continual learning and AGENTS updates](18-place-continual-learning-and-agents-updates.md) owns curator timing, project/user scope, cadence, and write authority.
+- [Decide local skill migration cutover](14-decide-local-skill-migration-cutover.md) owns source notices, retained text, and migration validation.
+
+The source comparison surfaced no additional decision outside those existing tickets. The map's compatibility/precedence fog is therefore cleared rather than graduated into another ticket.

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Show planner, worker, verifier, and integrator authority without role overlap or self-verification. The backend receives a current approved implementation ticket set bound to current Engineering Requirements and Engineering Specification revisions; this is accepted implementation authority. The full-orchestration topology and its revised Route Overview are explicitly current and approved. Stop after fresh post-integration verification; do not simulate final review, curation, or completion. The planner handed-off output and artifact must be called a planning Handoff containing decomposition and contracts, never an implementation Handoff; only workers produce implementation Handoffs. Treat the planning Handoff as backend-validated current contract authority, with no independent implementation verification required before its worker children become ready."
+  },
+  "scripted_replies": []
+}

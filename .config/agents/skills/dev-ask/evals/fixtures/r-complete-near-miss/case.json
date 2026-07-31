@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A worker Handoff claims completion, but current terminal evidence shows verification and required work remain incomplete. Route first to dev-implementation, allow only prospective eventual return to dev-ask, reject completion now, and do not present completion until later evidence proves it."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

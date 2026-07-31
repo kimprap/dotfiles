@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Tasks A and B are genuinely independent; C depends on verified Handoffs from both. Dispatch only the ready frontier. All unspecified authority, capability-profile, identity, adapter, smoke, and verifier prerequisites are current and satisfied. Simulate through completed worker Handoffs, one run-level verifying transition covering fresh proof for A and B, direct task handed-off → verified transitions for A and B, and the point where C becomes ready with both current verified Handoffs. Every running transition is task-level and owned by worker; do not emit a backend-owned aggregate run-running transition. Do not emit task-level verifying states: verifying exists only in the run projection."
+  },
+  "scripted_replies": []
+}

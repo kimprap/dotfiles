@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "One bounded cohesive task fits one fresh context and has no durable recovery requirement. In the backend ready event explicitly select one worker and state that no planner is dispatched. Use owner:worker, never worker/planner, for implementation running and handed-off events."
+  },
+  "scripted_replies": []
+}

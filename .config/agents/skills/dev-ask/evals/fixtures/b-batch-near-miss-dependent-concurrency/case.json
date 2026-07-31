@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Task B consumes task A output, so they are not independent. Stop after Task B receives fresh dev-verification proof; do not simulate final review, curation, or completion. If modeled as separate tasks, Task B must remain pending and must not become ready or running until after Task A has an explicit state:verified event owned by dev-verification. In the Task A ready event output, explicitly state that Task B remains pending on Task A verification."
+  },
+  "scripted_replies": []
+}

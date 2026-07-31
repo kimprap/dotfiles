@@ -1,14 +1,10 @@
 ---
 name: craft-rule
 description: >
-  Create, update, evaluate, and clean up agent rule files. Use for rule authoring,
-  activation/injection timing, TTSR condition/scope tuning, false-trigger audits,
-  layered base/companion/harness adapters, always-apply decisions, or rule cleanup.
-compatibility: >
-  Runs as an Agent Skill in OMP, Grok CLI, and other Agent Skills hosts.
-  Rule output stays portable; OMP TTSR metadata is optional and provider-specific.
-metadata:
-  tags: "agent-rules,ttsr,rule-authoring,agent-harness-engineering"
+  Create, update, evaluate, and clean up agent rule files. Use when the user explicitly
+  requests rule maintenance, or when diagnosing activation, injection timing, TTSR
+  conditions/scopes, false triggers, layered adapters, duplicates, or stale policy.
+  Do not activate merely to comply with an existing rule.
 ---
 
 # craft-rule

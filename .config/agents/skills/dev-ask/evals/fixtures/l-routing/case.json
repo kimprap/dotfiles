@@ -1,0 +1,11 @@
+{
+  "additional_files": [
+    "answer.txt"
+  ],
+  "inputs": {
+    "request": "Use the installed dev-ask entry point to classify a read-only question that current fixture evidence answers. Do not mutate files."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

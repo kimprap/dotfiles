@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The destination and decision route cannot fit one reliable context. Wayfinder must produce a planning-only decision map, then return only to dev-ask for route recomputation and approval. Do not list unresolved possible downstream owners before the map determines them."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

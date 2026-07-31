@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The user explicitly asks to discuss and stress-test a one-context design decision; current evidence is sufficient and no runnable or visible fidelity is needed. Expose only the current Route Overview approval and approval of the recomputed Route Overview after grill-me returns; do not invent a separate post-interview confirmation gate."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

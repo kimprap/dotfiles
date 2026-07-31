@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A worker attempt crosses to a declared receiver. Show the revision-bound Handoff acceptance path. Use explicit simulated immutable identifiers AUTH-7, TASK-17, RECEIVER-3, and target-sha256:4a6f2d9b. The Handoff evidence must enumerate Outcome, Authority checked, Result, Evidence, Decisions and assumptions, Risks and unresolved items, and Next receiver. Record truthful executable capability profile CAP-5 as current in the accepted event, gates, and Handoff authority check; never describe a prerequisite as merely assumed or ambient. RECEIVER-3 is the fresh dev-verification receiver. After the worker Handoff, emit a state:verifying event owned by dev-verification that accepts only these current declared revisions; do not reopen TASK-17 as ready."
+  },
+  "scripted_replies": []
+}

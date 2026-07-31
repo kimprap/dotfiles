@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "An intake names a stale Engineering Specification revision and has no current approval. Show backend-owned accepted then backend-owned blocked, and return the authority defect to dev-specification as the named owner of the stale governing artifact; no task becomes ready. Any later router recomputation and reapproval remains prospective."
+  },
+  "scripted_replies": []
+}

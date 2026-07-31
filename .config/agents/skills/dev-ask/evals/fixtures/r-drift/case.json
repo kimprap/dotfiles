@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A load-bearing artifact digest changes after approval. After detecting drift, simulate presentation of the revised Route Overview but do not invent its approval and do not dispatch. Because drift stops execution before dispatch, set first_owner to null even though dev-implementation remains a prospective owner in the route. Set artifacts to an empty array: no implementation result, terminal evidence, or completion presentation has been produced or promised under the invalidated route."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

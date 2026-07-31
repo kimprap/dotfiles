@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A fixed verified target enters standards and specification review; a blocking FAIL finding yields overall CHANGES REQUIRED. Show who may edit. Use fixed simulated target identity target-sha256:4a6f2d9b in the review evidence and failed transition. The fresh read-only review must be owned by dev-code-review, distinct from the backend; list dev-code-review in owners and attribute the reviewing evidence event to it. Emit the complete prior trace accepted, ready, running, handed-off, verifying, and verified with the exact role owners before dev-code-review owns reviewing and the backend records failed. Do not require reviewed or complete after the blocking finding. Name target-sha256:4a6f2d9b in every worker Handoff, verification, review, and failed event so the fixed lineage is explicit end to end. In the backend failed event output, explicitly require a new repair task revision and renewed independent verification proof before review may resume."
+  },
+  "scripted_replies": []
+}

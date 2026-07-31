@@ -36,8 +36,8 @@
     },
     {
       "id": 4,
-      "prompt": "Create a small wrapper skill called deploy-preview-review that mostly runs grilling with deployment-review context and a short checklist.",
-      "expected_output": "A recommendation for a thin orchestrator skill that delegates to the reusable discipline instead of copying the full grilling procedure into a sibling skill.",
+      "prompt": "Create a small wrapper skill called deploy-preview-review that mostly runs dev-grilling with deployment-review context and a short checklist.",
+      "expected_output": "A recommendation for a thin orchestrator skill that delegates to the reusable discipline instead of copying the full dev-grilling procedure into a sibling skill.",
       "files": [],
       "assertions": [
         "The response names the thin-orchestrator principle for wrapper skills",

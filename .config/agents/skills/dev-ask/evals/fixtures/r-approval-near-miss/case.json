@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A silence, caveat, changed constraint, topic continuation, or unrelated affirmative is not approval. Simulate recomputing and presenting the revised Route Overview as an event, then stop without approval, dispatch, persistence, or mutation. Set route to recomputed Route Overview → wait for approval and set artifacts to an empty array: the overview, approval-resume state, and continuation state are not artifacts."
+  },
+  "scripted_replies": [
+    "I have a caveat: the constraint changed."
+  ]
+}

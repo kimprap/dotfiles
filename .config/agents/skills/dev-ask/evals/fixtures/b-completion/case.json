@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "All task revisions, criteria, lineages, proof, review, integration, curation, and residual risks are accounted. Show terminal presentation authority. Current immutable terminal evidence proves all required work and nonterminal states absent. Do not emit any dev-continual-learning-owned state transition; record CURATED only as an artifact and in the backend-owned complete event output. Emit the complete ordered trace accepted, ready, running, handed-off, verifying, verified, integration-pending, integrating, integrated, reviewing, reviewed, complete. Use the exact role-owner mapping: backend for accounting states, worker for running/handoff, dev-verification for verifying/verified, dev-integration for integrating/integrated, and dev-code-review for reviewing/reviewed. After integrated, emit a second fresh dev-verification-owned verifying and verified pair against the combined identity before dev-code-review begins reviewing. Include a residual-risk accounting artifact and name that accounting in the backend complete output."
+  },
+  "scripted_replies": []
+}

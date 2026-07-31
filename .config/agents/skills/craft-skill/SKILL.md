@@ -1,15 +1,10 @@
 ---
 name: craft-skill
 description: >
-  Create, update, evaluate, and clean up agent skills. Use for skill authoring,
-  frontmatter or description refinement, scripts/references/evals, discovery or invocation
-  failures, harness transports, duplicate/stale audits, or merge/delete decisions.
-compatibility: >
-  Uses the Agent Skills standard and runs in OMP, Grok CLI, Claude Code, Codex,
-  and similar hosts. Provider-specific transports and invocation metadata are optional adapters.
-metadata:
-  tags: "agent-skills,skill-authoring,skill-evals,skill-cleanup"
-  sources: "Agent Skills spec; OMP docs; Grok CLI docs; Codex docs; Anthropic skill-creator"
+  Create, update, evaluate, and clean up agent skills. Use when the user explicitly
+  requests skill authoring or maintenance, or when diagnosing skill discovery,
+  invocation, metadata, evals, references, scripts, duplicates, or stale copies.
+  Do not activate merely because an existing skill is being used.
 ---
 
 # craft-skill

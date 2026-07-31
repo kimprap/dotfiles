@@ -1,0 +1,12 @@
+{
+  "additional_files": [
+    "left.txt",
+    "right.txt"
+  ],
+  "inputs": {
+    "request": "A current human-approved Engineering Specification and exact tickets authorize the smallest full-orchestration planner/worker graph for left.txt and right.txt. Left lineage attempt 1 must produce one controlled pre-mutation failure; record backend failure, explicit retry authorization, and a recovery Handoff before a fresh attempt succeeds. The right lineage remains demonstrably independent. Require exact fresh verification of both lineages, neutral SHA-256 fan-in, integrated smoke, fresh post-integration verification, final Standards and Specification review, terminal curation, and completion aggregation. Return exact terminal evidence to dev-ask for later completion presentation. The current capability profile and full-orchestration Route Overview are approved."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

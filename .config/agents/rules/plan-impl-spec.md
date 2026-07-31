@@ -21,7 +21,7 @@ Map the implementation steps directly onto the `T1`, `T2`, ... task codes in the
 List the files, symbols, rule names, skill names, vault paths, or external docs that disambiguate the work.
 
 ## Skill outcomes to capture
-Record the decisions/results produced by `eng-tdd`, `eng-diagnosing-bugs`, `eng-codebase-design`, `eng-prototype`, `eng-improve-codebase-architecture`, `grilling`, or `domain-modeling`. Do not restate those skills' full procedures.
+Record the decisions/results produced by `dev-tdd`, `dev-diagnosing-bugs`, `dev-codebase-design`, `dev-prototype`, `dev-improve-codebase-architecture`, `dev-grilling`, or `dev-domain-modeling`. Do not restate those skills' full procedures.
 
 ## Verification
 Give at least one check that exercises the new behavior, not just metadata parsing.
