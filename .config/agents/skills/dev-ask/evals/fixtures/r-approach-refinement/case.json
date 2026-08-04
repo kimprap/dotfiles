@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "repo-local rules could be configured to be automatically injected into any agent harness, this ensures discovery on any agent/subagent sessions. However, other contracts are not, i.e. adrs, architecture.md, etc. The only good place to ensure their discovery would be repo-local @.agents/AGENTS.md . Give me a refined approach to design this into AGENTS.md. I suppose for ADRs, given there is a shared INDEX.md cache mapping, this should be included instead of brittlely listing all ADRS in there, which could get stale very easily."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

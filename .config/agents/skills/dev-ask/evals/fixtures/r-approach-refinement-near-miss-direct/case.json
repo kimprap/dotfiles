@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The desired behavior, scope, architecture, compatibility, failure behavior, acceptance, and verification are already settled. Apply the bounded approved edit now; do not reconsider or refine the approach."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

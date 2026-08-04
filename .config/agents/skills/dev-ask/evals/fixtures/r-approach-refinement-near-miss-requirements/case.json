@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "I want to change the behavior, but the observable result, failure handling, scope, constraints, and acceptance criteria are not settled. I have no candidate approach to refine."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

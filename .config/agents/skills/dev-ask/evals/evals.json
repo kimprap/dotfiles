@@ -476,7 +476,10 @@
     {
       "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
       "expected": {
-        "artifacts": [],
+        "artifacts": [
+          "immutable decision-evidence artifact",
+          "common Handoff"
+        ],
         "first_owner": "grill-me",
         "gates": [
           "overview approval",
@@ -507,6 +510,203 @@
         "approval",
         "identity-recheck",
         "dispatch:grill-me"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require approval or reapproval only for executable or routed work, material drift, topology escalation, destructive/external effects, or shipping; never require it solely for terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+      ],
+      "scripted_replies": [
+        "APPROVE the current Route Overview"
+      ],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
+      "expected": {
+        "artifacts": [
+          "immutable decision-evidence artifact",
+          "common Handoff"
+        ],
+        "first_owner": "grill-with-docs",
+        "gates": [
+          "overview approval",
+          "recomputed Route Overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "documented-codebase interview dispatch",
+        "owners": [
+          "grill-with-docs",
+          "dev-ask"
+        ],
+        "route": "grill-with-docs → dev-ask (recompute)"
+      },
+      "fixture_dir": "fixtures/r-approach-refinement",
+      "forbidden_events": [
+        "interview-bypass",
+        "router-deep-interview",
+        "mutation",
+        "persistence",
+        "dispatch:dev-requirements",
+        "dispatch:dev-specification",
+        "dispatch:dev-implementation"
+      ],
+      "id": "R-APPROACH-REFINEMENT",
+      "inputs": {
+        "request": "repo-local rules could be configured to be automatically injected into any agent harness, this ensures discovery on any agent/subagent sessions. However, other contracts are not, i.e. adrs, architecture.md, etc. The only good place to ensure their discovery would be repo-local @.agents/AGENTS.md . Give me a refined approach to design this into AGENTS.md. I suppose for ADRs, given there is a shared INDEX.md cache mapping, this should be included instead of brittlely listing all ADRS in there, which could get stale very easily."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:grill-with-docs"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require approval or reapproval only for executable or routed work, material drift, topology escalation, destructive/external effects, or shipping; never require it solely for terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+      ],
+      "scripted_replies": [
+        "APPROVE the current Route Overview"
+      ],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence (promised downstream output)"
+        ],
+        "first_owner": "dev-implementation",
+        "gates": [
+          "overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "direct implementation dispatch",
+        "owners": [
+          "dev-implementation",
+          "dev-ask"
+        ],
+        "route": "dev-implementation → dev-ask completion presentation"
+      },
+      "fixture_dir": "fixtures/r-approach-refinement-near-miss-direct",
+      "forbidden_events": [
+        "unnecessary-interview",
+        "dispatch:grill-me",
+        "dispatch:grill-with-docs"
+      ],
+      "id": "R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT",
+      "inputs": {
+        "request": "The desired behavior, scope, architecture, compatibility, failure behavior, acceptance, and verification are already settled. Apply the bounded approved edit now; do not reconsider or refine the approach."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-implementation"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require approval or reapproval only for executable or routed work, material drift, topology escalation, destructive/external effects, or shipping; never require it solely for terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+      ],
+      "scripted_replies": [
+        "APPROVE the current Route Overview"
+      ],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
+      "expected": {
+        "artifacts": [],
+        "first_owner": null,
+        "gates": [],
+        "mode": "none",
+        "outcome": "immediate evidence-backed answer",
+        "owners": [],
+        "route": "direct answer"
+      },
+      "fixture_dir": "fixtures/r-approach-refinement-near-miss-readonly",
+      "forbidden_events": [
+        "dispatch",
+        "mutation",
+        "persistence"
+      ],
+      "id": "R-APPROACH-REFINEMENT-NEAR-MISS-READONLY",
+      "inputs": {
+        "request": "Explain the existing implementation and why its current approach behaves as it does. I am not proposing a change or asking for critique; answer from sufficient current evidence only."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "direct-answer"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require approval or reapproval only for executable or routed work, material drift, topology escalation, destructive/external effects, or shipping; never require it solely for terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+      ],
+      "scripted_replies": [],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
+      "expected": {
+        "artifacts": [
+          "Engineering Requirements Brief"
+        ],
+        "first_owner": "dev-requirements",
+        "gates": [
+          "overview approval",
+          "requirements approval",
+          "recomputed Route Overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "requirements dispatch; return for recomputed overview",
+        "owners": [
+          "dev-requirements",
+          "dev-ask"
+        ],
+        "route": "dev-requirements → dev-ask (recompute)"
+      },
+      "fixture_dir": "fixtures/r-approach-refinement-near-miss-requirements",
+      "forbidden_events": [
+        "interview-before-requirements",
+        "dispatch:grill-me",
+        "dispatch:grill-with-docs"
+      ],
+      "id": "R-APPROACH-REFINEMENT-NEAR-MISS-REQUIREMENTS",
+      "inputs": {
+        "request": "I want to change the behavior, but the observable result, failure handling, scope, constraints, and acceptance criteria are not settled. I have no candidate approach to refine."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-requirements"
       ],
       "rubric": [
         "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
@@ -724,7 +924,10 @@
     {
       "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
       "expected": {
-        "artifacts": [],
+        "artifacts": [
+          "immutable decision-evidence artifact",
+          "common Handoff"
+        ],
         "first_owner": "grill-me",
         "gates": [
           "overview approval",
