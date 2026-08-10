@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A large request has complete approved product authority and no intent gap, but no approved Engineering Specification or dependency-wired ticket set. Breadth alone must not trigger interviewing. Route through dev-specification, dev-ticketing, then dev-implementation. Terminal evidence returns for automatic presentation when current."
+    "request": "A large request has complete approved product authority and no intent gap, but no current Engineering Specification or dependency-wired ticket set. Breadth alone must not trigger interviewing. Show the full prospective specification, ticketing, implementation, verification, final-review, learning, and completion route; faithful derived artifacts continue automatically under the route. Dispatch only dev-specification first."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

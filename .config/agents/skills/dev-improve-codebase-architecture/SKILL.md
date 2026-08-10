@@ -65,12 +65,12 @@ See [HTML-REPORT.md](HTML-REPORT.md) for the full HTML scaffold, diagram pattern
 
 Do NOT propose interfaces yet. After the file is written, ask the user: "Which of these would you like to explore?"
 
-### 3. Grilling loop
+### 3. Iterative candidate interview
 
-Once the user picks a candidate, use the `dev-grilling` skill to walk the decision tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, and what tests survive.
+Once the user picks a candidate, use `dev-grilling` round by round until its decision frontier is empty, the user pauses, or a named evidence/authority blocker remains. Preserve one complete batch of currently independent questions per round; never impose an arbitrary interview-round maximum. Return immutable decision evidence or the exact resumable frontier.
 
-Route any qualifying domain write through `dev-domain-modeling`, which exclusively owns artifact qualification, exact-content/destination confirmation, and mutation. To explore alternative interfaces for the selected module, use `dev-codebase-design` and its approved design-it-twice contract.
+Use `dev-codebase-design` and its approved design-it-twice contract only to explore alternative interfaces for the selected module. Route any qualifying domain write through `dev-domain-modeling`, which exclusively owns artifact qualification, exact-content/destination confirmation, and mutation.
 
 ### 4. Return the selected change
 
-Return the chosen architecture change, settled constraints, open authority decisions, and observable acceptance to `dev-ask`. Re-enter the intent and engineering-requirements gates before implementation. This skill surveys and selects; it never silently starts the refactor.
+Return the survey evidence, chosen architecture change, settled constraints, open authority decisions, observable acceptance, and exact artifact identities in one common Handoff to `dev-ask`. Include `route-impact: unchanged|changed` and no alternative receiver. `unchanged` preserves an already-approved continuation; `changed` identifies the material route facts for recomputation and possible reapproval. This skill surveys and selects; it never authorizes or starts requirements, specification, ticketing, implementation, destructive effects, or shipping.

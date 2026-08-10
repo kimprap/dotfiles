@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only standard-assurance trace: sequential tasks TASK-A and TASK-B form one shared lineage for OUT-T4. Smoke each task/attempt on its exact revision. Do not independently verify between tasks. Verify the final single-lineage target once, then run one eligible final read-only review once."
+  },
+  "scripted_replies": []
+}

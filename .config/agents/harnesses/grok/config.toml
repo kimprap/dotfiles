@@ -1,3 +1,6 @@
+[hints]
+memory_modal_fullscreen = true
+
 [memory]
 enabled = true
 
@@ -16,18 +19,20 @@ vim_mode = true
 simple_mode = false
 theme = "auto"
 show_timestamps = true
+auto_dark_theme = "groknight"
+show_timeline = true
 
 [subagents]
 enabled = true
 
 [subagents.toggle]
 browser-use = true
+planner = true
 
-[models]
-default = "grok-build"
 
 [marketplace]
 official_marketplace_auto_installed = true
+default_skills_installs_purged = true
 
 [[marketplace.sources]]
 name = "xAI Official"
@@ -36,4 +41,3 @@ git = "https://github.com/xai-org/plugin-marketplace.git"
 [plugins]
 enabled = []
 disabled = []
-

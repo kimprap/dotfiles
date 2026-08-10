@@ -1,6 +1,6 @@
 ---
 name: dev-domain-modeling
-description: Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model.
+description: Build or sharpen canonical domain terminology and qualifying architectural decisions when a human asks for durable domain modeling or an owner skill explicitly needs it. Skip passive glossary reading, ordinary documentation, implementation design, and unconfirmed writes.
 ---
 
 # Domain Modeling
@@ -59,7 +59,7 @@ When the user states how something works, check whether the code agrees. If you 
 
 ### Gate every durable domain write
 
-First qualify the artifact: a resolved canonical term may update or create the relevant `CONTEXT.md`; `CONTEXT-MAP.md` requires multiple real bounded contexts; an ADR must satisfy all three criteria below. Then show the exact proposed content and destination and obtain explicit human confirmation for that exact write. Silence, conversational resolution, approval of another artifact, or a caller's assumption is not confirmation. Only after confirmation may this skill write. Apply this gate identically for direct calls and for `dev-requirements`, `dev-grilling`, `grill-with-docs`, Wayfinder, or architecture-survey callers. Use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) or [ADR-FORMAT.md](./ADR-FORMAT.md) only after the gate.
+First qualify the artifact: a resolved canonical term may update or create the relevant `CONTEXT.md`; `CONTEXT-MAP.md` requires multiple real bounded contexts; an ADR must satisfy all three criteria below. Then bind exact durable-write authority. Normally, show the exact proposed content and destination and obtain explicit human confirmation for that exact write. An exact current human-approved plan or decision artifact that already names the content and destination is itself the durable-write authority for only that exact materialization; record its immutable identity and do not ask for duplicate confirmation. Any synthesis, omission, changed wording, changed destination, or expanded decision beyond that approved content still requires fresh exact confirmation. Silence, conversational resolution, approval of an unrelated artifact, or a caller's assumption is not confirmation. Apply this gate identically for direct calls and for `dev-requirements`, `dev-grilling`, `grill-with-docs`, Wayfinder, or architecture-survey callers. Use [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) or [ADR-FORMAT.md](./ADR-FORMAT.md) only after the gate.
 
 `CONTEXT.md` must contain no implementation detail. It is a glossary, not a specification, scratch pad, or repository for implementation decisions.
 
@@ -72,3 +72,9 @@ Only offer to create an ADR when all three are true:
 3. **The result of a real trade-off** — there were genuine alternatives and you picked one for specific reasons
 
 If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+
+## Result, stop, and receiver
+
+Return only the qualified glossary/context-map/ADR delta or an exact no-write/blocker result, its authority revision, destination and before/after identity, changed terms or decisions, rejected alternatives when applicable, and `route-impact: unchanged|changed` in one Common Handoff. Name exactly one receiver: the requesting lifecycle owner when its route remains current, or `dev-ask` when the confirmed domain decision materially changes route facts.
+
+Stop without writing for missing or stale authority, an artifact that does not qualify, unresolved terminology or architecture authority, a concurrent destination change that cannot be safely rebound, or any content/destination delta not covered by exact human approval. This discipline never chooses product scope, implementation architecture outside a qualifying confirmed ADR, a route, or a downstream stage.

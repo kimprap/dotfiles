@@ -1,0 +1,9 @@
+{
+  "additional_files": [
+    "registry.md"
+  ],
+  "inputs": {
+    "request": "Read registry.md as a read-only authority fixture. Report the one current executable ADR and the rejected and superseded records as linked history only. Emit no dispatch, approval, or mutation."
+  },
+  "scripted_replies": []
+}

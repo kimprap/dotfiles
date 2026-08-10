@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only convergence trace: final verification returns NOT VERIFIED for AC-11A and AC-11B before any review. Aggregate both IDs once, consume inherited repair token 1/1 at authorization of one consolidated owner repair revision, smoke the repair, reverify impacted and preserved behavior, then run the first eligible final review once. No assurance role edits."
+  },
+  "scripted_replies": []
+}

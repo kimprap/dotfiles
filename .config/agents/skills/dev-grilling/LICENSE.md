@@ -1,6 +1,6 @@
 Source repository: https://github.com/mattpocock/skills
-Source path: skills/in-progress/batch-grill-me/SKILL.md
-Source commit: ed37663cc5fbef691ddfecd080dff42f7e7e350d
+Source path: skills/productivity/grilling/SKILL.md
+Source commit: bfdaef8e989a5c81160e74bc5043bd434da49cac
 
 MIT License
 

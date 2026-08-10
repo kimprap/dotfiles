@@ -1,434 +1,652 @@
-import { afterEach, describe, expect, mock, test } from "bun:test";
 import { createHash } from "node:crypto";
-import * as fs from "node:fs/promises";
+import { afterEach, describe, expect, mock, test } from "bun:test";
+import { access, mkdir, mkdtemp, readFile, realpath, rename, rm, symlink, utimes, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
 mock.module("@oh-my-pi/pi-coding-agent/internal-urls", () => ({
-  resolveLocalUrlToPath(url, options) {
-    if (!options?.localRoot) throw new Error("missing test local protocol options");
-    return join(options.localRoot, url.slice("local://".length));
-  },
+    resolveLocalUrlToPath(value, options) {
+        if (!value.startsWith("local://")) throw new Error(`not a local URI: ${value}`);
+        return join(options.localRoot, value.slice("local://".length));
+    },
 }));
-
-const { default: planArtifactSync } = await import("./plan-artifact-sync.js");
 
 const DOTFILES = "/Users/kim/.dotfiles";
 const HELPER = join(DOTFILES, "bin/omp-copy-plan-artifact");
-const ACTIVE_DIR = [".agents", "plans"];
-const cleanups = new Set();
+const { publishLockRecord } = await import(HELPER);
+const { default: planArtifactSync } = await import("./plan-artifact-sync.js");
+const cleanups = [];
 
 function planBytes({
-  datetime = "2026-07-31-1718",
-  status = "PENDING",
-  body = "",
-  lineEnding = "\n",
+    datetime = "2026-08-10-0310",
+    status = "PENDING",
+    taskChecked = false,
+    criterionChecked = false,
+    completion = "Not complete.",
+    body = "",
 } = {}) {
-  return Buffer.from([
-    "# Demo plan",
-    "",
-    `**Datetime**: ${datetime}`,
-    "**Scope**: Test plan artifacts",
-    "**Summary**: Exercise deterministic plan projection.",
-    `**Status**: ${status}`,
-    "",
-    "## Tasks",
-    "- [x] T1. Exercise plan artifacts",
-    "",
-    "## Verification / Done criteria",
-    "- [x] The test fixture is deterministic",
-    body,
-  ].filter((line) => line !== "").join(lineEnding) + lineEnding);
+    return Buffer.from(
+        [
+            "# Mirror probe",
+            "",
+            `**Datetime**: ${datetime}`,
+            "**Scope**: mirror probe",
+            "**Summary**: mirror probe",
+            `**Status**: ${status}`,
+            "",
+            "## Context",
+            body,
+            "",
+            "## Tasks",
+            `- [${taskChecked ? "x" : " "}] T1. Exercise lifecycle`,
+            ...(taskChecked ? ["  completed 2026-08-10-0311"] : []),
+            "",
+            "## Verification / Done criteria",
+            `- [${criterionChecked ? "x" : " "}] Projection matches authority`,
+            "",
+            "## Completion Summary",
+            completion,
+            "",
+        ].join("\n")
+    );
 }
 
 async function temporaryDirectory(prefix) {
-  const directory = await fs.mkdtemp(join(tmpdir(), prefix));
-  cleanups.add(directory);
-  return directory;
+    const directory = await mkdtemp(join(tmpdir(), prefix));
+    cleanups.push(directory);
+    return directory;
 }
 
-async function pathExists(filePath) {
-  try {
-    await fs.lstat(filePath);
-    return true;
-  } catch (error) {
-    if (error?.code === "ENOENT") return false;
-    throw error;
-  }
-}
-
-function activePath(cwd, datetime, slug) {
-  return join(cwd, ...ACTIVE_DIR, `${datetime}_${slug}.md`);
-}
-
-function archivePath(cwd, datetime, slug) {
-  return join(cwd, ...ACTIVE_DIR, "archive", `${datetime}_${slug}.md`);
-}
-
-async function runProcess(command, args, cwd) {
-  const process = Bun.spawn([command, ...args], { cwd, stdout: "pipe", stderr: "pipe" });
-  const [stdout, stderr, code] = await Promise.all([
-    new Response(process.stdout).text(),
-    new Response(process.stderr).text(),
-    process.exited,
-  ]);
-  return { code, stdout: stdout.trim(), stderr: stderr.trim() };
-}
-
-function runHelper(cwd, operation, slug, contentFile) {
-  return runProcess(HELPER, [operation, "--slug", slug, "--content-file", contentFile], cwd);
-}
-
-async function writeLocalPlan(localRoot, slug, bytes) {
-  const sourcePath = join(localRoot, `${slug}-plan.md`);
-  await fs.writeFile(sourcePath, bytes);
-  return sourcePath;
-}
-
-async function lockPathFor(cwd, datetime, slug) {
-  const root = await fs.realpath(cwd);
-  const planId = `${datetime}_${slug}`;
-  const key = createHash("sha256").update(`${root}\0${planId}`).digest("hex");
-  return join(tmpdir(), "omp-plan-artifact-locks", `${key}.lock`);
+async function fixture(options = {}) {
+    const root = await temporaryDirectory("omp-plan-sync-repo-");
+    const localRoot = await temporaryDirectory("omp-plan-sync-local-");
+    const localPath = join(localRoot, "demo-plan.md");
+    await mkdir(join(root, ".agents", "plans"), { recursive: true });
+    await writeFile(localPath, planBytes(options));
+    return {
+        root,
+        localRoot,
+        localPath,
+        active: join(root, ".agents", "plans", `${options.datetime ?? "2026-08-10-0310"}_demo.md`),
+        archived: join(root, ".agents", "plans", "archive", `${options.datetime ?? "2026-08-10-0310"}_demo.md`),
+    };
 }
 
 function createFakePi() {
-  const handlers = new Map();
-  const tools = [];
-  const warnings = [];
-  const z = {
-    string() {
-      return {
-        regex() {
-          return { type: "string" };
+    const handlers = new Map();
+    const tools = [];
+    return {
+        handlers,
+        tools,
+        on(name, handler) {
+            handlers.set(name, handler);
         },
-      };
-    },
-    object(shape) {
-      return { shape };
-    },
-  };
-
-  return {
-    handlers,
-    tools,
-    warnings,
-    zod: { z },
-    setLabel() {},
-    on(name, handler) {
-      handlers.set(name, handler);
-    },
-    registerTool(tool) {
-      tools.push(tool);
-    },
-    async exec(command, args, { cwd }) {
-      return runProcess(command, args, cwd);
-    },
-  };
+        registerTool(tool) {
+            tools.push(tool);
+        },
+        async exec(command, args, options) {
+            const process = Bun.spawn([command, ...args], {
+                cwd: options.cwd,
+                stdout: "pipe",
+                stderr: "pipe",
+            });
+            const [stdout, stderr, code] = await Promise.all([
+                new Response(process.stdout).text(),
+                new Response(process.stderr).text(),
+                process.exited,
+            ]);
+            return { stdout, stderr, code };
+        },
+    };
 }
 
-function extensionContext(cwd, localRoot, warnings) {
-  return {
-    cwd,
-    localProtocolOptions: { localRoot },
-    ui: {
-      notify(message) {
-        warnings.push(message);
-      },
-    },
-  };
+function context(root, localRoot, notifications = []) {
+    return {
+        cwd: root,
+        localProtocolOptions: { localRoot },
+        ui: { notify: (message) => notifications.push(message) },
+    };
+}
+
+async function mutate(pi, ctx, event) {
+    return pi.handlers.get("tool_result")(
+        {
+            type: "tool_result",
+            toolCallId: "probe",
+            content: [],
+            isError: false,
+            ...event,
+        },
+        ctx
+    );
+}
+
+async function runHelper(cwd, operation, slug, contentFile) {
+    const process = Bun.spawn([HELPER, operation, "--slug", slug, "--content-file", contentFile], {
+        cwd,
+        stdout: "pipe",
+        stderr: "pipe",
+    });
+    const [stdout, stderr, code] = await Promise.all([
+        new Response(process.stdout).text(),
+        new Response(process.stderr).text(),
+        process.exited,
+    ]);
+    return { stdout: stdout.trim(), stderr: stderr.trim(), code };
+}
+
+async function exists(filePath) {
+    try {
+        await access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 afterEach(async () => {
-  await Promise.all([...cleanups].map((directory) => fs.rm(directory, { recursive: true, force: true })));
-  cleanups.clear();
+    await Promise.all(cleanups.splice(0).map((directory) => rm(directory, { recursive: true, force: true })));
+});
+
+describe("plan-artifact-sync extension", () => {
+    test("uses native OMP approval and never registers an execution gate or archive tool", () => {
+        const pi = createFakePi();
+        planArtifactSync(pi);
+
+        expect([...pi.handlers.keys()]).toEqual(["tool_result"]);
+        expect(pi.handlers.has("before_agent_start")).toBe(false);
+        expect(pi.handlers.has("tool_call")).toBe(false);
+        expect(pi.tools).toEqual([]);
+    });
+
+    test("mirrors logical and physical write/edit event paths byte-exactly", async () => {
+        const files = await fixture();
+        const pi = createFakePi();
+        const notifications = [];
+        const ctx = context(files.root, files.localRoot, notifications);
+        planArtifactSync(pi);
+
+        const events = [
+            { toolName: "write", input: { path: "local://demo-plan.md" } },
+            { toolName: "write", input: { path: files.localPath } },
+            { toolName: "edit", input: { input: `[${files.localPath}#ABCD]\nPUT 1.=1:\n+# Mirror probe` } },
+            { toolName: "edit", input: {}, details: { path: files.localPath } },
+            { toolName: "edit", input: {}, details: { resolvedPath: files.localPath } },
+        ];
+
+        for (const [index, event] of events.entries()) {
+            await writeFile(files.localPath, planBytes({ body: `revision ${index}` }));
+            await mutate(pi, ctx, event);
+            expect(await readFile(files.active)).toEqual(await readFile(files.localPath));
+        }
+        expect(notifications).toEqual([]);
+    });
+
+    test("expands tilde paths and ignores unrelated files", async () => {
+        const root = await temporaryDirectory("omp-plan-sync-repo-");
+        const fakeHome = await temporaryDirectory("omp-plan-sync-home-");
+        const localRoot = join(fakeHome, "local");
+        const localPath = join(localRoot, "demo-plan.md");
+        const unrelated = join(root, "demo-plan.md");
+        await mkdir(localRoot, { recursive: true });
+        await writeFile(localPath, planBytes());
+        await writeFile(unrelated, planBytes());
+        const pi = createFakePi();
+        const ctx = context(root, localRoot);
+        planArtifactSync(pi);
+        const originalHome = process.env.HOME;
+        process.env.HOME = fakeHome;
+        try {
+            await mutate(pi, ctx, { toolName: "write", input: { path: "~/local/demo-plan.md" } });
+            expect(await readFile(join(root, ".agents", "plans", "2026-08-10-0310_demo.md"))).toEqual(
+                await readFile(localPath)
+            );
+
+            const calls = [];
+            const originalExec = pi.exec;
+            pi.exec = async (...args) => {
+                calls.push(args);
+                return originalExec(...args);
+            };
+            await mutate(pi, ctx, { toolName: "write", input: { path: unrelated } });
+            expect(calls).toEqual([]);
+        } finally {
+            process.env.HOME = originalHome;
+        }
+    });
+
+    test("archives a terminal mutation without changing the local authority", async () => {
+        const files = await fixture();
+        const pi = createFakePi();
+        const ctx = context(files.root, files.localRoot);
+        planArtifactSync(pi);
+        const complete = planBytes({
+            status: "DONE",
+            taskChecked: true,
+            criterionChecked: true,
+            completion: "Lifecycle complete.",
+        });
+        await writeFile(files.localPath, complete);
+
+        await mutate(pi, ctx, {
+            toolName: "edit",
+            input: { input: `[${files.localPath}#CDEF]\nPUT 1.=1:\n+# Mirror probe` },
+        });
+
+        expect(await exists(files.active)).toBe(false);
+        expect(await readFile(files.archived)).toEqual(complete);
+        expect(await readFile(files.localPath)).toEqual(complete);
+    });
+
+    test("warns on projection ambiguity without blocking tools or changing authority", async () => {
+        const files = await fixture();
+        const notifications = [];
+        await mkdir(join(files.root, ".agents", "plans", "archive"), { recursive: true });
+        await writeFile(files.active, Buffer.from("active"));
+        await writeFile(files.archived, Buffer.from("archive"));
+        const authority = await readFile(files.localPath);
+        const pi = createFakePi();
+        const ctx = context(files.root, files.localRoot, notifications);
+        planArtifactSync(pi);
+
+        expect(await mutate(pi, ctx, { toolName: "write", input: { path: files.localPath } })).toBeUndefined();
+        expect(notifications).toHaveLength(1);
+        expect(notifications[0]).toContain("active and archived targets both exist");
+        expect(await readFile(files.localPath)).toEqual(authority);
+        expect(await readFile(files.active, "utf8")).toBe("active");
+        expect(await readFile(files.archived, "utf8")).toBe("archive");
+    });
+    test("continues a multi-plan edit after one projection fails", async () => {
+        const root = await temporaryDirectory("omp-plan-sync-repo-");
+        const localRoot = await temporaryDirectory("omp-plan-sync-local-");
+        const badPath = join(localRoot, "bad-plan.md");
+        const goodPath = join(localRoot, "good-plan.md");
+        const badActive = join(root, ".agents", "plans", "2026-08-10-0310_bad.md");
+        const badArchive = join(root, ".agents", "plans", "archive", "2026-08-10-0310_bad.md");
+        const goodActive = join(root, ".agents", "plans", "2026-08-10-0310_good.md");
+        await mkdir(join(root, ".agents", "plans", "archive"), { recursive: true });
+        await writeFile(badPath, planBytes({ body: "bad local mutation" }));
+        await writeFile(goodPath, planBytes({ body: "good local mutation" }));
+        await writeFile(badActive, "active");
+        await writeFile(badArchive, "archive");
+        const notifications = [];
+        const pi = createFakePi();
+        planArtifactSync(pi);
+
+        await mutate(pi, context(root, localRoot, notifications), {
+            toolName: "edit",
+            input: { input: `[${badPath}#ABCD]\nPUT 1.=1:\n+# Bad\n[${goodPath}#CDEF]\nPUT 1.=1:\n+# Good` },
+        });
+
+        expect(notifications).toHaveLength(1);
+        expect(notifications[0]).toContain("bad: ERROR: active and archived targets both exist");
+        expect(await readFile(goodActive)).toEqual(await readFile(goodPath));
+        expect(await readFile(badActive, "utf8")).toBe("active");
+        expect(await readFile(badArchive, "utf8")).toBe("archive");
+    });
+
+    test("warns on a lost acknowledgement after effect and continues later identities", async () => {
+        const root = await temporaryDirectory("omp-plan-sync-repo-");
+        const localRoot = await temporaryDirectory("omp-plan-sync-local-");
+        const firstPath = join(localRoot, "first-plan.md");
+        const laterPath = join(localRoot, "later-plan.md");
+        const firstActive = join(root, ".agents", "plans", "2026-08-10-0310_first.md");
+        const laterActive = join(root, ".agents", "plans", "2026-08-10-0310_later.md");
+        await mkdir(join(root, ".agents", "plans"), { recursive: true });
+        await writeFile(firstPath, planBytes({ body: "first effect" }));
+        await writeFile(laterPath, planBytes({ body: "later effect" }));
+        const notifications = [];
+        const pi = createFakePi();
+        const originalExec = pi.exec;
+        pi.exec = async (command, args, options) => {
+            const result = await originalExec(command, args, options);
+            return args.includes("first") ? { ...result, stdout: "" } : result;
+        };
+        planArtifactSync(pi);
+
+        await mutate(pi, context(root, localRoot, notifications), {
+            toolName: "edit",
+            input: { input: `[${firstPath}#ABCD]\nPUT 1.=1:\n+# First\n[${laterPath}#CDEF]\nPUT 1.=1:\n+# Later` },
+        });
+
+        expect(notifications).toHaveLength(1);
+        expect(notifications[0]).toContain("first: helper acknowledgement was missing or invalid");
+        expect(await readFile(firstActive)).toEqual(await readFile(firstPath));
+        expect(await readFile(laterActive)).toEqual(await readFile(laterPath));
+    });
 });
 
 describe("omp-copy-plan-artifact", () => {
-  test("derives the identity from canonical metadata and preserves bytes", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const source = await writeLocalPlan(
-      localRoot,
-      "demo",
-      planBytes({ datetime: "2024-02-29-2359", lineEnding: "\r\n" }),
-    );
+    test("keeps incomplete and malformed terminal lifecycles active", async () => {
+        const complete = planBytes({
+            status: "DONE",
+            taskChecked: true,
+            criterionChecked: true,
+            completion: "Looks complete.",
+        }).toString("utf8");
+        for (const source of [
+            planBytes(),
+            planBytes({ status: "DONE", taskChecked: true, criterionChecked: false }),
+            planBytes({ status: "DONE", taskChecked: true, criterionChecked: true, completion: "   " }),
+            Buffer.from(complete.replace("T1.", "T0.")),
+            Buffer.from(complete.replace("T1.", "T01.")),
+        ]) {
+            const files = await fixture();
+            await writeFile(files.localPath, source);
+            const result = await runHelper(files.root, "sync", "demo", files.localPath);
+            expect(result.code).toBe(0);
+            expect(result.stdout).toContain("plan-artifact-synced:");
+            expect(await readFile(files.active)).toEqual(source);
+            expect(await exists(files.archived)).toBe(false);
+        }
+    });
 
-    const result = await runHelper(cwd, "sync", "demo", source);
-    const target = activePath(cwd, "2024-02-29-2359", "demo");
+    test("archives complete projections and updates the archived identity in place", async () => {
+        const files = await fixture();
+        const complete = planBytes({
+            status: "DONE",
+            taskChecked: true,
+            criterionChecked: true,
+            completion: "Complete.",
+        });
+        await writeFile(files.localPath, complete);
+        const archived = await runHelper(files.root, "sync", "demo", files.localPath);
+        expect(archived.code).toBe(0);
+        expect(archived.stdout).toContain("plan-artifact-archived:");
+        expect(await exists(files.active)).toBe(false);
+        expect(await readFile(files.archived)).toEqual(complete);
 
-    expect(result.code).toBe(0);
-    expect(result.stdout).toBe("plan-artifact-synced: .agents/plans/2024-02-29-2359_demo.md");
-    expect(await fs.readFile(target)).toEqual(await fs.readFile(source));
+        const override = planBytes({ status: "IN_PROGRESS", body: "Later authority override." });
+        await writeFile(files.localPath, override);
+        const updated = await runHelper(files.root, "sync", "demo", files.localPath);
+        expect(updated.code).toBe(0);
+        expect(updated.stdout).toContain("plan-artifact-already-archived:");
+        expect(await exists(files.active)).toBe(false);
+        expect(await readFile(files.archived)).toEqual(override);
+        expect(await readFile(files.localPath)).toEqual(override);
+    });
 
-    const uppercase = await runHelper(cwd, "sync", "Demo", source);
-    expect(uppercase.code).not.toBe(0);
-    expect(await fs.readdir(join(cwd, ...ACTIVE_DIR))).toEqual(["2024-02-29-2359_demo.md"]);
+    test("archives uppercase checked Markdown lifecycles", async () => {
+        const files = await fixture();
+        const complete = Buffer.from(
+            planBytes({
+                status: "DONE",
+                taskChecked: true,
+                criterionChecked: true,
+                completion: "Uppercase checks complete.",
+            })
+                .toString("utf8")
+                .replaceAll("[x]", "[X]")
+        );
+        await writeFile(files.localPath, complete);
 
-    const quoted = await writeLocalPlan(
-      localRoot,
-      "quoted",
-      planBytes({ body: "## Completion Summary\n**Datetime**: quoted plan identity\n**Status**: quoted status" }),
-    );
-    expect((await runHelper(cwd, "sync", "quoted", quoted)).code).toBe(0);
-    expect(await pathExists(activePath(cwd, "2026-07-31-1718", "quoted"))).toBe(true);
-  });
+        const archived = await runHelper(files.root, "sync", "demo", files.localPath);
 
-  test("rejects invalid, duplicate, misplaced, and non-UTF-8 metadata without writes", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const invalidFixtures = [
-      ["calendar", planBytes({ datetime: "2026-02-29-1718" })],
-      ["duplicate", Buffer.from(planBytes().toString().replace("## Tasks", "**Datetime**: 2026-07-31-1718\n\n## Tasks"))],
-      ["misplaced", Buffer.from("# Demo\n\n## Tasks\n**Datetime**: 2026-07-31-1718\n")],
-      ["nonutf8", Buffer.from([0x23, 0x20, 0xff])],
-    ];
+        expect(archived.code).toBe(0);
+        expect(archived.stdout).toContain("plan-artifact-archived:");
+        expect(await exists(files.active)).toBe(false);
+        expect(await readFile(files.archived)).toEqual(complete);
+        expect(await readFile(files.localPath)).toEqual(complete);
+    });
 
-    for (const [slug, bytes] of invalidFixtures) {
-      const source = await writeLocalPlan(localRoot, slug, bytes);
-      const result = await runHelper(cwd, "sync", slug, source);
-      expect(result.code).not.toBe(0);
-      expect(await pathExists(activePath(cwd, "2026-07-31-1718", slug))).toBe(false);
-    }
-  });
+    test("rejects noncanonical core datetime metadata without creating a projection", async () => {
+        const files = await fixture();
+        const malformed = Buffer.from(planBytes().toString("utf8").replace("**Datetime**: ", "**Datetime**:"));
+        await writeFile(files.localPath, malformed);
 
-  test("fails closed for ambiguity and refuses a non-DONE archive", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const source = await writeLocalPlan(localRoot, "demo", planBytes());
-    const active = activePath(cwd, "2026-07-31-1718", "demo");
-    const archived = archivePath(cwd, "2026-07-31-1718", "demo");
-    await fs.mkdir(join(cwd, ...ACTIVE_DIR, "archive"), { recursive: true });
-    await fs.writeFile(active, "active before ambiguity");
-    await fs.writeFile(archived, "archive before ambiguity");
+        const synchronized = await runHelper(files.root, "sync", "demo", files.localPath);
 
-    const ambiguous = await runHelper(cwd, "sync", "demo", source);
-    expect(ambiguous.code).not.toBe(0);
-    expect(await fs.readFile(active, "utf8")).toBe("active before ambiguity");
-    expect(await fs.readFile(archived, "utf8")).toBe("archive before ambiguity");
+        expect(synchronized.code).toBe(1);
+        expect(synchronized.stderr).toContain("canonical **Datetime**");
+        expect(await exists(files.active)).toBe(false);
+        expect(await exists(files.archived)).toBe(false);
+        expect(await readFile(files.localPath)).toEqual(malformed);
+    });
 
-    await fs.rm(archived);
-    const nonDoneArchive = await runHelper(cwd, "archive", "demo", source);
-    expect(nonDoneArchive.code).not.toBe(0);
-    expect(await fs.readFile(active, "utf8")).toBe("active before ambiguity");
-  });
+    test("keeps noncanonical terminal-only metadata active", async () => {
+        const canonical = planBytes({
+            status: "DONE",
+            taskChecked: true,
+            criterionChecked: true,
+            completion: "Canonical completion.",
+        }).toString("utf8");
+        for (const name of ["Scope", "Summary", "Status"]) {
+            const files = await fixture();
+            const malformed = Buffer.from(canonical.replace(`**${name}**: `, `**${name}**:`));
+            await writeFile(files.localPath, malformed);
 
-  test("archives a completed source directly when no projection exists", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const source = await writeLocalPlan(localRoot, "demo", planBytes());
-    const active = activePath(cwd, "2026-07-31-1718", "demo");
-    const archived = archivePath(cwd, "2026-07-31-1718", "demo");
+            const synchronized = await runHelper(files.root, "sync", "demo", files.localPath);
 
-    const rejected = await runHelper(cwd, "archive", "demo", source);
-    expect(rejected.code).not.toBe(0);
-    expect(await pathExists(active)).toBe(false);
-    expect(await pathExists(archived)).toBe(false);
+            expect(synchronized.code).toBe(0);
+            expect(synchronized.stdout).toContain("plan-artifact-synced:");
+            expect(await readFile(files.active)).toEqual(malformed);
+            expect(await exists(files.archived)).toBe(false);
+            expect(await readFile(files.localPath)).toEqual(malformed);
+        }
+    });
 
-    await fs.writeFile(source, planBytes({ status: "DONE", body: "## Completion Summary\nDirect archive." }));
+    test("fails closed on active/archive ambiguity and target symlinks", async () => {
+        const files = await fixture();
+        await mkdir(join(files.root, ".agents", "plans", "archive"), { recursive: true });
+        await writeFile(files.active, Buffer.from("active"));
+        await writeFile(files.archived, Buffer.from("archive"));
+        const ambiguous = await runHelper(files.root, "sync", "demo", files.localPath);
+        expect(ambiguous.code).toBe(1);
+        expect(ambiguous.stderr).toContain("active and archived targets both exist");
+        expect(await readFile(files.active, "utf8")).toBe("active");
+        expect(await readFile(files.archived, "utf8")).toBe("archive");
 
-    const result = await runHelper(cwd, "archive", "demo", source);
-    expect(result.stdout).toBe("plan-artifact-archived: .agents/plans/archive/2026-07-31-1718_demo.md");
-    expect(await pathExists(active)).toBe(false);
-    expect(await fs.readFile(archived)).toEqual(await fs.readFile(source));
-  });
+        await rm(files.active);
+        await rm(files.archived);
+        const outside = join(files.root, "outside.md");
+        await writeFile(outside, "outside");
+        await symlink(outside, files.active);
+        const unsafe = await runHelper(files.root, "sync", "demo", files.localPath);
+        expect(unsafe.code).toBe(1);
+        expect(unsafe.stderr).toContain("regular non-symlink file");
+        expect(await readFile(outside, "utf8")).toBe("outside");
+    });
 
-  test("archives once and refreshes only the archived identity thereafter", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const source = await writeLocalPlan(localRoot, "demo", planBytes());
-    const active = activePath(cwd, "2026-07-31-1718", "demo");
-    const archived = archivePath(cwd, "2026-07-31-1718", "demo");
+    test("rejects malformed sources without creating a projection", async () => {
+        const files = await fixture();
+        for (const source of [Buffer.alloc(0), Buffer.from([0xff]), Buffer.from("not a plan\n")]) {
+            await rm(files.active, { force: true });
+            await writeFile(files.localPath, source);
+            const result = await runHelper(files.root, "sync", "demo", files.localPath);
+            expect(result.code).toBe(1);
+            expect(await exists(files.active)).toBe(false);
+            expect(await exists(files.archived)).toBe(false);
+        }
+    });
 
-    expect((await runHelper(cwd, "sync", "demo", source)).code).toBe(0);
-    await fs.writeFile(source, planBytes({ status: "DONE", body: "## Completion Summary\nDone." }));
-    const archivedResult = await runHelper(cwd, "archive", "demo", source);
-    expect(archivedResult.stdout).toBe("plan-artifact-archived: .agents/plans/archive/2026-07-31-1718_demo.md");
-    expect(await pathExists(active)).toBe(false);
-    expect(await fs.readFile(archived)).toEqual(await fs.readFile(source));
+    test("serializes overlapping synchronization for one identity", async () => {
+        const files = await fixture({ body: "concurrent" });
+        const results = await Promise.all(
+            Array.from({ length: 8 }, () => runHelper(files.root, "sync", "demo", files.localPath))
+        );
+        expect(results.every((result) => result.code === 0)).toBe(true);
+        expect(await readFile(files.active)).toEqual(await readFile(files.localPath));
+        expect(await exists(files.archived)).toBe(false);
+    });
 
-    await fs.writeFile(source, planBytes({ status: "DONE", body: "## Completion Summary\nLater override." }));
-    const repeatArchive = await runHelper(cwd, "archive", "demo", source);
-    expect(repeatArchive.stdout).toBe("plan-artifact-already-archived: .agents/plans/archive/2026-07-31-1718_demo.md");
-    const postArchiveSync = await runHelper(cwd, "sync", "demo", source);
-    expect(postArchiveSync.stdout).toBe("plan-artifact-synced: .agents/plans/archive/2026-07-31-1718_demo.md");
-    expect(await pathExists(active)).toBe(false);
-    expect(await fs.readFile(archived)).toEqual(await fs.readFile(source));
-  });
+    test("publishes one owner when a paused creator, reclaimer, and third contender collide", async () => {
+        const root = await temporaryDirectory("omp-plan-lock-publish-");
+        const lockPath = join(root, "generation.lock");
+        const ownerPath = join(lockPath, "owner.json");
+        await mkdir(lockPath);
+        const reclaimer = JSON.stringify({
+            pid: process.pid,
+            createdAt: new Date().toISOString(),
+            token: "active-reclaimer",
+        });
+        const pausedCreator = JSON.stringify({
+            pid: process.pid,
+            createdAt: new Date().toISOString(),
+            token: "paused-creator",
+        });
+        const thirdContender = JSON.stringify({
+            pid: process.pid,
+            createdAt: new Date().toISOString(),
+            token: "third-contender",
+        });
 
-  test("keeps distinct identities for matching slugs with distinct datetimes", async () => {
-    const cwd = await temporaryDirectory("omp-plan-helper-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const first = await writeLocalPlan(localRoot, "demo", planBytes({ datetime: "2026-07-30-1718" }));
-    const second = join(localRoot, "second-plan.md");
-    await fs.writeFile(second, planBytes({ datetime: "2026-07-31-1718" }));
+        expect(await publishLockRecord(ownerPath, reclaimer)).toBe("published");
+        expect(await publishLockRecord(ownerPath, pausedCreator)).toBe("occupied");
+        expect(await publishLockRecord(ownerPath, thirdContender)).toBe("occupied");
+        expect(await readFile(ownerPath, "utf8")).toBe(reclaimer);
 
-    expect((await runHelper(cwd, "sync", "demo", first)).code).toBe(0);
-    expect((await runHelper(cwd, "sync", "demo", second)).code).toBe(0);
-    expect(await pathExists(activePath(cwd, "2026-07-30-1718", "demo"))).toBe(true);
-    expect(await pathExists(activePath(cwd, "2026-07-31-1718", "demo"))).toBe(true);
-  });
+        await rm(lockPath, { recursive: true });
+        await mkdir(lockPath);
+        expect(await publishLockRecord(ownerPath, thirdContender)).toBe("published");
+        expect(await readFile(ownerPath, "utf8")).toBe(thirdContender);
+    });
 
-  test("converges planner and executor copies through the extension and archives explicitly", async () => {
-    const cwd = await temporaryDirectory("omp-plan-extension-");
-    const plannerRoot = await temporaryDirectory("omp-plan-planner-");
-    const executorRoot = await temporaryDirectory("omp-plan-executor-");
-    const pi = createFakePi();
-    planArtifactSync(pi);
-    const toolResult = pi.handlers.get("tool_result");
-    const beforeAgentStart = pi.handlers.get("before_agent_start");
-    const archiveTool = pi.tools.find((tool) => tool.name === "archive_plan_artifact");
-    const plannerContext = extensionContext(cwd, plannerRoot, pi.warnings);
-    const executorContext = extensionContext(cwd, executorRoot, pi.warnings);
-    const active = activePath(cwd, "2026-07-31-1718", "demo");
-    const archived = archivePath(cwd, "2026-07-31-1718", "demo");
+    test("reclaims one stale generation before concurrent synchronization", async () => {
+        const files = await fixture({ body: "stale lock" });
+        const planId = "2026-08-10-0310_demo";
+        const canonicalRoot = await realpath(files.root);
+        const lockKey = createHash("sha256").update(`${canonicalRoot}\0${planId}`).digest("hex");
+        const lockPath = join(tmpdir(), "omp-plan-artifact-locks", `${lockKey}.lock`);
+        await rm(lockPath, { recursive: true, force: true });
+        await mkdir(lockPath, { recursive: true });
+        await writeFile(
+            join(lockPath, "owner.json"),
+            JSON.stringify({ pid: 99999999, createdAt: "2000-01-01T00:00:00.000Z", token: "dead-generation" })
+        );
 
-    expect(archiveTool.loadMode).toBe("essential");
-    await writeLocalPlan(plannerRoot, "demo", planBytes({ body: "Planner draft." }));
-    await toolResult({ isError: false, toolName: "write", input: { path: "local://demo-plan.md" } }, plannerContext);
-    expect(await fs.readFile(active)).toEqual(await fs.readFile(join(plannerRoot, "demo-plan.md")));
+        try {
+            const results = await Promise.all(
+                Array.from({ length: 16 }, () => runHelper(files.root, "sync", "demo", files.localPath))
+            );
+            expect(results.every((result) => result.code === 0)).toBe(true);
+            expect(await readFile(files.active)).toEqual(await readFile(files.localPath));
+            expect(await exists(files.archived)).toBe(false);
+            expect(await exists(lockPath)).toBe(false);
+        } finally {
+            await rm(lockPath, { recursive: true, force: true });
+        }
+    });
 
-    await fs.writeFile(join(plannerRoot, "demo-plan.md"), planBytes({ body: "Review overlay." }));
-    await toolResult(
-      { isError: false, toolName: "edit", input: { input: "[local://demo-plan.md#ABCD]\nSWAP 1.=1:\n+# Demo" } },
-      plannerContext,
-    );
-    await fs.copyFile(join(plannerRoot, "demo-plan.md"), join(executorRoot, "demo-plan.md"));
-    await beforeAgentStart(
-      { prompt: "Plan approved.\nYou MUST read `local://demo-plan.md` before executing.\n" },
-      executorContext,
-    );
-    expect(await fs.readFile(active)).toEqual(await fs.readFile(join(executorRoot, "demo-plan.md")));
+    test("reclaims a malformed stale owner record", async () => {
+        const files = await fixture({ body: "malformed stale lock" });
+        const planId = "2026-08-10-0310_demo";
+        const canonicalRoot = await realpath(files.root);
+        const lockKey = createHash("sha256").update(`${canonicalRoot}\0${planId}`).digest("hex");
+        const lockPath = join(tmpdir(), "omp-plan-artifact-locks", `${lockKey}.lock`);
+        await rm(lockPath, { recursive: true, force: true });
+        await mkdir(lockPath, { recursive: true });
+        await writeFile(join(lockPath, "owner.json"), "{invalid-json");
+        const staleTime = new Date("2000-01-01T00:00:00.000Z");
+        await utimes(lockPath, staleTime, staleTime);
 
-    await fs.writeFile(
-      join(executorRoot, "demo-plan.md"),
-      planBytes({ status: "DONE", body: "## Completion Summary\nExecutor completion evidence." }),
-    );
-    await toolResult(
-      { isError: false, toolName: "edit", input: { input: "[local://demo-plan.md#C0DE]\nSWAP 1.=1:\n+# Demo" } },
-      executorContext,
-    );
-    expect(await fs.readFile(active)).toEqual(await fs.readFile(join(executorRoot, "demo-plan.md")));
+        try {
+            const result = await runHelper(files.root, "sync", "demo", files.localPath);
+            expect(result.code).toBe(0);
+            expect(result.stdout).toContain("plan-artifact-synced:");
+            expect(await readFile(files.active)).toEqual(await readFile(files.localPath));
+            expect(await exists(files.archived)).toBe(false);
+            expect(await exists(lockPath)).toBe(false);
+        } finally {
+            await rm(lockPath, { recursive: true, force: true });
+        }
+    });
 
-    const toolResultValue = await archiveTool.execute("call", { slug: "demo" }, undefined, undefined, executorContext);
-    expect(toolResultValue.content[0].text).toBe("plan-artifact-archived: .agents/plans/archive/2026-07-31-1718_demo.md");
-    expect(await pathExists(active)).toBe(false);
-    expect(await fs.readFile(archived)).toEqual(await fs.readFile(join(executorRoot, "demo-plan.md")));
+    test("synchronizes different identities independently", async () => {
+        const root = await temporaryDirectory("omp-plan-sync-repo-");
+        const localRoot = await temporaryDirectory("omp-plan-sync-local-");
+        const demoPath = join(localRoot, "demo-plan.md");
+        const otherPath = join(localRoot, "other-plan.md");
+        const demo = planBytes({ body: "demo identity" });
+        const other = planBytes({ body: "other identity" });
+        await mkdir(join(root, ".agents", "plans"), { recursive: true });
+        await writeFile(demoPath, demo);
+        await writeFile(otherPath, other);
 
-    await fs.writeFile(
-      join(executorRoot, "demo-plan.md"),
-      planBytes({ status: "DONE", body: "## Completion Summary\nLater executor override." }),
-    );
-    await toolResult(
-      { isError: false, toolName: "edit", input: { input: "[local://demo-plan.md#D00D]\nSWAP 1.=1:\n+# Demo" } },
-      executorContext,
-    );
-    expect(await pathExists(active)).toBe(false);
-    expect(await fs.readFile(archived)).toEqual(await fs.readFile(join(executorRoot, "demo-plan.md")));
-    expect(pi.warnings).toEqual([]);
-  });
+        const [demoResult, otherResult] = await Promise.all([
+            runHelper(root, "sync", "demo", demoPath),
+            runHelper(root, "sync", "other", otherPath),
+        ]);
 
-  test("ignores working-tree edits and non-approved prompts", async () => {
-    const cwd = await temporaryDirectory("omp-plan-extension-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const pi = createFakePi();
-    planArtifactSync(pi);
-    const context = extensionContext(cwd, localRoot, pi.warnings);
-    await writeLocalPlan(localRoot, "demo", planBytes());
+        expect(demoResult.code).toBe(0);
+        expect(otherResult.code).toBe(0);
+        expect(demoResult.stdout).toContain("2026-08-10-0310_demo.md");
+        expect(otherResult.stdout).toContain("2026-08-10-0310_other.md");
+        expect(await readFile(join(root, ".agents", "plans", "2026-08-10-0310_demo.md"))).toEqual(demo);
+        expect(await readFile(join(root, ".agents", "plans", "2026-08-10-0310_other.md"))).toEqual(other);
+    });
 
-    await pi.handlers.get("tool_result")(
-      {
-        isError: false,
-        toolName: "edit",
-        input: { input: "[/workspace/notes.md#ABCD]\nSWAP 1.=1:\n+[local://demo-plan.md#C0DE]" },
-      },
-      context,
-    );
-    await pi.handlers.get("before_agent_start")(
-      { prompt: "Please read `local://demo-plan.md` before executing." },
-      context,
-    );
+    test("classifies a discarded acknowledgement without retrying or rolling back local authority", async () => {
+        const files = await fixture({ body: "captured revision" });
+        const captured = await readFile(files.localPath);
+        const result = await runHelper(files.root, "sync", "demo", files.localPath);
+        expect(result.code).toBe(0);
 
-    expect(await pathExists(activePath(cwd, "2026-07-31-1718", "demo"))).toBe(false);
-    expect(pi.warnings).toEqual([]);
-  });
+        const current = planBytes({ body: "new local revision after discarded acknowledgement" });
+        await writeFile(files.localPath, current);
 
-  test("serializes overlapping sync and archive, reclaims dead or malformed locks, and times out live locks", async () => {
-    const cwd = await temporaryDirectory("omp-plan-lock-");
-    const localRoot = await temporaryDirectory("omp-plan-local-");
-    const source = await writeLocalPlan(
-      localRoot,
-      "demo",
-      planBytes({ status: "DONE", body: "## Completion Summary\nDone." }),
-    );
-    const active = activePath(cwd, "2026-07-31-1718", "demo");
-    const archived = archivePath(cwd, "2026-07-31-1718", "demo");
+        expect(await readFile(files.active)).toEqual(captured);
+        expect(await readFile(files.localPath)).toEqual(current);
+        expect(await readFile(files.active)).not.toEqual(await readFile(files.localPath));
+        expect(await exists(files.archived)).toBe(false);
+    });
 
-    expect((await runHelper(cwd, "sync", "demo", source)).code).toBe(0);
-    const gateLock = await lockPathFor(cwd, "2026-07-31-1718", "demo");
-    await fs.mkdir(gateLock, { recursive: true });
-    await fs.writeFile(join(gateLock, "owner.json"), JSON.stringify({ pid: process.pid, createdAt: new Date().toISOString() }));
-    const sync = Bun.spawn([HELPER, "sync", "--slug", "demo", "--content-file", source], { cwd, stdout: "pipe", stderr: "pipe" });
-    const archive = Bun.spawn([HELPER, "archive", "--slug", "demo", "--content-file", source], { cwd, stdout: "pipe", stderr: "pipe" });
-    await Bun.sleep(100);
-    expect(await pathExists(active)).toBe(true);
-    expect(await pathExists(archived)).toBe(false);
-    await fs.rm(gateLock, { recursive: true, force: true });
-    const [syncCode, archiveCode] = await Promise.all([sync.exited, archive.exited]);
-    expect(syncCode).toBe(0);
-    expect(archiveCode).toBe(0);
-    expect(await pathExists(active)).toBe(false);
-    expect(await pathExists(archived)).toBe(true);
+    test("reports source drift after an atomic projection effect and preserves both exact revisions", async () => {
+        const files = await fixture();
+        const captured = planBytes({ body: "a".repeat(64 * 1024 * 1024) });
+        const current = planBytes({ body: "b".repeat(64 * 1024 * 1024) });
+        const replacement = join(files.localRoot, "replacement.tmp");
+        await writeFile(files.localPath, captured);
+        await writeFile(replacement, current);
+        const process = Bun.spawn([HELPER, "sync", "--slug", "demo", "--content-file", files.localPath], {
+            cwd: files.root,
+            stdout: "pipe",
+            stderr: "pipe",
+        });
+        let exited;
+        process.exited.then((code) => {
+            exited = code;
+        });
+        const deadline = Date.now() + 10_000;
+        while (!(await exists(files.active)) && exited === undefined && Date.now() < deadline) {
+            await Bun.sleep(1);
+        }
+        expect(await exists(files.active)).toBe(true);
+        await rename(replacement, files.localPath);
+        const [stdout, stderr, code] = await Promise.all([
+            new Response(process.stdout).text(),
+            new Response(process.stderr).text(),
+            process.exited,
+        ]);
 
-    const deadCwd = await temporaryDirectory("omp-plan-dead-lock-");
-    const deadSource = await writeLocalPlan(localRoot, "dead", planBytes());
-    const deadLock = await lockPathFor(deadCwd, "2026-07-31-1718", "dead");
-    await fs.mkdir(deadLock, { recursive: true });
-    await fs.writeFile(join(deadLock, "owner.json"), JSON.stringify({ pid: 2_147_483_647, createdAt: new Date().toISOString() }));
-    const reclaimed = await runHelper(deadCwd, "sync", "dead", deadSource);
-    expect(reclaimed.code).toBe(0);
-    expect(await pathExists(activePath(deadCwd, "2026-07-31-1718", "dead"))).toBe(true);
+        expect(code).toBe(1);
+        expect(stdout).toBe("");
+        expect(stderr).toContain("content changed during synchronization");
+        expect(await readFile(files.active)).toEqual(captured);
+        expect(await readFile(files.localPath)).toEqual(current);
+        expect(await exists(files.archived)).toBe(false);
+    });
 
-    const abandonedCwd = await temporaryDirectory("omp-plan-abandoned-claim-");
-    const abandonedSource = await writeLocalPlan(localRoot, "abandoned", planBytes());
-    const abandonedLock = await lockPathFor(abandonedCwd, "2026-07-31-1718", "abandoned");
-    await fs.mkdir(abandonedLock, { recursive: true });
-    await fs.writeFile(join(abandonedLock, "owner.json"), JSON.stringify({ pid: 2_147_483_647, createdAt: new Date().toISOString() }));
-    await fs.writeFile(join(abandonedLock, "reclaim.json"), JSON.stringify({ pid: 2_147_483_647, createdAt: new Date().toISOString() }));
-    const abandonedRecovered = await runHelper(abandonedCwd, "sync", "abandoned", abandonedSource);
-    expect(abandonedRecovered.code).toBe(0);
-    expect(await pathExists(activePath(abandonedCwd, "2026-07-31-1718", "abandoned"))).toBe(true);
+    test("removes preflight and explicit archive operations", async () => {
+        const files = await fixture();
+        for (const operation of ["preflight", "archive"]) {
+            const result = await runHelper(files.root, operation, "demo", files.localPath);
+            expect(result.code).toBe(2);
+            expect(result.stderr).toContain("expected operation 'sync'");
+        }
+        expect(await exists(files.active)).toBe(false);
+        expect(await exists(files.archived)).toBe(false);
+    });
 
-    const competingCwd = await temporaryDirectory("omp-plan-competing-reclaim-");
-    const competingSource = await writeLocalPlan(localRoot, "competing", planBytes());
-    const competingLock = await lockPathFor(competingCwd, "2026-07-31-1718", "competing");
-    await fs.mkdir(competingLock, { recursive: true });
-    await fs.writeFile(join(competingLock, "owner.json"), JSON.stringify({ pid: 2_147_483_647, createdAt: new Date().toISOString() }));
-    const firstReclaimer = Bun.spawn([HELPER, "sync", "--slug", "competing", "--content-file", competingSource], { cwd: competingCwd, stdout: "pipe", stderr: "pipe" });
-    const secondReclaimer = Bun.spawn([HELPER, "sync", "--slug", "competing", "--content-file", competingSource], { cwd: competingCwd, stdout: "pipe", stderr: "pipe" });
-    expect(await Promise.all([firstReclaimer.exited, secondReclaimer.exited])).toEqual([0, 0]);
-    expect(await pathExists(activePath(competingCwd, "2026-07-31-1718", "competing"))).toBe(true);
-    expect(await pathExists(archivePath(competingCwd, "2026-07-31-1718", "competing"))).toBe(false);
+    test("rejects relative and mismatched content identities before projection", async () => {
+        const files = await fixture();
+        const relative = await runHelper(files.root, "sync", "demo", "demo-plan.md");
+        expect(relative.code).toBe(2);
+        expect(relative.stderr).toContain("--content-file must be an absolute path");
 
-    const malformedCwd = await temporaryDirectory("omp-plan-malformed-lock-");
-    const malformedSource = await writeLocalPlan(localRoot, "malformed", planBytes());
-    const malformedLock = await lockPathFor(malformedCwd, "2026-07-31-1718", "malformed");
-    await fs.mkdir(malformedLock, { recursive: true });
-    await fs.writeFile(join(malformedLock, "owner.json"), "{");
-    const staleTime = new Date(Date.now() - 2_000);
-    await fs.utimes(malformedLock, staleTime, staleTime);
-    const malformedReclaimed = await runHelper(malformedCwd, "sync", "malformed", malformedSource);
-    expect(malformedReclaimed.code).toBe(0);
-    expect(await pathExists(activePath(malformedCwd, "2026-07-31-1718", "malformed"))).toBe(true);
-
-    const liveCwd = await temporaryDirectory("omp-plan-live-lock-");
-    const liveSource = await writeLocalPlan(localRoot, "live", planBytes());
-    const liveLock = await lockPathFor(liveCwd, "2026-07-31-1718", "live");
-    await fs.mkdir(liveLock, { recursive: true });
-    await fs.writeFile(join(liveLock, "owner.json"), JSON.stringify({ pid: process.pid, createdAt: new Date().toISOString() }));
-    const timedOut = await runHelper(liveCwd, "sync", "live", liveSource);
-    expect(timedOut.code).not.toBe(0);
-    expect(await pathExists(activePath(liveCwd, "2026-07-31-1718", "live"))).toBe(false);
-    await fs.rm(liveLock, { recursive: true, force: true });
-  }, 20_000);
+        const mismatched = await runHelper(files.root, "sync", "other", files.localPath);
+        expect(mismatched.code).toBe(1);
+        expect(mismatched.stderr).toContain("content file identity must match slug");
+        expect(await exists(files.active)).toBe(false);
+        expect(await exists(files.archived)).toBe(false);
+    });
 });

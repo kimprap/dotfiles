@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only fresh repository-guided workflow-maintenance discovery. Starting from repository guidance only, identify the concise current workflow path, the ADR index path, and every ACTIVE workflow ADR ID from the index. Do not open every ADR body and do not treat rejected or superseded history as executable."
+  },
+  "scripted_replies": []
+}

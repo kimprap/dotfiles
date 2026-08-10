@@ -8,6 +8,7 @@
 .config/mise
 .config/starship
 archive
+docs
 .config/nvim
 .config/ghostty
 .config/yazi

@@ -1,6 +1,6 @@
 ---
 name: dev-tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+description: Apply test-driven development inside a current implementation task when the user explicitly requests test-first work, red-green-refactor, or TDD-guided integration tests. Skip ordinary testing, verification, review, and implementation whose approved method is not test-first.
 ---
 
 # Test-Driven Development
@@ -8,6 +8,12 @@ description: Test-driven development. Use when the user wants to build features 
 TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle — consult them before and during the loop, not after.
 
 When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+
+## Support contract
+
+Require a current approved implementation Task Contract, exact acceptance criterion, approved observable test seam, one implementation owner, and explicit test-first authority. TDD changes only the worker's implementation method; it does not add a lifecycle stage, assurance boundary, approval, or receiver.
+
+Each bounded cycle returns its red evidence, minimal green change, smoke, exact target/test identities, and any seam or authority blocker inside the worker's one Common Handoff to exactly one receiver already named by the Task Contract. Stop and return `authority-change-required` to that owner when the seam, behavior, scope, or effects differ from current authority; stop `no-progress-stop` when no plausible observable red case can be established. Never self-verify, review, refactor during review, or choose a new downstream owner.
 
 ## What a good test is
 

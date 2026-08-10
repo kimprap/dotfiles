@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only convergence trace: DEFECT-1 already consumed its single bounded diagnosis entry. The defect identity, hypothesis set, and evidence frontier are unchanged. Stop no-progress with exact prior evidence; do not authorize another diagnosis, repair, audit, planning pass, or lifecycle reset."
+  },
+  "scripted_replies": []
+}

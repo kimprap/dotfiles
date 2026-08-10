@@ -1,9 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A worker Handoff claims a terminal result, but current terminal evidence shows verification and required work remain incomplete. Reject terminal presentation now. Further implementation changes the approved route, so recompute the Route Overview and require its approval before dispatching dev-implementation; only a later current terminal evidence index may be presented automatically."
+    "request": "A worker Handoff claims a terminal result, but current evidence shows named approved acceptance and verification work remain incomplete. The exact authority, scope, route, acceptance, topology, effects, capabilities, and identities remain current. Reject completion and continue automatically to dev-implementation without renewed planning, audit, review, or route approval."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

@@ -36,7 +36,9 @@ Reject silence, implication, stale completion evidence, missing destination, mis
 8. For release/deploy/rollout, observe the declared health signals and execute the approved rollback when its threshold is met. Ambiguous or irreversible effects stop for human authority.
 9. Emit delivery, check, rollout, and rollback evidence tied to exact identities.
 
-## Shipping Handoff
+## Shipping payload in the Common Handoff
+
+Emit one Common Handoff and extend its role payload with the fields below; never create a second shipping result envelope.
 
 ```markdown
 ## Shipping authority
@@ -52,10 +54,10 @@ Reject silence, implication, stale completion evidence, missing destination, mis
 - Approved procedure, trigger, execution status, and resulting identity
 ## Outcome
 - SHIPPED | BLOCKED | FAILED | ROLLED BACK
-## Next owner
-- Human/requesting owner and any exact resume condition
+## Next receiver
+- Exactly one Task-Contract-eligible human, requesting, or backend owner plus any exact resume condition
 ```
 
 ## Permissions and stops
 
-Shipping cannot review its own target, repair code, infer authority, bypass hooks/checks, alter unrelated work, or combine local completion with delivery permission. Stop on stale evidence, missing authorization, unavailable required capability, check nonpass, unsafe partial effect, credential/account requirement, or ambiguous rollback. Report the smallest human prerequisite and leave local completion truth unchanged.
+Shipping cannot review its own target, repair code, infer authority, bypass hooks/checks, alter unrelated work, or combine local completion with delivery permission. Stop on stale evidence, missing authorization, unavailable required capability, check nonpass, unsafe partial effect, credential/account requirement, or ambiguous rollback. Every exit records `route-impact: unchanged|changed` and exactly one receiver in the Common Handoff; report the smallest human prerequisite and leave local completion truth unchanged.

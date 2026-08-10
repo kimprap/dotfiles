@@ -1,6 +1,6 @@
 ---
 name: dev-prototype
-description: Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic feels right, or explore what a UI should look like.
+description: Build an approved throwaway prototype only when a requirements, grilling, or specification owner needs runnable logic/state/UI evidence for one design question. Skip production implementation, ordinary candidate discussion, and questions answerable from current evidence.
 ---
 
 # Prototype
@@ -35,6 +35,6 @@ Return:
 - the immutable artifact identity and location;
 - the required disposal or preservation action, expressed without transport assumptions;
 - explicit uncertainty and decisions still owned by a human or lifecycle stage; and
-- the next owner: `dev-requirements`, `dev-grilling`, or `dev-specification`.
+- one common Handoff with `route-impact: unchanged|changed` to exactly one receiver: the requesting `dev-requirements`, `dev-grilling`, or `dev-specification` owner.
 
-The prototype is decision evidence only. It is not a production implementation, accepted test seam, shipping artifact, or completion claim. Never fold it into production, prescribe a branch, or perform the downstream change.
+The prototype is decision evidence only. `unchanged` resumes the requesting owner's approved route without router reapproval; `changed` reports the changed facts to that owner for recomputation. The prototype never selects a route, authorizes production continuation, becomes an accepted test seam, implies completion, folds into production, prescribes a branch, or performs the downstream change.

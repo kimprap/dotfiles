@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only standard-assurance trace: isolated LINEAGE-A owns AC-10A and LINEAGE-B owns AC-10B. Smoke each exact revision, independently verify each lineage, neutrally combine all and only those verified identities, smoke and verify the integrated target, then run one final review. Preserve OUT-T4 and unused 1/1 repair state in integration Handoff."
+  },
+  "scripted_replies": []
+}

@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A previously approved dev-implementation baton remains byte-identical: next owner dev-implementation, prerequisites, authority revisions, gates, and route are unchanged."
+    "request": "A previously approved common Handoff reports route-impact: unchanged and the approved authority, scope, acceptance, route, topology, effects, capability, and next owner remain exact. The named configuration target has a new digest because an unrelated commented setting changed in the same file; semantic comparison proves no load-bearing route fact or shared assumption changed. Continue automatically without reapproval."
   },
   "scripted_replies": []
 }

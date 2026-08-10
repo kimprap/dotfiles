@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Stress-test this repository-bearing candidate. Ask every currently independent load-bearing decision in one numbered round, wait for the user, recompute dependencies, and continue for as many rounds as the decision tree requires. Finish only when the frontier is empty and shared understanding is confirmed, or return the exact resumable frontier for a user pause, blocker, or repeated no-progress frontier."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

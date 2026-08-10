@@ -5,13 +5,15 @@ description: Diagnose hard bugs and performance regressions. Use when the user e
 
 # Diagnosing Bugs
 
-A discipline for hard bugs. Skip phases only when explicitly justified.
+A bounded diagnostic discipline for hard unexplained defects. One invocation establishes the loop and returns evidence; it never mutates production behavior.
 
 When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
 
-## Intake gate
+## Intake and single-entry gate
 
-Before creating a feedback-loop artifact, reproducing, instrumenting, or changing any state, bind the settled expected behavior or performance threshold and its current product/engineering authority. If expected behavior is missing, return to `dev-requirements`; if product intent is ambiguous, return to product authority. Name the exact resume artifact or decision. Enter Phase 1 only when the discrepancy is an authorized defect rather than a new requirement.
+Accept only a hard unexplained bug or performance regression with settled expected behavior or threshold, current product/engineering authority, and a stable observed reproduction whose symptom matches that authority. Reject feature work, generic quality or security audits, routine implementation/smoke/verification/review failures, and defects whose cause and bounded change surface are already known; those return directly to `dev-implementation` for owner repair under its current budget.
+
+Bind a defect identity from the expected-behavior authority, symptom, target, and environment before creating a feedback-loop artifact, instrumenting, or changing diagnostic state. One bounded invocation owns that defect's reproduction, hypotheses, and probes. The same defect cannot re-enter diagnosis on an unchanged hypothesis set and evidence frontier; return `no-progress-stop` with the prior identities instead. Materially expanded product, architecture, scope, acceptance, or effect authority returns to its canonical owner and cannot be decided here. If expected behavior is missing, return to `dev-requirements`; if product intent is ambiguous, return to product authority; if the observed reproduction is not stable enough to establish the discrepancy, return a blocker naming the exact missing evidence and resume condition.
 
 ## Phase 1 — Build a feedback loop
 
@@ -111,9 +113,9 @@ Tool preference:
 
 ## Phase 5 — Return bounded diagnosis evidence
 
-Stop before writing a regression test or applying a production fix. This skill establishes evidence; `dev-implementation` issues mutation authority to a worker.
+Stop before writing a regression test or applying a production fix. This single invocation establishes one red-capable minimized loop, 3–5 ranked falsifiable hypotheses, their one-variable probes, and bounded cause evidence; `dev-implementation` alone issues mutation authority to a worker.
 
-First remove or discard any disposable diagnostic instrumentation and prove the inspected target still has its original identity. If safe restoration or target identity is uncertain, return an evidence-backed blocker.
+First remove or discard every disposable diagnostic effect and prove the inspected production target still has its original identity. If safe restoration or target identity is uncertain, return an evidence-backed blocker. Diagnostic evidence may be retained only at an authorized non-production destination.
 
 Return exactly one outcome:
 
@@ -127,14 +129,14 @@ Return exactly one outcome:
 - Acceptance and verification scenarios, including the original unminimized reproduction
 - Security, data, migration, performance, or rollback risks
 - Exact target and evidence identities
-- Next owner: `dev-implementation`
+- Next owner: `dev-implementation`, with the same defect identity and current inherited budget
 
 ### Blocker
 
-State the missing environment, permission, stable reproduction, evidence, or safe diagnostic capability; what was tried; preserved target identity; smallest human prerequisite; and exact resume condition.
+State the missing environment, permission, stable reproduction, evidence, or safe diagnostic capability; what was tried; preserved target identity; unchanged or changed hypothesis/evidence frontier; smallest human prerequisite; and exact resume condition. A blocker cannot authorize another diagnosis invocation.
 
 ### Architecture finding
 
-When no correct test seam or safe bounded fix surface exists, return the coupling/seam evidence to `dev-improve-codebase-architecture`. Do not propose or apply the architecture change here.
+When no correct test seam or safe bounded fix surface exists, return the exact coupling/seam evidence to the current architecture authority owner. Do not propose or apply an architecture change, dispatch a survey, or expand the approved route here.
 
-Use the common `dev-handoff` shape. Include every observed check and uncertainty. Do not declare the bug fixed, write a regression test, change production code, create a commit, ship, or perform independent verification.
+Use the common `dev-handoff` shape and return to exactly one Task-Contract-eligible receiver. Include every observed check, all hypothesis/probe results, the defect identity, diagnosis-entry consumption, and uncertainty. Do not declare the bug fixed, write a regression test, change production code, create a commit, ship, perform independent verification, or restart the lifecycle.

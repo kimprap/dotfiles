@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A current human-approved PRD settles target customer, product success, strategy, and scope; observable build acceptance is incomplete. Human approval of the Engineering Requirements Brief is a required downstream gate before any later stage. Also expose approval of the recomputed Route Overview after the dev-ask return as a downstream gate."
+    "request": "A current human-approved PRD settles target customer, product success, strategy, and scope; observable build acceptance is incomplete. Confirmation of the synthesized Engineering Requirements Brief is required because it creates human-owned acceptance. The resulting route facts are not yet knowable, so expose revised compact Route Overview approval after the dev-ask return."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

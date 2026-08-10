@@ -25,8 +25,8 @@ Reject stale, conflicting, or unapproved requirements. Return material product q
 4. Identify the highest viable observable test seams before implementation. For every acceptance criterion, state the falsifiable claim, conditions/input, expected behavior or threshold, minimum proof class, target surface/environment, and whether baseline/treatment comparison is required.
 5. Resolve engineering decisions inside the approved scope. Stop for product, destructive, scope, or materially different architecture choices that require human authority.
 6. Draft one revision-bound Engineering Specification. Link authority instead of copying it and mark all material assumptions.
-7. Obtain explicit human approval. A caveat or changed decision creates a new revision and invalidates dependent tickets.
-8. Hand the approved revision to `dev-ticketing` when a durable graph is required, otherwise to `dev-ask` for implementation routing.
+7. Continue automatically when the specification only derives technical detail inside current approved requirements and architecture. If it exposes a new human-owned product, architecture, destructive/external-effect, or shipping choice, request confirmation of that one decision; a caveat or changed decision creates a new revision and invalidates dependent tickets.
+8. Hand the current revision to the one next owner in the approved route: `dev-ticketing` when a durable graph is required, otherwise `dev-implementation`. Return to `dev-ask` only when route impact changed.
 
 ## Engineering Specification
 
@@ -48,13 +48,17 @@ Reject stale, conflicting, or unapproved requirements. Return material product q
 - Cohesive ownership, fixed shared contracts, allowed decomposition, and non-goals
 ## Open decisions
 - Question → authority owner → blocking status
-## Approval and revision
-- Approved revision and supersession rule
+## Revision and governing authority
+- Current revision, governing approval, and supersession rule
 ## Next owner
-- `dev-ticketing`, or `dev-ask` for a qualified direct implementation route
+- One exact approved continuation owner: `dev-ticketing` or `dev-implementation`
 ```
 
 Do not derive runtime state, execute code, verify implementation, or create tickets inside this skill. Do not create a domain artifact unless a qualifying real term or decision receives human confirmation through `dev-domain-modeling`.
+
+## Handoff and continuation
+
+Every exit emits one common Handoff with the exact specification/authority identity, `route-impact: unchanged|changed`, unresolved blocker if any, and exactly one receiver. `unchanged` continues automatically to the next owner already named by the approved route when the specification is a faithful derivation and any newly exposed human-owned decision is confirmed; it does not add a specification-completion or router approval. `changed` returns to `dev-ask` with the changed facts for recomputation. A stop names the exact requirements, product, architecture, or destructive-effect authority owner. This stage never authorizes ticketing or implementation by itself.
 
 ## Stop conditions
 

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only convergence trace: isolated LINEAGE-A and LINEAGE-B have worker smoke but no independent lineage verification. A proposal asks to integrate them and verify only the final target. Stop before integration with exact missing proof; do not fan in, review, repair, or reset the lifecycle."
+  },
+  "scripted_replies": []
+}

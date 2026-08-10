@@ -1,36 +1,36 @@
-theme: 
+theme:
   dark: dark-swamp
   light: light
-statusLine: 
+statusLine:
   preset: custom
   separator: none
   sessionAccent: true
   transparent: true
-  leftSegments: 
+  leftSegments:
     - path
     - model
     - mode
     - token_total
     - context_pct
-  rightSegments: 
+  rightSegments:
     - session_name
-  segmentOptions: 
-    model: 
+  segmentOptions:
+    model:
       showThinkingLevel: true
-      path: 
+      path:
         abbreviate: true
         maxLength: 40
         stripWorkPrefix: true
-      git: 
+      git:
         showBranch: true
         showStaged: true
         showUnstaged: true
         showUntracked: true
 symbolPreset: nerd
 defaultThinkingLevel: medium
-memory: 
+memory:
   backend: mnemopi
-mnemopi: 
+mnemopi:
   scoping: per-project-tagged
   dbPath: ""
   bank: ""
@@ -41,51 +41,62 @@ mnemopi:
   embeddingApiUrl: https://openrouter.ai/api/v1
   llmMode: smol
   autoRetain: true
-extensions: 
+extensions:
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/plan-artifact-sync.js
-lsp: 
+lsp:
   formatOnWrite: true
 setupVersion: 1
-display: 
+display:
   showTokenUsage: true
-task: 
+task:
   showResolvedModelBadge: true
-  agentModelOverrides: 
+  agentModelOverrides:
     reviewer: openai-codex/gpt-5.6-sol:xhigh
     security-reviewer: openai-codex/gpt-5.6-sol:xhigh
-    scout: openai-codex/gpt-5.6-luna:max
-    sonic: openai-codex/gpt-5.6-luna:max
-    task: openai-codex/gpt-5.6-luna:max
-    designer: openai-codex/gpt-5.6-luna:max
-    librarian: openai-codex/gpt-5.6-luna:max
+    # scout: openai-codex/gpt-5.6-luna:max
+    # sonic: openai-codex/gpt-5.6-luna:max
+    # task: openai-codex/gpt-5.6-luna:max
+    # designer: openai-codex/gpt-5.6-luna:max
+    # librarian: openai-codex/gpt-5.6-luna:max
+    scout: openai-codex/gpt-5.6-sol:xhigh
+    sonic: openai-codex/gpt-5.6-sol:xhigh
+    task: openai-codex/gpt-5.6-sol:xhigh
+    designer: openai-codex/gpt-5.6-sol:xhigh
+    librarian: openai-codex/gpt-5.6-sol:xhigh
 hideThinkingBlock: true
-providers: 
-  webSearchExclude: 
+providers:
+  webSearchExclude:
     - perplexity
   memoryModel: online
-  webSearchOrder: 
+  webSearchOrder:
     - brave
     - xai
     - codex
-github: 
+github:
   enabled: true
-modelRoles: 
-  default: openai-codex/gpt-5.6-luna:max
-  slow: openai-codex/gpt-5.6-sol:xhigh
+modelRoles:
+  "*": openai-codex/gpt-5.6-sol:xhigh
+  # default: openai-codex/gpt-5.6-luna:max
+  default: openai-codex/gpt-5.6-sol:xhigh
+  slow: openai-codex/gpt-5.6-sol:max
   plan: openai-codex/gpt-5.6-sol:max
   advisor: openai-codex/gpt-5.6-sol:xhigh
-  smol: openai-codex/gpt-5.6-luna:max
-  task: openai-codex/gpt-5.6-luna:max
-  tiny: openai-codex/gpt-5.6-luna:max
-  designer: openai-codex/gpt-5.6-luna:max
-vault: 
+  # smol: openai-codex/gpt-5.6-luna:max
+  # task: openai-codex/gpt-5.6-luna:max
+  # tiny: openai-codex/gpt-5.6-luna:max
+  # designer: openai-codex/gpt-5.6-luna:max
+  smol: openai-codex/gpt-5.6-sol:xhigh
+  task: openai-codex/gpt-5.6-sol:xhigh
+  tiny: openai-codex/gpt-5.6-sol:xhigh
+  designer: openai-codex/gpt-5.6-sol:xhigh
+vault:
   enabled: true
-browser: 
+browser:
   enabled: true
-web_search: 
+web_search:
   enabled: true
-disabledProviders: 
+disabledProviders:
   - codex
-dev: 
+dev:
   autoqaConsent: granted

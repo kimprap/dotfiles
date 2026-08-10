@@ -1,10 +1,10 @@
 ---
 name: dev-ticketing
 description: >
-  Derive a human-approved, acyclic graph of vertical implementation tickets from
-  an approved engineering specification. Use when multiple owners, dependency
-  fan-in, recovery, or durable acceptance require tickets; skip for cohesive
-  direct work and never implement or redesign the specification.
+  Derive an acyclic graph of vertical implementation tickets from a current
+  engineering specification. Use when multiple owners, dependency fan-in,
+  recovery, or durable acceptance require tickets; skip for cohesive direct work
+  and never implement or redesign the specification.
 ---
 
 # Engineering Ticketing
@@ -23,11 +23,11 @@ Reject stale or conflicting authority, unresolved product/architecture/scope dec
 2. Identify the minimum vertical tracer bullets that each produce a demonstrable behavior. Keep coupled files, interfaces, state, and reasoning under one owner; path separation alone is not independence.
 3. Declare every dependency by stable ticket name and exact upstream artifact or Handoff. Dependencies carry explicit context, never ambient sibling state.
 4. Order tickets into an acyclic graph. Fan-out consumers bind the same upstream revision; fan-in names every required lineage and gives arrival order no precedence.
-5. Give each ticket one observable objective, behavioral/state ownership, fixed shared contracts, explicit non-goals, criterion-level acceptance, verification scenarios/evidence, decomposition permission, isolation/integration needs, decision gates, and expected receiver. When affected, project the governing specification's compatibility/degraded-behavior decision into those existing fixed-contract, acceptance, and verification fields without reinterpreting it.
+5. Give each ticket one observable objective, behavioral/state ownership, fixed shared contracts, explicit non-goals, stable acceptance-criterion IDs, verification scenarios/evidence, decomposition permission, isolation/integration needs, decision gates, and expected receiver. When affected, project the governing specification's compatibility/degraded-behavior decision into those existing fields without reinterpreting it.
 6. Ensure at least one early vertical tracer bullet can exercise the real seam without creating a horizontal scaffold or placeholder.
-7. Account for every specification criterion exactly once as owned work or explicit shared verification. Do not invent retries, runtime mechanisms, adapter bindings, or shipping.
-8. Present the dependency-wired graph for explicit human approval before publication. A caveat or changed interface creates a new ticket-set revision.
-9. Hand approved tickets to `dev-implementation` through `dev-ask`.
+7. Account for every specification criterion exactly once as owned work or explicit shared verification. Do not invent retries, runtime mechanisms, adapter bindings, todos, or shipping.
+8. Validate the graph before publication. A faithful acyclic projection continues automatically under the approved route. If the graph exposes a changed interface, material ownership/topology change, destructive/external effect, shipping action, or another human-owned decision, stop for confirmation and create a new ticket-set revision after it is settled.
+9. Return an `unchanged` Handoff directly to `dev-implementation` when that is the already-approved next owner. Return to `dev-ask` only when route impact changed.
 
 ## Ticket shape
 
@@ -47,7 +47,7 @@ Reject stale or conflicting authority, unresolved product/architecture/scope dec
 - Blocking ticket names
 - Exact upstream handoffs or artifact revisions
 ## Acceptance
-- Observable criterion per bullet
+- Stable acceptance-criterion ID → observable criterion
 ## Verification
 - Scenario, environment, proof class, and evidence per criterion
 ## Execution policy
@@ -60,10 +60,10 @@ Reject stale or conflicting authority, unresolved product/architecture/scope dec
 
 The backend later projects this shape into Task Contracts and runtime state. Do not create implementation artifacts, runtime mechanisms, verification verdicts, integration results, or shipping effects here.
 
-## Next owner
+## Handoff and next owner
 
-Return the approved ticket-set revision to `dev-ask` for `dev-implementation` routing.
+Emit one common Handoff with the exact ticket-set/specification identity, `route-impact: unchanged|changed`, graph/criterion accounting, unresolved blocker if any, and exactly one receiver. `unchanged` names `dev-implementation` and continues the already-approved route without an artifact-completion or intermediate router approval. `changed` names `dev-ask` for recomputation. A blocked graph names its exact requirements, specification, architecture, or human authority owner. The derivative Handoff does not authorize implementation by itself.
 
 ## Graph checks and stops
 
-Before approval, prove stable unique names, no dependency cycle, no missing blocker, no unowned criterion, no overlapping behavioral/state authority, no dependent tasks marked independent, and no ticket that changes the governing contract. Stop and return defects to requirements, specification, or human authority rather than repairing them in place.
+Before publication and continuation, prove stable unique names, no dependency cycle, no missing blocker, no unowned criterion, no overlapping behavioral/state authority, no dependent tasks marked independent, and no ticket that changes the governing contract. Stop with one Handoff to the exact owner of any requirements, specification, architecture, or human-authority defect rather than repairing it in place.

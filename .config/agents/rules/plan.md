@@ -69,3 +69,17 @@ Near misses:
 - Explaining a database query plan.
 - Giving informal conversational bullets with no durable artifact.
 - Reading or summarizing an archived plan without revising or executing it.
+
+## Native execution authority and transport separation
+
+At every new or resumed approved start, native harness review binds the exact authoritative identity and URI, the complete authoritative bytes and SHA-256 revision, the current lifecycle status, and the human's explicit approval of that exact presentation. Only an exact match permits execution. Missing approval, another identity or revision, changed bytes, and `DONE` or `CLOSED` status stop before plan-authorized work; a later resumed start requires a fresh review of the then-current bytes.
+
+A plan records authority but cannot approve itself, and a projection or synchronization receipt never supplies approval. A new or revised executable plan must not contain the obsolete `## Execution gate` section. Historical immutable plans remain untouched; an active old-contract plan must be explicitly revised under its own authority, with no compatibility alias.
+
+Native approval grants only plan-execution authority. Repository, shared-configuration, delivery, profile, vault, instance, source-observation, shipping, and other effects still require their own exact authority.
+
+Portable structural validation remains separate from transport. Executor Plans use the shared `executor_plan.py` validator before publication and backend mutation; ordinary durable plans use their applicable lifecycle and stage contracts. Storage adapters do not add another semantic parser or gate.
+
+An adapter may observe native approval metadata only when the harness exposes it through a documented runtime API. It must not infer approval from prompt prose, current-byte hashing, a projection, or a synchronization result. When approval metadata is not exposed, native OMP itself owns the stop; an adapter does not manufacture approval or denial.
+
+Synchronization and archival are storage effects only. They do not approve a plan, clear blockers, authorize execution, or replace current-authority checks.

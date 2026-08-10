@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Explicitly inspect and triage raw external issue #42 as read-only intake. Classify exactly one bug/enhancement category and one triage state, verify current repository evidence, and produce an agent-ready brief when qualified. Do not change labels, assignments, comments, or issue state."
+  },
+  "scripted_replies": [
+    "approve"
+  ]
+}

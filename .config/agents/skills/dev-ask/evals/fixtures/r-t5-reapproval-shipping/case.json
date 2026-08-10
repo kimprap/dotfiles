@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only router case: local completion is current, but a shipping action is newly requested. Classify shipping as a separate material route fact, present a revised Route Overview with separate delivery authority, and stop before approval or dispatch."
+  },
+  "scripted_replies": []
+}

@@ -7,6 +7,12 @@ description: Design or improve module interfaces with deep-module vocabulary. Us
 
 Design **deep modules**: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use this language and these principles wherever code is being designed or restructured. The aim is leverage for callers, locality for maintainers, and testability for everyone.
 
+## Support contract
+
+Accept only an explicit architecture/interface-design request or a current owner skill's exact design question, governing authority, fixed constraints, target seam, non-goals, and one requesting owner. This is a vocabulary and design discipline inside that owner's route, never a lifecycle stage or implementation authority.
+
+Return bounded interface options or one selected design with assumptions, trade-offs, affected seams, testability evidence, authority gaps, and `route-impact: unchanged|changed` to exactly one receiver: the requesting owner, or `dev-ask` only when the evidence materially changes route facts. Stop for missing product or architecture authority, stale/conflicting contracts, an implementation request without an approved design task, or a choice that would expand scope or effects. Do not create a Task Contract, mutate code, approve a route, or dispatch the next stage.
+
 ## Local agent-harness adaptation
 
 - Agent harness artifacts count as modules when they have an interface and implementation: agent personas, skills, rules, hooks/extensions, memory backends, vault layouts, and research-agent framework components.

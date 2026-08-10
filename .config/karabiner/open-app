@@ -25,6 +25,11 @@ if [[ -z "$bundle_id" ]]; then
 fi
 
 activate() {
+    if [[ "$bundle_id" == "com.brave.Browser" ]]; then
+        /usr/bin/open "$target"
+        return
+    fi
+
     /usr/bin/osascript - "$bundle_id" >/dev/null <<'APPLESCRIPT'
 on run argv
     tell application id (item 1 of argv) to activate
@@ -32,7 +37,7 @@ end run
 APPLESCRIPT
 }
 
-# First activation is fast for warm apps; second catches slower Space/app focus races.
+# Bundle activation preserves native window ordering; Brave needs path identity across instances.
 /bin/sleep 0.02
 activate
 /bin/sleep 0.02

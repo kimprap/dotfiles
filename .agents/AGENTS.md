@@ -17,6 +17,7 @@ Primary areas: Neovim, Zsh, Starship, Ghostty, Yazi, Cursor, helper scripts, and
 - `.config/scripts/bootstrap` owns machine setup: symlinks, Homebrew packages, Ghostty install, SourceCodePro Nerd Font, and minimal `~/.zshrc` sourcing `.config/zsh/zshrc`.
 - Preserve backup-before-overwrite behavior in bootstrap/setup scripts.
 - Target macOS on Apple Silicon; prefer Homebrew paths under `/opt/homebrew`.
+- When changing or diagnosing the generic engineering workflow, read `.config/agents/skills/dev-ask/WORKFLOW.md` and `docs/adr/INDEX.md`; ordinary tasks read only the applicable skill/rule and active ADRs named in their Task Contract.
 
 ## Key directories
 

@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A bounded shared-interface migration has a settled approved product goal but missing compatibility and failure acceptance. The approved Engineering Requirements Brief will make the specification/ticket lane mandatory. The complete intended route is dev-requirements → dev-ask recompute → dev-specification → dev-ticketing → dev-implementation → dev-ask terminal presentation. Record only the authorized dev-requirements first dispatch as a simulated event. Expose the current overview approval, Requirements Brief approval, recomputed Route Overview approval, specification approval, and ticket approval as distinct ordered gates. Terminal evidence returns for automatic presentation when current."
+    "request": "A bounded shared-interface migration has settled approved product authority but missing compatibility and failure acceptance. The resulting Requirements Brief requires confirmation because it synthesizes human-owned behavior. The specification/ticket lane is mandatory; faithful technical derivation and graph projection then continue automatically through implementation, verification, final review, learning, and completion without artifact-count approvals or an intermediate dev-ask owner. Dispatch only dev-requirements first."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

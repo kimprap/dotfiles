@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only convergence trace: OUT-T4 has settled expected behavior, stable reproduction DEFECT-1, and a hard unexplained regression. Enter dev-diagnosing-bugs exactly once. That one bounded invocation establishes a red-capable minimized loop, 3-5 falsifiable hypotheses and probes, preserves production identity, and returns exactly one fix contract to dev-implementation."
+  },
+  "scripted_replies": []
+}

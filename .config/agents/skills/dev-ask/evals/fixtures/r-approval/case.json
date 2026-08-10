@@ -1,9 +1,9 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The current Route Overview routes to dev-research with dev-research as its named first owner; all authority and target identities remain current. The user gives an unambiguous affirmative tied exactly to that overview. Record the immediately-pre-dispatch identity recheck as an explicit event."
+    "request": "The current route sends a bounded factual gap to dev-research with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections, with concise indented content and no Plan Summary, Why, Artifacts, Gates, Execution, or First action sections. The user replies approve. Record the immediately-pre-dispatch identity recheck as an explicit event."
   },
   "scripted_replies": [
-    "APPROVE the current Route Overview"
+    "approve"
   ]
 }

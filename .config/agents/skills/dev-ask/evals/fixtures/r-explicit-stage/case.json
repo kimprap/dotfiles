@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "user names dev-specification and prerequisites are current"
+    "request": "The user names dev-specification and all current prerequisites are satisfied. Dispatch that stage after compact route approval; do not add a specification-completion approval, and return for route recomputation only because downstream ownership is not yet knowable."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

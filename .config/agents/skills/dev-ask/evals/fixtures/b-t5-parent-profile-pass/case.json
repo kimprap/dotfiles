@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only parent launch assessment: for OMP and Grok, the exact Task Contract digest, Executor Plan digest, authority revision, runtime identity, adapter, selector source, resolved model, reasoning, all required capabilities and limits match; every bound field is live-attested and fallback is none. Emit the no-fallback assessment for each adapter without selecting or changing a model."
+  },
+  "scripted_replies": []
+}

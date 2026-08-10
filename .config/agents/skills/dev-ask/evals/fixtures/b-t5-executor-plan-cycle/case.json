@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only Executor Plan negative: T1 depends on T2 and T2 depends on T1. Evaluate the same bytes with executor_plan.py for omp and grok backend consumers. Return CYCLIC_DEPENDENCY and block before any plan-authorized mutation; do not choose an ordering."
+  },
+  "scripted_replies": []
+}

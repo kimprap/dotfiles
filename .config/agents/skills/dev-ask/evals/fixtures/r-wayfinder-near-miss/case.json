@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A large multi-file request already has current human-approved product authority, an approved Engineering Specification, an approved ticket set with exact Task Contracts, approved architecture and dependency graph, acceptance and verification seams, and a current capability profile. Dispatch dev-implementation in full-orchestration mode; do not invoke Wayfinder or recreate specification/tickets. Terminal evidence returns for automatic presentation when current."
+    "request": "A large multi-file request already has current approved authority, specification, ticket graph, Task Contracts, acceptance, verification seams, and a current capability profile. Skip Wayfinder and artifact regeneration, show the full prospective assurance/learning/completion tail, and dispatch only dev-implementation in full-orchestration mode."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

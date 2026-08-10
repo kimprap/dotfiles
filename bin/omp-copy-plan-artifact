@@ -1,521 +1,591 @@
 #!/usr/bin/env bun
 /**
- * Synchronize or atomically archive a session-local OMP plan artifact.
+ * Mirror a session-local OMP plan artifact into .agents/plans/. A complete
+ * lifecycle is archived atomically in the repository; the source is never
+ * changed.
  *
  * Usage:
  *   omp-copy-plan-artifact sync --slug <slug> --content-file <path>
- *   omp-copy-plan-artifact archive --slug <slug> --content-file <path>
  */
 
 import { createHash, randomUUID } from "node:crypto";
-import {
-  lstat,
-  mkdir,
-  open,
-  readFile,
-  realpath,
-  rename,
-  rm,
-  stat,
-  writeFile,
-} from "node:fs/promises";
-import { basename, dirname, join, relative } from "node:path";
+import { link, lstat, mkdir, open, readFile, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
+import { basename, dirname, isAbsolute, join, relative } from "node:path";
 import { tmpdir } from "node:os";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DATETIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})-(\d{2})(\d{2})$/;
+const TASK_CHECKBOX_RE = /^\s*(?:[-+*]|\d+[.)])\s+\[/;
+const TASK_ROW_RE = /^\s*-\s+\[[xX]\]\s+(T[1-9]\d*)\.\s+(\S.*)$/;
 const LOCK_WAIT_MS = 15_000;
 const LOCK_RETRY_MS = 25;
 const MALFORMED_LOCK_RECLAIM_AGE_MS = 1_000;
 
 class PlanArtifactError extends Error {
-  constructor(message, exitCode = 1) {
-    super(message);
-    this.name = "PlanArtifactError";
-    this.exitCode = exitCode;
-  }
+    constructor(message, exitCode = 1) {
+        super(message);
+        this.name = "PlanArtifactError";
+        this.exitCode = exitCode;
+    }
 }
 
 function usage() {
-  return [
-    "Usage:",
-    "  omp-copy-plan-artifact sync --slug <slug> --content-file <path>",
-    "  omp-copy-plan-artifact archive --slug <slug> --content-file <path>",
-  ].join("\n");
+    return "Usage: omp-copy-plan-artifact sync --slug <slug> --content-file <path>";
 }
 
 function parseArguments(argv) {
-  const [operation, ...argumentsList] = argv;
-  if (operation === "--help" || operation === "-h") {
-    console.log(usage());
-    process.exit(0);
-  }
-
-  if (operation !== "sync" && operation !== "archive") {
-    throw new PlanArtifactError(`expected operation 'sync' or 'archive'`, 2);
-  }
-
-  let slug;
-  let contentFile;
-  for (let index = 0; index < argumentsList.length; index += 1) {
-    const argument = argumentsList[index];
-    if (argument !== "--slug" && argument !== "--content-file") {
-      throw new PlanArtifactError(`unknown argument: ${argument}`, 2);
+    const [operation, ...rest] = argv;
+    if (operation === "--help" || operation === "-h") {
+        console.log(usage());
+        process.exit(0);
+    }
+    if (operation !== "sync") {
+        throw new PlanArtifactError(`expected operation 'sync', received '${operation ?? ""}'`, 2);
     }
 
-    const value = argumentsList[index + 1];
-    if (!value || value.startsWith("--")) {
-      throw new PlanArtifactError(`${argument} requires a value`, 2);
+    let slug;
+    let contentFile;
+    for (let index = 0; index < rest.length; index += 1) {
+        const argument = rest[index];
+        if (argument !== "--slug" && argument !== "--content-file") {
+            throw new PlanArtifactError(`unknown argument: ${argument}`, 2);
+        }
+        const value = rest[index + 1];
+        if (!value || value.startsWith("--")) {
+            throw new PlanArtifactError(`${argument} requires a value`, 2);
+        }
+        index += 1;
+        if (argument === "--slug") {
+            if (slug !== undefined) throw new PlanArtifactError("--slug may be provided only once", 2);
+            slug = value;
+        } else {
+            if (contentFile !== undefined) throw new PlanArtifactError("--content-file may be provided only once", 2);
+            contentFile = value;
+        }
     }
-    index += 1;
 
-    if (argument === "--slug") {
-      if (slug !== undefined) {
-        throw new PlanArtifactError("--slug may be provided only once", 2);
-      }
-      slug = value;
-    } else {
-      if (contentFile !== undefined) {
-        throw new PlanArtifactError("--content-file may be provided only once", 2);
-      }
-      contentFile = value;
+    if (!slug || !contentFile) {
+        throw new PlanArtifactError("--slug and --content-file are required", 2);
     }
-  }
-
-  if (!slug || !contentFile) {
-    throw new PlanArtifactError("--slug and --content-file are required", 2);
-  }
-  if (!SLUG_PATTERN.test(slug)) {
-    throw new PlanArtifactError(
-      `slug '${slug}' must be canonical lowercase kebab-case`,
-      2,
-    );
-  }
-
-  return { operation, slug, contentFile };
+    if (!SLUG_PATTERN.test(slug)) {
+        throw new PlanArtifactError(`slug '${slug}' must be canonical lowercase kebab-case`, 2);
+    }
+    if (!isAbsolute(contentFile)) {
+        throw new PlanArtifactError("--content-file must be an absolute path", 2);
+    }
+    return { slug, contentFile };
 }
 
 function isLeapYear(year) {
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
 function hasValidDatetime(datetime) {
-  const match = datetime.match(DATETIME_PATTERN);
-  if (!match) {
-    return false;
-  }
-
-  const [, yearText, monthText, dayText, hourText, minuteText] = match;
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const day = Number(dayText);
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-  if (year < 1 || year > 9999 || month < 1 || month > 12 || hour > 23 || minute > 59) {
-    return false;
-  }
-
-  const daysByMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return day >= 1 && day <= daysByMonth[month - 1];
+    const match = DATETIME_PATTERN.exec(datetime);
+    if (!match) return false;
+    const [, yearText, monthText, dayText, hourText, minuteText] = match;
+    const year = Number(yearText);
+    const month = Number(monthText);
+    const day = Number(dayText);
+    const hour = Number(hourText);
+    const minute = Number(minuteText);
+    if (year < 1 || year > 9999 || month < 1 || month > 12 || hour > 23 || minute > 59) return false;
+    const daysByMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return day >= 1 && day <= daysByMonth[month - 1];
 }
 
-function metadataLineIndexes(lines, name) {
-  const prefix = `**${name}**:`;
-  return lines.flatMap((line, index) => (line.startsWith(prefix) ? [index] : []));
+function normalizedLines(source) {
+    return source.split("\n").map((line) => (line.endsWith("\r") ? line.slice(0, -1) : line));
 }
 
-function validatePlanMetadata(bytes, operation) {
-  if (bytes.length === 0) {
-    throw new PlanArtifactError("refusing to sync an empty plan artifact");
-  }
-  if (bytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) {
-    throw new PlanArtifactError("plan artifact must begin directly with its H1, without a UTF-8 BOM");
-  }
+function canonicalMetadataValues(lines, name) {
+    const prefix = `**${name}**:`;
+    return lines
+        .filter((line) => line.startsWith(prefix))
+        .map((line) => {
+            const suffix = line.slice(prefix.length);
+            return /^ \S(?:.*\S)?$/.test(suffix) ? suffix.slice(1) : undefined;
+        });
+}
 
-  let source;
-  try {
-    source = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-  } catch {
-    throw new PlanArtifactError("plan artifact must be valid UTF-8");
-  }
+function sectionEnd(h2Indexes, index, lineCount) {
+    return h2Indexes.find((candidate) => candidate > index) ?? lineCount;
+}
 
-  const lines = source.split("\n").map((line) => (line.endsWith("\r") ? line.slice(0, -1) : line));
-  if (!/^#\s+\S.*$/.test(lines[0] ?? "")) {
-    throw new PlanArtifactError("the first line of the plan artifact must be its H1");
-  }
+function terminalLifecycleComplete(source) {
+    const lines = normalizedLines(source);
+    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
+    if (firstH2 === -1) return false;
+    const metadata = lines.slice(1, firstH2);
+    const exactly = (name) => {
+        const values = canonicalMetadataValues(metadata, name);
+        return values.length === 1 ? values[0] : undefined;
+    };
+    const datetime = exactly("Datetime");
+    if (
+        !datetime ||
+        !hasValidDatetime(datetime) ||
+        exactly("Status") !== "DONE" ||
+        !exactly("Scope") ||
+        !exactly("Summary")
+    )
+        return false;
 
-  const firstH2Index = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
-  if (firstH2Index === -1) {
-    throw new PlanArtifactError("plan artifact must contain a ## heading after its metadata block");
-  }
+    const h2Indexes = lines.flatMap((line, index) => (/^##(?:\s|$)/.test(line) ? [index] : []));
+    const tasksIndexes = lines.flatMap((line, index) => (line === "## Tasks" ? [index] : []));
+    const verificationIndexes = lines.flatMap((line, index) =>
+        line === "## Verification / Done criteria" ? [index] : []
+    );
+    const completionIndexes = lines.flatMap((line, index) => (line === "## Completion Summary" ? [index] : []));
+    if (
+        tasksIndexes.length !== 1 ||
+        verificationIndexes.length !== 1 ||
+        completionIndexes.length !== 1 ||
+        tasksIndexes[0] >= verificationIndexes[0] ||
+        verificationIndexes[0] >= completionIndexes[0] ||
+        completionIndexes[0] !== h2Indexes.at(-1)
+    )
+        return false;
 
-  const metadataLines = lines.slice(1, firstH2Index);
-  const datetimeIndexes = metadataLineIndexes(metadataLines, "Datetime");
-  if (datetimeIndexes.length !== 1) {
-    throw new PlanArtifactError("plan artifact must contain exactly one **Datetime** metadata line");
-  }
-
-  const datetimeMatch = metadataLines[datetimeIndexes[0]].match(/^\*\*Datetime\*\*: (\d{4}-\d{2}-\d{2}-\d{4})$/);
-  if (!datetimeMatch || !hasValidDatetime(datetimeMatch[1])) {
-    throw new PlanArtifactError("**Datetime** metadata must be a real YYYY-MM-DD-HHMM value");
-  }
-
-  if (operation === "archive") {
-    const statusIndexes = metadataLineIndexes(metadataLines, "Status");
-    if (statusIndexes.length !== 1 || metadataLines[statusIndexes[0]] !== "**Status**: DONE") {
-      throw new PlanArtifactError("archive requires exactly one **Status**: DONE metadata line between the H1 and first ## heading");
+    const taskLines = lines.slice(tasksIndexes[0] + 1, sectionEnd(h2Indexes, tasksIndexes[0], lines.length));
+    const tasks = [];
+    for (let index = 0; index < taskLines.length; index += 1) {
+        if (!TASK_CHECKBOX_RE.test(taskLines[index])) continue;
+        const match = TASK_ROW_RE.exec(taskLines[index]);
+        if (!match) return false;
+        const completed = /^\s{2}completed (\d{4}-\d{2}-\d{2}-\d{4})$/.exec(taskLines[index + 1] ?? "");
+        if (!completed || !hasValidDatetime(completed[1])) return false;
+        tasks.push(Number(match[1].slice(1)));
     }
-  }
+    if (
+        tasks.length === 0 ||
+        tasks[0] !== 1 ||
+        new Set(tasks).size !== tasks.length ||
+        tasks.some((number, index) => index > 0 && number <= tasks[index - 1])
+    )
+        return false;
 
-  return { datetime: datetimeMatch[1] };
+    const criterionLines = lines.slice(
+        verificationIndexes[0] + 1,
+        sectionEnd(h2Indexes, verificationIndexes[0], lines.length)
+    );
+    const criteria = criterionLines.filter((line) => TASK_CHECKBOX_RE.test(line));
+    if (criteria.length === 0 || criteria.some((line) => !/^\s*-\s+\[[xX]\]\s+\S/.test(line))) return false;
+
+    return (
+        lines
+            .slice(completionIndexes[0] + 1)
+            .join("\n")
+            .trim().length > 0
+    );
 }
 
-async function readAndValidateSource(contentFile, operation) {
-  let sourceStat;
-  try {
-    sourceStat = await lstat(contentFile);
-  } catch (error) {
-    if (error?.code === "ENOENT") {
-      throw new PlanArtifactError(`content file does not exist: ${contentFile}`);
+function validatePlanBytes(bytes) {
+    if (bytes.length === 0) throw new PlanArtifactError("refusing to sync an empty plan artifact");
+    if (bytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) {
+        throw new PlanArtifactError("plan artifact must begin directly with its H1, without a UTF-8 BOM");
     }
-    throw error;
-  }
+    let source;
+    try {
+        source = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    } catch {
+        throw new PlanArtifactError("plan artifact must be valid UTF-8");
+    }
+    const lines = normalizedLines(source);
+    if (!/^#\s+\S.*$/.test(lines[0] ?? "")) {
+        throw new PlanArtifactError("the first line of the plan artifact must be its H1");
+    }
+    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
+    if (firstH2 === -1) throw new PlanArtifactError("plan artifact must contain a ## heading after its metadata block");
+    const datetimes = canonicalMetadataValues(lines.slice(1, firstH2), "Datetime");
+    if (datetimes.length !== 1 || !datetimes[0] || !hasValidDatetime(datetimes[0])) {
+        throw new PlanArtifactError(
+            "plan artifact must contain exactly one canonical **Datetime**: YYYY-MM-DD-HHMM value"
+        );
+    }
+    return { source, datetime: datetimes[0] };
+}
 
-  if (!sourceStat.isFile() || sourceStat.isSymbolicLink()) {
-    throw new PlanArtifactError(`content file must be a regular non-symlink file: ${contentFile}`);
-  }
+async function readSource(contentFile) {
+    let sourceStat;
+    try {
+        sourceStat = await lstat(contentFile);
+    } catch (error) {
+        if (error?.code === "ENOENT") throw new PlanArtifactError(`content file does not exist: ${contentFile}`);
+        throw error;
+    }
+    if (!sourceStat.isFile() || sourceStat.isSymbolicLink()) {
+        throw new PlanArtifactError(`content file must be a regular non-symlink file: ${contentFile}`);
+    }
+    const bytes = await readFile(contentFile);
+    return { bytes, ...validatePlanBytes(bytes) };
+}
 
-  const bytes = await readFile(contentFile);
-  return { bytes, ...validatePlanMetadata(bytes, operation) };
+async function ensureDirectory(directory) {
+    await mkdir(directory, { recursive: true });
+    const directoryStat = await lstat(directory);
+    if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
+        throw new PlanArtifactError(`plan directory must be a regular non-symlink directory: ${directory}`);
+    }
 }
 
 async function targetExistsAndIsRegular(targetPath) {
-  try {
+    try {
+        const targetStat = await lstat(targetPath);
+        if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
+            throw new PlanArtifactError(`existing plan target must be a regular non-symlink file: ${targetPath}`);
+        }
+        return true;
+    } catch (error) {
+        if (error?.code === "ENOENT") return false;
+        throw error;
+    }
+}
+
+async function targetIsAbsent(targetPath) {
+    try {
+        await lstat(targetPath);
+        return false;
+    } catch (error) {
+        if (error?.code === "ENOENT") return true;
+        throw error;
+    }
+}
+
+async function assertExactTarget(targetPath, expectedBytes) {
     const targetStat = await lstat(targetPath);
     if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
-      throw new PlanArtifactError(`existing plan target must be a regular non-symlink file: ${targetPath}`);
+        throw new PlanArtifactError(`synchronized target must be a regular non-symlink file: ${targetPath}`);
     }
-    return true;
-  } catch (error) {
-    if (error?.code === "ENOENT") {
-      return false;
+    const actualBytes = await readFile(targetPath);
+    if (!actualBytes.equals(expectedBytes)) {
+        throw new PlanArtifactError(`synchronized target reread did not match captured source bytes: ${targetPath}`);
     }
-    throw error;
-  }
+}
+
+async function assertSourceUnchanged(contentFile, expectedSource) {
+    const finalSource = await readSource(contentFile);
+    if (finalSource.datetime !== expectedSource.datetime || !finalSource.bytes.equals(expectedSource.bytes)) {
+        throw new PlanArtifactError(
+            "content changed during synchronization; projection may contain an earlier complete revision"
+        );
+    }
 }
 
 async function atomicReplace(targetPath, bytes) {
-  const targetDirectory = dirname(targetPath);
-  await mkdir(targetDirectory, { recursive: true });
-
-  const temporaryPath = join(
-    targetDirectory,
-    `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`,
-  );
-  let handle;
-  try {
-    handle = await open(temporaryPath, "wx", 0o600);
-    await handle.writeFile(bytes);
-    await handle.sync();
-    await handle.close();
-    handle = undefined;
-    await rename(temporaryPath, targetPath);
-  } finally {
-    if (handle) {
-      await handle.close().catch(() => {});
+    const targetDirectory = dirname(targetPath);
+    await ensureDirectory(targetDirectory);
+    const temporaryPath = join(targetDirectory, `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`);
+    let handle;
+    try {
+        handle = await open(temporaryPath, "wx", 0o600);
+        await handle.writeFile(bytes);
+        await handle.sync();
+        await handle.close();
+        handle = undefined;
+        await rename(temporaryPath, targetPath);
+    } finally {
+        if (handle) await handle.close().catch(() => {});
+        await rm(temporaryPath, { force: true }).catch(() => {});
     }
-    await rm(temporaryPath, { force: true }).catch(() => {});
-  }
-}
-
-function planPathFrom(root, targetPath) {
-  return relative(root, targetPath);
 }
 
 async function isProcessAlive(pid) {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (error) {
-    return error?.code !== "ESRCH";
-  }
+    try {
+        process.kill(pid, 0);
+        return true;
+    } catch (error) {
+        return error?.code !== "ESRCH";
+    }
+}
+
+function validLockRecord(record) {
+    return (
+        Number.isInteger(record?.pid) &&
+        record.pid > 0 &&
+        typeof record.createdAt === "string" &&
+        !Number.isNaN(Date.parse(record.createdAt)) &&
+        typeof record.token === "string" &&
+        record.token.length > 0
+    );
+}
+
+async function readSerialized(filePath) {
+    try {
+        return await readFile(filePath, "utf8");
+    } catch (error) {
+        if (error?.code === "ENOENT") return undefined;
+        throw error;
+    }
 }
 
 async function releaseReclaimClaimIfOwned(claimPath, claim) {
-  try {
-    if (await readFile(claimPath, "utf8") === claim) {
-      await rm(claimPath, { force: true });
+    try {
+        if ((await readSerialized(claimPath)) === claim) await rm(claimPath, { force: true });
+    } catch {
+        // Another contender owns the claim or the lock generation moved.
     }
-  } catch {
-    // The claim moves with a reclaimed lock or another contender won it.
-  }
 }
 
 async function reclaimAbandonedClaimIfSafe(claimPath) {
-  let claim;
-  let malformedClaim = false;
-  try {
-    const parsed = JSON.parse(await readFile(claimPath, "utf8"));
-    if (
-      !Number.isInteger(parsed?.pid) ||
-      parsed.pid <= 0 ||
-      typeof parsed.createdAt !== "string" ||
-      Number.isNaN(Date.parse(parsed.createdAt))
-    ) {
-      malformedClaim = true;
-    } else {
-      claim = parsed;
-    }
-  } catch (error) {
-    if (error?.code === "ENOENT") {
-      return true;
-    }
-    malformedClaim = true;
-  }
+    const serialized = await readSerialized(claimPath);
+    if (serialized === undefined) return true;
 
-  if (claim && await isProcessAlive(claim.pid)) {
-    return false;
-  }
-  if (malformedClaim) {
-    const claimStat = await stat(claimPath).catch((error) => {
-      if (error?.code === "ENOENT") return undefined;
-      throw error;
+    let claim;
+    let malformed = false;
+    try {
+        claim = JSON.parse(serialized);
+        malformed = !validLockRecord(claim);
+    } catch {
+        malformed = true;
+    }
+    if (!malformed && (await isProcessAlive(claim.pid))) return false;
+    if (malformed) {
+        const claimStat = await stat(claimPath).catch((error) =>
+            error?.code === "ENOENT" ? undefined : Promise.reject(error)
+        );
+        if (!claimStat) return true;
+        if (Date.now() - claimStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
+    }
+    if ((await readSerialized(claimPath)) !== serialized) return false;
+    const tombstone = `${claimPath}.abandoned.${process.pid}.${randomUUID()}`;
+    try {
+        await rename(claimPath, tombstone);
+    } catch (error) {
+        return error?.code === "ENOENT";
+    }
+    await rm(tombstone, { force: true });
+    return true;
+}
+
+async function publishLockRecord(ownerPath, record) {
+    const lockPath = dirname(ownerPath);
+    const lockRoot = dirname(lockPath);
+    const temporaryPath = join(
+        lockRoot,
+        `.${basename(lockPath)}.${process.pid}.${randomUUID()}.owner.tmp`
+    );
+    let handle;
+    try {
+        handle = await open(temporaryPath, "wx", 0o600);
+        await handle.writeFile(record);
+        await handle.sync();
+        await handle.close();
+        handle = undefined;
+        try {
+            await link(temporaryPath, ownerPath);
+            return "published";
+        } catch (error) {
+            if (error?.code === "EEXIST") return "occupied";
+            if (error?.code === "ENOENT") return "missing";
+            throw error;
+        }
+    } finally {
+        if (handle) await handle.close().catch(() => {});
+        await rm(temporaryPath, { force: true }).catch(() => {});
+    }
+}
+
+async function claimUnpublishedLockIfSafe(lockPath, ownerPath) {
+    const lockStat = await stat(lockPath).catch((error) =>
+        error?.code === "ENOENT" ? undefined : Promise.reject(error)
+    );
+    if (!lockStat) return true;
+    if (Date.now() - lockStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
+
+    const claim = JSON.stringify({
+        pid: process.pid,
+        createdAt: new Date().toISOString(),
+        token: randomUUID(),
     });
-    if (!claimStat || Date.now() - claimStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) {
-      return !claimStat;
-    }
-  }
+    const publication = await publishLockRecord(ownerPath, claim);
+    if (publication === "missing") return true;
+    if (publication === "occupied") return false;
 
-  const tombstonePath = `${claimPath}.abandoned.${process.pid}.${randomUUID()}`;
-  try {
-    await rename(claimPath, tombstonePath);
-  } catch (error) {
-    if (error?.code === "ENOENT") {
-      return true;
+    let releaseClaim = true;
+    try {
+        if ((await readSerialized(ownerPath)) !== claim) return false;
+        const tombstone = `${lockPath}.reclaim.${process.pid}.${randomUUID()}`;
+        try {
+            await rename(lockPath, tombstone);
+        } catch (error) {
+            return error?.code === "ENOENT";
+        }
+        releaseClaim = false;
+        await rm(tombstone, { recursive: true, force: true });
+        return true;
+    } finally {
+        if (releaseClaim && (await readSerialized(ownerPath)) === claim) {
+            await rm(ownerPath, { force: true }).catch(() => {});
+        }
     }
-    return false;
-  }
-  await rm(tombstonePath, { force: true });
-  return true;
 }
 
 async function reclaimLockIfSafe(lockPath) {
-  let owner;
-  let malformedOwner = false;
-  try {
-    const parsed = JSON.parse(await readFile(join(lockPath, "owner.json"), "utf8"));
-    if (
-      !Number.isInteger(parsed?.pid) ||
-      parsed.pid <= 0 ||
-      typeof parsed.createdAt !== "string" ||
-      Number.isNaN(Date.parse(parsed.createdAt))
-    ) {
-      malformedOwner = true;
-    } else {
-      owner = parsed;
+    const ownerPath = join(lockPath, "owner.json");
+    const observedOwner = await readSerialized(ownerPath);
+    if (observedOwner === undefined) {
+        return claimUnpublishedLockIfSafe(lockPath, ownerPath);
     }
-  } catch {
-    malformedOwner = true;
-  }
 
-  if (owner && await isProcessAlive(owner.pid)) {
-    return false;
-  }
-
-  if (malformedOwner) {
-    let lockStat;
+    let owner;
+    let malformed = false;
     try {
-      lockStat = await stat(lockPath);
-    } catch (error) {
-      if (error?.code === "ENOENT") {
-        return true;
-      }
-      throw error;
-    }
-    if (Date.now() - lockStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) {
-      return false;
-    }
-  }
-
-  const claimPath = join(lockPath, "reclaim.json");
-  const claim = JSON.stringify({ pid: process.pid, createdAt: new Date().toISOString() });
-  try {
-    await writeFile(claimPath, claim, { flag: "wx" });
-  } catch (error) {
-    if (error?.code === "ENOENT") {
-      return true;
-    }
-    if (error?.code === "EEXIST") {
-      return reclaimAbandonedClaimIfSafe(claimPath);
-    }
-    throw error;
-  }
-
-  let releaseClaim = true;
-  try {
-    try {
-      const currentOwner = JSON.parse(await readFile(join(lockPath, "owner.json"), "utf8"));
-      if (
-        Number.isInteger(currentOwner?.pid) &&
-        currentOwner.pid > 0 &&
-        typeof currentOwner.createdAt === "string" &&
-        !Number.isNaN(Date.parse(currentOwner.createdAt)) &&
-        await isProcessAlive(currentOwner.pid)
-      ) {
-        return false;
-      }
+        owner = JSON.parse(observedOwner);
+        malformed = !validLockRecord(owner);
     } catch {
-      // The pre-claim eligibility check remains authoritative for this lock.
+        malformed = true;
+    }
+    if (!malformed && (await isProcessAlive(owner.pid))) return false;
+    if (malformed) {
+        const lockStat = await stat(lockPath).catch((error) =>
+            error?.code === "ENOENT" ? undefined : Promise.reject(error)
+        );
+        if (!lockStat) return true;
+        if (Date.now() - lockStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
     }
 
-    const tombstonePath = `${lockPath}.reclaim.${process.pid}.${randomUUID()}`;
+    const claimPath = join(lockPath, "reclaim.json");
+    const claim = JSON.stringify({
+        pid: process.pid,
+        createdAt: new Date().toISOString(),
+        token: randomUUID(),
+    });
     try {
-      await rename(lockPath, tombstonePath);
+        await writeFile(claimPath, claim, { flag: "wx" });
     } catch (error) {
-      if (error?.code === "ENOENT") {
+        if (error?.code === "ENOENT") return true;
+        if (error?.code === "EEXIST") await reclaimAbandonedClaimIfSafe(claimPath);
+        return false;
+    }
+
+    let releaseClaim = true;
+    try {
+        if ((await readSerialized(ownerPath)) !== observedOwner) return false;
+        if (!malformed && (await isProcessAlive(owner.pid))) return false;
+
+        const tombstone = `${lockPath}.reclaim.${process.pid}.${randomUUID()}`;
+        try {
+            await rename(lockPath, tombstone);
+        } catch (error) {
+            return error?.code === "ENOENT";
+        }
+        releaseClaim = false;
+        await rm(tombstone, { recursive: true, force: true });
         return true;
-      }
-      return false;
+    } finally {
+        if (releaseClaim) await releaseReclaimClaimIfOwned(claimPath, claim);
     }
-    releaseClaim = false;
-    await rm(tombstonePath, { recursive: true, force: true });
-    return true;
-  } finally {
-    if (releaseClaim) {
-      await releaseReclaimClaimIfOwned(claimPath, claim);
-    }
-  }
 }
+
 
 async function acquireLock(root, planId) {
-  const lockRoot = join(tmpdir(), "omp-plan-artifact-locks");
-  await mkdir(lockRoot, { recursive: true });
-  const lockKey = createHash("sha256").update(`${root}\0${planId}`).digest("hex");
-  const lockPath = join(lockRoot, `${lockKey}.lock`);
-  const deadline = Date.now() + LOCK_WAIT_MS;
-
-  while (true) {
-    try {
-      await mkdir(lockPath);
-      const ownerPath = join(lockPath, "owner.json");
-      const owner = JSON.stringify({ pid: process.pid, createdAt: new Date().toISOString() });
-      try {
-        await writeFile(ownerPath, owner, { flag: "wx" });
-      } catch (error) {
-        if (error?.code === "EEXIST" || error?.code === "ENOENT") {
-          // A stale ownerless lock may have been reclaimed before publication
-          // or replaced by its successor. Retry instead of touching a
-          // generation this process no longer owns.
-          if (Date.now() >= deadline) {
-            throw new PlanArtifactError(`timed out waiting for plan identity lock: ${planId}`);
-          }
-          await Bun.sleep(LOCK_RETRY_MS);
-          continue;
-        }
-        throw error;
-      }
-
-      let ownershipLost = false;
-      while (!ownershipLost) {
+    const lockRoot = join(tmpdir(), "omp-plan-artifact-locks");
+    await ensureDirectory(lockRoot);
+    const key = createHash("sha256").update(`${root}\0${planId}`).digest("hex");
+    const lockPath = join(lockRoot, `${key}.lock`);
+    const deadline = Date.now() + LOCK_WAIT_MS;
+    while (Date.now() < deadline) {
         try {
-          await lstat(join(lockPath, "reclaim.json"));
-        } catch (error) {
-          if (error?.code !== "ENOENT") {
-            throw error;
-          }
-          try {
-            if (await readFile(ownerPath, "utf8") === owner) {
-              return lockPath;
+            await mkdir(lockPath);
+            const ownerPath = join(lockPath, "owner.json");
+            const owner = JSON.stringify({
+                pid: process.pid,
+                createdAt: new Date().toISOString(),
+                token: randomUUID(),
+            });
+            const publication = await publishLockRecord(ownerPath, owner);
+            if (publication === "published") {
+                return { lockPath, ownerPath, owner };
             }
-          } catch {
-            // This generation was reclaimed before ownership could publish.
-          }
-          ownershipLost = true;
-          continue;
-        }
-
-        await reclaimAbandonedClaimIfSafe(join(lockPath, "reclaim.json"));
-        if (Date.now() >= deadline) {
-          throw new PlanArtifactError(`timed out waiting for plan identity lock: ${planId}`);
+        } catch (error) {
+            if (error?.code !== "EEXIST") throw error;
+            await reclaimLockIfSafe(lockPath);
         }
         await Bun.sleep(LOCK_RETRY_MS);
-      }
-    } catch (error) {
-      if (error?.code !== "EEXIST") {
-        throw error;
-      }
-
-      await reclaimLockIfSafe(lockPath);
-      if (Date.now() >= deadline) {
-        throw new PlanArtifactError(`timed out waiting for plan identity lock: ${planId}`);
-      }
-      await Bun.sleep(LOCK_RETRY_MS);
     }
-  }
+    throw new PlanArtifactError(`timed out waiting for plan identity lock: ${planId}`);
 }
 
-async function releaseLock(lockPath) {
-  await rm(lockPath, { recursive: true, force: true });
+async function releaseLock(lock) {
+    if ((await readSerialized(lock.ownerPath)) === lock.owner) {
+        await rm(lock.lockPath, { recursive: true, force: true });
+    }
 }
 
-async function synchronize({ root, activePath, archivePath, bytes }) {
-  const activeExists = await targetExistsAndIsRegular(activePath);
-  const archiveExists = await targetExistsAndIsRegular(archivePath);
-  if (activeExists && archiveExists) {
-    throw new PlanArtifactError("active and archived targets both exist for this plan identity");
-  }
+async function synchronize(root, slug, source) {
+    const planId = `${source.datetime}_${slug}`;
+    const activePath = join(root, ".agents", "plans", `${planId}.md`);
+    const archivePath = join(root, ".agents", "plans", "archive", `${planId}.md`);
+    const lock = await acquireLock(root, planId);
+    try {
+        const current = await readSource(source.contentFile);
+        if (current.datetime !== source.datetime) {
+            throw new PlanArtifactError("content identity changed while waiting for the plan identity lock");
+        }
+        const activeExists = await targetExistsAndIsRegular(activePath);
+        const archiveExists = await targetExistsAndIsRegular(archivePath);
+        if (activeExists && archiveExists) {
+            throw new PlanArtifactError("active and archived targets both exist for this plan identity");
+        }
+        if (archiveExists) {
+            await atomicReplace(archivePath, current.bytes);
+            await assertExactTarget(archivePath, current.bytes);
+            if (!(await targetIsAbsent(activePath))) {
+                throw new PlanArtifactError("active target appeared while updating the archived plan identity");
+            }
+            await assertSourceUnchanged(source.contentFile, current);
+            return `plan-artifact-already-archived: ${relative(root, archivePath)}`;
+        }
 
-  const targetPath = archiveExists ? archivePath : activePath;
-  await atomicReplace(targetPath, bytes);
-  return `plan-artifact-synced: ${planPathFrom(root, targetPath)}`;
-}
-
-async function archive({ root, activePath, archivePath, bytes }) {
-  const activeExists = await targetExistsAndIsRegular(activePath);
-  const archiveExists = await targetExistsAndIsRegular(archivePath);
-  if (activeExists && archiveExists) {
-    throw new PlanArtifactError("active and archived targets both exist for this plan identity");
-  }
-  if (!activeExists && !archiveExists) {
-    await atomicReplace(archivePath, bytes);
-    return `plan-artifact-archived: ${planPathFrom(root, archivePath)}`;
-  }
-
-  if (archiveExists) {
-    await atomicReplace(archivePath, bytes);
-    return `plan-artifact-already-archived: ${planPathFrom(root, archivePath)}`;
-  }
-
-  await mkdir(dirname(archivePath), { recursive: true });
-  await atomicReplace(activePath, bytes);
-  await rename(activePath, archivePath);
-  return `plan-artifact-archived: ${planPathFrom(root, archivePath)}`;
+        await atomicReplace(activePath, current.bytes);
+        if (!terminalLifecycleComplete(current.source)) {
+            await assertExactTarget(activePath, current.bytes);
+            if (!(await targetIsAbsent(archivePath))) {
+                throw new PlanArtifactError("archived target appeared while synchronizing the active plan identity");
+            }
+            await assertSourceUnchanged(source.contentFile, current);
+            return `plan-artifact-synced: ${relative(root, activePath)}`;
+        }
+        await ensureDirectory(dirname(archivePath));
+        if (await targetExistsAndIsRegular(archivePath)) {
+            throw new PlanArtifactError("active and archived targets both exist for this plan identity");
+        }
+        await rename(activePath, archivePath);
+        await assertExactTarget(archivePath, current.bytes);
+        if (!(await targetIsAbsent(activePath))) {
+            throw new PlanArtifactError("active target remained after terminal projection archival");
+        }
+        await assertSourceUnchanged(source.contentFile, current);
+        return `plan-artifact-archived: ${relative(root, archivePath)}`;
+    } finally {
+        await releaseLock(lock);
+    }
 }
 
 async function main() {
-  const { operation, slug, contentFile } = parseArguments(process.argv.slice(2));
-  const { bytes, datetime } = await readAndValidateSource(contentFile, operation);
-  const root = await realpath(process.cwd());
-  const planId = `${datetime}_${slug}`;
-  const activePath = join(root, ".agents", "plans", `${planId}.md`);
-  const archivePath = join(root, ".agents", "plans", "archive", `${planId}.md`);
-  const lockPath = await acquireLock(root, planId);
-
-  try {
-    const output = operation === "sync"
-      ? await synchronize({ root, activePath, archivePath, bytes })
-      : await archive({ root, activePath, archivePath, bytes });
-    console.log(output);
-  } finally {
-    await releaseLock(lockPath);
-  }
+    const { slug, contentFile } = parseArguments(process.argv.slice(2));
+    if (basename(contentFile) !== `${slug}-plan.md`) {
+        throw new PlanArtifactError(
+            `content file identity must match slug '${slug}': expected ${slug}-plan.md`
+        );
+    }
+    const root = await realpath(process.cwd());
+    await ensureDirectory(join(root, ".agents"));
+    await ensureDirectory(join(root, ".agents", "plans"));
+    const source = { contentFile, ...(await readSource(contentFile)) };
+    console.log(await synchronize(root, slug, source));
 }
 
-main().catch((error) => {
-  if (error instanceof PlanArtifactError) {
-    console.error(`ERROR: ${error.message}`);
-    process.exit(error.exitCode);
-  }
-  console.error(`ERROR: ${error?.message ?? String(error)}`);
-  process.exit(1);
-});
+export { publishLockRecord };
+
+if (import.meta.main) {
+    main().catch((error) => {
+        if (error instanceof PlanArtifactError) {
+            console.error(`ERROR: ${error.message}`);
+            process.exit(error.exitCode);
+        }
+        console.error(`ERROR: ${error?.message ?? String(error)}`);
+        process.exit(1);
+    });
+}

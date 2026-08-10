@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A changed Handoff must enumerate the exact exhaustive material reapproval triggers and stop before dispatch. Process-only returns, unchanged artifacts, another audit, or another review are not triggers."
+  },
+  "scripted_replies": []
+}

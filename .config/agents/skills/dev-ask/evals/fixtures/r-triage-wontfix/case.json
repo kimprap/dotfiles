@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "A previously dispatched raw external intake returns a current read-only triage result with exactly one category, state wontfix, evidence, external effects none, and route-impact unchanged. Consume it according to the current triage return contract and present the terminal result. Do not redispatch triage or implementation, request another approval, mutate the tracker, or omit the Common Handoff receiver."
+  },
+  "scripted_replies": []
+}
