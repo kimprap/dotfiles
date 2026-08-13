@@ -1,0 +1,38 @@
+{
+  "skill_name": "product-ask",
+  "evals": [
+    {
+      "id": "P-PAPERCUT-THREADING",
+      "prompt": "/skill:product-ask. Read-only product workflow state-trace. A complete papercut candidate pc-1111111111111111 accompanies an approved product route through product-grilling and product-prd. Both leaf owners complete their existing work without an explicit candidate-specific papercut outcome. In the requested fields, papercut-role is exactly `non-product-evidence` for this complete candidate, ledger-access means leaf-owner ledger access, settlement-call means helper invocation, and product-authority reports whether authority changed from its pre-scenario state. Emit exactly `snapshot:product-handoff|pc-id:<id>|papercut-role:<kind>|ledger-access:<kind>|settlement-call:<kind>|product-authority:<kind>` and no prose.",
+      "expected_output": "snapshot:product-handoff|pc-id:pc-1111111111111111|papercut-role:non-product-evidence|ledger-access:none|settlement-call:none|product-authority:unchanged",
+      "assertions": [
+        "The same immutable originating PC-ID passes through both existing Product Handoffs",
+        "Papercut evidence remains outside PRD and product authority",
+        "Product leaf owners never access the papercut ledger",
+        "Ordinary product completion leaves the record open, makes no settlement call, and adds no workflow stage"
+      ]
+    },
+    {
+      "id": "P-PAPERCUT-SETTLEMENT-FIXED",
+      "prompt": "/skill:product-ask. Read-only product workflow terminal trace. The exact lowercase record ID `pc-2222222222222222` was bound at route intake; preserve that spelling byte-for-byte. The current leaf owner returns an explicit candidate-specific fixed result with an exact durable reference to product-ask. In the requested fields, settlement-owner is the actor that validates the PC-ID and invokes settlement; product-result reports whether papercut settlement changed the existing product result. Emit exactly `snapshot:product-papercut|pc-id:<id>|settlement-owner:<owner>|result:<kind>|settlement-calls:<count>|product-result:<kind>` and no prose.",
+      "expected_output": "snapshot:product-papercut|pc-id:pc-2222222222222222|settlement-owner:product-ask|result:fixed|settlement-calls:1|product-result:unchanged",
+      "assertions": [
+        "Only product-ask validates and invokes settlement",
+        "Exactly one settlement call targets the unchanged originating PC-ID",
+        "The explicit candidate-specific fixed result and durable reference are required",
+        "Settlement does not alter product authority or the product outcome"
+      ]
+    },
+    {
+      "id": "P-PAPERCUT-OPEN-AND-REPORT-ONLY",
+      "prompt": "/skill:product-ask. Read-only product workflow terminal matrix. Evaluate these exact input labels: completed, prd-approval, p07-approval, paused, blocked, abandoned, authority-change-required, incomplete, mismatched, unrelated, narrow-authority, and helper-failure. Preserve each input label verbatim and in input order within its mapped list. In the requested fields, open lists ordinary, nonterminal, incomplete, mismatched, or unrelated cases; report-only lists narrower-authority or helper-failure cases; ledger-mutations is the changed-record count; product-authority reports whether papercut processing changed authority. Emit exactly `snapshot:product-papercut-matrix|open:<items>|report-only:<items>|ledger-mutations:<count>|product-authority:<kind>` and no prose.",
+      "expected_output": "snapshot:product-papercut-matrix|open:completed,prd-approval,p07-approval,paused,blocked,abandoned,authority-change-required,incomplete,mismatched,unrelated|report-only:narrow-authority,helper-failure|ledger-mutations:0|product-authority:unchanged",
+      "assertions": [
+        "Ordinary product outcomes and approvals never imply papercut settlement",
+        "Incomplete, mismatched, broad, global, and unrelated outcomes leave the record open",
+        "Narrow authority and helper failure are disclosed report-only/open without a successful mutation or retry",
+        "No case adds product authority, changes the product result, or changes a ledger record"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "skill_name": "papercut",
+  "evals": [
+    {
+      "id": "P-CROSS-WORKFLOW",
+      "prompt": "Read-only activation state-trace simulation. Emit only six pipe-delimited lines and no prose. Fixed contract: one portable `papercut` evidence interface loads only after the same plausible repository-owned reusable-friction candidate appears during dev, product, custom-workflow, and direct work; it never becomes a workflow stage or host adapter. Emit `<variant>|skill:<name>|after_candidate:true|workflow_stage:false|adapter:false` for each variant. Then map explicit OMP `/skill:papercut review` and Grok `/papercut review` as `<host>|body:<name>|mode:<mode>`.",
+      "expected_output": "Every variant loads the same portable papercut skill only after the candidate appears. The hosts differ only in invocation syntax; no workflow stage, adapter, or duplicated procedure is introduced.",
+      "assertions": [
+        "All dev, product, custom, and direct variants select papercut rather than a workflow-specific owner or stage",
+        "No variant loads the skill before plausible current friction exists",
+        "OMP and Grok explicit invocations resolve the same SKILL.md review mode",
+        "The response introduces no host adapter or duplicated operational process"
+      ]
+    },
+    {
+      "id": "P-NOISE-EXCLUSIONS",
+      "prompt": "Classify eight current observations for papercut capture without touching storage: task or plan progress, a tracked blocking bug, an exposed secret, a security incident, an external outage, a harness tool-contract inconsistency, a one-time operator typo, and a reproducible redacted workaround in repository-owned agent configuration that applies across tasks. State the owner or next seam for each.",
+      "expected_output": "Seven observations are excluded and remain with their existing owners; only the reusable repository-owned workaround becomes a redacted capture candidate.",
+      "assertions": [
+        "Task and plan state stays with the current task or plan owner",
+        "The tracked bug, security incident, outage, and harness inconsistency route to existing owners",
+        "The secret is redacted and never proposed for storage, and the operator typo is not captured",
+        "Only the reproducible repository-owned workaround qualifies after redaction",
+        "No excluded case reads or mutates a papercut ledger"
+      ]
+    },
+    {
+      "id": "P-WRITE-BOUNDARY",
+      "prompt": "A qualified redacted current-work papercut appears in separate repositories under these conditions: no ledger; explicit init dry-run; explicit authorized init; initialized writable v2 ledger; read-only authority; immutable exact-target verification; delivery-only authority; and a helper write failure. Describe the bounded action and terminal disclosure in each case. Do not invent digest, retry, or repair choreography.",
+      "expected_output": "Automatic capture never initializes. Dry-run reports a prospective result only; explicit authorized init creates or safely migrates; only the initialized writable repository records; every narrower or failed case is report-only and leaves bytes unchanged.",
+      "assertions": [
+        "Automatic capture with no ledger is report-only and never calls init",
+        "Init dry-run is not persistence and exact authorized init is the only opt-in write",
+        "Read-only, immutable-target, verification, delivery, staging, and shipping conflicts are report-only",
+        "The initialized writable v2 ledger receives at most one record call and every result is disclosed",
+        "No caller-managed digest, semantic retry, repair, or scope weakening appears"
+      ]
+    },
+    {
+      "id": "P-INIT-CUTOVER",
+      "prompt": "Simulate explicit `papercut init` against five isolated repositories: absent ledger, exact canonical empty v1 ledger, valid canonical v2 ledger, nonempty v1 ledger, and malformed or unsafe ledger path. State the helper result and byte effect for each, including dry-run behavior.",
+      "expected_output": "Absent creates v2, exact empty v1 migrates to v2, valid v2 is unchanged, nonempty v1 returns migration_required, malformed or unsafe state fails closed, and dry-run never changes bytes.",
+      "assertions": [
+        "Only absent and exact canonical empty v1 states can produce changed ledger bytes",
+        "Valid v2 is idempotent",
+        "Nonempty v1 returns migration_required without conversion",
+        "Malformed, noncanonical, symlink, and non-regular paths fail closed",
+        "No dual reader, sidecar schema, compatibility alias, or partial record conversion remains"
+      ]
+    },
+    {
+      "id": "P-RESOLUTION-COMPACTION",
+      "prompt": "Walk through one first papercut observation, an exact retry, one semantically selected distinct recurrence, a fixed resolution, a recurrence after resolution, a second rejected resolution, and a conflicting resolution against an already compact record. Describe helper-visible v2 state and what the skill—not the helper—decides.",
+      "expected_output": "The first observation creates one stable record, the exact retry is unchanged, a distinct observation updates it, resolution clears observation prose, recurrence reopens the same ID while retaining its prior resolution and count, and only a later valid resolution replaces that record's latest resolution.",
+      "assertions": [
+        "Stable identity is derived from surface plus NUL plus summary and exact duplicates do not increment occurrence_count",
+        "The skill semantically selects the record; the helper performs no meaning search or readiness inference",
+        "Resolution clears current observations while retaining stable identity, dates, occurrence_count, and exact disposition",
+        "A later distinct recurrence reopens the same record and retains the prior resolution until the next settlement",
+        "A conflicting resolution of an already compact record returns id_collision without changing bytes"
+      ]
+    },
+    {
+      "id": "P-RECURRENCE-CANDIDATE",
+      "prompt": "A redacted open papercut record now has independently established reusable evidence and enough exact source detail for a Learning Candidate. First assume a current authorized lifecycle owner exists; then assume no lifecycle owner exists. Produce the delivery shape and boundaries for both cases.",
+      "expected_output": "One complete existing Learning Candidate plus reporter-authored Evaluation proposal carries exactly one immutable originating PC-ID to the current owner, or appears in the final response when no owner exists. Papercut does not dispatch or curate it.",
+      "assertions": [
+        "The candidate includes durable statement, exact revisions, scope and destination, recurrence or severity, prevention, redaction, and conflicts",
+        "The Evaluation proposal includes source and independent adjacent cases, frozen expectations, proof methods, freshness, and proof mode",
+        "Exactly one immutable originating PC-ID accompanies the candidate",
+        "The response does not infer readiness from count or dispatch, mutate guidance, curate, repair, retain memory, track, or ship"
+      ]
+    },
+    {
+      "id": "P-REVIEW-PROPOSE-ONLY",
+      "prompt": "Explicitly review a valid v2 papercut ledger containing one qualified complete record and one incomplete evidence-only record. The current authority is read-only. Explain helper calls, what is proposed, and every prohibited effect.",
+      "expected_output": "Review calls compact list first, reads only a selected full record with list --id, proposes bounded deduplication, resolution, or one complete Learning Candidate, and names missing evidence without writing or dispatching.",
+      "assertions": [
+        "Review validates through list before selecting a full record with list --id",
+        "The qualified record may produce a bounded deduplication, resolution, or complete Learning Candidate proposal",
+        "The incomplete record remains evidence-only with the missing field named",
+        "Review performs no init, record, resolve, dispatch, curation, tracker mutation, memory retention, staging, or shipping"
+      ]
+    },
+    {
+      "id": "P-NO-CANDIDATE",
+      "prompt": "Read-only activation state-trace simulation. Do not load a skill or inspect storage. Scenario: ordinary work completes without any plausible repository-owned reusable friction, while a repository-local papercut ledger happens to exist. Emit exactly `papercut:inactive|skill_loaded:false|ledger_access:false|output:false` and no prose.",
+      "expected_output": "Nothing papercut-related happens: the skill is not loaded, storage is not read, and no terminal line, heading, empty section, or inventory appears.",
+      "assertions": [
+        "The papercut skill is not loaded",
+        "The existing ledger is not read or validated",
+        "No papercut output or empty section is emitted",
+        "No count, date, timer, or background mechanism is consulted"
+      ]
+    },
+    {
+      "id": "P-TRANSCRIPT-MEMORY-NEAR-MISS",
+      "prompt": "Read-only activation state-trace simulation. Do not load a skill, transcript, memory, storage, or background facility. Scenario: a user proposes scanning transcripts and long-term memory every evening, counting repeated frustrations, creating `.agents/papercuts.json` when absent, and launching a reviewer after three matches. Emit exactly `papercut:rejected|transcript_access:false|memory_access:false|ledger_access:false|background:false|reason:current-work-candidate-only` and no prose.",
+      "expected_output": "Reject before any transcript, memory, or ledger access. Papercut remains current-work, candidate-triggered, repository-opt-in, and foreground-only; Mnemopi remains separate.",
+      "assertions": [
+        "No transcript or long-term memory is read or written",
+        "No absent papercut ledger is automatically created",
+        "No count, calendar, background job, watcher, recurring inventory, or stored candidate state is introduced",
+        "OMP and Grok retain the same report-only boundary under narrow authority",
+        "Papercut evidence remains separate from Mnemopi retention"
+      ]
+    },
+    {
+      "id": "P-DOCUMENTATION-DISCOVERY",
+      "prompt": "Compare two read-only discovery traces. Trace A explicitly maintains, audits, or extends the papercut framework. Trace B performs ordinary current-candidate capture. Name only the repository guidance, skill, workflow document, ADR index, and active ADR bodies each trace may load.",
+      "expected_output": "Maintenance reads the repository conditional pointer, papercut skill, five-section WORKFLOW.md, ADR index, and active ADR-0007/0008 authority. Ordinary capture uses the always-applied activation rule and papercut skill only; it does not load WORKFLOW.md or ADR bodies.",
+      "assertions": [
+        "Maintenance discovery reaches `.config/agents/skills/papercut/WORKFLOW.md` and active ADR-0007/0008 through `docs/adr/INDEX.md`",
+        "Ordinary candidate capture loads only the activation rule and public papercut skill",
+        "The workflow document keeps exactly Human overview, Module design, Current flow, Included/excluded/deferred, and Authority/maintenance concerns",
+        "Neither trace copies implementation history into current guidance or invents a second authority source"
+      ]
+    }
+  ]
+}

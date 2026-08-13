@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Terminal evidence snapshot: one required Standard assessment finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record source plus adjacent-near-miss validation, and keep the gate terminal. Do not start Deep or another audit."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: one required Standard assessment has no bound mutating candidate and finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record the source plus adjacent-near-miss assessment in Validation, set Papercut outcome to none, and keep the gate terminal. Do not invent an Evaluation proposal, mutate guidance, start Deep, or begin another audit."
   },
   "scripted_replies": []
 }

@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only fresh repository-guided workflow-maintenance discovery. Starting from repository guidance only, identify the concise current workflow path, the ADR index path, and every ACTIVE workflow ADR ID from the index. Do not open every ADR body and do not treat rejected or superseded history as executable."
+    "request": "Read-only fresh repository-guided workflow-maintenance discovery. Starting from repository guidance only, identify the concise current workflow path and ADR index path; discover the generic concern-to-authority map and stage/surface-to-decision-unit map in WORKFLOW; identify the four ACTIVE generic workflow ADR IDs plus separate ACTIVE product ADR-0005 from the index. Do not open every ADR body, duplicate rationale/history into WORKFLOW, fold ADR-0005 into the generic map, or treat rejected or superseded history as executable."
   },
   "scripted_replies": []
 }

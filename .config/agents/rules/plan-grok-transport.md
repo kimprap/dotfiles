@@ -1,11 +1,48 @@
 ---
-description: Use for Grok materialized execution plans to bind repository or session storage to the same portable Executor Plan body, revision, and structural validator.
+description: Apply to Grok materialized execution plans that bind repository or session storage to the portable plan contract and shared validator.
 ---
 
 # Grok plan transport
 
-Apply `plan.md` and, for implementation plans, `plan-impl-spec.md`. This companion changes only transport. Current Grok project discovery loads `.grok/rules/plan-grok-transport.md`; in this repository `.grok/rules` resolves to the shared `.config/agents/rules` source, so no invented config key or duplicate rule registration is required. Discovery proves availability only, not invocation, approval, plan identity, validator success, or parent capability.
+Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-storage.md` for repository materialization. This companion owns only Grok discovery and transport binding.
 
-A Grok repository- or session-backed plan binds the exact portable body bytes and approved revision. Planner preflight invokes `.config/agents/skills/dev-implementation/scripts/executor_plan.py <plan> --context grok --consumer planner` before publication; backend preflight invokes that same file and parser with `--consumer backend` before mutation. Both bind the returned plan digest and complete validator result. Missing exact body/revision binding, a non-valid result, parser disagreement, or an unavailable validator fails closed.
+## Discovery and authority
 
-Grok storage, identity presentation, model, role, tool, and recovery mechanics may differ from OMP's session-local authority, byte-exact repository projection, synchronization extension, and automatic projection-only archival. The adapter must disclose its actual mechanics and must not reinterpret portable sections, create a semantic sidecar or second parser, infer approval from storage, promise identical transport, or place provider, model, role, tool, credential, fallback, or runtime state inside the portable plan. Full orchestration separately requires the provider-neutral parent profile's exact live no-fallback assessment; config or rule discovery cannot supply attestation. The only eligible downgrade is the exact plan-approved one-qualified-owner sequential projection, and it is not a transport equivalence claim.
+- Grok discovers this shared rule through `.grok/rules/plan-grok-transport.md`; do not invent a config key or register a duplicate. Discovery proves availability only—not activation, approval, identity, validation, or capability.
+- A session-backed authority declares `Authority kind: local-authority`; an authority stored directly at its exact repository active/archive path declares `direct-repository`.
+- Actual verified storage selects the marker. `context=grok`, provider name, equality, path presence, and history never infer or change authority.
+
+## Validation and backend preflight
+
+Planner publication runs:
+
+```text
+executor_plan.py PLAN --context grok --consumer planner
+```
+
+It supplies no locators and consumes only `executor-plan-validation/v1`.
+
+Before readiness, the Grok adapter binds the current canonical repository root, actual session/local root, exact same-identity session counterpart, stable slug, and presented authority path, then runs:
+
+```text
+executor_plan.py PLAN --context grok --consumer backend \
+  --slug SLUG \
+  --repository-root ABS_REPOSITORY_ROOT \
+  --local-root ABS_LOCAL_ROOT \
+  --local-plan ABS_LOCAL_PLAN
+```
+
+`PLAN` is the exact session path for local authority or exact active/archive path for direct authority. Always supply the exact session counterpart, including when safely absent. If the adapter cannot name this mapping, stop with `PLAN_PREFLIGHT_UNAVAILABLE`.
+
+Only a fresh `executor-plan-preflight/v1` `eligible` result may advance: locator identity and current top-level/nested digests must match the same Context Pack and unchanged native-approved revision. Structural-only evidence, missing/invalid markers, marker/location mismatch, direct/local conflict, path ambiguity, digest drift, or unavailable mapping keeps every task non-ready. Preflight accepts no approval, role, authority outcome, or expected-state assertion.
+
+## Adapter boundary
+
+- Grok storage, identity, tools, model, and recovery may differ from OMP. Disclose actual mechanics; never promise transport equivalence.
+- A direct repository writer must use the shared generation protocol in `plan-repo-storage.md` or fail without mutation. Do not use the OMP projection helper for direct authoring.
+- Do not reinterpret portable sections, add a semantic sidecar/parser, infer approval from storage, or put provider, model, role, tool, credential, fallback, or runtime state in the portable plan.
+- Full orchestration requires a fresh provider-neutral parent-profile assessment. Rule/config discovery cannot attest capability. On mismatch, stop `transport-unavailable` unless the plan already approves a contract-preserving one-qualified-owner sequential projection.
+
+## Activation checks
+
+Use this rule for creation, revision, validation, or execution of a materialized Grok plan backed by session or repository storage. Skip OMP-local transport and non-plan Markdown.

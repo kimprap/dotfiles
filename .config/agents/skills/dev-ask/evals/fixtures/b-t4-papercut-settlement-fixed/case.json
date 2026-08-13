@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: CURATED proves a durable correction for originating pc-0123456789abcdef. The curator returns the unchanged ID, resolved date 2026-08-12, reference OUT-CURATION-1, and concise summary. Validate the candidate-specific result, map fixed, invoke papercut settlement once, and leave pc-fedcba9876543210 unchanged."
+  },
+  "scripted_replies": []
+}

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-PASS-1 is backend-frozen with fresh-required source and adjacent baselines. One neutral curator applies the authorized guidance delta. One fresh read-only non-curator evaluator returns a result bound to the tuple SHA-256 with evaluator identity, PASS, source_observed, adjacent_observed, and reasoned comparison to both frozen expectations. Return CURATED with the matching baseline, post-mutation, evaluator, destination, and final-identity evidence in Validation. Do not let the curator self-grade or add another Handoff or lifecycle state."
+  },
+  "scripted_replies": []
+}

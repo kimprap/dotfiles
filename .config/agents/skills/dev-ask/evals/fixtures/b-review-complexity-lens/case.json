@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only state-trace simulation for exact VERIFIED target target-sha256:d22c01 under standard assurance with a reviewer distinct from the verifier. In the sole final Standards and Specification pass, evidence proves src/feature.ts duplicates the existing src/shared.ts helper and diverges on the AC-CX-01 boundary required by specification SPEC-CX-R1. Report ordinary blocking finding F-CX-001: severity blocking because of the established specification/correctness violation, exact path src/feature.ts, authority SPEC-CX-R1, affected AC-CX-01, evidence naming the duplicate and divergence, primary tag reuse, and concrete replacement use src/shared.ts while preserving the full contract. Carry it in the existing Review Handoff, return CHANGES REQUIRED to the backend for possible authorized repair, and do not edit. Emit the complete accepted through verified trace, then one dev-code-review reviewing event and backend failed event. Add no second pass, Handoff, schema, verdict, metric, delivery wording, or repair by the reviewer."
+  },
+  "scripted_replies": []
+}

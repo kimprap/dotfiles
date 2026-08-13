@@ -2,52 +2,54 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Decision IDs:** D06, D08, D09
+**Updated:** 2026-08-11  
+**Decision IDs:** D06, D08, D09, D21
 
 ## Scope
 
-This decision governs the portable semantic shape of executor plans, parent-orchestrator capability binding, task/context projection, and route-to-todo presentation for the generic engineering workflow. It applies to the plan rules and transports, canonical planner persona/projector, `dev-implementation`, `dev-handoff`, and the current workflow reference. It does not authorize a new lifecycle skill, provider purchase or fallback, execution mutation, or a second runtime state machine.
+This decision governs the portable semantic shape of executor plans, parent-orchestrator capability binding, task/context projection, route-to-todo presentation, and implementation-worker solution discipline for the generic engineering workflow. It applies to the plan rules and transports, canonical planner persona/projector, `dev-implementation`, `dev-handoff`, and the current workflow reference. It does not authorize a new lifecycle skill, provider purchase or fallback, execution mutation, approved-scope reduction, or a second runtime state machine.
 
 ## Context / problem
 
-Large, approved work needs enough structure that a fresh or less-capable executor can act without rediscovering intent, acceptance, ownership, sequencing, or recovery. At the same time, a plan must remain a projection of approved authority rather than become another control plane. Full orchestration also needs truthful launch-time evidence that the current parent can preserve global intent, decompose work, bind exact contracts, supervise bounded concurrency, and account completion. Skill prose cannot upgrade a model or manufacture missing provider capabilities. The human-facing todo view must expose required assurance without mirroring every route owner or pretending that implementation alone is completion.
+Large, approved work needs enough structure that a fresh or less-capable executor can act without rediscovering intent, acceptance, ownership, sequencing, or recovery. At the same time, a plan must remain a projection of approved authority rather than become another control plane. Full orchestration needs truthful launch-time evidence that the current parent can preserve global intent, decompose work, bind exact contracts, supervise bounded concurrency, and account completion. Skill prose cannot upgrade a model or manufacture missing provider capabilities. The human-facing todo view must expose required assurance without mirroring every route owner or pretending that implementation alone is completion. Once approved behavior is fixed, the worker also needs an explicit existing seam for choosing the simplest sufficient implementation without using simplicity to weaken the contract.
 
-## Adopted decision
+## Decisions
 
-1. **Use one layered portable Executor Plan contract.** Executor Plan v1 carries the objective and stable outcome, exact authority and bindings, target and shared-contract maps, acceptance criteria, dependency graph and waves, boundaries and effects, per-task Task Contracts and Context Packs, proof mapping, outputs and receivers, recovery, and terminal Handoff expectations. Stable IDs close references among targets, tasks, dependencies, criteria, evidence, and receivers.
-2. **Keep semantic plans derivative.** Requirements, specifications, and direct approved authority decide product and architecture semantics. Plans, task graphs, todos, Context Packs, and Handoffs project that authority. Plan identity and lifecycle remain separate from backend task/run state, and one structural validator checks completeness and reference closure before mutation without judging product semantics.
-3. **Keep transports thin and truthful.** OMP and Grok consume the same portable semantic plan contract while adapters own concrete identity, storage, archive, provider, model, and tool mechanics. OMP retains native plan review, local authority, and byte-exact repository projection; its adapter observes successful local mutations and automatically archives only a terminal-complete projection. It does not invent approval metadata that OMP does not expose. Grok needs contract-equivalent binding, not identical storage behavior. Portable plans contain no provider, model, or tool selection policy.
-4. **Bind full orchestration at launch.** A provider-neutral Orchestrator Role Profile defines the capable parent's required behavior. Full orchestration starts only after live launch-time attestation. Missing or mismatched capability fails closed or uses an already approved, contract-preserving sequential/one-qualified-owner projection. If the downgrade would weaken isolation, independence, recovery, authority, or acceptance, execution stops for a revised route.
-5. **Preserve one-owner default and bounded topology.** The capable parent owns global intent, contract binding, dispatch, dependency/frontier accounting, and completion accounting. It does not create a recursive planner tree or delegate its top-level semantic responsibility. Workers receive narrow exact contracts; independent assurance roles remain distinct.
-6. **Project todos deterministically.** Render only applicable `Authority / Design`, `Build`, `Assurance`, and `Completion` phases. Bind visible work to stable criterion IDs, omit skipped stages, and always show required assurance separately from completion. Todos display work; they do not authorize it or mirror Handoffs, routers, or every route owner as ceremonial steps.
+### D06 — Orchestrator binding
 
-## Rejected alternatives and reasons
+- **Scope:** Parent capability, orchestration launch, execution topology, and eligible downgrade.
+- **Decision:** Use a provider-neutral Orchestrator Role Profile for the capable parent's required behavior and require live launch-time attestation before full orchestration starts. Missing or mismatched capability fails closed or uses an already approved, contract-preserving sequential or one-qualified-owner projection; stop for a revised route if that downgrade would weaken isolation, independence, recovery, authority, or acceptance. Preserve one owner as the default: the capable parent owns global intent, contract binding, dispatch, dependency/frontier accounting, and completion accounting without delegating its top-level semantic responsibility or creating a recursive planner tree. Workers receive narrow exact contracts and independent assurance roles remain distinct.
+- **Why:** Capability truth belongs at launch, and one parent must retain the global contract so bounded concurrency does not fragment ownership or silently weaken the route.
+- **Rejected alternatives / why not:** A dedicated nested orchestrator lifecycle skill or recursive subplanner tree cannot grant parent capability and adds a stage. Hundreds-agent defaults, ordinary isolated cloud trees, custom VCS, a SQLite workflow experiment, or planner-publication-owned completion create disproportionate state and coordination complexity. Best-effort or unverified capability/model selection and a skill claiming it can upgrade its model make topology assertions untruthful. Automatic model purchasing, account switching, credentials, or provider fallback are unauthorized external effects. A silent fallback can erase required isolation, independence, or recovery.
+- **Consequences:** The profile remains provider-neutral and concrete evidence remains an adapter launch concern. Full orchestration cannot start on assertion alone; the eligible downgrade preserves the same contracts and acceptance or does not run. Cohesive work defaults to one owner, while concurrency follows the real dependency graph.
+- **Reopen when:** The parent profile, launch attestation, provider neutrality, one-owner default, eligible downgrade, ownership boundary, or topology/assurance independence changes.
 
-- **One huge duplicated plan:** rejected because repeating authority at every layer creates drift, context growth, and competing copies rather than reliable references.
-- **A checklist that makes executors rediscover intent, ownership, dependencies, or acceptance:** rejected because it transfers the hardest planning decisions to the least-informed context.
-- **A second plan-side runtime state machine, sidecar, or duplicated OMP/Grok semantic parser:** rejected because plans are authority projections, while the backend owns run state and one shared contract must define semantics.
-- **A dedicated nested orchestrator lifecycle skill or recursive subplanner tree by default:** rejected because orchestration is a launch-bound parent capability, not a skill that can grant itself capability or a new lifecycle stage.
-- **Hundreds-agent defaults, ordinary isolated cloud trees, custom VCS, a SQLite workflow experiment, or “unfinished until the planner stops publishing” control:** rejected because those mechanisms address extreme-scale coordination at disproportionate complexity and would create new state authorities for ordinary work.
-- **Best-effort, unverified capability/model selection or a skill claiming it can upgrade its own model:** rejected because capability truth belongs to launch attestation and silent mismatch weakens the approved topology.
-- **Automatic model purchasing, account switching, credential changes, or provider fallback:** rejected because those are external effects outside workflow authority.
-- **Provider, model, or tool names in the portable semantic contract:** rejected because adapters own concrete bindings and provider-specific policy would break portability.
-- **Adapter-invented approved revisions or a transport-wide tool gate:** rejected because prompt prose and current bytes cannot recover the immutable revision reviewed by a native harness.
-- **A silent fallback from full orchestration:** rejected because it can erase required isolation, independent assurance, or recovery guarantees. Only the approved contract-preserving downgrade is eligible.
-- **Route owners mirrored one-for-one as todos, Handoff/router ceremony todos, or a dependency graph with no visible assurance:** rejected because activity labels are not outcome progress and can hide missing proof.
-- **`Implementation → Completion` while proof is still required:** rejected because completion cannot imply unobserved assurance.
-- **A new lifecycle skill, issue tracker, workflow service, or planner-owned execution ledger to implement this decision:** rejected because the existing router, backend, Handoff, plan lifecycle, and adapters already own those seams.
+### D08 — Executor plan shape
 
-## Consequences / invariants
+- **Scope:** Portable Executor Plan semantics, authority projection, validation, lifecycle identity, and OMP/Grok transports.
+- **Decision:** Use one layered portable Executor Plan contract carrying the objective and stable outcome, exact authority and bindings, target and shared-contract maps, acceptance criteria, dependency graph and waves, boundaries and effects, per-task Task Contracts and Context Packs, proof mapping, outputs and receivers, recovery, and terminal Handoff expectations. Stable IDs close references among targets, tasks, dependencies, criteria, evidence, and receivers. Requirements, specifications, and direct approved authority decide product and architecture semantics; plans, task graphs, todos, Context Packs, and Handoffs only project them. Keep plan identity and lifecycle separate from backend task/run state, and use one structural validator to check completeness and reference closure before mutation without judging product semantics. OMP and Grok consume the same portable semantic contract while adapters own identity, storage, archive, provider, model, and tool mechanics. OMP retains native review, session-local authority, byte-exact repository projection, and automatic archival only of a terminal-complete projection; its adapter never invents unexposed approval metadata. Grok requires contract-equivalent binding, not identical storage behavior. Portable plans contain no provider, model, or tool selection policy.
+- **Why:** A fresh executor needs complete, reference-closed semantic structure without duplicated authority, while one shared contract and thin adapters prevent the plan from becoming a second control plane.
+- **Rejected alternatives / why not:** One huge duplicated plan creates drift, context growth, and competing copies. A thin checklist transfers intent, ownership, dependencies, and acceptance discovery to the least-informed context. A second plan-side runtime state machine, sidecar, or duplicated OMP/Grok parser competes with backend state and the shared contract. Provider/model/tool names in portable semantics break portability. Adapter-invented approved revisions or a transport-wide tool gate cannot recover native immutable approval identity. A new planner-owned execution ledger duplicates existing owners.
+- **Consequences:** Executors receive enough exact structure to act without re-deciding approved semantics. Structural omissions, duplicate or dangling IDs, cycles, missing criterion/proof ownership, placeholders, or missing effect/output/recovery fields fail before mutation. Plan lifecycle (`PENDING → IN_PROGRESS → DONE/CLOSED`) remains distinct from backend task state. OMP may archive the byte-identical terminal repository projection, but the session-local authority is neither moved nor treated as approved by that storage effect. Contract changes synchronize active skills, rules, `WORKFLOW.md`, and active ADRs atomically or fail closed.
+- **Reopen when:** Executor Plan semantics, derivative-authority boundaries, stable reference structure, the single-validator design, lifecycle/runtime separation, shared transport contract, or adapter ownership changes.
 
-- An executor receives enough exact semantic structure to act without re-deciding approved product or architecture intent.
-- Structural omissions, duplicate IDs, dangling references, cycles, missing criterion/proof ownership, placeholders, or missing effect/output/recovery fields fail before mutation.
-- The orchestrator profile is provider-neutral; concrete capability evidence remains an adapter launch concern.
-- Full orchestration cannot start on assertion alone. A downgrade preserves the same contracts and acceptance or does not run.
-- One owner remains the default for cohesive work; concurrency follows the real dependency graph and does not justify nested planning.
-- Todo shape is a deterministic view of route facts. Assurance is visible and orthogonal to lifecycle depth and topology.
-- Plan lifecycle (`PENDING → IN_PROGRESS → DONE/CLOSED`) is not backend task state, and plans/todos never become runtime authority.
-- OMP lifecycle completion may automatically archive the byte-identical repository projection; the session-local authority is never moved, rewritten, or treated as approved by that storage effect.
-- Active skills, rules, `WORKFLOW.md`, and active ADRs must be updated atomically when this contract changes; conflict fails closed.
+### D09 — Todo projection
+
+- **Scope:** Human-visible route-to-task and todo projection.
+- **Decision:** Render only applicable `Authority / Design`, `Build`, `Assurance`, and `Completion` phases. Bind visible work to stable criterion IDs, omit skipped stages, and always show required assurance separately from completion. Todos display work; they do not authorize it or mirror Handoffs, routers, or every route owner as ceremonial steps.
+- **Why:** A deterministic projection should expose outcome progress and required proof without turning lifecycle owners or transfer machinery into activity theatre.
+- **Rejected alternatives / why not:** Mirroring route owners one-for-one, adding Handoff/router ceremony todos, or showing a dependency graph with no Assurance hides outcome state behind activity labels. `Implementation → Completion` while proof remains required implies assurance that has not occurred.
+- **Consequences:** Equivalent route facts produce the same applicable phases, tasks, and criterion bindings. Assurance remains visible and orthogonal to lifecycle depth and topology; plans and todos never become runtime authority.
+- **Reopen when:** Todo phase names, applicability rules, criterion binding, Assurance visibility, or the display-versus-authority boundary changes.
+
+### D21 — Worker solution discipline
+
+- **Scope:** `dev-implementation` Task Contracts and Context Packs
+- **Decision:** After approved behavior is fixed and the real flow is read, every implementation worker chooses the first sufficient rung: reuse current code; standard library; native platform; already-installed dependency; minimum new code. Bind this through `dev-implementation` Task Contracts and Context Packs. It may simplify implementation, never approved behavior, compatibility, safety, accessibility, or required proof. Add no new skill or global mode.
+- **Why:** This makes the useful Ponytail heuristic enforceable at the existing worker seam.
+- **Rejected alternatives / why not:** A global Ponytail mode duplicates foundational guidance; literal YAGNI can silently shrink approved scope; a one-check rule can weaken assurance; implicit principles alone are easy to skip.
+- **Consequences:** Worker contracts and review evidence can identify the selected sufficient rung without adding a lifecycle owner or relaxing acceptance.
+- **Reopen when:** Worker or Context Pack ownership changes, or a separately approved global policy supersedes it.
 
 ## Affected contracts
 
@@ -56,13 +58,15 @@ Large, approved work needs enough structure that a fresh or less-capable executo
 - `.config/agents/skills/dev-handoff/SKILL.md` for Task Contract, Context Pack, progress, recovery, and one-receiver fields.
 - `.config/agents/personas/planner/PERSONA.md`, `.config/agents/personas/planner/project.py`, `.config/agents/personas/planner/test_project.py`, and generated `.config/agents/harnesses/omp/agents/planner.md` and `.config/agents/harnesses/grok/agents/planner.md` through the projector only.
 - `.config/agents/rules/plan-omp-transport.md` for OMP native approval, local-authority/projection/synchronization/automatic projection-only archival binding and `.config/agents/rules/plan-grok-transport.md` for Grok project-rule auto-discovery plus repository-or-session body/revision binding; storage, identity, model, role, and tool mechanics remain adapter-specific.
-- `.config/agents/skills/dev-ask/WORKFLOW.md`, `.config/agents/skills/dev-ask/evals/evals.json`, and targeted todo, validator, semantic-context, transport, and parent-profile fixture directories.
+- `.config/agents/skills/dev-ask/WORKFLOW.md`, `.config/agents/skills/dev-ask/evals/evals.json`, and targeted todo, validator, semantic-context, transport, worker-discipline, and parent-profile fixture directories.
 
 These current executable/documentation contracts and this ACTIVE ADR are synchronized under the approved plan authority. The ADR remains semantic decision authority rather than a planner, transport, or runtime ledger.
 
 ## Evidence / source revisions
 
 - Governing authority: `local://dev-workflow-convergence-refinement-plan.md`, Datetime `2026-08-09-1616`, especially **Human-confirmed governing decisions** D06, D08, and D09; **Fixed shared contracts**; **Target map and critical anchors**; **Canonical discovery and continual learning**; **Material approval boundary**; and T3's task contract. The plan authority declares `revision: null`; no unobserved commit revision is asserted here.
+- D21 durable-write authority: `local://dev-workflow-routing-simplicity-decisions.md`, SHA-256 `ef2ac3ddd04239e1c055f25439d81f58f8ec503777c4fa691a3443abe83823be`, explicitly confirmed by the user.
+- D21 research evidence: official [`DietrichGebert/ponytail` commit `2ed6c52c9d7e5e56942508591085fd45dea277d3`](https://github.com/DietrichGebert/ponytail/commit/2ed6c52c9d7e5e56942508591085fd45dea277d3), especially pinned [`skills/ponytail/SKILL.md`](https://github.com/DietrichGebert/ponytail/blob/2ed6c52c9d7e5e56942508591085fd45dea277d3/skills/ponytail/SKILL.md); the reuse/stdlib/native/already-installed-dependency ladder is consumed only at the existing worker seam, while upstream scope-reduction and proof-ceiling semantics are rejected.
 - Current transport correction authority: user-approved Route Overview on 2026-08-10 for defect `DEF-3d1e57d746cea524b96d0e8f9cfd7216fac44c5b34528292aaf3edd0d0bbde27`, requiring native OMP approval, byte-exact local lifecycle mirroring, and automatic projection-only archival without separate approval.
 - Cursor, [Agent swarms and the new model economics](https://cursor.com/blog/agent-swarm-model-economics), accessed 2026-08-09: capable-parent intent retention, narrow worker context, explicit ownership, and outcome grading inform the plan; hundreds-agent defaults, recursive trees, custom VCS, an agent-owned always-injected Field Guide, unlimited stacked reviews, and model-specific policy are rejected.
 - Cursor, [official plugins and curated skills](https://github.com/cursor/plugins), including `orchestrate`, accessed 2026-08-09: explicit roles and structured returns inform orchestration; recursive subplanners, ordinary isolated cloud trees, and planner-publication-owned completion do not.
@@ -73,11 +77,11 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 
 ## Human authority
 
-The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan are the authority for adopting this record. The parent execution dispatch authorizes only this exact D06/D08/D09 materialization. It does not authorize executable plan/backend/persona changes, model or credential effects, new lifecycle skills, topology escalation, weakened assurance, or shipping.
+The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, plus the exact confirmed D21 evidence artifact above, are the authority for this record. The parent execution dispatch authorizes only this D06/D08/D09/D21 materialization. It does not authorize executable plan/backend/persona or worker-contract changes, model or credential effects, new lifecycle skills, topology escalation, approved-scope reduction, weakened assurance, or shipping.
 
-## Supersession / reopen conditions
+## Supersession
 
-This record remains ACTIVE until a newer focused ADR explicitly supersedes it and the index links that relationship. Reopen or seek reapproval if Executor Plan semantics, its derivative-authority boundary, the single-validator design, parent profile, attestation requirement, provider neutrality, one-owner default, eligible downgrade, lifecycle/runtime separation, or todo phases change; if a new orchestrator skill/state authority is proposed; or if topology or assurance independence would weaken. Adapter-specific mechanical storage, formatting, generated projection, and a contract-preserving sequential downgrade do not reopen it.
+This record remains ACTIVE until a newer focused ADR explicitly supersedes it and the index links that relationship. Adapter-specific mechanical storage, formatting, generated projection, and a contract-preserving sequential downgrade do not supersede any decision.
 
 ## Verification expectations
 
@@ -86,4 +90,4 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes it an
 - **AC07:** Full orchestration starts only under a live matching Orchestrator Role Profile; mismatch either uses the approved contract-preserving one-owner projection or stops `transport-unavailable`.
 - **AC08:** Task Contracts and Handoffs expose stable outcome/criterion IDs, expected and observed progress, exact target, inherited attempt/repair state, route impact, next frontier, and one receiver.
 - **AC14:** Canonical planner source, generated projections, plan transports, validator, and profile bindings pass their targeted checks without provider-specific semantics leaking into the portable contract.
-- A future executable revision must prove active skills/rules/`WORKFLOW.md` and active ADRs agree; conflicts fail closed.
+- A future executable revision must prove D21 is bound at the worker Task Contract/Context Pack seam without reducing approved behavior, compatibility, safety, accessibility, or required proof, and must prove active skills/rules/`WORKFLOW.md` and active ADRs agree; conflicts fail closed.

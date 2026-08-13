@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: authoritative curation replaces originating pc-0123456789abcdef with decision ADR-0099 D31. The curator returns date 2026-08-12 and exact replacement reference. Map superseded, settle the originating ID once, and do not resolve the replacement record or any unrelated record."
+  },
+  "scripted_replies": []
+}

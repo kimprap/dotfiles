@@ -2,70 +2,151 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-10  
-**Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18
+**Updated:** 2026-08-11  
+**Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20
 
 ## Scope
 
-This decision governs the generic engineering workflow's durable authority, route classification, approval/reapproval, interview completion boundary, optional external-intake triage, presentation contract, ownership boundaries, cutover discipline, and delivery boundary. It applies to `dev-ask`, the lifecycle skills and adapters that return to it, the current `WORKFLOW.md`, active workflow ADRs, and repository discovery. It does not grant authority to change product behavior, executable skills, rules, or delivery state.
+This decision governs the generic engineering workflow's durable authority, route classification, approval/reapproval, interview completion boundary, optional external-intake triage, route recommendation and presentation contract, ownership boundaries, cutover discipline, and delivery boundary. It applies to `dev-ask`, the lifecycle skills and adapters that return to it, the current `WORKFLOW.md`, active workflow ADRs, and repository discovery. It does not grant authority to change product behavior, executable skills, rules, or delivery state.
 
 ## Context / problem
 
-The workflow needs one current route and one durable explanation of why its boundaries exist. A route can otherwise accumulate duplicate routers, stage-by-stage approvals, serialized interviews, hidden execution state, mandatory intake ceremony, or implicit authority to make product, architecture, destructive, or shipping decisions. Current behavior also needs a clean distinction between concise executable guidance, durable rationale, and advisory research. Without that distinction, a future maintainer can mistake a plan, memory, Atlas note, todo, Handoff, or stale record for authority.
+The workflow needs one current route and one durable explanation of why its boundaries exist. A route can otherwise accumulate duplicate routers, stage-by-stage approvals, serialized interviews, hidden execution state, mandatory intake ceremony, choice theatre, or implicit authority to make product, architecture, destructive, or shipping decisions. Current behavior also needs a clean distinction between concise executable guidance, durable rationale, and advisory research. Without that distinction, a future maintainer can mistake a plan, memory, Atlas note, todo, Handoff, transcript, or stale record for authority.
 
-## Adopted decision
+## Decisions
 
-1. **Durable authority is focused ADRs plus one stable registry.** `docs/adr/INDEX.md` registers the active records and their supersession links. ADRs preserve adopted decisions and rejected alternatives; they are not a queue, runtime ledger, or attempt history.
-2. **`dev-ask` is the sole thin, stateless external router.** It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches the applicable owner; handles material reapproval; and presents completion. It owns no baton ledger, workflow state machine, execution state, or competing routing policy.
-3. **One stable compact route approval is delegated downstream.** The initial approval authorizes the named prospective route. Requirements request targeted confirmation only for synthesized or materially clarified human-owned behavior; a specification or ticket graph that faithfully derives current authority continues automatically. A stage return, artifact completion, audit, or review does not require another approval. Digest drift triggers semantic comparison rather than automatic reapproval: even changed bytes in a named target are non-material when they do not alter authority, scope, acceptance, route, topology, proof/independence, destructive or external effects, shipping, a shared assumption, or equivalent capability.
-4. **Grilling is bounded by the decision tree, not an arbitrary round count.** Each round asks the whole current load-bearing frontier, waits for the user's answers, and recomputes dependencies. Continue for as many rounds as required until the frontier is empty and the user confirms shared understanding, or stop with an exact resumable frontier for a user pause, authority/evidence blocker, or repeated no-progress frontier. Candidate/refinement intent can use grilling; ordinary ambiguity, missing requirements, factual lookup, and settled edits use their applicable owner instead.
-5. **Authority stays human at the consequential boundaries.** Product behavior, architecture, material scope, acceptance, destructive effects, external effects, and shipping remain human-authorized. Local completion never authorizes staging, commit, push, release, deploy, rollout, or any other delivery action.
-6. **Lifecycle depth, assurance profile, and execution topology remain independent dimensions.** A route may choose compact, standard, or high-consequence assurance separately from lifecycle depth and one-owner, bounded parallel, or other approved topology.
-7. **Clean cutover is required.** A changed contract migrates every affected caller, fixture, and document and removes obsolete paths rather than retaining aliases, compatibility shims, or silently competing behavior. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed.
-8. **Each artifact has one semantic owner.** Existing approved requirements, specifications, and direct authority remain authoritative; plans, tickets, tasks, todos, Context Packs, and Handoffs only project that authority. `WORKFLOW.md` describes concise current behavior, ADRs carry rationale and rejected alternatives, and Atlas carries research evidence only.
-9. **Triage is an optional external-intake on-ramp.** Explicitly requested raw issue or pull-request intake may use `dev-triage`; project-authored tickets and plans skip it. Its states map into `Authority / Design` readiness rather than adding a lifecycle phase, and every tracker mutation remains an exact external-effect gate.
-10. **Approval and completion presentations are compact.** Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal presentation contains the exact completed `Route`, `Result`, and only relevant `Verification`, `Risks`, or `Next`. Internal artifact identities and gate mechanics remain available to the engine but are omitted unless they affect the human decision.
+### D01 — Durable decision authority
 
-## Rejected alternatives and reasons
+- **Scope:** Generic engineering workflow ADR storage, registry, and supersession.
+- **Decision:** Use focused ADRs under `docs/adr/` with one stable `docs/adr/INDEX.md`. The index registers active records and their supersession links. ADRs preserve adopted decisions and rejected alternatives; they are not a queue, runtime ledger, or attempt history.
+- **Why:** Focused records keep unrelated concerns, ownership, and supersession clear while preserving rationale outside concise executable guidance.
+- **Rejected alternatives / why not:** One ever-growing decision register mixes unrelated scope and blurs focused ownership and supersession. Embedding rationale or history in `WORKFLOW.md` turns current guidance into an archive. Plans, memory, Atlas, todos, Handoffs, and transcripts are proposals, projections, research, or transfer evidence that can be stale or instance-specific, so they are not normative authority.
+- **Consequences:** The ADR index and active ADRs are durable documentation authority, not execution state. Rejected and superseded records remain discoverable history but never execute.
+- **Reopen when:** ADR storage, the stable registry, focused ownership, status, or supersession semantics change.
 
-- **One ever-growing decision register:** rejected because it mixes unrelated scope and makes supersession and focused ownership ambiguous.
-- **Embedding rationale/history in `WORKFLOW.md`:** rejected because executable guidance must remain concise and current rather than becoming an archive.
-- **Treating plans, memory, Atlas, todos, Handoffs, or transcripts as normative authority:** rejected because they are proposals, projections, research, or transfer artifacts and can be stale or instance-specific.
-- **Reapproving every stage return or derivative artifact:** rejected because unchanged work would wait on ceremonial approval rather than progress against the stable outcome.
-- **Letting initial approval silently cover later material decisions:** rejected because human authority cannot be inferred across changed product, architecture, scope, acceptance, destructive, external-effect, or shipping facts.
-- **A competing router, baton ledger, workflow state machine, or router-owned execution state:** rejected because it duplicates classification and creates contradictory lifecycle authority.
-- **A fixed two-round interview cap, one-question-at-a-time interview, or scope-unbounded interview:** rejected because the first truncates newly exposed dependencies, the second adds avoidable latency, and the third lacks a finite frontier-based completion condition.
-- **Routing ordinary ambiguity, factual lookup, incomplete requirements, or settled direct edits to grilling:** rejected because requirements, research, or implementation already own those bounded cases.
-- **Coupling lifecycle depth to assurance or topology:** rejected because consequence and capability are distinct facts and must not be hidden in one label.
-- **Automated or inferred product/architecture/destructive/shipping authority:** rejected because the human owner retains those decisions.
-- **Leaving old callers, aliases, compatibility shims, or obsolete paths after a cutover:** rejected because dual behavior obscures the active contract and permits drift.
-- **Inferring shipping from completion evidence:** rejected because external delivery has a separate explicit authorization and rollback boundary.
-- **A model/provider-specific router or policy:** rejected because semantic routing must remain portable and adapters own transport mechanics.
-- **A new routing lifecycle stage, generic evaluator, issue tracker, workflow service, or other coordination authority:** rejected because existing owners already classify, execute, transfer, prove, and present the work; another authority would duplicate state and responsibility.
-- **Turning ADRs, plans, tickets, todos, Context Packs, or Handoffs into runtime ledgers:** rejected because these artifacts document or project authority while the implementation backend alone owns execution state.
-- **Grilling every change or scheduling frequent architecture surveys as blanket policy:** rejected because those routes activate only for actual candidate-refinement or explicit survey intent, not ordinary work.
-- **Mandatory triage or wholesale import of an upstream tracker framework:** rejected because project-authored work is already qualified and tracker labels/layout are repository-owned.
-- **Additional upstream engineering-skill imports:** rejected because `ask-matt`, code review, codebase design, domain modeling, specification, ticketing, prototyping, architecture survey, and Wayfinder already have current local semantic owners; upstream setup imposes tracker/layout policy; and its merge resolver stages and commits automatically. Only triage fills a distinct intake gap.
-- **Verbose approval and completion templates:** rejected because artifact inventories, gate machinery, and execution metadata obscure the one decision or result the user needs.
+### D02 — Approval model
 
-## Consequences / invariants
+- **Scope:** `dev-ask` route approval, downstream continuation, and material reapproval.
+- **Decision:** Approve one stable compact prospective Route. The initial approval authorizes that named route. Requirements request targeted confirmation only for synthesized or materially clarified human-owned behavior; a specification or ticket graph that faithfully derives current authority continues automatically. A stage return, artifact completion, audit, or review does not require another approval. Digest drift triggers semantic comparison rather than automatic reapproval: changed bytes are non-material when they do not alter authority, scope, acceptance, route, topology, proof or independence, destructive or external effects, shipping, a shared assumption, or equivalent capability.
+- **Why:** Unchanged work should progress against the stable outcome without ceremonial approval, while every newly exposed human-owned or materially changed fact remains gated.
+- **Rejected alternatives / why not:** Reapproving every stage return or derivative artifact adds waiting without changing authority. Letting initial approval silently cover later material product, architecture, scope, acceptance, destructive, external-effect, or shipping decisions infers authority the human did not grant. Treating every byte change as material mistakes identity drift for semantic drift.
+- **Consequences:** The current route and outcome remain stable until a named material trigger changes them. Human prompts correspond to new human-owned decisions or external effects, not stage or artifact count.
+- **Reopen when:** The stable-route approval model, targeted confirmation boundary, semantic drift test, or list of material route facts changes.
 
-- The current route and outcome remain stable until a named material trigger changes them.
-- A direct settled implementation does not re-enter requirements, diagnosis, planning, or review merely because a stage returned unchanged evidence.
-- A route judgment must cite the relevant evidence and preserve one owner per responsibility.
-- A conflict between an active executable contract and an active ADR stops the workflow; no agent silently selects a winner.
-- Rejected and superseded records remain discoverable history but never execute.
-- Completion is local evidence only. Shipping remains outside this lifecycle.
-- The ADR index and this record are documentation authority, not runtime state and not a replacement for executable enforcement.
-- Raw external intake can become agent-ready without changing the four todo phases or making triage a universal prerequisite.
-- Human prompts correspond to new human-owned decisions or external effects, not stage/artifact count.
+### D05 — Grilling bound
+
+- **Scope:** `dev-grilling` applicability and the composition of each decision frontier.
+- **Decision:** Ask the whole current load-bearing decision frontier in each round. Use grilling for explicit candidate, plan, hypothesis, or design refinement; route ordinary ambiguity, missing requirements, factual lookup, and settled direct edits to their applicable owners instead.
+- **Why:** Complete-frontier questions reduce avoidable latency while near-miss routing keeps requirements, research, and implementation responsibilities with their existing owners.
+- **Rejected alternatives / why not:** One-question-at-a-time interviews serialize decisions unnecessarily. Routing ordinary ambiguity, factual lookup, incomplete requirements, or settled edits to grilling duplicates owners that already handle those cases. Grilling every change is blanket ceremony rather than intent-driven refinement.
+- **Consequences:** Each round exposes the full currently known decision surface, and non-grilling work does not acquire an interview stage merely because some ambiguity exists.
+- **Reopen when:** Grilling's qualifying intent, near-miss owners, or complete-frontier composition changes.
+
+### D10 — Sole thin, stateless router
+
+- **Scope:** External generic engineering route classification and lifecycle dispatch.
+- **Decision:** Keep `dev-ask` the sole thin, stateless external router. It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches the applicable owner; handles material reapproval; and presents completion. It owns no baton ledger, workflow state machine, execution state, or competing routing policy.
+- **Why:** One semantic router prevents contradictory lifecycle authority and keeps runtime state with the implementation backend.
+- **Rejected alternatives / why not:** A competing router, baton ledger, workflow state machine, or router-owned execution state duplicates classification and creates contradictory authority. A model/provider-specific router breaks semantic portability. A new routing stage, generic evaluator, issue tracker, workflow service, or coordination authority duplicates existing owners.
+- **Consequences:** Route judgments cite relevant evidence and preserve one owner per responsibility. Router state cannot become a hidden continuation or scheduling authority.
+- **Reopen when:** Sole router ownership, statelessness, classification responsibility, or backend ownership of execution state changes.
+
+### D11 — Independent workflow dimensions
+
+- **Scope:** Route lifecycle depth, assurance profile, and execution topology.
+- **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. A route may choose compact, standard, or high-consequence assurance separately from lifecycle depth and one-owner, bounded-parallel, or another approved topology.
+- **Why:** Consequence, capability, lifecycle need, and dependency shape are distinct facts and cannot be represented truthfully by one coupled label.
+- **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology hides distinct route facts and can add ceremony or weaken proof for the wrong reason.
+- **Consequences:** A change in one dimension does not silently change the others; any topology or assurance consequence remains explicit in the route.
+- **Reopen when:** These dimensions are redefined, merged, or made dependent on one another.
+
+### D12 — Human authority at consequential boundaries
+
+- **Scope:** Product, architecture, scope, acceptance, topology/independence, destructive, and external-effect decisions.
+- **Decision:** Preserve human authority for product behavior, architecture, material scope, acceptance, destructive effects, external effects, and shipping. No router, planner, worker, or assurance role may infer those decisions.
+- **Why:** These choices change what is built, the safety contract, or the user's external state and therefore require explicit human authority.
+- **Rejected alternatives / why not:** Automated or inferred product, architecture, destructive, external-effect, or shipping authority lets procedural artifacts silently decide consequential facts reserved to the human owner.
+- **Consequences:** A newly exposed consequential decision returns through the material authority boundary; unchanged derivative work continues without inventing another approval gate.
+- **Reopen when:** Human-owned decision boundaries or the materiality rules governing them change.
+
+### D13 — Clean cutover
+
+- **Scope:** Every caller, fixture, document, skill, rule, and active ADR affected by a changed generic workflow contract.
+- **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed.
+- **Why:** Dual behavior obscures the active contract, permits drift, and makes it impossible to know which path is authoritative.
+- **Rejected alternatives / why not:** Leaving old callers, aliases, compatibility shims, or obsolete paths after cutover preserves silently competing behavior instead of completing the migration.
+- **Consequences:** A contract change is not complete until every affected projection agrees and obsolete paths are gone. No agent silently chooses a winner when active authorities conflict.
+- **Reopen when:** The repository adopts a different explicit migration or compatibility policy, or atomic synchronization becomes impossible under approved authority.
+
+### D14 — Separate shipping authority
+
+- **Scope:** Staging, commit, push, review request, release, deploy, rollout, and other delivery effects.
+- **Decision:** Keep shipping separately and explicitly authorized. Local completion never authorizes staging, commit, push, release, deploy, rollout, or another delivery action.
+- **Why:** Delivery mutates external state and requires its own exact authorization and rollback boundary.
+- **Rejected alternatives / why not:** Inferring shipping from implementation, verification, review approval, or completion evidence crosses an external-effect boundary the local lifecycle does not own.
+- **Consequences:** Completion is local evidence only. Delivery remains outside the generic engineering lifecycle until separately authorized.
+- **Reopen when:** Delivery ownership, authorization, or rollback policy changes.
+
+### D15 — Semantic ownership and source roles
+
+- **Scope:** Requirements, specifications, direct authority, plans, tasks, todos, Context Packs, Handoffs, `WORKFLOW.md`, ADRs, and research.
+- **Decision:** Give each artifact one semantic owner. Approved requirements, specifications, and direct authority govern their concerns; plans, tickets, tasks, todos, Context Packs, and Handoffs only project that authority. `WORKFLOW.md` describes concise current behavior, ADRs carry durable rationale and rejected alternatives, and Atlas and external sources carry advisory research only.
+- **Why:** Explicit source roles prevent proposals, projections, stale evidence, or research from masquerading as approved behavior.
+- **Rejected alternatives / why not:** Turning plans, tickets, todos, Context Packs, Handoffs, memories, transcripts, or Atlas into normative or runtime ledgers creates competing copies and instance-specific authority. Copying ADR rationale into `WORKFLOW.md` duplicates the durable source and bloats current guidance.
+- **Consequences:** Current executable behavior and active ADR rationale remain distinct but synchronized. A source-role conflict fails closed instead of being resolved by convenience.
+- **Reopen when:** Any artifact's semantic ownership, source precedence, or executable-versus-advisory boundary changes.
+
+### D16 — Iterative grilling completion
+
+- **Scope:** `dev-grilling` rounds, completion, pause, and no-progress boundaries.
+- **Decision:** Bound grilling by the decision tree, not an arbitrary round count. After each complete-frontier round, wait for the user's answers and recompute dependencies. Continue for as many rounds as required until the frontier is empty and the user confirms shared understanding, or stop with an exact resumable frontier for a user pause, authority/evidence blocker, or repeated no-progress frontier. This supersedes D05's former fixed one-follow-up cap while retaining D05's whole-frontier and near-miss authority.
+- **Why:** Newly exposed dependencies can require more than one follow-up, while an exact frontier and no-progress stop keep the interview finite and resumable.
+- **Rejected alternatives / why not:** A fixed two-round cap truncates newly exposed dependencies. An exhaustive scope-unbounded interview lacks a finite completion condition. Repeating an unchanged frontier treats activity as progress.
+- **Consequences:** User confirmation is an interview completion condition rather than a second router approval; pauses and blockers return exact recovery state.
+- **Reopen when:** The decision-tree completion condition, user-confirmation boundary, pause semantics, or no-progress stop changes.
+
+### D17 — Optional external-intake triage
+
+- **Scope:** Explicitly requested raw issue or pull-request intake.
+- **Decision:** Keep triage an optional external-intake on-ramp. Raw issue or pull-request intake may use `dev-triage`; project-authored tickets and plans skip it. Triage states map into `Authority / Design` readiness rather than adding a lifecycle phase, and every tracker mutation remains an exact external-effect gate.
+- **Why:** Raw external work can become agent-ready without imposing tracker ceremony on work the project has already qualified.
+- **Rejected alternatives / why not:** Mandatory triage duplicates qualification for project-authored work. Wholesale import of an upstream tracker framework imposes non-project labels and layout. A new lifecycle phase would change the existing route shape without a distinct owner need.
+- **Consequences:** External intake can be normalized without changing the four todo phases or making triage universal; tracker writes remain separately authorized effects.
+- **Reopen when:** Triage becomes mandatory, its readiness mapping changes, or tracker mutation authority changes.
+
+### D18 — Compact approval and completion presentation
+
+- **Scope:** Human-facing initial route approval and terminal completion output.
+- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal presentation contains the exact completed `Route`, `Result`, and only relevant `Verification`, `Risks`, or `Next`. Internal artifact identities and gate mechanics remain available to the engine but are omitted unless they affect the human decision.
+- **Why:** Compact output keeps the human's decision or result visible instead of burying it in execution machinery.
+- **Rejected alternatives / why not:** Verbose templates, artifact inventories, gate machinery, and execution metadata obscure the one decision or result the user needs.
+- **Consequences:** Presentation remains route-truthful and concise while internal evidence remains available when material.
+- **Reopen when:** The human approval fields, completion fields, or threshold for exposing internal mechanics changes.
+
+### D19 — Ordered route presentation
+
+- **Scope:** `dev-ask` prospective and completion presentation
+- **Decision:** Render every human-facing prospective and completed Route as an ordered list, one route owner per line, preserving exact order. Never render an inline arrow chain. If materially different candidates are required, give each candidate its own labeled ordered list.
+- **Why:** Ordered lists scan and wrap better while preserving sequence.
+- **Rejected alternatives / why not:** Arrow chains are dense; unordered bullets lose order; route tables expose unnecessary mechanics.
+- **Consequences:** Approval and completion templates, examples, and paired eval fixtures must use ordered route lists without changing internal route identity or ordering.
+- **Reopen when:** Route ordering or the compact presentation contract changes.
+
+### D20 — Recommended route and conditional decision support
+
+- **Scope:** `dev-ask` route selection and interview boundary
+- **Decision:** Evaluate the full skill catalog internally, but present one recommended route by default. Show two or three candidates only for materially different valid routes with user-owned trade-offs. Ask one gating question only when one fact changes the first owner. Use grilling only for explicit candidate, plan, hypothesis, or design refinement; use research, requirements, diagnosis, or implementation for their existing near misses.
+- **Why:** Useful skills remain available without choice theatre or routine interview latency.
+- **Rejected alternatives / why not:** Always listing candidates burdens predictable choices; interviewing every prompt overlaps other owners; keyword routing misses context.
+- **Consequences:** Candidate routes are exceptional decision support, not a catalog tour. The router still considers every applicable skill predicate internally.
+- **Reopen when:** Route-discriminating authority or catalog semantics change.
 
 ## Affected contracts
 
-- `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, completion, and current behavior.
+- `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior.
 - `.config/agents/skills/dev-requirements/SKILL.md`, `dev-research/SKILL.md`, `dev-triage/SKILL.md`, `dev-grilling/SKILL.md`, `grill-me/SKILL.md`, `grill-with-docs/SKILL.md`, `dev-prototype/SKILL.md`, `dev-specification/SKILL.md`, `dev-ticketing/SKILL.md`, `dev-implementation/SKILL.md`, `dev-improve-codebase-architecture/SKILL.md`, and `wayfinder/SKILL.md` for targeted confirmation, iterative decision frontiers, optional intake, semantic revision rebinding, adapters, route impact, stops, and exactly one receiver.
 - `.config/agents/skills/dev-ask/evals/evals.json` and its route, reapproval, continuation, presentation, discovery, triage, and ordinary-context fixture directories.
-- `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the four ACTIVE workflow ADRs.
+- `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the four ACTIVE generic-workflow ADRs.
 - Human approval boundaries for product, architecture, material scope, acceptance, topology/independence, destructive/external effects, and shipping.
 
 These current executable/documentation contracts and this ACTIVE ADR are synchronized under the approved plan authority. The ADR remains decision authority rather than implementation or run state.
@@ -73,6 +154,7 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 ## Evidence / source revisions
 
 - Governing authority: `local://dev-workflow-convergence-refinement-plan.md`, Datetime `2026-08-09-1616`, especially **Human-confirmed governing decisions**, **Fixed shared contracts**, **Deterministic routing model**, **Canonical discovery and continual learning**, **Material approval boundary**, and T1's task contract. The plan authority declares `revision: null`; no unobserved commit revision is asserted here.
+- D19-D20 durable-write authority: `local://dev-workflow-routing-simplicity-decisions.md`, SHA-256 `ef2ac3ddd04239e1c055f25439d81f58f8ec503777c4fa691a3443abe83823be`, explicitly confirmed by the user.
 - Repository conventions: `.config/agents/skills/dev-domain-modeling/ADR-FORMAT.md` (ADR destination and numbering), current `.agents/AGENTS.md`, and current `manifest` as read before this record was created.
 - Executable lineage revisions: completed T2 Common Handoff `agent://WorkflowRouting`; T5 synchronization of the current paths above under `AUTH-PLAN`, with its exact final target identity returned to T6.
 - Cursor, [Agent swarms and the new model economics](https://cursor.com/blog/agent-swarm-model-economics), accessed 2026-08-09: specialization and shared decision context are useful; hundreds-agent defaults, recursive trees, custom VCS, agent-owned Field Guides, unlimited stacked reviews, and model-specific policy are not adopted.
@@ -82,16 +164,16 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 
 ## Human authority
 
-The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, plus the user's 2026-08-10 explicit D16-D18 workflow refinements, are the authority for this record. The parent execution dispatch authorizes their materialization; it does not authorize product decisions, shipping, or mutation of `/Users/kim/.agents/AGENTS.md`. Human approval remains required at the material boundaries named above.
+The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, the user's 2026-08-10 explicit D16-D18 workflow refinements, and the exact confirmed D19-D20 evidence artifact above are the authority for this record. The parent execution dispatch authorizes their materialization; it does not authorize product decisions, executable workflow changes, shipping, or mutation of `/Users/kim/.agents/AGENTS.md`. Human approval remains required at the material boundaries named above.
 
-## Supersession / reopen conditions
+## Supersession
 
-This record remains ACTIVE until a newer focused ADR explicitly supersedes it and the index links that relationship. Reopen or seek reapproval if the router's sole ownership, stable-route approval model, decision-frontier interview completion, optional triage boundary, compact presentation contract, human authority, lifecycle/assurance/topology independence, cutover policy, source-of-truth split, or shipping boundary changes; if a new mandatory lifecycle skill or competing state authority is proposed; or if current active contracts and ADRs cannot be synchronized atomically. Mechanical wording, formatting, and a contract-preserving sequential downgrade do not reopen it.
+This record remains ACTIVE until a newer focused ADR explicitly supersedes it and the index links that relationship. D16 supersedes only D05's former fixed one-follow-up cap; D05's whole-frontier and applicability boundaries remain active. Mechanical wording, formatting, and a contract-preserving sequential downgrade do not supersede any decision.
 
 ## Verification expectations
 
-- **AC01:** A fresh read-only agent given only repository guidance finds the single minimal pointer, opens `docs/adr/INDEX.md`, identifies all four ACTIVE records, and does not load every ADR for ordinary unrelated work.
-- **AC02:** Every D01-D18 decision and its relevant rejection is represented by one focused active ADR or a linked focused record, with approval and supersession semantics.
+- **AC01:** A fresh read-only agent given only repository guidance finds the single minimal pointer, opens `docs/adr/INDEX.md`, identifies the four ACTIVE generic-workflow records and the separate concurrent product-workflow ADR-0005, and does not load every ADR for ordinary unrelated work.
+- **AC02:** Every D01-D23 decision and its relevant rejection is represented exactly once by one decision unit in one focused ACTIVE ADR, with approval and supersession semantics.
 - Route fixtures must distinguish direct answers, research, optional raw external triage, missing requirements, candidate refinement/grilling, hard bugs, known-cause repair, settled implementation, and large specified work without keyword-only routing.
-- Approval fixtures must show unchanged derivative stages continue on one route approval, only newly exposed human-owned decisions or material semantic drift reopen approval, compact presentation is stable, and completion does not produce a shipping action.
+- Approval fixtures must show unchanged derivative stages continue on one route approval, only newly exposed human-owned decisions or material semantic drift reopen approval, route presentation is an ordered list, route candidates remain exceptional, compact presentation is stable, and completion does not produce a shipping action.
 - A future executable revision must prove current skills/rules/`WORKFLOW.md` and active ADRs agree; conflicts fail closed.

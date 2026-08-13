@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Expected behavior and the reproduction are settled, but exactly one fact is unknown: whether the cause is already established. If established, dev-implementation owns the routine fix; if unexplained, dev-diagnosing-bugs owns diagnosis. Ask exactly one bounded question that resolves that cause-status fact, then stop without candidate routes, approval, dispatch, mutation, or a second question."
+  },
+  "scripted_replies": []
+}

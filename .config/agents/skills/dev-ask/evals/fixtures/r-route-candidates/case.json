@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Observable behavior, acceptance, compatibility, failure behavior, and proof are settled. Two materially different routes are explicitly valid: a bounded direct change without durable recovery artifacts, or specification plus ticket graph because I may require durable handoff and recovery. Whether that durability is worth the extra artifact work is my trade-off, and I have not selected it. Present exactly two candidates: recommend the direct route, label the alternative, give each its own numbered one-owner-per-line Route list and one concise trade-off sentence, ask one selection question, and do not request approval or dispatch."
+  },
+  "scripted_replies": []
+}

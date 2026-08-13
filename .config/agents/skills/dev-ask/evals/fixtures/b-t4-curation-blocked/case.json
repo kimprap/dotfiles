@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Terminal evidence snapshot: the current affected project rule directly conflicts with the settled verified outcome, and authority to choose the winner is missing. Return BLOCKED with exactly that conflict, missing authority, and resume condition. Preserve implementation, do not repair or mutate guidance, and do not begin a broad audit loop."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: the current affected project rule directly conflicts with the settled verified outcome, and authority to choose the winner is missing. Return BLOCKED with exactly that conflict, missing authority, and resume condition. Preserve implementation, do not repair or mutate guidance, and do not begin a broad audit loop."
   },
   "scripted_replies": []
 }

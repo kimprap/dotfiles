@@ -1,6 +1,7 @@
 # Portable executor fixture
 
 **Datetime**: 2026-08-09-1700
+**Authority kind**: direct-repository
 **Scope**: Portable plan validation fixture
 **Summary**: Change one rule and its shared validator without provider-specific semantics.
 **Status**: PENDING

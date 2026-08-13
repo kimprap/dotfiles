@@ -55,7 +55,7 @@
           "dev-research",
           "dev-ask"
         ],
-        "route": "dev-research \u2192 dev-ask"
+        "route": "dev-research → dev-ask"
       },
       "fixture_dir": "fixtures/r-direct-near-miss",
       "forbidden_events": [
@@ -64,7 +64,7 @@
       ],
       "id": "R-DIRECT-NEAR-MISS",
       "inputs": {
-        "request": "The same bounded question requires factual lookup. The complete route is exactly dev-research \u2192 dev-ask for the approved answer; direct answer is not a downstream route segment. List only Route Overview approval in gates, and represent cited research evidence as an artifact rather than a gate."
+        "request": "The same bounded question requires factual lookup. The complete route is exactly dev-research → dev-ask for the approved answer; direct answer is not a downstream route segment. List only Route Overview approval in gates, and represent cited research evidence as an artifact rather than a gate."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -104,7 +104,7 @@
           "dev-research",
           "dev-ask"
         ],
-        "route": "dev-research \u2192 dev-ask"
+        "route": "dev-research → dev-ask"
       },
       "fixture_dir": "fixtures/r-research",
       "forbidden_events": [
@@ -235,7 +235,7 @@
           "dev-requirements",
           "dev-ask"
         ],
-        "route": "dev-requirements \u2192 dev-ask (recompute)"
+        "route": "dev-requirements → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-product-authority-near-miss",
       "forbidden_events": [
@@ -293,7 +293,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-requirements \u2192 dev-specification \u2192 dev-ticketing \u2192 dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-requirements → dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-requirements",
       "forbidden_events": [
@@ -346,7 +346,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-requirements-near-miss",
       "forbidden_events": [
@@ -400,7 +400,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-diagnosing-bugs \u2192 dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-diagnosing-bugs → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-bug",
       "forbidden_events": [
@@ -451,7 +451,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-bug-near-miss",
       "forbidden_events": [
@@ -502,7 +502,7 @@
           "grill-me",
           "dev-ask"
         ],
-        "route": "grill-me \u2192 dev-ask (recompute)"
+        "route": "grill-me → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-grill",
       "forbidden_events": [
@@ -554,7 +554,7 @@
           "grill-with-docs",
           "dev-ask"
         ],
-        "route": "grill-with-docs \u2192 dev-ask (recompute)"
+        "route": "grill-with-docs → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-approach-refinement",
       "forbidden_events": [
@@ -612,17 +612,22 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-approach-refinement-near-miss-direct",
       "forbidden_events": [
         "unnecessary-interview",
         "dispatch:grill-me",
-        "dispatch:grill-with-docs"
+        "dispatch:grill-with-docs",
+        "route-candidates",
+        "gating-question",
+        "inline-route",
+        "route-table",
+        "unordered-route"
       ],
       "id": "R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT",
       "inputs": {
-        "request": "The desired behavior, scope, architecture, compatibility, failure behavior, named acceptance, and verification seams are already settled. Apply the bounded approved edit now; show the complete prospective implementation, verification, final-review, learning, and completion route, and dispatch only dev-implementation first."
+        "request": "The desired behavior, scope, architecture, compatibility, failure behavior, named acceptance, and verification seams are already settled. Apply the bounded approved edit now. Present only the one recommended prospective Route as a numbered ordered list with one owner per line in the exact internal owner order, with no route candidates or gating question. After approval, dispatch only dev-implementation first."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -639,7 +644,8 @@
         "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
         "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
         "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
-        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
+        "Require exactly one recommended prospective Route as a numbered one-owner-per-line list in the unchanged internal order; reject candidate theatre, a gating question, inline arrows, a route table, or an unordered Route."
       ],
       "scripted_replies": [
         "APPROVE the current Route Overview"
@@ -703,7 +709,7 @@
           "dev-requirements",
           "dev-ask"
         ],
-        "route": "dev-requirements \u2192 dev-ask (recompute)"
+        "route": "dev-requirements → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-approach-refinement-near-miss-requirements",
       "forbidden_events": [
@@ -760,7 +766,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-specification \u2192 dev-ticketing \u2192 dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-grill-near-miss",
       "forbidden_events": [
@@ -810,7 +816,7 @@
           "wayfinder",
           "dev-ask"
         ],
-        "route": "wayfinder \u2192 dev-ask (recompute)"
+        "route": "wayfinder → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-wayfinder",
       "forbidden_events": [
@@ -861,7 +867,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-wayfinder-near-miss",
       "forbidden_events": [
@@ -909,7 +915,7 @@
           "dev-prototype",
           "dev-specification"
         ],
-        "route": "dev-prototype \u2192 dev-specification"
+        "route": "dev-prototype → dev-specification"
       },
       "fixture_dir": "fixtures/r-prototype",
       "forbidden_events": [
@@ -960,7 +966,7 @@
           "grill-me",
           "dev-ask"
         ],
-        "route": "grill-me \u2192 dev-ask (recompute; wait for approval)"
+        "route": "grill-me → dev-ask (recompute; wait for approval)"
       },
       "fixture_dir": "fixtures/r-prototype-near-miss",
       "forbidden_events": [
@@ -1010,7 +1016,7 @@
           "dev-improve-codebase-architecture",
           "dev-ask"
         ],
-        "route": "dev-improve-codebase-architecture \u2192 dev-ask (recompute to intent/requirements)"
+        "route": "dev-improve-codebase-architecture → dev-ask (recompute to intent/requirements)"
       },
       "fixture_dir": "fixtures/r-architecture",
       "forbidden_events": [
@@ -1061,7 +1067,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-architecture-near-miss",
       "forbidden_events": [
@@ -1118,7 +1124,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-specification \u2192 dev-ticketing \u2192 dev-implementation \u2192 dev-verification \u2192 dev-integration \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-integration → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-artifact-lane",
       "forbidden_events": [
@@ -1169,7 +1175,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-artifact-lane-near-miss",
       "forbidden_events": [
@@ -1218,7 +1224,7 @@
           "dev-specification",
           "dev-ask"
         ],
-        "route": "dev-specification \u2192 dev-ask (post-specification recompute)"
+        "route": "dev-specification → dev-ask (post-specification recompute)"
       },
       "fixture_dir": "fixtures/r-explicit-stage",
       "forbidden_events": [
@@ -1307,16 +1313,19 @@
           "dev-research",
           "dev-ask"
         ],
-        "route": "dev-research \u2192 dev-ask"
+        "route": "dev-research → dev-ask"
       },
       "fixture_dir": "fixtures/r-approval",
       "forbidden_events": [
         "preapproval-effect",
-        "multi-dispatch"
+        "multi-dispatch",
+        "inline-route",
+        "route-table",
+        "unordered-route"
       ],
       "id": "R-APPROVAL",
       "inputs": {
-        "request": "The current route sends a bounded factual gap to dev-research with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections, with concise indented content and no Plan Summary, Why, Artifacts, Gates, Execution, or First action sections. The user replies approve. Record the immediately-pre-dispatch identity recheck as an explicit event."
+        "request": "The current route sends a bounded factual gap to dev-research and returns to dev-ask, with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections. Under Route, render a numbered ordered list with dev-research first and dev-ask second, one owner per line; never use an inline arrow chain, route table, or unordered list. Keep other content concise and indented, omit Plan Summary, Why, Artifacts, Gates, Execution, and First action sections, then after the user replies approve record the immediately-pre-dispatch identity recheck as an explicit event."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1335,7 +1344,8 @@
         "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
         "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
         "Before dispatch, emit exactly the standalone H2 sections Goal, Route, Plan, Safety, and Approval in that order.",
-        "Keep Plan to one or two concise sentences and make Approval ask for approve; omit Plan Summary, Why, Artifacts, Gates, Execution, First action, target hashes, and gate mechanics."
+        "Keep Plan to one or two concise sentences and make Approval ask for approve; omit Plan Summary, Why, Artifacts, Gates, Execution, First action, target hashes, and gate mechanics.",
+        "Require Route to contain exactly two numbered items in order, dev-research then dev-ask, one owner per line; reject an inline arrow chain, route table, or unordered Route while preserving expected.route as internal machine identity."
       ],
       "scripted_replies": [
         "approve"
@@ -1353,7 +1363,7 @@
         "mode": "one owner",
         "outcome": "no dispatch",
         "owners": [],
-        "route": "recomputed Route Overview \u2192 wait for approval"
+        "route": "recomputed Route Overview → wait for approval"
       },
       "fixture_dir": "fixtures/r-approval-near-miss",
       "forbidden_events": [
@@ -1363,7 +1373,7 @@
       ],
       "id": "R-APPROVAL-NEAR-MISS",
       "inputs": {
-        "request": "A silence, caveat, changed constraint, topic continuation, or unrelated affirmative is not approval. Simulate recomputing and presenting the revised Route Overview as an event, then stop without approval, dispatch, persistence, or mutation. Set route to recomputed Route Overview \u2192 wait for approval and set artifacts to an empty array: the overview, approval-resume state, and continuation state are not artifacts."
+        "request": "A silence, caveat, changed constraint, topic continuation, or unrelated affirmative is not approval. Simulate recomputing and presenting the revised Route Overview as an event, then stop without approval, dispatch, persistence, or mutation. Set route to recomputed Route Overview → wait for approval and set artifacts to an empty array: the overview, approval-resume state, and continuation state are not artifacts."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1448,7 +1458,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-drift-near-miss",
       "forbidden_events": [
@@ -1495,11 +1505,14 @@
       "fixture_dir": "fixtures/r-complete",
       "forbidden_events": [
         "new-dispatch",
-        "approval-request"
+        "approval-request",
+        "inline-route",
+        "route-table",
+        "unordered-route"
       ],
       "id": "R-COMPLETE",
       "inputs": {
-        "request": "The initially approved route named terminal presentation. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, required learning result, and residual risk are accounted with no remaining work. Present completion without a new dispatch or approval. Include the exact completed Route, then Result and Verification; no material residual risk or user action remains, so omit Risks and Next. Omit internal artifact and gate mechanics."
+        "request": "The initially approved standard route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and dev-ask completion presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, required learning result, and residual risk are accounted with no remaining work. Present completion without a new dispatch or approval. Render the exact five completed owners/terminal segment under Route as a numbered ordered list with one per line, never as an inline arrow chain, table, or unordered list; then include Result and Verification. No material residual risk or user action remains, so omit Risks and Next, internal artifact inventory, and gate mechanics."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1517,7 +1530,8 @@
         "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
         "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
         "Emit Route, Result, and Verification as standalone H2 sections in that order; Route names the exact completed skill route.",
-        "Because no material residual risk or user action remains, omit Risks and Next; also omit artifact inventories, gate mechanics, and approval requests."
+        "Because no material residual risk or user action remains, omit Risks and Next; also omit artifact inventories, gate mechanics, and approval requests.",
+        "Require the completed Route to be the exact five-item numbered owner list ending in dev-ask completion presentation; reject an inline arrow chain, route table, or unordered Route."
       ],
       "scripted_replies": [],
       "absent_capabilities": []
@@ -1534,18 +1548,21 @@
         "mode": "none",
         "outcome": "terminal compact report presented automatically",
         "owners": [],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-ask completion presentation",
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-ask completion presentation",
         "assurance_profile": "compact"
       },
       "fixture_dir": "fixtures/r-complete-compact-no-learning",
       "forbidden_events": [
         "new-dispatch",
         "approval-request",
-        "untriggered-learning-stage"
+        "untriggered-learning-stage",
+        "inline-route",
+        "route-table",
+        "unordered-route"
       ],
       "id": "R-COMPLETE-COMPACT-NO-LEARNING",
       "inputs": {
-        "request": "The approved compact prospective route contained a conditional dev-continual-learning branch. Final verification and review passed, the post-review screen checked every qualifying trigger class and found none, and the backend recorded compact curation not triggered as terminal evidence. Present completion without dispatch or approval. The exact completed Route must resolve to dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-ask completion presentation and must not claim that dev-continual-learning ran. Include Result and Verification; omit Risks and Next because no material residual risk or user action remains."
+        "request": "The approved compact prospective route contained a conditional dev-continual-learning branch. Final verification and review passed, the post-review screen checked every qualifying trigger class and found none, and the backend recorded compact curation not triggered as terminal evidence. Present completion without dispatch or approval. Under Route, render exactly four numbered items in order: dev-implementation; dev-verification; dev-code-review; dev-ask completion presentation. Use one owner or terminal segment per line, never an inline arrow chain, table, or unordered list, and do not claim that dev-continual-learning ran. Include Result and Verification; omit Risks and Next because no material residual risk or user action remains."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the compact conditional route and terminal evidence.",
@@ -1562,7 +1579,8 @@
         "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
         "Resolve the approved compact conditional learning branch from terminal evidence rather than treating the branch as another approval gate.",
         "When the compact trigger screen is empty, require the exact completed Route to omit dev-continual-learning and reject any claim that the untriggered stage ran.",
-        "Emit Route, Result, and Verification as standalone H2 sections in that order; omit Risks, Next, artifact inventories, gate mechanics, and approval requests."
+        "Emit Route, Result, and Verification as standalone H2 sections in that order; omit Risks, Next, artifact inventories, gate mechanics, and approval requests.",
+        "Require exactly four numbered Route items in the expected internal order, with dev-continual-learning omitted; reject an inline arrow chain, route table, or unordered Route while preserving the arrow-encoded expected.route machine identity."
       ],
       "scripted_replies": [],
       "absent_capabilities": []
@@ -1584,7 +1602,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-complete-near-miss",
       "forbidden_events": [
@@ -1868,7 +1886,7 @@
       ],
       "id": "B-BATCH",
       "inputs": {
-        "request": "Tasks A and B are genuinely independent; C depends on verified Handoffs from both. Dispatch only the ready frontier. All unspecified authority, capability-profile, identity, adapter, smoke, and verifier prerequisites are current and satisfied. Simulate through completed worker Handoffs, one run-level verifying transition covering fresh proof for A and B, direct task handed-off \u2192 verified transitions for A and B, and the point where C becomes ready with both current verified Handoffs. Every running transition is task-level and owned by worker; do not emit a backend-owned aggregate run-running transition. Do not emit task-level verifying states: verifying exists only in the run projection."
+        "request": "Tasks A and B are genuinely independent; C depends on verified Handoffs from both. Dispatch only the ready frontier. All unspecified authority, capability-profile, identity, adapter, smoke, and verifier prerequisites are current and satisfied. Simulate through completed worker Handoffs, one run-level verifying transition covering fresh proof for A and B, direct task handed-off → verified transitions for A and B, and the point where C becomes ready with both current verified Handoffs. Every running transition is task-level and owned by worker; do not emit a backend-owned aggregate run-running transition. Do not emit task-level verifying states: verifying exists only in the run projection."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -2670,13 +2688,16 @@
           "separate verification Handoff",
           "separate review Handoff",
           "dev-continual-learning evidence",
-          "terminal evidence"
+          "terminal evidence",
+          "backend-frozen evaluation tuple"
         ],
         "first_owner": "backend",
         "gates": [
           "current approved authority",
           "settled compact eligibility",
-          "declared Learning Candidate"
+          "declared Learning Candidate",
+          "complete reporter Evaluation proposal",
+          "backend-frozen CE-COMPACT-1 @ canonical SHA-256"
         ],
         "mode": "one owner",
         "outcome": "compact qualifying curation evidence and completion",
@@ -2694,18 +2715,20 @@
         "curation not triggered",
         "fourth curation outcome",
         "curator lifecycle state",
-        "implicit shipping"
+        "implicit shipping",
+        "curator-authored evaluation tuple",
+        "CURATED-without-frozen-post-runs"
       ],
       "id": "B-COMPACT-CURATION-TRIGGER",
       "inputs": {
-        "request": "A settled compact task satisfies every compact eligibility condition and declares one Learning Candidate with source evidence. Its approved Task Contract binds one implementation owner, same non-implementer identity for ordered verifier/reviewer attempts, and qualifying-trigger-only curation. The backend must dispatch bounded dev-continual-learning after review, account for its existing terminal outcome, and never create a new curation outcome or lifecycle state."
+        "request": "Read-only state-trace simulation. Emit only canonical state:<state>|owner:<canonical owner>|output:<observable output> events with no prose, using only accepted, ready, running, handed-off, verifying, verified, reviewing, reviewed, and complete in causal order. Use only owner tokens backend, worker, dev-verification, and dev-code-review; curation is terminal evidence in complete, never another task or state. Scenario: a settled compact task satisfies every compact eligibility condition and declares one Learning Candidate with a complete deterministic Evaluation proposal. Its approved Task Contract binds one implementation owner, same non-implementer identity for ordered verifier/reviewer attempts, and qualifying-trigger-only curation. Before curator dispatch the backend validates the reporter proposal, freezes its exact source and independent adjacent cases plus expectations and proof, and binds CE-COMPACT-1 @ canonical SHA-256 in Task Contract Verification and the Context Pack. The backend must dispatch bounded dev-continual-learning after review, account for CURATED only after both deterministic post-runs pass without a separate evaluator, and never create a new curation outcome or lifecycle state."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:compact Task Contract and Learning Candidate accepted",
+        "state:accepted|owner:backend|output:compact Task Contract and complete reporter Learning Candidate proposal accepted",
         "state:ready|owner:backend|output:one compact worker Task Contract ready",
         "state:running|owner:worker|output:bounded reversible implementation",
         "state:handed-off|owner:worker|output:result plus smoke and Handoff",
@@ -2713,13 +2736,15 @@
         "state:verified|owner:dev-verification|output:VERIFIED exact target and separate verification Handoff",
         "state:reviewing|owner:dev-code-review|output:non-implementer-1 ordered separate review Handoff",
         "state:reviewed|owner:dev-code-review|output:Standards PASS; Specification APPROVED",
-        "state:complete|owner:backend|output:CURATED dev-continual-learning evidence accounted; terminal evidence complete"
+        "state:complete|owner:backend|output:CURATED only after frozen source and adjacent deterministic post-runs pass; dev-continual-learning evidence accounted; terminal evidence complete"
       ],
       "rubric": [
         "Derive the justified backend trace from the supplied scenario and embedded candidate authority; compare its authority, topology, state order, role ownership, gates, artifacts, outcome, and stop or continuation boundary with the observation.",
+        "Require backend validation and immutable binding of the reporter proposal before curator dispatch.",
+        "Require both deterministic post-runs against frozen expectations and no separate evaluator.",
         "Full and prefix traces begin with backend-owned accepted; a declared terminal-evidence snapshot must prove an already-complete local result without pretending to be a full trace.",
         "Each state event must use the declared state:<state>|owner:<owner>|output:<observable output> form and the exact canonical owner token for that transition.",
-        "Reject readiness without current authority/dependencies, illegal retries, dependent continuation after invalidation, silent fallback, premature integration/review/completion, inferred shipping, or lineage loss.",
+        "Reject readiness without current authority/dependencies, curator-authored tuple changes, silent fallback, premature completion, inferred shipping, or a fourth curation outcome.",
         "Runtime and source fixtures remain read-only; missing or contradictory proof is not semantic success."
       ],
       "scripted_replies": [],
@@ -3139,7 +3164,7 @@
           "dev-implementation",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-ask completion presentation",
+        "route": "dev-implementation → dev-ask completion presentation",
         "assurance_profile": "compact"
       },
       "expected_runtime_files": {
@@ -3213,7 +3238,7 @@
           "dev-implementation",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-ask completion presentation",
+        "route": "dev-implementation → dev-ask completion presentation",
         "assurance_profile": "standard"
       },
       "expected_runtime_files": {
@@ -3286,7 +3311,7 @@
           "dev-implementation",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-ask completion presentation",
+        "route": "dev-implementation → dev-ask completion presentation",
         "assurance_profile": "standard"
       },
       "fixture_dir": "fixtures/l-delegation",
@@ -3360,7 +3385,7 @@
           "dev-implementation",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-ask completion presentation",
+        "route": "dev-implementation → dev-ask completion presentation",
         "assurance_profile": "standard"
       },
       "fixture_dir": "fixtures/l-full",
@@ -3433,7 +3458,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-outcome-continuation",
       "forbidden_events": [
@@ -3483,7 +3508,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-unchanged-handoff",
       "forbidden_events": [
@@ -3539,7 +3564,7 @@
         "mode": "none",
         "outcome": "material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-material-reapproval",
       "forbidden_events": [
@@ -3591,7 +3616,7 @@
           "grill-with-docs",
           "dev-ask"
         ],
-        "route": "grill-with-docs \u2192 dev-ask (recompute)"
+        "route": "grill-with-docs → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-grill-round-bound",
       "forbidden_events": [
@@ -3655,7 +3680,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-requirements \u2192 dev-specification \u2192 dev-ticketing \u2192 dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation",
+        "route": "dev-requirements → dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation",
         "todo_phases": [
           "Authority / Design",
           "Build",
@@ -3724,7 +3749,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-requirements \u2192 dev-specification \u2192 dev-ticketing \u2192 dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation",
+        "route": "dev-requirements → dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation",
         "todo_phases": [
           "Authority / Design",
           "Build",
@@ -4233,16 +4258,19 @@
       "absent_capabilities": []
     },
     {
-      "criterion": "Standard learning is one narrow terminal assessment with the exact six-field payload and source plus adjacent-near-miss validation.",
+      "criterion": "Standard learning is one narrow terminal assessment with the exact seven-field payload and source plus adjacent-near-miss validation.",
       "expected": {
         "artifacts": [
           "terminal evidence snapshot",
-          "CURATED payload"
+          "CURATED payload",
+          "backend-frozen evaluation tuple"
         ],
         "first_owner": null,
         "gates": [
           "settled standard outcome",
-          "affected-artifact manifest"
+          "affected-artifact manifest",
+          "complete reporter Evaluation proposal",
+          "fresh independent adjacent baseline"
         ],
         "mode": "one owner",
         "outcome": "CURATED terminally; Deep not triggered",
@@ -4257,23 +4285,27 @@
         "background-learning",
         "Deep-dispatch",
         "curator-repair",
-        "user-level-mutation"
+        "user-level-mutation",
+        "missing-evaluation-binding",
+        "curator-authored-expectation",
+        "separate-deterministic-evaluator"
       ],
       "id": "B-T4-LEARNING-STANDARD",
       "inputs": {
-        "request": "Terminal evidence snapshot: after a settled standard outcome, one neutral Standard assessment inspects only AFFECTED-1 and updates only its directly impacted current project-owned rule. Validate the source case and ADJACENT-NEAR-MISS-1. Return CURATED with exactly Updated, Added, Removed, Skipped, Validation, and Deep candidate; Deep candidate is none."
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: after a settled Standard outcome, the reporter supplies complete deterministic proposal CE-AFFECTED-1 for a guidance update to AFFECTED-1. The backend validates reporter ownership, authority, freshness, completeness, and independence; canonically hashes the proposal; freezes its exact source SOURCE-1, independent ADJACENT-NEAR-MISS-1, expectations, proofs, and CE identity under Task Contract Verification and in the Context Pack. Exact settled source evidence matches the frozen target revision, environment, expectation, and proof, so reuse it; run the adjacent baseline fresh. After the update both frozen cases pass deterministic reruns with no separate evaluator. Return CURATED with exactly Updated, Added, Removed, Skipped, Validation, Deep candidate, and Papercut outcome; Validation names the tuple digest, reused source baseline, fresh adjacent baseline, both post-runs, and final destination identity; Deep candidate is none; Papercut outcome is none."
       },
       "layer": "backend",
       "proof": "Fresh read-only terminal-snapshot evaluation against AC12 and exact fixture identity.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "snapshot:terminal-evidence|owner:backend|output:CURATED; Updated AFFECTED-1 rule; Added none; Removed none; Skipped none; Validation source plus ADJACENT-NEAR-MISS-1; Deep candidate none"
+        "snapshot:terminal-evidence|owner:backend|output:CURATED; CE-AFFECTED-1 @ canonical SHA-256 frozen from reporter; Updated AFFECTED-1 rule; Added none; Removed none; Skipped none; Validation reused SOURCE-1 baseline, fresh ADJACENT-NEAR-MISS-1 baseline, both deterministic post-runs pass, no separate evaluator, final destination identity; Deep candidate none; Papercut outcome none"
       ],
       "rubric": [
         "Require one neutral Standard assessment limited to AFFECTED-1.",
-        "Require exactly the six named payload fields and source plus adjacent-near-miss validation.",
-        "Reject broad or background audit, Deep dispatch, curator repair, and user-level mutation."
+        "Require the reporter proposal to be validated, canonically hashed, and frozen before curator dispatch.",
+        "Require exactly the seven named payload fields—Updated, Added, Removed, Skipped, Validation, Deep candidate, and Papercut outcome—matching settled source reuse, a fresh independent adjacent baseline, both deterministic post-runs, and no separate evaluator.",
+        "Reject broad or background audit, curator-authored tuple changes, Deep dispatch, curator repair, and user-level mutation."
       ],
       "scripted_replies": [],
       "trace_scope": "terminal-snapshot",
@@ -4535,7 +4567,7 @@
       "absent_capabilities": []
     },
     {
-      "criterion": "NO DURABLE LEARNING is a valid terminal Standard outcome with exact sources and the six-field payload.",
+      "criterion": "NO DURABLE LEARNING is a valid terminal Standard outcome with exact sources and the seven-field payload.",
       "expected": {
         "artifacts": [
           "terminal evidence snapshot",
@@ -4561,19 +4593,387 @@
       ],
       "id": "B-T4-CURATION-NO-DURABLE",
       "inputs": {
-        "request": "Terminal evidence snapshot: one required Standard assessment finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record source plus adjacent-near-miss validation, and keep the gate terminal. Do not start Deep or another audit."
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: one required Standard assessment has no bound mutating candidate and finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record the source plus adjacent-near-miss assessment in Validation, set Papercut outcome to none, and keep the gate terminal. Do not invent an Evaluation proposal, mutate guidance, start Deep, or begin another audit."
       },
       "layer": "backend",
       "proof": "Fresh read-only terminal-snapshot evaluation against AC12 and exact fixture identity.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "snapshot:terminal-evidence|owner:backend|output:NO DURABLE LEARNING; Updated none; Added none; Removed none; Skipped exact sources assessed; Validation source plus adjacent near miss; Deep candidate none"
+        "snapshot:terminal-evidence|owner:backend|output:NO DURABLE LEARNING; no bound mutating candidate; Updated none; Added none; Removed none; Skipped exact sources assessed; Validation source plus adjacent near miss; Deep candidate none; Papercut outcome none"
       ],
       "rubric": [
-        "Accept NO DURABLE LEARNING as terminal.",
-        "Require all exact sources under Skipped and exactly the six payload fields.",
-        "Reject another assessment, Deep dispatch, audit loop, mutation, or curator repair."
+        "Accept NO DURABLE LEARNING as terminal when no mutating candidate is bound.",
+        "Require all exact sources under Skipped and exactly the seven payload fields.",
+        "Reject invented evaluation proposals, another assessment, Deep dispatch, audit loop, mutation, or curator repair."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A guidance-mutating Learning Candidate without a reporter Evaluation proposal cannot make the curator ready.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "exact missing-binding blocker"
+        ],
+        "first_owner": null,
+        "gates": [
+          "guidance-mutating Learning Candidate",
+          "complete reporter Evaluation proposal"
+        ],
+        "mode": "one owner",
+        "outcome": "BLOCKED before curator readiness",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-unbound-candidate",
+      "forbidden_events": [
+        "curator-authored tuple",
+        "guidance-mutation",
+        "CURATED",
+        "audit-loop"
+      ],
+      "id": "B-T4-CURATION-UNBOUND-CANDIDATE",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: a reporter supplies a Learning Candidate that may mutate project guidance but omits its Evaluation proposal. The backend must reject curator readiness before any write, return BLOCKED with the exact missing reporter proposal and resume condition, and preserve the candidate as evidence only. Do not let the curator invent or bind a tuple, mutate guidance, or return CURATED."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:BLOCKED before curator readiness; missing reporter Evaluation proposal; no guidance write; exact resume condition"
+      ],
+      "rubric": [
+        "Require the reporter, not the curator, to supply the complete proposal.",
+        "Require BLOCKED before readiness or write with an exact resume condition.",
+        "Reject invented bindings, guidance mutation, CURATED, and audit loops."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A curator cannot replace or weaken a backend-frozen evaluation tuple after dispatch.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "exact mismatch blocker"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen CE-DRIFT-1 tuple",
+          "curator tuple modification"
+        ],
+        "mode": "one owner",
+        "outcome": "BLOCKED on tuple-digest mismatch",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-tuple-drift",
+      "forbidden_events": [
+        "replacement-tuple-accepted",
+        "guidance-mutation",
+        "CURATED",
+        "weakened-proof"
+      ],
+      "id": "B-T4-CURATION-TUPLE-DRIFT",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: the reporter's complete mixed Evaluation proposal was backend-validated and frozen as CE-DRIFT-1 @ its canonical SHA-256 in Task Contract Verification and the Context Pack. After dispatch, the curator attempts to replace the adjacent expected behavior and omit the semantic facet. Return BLOCKED before any guidance write with the tuple-digest mismatch and exact resume condition. Do not accept a curator-authored replacement, mutate guidance, or return CURATED."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:BLOCKED before guidance write; CE-DRIFT-1 tuple-digest mismatch; curator replacement rejected; exact resume condition"
+      ],
+      "rubric": [
+        "Treat the reporter proposal and backend digest as immutable after dispatch.",
+        "Require BLOCKED before guidance mutation with the exact mismatch and resume condition.",
+        "Reject curator-authored replacement expectations, omitted facets, weakened proof, and CURATED."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A stable deterministic post-mutation failure safely restores only the exact curator delta and returns NO DURABLE LEARNING.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "restoration evidence"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen deterministic tuple",
+          "byte-exact safe restoration"
+        ],
+        "mode": "one owner",
+        "outcome": "NO DURABLE LEARNING after safe restoration",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-deterministic-failure",
+      "forbidden_events": [
+        "separate-deterministic-evaluator",
+        "concurrent-overwrite",
+        "CURATED",
+        "BLOCKED-after-safe-restoration"
+      ],
+      "id": "B-T4-CURATION-DETERMINISTIC-FAILURE",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation over supplied completed evidence; do not inspect files or perform actions. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-DETERMINISTIC-FAIL-1 is backend-frozen. Its exact settled source evidence still matches revision, environment, expectation, and proof, so reuse it; run the independent adjacent baseline fresh. After the smallest guidance update, the frozen source rerun fails stably while the adjacent rerun passes. Current destination bytes still match exactly the curator delta, so restore only that delta and confirm both frozen cases against the restored destination. Return NO DURABLE LEARNING with the safe restoration and all baseline/post-restoration evidence in Validation. Use no separate evaluator, do not overwrite concurrent work, and do not return CURATED."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:NO DURABLE LEARNING; CE-DETERMINISTIC-FAIL-1 source baseline reused and adjacent baseline fresh; stable source post-failure; exact curator delta restored safely; restored source and adjacent checks recorded; no separate evaluator"
+      ],
+      "rubric": [
+        "Require exact settled source reuse only on matching revision, environment, expectation, and proof, plus a fresh adjacent baseline.",
+        "Require stable deterministic failure, byte-exact safe curator-delta restoration, and both restored checks.",
+        "Reject a separate deterministic evaluator, concurrent overwrite, CURATED, and BLOCKED after proven safe restoration."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Semantic curation reaches CURATED only with one fresh read-only non-curator result bound to the frozen tuple.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "semantic evaluator result"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen semantic tuple",
+          "separate semantic evaluator PASS"
+        ],
+        "mode": "one owner",
+        "outcome": "CURATED with separate semantic proof",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-semantic-verdict",
+      "forbidden_events": [
+        "curator-self-grade",
+        "missing-semantic-result",
+        "extra-Handoff",
+        "new-lifecycle-state"
+      ],
+      "id": "B-T4-CURATION-SEMANTIC-VERDICT",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-PASS-1 is backend-frozen with fresh-required source and adjacent baselines. One neutral curator applies the authorized guidance delta. One fresh read-only non-curator evaluator returns a result bound to the tuple SHA-256 with evaluator identity, PASS, source_observed, adjacent_observed, and reasoned comparison to both frozen expectations. Return CURATED with the matching baseline, post-mutation, evaluator, destination, and final-identity evidence in Validation. Do not let the curator self-grade or add another Handoff or lifecycle state."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:CURATED; CE-SEMANTIC-PASS-1 fresh source and adjacent baselines plus post-results; separate non-curator PASS bound to tuple SHA-256 with both observations and rationale; final destination identity"
+      ],
+      "rubric": [
+        "Require one fresh read-only non-curator semantic evaluator result bound to the tuple digest.",
+        "Require PASS, both observations, reasoned comparison, frozen baselines/post-results, and final destination identity.",
+        "Reject curator self-grading, missing semantic evidence, extra Handoffs, and new lifecycle states."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A bound semantic FAIL after mutation safely restores only the exact curator delta and returns NO DURABLE LEARNING.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "semantic evaluator and restoration evidence"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen semantic tuple",
+          "separate semantic evaluator FAIL",
+          "byte-exact safe restoration"
+        ],
+        "mode": "one owner",
+        "outcome": "NO DURABLE LEARNING after semantic FAIL and safe restoration",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-semantic-failure",
+      "forbidden_events": [
+        "curator-self-grade",
+        "concurrent-overwrite",
+        "CURATED",
+        "BLOCKED-after-safe-restoration"
+      ],
+      "id": "B-T4-CURATION-SEMANTIC-FAILURE",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation over supplied completed evidence; do not inspect files or perform actions. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-FAIL-1 is backend-frozen with fresh-required source and adjacent baselines. One neutral curator applies the authorized guidance delta. One fresh read-only non-curator evaluator returns a result bound to the tuple SHA-256 with evaluator identity, FAIL, source_observed, adjacent_observed, and reasoned comparison to both frozen expectations because the source expectation is not met while the adjacent expectation remains preserved. Current destination bytes still match exactly the curator delta, so restore only that delta and confirm both frozen cases against the restored destination. Return NO DURABLE LEARNING with the bound semantic FAIL, safe restoration, and all baseline/post-restoration evidence in Validation. Do not let the curator self-grade, overwrite concurrent work, return CURATED, or return BLOCKED after proven safe restoration."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:NO DURABLE LEARNING; CE-SEMANTIC-FAIL-1 fresh source and adjacent baselines plus post-results; separate non-curator FAIL bound to tuple SHA-256 with both observations and rationale; exact curator delta restored safely; restored source and adjacent checks recorded"
+      ],
+      "rubric": [
+        "Require one fresh read-only non-curator semantic evaluator FAIL bound to the tuple digest with both observations and reasoned comparison.",
+        "Require byte-exact safe curator-delta restoration and both restored checks before NO DURABLE LEARNING.",
+        "Reject curator self-grading, concurrent overwrite, CURATED, and BLOCKED after proven safe restoration."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A missing required semantic evaluator result blocks curation without treating curator self-assessment as proof.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "exact missing-verdict blocker"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen semantic tuple",
+          "required semantic verdict absent"
+        ],
+        "mode": "one owner",
+        "outcome": "BLOCKED on missing semantic verdict",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-semantic-verdict-missing",
+      "forbidden_events": [
+        "curator-self-grade",
+        "CURATED",
+        "proof-inference",
+        "shipping"
+      ],
+      "id": "B-T4-CURATION-SEMANTIC-VERDICT-MISSING",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-MISSING-1 is backend-frozen and the curator applies a guidance delta, but no fresh read-only non-curator evaluator result exists for the semantic source and adjacent facets. Return BLOCKED with the missing verdict and exact resume condition; preserve the current bounded outcome without claiming proof. Do not let curator self-assessment substitute, return CURATED, start another lifecycle state, or ship."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:BLOCKED; CE-SEMANTIC-MISSING-1 missing fresh non-curator semantic verdict; current delta not accepted as proved; exact resume condition"
+      ],
+      "rubric": [
+        "Require the fresh non-curator semantic result before CURATED.",
+        "Require BLOCKED with the exact missing verdict and resume condition.",
+        "Reject curator self-assessment, proof inference, CURATED, and shipping."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Flaky semantic proof blocks curation even when deterministic facets pass.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "flaky evaluator result"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen mixed tuple",
+          "semantic evaluator FLAKY"
+        ],
+        "mode": "one owner",
+        "outcome": "BLOCKED on flaky proof",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-flaky",
+      "forbidden_events": [
+        "score-averaging",
+        "expectation-weakening",
+        "CURATED",
+        "optimizer-loop"
+      ],
+      "id": "B-T4-CURATION-FLAKY",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete mixed proposal CE-FLAKY-1 is backend-frozen. The deterministic facet passes, but the required fresh semantic evaluator reports FLAKY because repeated source observations disagree against the frozen expectation. Return BLOCKED with the tuple identity, flaky proof, and exact resume condition. Do not average or score away the instability, weaken the expectation, return CURATED, or start an optimizer loop."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:BLOCKED; CE-FLAKY-1 semantic evaluator FLAKY; deterministic facet pass is insufficient; exact resume condition"
+      ],
+      "rubric": [
+        "Apply deterministic and semantic ownership separately for mixed proof.",
+        "Require FLAKY semantic evidence to map to BLOCKED with an exact resume condition.",
+        "Reject averaging, scoring, weakened expectations, CURATED, and optimizer loops."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Unavailable required proof yields BLOCKED rather than an inferred pass or substituted proof method.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "frozen tuple identity",
+          "capability-bound blocker"
+        ],
+        "first_owner": null,
+        "gates": [
+          "backend-frozen deterministic tuple",
+          "required adjacent capability unavailable"
+        ],
+        "mode": "one owner",
+        "outcome": "BLOCKED on inconclusive proof",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-curation-inconclusive",
+      "forbidden_events": [
+        "inferred-pass",
+        "proof-substitution",
+        "tuple-replacement",
+        "CURATED"
+      ],
+      "id": "B-T4-CURATION-INCONCLUSIVE",
+      "inputs": {
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-INCONCLUSIVE-1 is backend-frozen, but the post-mutation adjacent check cannot establish the frozen observable because its required capability is unavailable. Return BLOCKED with the inconclusive proof and exact capability-bound resume condition. Do not infer a pass, weaken or replace the tuple, return CURATED, or silently substitute another proof method."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-EVAL and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:BLOCKED; CE-INCONCLUSIVE-1 adjacent proof INCONCLUSIVE because required capability is unavailable; no proof substitution; exact capability-bound resume condition"
+      ],
+      "rubric": [
+        "Treat unavailable required proof as INCONCLUSIVE, never PASS.",
+        "Require BLOCKED with the exact missing capability and resume condition.",
+        "Reject proof substitution, tuple replacement or weakening, inferred success, and CURATED."
       ],
       "scripted_replies": [],
       "trace_scope": "terminal-snapshot",
@@ -4607,7 +5007,7 @@
       ],
       "id": "B-T4-CURATION-BLOCKED",
       "inputs": {
-        "request": "Terminal evidence snapshot: the current affected project rule directly conflicts with the settled verified outcome, and authority to choose the winner is missing. Return BLOCKED with exactly that conflict, missing authority, and resume condition. Preserve implementation, do not repair or mutate guidance, and do not begin a broad audit loop."
+        "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: the current affected project rule directly conflicts with the settled verified outcome, and authority to choose the winner is missing. Return BLOCKED with exactly that conflict, missing authority, and resume condition. Preserve implementation, do not repair or mutate guidance, and do not begin a broad audit loop."
       },
       "layer": "backend",
       "proof": "Fresh read-only terminal-snapshot evaluation against AC12 and exact fixture identity.",
@@ -4651,7 +5051,7 @@
       ],
       "id": "B-T4-CURATION-COMPACT-NOT-TRIGGERED",
       "inputs": {
-        "request": "Terminal evidence snapshot: compact post-review screening finds no Learning Candidate, durable correction/decision, qualified recurrence, or severe incident. Record compact curation not triggered with checked facts as terminal evidence. Do not dispatch dev-continual-learning or create a curation Handoff."
+        "request": "Read-only terminal state-trace simulation owned by the dev-implementation backend. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: backend compact post-review screening finds no Learning Candidate, durable correction/decision, qualified recurrence, or severe incident. Record compact curation not triggered with checked facts as terminal evidence. Do not dispatch dev-continual-learning or create a curation Handoff."
       },
       "layer": "backend",
       "proof": "Fresh read-only terminal-snapshot evaluation against AC12 and exact fixture identity.",
@@ -4681,7 +5081,7 @@
         "mode": "none",
         "outcome": "product-or-architecture-authority material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-authority",
       "forbidden_events": [
@@ -4726,7 +5126,7 @@
         "mode": "none",
         "outcome": "material-scope material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-scope",
       "forbidden_events": [
@@ -4771,7 +5171,7 @@
         "mode": "none",
         "outcome": "acceptance material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-acceptance",
       "forbidden_events": [
@@ -4816,7 +5216,7 @@
         "mode": "none",
         "outcome": "topology-escalation-or-weakened-independence material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-topology",
       "forbidden_events": [
@@ -4861,7 +5261,7 @@
         "mode": "none",
         "outcome": "destructive-or-external-effect material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-destructive-effect",
       "forbidden_events": [
@@ -4906,7 +5306,7 @@
         "mode": "none",
         "outcome": "shipping material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-shipping",
       "forbidden_events": [
@@ -5328,12 +5728,15 @@
       "absent_capabilities": []
     },
     {
-      "criterion": "A fresh workflow-maintenance reader discovers the current workflow and four-record ACTIVE registry from the one repository pointer without eagerly loading ADR bodies.",
+      "criterion": "A fresh workflow-maintenance reader discovers the concise current workflow, both decision-authority maps, four generic ACTIVE workflow ADRs, and separate ACTIVE product ADR-0005 from the repository pointers without eagerly loading ADR bodies or copying rationale.",
       "expected": {
         "artifacts": [
           "current workflow path",
           "ADR index path",
-          "four ACTIVE IDs"
+          "generic decision-authority map",
+          "stage/surface decision-authority map",
+          "four generic ACTIVE IDs",
+          "separate ACTIVE product ADR-0005"
         ],
         "first_owner": null,
         "gates": [],
@@ -5348,11 +5751,14 @@
         "rejected-authority",
         "superseded-authority",
         "dispatch",
-        "mutation"
+        "mutation",
+        "rationale-duplication",
+        "history-duplication",
+        "product-ADR-folded-into-generic-map"
       ],
       "id": "R-T5-CANONICAL-DISCOVERY",
       "inputs": {
-        "request": "Read-only fresh repository-guided workflow-maintenance discovery. Starting from repository guidance only, identify the concise current workflow path, the ADR index path, and every ACTIVE workflow ADR ID from the index. Do not open every ADR body and do not treat rejected or superseded history as executable."
+        "request": "Read-only fresh repository-guided workflow-maintenance discovery. Starting from repository guidance only, identify the concise current workflow path and ADR index path; discover the generic concern-to-authority map and stage/surface-to-decision-unit map in WORKFLOW; identify the four ACTIVE generic workflow ADR IDs plus separate ACTIVE product ADR-0005 from the index. Do not open every ADR body, duplicate rationale/history into WORKFLOW, fold ADR-0005 into the generic map, or treat rejected or superseded history as executable."
       },
       "layer": "router",
       "proof": "Fresh minimal-discovery trace with exact paths and index-derived ACTIVE IDs.",
@@ -5361,13 +5767,17 @@
       "required_events": [
         "answer:workflow-path:.config/agents/skills/dev-ask/WORKFLOW.md",
         "answer:index-path:docs/adr/INDEX.md",
-        "answer:active:ADR-0001,ADR-0002,ADR-0003,ADR-0004",
+        "answer:maps:generic-and-stage/surface",
+        "answer:active-generic:ADR-0001,ADR-0002,ADR-0003,ADR-0004",
+        "answer:active-product:ADR-0005:separate",
+        "answer:no-rationale-or-history-duplication",
         "answer:history-not-executable"
       ],
       "rubric": [
-        "Discover both canonical paths from the one repository-local pointer.",
-        "Identify all four ACTIVE records from the registry without eagerly loading their bodies.",
-        "Reject rejected/superseded history as executable authority and perform no dispatch or mutation."
+        "Discover both canonical paths from the one repository-local pointer and discover both concise decision-authority maps in WORKFLOW.",
+        "Require the generic map to assign D01–D23 exactly across ADR-0001 through ADR-0004 and the stage/surface map to name the exact current stage decision units.",
+        "Identify all four ACTIVE generic workflow records plus separate ACTIVE product ADR-0005 from the index without eagerly loading their bodies or folding product authority into the generic map.",
+        "Reject rationale or history duplication, rejected/superseded history as executable authority, dispatch, or mutation."
       ],
       "scripted_replies": [],
       "absent_capabilities": []
@@ -5434,7 +5844,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-t5-ordinary-direct-no-eager-history",
       "forbidden_events": [
@@ -5485,7 +5895,7 @@
         "mode": "one owner",
         "outcome": "local completion eligible; shipping absent",
         "owners": [],
-        "route": "dev-implementation backend \u2192 dev-ask completion presentation",
+        "route": "dev-implementation backend → dev-ask completion presentation",
         "assurance_profile": "standard"
       },
       "fixture_dir": "fixtures/b-t5-completion-assured",
@@ -5572,7 +5982,7 @@
         "mode": "none",
         "outcome": "route material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-route",
       "forbidden_events": [
@@ -5617,7 +6027,7 @@
         "mode": "none",
         "outcome": "broken-shared-assumption material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-shared-assumption",
       "forbidden_events": [
@@ -5662,7 +6072,7 @@
         "mode": "none",
         "outcome": "non-equivalent-capability material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-non-equivalent-capability",
       "forbidden_events": [
@@ -5707,7 +6117,7 @@
         "mode": "none",
         "outcome": "load-bearing-authority-or-identity-drift material reapproval stop",
         "owners": [],
-        "route": "recompute Route Overview \u2192 wait for material reapproval"
+        "route": "recompute Route Overview → wait for material reapproval"
       },
       "fixture_dir": "fixtures/r-t5-reapproval-authority-identity-drift",
       "forbidden_events": [
@@ -5759,7 +6169,7 @@
           "dev-triage",
           "dev-ask"
         ],
-        "route": "dev-triage \u2192 dev-ask (recompute)"
+        "route": "dev-triage → dev-ask (recompute)"
       },
       "fixture_dir": "fixtures/r-triage",
       "forbidden_events": [
@@ -5813,7 +6223,7 @@
           "dev-continual-learning",
           "dev-ask"
         ],
-        "route": "dev-implementation \u2192 dev-verification \u2192 dev-code-review \u2192 dev-continual-learning \u2192 dev-ask completion presentation"
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
       },
       "fixture_dir": "fixtures/r-triage-near-miss-project-ticket",
       "forbidden_events": [
@@ -5866,7 +6276,7 @@
         "owners": [
           "dev-triage"
         ],
-        "route": "dev-triage \u2192 exact tracker-effect approval"
+        "route": "dev-triage → exact tracker-effect approval"
       },
       "fixture_dir": "fixtures/r-triage-external-effect",
       "forbidden_events": [
@@ -5916,7 +6326,7 @@
         "mode": "none",
         "outcome": "wontfix terminal report presented automatically",
         "owners": [],
-        "route": "dev-triage \u2192 dev-ask terminal presentation"
+        "route": "dev-triage → dev-ask terminal presentation"
       },
       "fixture_dir": "fixtures/r-triage-wontfix",
       "forbidden_events": [
@@ -5947,6 +6357,752 @@
         "Reject mutation, persistence, shipping, authority invention, or other effects not authorized by the scenario."
       ],
       "scripted_replies": [],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "An explicit request for inline arrows cannot override the active ordered human Route presentation contract.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence (promised downstream output)"
+        ],
+        "first_owner": "dev-implementation",
+        "gates": [
+          "overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "ordered route presented and one first dispatch performed",
+        "owners": [
+          "dev-implementation",
+          "dev-verification",
+          "dev-code-review",
+          "dev-continual-learning",
+          "dev-ask"
+        ],
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
+      },
+      "fixture_dir": "fixtures/r-route-presentation-near-miss-inline",
+      "forbidden_events": [
+        "inline-route",
+        "route-table",
+        "unordered-route",
+        "multi-dispatch"
+      ],
+      "id": "R-ROUTE-PRESENTATION-NEAR-MISS-INLINE",
+      "inputs": {
+        "request": "The implementation authority, acceptance, compatibility, failure behavior, and proof seams are settled. I explicitly request that the human Route be written as one inline arrow chain. Apply the active presentation contract instead: show the one recommended prospective Route as a numbered ordered list with one owner per line, keep the internal machine route identity unchanged, request approval, and after approve dispatch only dev-implementation first."
+      },
+      "layer": "router",
+      "proof": "Fresh router presentation trace compared with the active ordered-list contract and unchanged internal route identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-implementation"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
+        "Require the prospective Route to be a numbered ordered list with exactly one owner or terminal-presentation segment per line, despite the explicit inline-arrow request.",
+        "Reject an inline arrow chain, route table, unordered Route, candidate theatre, or more than one immediate dispatch; keep expected.route and ordered owners as internal identity."
+      ],
+      "scripted_replies": [
+        "approve"
+      ],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Two materially valid routes separated only by a user-owned durability trade-off must be presented as exceptional labeled ordered candidates before approval or dispatch.",
+      "expected": {
+        "artifacts": [],
+        "first_owner": null,
+        "gates": [
+          "route selection"
+        ],
+        "mode": "none",
+        "outcome": "two valid route candidates presented; wait for selection",
+        "owners": [],
+        "route": "recommended: dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation | alternative: dev-specification → dev-ticketing → dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
+      },
+      "fixture_dir": "fixtures/r-route-candidates",
+      "forbidden_events": [
+        "approval",
+        "dispatch",
+        "catalog-tour",
+        "unnecessary-interview",
+        "unlabeled-candidate",
+        "inline-route"
+      ],
+      "id": "R-ROUTE-CANDIDATES",
+      "inputs": {
+        "request": "Observable behavior, acceptance, compatibility, failure behavior, and proof are settled. Two materially different routes are explicitly valid: a bounded direct change without durable recovery artifacts, or specification plus ticket graph because I may require durable handoff and recovery. Whether that durability is worth the extra artifact work is my trade-off, and I have not selected it. Present exactly two candidates: recommend the direct route, label the alternative, give each its own numbered one-owner-per-line Route list and one concise trade-off sentence, ask one selection question, and do not request approval or dispatch."
+      },
+      "layer": "router",
+      "proof": "Fresh router candidate presentation compared with the paired unique-route direct case.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "route-candidates",
+        "recommendation",
+        "selection-question",
+        "stop-for-selection"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
+        "Allow candidate presentation only because both complete routes are materially valid and the remaining durability choice is explicitly user-owned.",
+        "Require exactly two labeled candidates, exactly one Recommended label, a separate numbered one-owner-per-line list and one concise trade-off sentence for each, and exactly one selection question.",
+        "Reject route approval, dispatch, inline arrows, an unlabeled option, a catalog tour, or more than three candidates before selection."
+      ],
+      "scripted_replies": [],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Exactly one unknown fact that changes the first owner must produce exactly one bounded gating question and no route candidates, approval, or dispatch.",
+      "expected": {
+        "artifacts": [],
+        "first_owner": null,
+        "gates": [
+          "one cause-status fact changes first owner"
+        ],
+        "mode": "none",
+        "outcome": "one bounded gating question; wait for fact",
+        "owners": [],
+        "route": "gating question → first owner undetermined"
+      },
+      "fixture_dir": "fixtures/r-route-gating-question",
+      "forbidden_events": [
+        "route-candidates",
+        "approval",
+        "dispatch",
+        "multiple-questions",
+        "mutation",
+        "persistence"
+      ],
+      "id": "R-ROUTE-GATING-QUESTION",
+      "inputs": {
+        "request": "Expected behavior and the reproduction are settled, but exactly one fact is unknown: whether the cause is already established. If established, dev-implementation owns the routine fix; if unexplained, dev-diagnosing-bugs owns diagnosis. Ask exactly one bounded question that resolves that cause-status fact, then stop without candidate routes, approval, dispatch, mutation, or a second question."
+      },
+      "layer": "router",
+      "proof": "Fresh router gating trace compared with the paired settled-worker-choice near miss.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "gating-question",
+        "stop-for-answer"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
+        "Require exactly one question because the one unknown cause-status fact changes the first owner between dev-implementation and dev-diagnosing-bugs.",
+        "Reject candidate routes, an approval request, dispatch, mutation, persistence, or any additional router question before the answer."
+      ],
+      "scripted_replies": [],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Uncertainty about which worker solution rung will be sufficient must not create a router gating question when the first owner is settled.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence (promised downstream output)"
+        ],
+        "first_owner": "dev-implementation",
+        "gates": [
+          "overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "settled route presented and implementation dispatched",
+        "owners": [
+          "dev-implementation",
+          "dev-verification",
+          "dev-code-review",
+          "dev-continual-learning",
+          "dev-ask"
+        ],
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
+      },
+      "fixture_dir": "fixtures/r-route-gating-question-near-miss",
+      "forbidden_events": [
+        "gating-question",
+        "route-candidates",
+        "unnecessary-interview",
+        "multi-dispatch"
+      ],
+      "id": "R-ROUTE-GATING-QUESTION-NEAR-MISS",
+      "inputs": {
+        "request": "The desired behavior, acceptance, compatibility, failure behavior, architecture, and proof seams are settled. The only uncertainty is which solution-discipline rung the worker will select after reading the real flow; that fact cannot change the first owner. Present only the one recommended numbered Route, request approval, and after approve dispatch only dev-implementation without a gating question or route candidates."
+      },
+      "layer": "router",
+      "proof": "Fresh router trace paired with the first-owner-changing gating case.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-implementation"
+      ],
+      "rubric": [
+        "Derive the complete lifecycle route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
+        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
+        "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
+        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
+        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
+        "Treat the sufficient solution rung as a worker decision made after flow inspection, not a fact that changes the first owner.",
+        "Require one recommended numbered Route and one dev-implementation dispatch; reject gating, candidates, or an unnecessary interview."
+      ],
+      "scripted_replies": [
+        "approve"
+      ],
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A worker with a sufficient existing helper must consume the bound solution discipline, select reuse current code, preserve the complete contract, and return the required evidence in its existing Handoff.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "worker Handoff"
+        ],
+        "first_owner": "backend",
+        "gates": [
+          "current worker Task Contract",
+          "exact Context Pack solution-discipline binding"
+        ],
+        "mode": "one owner",
+        "outcome": "reuse selected with consumable worker Handoff",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-worker-solution-discipline",
+      "forbidden_events": [
+        "scope-reduction",
+        "proof-reduction",
+        "new-dependency",
+        "worker-delegation",
+        "missing-rung-evidence"
+      ],
+      "id": "B-WORKER-SOLUTION-DISCIPLINE",
+      "inputs": {
+        "request": "Read-only backend/worker state-trace simulation. The approved worker Task Contract preserves AC-WSD-01, compatibility, degraded behavior, and the complete smoke/proof recipe. Its exact Context Pack binds the same complete Solution discipline block. The worker reads the real changed flow, its callers, and the relevant existing helper; that helper is sufficient, so the worker selects reuse current code. Emit accepted, ready, running, and handed-off only. The existing worker Handoff Decisions and assumptions/choices payload must name inspected surfaces, selected rung, concise earlier-rung disposition, the root-cause reuse change, full preservation, and exact-revision smoke. No scope or proof reduction, dependency, delegation, or new state is allowed."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only worker trace and existing-Handoff evidence for the exact bound contract.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:worker Task Contract preserves AC-WSD-01 and complete proof",
+        "state:ready|owner:backend|output:worker Task Contract and exact Context Pack bind complete Solution discipline",
+        "state:running|owner:worker|output:real flow, callers, and existing helper inspected; reuse current code selected; no earlier rung",
+        "state:handed-off|owner:worker|output:Handoff Decisions and assumptions records inspected surfaces, selected rung, earlier-rung disposition, root-cause reuse, preserved acceptance and proof, and exact-revision smoke"
+      ],
+      "rubric": [
+        "Require accepted before ready and require both the worker Task Contract and exact Context Pack to bind the complete ordered Solution discipline before readiness.",
+        "Require real-flow, caller, and existing-helper inspection before selecting the first sufficient rung, reuse current code.",
+        "Require the existing worker Handoff choices payload to record inspected surfaces, selected rung, every earlier-rung disposition, the root-cause change, complete preservation, and exact-revision smoke.",
+        "Reject reduced behavior, compatibility, degraded behavior, acceptance, smoke, proof, a new dependency, worker delegation, or a new state/Handoff schema."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "When earlier solution rungs are insufficient, the worker must reject scope/proof reduction, select minimum new code, and preserve the same complete authority and evidence contract.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "worker Handoff"
+        ],
+        "first_owner": "backend",
+        "gates": [
+          "current worker Task Contract",
+          "exact Context Pack solution-discipline binding"
+        ],
+        "mode": "one owner",
+        "outcome": "minimum new code selected without scope or proof reduction",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-worker-solution-discipline-near-miss",
+      "forbidden_events": [
+        "yagni-scope-cut",
+        "one-check-proof-ceiling",
+        "compatibility-reduction",
+        "new-dependency",
+        "missing-rung-evidence"
+      ],
+      "id": "B-WORKER-SOLUTION-DISCIPLINE-NEAR-MISS",
+      "inputs": {
+        "request": "Read-only backend/worker state-trace simulation under the same AC-WSD-01 authority, compatibility, degraded behavior, and complete smoke/proof recipe. The worker Task Contract and exact Context Pack bind the complete Solution discipline. After reading the real flow, callers, and helpers, the worker establishes that reuse current code, standard library, native platform, and already-installed dependency are each insufficient. A suggestion to drop compatibility as YAGNI and cap proof at one check is unauthorized. Select minimum new code as the smallest root-cause implementation satisfying the complete contract. Emit accepted, ready, running, and handed-off only, with every earlier-rung disposition, rejected reductions, preservation, root-cause change, and exact-revision smoke in the existing worker Handoff choices payload."
+      },
+      "layer": "backend",
+      "proof": "Fresh paired worker trace showing the full ladder and rejected scope/proof reduction under identical authority.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:worker Task Contract preserves AC-WSD-01 and complete proof",
+        "state:ready|owner:backend|output:worker Task Contract and exact Context Pack bind complete Solution discipline",
+        "state:running|owner:worker|output:real flow and callers inspected; reuse, standard library, native platform, and already-installed dependency insufficient; minimum new code selected",
+        "state:handed-off|owner:worker|output:Handoff rejects YAGNI scope reduction and one-check proof cut, records every rung disposition and root-cause change, preserves full contract and proof, and includes exact-revision smoke"
+      ],
+      "rubric": [
+        "Hold authority, AC-WSD-01, compatibility, degraded behavior, and the complete smoke/proof recipe equal to the reuse case.",
+        "Require the worker to inspect the real flow and callers, dispose of all four earlier rungs with evidence, then select minimum new code as the smallest complete root-cause change.",
+        "Reject YAGNI scope reduction, a one-check proof ceiling, a new dependency, or any loss of approved behavior, compatibility, failure behavior, safety, accessibility, project rules, smoke, or proof.",
+        "Require all dispositions, rejected reductions, preservation, root-cause change, and exact-revision smoke in the existing worker Handoff choices payload."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "The sole final Standards pass must report an evidence-backed simplicity finding with one primary tag and complete existing Review Handoff detail without changing severity or repair ownership.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "Review Handoff"
+        ],
+        "first_owner": "backend",
+        "gates": [
+          "exact VERIFIED target",
+          "distinct reviewer identity",
+          "one eligible final pass"
+        ],
+        "mode": "one owner",
+        "outcome": "tagged blocking simplicity finding returned to authorized repair",
+        "owners": [
+          "backend",
+          "worker",
+          "dev-verification",
+          "dev-code-review"
+        ],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-review-complexity-lens",
+      "forbidden_events": [
+        "second-review-pass",
+        "second-review-Handoff",
+        "reviewer-edit",
+        "tag-determined-severity",
+        "net-line-metric",
+        "shipping-signal"
+      ],
+      "id": "B-REVIEW-COMPLEXITY-LENS",
+      "inputs": {
+        "request": "Read-only state-trace simulation for exact VERIFIED target target-sha256:d22c01 under standard assurance with a reviewer distinct from the verifier. In the sole final Standards and Specification pass, evidence proves src/feature.ts duplicates the existing src/shared.ts helper and diverges on the AC-CX-01 boundary required by specification SPEC-CX-R1. Report ordinary blocking finding F-CX-001: severity blocking because of the established specification/correctness violation, exact path src/feature.ts, authority SPEC-CX-R1, affected AC-CX-01, evidence naming the duplicate and divergence, primary tag reuse, and concrete replacement use src/shared.ts while preserving the full contract. Carry it in the existing Review Handoff, return CHANGES REQUIRED to the backend for possible authorized repair, and do not edit. Emit the complete accepted through verified trace, then one dev-code-review reviewing event and backend failed event. Add no second pass, Handoff, schema, verdict, metric, delivery wording, or repair by the reviewer."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only final-review trace and existing Review Handoff for one exact VERIFIED target.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:fixed target-sha256:d22c01 accepted",
+        "state:ready|owner:backend|output:worker contract ready",
+        "state:running|owner:worker|output:implementation on fixed target",
+        "state:handed-off|owner:worker|output:Handoff and smoke for target-sha256:d22c01",
+        "state:verifying|owner:dev-verification|output:fresh proof of target-sha256:d22c01",
+        "state:verified|owner:dev-verification|output:target-sha256:d22c01 VERIFIED",
+        "state:reviewing|owner:dev-code-review|output:sole Standards and Specification pass records F-CX-001 blocking at src/feature.ts under SPEC-CX-R1 and AC-CX-01 with duplicate-divergence evidence, primary tag reuse, contract-preserving src/shared.ts replacement, and one Review Handoff",
+        "state:failed|owner:backend|output:CHANGES REQUIRED returns F-CX-001 to authorized worker repair; reviewer does not edit"
+      ],
+      "rubric": [
+        "Require exact-target VERIFIED evidence and a distinct final reviewer before the sole Standards and Specification pass.",
+        "Require F-CX-001 to include stable ID, existing blocking severity justified independently of its tag, exact path, governing authority, affected AC ID, evidence, exactly one primary tag, and a concrete contract-preserving replacement.",
+        "Carry the tagged finding in the one existing Review Handoff and preserve CHANGES REQUIRED plus backend-owned repair authority.",
+        "Reject a second pass or Handoff, reviewer mutation, tag-derived severity, a new schema/verdict/repair path, net-line metric, delivery signal, or advisory-driven reopening."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Complexity required by approved compatibility authority must not produce a false simplicity finding in the sole final review pass.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "Review Handoff"
+        ],
+        "first_owner": "backend",
+        "gates": [
+          "exact VERIFIED target",
+          "distinct reviewer identity",
+          "one eligible final pass"
+        ],
+        "mode": "one owner",
+        "outcome": "required compatibility complexity approved without a false finding",
+        "owners": [
+          "backend",
+          "worker",
+          "dev-verification",
+          "dev-code-review"
+        ],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-review-complexity-lens-near-miss",
+      "forbidden_events": [
+        "false-simplicity-finding",
+        "second-review-pass",
+        "second-review-Handoff",
+        "reviewer-edit",
+        "net-line-metric",
+        "shipping-signal"
+      ],
+      "id": "B-REVIEW-COMPLEXITY-LENS-NEAR-MISS",
+      "inputs": {
+        "request": "Read-only state-trace simulation for exact VERIFIED target target-sha256:d22c02 under standard assurance with a reviewer distinct from the verifier. The target contains an apparently duplicate legacy adapter, but approved compatibility authority SPEC-COMPAT-R1 and AC-COMPAT-01 require that adapter, and verification proves the supported legacy caller fails if it is deleted, reused through the new helper, or shrunk. In the sole final Standards and Specification pass, do not create a complexity finding from that required code. Return Standards PASS, Specification PASS, Overall APPROVED and one existing Review Handoff with no blocking findings or advisories. Emit the complete accepted through verified trace, one dev-code-review reviewing event, and reviewed; stop before curation. Add no second pass, Handoff, schema, metric, delivery wording, or reviewer edit."
+      },
+      "layer": "backend",
+      "proof": "Fresh paired review trace proving compatibility-required complexity is not misclassified.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:fixed target-sha256:d22c02 and compatibility authority SPEC-COMPAT-R1 accepted",
+        "state:ready|owner:backend|output:worker contract ready",
+        "state:running|owner:worker|output:implementation on fixed target",
+        "state:handed-off|owner:worker|output:Handoff and smoke for target-sha256:d22c02",
+        "state:verifying|owner:dev-verification|output:fresh proof of target-sha256:d22c02 and required legacy adapter",
+        "state:verified|owner:dev-verification|output:target-sha256:d22c02 VERIFIED with AC-COMPAT-01 preserved",
+        "state:reviewing|owner:dev-code-review|output:sole Standards and Specification pass preserves required compatibility complexity; one Review Handoff records no findings and APPROVED",
+        "state:reviewed|owner:dev-code-review|output:target-sha256:d22c02 approved without a false simplicity finding"
+      ],
+      "rubric": [
+        "Require exact-target VERIFIED evidence, approved compatibility authority, and a distinct final reviewer before the one review pass.",
+        "Treat the legacy adapter as required contract complexity because deletion, reuse, or shrink would break the verified supported caller.",
+        "Require both axes PASS, Overall APPROVED, and one existing Review Handoff with no findings; stop before curation rather than implying completion.",
+        "Reject a false tagged finding, second pass or Handoff, reviewer edit, changed schema/verdict, net-line metric, delivery signal, or compatibility reduction."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A complete papercut Learning Candidate carries one immutable originating PC-ID while an incomplete candidate remains evidence-only.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "complete ID preserved; incomplete evidence-only",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-candidate-binding",
+      "forbidden_events": [
+        "synthetic-PC-ID",
+        "incomplete-dispatch",
+        "settlement",
+        "ledger-write"
+      ],
+      "id": "B-T4-PAPERCUT-CANDIDATE-BINDING",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: one complete papercut Learning Candidate carries originating pc-0123456789abcdef plus a complete Evaluation proposal; a second candidate lacks its PC-ID and one adjacent-case proof field. Preserve the complete ID unchanged through Task Contract, Context Pack, and curator Handoff. Keep the incomplete candidate evidence-only and do not synthesize an ID, dispatch it, or settle anything."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:complete candidate pc-0123456789abcdef bound unchanged through Task Contract, Context Pack, and curator Handoff; incomplete candidate evidence-only with missing PC-ID and adjacent proof; no synthetic ID; no settlement"
+      ],
+      "rubric": [
+        "Require exactly one unchanged originating PC-ID on the complete candidate.",
+        "Keep the incomplete candidate evidence-only and name both missing fields.",
+        "Reject synthetic IDs, curation dispatch, or settlement."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A verified durable CURATED correction settles only its originating papercut record as fixed.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "originating record fixed",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-settlement-fixed",
+      "forbidden_events": [
+        "unrelated-settlement",
+        "second-settlement",
+        "product-decision",
+        "broad-close"
+      ],
+      "id": "B-T4-PAPERCUT-SETTLEMENT-FIXED",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: CURATED proves a durable correction for originating pc-0123456789abcdef. The curator returns the unchanged ID, resolved date 2026-08-12, reference OUT-CURATION-1, and concise summary. Validate the candidate-specific result, map fixed, invoke papercut settlement once, and leave pc-fedcba9876543210 unchanged."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:record_id pc-0123456789abcdef; CURATED candidate-specific durable correction; kind fixed; resolved_on 2026-08-12; reference OUT-CURATION-1; settlement once; unrelated pc-fedcba9876543210 unchanged"
+      ],
+      "rubric": [
+        "Map verified candidate-specific CURATED to fixed.",
+        "Require one exact settlement call and durable terminal fields.",
+        "Preserve every unrelated record."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A candidate-specific final NO DURABLE LEARNING result after failed frozen evaluation settles only the origin as rejected.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "originating record rejected",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-settlement-rejected",
+      "forbidden_events": [
+        "fixed",
+        "superseded",
+        "unrelated-settlement",
+        "second-settlement"
+      ],
+      "id": "B-T4-PAPERCUT-SETTLEMENT-REJECTED",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: frozen evaluation for originating pc-0123456789abcdef fails deterministically, the exact curator delta is safely restored, and candidate-specific NO DURABLE LEARNING is final. The curator returns date 2026-08-12, reference OUT-CURATION-REJECT-1, and summary. Map rejected, settle once, and leave unrelated IDs unchanged."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:record_id pc-0123456789abcdef; candidate-specific NO DURABLE LEARNING after failed frozen evaluation and safe restoration; kind rejected; resolved_on 2026-08-12; reference OUT-CURATION-REJECT-1; settlement once; unrelated records unchanged"
+      ],
+      "rubric": [
+        "Map only the candidate-specific final failed frozen evaluation to rejected.",
+        "Require exact restoration evidence and terminal reference.",
+        "Settle only the originating ID once."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "An authoritative replacement settles only the originating papercut record as superseded.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "originating record superseded",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-settlement-superseded",
+      "forbidden_events": [
+        "replacement-record-resolution",
+        "unrelated-settlement",
+        "second-settlement",
+        "fixed"
+      ],
+      "id": "B-T4-PAPERCUT-SETTLEMENT-SUPERSEDED",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: authoritative curation replaces originating pc-0123456789abcdef with decision ADR-0099 D31. The curator returns date 2026-08-12 and exact replacement reference. Map superseded, settle the originating ID once, and do not resolve the replacement record or any unrelated record."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:record_id pc-0123456789abcdef; authoritative replacement ADR-0099 D31; kind superseded; resolved_on 2026-08-12; reference ADR-0099 D31; settlement once; replacement and unrelated records unchanged"
+      ],
+      "rubric": [
+        "Map an exact authoritative replacement to superseded.",
+        "Preserve the replacement and unrelated records.",
+        "Require one terminal settlement call for the origin."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "BLOCKED, incomplete, or deferred papercut outcomes remain open without a helper call.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "records remain open",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-settlement-open",
+      "forbidden_events": [
+        "resolve",
+        "fixed",
+        "rejected",
+        "superseded",
+        "ledger-write",
+        "implementation-repair"
+      ],
+      "id": "B-T4-PAPERCUT-SETTLEMENT-OPEN",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: originating pc-0123456789abcdef reaches curator BLOCKED because exact authority is missing; a second candidate is incomplete and a third is deferred. Return open reasons, perform no settlement call, preserve every ledger byte, and keep the verified implementation intact."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:pc-0123456789abcdef open on BLOCKED missing authority; incomplete and deferred candidates open; no settlement call; ledger bytes unchanged; verified implementation preserved"
+      ],
+      "rubric": [
+        "Map BLOCKED, incomplete, and deferred results to open.",
+        "Perform no helper call or ledger write.",
+        "Preserve verified implementation and exact blockers."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "A broad or unrelated curation result cannot settle an originating papercut record.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "broad result leaves origin open",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-settlement-global",
+      "forbidden_events": [
+        "inferred-fixed",
+        "resolve",
+        "ledger-write",
+        "unrelated-settlement"
+      ],
+      "id": "B-T4-PAPERCUT-SETTLEMENT-GLOBAL",
+      "inputs": {
+        "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: a broad global CURATED result does not name originating pc-0123456789abcdef and concerns another rule. Treat the papercut as open, perform no settlement call, and preserve both originating and unrelated records."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:broad global CURATED result is not candidate-specific; pc-0123456789abcdef open; no settlement call; originating and unrelated records unchanged"
+      ],
+      "rubric": [
+        "Reject broad or unrelated curation as settlement authority.",
+        "Keep the originating record open without a helper call.",
+        "Preserve every record."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
+      "absent_capabilities": []
+    },
+    {
+      "criterion": "Direct, read-only, plan, verification, review, shipping, and helper-failure variants remain report-only/open.",
+      "expected": {
+        "artifacts": [
+          "terminal evidence snapshot",
+          "papercut outcome"
+        ],
+        "first_owner": null,
+        "gates": [
+          "exact originating PC-ID and authoritative candidate-specific result"
+        ],
+        "mode": "one owner",
+        "outcome": "all narrow or failed variants report-only/open",
+        "owners": [],
+        "route": "dev-implementation backend",
+        "assurance_profile": "standard"
+      },
+      "fixture_dir": "fixtures/b-t4-papercut-narrow-authority",
+      "forbidden_events": [
+        "curation-dispatch",
+        "ledger-write",
+        "scope-weakening",
+        "workflow-outcome-rewrite",
+        "shipping-effect"
+      ],
+      "id": "B-T4-PAPERCUT-NARROW-AUTHORITY",
+      "inputs": {
+        "request": "/skill:dev-implementation. Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: the same complete papercut candidate appears separately during direct no-workflow, read-only, plan-only, verification, review, and shipping work; then a terminal authorized workflow settlement encounters a helper write failure. The observable output must name every one of the six narrow variants. No narrow variant starts curation or writes. The helper failure is disclosed report-only and leaves the record open without changing the authoritative workflow outcome."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only terminal-snapshot evaluation against AC-SET-01, AC-SET-02, or AC-SET-04 and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:terminal-evidence|owner:backend|output:direct, read-only, plan-only, verification, review, and shipping variants report-only with no curation or write; helper failure disclosed report-only; originating record open; authoritative workflow outcome unchanged"
+      ],
+      "rubric": [
+        "Keep every narrow-authority variant report-only without curation.",
+        "Disclose helper failure and leave the record open.",
+        "Do not weaken authority or rewrite the workflow result."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "terminal-snapshot",
       "absent_capabilities": []
     }
   ],

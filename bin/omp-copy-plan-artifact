@@ -10,6 +10,7 @@
 
 import { createHash, randomUUID } from "node:crypto";
 import { link, lstat, mkdir, open, readFile, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -22,11 +23,40 @@ const LOCK_RETRY_MS = 25;
 const MALFORMED_LOCK_RECLAIM_AGE_MS = 1_000;
 
 class PlanArtifactError extends Error {
-    constructor(message, exitCode = 1) {
+    constructor(message, exitCode = 1, diagnostic = undefined) {
         super(message);
         this.name = "PlanArtifactError";
         this.exitCode = exitCode;
+        this.diagnostic = diagnostic;
     }
+}
+
+class HeaderValidationError extends Error {
+    constructor(code, message, markerMissingOnly = false) {
+        super(message);
+        this.name = "HeaderValidationError";
+        this.code = code;
+        this.markerMissingOnly = markerMissingOnly;
+    }
+}
+
+class SafeDiagnosticError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "SafeDiagnosticError";
+    }
+}
+
+function operationError(kind, plan, state, path, effect, message) {
+    return new PlanArtifactError(message, 1, { kind, plan, state, path, effect });
+}
+
+function safeDiagnosticReason(error, fallback) {
+    return error instanceof SafeDiagnosticError ? error.message : fallback;
+}
+
+function safeFailure(message) {
+    return new SafeDiagnosticError(message);
 }
 
 function usage() {
@@ -40,7 +70,7 @@ function parseArguments(argv) {
         process.exit(0);
     }
     if (operation !== "sync") {
-        throw new PlanArtifactError(`expected operation 'sync', received '${operation ?? ""}'`, 2);
+        throw new PlanArtifactError("expected operation 'sync'", 2);
     }
 
     let slug;
@@ -48,7 +78,7 @@ function parseArguments(argv) {
     for (let index = 0; index < rest.length; index += 1) {
         const argument = rest[index];
         if (argument !== "--slug" && argument !== "--content-file") {
-            throw new PlanArtifactError(`unknown argument: ${argument}`, 2);
+            throw new PlanArtifactError("unknown argument", 2);
         }
         const value = rest[index + 1];
         if (!value || value.startsWith("--")) {
@@ -68,7 +98,7 @@ function parseArguments(argv) {
         throw new PlanArtifactError("--slug and --content-file are required", 2);
     }
     if (!SLUG_PATTERN.test(slug)) {
-        throw new PlanArtifactError(`slug '${slug}' must be canonical lowercase kebab-case`, 2);
+        throw new PlanArtifactError("slug must be canonical lowercase kebab-case", 2);
     }
     if (!isAbsolute(contentFile)) {
         throw new PlanArtifactError("--content-file must be an absolute path", 2);
@@ -98,39 +128,213 @@ function normalizedLines(source) {
     return source.split("\n").map((line) => (line.endsWith("\r") ? line.slice(0, -1) : line));
 }
 
-function canonicalMetadataValues(lines, name) {
-    const prefix = `**${name}**:`;
-    return lines
-        .filter((line) => line.startsWith(prefix))
-        .map((line) => {
-            const suffix = line.slice(prefix.length);
-            return /^ \S(?:.*\S)?$/.test(suffix) ? suffix.slice(1) : undefined;
-        });
+const HEADER_FIELDS = ["Datetime", "Authority kind", "Mode", "Scope", "Summary", "Status"];
+const REQUIRED_HEADER_FIELDS = ["Datetime", "Authority kind", "Scope", "Summary", "Status"];
+const AUTHORITY_KINDS = ["local-authority", "direct-repository"];
+const HEADER_STATUSES = ["PENDING", "IN_PROGRESS", "DONE", "CLOSED"];
+const HEADER_PRIORITY = [
+    "UTF8",
+    "HEADER_BOM",
+    "HEADER_H1",
+    "HEADER_METADATA_BLOCK",
+    "HEADER_FIELD_CASE",
+    "HEADER_FIELD_UNKNOWN",
+    "HEADER_FIELD_MALFORMED",
+    "HEADER_FIELD_MISSING",
+    "HEADER_FIELD_DUPLICATE",
+    "HEADER_FIELD_ORDER",
+    "HEADER_FIELD_VALUE",
+    "HEADER_FIELD_MISPLACED",
+];
+
+function inspectHeaderBytes(bytes) {
+    if (bytes.length === 0) {
+        return {
+            issues: [{ code: "HEADER_H1", message: "plan artifact is empty" }],
+            markerMissingOnly: false,
+        };
+    }
+    if (bytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) {
+        return {
+            issues: [{ code: "HEADER_BOM", message: "plan must begin directly with its H1" }],
+            markerMissingOnly: false,
+        };
+    }
+
+    let source;
+    try {
+        source = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    } catch {
+        return {
+            issues: [{ code: "UTF8", message: "plan artifact must be valid UTF-8" }],
+            markerMissingOnly: false,
+        };
+    }
+
+    const lines = normalizedLines(source);
+    const issues = [];
+    const issue = (code, message) => issues.push({ code, message });
+    if ((lines[0] ?? "").includes("\r") || !/^#\s+\S.*$/.test(lines[0] ?? "")) {
+        issue("HEADER_H1", "first line must be a nonempty H1");
+    }
+    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
+    if (firstH2 === -1) {
+        issue("HEADER_METADATA_BLOCK", "plan must contain an H2 after one contiguous metadata block");
+    }
+
+    const region = firstH2 === -1 ? [] : lines.slice(1, firstH2);
+    const nonblank = region.flatMap((line, index) => (line === "" ? [] : [index]));
+    let block = [];
+    if (firstH2 !== -1) {
+        if (nonblank.length === 0) {
+            issue("HEADER_METADATA_BLOCK", "header metadata block is empty");
+        } else {
+            const first = nonblank[0];
+            const last = nonblank.at(-1);
+            if (region.slice(first, last + 1).some((line) => line === "")) {
+                issue("HEADER_METADATA_BLOCK", "header metadata must be one contiguous nonblank block");
+            }
+            block = region.slice(first, last + 1);
+        }
+    }
+
+    const values = new Map(HEADER_FIELDS.map((field) => [field, []]));
+    const exactNames = [];
+    const headerIssue = (code, field = "metadata") =>
+        issue(code, `canonical header violation for ${field}`);
+    for (const line of block) {
+        if (line.includes("\r")) {
+            const rawName = /^\s*\*\*([^*\n]+)\*\*/.exec(line)?.[1];
+            const field =
+                HEADER_FIELDS.find(
+                    (candidate) =>
+                        rawName &&
+                        candidate.toLocaleLowerCase("en-US") === rawName.toLocaleLowerCase("en-US")
+                ) ?? "metadata";
+            headerIssue("HEADER_FIELD_MALFORMED", field);
+            continue;
+        }
+        const match = /^\*\*([^*\r\n]+)\*\*: (.*)$/.exec(line);
+        if (match) {
+            const [, name, value] = match;
+            const canonicalName = HEADER_FIELDS.find(
+                (field) => field.toLocaleLowerCase("en-US") === name.toLocaleLowerCase("en-US")
+            );
+            if (canonicalName && canonicalName !== name) {
+                headerIssue("HEADER_FIELD_CASE", canonicalName);
+                continue;
+            }
+            if (!canonicalName) {
+                headerIssue("HEADER_FIELD_UNKNOWN");
+                continue;
+            }
+            if (value !== value.trim() || value.includes("\t")) {
+                headerIssue("HEADER_FIELD_MALFORMED", canonicalName);
+                continue;
+            }
+            exactNames.push(name);
+            values.get(name).push(value);
+            continue;
+        }
+
+        const boldName = /^\s*\*\*([^*\r\n]+)\*\*/.exec(line)?.[1];
+        if (boldName) {
+            const canonicalName = HEADER_FIELDS.find(
+                (field) => field.toLocaleLowerCase("en-US") === boldName.toLocaleLowerCase("en-US")
+            );
+            if (canonicalName && canonicalName !== boldName) {
+                headerIssue("HEADER_FIELD_CASE", canonicalName);
+            } else {
+                headerIssue("HEADER_FIELD_MALFORMED", canonicalName ?? "metadata");
+            }
+        } else {
+            issue("HEADER_METADATA_BLOCK", "nonmetadata prose is not allowed in the header region");
+        }
+    }
+
+    for (const field of REQUIRED_HEADER_FIELDS) {
+        const count = values.get(field).length;
+        if (count === 0) issue("HEADER_FIELD_MISSING", `required header field is missing: ${field}`);
+        else if (count > 1) issue("HEADER_FIELD_DUPLICATE", `header field appears ${count} times: ${field}`);
+    }
+    if (values.get("Mode").length > 1) {
+        issue("HEADER_FIELD_DUPLICATE", `header field appears ${values.get("Mode").length} times: Mode`);
+    }
+
+    const order = new Map(HEADER_FIELDS.map((field, index) => [field, index]));
+    const orderedNames = [...exactNames].sort((left, right) => order.get(left) - order.get(right));
+    if (exactNames.some((name, index) => name !== orderedNames[index])) {
+        issue(
+            "HEADER_FIELD_ORDER",
+            "header fields are not in Datetime, Authority kind, optional Mode, Scope, Summary, Status order"
+        );
+    }
+
+    const datetime = values.get("Datetime")[0];
+    if (datetime !== undefined && !hasValidDatetime(datetime)) {
+        issue("HEADER_FIELD_VALUE", "Datetime is not a valid calendar value");
+    }
+    const authorityKind = values.get("Authority kind")[0];
+    if (authorityKind !== undefined && !AUTHORITY_KINDS.includes(authorityKind)) {
+        if (AUTHORITY_KINDS.some((kind) => kind.toLowerCase() === authorityKind.toLowerCase())) {
+            issue("HEADER_FIELD_CASE", "Authority kind value has noncanonical case");
+        } else {
+            issue("HEADER_FIELD_VALUE", "Authority kind must be local-authority or direct-repository");
+        }
+    }
+    for (const field of ["Mode", "Scope", "Summary"]) {
+        if (values.get(field)[0] === "") issue("HEADER_FIELD_VALUE", `${field} must be nonempty`);
+    }
+    const status = values.get("Status")[0];
+    if (status !== undefined && !HEADER_STATUSES.includes(status)) {
+        issue("HEADER_FIELD_VALUE", "Status must be PENDING, IN_PROGRESS, DONE, or CLOSED");
+    }
+    if (
+        firstH2 !== -1 &&
+        lines.slice(firstH2).some((line) => /^\*\*authority kind\*\*: .*$/i.test(line))
+    ) {
+        issue("HEADER_FIELD_MISPLACED", "Authority kind metadata occurs outside the header block");
+    }
+
+    const priority = new Map(HEADER_PRIORITY.map((code, index) => [code, index]));
+    issues.sort((left, right) => priority.get(left.code) - priority.get(right.code));
+    const markerMissingOnly =
+        issues.length === 1 &&
+        issues[0].code === "HEADER_FIELD_MISSING" &&
+        issues[0].message.endsWith("Authority kind");
+    return {
+        source,
+        lines,
+        firstH2,
+        fields: Object.fromEntries(HEADER_FIELDS.map((field) => [field, values.get(field)[0]])),
+        issues,
+        markerMissingOnly,
+    };
+}
+
+function validatePlanBytes(bytes) {
+    const inspection = inspectHeaderBytes(bytes);
+    if (inspection.issues.length > 0) {
+        const first = inspection.issues[0];
+        throw new HeaderValidationError(first.code, first.message, inspection.markerMissingOnly);
+    }
+    return {
+        source: inspection.source,
+        lines: inspection.lines,
+        firstH2: inspection.firstH2,
+        datetime: inspection.fields.Datetime,
+        authorityKind: inspection.fields["Authority kind"],
+        status: inspection.fields.Status,
+    };
 }
 
 function sectionEnd(h2Indexes, index, lineCount) {
     return h2Indexes.find((candidate) => candidate > index) ?? lineCount;
 }
 
-function terminalLifecycleComplete(source) {
-    const lines = normalizedLines(source);
-    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
-    if (firstH2 === -1) return false;
-    const metadata = lines.slice(1, firstH2);
-    const exactly = (name) => {
-        const values = canonicalMetadataValues(metadata, name);
-        return values.length === 1 ? values[0] : undefined;
-    };
-    const datetime = exactly("Datetime");
-    if (
-        !datetime ||
-        !hasValidDatetime(datetime) ||
-        exactly("Status") !== "DONE" ||
-        !exactly("Scope") ||
-        !exactly("Summary")
-    )
-        return false;
-
+function terminalLifecycleComplete(parsed) {
+    const { lines } = parsed;
+    if (parsed.status !== "DONE") return false;
     const h2Indexes = lines.flatMap((line, index) => (/^##(?:\s|$)/.test(line) ? [index] : []));
     const tasksIndexes = lines.flatMap((line, index) => (line === "## Tasks" ? [index] : []));
     const verificationIndexes = lines.flatMap((line, index) =>
@@ -171,122 +375,322 @@ function terminalLifecycleComplete(source) {
     );
     const criteria = criterionLines.filter((line) => TASK_CHECKBOX_RE.test(line));
     if (criteria.length === 0 || criteria.some((line) => !/^\s*-\s+\[[xX]\]\s+\S/.test(line))) return false;
-
-    return (
-        lines
-            .slice(completionIndexes[0] + 1)
-            .join("\n")
-            .trim().length > 0
-    );
+    return lines.slice(completionIndexes[0] + 1).join("\n").trim().length > 0;
 }
 
-function validatePlanBytes(bytes) {
-    if (bytes.length === 0) throw new PlanArtifactError("refusing to sync an empty plan artifact");
-    if (bytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) {
-        throw new PlanArtifactError("plan artifact must begin directly with its H1, without a UTF-8 BOM");
+function inodeIdentity(fileStat) {
+    return `${fileStat.dev}:${fileStat.ino}`;
+}
+
+function sourceBindingFromEnvironment() {
+    const rootIdentity = process.env.OMP_PLAN_ARTIFACT_SYNC_ROOT_IDENTITY;
+    const sourceIdentity = process.env.OMP_PLAN_ARTIFACT_SYNC_SOURCE_IDENTITY;
+    if (rootIdentity === undefined && sourceIdentity === undefined) return undefined;
+    if (
+        !/^\d+:\d+$/.test(rootIdentity ?? "") ||
+        !/^\d+:\d+$/.test(sourceIdentity ?? "")
+    ) {
+        throw safeFailure("source identity binding is unavailable");
     }
-    let source;
+    return { rootIdentity, sourceIdentity };
+}
+
+async function assertBoundSourceParent(filePath, binding) {
+    if (!binding) return;
+    const parent = await lstat(dirname(filePath));
+    if (
+        !parent.isDirectory() ||
+        parent.isSymbolicLink() ||
+        inodeIdentity(parent) !== binding.rootIdentity
+    ) {
+        throw safeFailure("source parent changed before it could be read safely");
+    }
+}
+
+async function readRegularBytes(filePath, binding = undefined) {
+    await assertBoundSourceParent(filePath, binding);
+    const before = await lstat(filePath);
+    if (
+        !before.isFile() ||
+        before.isSymbolicLink() ||
+        (binding && inodeIdentity(before) !== binding.sourceIdentity)
+    ) {
+        throw safeFailure("required path is not the bound regular non-symlink file");
+    }
+    const handle = await open(filePath, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
     try {
-        source = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-    } catch {
-        throw new PlanArtifactError("plan artifact must be valid UTF-8");
-    }
-    const lines = normalizedLines(source);
-    if (!/^#\s+\S.*$/.test(lines[0] ?? "")) {
-        throw new PlanArtifactError("the first line of the plan artifact must be its H1");
-    }
-    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
-    if (firstH2 === -1) throw new PlanArtifactError("plan artifact must contain a ## heading after its metadata block");
-    const datetimes = canonicalMetadataValues(lines.slice(1, firstH2), "Datetime");
-    if (datetimes.length !== 1 || !datetimes[0] || !hasValidDatetime(datetimes[0])) {
-        throw new PlanArtifactError(
-            "plan artifact must contain exactly one canonical **Datetime**: YYYY-MM-DD-HHMM value"
-        );
-    }
-    return { source, datetime: datetimes[0] };
-}
-
-async function readSource(contentFile) {
-    let sourceStat;
-    try {
-        sourceStat = await lstat(contentFile);
-    } catch (error) {
-        if (error?.code === "ENOENT") throw new PlanArtifactError(`content file does not exist: ${contentFile}`);
-        throw error;
-    }
-    if (!sourceStat.isFile() || sourceStat.isSymbolicLink()) {
-        throw new PlanArtifactError(`content file must be a regular non-symlink file: ${contentFile}`);
-    }
-    const bytes = await readFile(contentFile);
-    return { bytes, ...validatePlanBytes(bytes) };
-}
-
-async function ensureDirectory(directory) {
-    await mkdir(directory, { recursive: true });
-    const directoryStat = await lstat(directory);
-    if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-        throw new PlanArtifactError(`plan directory must be a regular non-symlink directory: ${directory}`);
-    }
-}
-
-async function targetExistsAndIsRegular(targetPath) {
-    try {
-        const targetStat = await lstat(targetPath);
-        if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
-            throw new PlanArtifactError(`existing plan target must be a regular non-symlink file: ${targetPath}`);
+        const current = await handle.stat();
+        if (
+            !current.isFile() ||
+            current.isSymbolicLink() ||
+            current.dev !== before.dev ||
+            current.ino !== before.ino ||
+            (binding && inodeIdentity(current) !== binding.sourceIdentity)
+        ) {
+            throw safeFailure("required path changed before it could be read safely");
         }
-        return true;
-    } catch (error) {
-        if (error?.code === "ENOENT") return false;
-        throw error;
+        const bytes = await handle.readFile();
+        const after = await handle.stat();
+        if (fileIdentity(current) !== fileIdentity(after)) {
+            throw safeFailure("required path changed while it was being read");
+        }
+        await assertBoundSourceParent(filePath, binding);
+        return { bytes, stat: after };
+    } finally {
+        await handle.close();
     }
 }
 
-async function targetIsAbsent(targetPath) {
+async function readSource(contentFile, slug, binding = undefined) {
+    let snapshot;
     try {
-        await lstat(targetPath);
-        return false;
+        snapshot = await readRegularBytes(contentFile, binding);
     } catch (error) {
-        if (error?.code === "ENOENT") return true;
-        throw error;
-    }
-}
-
-async function assertExactTarget(targetPath, expectedBytes) {
-    const targetStat = await lstat(targetPath);
-    if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
-        throw new PlanArtifactError(`synchronized target must be a regular non-symlink file: ${targetPath}`);
-    }
-    const actualBytes = await readFile(targetPath);
-    if (!actualBytes.equals(expectedBytes)) {
-        throw new PlanArtifactError(`synchronized target reread did not match captured source bytes: ${targetPath}`);
-    }
-}
-
-async function assertSourceUnchanged(contentFile, expectedSource) {
-    const finalSource = await readSource(contentFile);
-    if (finalSource.datetime !== expectedSource.datetime || !finalSource.bytes.equals(expectedSource.bytes)) {
-        throw new PlanArtifactError(
-            "content changed during synchronization; projection may contain an earlier complete revision"
+        throw operationError(
+            "PLAN_FILE_KIND_UNSAFE",
+            slug,
+            "source-unsafe",
+            "none",
+            "none",
+            safeDiagnosticReason(error, "source path could not be read safely")
         );
     }
+    let parsed;
+    try {
+        parsed = validatePlanBytes(snapshot.bytes);
+    } catch (error) {
+        if (!(error instanceof HeaderValidationError)) throw error;
+        const kind = error.markerMissingOnly ? "PLAN_AUTHORITY_UNCLASSIFIED" : "PLAN_HEADER_INVALID";
+        throw operationError(kind, slug, `source:${error.code}`, "none", "none", error.message);
+    }
+    const planId = `${parsed.datetime}_${slug}`;
+    if (parsed.authorityKind !== "local-authority") {
+        throw operationError(
+            "PLAN_AUTHORITY_CONTEXT",
+            planId,
+            "source:direct-repository",
+            "none",
+            "none",
+            "session-local source must declare local-authority"
+        );
+    }
+    return { contentFile, binding, planId, bytes: snapshot.bytes, ...parsed };
 }
 
-async function atomicReplace(targetPath, bytes) {
-    const targetDirectory = dirname(targetPath);
-    await ensureDirectory(targetDirectory);
-    const temporaryPath = join(targetDirectory, `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`);
+async function ensureDirectory(directory, role) {
+    try {
+        await mkdir(directory, { recursive: true });
+        const directoryStat = await lstat(directory);
+        if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
+            throw safeFailure(`${role} is not a regular non-symlink directory`);
+        }
+    } catch (error) {
+        if (error instanceof SafeDiagnosticError) throw error;
+        throw safeFailure(`${role} could not be established as a safe directory`);
+    }
+}
+
+async function lstatOrAbsent(filePath) {
+    try {
+        return await lstat(filePath);
+    } catch (error) {
+        if (error?.code === "ENOENT") return undefined;
+        throw error;
+    }
+}
+
+function fileIdentity(fileStat) {
+    return `${fileStat.dev}:${fileStat.ino}:${fileStat.mode}:${fileStat.size}:${fileStat.mtimeMs}:${fileStat.ctimeMs}`;
+}
+function objectIdentity(fileStat) {
+    return `${fileStat.dev}:${fileStat.ino}`;
+}
+
+async function readVerifiedTargetDescriptor(handle, _targetPath, expectedStat) {
+    const current = await handle.stat();
+    if (
+        !current.isFile() ||
+        current.isSymbolicLink() ||
+        current.dev !== expectedStat.dev ||
+        current.ino !== expectedStat.ino
+    ) {
+        return undefined;
+    }
+    const bytes = await handle.readFile();
+    const after = await handle.stat();
+    if (
+        !after.isFile() ||
+        after.isSymbolicLink() ||
+        fileIdentity(current) !== fileIdentity(after) ||
+        bytes.length !== after.size
+    ) {
+        return undefined;
+    }
+    return { bytes, stat: after };
+}
+
+
+async function observeOneTarget(root, targetPath, source) {
+    const relativePath = relative(root, targetPath);
+    let targetStat;
+    try {
+        targetStat = await lstatOrAbsent(targetPath);
+    } catch {
+        return { classification: "invalid:unreadable", path: relativePath };
+    }
+    if (!targetStat) return { classification: "absent", path: relativePath };
+    if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
+        return {
+            classification: "invalid:file-kind",
+            path: relativePath,
+            fileIdentity: fileIdentity(targetStat),
+            objectIdentity: objectIdentity(targetStat),
+        };
+    }
+
+    let bytes;
+    let handle;
+    try {
+        handle = await open(targetPath, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+        const snapshot = await readVerifiedTargetDescriptor(handle, targetPath, targetStat);
+        if (!snapshot) {
+            return {
+                classification: "invalid:stale",
+                path: relativePath,
+                fileIdentity: fileIdentity(targetStat),
+                objectIdentity: objectIdentity(targetStat),
+            };
+        }
+        bytes = snapshot.bytes;
+        targetStat = snapshot.stat;
+    } catch {
+        return {
+            classification: "invalid:unreadable",
+            path: relativePath,
+            fileIdentity: fileIdentity(targetStat),
+            objectIdentity: objectIdentity(targetStat),
+        };
+    } finally {
+        if (handle) await handle.close().catch(() => {});
+    }
+    const hash = createHash("sha256").update(bytes).digest("hex");
+    const inspection = inspectHeaderBytes(bytes);
+    if (inspection.issues.length > 0) {
+        return {
+            classification: inspection.markerMissingOnly
+                ? "unclassified"
+                : `invalid:${inspection.issues[0].code}`,
+            path: relativePath,
+            fileIdentity: fileIdentity(targetStat),
+            objectIdentity: objectIdentity(targetStat),
+            bytes,
+            hash,
+        };
+    }
+    const parsed = validatePlanBytes(bytes);
+    if (parsed.datetime !== source.datetime) {
+        return {
+            classification: "invalid:identity",
+            path: relativePath,
+            fileIdentity: fileIdentity(targetStat),
+            objectIdentity: objectIdentity(targetStat),
+            bytes,
+            hash,
+            datetime: parsed.datetime,
+            authorityKind: parsed.authorityKind,
+        };
+    }
+    return {
+        classification:
+            parsed.authorityKind === "local-authority" ? "local-projection" : "direct-authority",
+        path: relativePath,
+        fileIdentity: fileIdentity(targetStat),
+        objectIdentity: objectIdentity(targetStat),
+        bytes,
+        hash,
+        datetime: parsed.datetime,
+        authorityKind: parsed.authorityKind,
+    };
+}
+
+async function observeTargetState(root, activePath, archivePath, source) {
+    const active = await observeOneTarget(root, activePath, source);
+    const archived = await observeOneTarget(root, archivePath, source);
+    const unsafeClassifications = new Set([
+        "invalid:file-kind",
+        "invalid:unreadable",
+        "invalid:stale",
+    ]);
+    if (unsafeClassifications.has(active.classification)) {
+        return { ...active, location: "active" };
+    }
+    if (unsafeClassifications.has(archived.classification)) {
+        return { ...archived, location: "archive" };
+    }
+    if (active.classification !== "absent" && archived.classification !== "absent") {
+        return { classification: "ambiguous", active, archived };
+    }
+    if (active.classification !== "absent") return { ...active, location: "active" };
+    if (archived.classification !== "absent") return { ...archived, location: "archive" };
+    return { classification: "absent", path: "none", location: "active" };
+}
+
+function sameTargetObservation(left, right) {
+    if (
+        left.classification !== right.classification ||
+        left.location !== right.location ||
+        left.path !== right.path ||
+        left.fileIdentity !== right.fileIdentity ||
+        left.objectIdentity !== right.objectIdentity ||
+        left.hash !== right.hash ||
+        left.datetime !== right.datetime ||
+        left.authorityKind !== right.authorityKind
+    )
+        return false;
+    if (left.classification === "ambiguous") {
+        return (
+            sameTargetObservation(left.active, right.active) &&
+            sameTargetObservation(left.archived, right.archived)
+        );
+    }
+    if (left.bytes || right.bytes) return Boolean(left.bytes && right.bytes && left.bytes.equals(right.bytes));
+    return true;
+}
+
+async function stageBytes(targetPath, bytes) {
+    const temporaryPath = join(
+        dirname(targetPath),
+        `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`
+    );
+    const generationPath = `${temporaryPath}.generation`;
     let handle;
     try {
         handle = await open(temporaryPath, "wx", 0o600);
         await handle.writeFile(bytes);
         await handle.sync();
+        const stagedStat = await handle.stat();
         await handle.close();
         handle = undefined;
-        await rename(temporaryPath, targetPath);
-    } finally {
+        await link(temporaryPath, generationPath);
+        return {
+            path: temporaryPath,
+            generationPath,
+            objectIdentity: objectIdentity(stagedStat),
+        };
+    } catch (error) {
         if (handle) await handle.close().catch(() => {});
+        await rm(generationPath, { force: true }).catch(() => {});
         await rm(temporaryPath, { force: true }).catch(() => {});
+        throw error;
+    }
+}
+
+async function linkGenerationNoOverwrite(generationPath, targetPath, staleMessage) {
+    try {
+        await link(generationPath, targetPath);
+    } catch (error) {
+        if (error?.code === "EEXIST") throw safeFailure(staleMessage);
+        throw error;
     }
 }
 
@@ -481,7 +885,7 @@ async function reclaimLockIfSafe(lockPath) {
 
 async function acquireLock(root, planId) {
     const lockRoot = join(tmpdir(), "omp-plan-artifact-locks");
-    await ensureDirectory(lockRoot);
+    await ensureDirectory(lockRoot, "identity lock root");
     const key = createHash("sha256").update(`${root}\0${planId}`).digest("hex");
     const lockPath = join(lockRoot, `${key}.lock`);
     const deadline = Date.now() + LOCK_WAIT_MS;
@@ -504,7 +908,7 @@ async function acquireLock(root, planId) {
         }
         await Bun.sleep(LOCK_RETRY_MS);
     }
-    throw new PlanArtifactError(`timed out waiting for plan identity lock: ${planId}`);
+    throw safeFailure(`timed out waiting for plan identity lock: ${planId}`);
 }
 
 async function releaseLock(lock) {
@@ -513,52 +917,321 @@ async function releaseLock(lock) {
     }
 }
 
+async function assertLockOwnership(lock) {
+    if ((await readSerialized(lock.ownerPath)) !== lock.owner) {
+        throw safeFailure("plan identity lock generation changed before transition");
+    }
+}
+
 async function synchronize(root, slug, source) {
-    const planId = `${source.datetime}_${slug}`;
+    const { planId } = source;
     const activePath = join(root, ".agents", "plans", `${planId}.md`);
     const archivePath = join(root, ".agents", "plans", "archive", `${planId}.md`);
-    const lock = await acquireLock(root, planId);
+    let lock;
     try {
-        const current = await readSource(source.contentFile);
-        if (current.datetime !== source.datetime) {
-            throw new PlanArtifactError("content identity changed while waiting for the plan identity lock");
+        lock = await acquireLock(root, planId);
+    } catch (error) {
+        throw operationError(
+            "PLAN_LOCK_UNAVAILABLE",
+            planId,
+            "lock-unavailable",
+            "none",
+            "none",
+            safeDiagnosticReason(error, "identity lock storage is unavailable")
+        );
+    }
+
+    let temporaryPath;
+    let generationPath;
+    let effectStarted = false;
+    try {
+        let lockedSource;
+        try {
+            lockedSource = await readRegularBytes(source.contentFile, source.binding);
+        } catch (error) {
+            throw operationError(
+                "PLAN_SOURCE_STALE",
+                planId,
+                "source-unreadable",
+                "none",
+                "none",
+                safeDiagnosticReason(error, "source path could not be re-read safely")
+            );
         }
-        const activeExists = await targetExistsAndIsRegular(activePath);
-        const archiveExists = await targetExistsAndIsRegular(archivePath);
-        if (activeExists && archiveExists) {
-            throw new PlanArtifactError("active and archived targets both exist for this plan identity");
-        }
-        if (archiveExists) {
-            await atomicReplace(archivePath, current.bytes);
-            await assertExactTarget(archivePath, current.bytes);
-            if (!(await targetIsAbsent(activePath))) {
-                throw new PlanArtifactError("active target appeared while updating the archived plan identity");
-            }
-            await assertSourceUnchanged(source.contentFile, current);
-            return `plan-artifact-already-archived: ${relative(root, archivePath)}`;
+        if (!lockedSource.bytes.equals(source.bytes)) {
+            throw operationError(
+                "PLAN_SOURCE_STALE",
+                planId,
+                "source-changed-under-lock",
+                "none",
+                "none",
+                "source bytes changed while waiting for the identity lock"
+            );
         }
 
-        await atomicReplace(activePath, current.bytes);
-        if (!terminalLifecycleComplete(current.source)) {
-            await assertExactTarget(activePath, current.bytes);
-            if (!(await targetIsAbsent(archivePath))) {
-                throw new PlanArtifactError("archived target appeared while synchronizing the active plan identity");
+        try {
+            await ensureDirectory(join(root, ".agents"), "repository metadata directory");
+            await ensureDirectory(join(root, ".agents", "plans"), "repository plan directory");
+            const archiveDirectoryStat = await lstatOrAbsent(dirname(archivePath));
+            if (
+                archiveDirectoryStat &&
+                (!archiveDirectoryStat.isDirectory() || archiveDirectoryStat.isSymbolicLink())
+            ) {
+                throw safeFailure("repository archive parent is not a regular non-symlink directory");
             }
-            await assertSourceUnchanged(source.contentFile, current);
-            return `plan-artifact-synced: ${relative(root, activePath)}`;
+        } catch (error) {
+            throw operationError(
+                "PLAN_FILE_KIND_UNSAFE",
+                planId,
+                "storage-unsafe",
+                ".agents/plans",
+                "none",
+                safeDiagnosticReason(error, "repository storage directories could not be established safely")
+            );
         }
-        await ensureDirectory(dirname(archivePath));
-        if (await targetExistsAndIsRegular(archivePath)) {
-            throw new PlanArtifactError("active and archived targets both exist for this plan identity");
+
+        const observed = await observeTargetState(root, activePath, archivePath, source);
+        if (observed.classification === "ambiguous") {
+            throw operationError(
+                "PLAN_PROJECTION_AMBIGUOUS",
+                planId,
+                "ambiguous",
+                "none",
+                "none",
+                "active and archived targets both exist for this plan identity"
+            );
         }
-        await rename(activePath, archivePath);
-        await assertExactTarget(archivePath, current.bytes);
-        if (!(await targetIsAbsent(activePath))) {
-            throw new PlanArtifactError("active target remained after terminal projection archival");
+        if (
+            observed.classification === "invalid:file-kind" ||
+            observed.classification === "invalid:unreadable"
+        ) {
+            throw operationError(
+                "PLAN_FILE_KIND_UNSAFE",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                observed.classification === "invalid:file-kind"
+                    ? "existing plan target must be a regular non-symlink file"
+                    : "existing plan target could not be read through its verified descriptor"
+            );
         }
-        await assertSourceUnchanged(source.contentFile, current);
-        return `plan-artifact-archived: ${relative(root, archivePath)}`;
+        if (observed.classification === "invalid:stale") {
+            throw operationError(
+                "PLAN_TARGET_STALE",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                "existing plan target changed while its descriptor was read"
+            );
+        }
+        if (observed.classification === "direct-authority") {
+            throw operationError(
+                "PLAN_AUTHORITY_CONFLICT",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                "local authority cannot replace a direct repository authority"
+            );
+        }
+        if (observed.classification === "unclassified") {
+            throw operationError(
+                "PLAN_AUTHORITY_UNCLASSIFIED",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                "existing target has no Authority kind and requires separate classification"
+            );
+        }
+        if (observed.classification === "invalid:identity") {
+            throw operationError(
+                "PLAN_IDENTITY_MISMATCH",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                "existing target Datetime does not match its exact repository identity"
+            );
+        }
+        if (observed.classification.startsWith("invalid:")) {
+            throw operationError(
+                "PLAN_HEADER_INVALID",
+                planId,
+                observed.classification,
+                observed.path,
+                "none",
+                "existing target header is invalid"
+            );
+        }
+
+        const terminal = terminalLifecycleComplete(source);
+        const targetPath = observed.location === "archive" ? archivePath : activePath;
+        if (terminal && observed.location !== "archive") {
+            try {
+                await ensureDirectory(dirname(archivePath), "repository archive directory");
+            } catch (error) {
+                throw operationError(
+                    "PLAN_FILE_KIND_UNSAFE",
+                    planId,
+                    "archive-directory-unsafe",
+                    ".agents/plans/archive",
+                    "none",
+                    safeDiagnosticReason(error, "repository archive directory could not be established safely")
+                );
+            }
+        }
+
+        const staged = await stageBytes(targetPath, source.bytes);
+        temporaryPath = staged.path;
+        generationPath = staged.generationPath;
+        let precommitSource;
+        try {
+            precommitSource = await readRegularBytes(source.contentFile, source.binding);
+        } catch (error) {
+            throw operationError(
+                "PLAN_SOURCE_STALE",
+                planId,
+                "source-unreadable-precommit",
+                "none",
+                "none",
+                    safeDiagnosticReason(error, "source path could not be re-read safely before publication")
+            );
+        }
+        if (!precommitSource.bytes.equals(source.bytes)) {
+            throw operationError(
+                "PLAN_SOURCE_STALE",
+                planId,
+                "source-changed-precommit",
+                "none",
+                "none",
+                "source bytes changed before publication"
+            );
+        }
+        await assertLockOwnership(lock);
+        const precommitTarget = await observeTargetState(root, activePath, archivePath, source);
+        if (!sameTargetObservation(observed, precommitTarget)) {
+            throw operationError(
+                "PLAN_TARGET_STALE",
+                planId,
+                "target-changed-precommit",
+                precommitTarget.path ?? "none",
+                "none",
+                "target path, kind, bytes, identity, or authority changed before publication"
+            );
+        }
+
+        if (observed.classification === "absent") {
+            await linkGenerationNoOverwrite(
+                staged.generationPath,
+                targetPath,
+                "target generation appeared at publication"
+            );
+        } else {
+            await rename(temporaryPath, targetPath);
+            temporaryPath = undefined;
+        }
+        effectStarted = true;
+        let expectedLocation = observed.location === "archive" ? "archive" : "active";
+        if (terminal && expectedLocation === "active") {
+            await assertLockOwnership(lock);
+            const terminalSource = await readRegularBytes(source.contentFile, source.binding);
+            const publishedActive = await observeOneTarget(root, activePath, source);
+            const emptyArchive = await observeOneTarget(root, archivePath, source);
+            if (
+                !terminalSource.bytes.equals(source.bytes) ||
+                publishedActive.classification !== "local-projection" ||
+                publishedActive.location !== undefined ||
+                publishedActive.path !== relative(root, activePath) ||
+                publishedActive.objectIdentity !== staged.objectIdentity ||
+                publishedActive.datetime !== source.datetime ||
+                publishedActive.authorityKind !== "local-authority" ||
+                !publishedActive.bytes?.equals(source.bytes) ||
+                emptyArchive.classification !== "absent"
+            ) {
+                throw safeFailure("terminal publication barrier failed");
+            }
+            await linkGenerationNoOverwrite(
+                staged.generationPath,
+                archivePath,
+                "terminal archive generation appeared at transition"
+            );
+            const archivedGeneration = await observeOneTarget(root, archivePath, source);
+            const removableActive = await observeOneTarget(root, activePath, source);
+            if (
+                archivedGeneration.classification !== "local-projection" ||
+                archivedGeneration.objectIdentity !== staged.objectIdentity ||
+                !archivedGeneration.bytes?.equals(source.bytes) ||
+                removableActive.classification !== "local-projection" ||
+                removableActive.objectIdentity !== staged.objectIdentity ||
+                !removableActive.bytes?.equals(source.bytes)
+            ) {
+                throw safeFailure("terminal generation changed at transition");
+            }
+            await rm(activePath);
+            expectedLocation = "archive";
+        }
+
+        const postcondition = await observeTargetState(root, activePath, archivePath, source);
+        const expectedPath = expectedLocation === "archive" ? relative(root, archivePath) : relative(root, activePath);
+        if (
+            postcondition.classification !== "local-projection" ||
+            postcondition.location !== expectedLocation ||
+            postcondition.path !== expectedPath ||
+            !postcondition.bytes?.equals(source.bytes)
+        ) {
+            throw safeFailure("target changed after publication");
+        }
+        const finalSource = await readRegularBytes(source.contentFile, source.binding);
+        if (!finalSource.bytes.equals(source.bytes)) {
+            throw safeFailure("source changed after publication");
+        }
+        const confirmedTarget = await observeTargetState(root, activePath, archivePath, source);
+        if (
+            confirmedTarget.classification !== "local-projection" ||
+            confirmedTarget.location !== expectedLocation ||
+            confirmedTarget.path !== expectedPath ||
+            !confirmedTarget.bytes?.equals(source.bytes)
+        ) {
+            throw safeFailure("target changed after publication");
+        }
+        const confirmedSource = await readRegularBytes(source.contentFile, source.binding);
+        if (!confirmedSource.bytes.equals(source.bytes)) {
+            throw safeFailure("source changed after publication");
+        }
+
+        if (observed.location === "archive") {
+            return `plan-artifact-already-archived: ${relative(root, archivePath)}`;
+        }
+        if (expectedLocation === "archive") {
+            return `plan-artifact-archived: ${relative(root, archivePath)}`;
+        }
+        return `plan-artifact-synced: ${relative(root, activePath)}`;
+    } catch (error) {
+        if (effectStarted) {
+            throw operationError(
+                "PLAN_POSTCONDITION_FAILED",
+                planId,
+                "postcondition-uncertain",
+                "none",
+                "possible-complete",
+                safeDiagnosticReason(error, "publication postcondition could not be established")
+            );
+        }
+        if (error instanceof PlanArtifactError) throw error;
+        throw operationError(
+            "PLAN_TARGET_STALE",
+            planId,
+            "precommit-failed",
+            "none",
+            "none",
+            safeDiagnosticReason(error, "precommit state could not be established safely")
+        );
     } finally {
+        if (temporaryPath) await rm(temporaryPath, { force: true }).catch(() => {});
+        if (generationPath) await rm(generationPath, { force: true }).catch(() => {});
         await releaseLock(lock);
     }
 }
@@ -566,26 +1239,51 @@ async function synchronize(root, slug, source) {
 async function main() {
     const { slug, contentFile } = parseArguments(process.argv.slice(2));
     if (basename(contentFile) !== `${slug}-plan.md`) {
-        throw new PlanArtifactError(
+        throw operationError(
+            "PLAN_IDENTITY_MISMATCH",
+            slug,
+            "source-basename-mismatch",
+            "none",
+            "none",
             `content file identity must match slug '${slug}': expected ${slug}-plan.md`
         );
     }
-    const root = await realpath(process.cwd());
-    await ensureDirectory(join(root, ".agents"));
-    await ensureDirectory(join(root, ".agents", "plans"));
-    const source = { contentFile, ...(await readSource(contentFile)) };
+    let root;
+    try {
+        root = await realpath(process.cwd());
+    } catch {
+        throw operationError(
+            "PLAN_FILE_KIND_UNSAFE",
+            slug,
+            "repository-root-unavailable",
+            "none",
+            "none",
+            "repository root could not be established safely"
+        );
+    }
+    const source = await readSource(contentFile, slug, sourceBindingFromEnvironment());
     console.log(await synchronize(root, slug, source));
 }
 
-export { publishLockRecord };
+export {
+    linkGenerationNoOverwrite,
+    publishLockRecord,
+    readVerifiedTargetDescriptor,
+    releaseLock,
+};
 
 if (import.meta.main) {
     main().catch((error) => {
         if (error instanceof PlanArtifactError) {
-            console.error(`ERROR: ${error.message}`);
+            if (error.diagnostic) {
+                const { kind, plan, state, path, effect } = error.diagnostic;
+                console.error(`ERROR: ${kind}: plan=${plan} state=${state} path=${path} effect=${effect}: ${error.message}`);
+            } else {
+                console.error(`ERROR: ${error.message}`);
+            }
             process.exit(error.exitCode);
         }
-        console.error(`ERROR: ${error?.message ?? String(error)}`);
+        console.error("ERROR: operation failed before a stable diagnostic was available");
         process.exit(1);
     });
 }

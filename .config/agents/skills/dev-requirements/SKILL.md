@@ -28,7 +28,7 @@ Do not decide customers, market, positioning, pricing, business model, roadmap, 
 PRODUCT AUTHORITY REQUIRED
 Unresolved decisions: <specific product questions>
 Current safe evidence: <artifact/evidence references>
-Next owner: <human product owner or future product flow>
+Next owner: <human product owner or product-ask>
 Resume input: <approved product brief/PRD revision or explicit settled decision>
 ```
 

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal state-trace simulation over supplied completed evidence; do not inspect files or perform actions. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-DETERMINISTIC-FAIL-1 is backend-frozen. Its exact settled source evidence still matches revision, environment, expectation, and proof, so reuse it; run the independent adjacent baseline fresh. After the smallest guidance update, the frozen source rerun fails stably while the adjacent rerun passes. Current destination bytes still match exactly the curator delta, so restore only that delta and confirm both frozen cases against the restored destination. Return NO DURABLE LEARNING with the safe restoration and all baseline/post-restoration evidence in Validation. Use no separate evaluator, do not overwrite concurrent work, and do not return CURATED."
+  },
+  "scripted_replies": []
+}

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: a broad global CURATED result does not name originating pc-0123456789abcdef and concerns another rule. Treat the papercut as open, perform no settlement call, and preserve both originating and unrelated records."
+  },
+  "scripted_replies": []
+}

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal-evidence snapshot simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: frozen evaluation for originating pc-0123456789abcdef fails deterministically, the exact curator delta is safely restored, and candidate-specific NO DURABLE LEARNING is final. The curator returns date 2026-08-12, reference OUT-CURATION-REJECT-1, and summary. Map rejected, settle once, and leave unrelated IDs unchanged."
+  },
+  "scripted_replies": []
+}

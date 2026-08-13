@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The approved compact prospective route contained a conditional dev-continual-learning branch. Final verification and review passed, the post-review screen checked every qualifying trigger class and found none, and the backend recorded compact curation not triggered as terminal evidence. Present completion without dispatch or approval. The exact completed Route must resolve to dev-implementation → dev-verification → dev-code-review → dev-ask completion presentation and must not claim that dev-continual-learning ran. Include Result and Verification; omit Risks and Next because no material residual risk or user action remains."
+    "request": "The approved compact prospective route contained a conditional dev-continual-learning branch. Final verification and review passed, the post-review screen checked every qualifying trigger class and found none, and the backend recorded compact curation not triggered as terminal evidence. Present completion without dispatch or approval. Under Route, render exactly four numbered items in order: dev-implementation; dev-verification; dev-code-review; dev-ask completion presentation. Use one owner or terminal segment per line, never an inline arrow chain, table, or unordered list, and do not claim that dev-continual-learning ran. Include Result and Verification; omit Risks and Next because no material residual risk or user action remains."
   },
   "scripted_replies": []
 }

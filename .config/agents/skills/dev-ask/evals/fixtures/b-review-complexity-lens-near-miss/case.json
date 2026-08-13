@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only state-trace simulation for exact VERIFIED target target-sha256:d22c02 under standard assurance with a reviewer distinct from the verifier. The target contains an apparently duplicate legacy adapter, but approved compatibility authority SPEC-COMPAT-R1 and AC-COMPAT-01 require that adapter, and verification proves the supported legacy caller fails if it is deleted, reused through the new helper, or shrunk. In the sole final Standards and Specification pass, do not create a complexity finding from that required code. Return Standards PASS, Specification PASS, Overall APPROVED and one existing Review Handoff with no blocking findings or advisories. Emit the complete accepted through verified trace, one dev-code-review reviewing event, and reviewed; stop before curation. Add no second pass, Handoff, schema, metric, delivery wording, or reviewer edit."
+  },
+  "scripted_replies": []
+}

@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The initially approved route named terminal presentation. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, required learning result, and residual risk are accounted with no remaining work. Present completion without a new dispatch or approval. Include the exact completed Route, then Result and Verification; no material residual risk or user action remains, so omit Risks and Next. Omit internal artifact and gate mechanics."
+    "request": "The initially approved standard route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and dev-ask completion presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, required learning result, and residual risk are accounted with no remaining work. Present completion without a new dispatch or approval. Render the exact five completed owners/terminal segment under Route as a numbered ordered list with one per line, never as an inline arrow chain, table, or unordered list; then include Result and Verification. No material residual risk or user action remains, so omit Risks and Next, internal artifact inventory, and gate mechanics."
   },
   "scripted_replies": []
 }

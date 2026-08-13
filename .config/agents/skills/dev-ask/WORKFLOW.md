@@ -6,20 +6,47 @@ This workflow carries a current engineering request or approved product authorit
 
 Common routes are:
 
-- sufficient current evidence → direct read-only answer;
-- explicit raw external issue or pull-request intake → `dev-triage` → route recomputation;
-- incomplete observable behavior or acceptance under settled product authority → `dev-requirements`;
-- a candidate plan, hypothesis, or design requested for refinement → `grill-with-docs` when repository evidence is decision-bearing, otherwise `grill-me`;
-- settled direct authority or a known/routine fix → `dev-implementation`;
-- durable technical decisions → `dev-specification`, then `dev-ticketing` only when graph/recovery, multiple owners, or fan-in warrants it;
-- a hard unexplained reproducible defect → `dev-diagnosing-bugs`;
-- genuine multi-context route fog → `wayfinder` → `dev-ask` recomputation; and
-- separately authorized delivery → `dev-shipping`.
+- sufficient current evidence is answered directly;
+- explicit raw external issue or pull-request intake uses `dev-triage` before route recomputation;
+- incomplete observable behavior or acceptance under settled product authority starts with `dev-requirements`;
+- a candidate plan, hypothesis, or design requested for refinement starts with `grill-with-docs` when repository evidence is decision-bearing, otherwise `grill-me`;
+- settled direct authority or a known/routine fix starts with `dev-implementation`;
+- durable technical decisions start with `dev-specification`, then use `dev-ticketing` only when graph/recovery, multiple owners, or fan-in warrants it;
+- a hard unexplained reproducible defect starts with `dev-diagnosing-bugs`;
+- genuine multi-context route fog starts with `wayfinder` and returns to `dev-ask` for recomputation; and
+- separately authorized delivery uses `dev-shipping`.
 
 Initial route approval authorizes the named prospective route. Downstream artifacts do not create approval gates merely because they exist: requirements request confirmation only for synthesized or materially clarified human-owned behavior; specifications and ticket graphs continue automatically when they faithfully derive current authority; grilling ends with confirmation of shared decision evidence. Reapprove only for a material change in authority, route, scope, acceptance, topology/independence, effects, shipping, shared assumptions, or equivalent capability. `bro` remains an exact-name manual response rewrite, never an automatic route.
 
 
 Durable workflow decisions and supersession links are indexed in [`docs/adr/INDEX.md`](../../../../docs/adr/INDEX.md); active ADRs carry rationale and rejected alternatives, superseded or rejected records are history rather than executable authority, and this file remains the concise current-behavior reference.
+
+### Generic decision authority
+
+| Concern | Authority |
+|---|---|
+| Routing, approval, human/effect boundaries, ownership, cutover, presentation, grilling/triage classification | ADR-0001: D01, D02, D05, D10–D20 |
+| Executor plans, orchestration, todo projection, worker discipline | ADR-0002: D06, D08, D09, D21 |
+| Assurance, review, repair, complexity lens | ADR-0003: D03, D04, D22 |
+| Discovery, continual learning, decision provenance | ADR-0004: D07, D23 |
+
+### Stage/surface decision authority
+
+| Stage/surface | Decision units |
+|---|---|
+| `dev-ask` route/approval/presentation | D02, D10–D15, D18–D20 |
+| `dev-triage` | D17, D20 |
+| grilling skills/adapters | D05, D16, D20 |
+| other authority/decision owners | D02, D10, D12, D15, D20 |
+| `dev-implementation` | D03, D04, D06, D08, D09, D21 |
+| `dev-verification`, `dev-integration` | D03, D04 |
+| `dev-code-review` | D03, D04, D22 |
+| `dev-handoff` | D03, D08, D15, D22 |
+| `dev-continual-learning` | D07, D23 |
+| `dev-shipping` | D12, D14 |
+| WORKFLOW/ADR discovery | D01, D13, D15, D23 |
+
+These maps cover the four ACTIVE generic workflow ADRs. ACTIVE ADR-0005 remains separate product-workflow authority; the index remains the per-ID title, scope, status, and supersession registry.
 
 ## Engine reference
 
@@ -30,7 +57,7 @@ Classification uses current intent, authority, evidence, consequence, lifecycle 
 | Current evidence fully answers a read-only question | Direct answer | Grilling, requirements, implementation | Evidence-backed answer; no approval |
 | One bounded factual engineering question needs new evidence | `dev-research` | Product decisions or planning by research | Research Evidence to exactly one requesting owner |
 | Raw external issue or pull-request intake is explicitly requested | `dev-triage` | Mandatory triage for project-authored tickets or plans; immediate implementation | Category/state, evidence, optional agent-ready brief, and one state-mapped Common Handoff; `ready-for-agent` returns to `dev-ask` for route composition and `wontfix` returns to `dev-ask` for terminal presentation; tracker mutations require exact external-effect approval |
-| Product behavior, priority, or strategy authority is missing | Human product owner | Requirements, specification, or research deciding policy | `PRODUCT AUTHORITY REQUIRED` |
+| Product behavior, priority, or strategy authority is missing | Human product owner, or `product-ask` when the user explicitly requests the product-development workflow | Requirements, specification, research, or engineering grilling deciding product policy | Approved product authority returned to `dev-ask`, or `PRODUCT AUTHORITY REQUIRED` |
 | Product authority exists but observable behavior, scope, constraints, or acceptance are incomplete and no candidate is being refined | `dev-requirements` | Grilling by default; implementation | Current requirements with confirmation only for synthesized/materially clarified human-owned behavior, then unchanged route continuation |
 | A candidate approach, hypothesis, plan, or design direction is unsettled and the user asks to refine, challenge, compare, or validate it | `grill-with-docs` with decision-bearing repository evidence; otherwise `grill-me` | Factual lookup, missing-requirements intake, settled edits | User-confirmed immutable decision evidence and Handoff to one requesting owner |
 | A hard unexplained reproducible bug or performance regression has settled expected behavior | `dev-diagnosing-bugs` | Feature work, known cause, routine proof failure | One fix contract, blocker, or architecture finding |
@@ -48,11 +75,13 @@ Each procedure has one owner: `dev-ask` classifies and approves; triage qualifie
 
 A semantic pass advances only when it implements or proves a named acceptance criterion, resolves a named blocker, changes approved authority, scope, acceptance, topology, effects, route, or next owner through authorized decision evidence, or materially changes an authorized diagnostic hypothesis/evidence frontier. A terminal budget-consuming blocker is a bounded stop. Planning prose, another audit or review, elapsed time, agent/artifact count, an unchanged Handoff, or a repeated hypothesis is not progress and cannot authorize another attempt or wave.
 
-Approval is required before dispatchable or executable work. Present exactly five compact sections: `Goal`, `Route`, `Plan`, `Safety`, and `Approval`; ask for **approve**. Do not expose a separate why, artifact inventory, gate list, execution mode, first action, target hash, or internal mechanics unless it changes the user's decision.
+Approval is required before dispatchable or executable work. Present exactly five compact sections: `Goal`, `Route`, `Plan`, `Safety`, and `Approval`; ask for **approve**. The human-facing `Route` is a numbered ordered list with one exact owner or terminal-presentation segment per line, never an inline arrow chain, route table, or unordered list. Do not expose a separate why, artifact inventory, gate list, execution mode, first action, target hash, or internal mechanics unless it changes the user's decision.
+
+After the full catalog is evaluated, show one recommended route when the evidence settles it. Ask exactly one bounded gating question only when one unknown fact changes the first owner; multiple unresolved facts go to the existing authority owner. Show two or three labeled ordered candidate lists only for materially valid routes separated by a user-owned trade-off, mark one `Recommended`, ask one selection question, and withhold approval and dispatch until selection. Grilling remains limited to explicit candidate, plan, hypothesis, or design refinement; direct answer, research, requirements, diagnosis, and implementation keep their existing near-miss ownership.
 
 Immediately before dispatch, reread load-bearing artifact and capability identities. Digest drift triggers semantic comparison, not automatic reapproval: only changed load-bearing route facts invalidate approval, while unrelated bytes remain non-material even in the same target file.
 
-Terminal presentation uses the exact completed `Route`, then `Result` and only relevant `Verification`, `Risks`, or `Next` H2 sections. It never repeats internal artifact inventory, gate mechanics, or an approval request.
+Terminal presentation uses the exact completed `Route` in the same numbered one-owner-per-line list, omits untriggered conditional stages, then includes `Result` and only relevant `Verification`, `Risks`, or `Next` H2 sections. It never repeats internal artifact inventory, gate mechanics, or an approval request.
 
 When current facts determine an implementation lifecycle, compose the prospective tail by assurance profile. Standard and high-consequence use `dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation`; compact uses `dev-implementation → dev-verification → dev-code-review → [dev-continual-learning only if the post-review trigger screen qualifies] → dev-ask completion presentation`. Insert `dev-integration → dev-verification` only after at least two exact isolated lineages are independently verified and require neutral fan-in. Prepend only actually required authority, decision, research, diagnosis, prototype, specification, ticketing, survey, or Wayfinder work. Terminal presentation resolves the approved conditional branch to the exact completed skill route and omits an untriggered learning stage. Dispatch exactly one immediate owner.
 
@@ -65,9 +94,13 @@ The todo view is a deterministic, non-authoritative projection of equivalent rou
 
 `dev-ask` selects the route and dispatches one first owner. `dev-implementation` is the single execution backend for every semantic stage. It validates intake, binds a Task Contract and Context Pack when needed, chooses topology, records attempts/runtime state, and validates one common Handoff per stage. `dev-triage`, `dev-requirements`, `dev-grilling`, `dev-diagnosing-bugs`, `dev-specification`, `dev-ticketing`, `dev-prototype`, `dev-research`, `dev-verification`, `dev-integration`, `dev-code-review`, `dev-continual-learning`, and `dev-shipping` remain semantic procedure owners, never alternate backends. Backend state projects deterministically into the four phases above; triage states map into `Authority / Design` readiness and never create another phase. Stage returns continue to the exact named receiver and do not loop through `dev-ask` when the route remains unchanged.
 
-Diagnosis is for one hard unexplained defect, never a routine known-cause repair or unchanged re-entry. Every task and semantic attempt receives exact-revision worker smoke. Fresh independent verification occurs at declared consumable isolated-lineage, integrated, final single-lineage, and explicit high-consequence boundaries—not between sequential tasks merely because another task follows. Integration accepts all and only exact verified isolated lineages and never chooses a semantic winner. Review receives only the exact final verified target, runs once, and never repairs.
+Every implementation-worker Task Contract and its exact Context Pack bind the ordered solution discipline: inspect the real changed flow, callers, and existing helpers; select the first sufficient rung among reuse current code, standard library, native platform, already-installed dependency, and minimum new code; preserve the full contract and proof; and record inspected surfaces, the selected rung, every earlier-rung disposition, and the root-cause change in the existing worker Handoff. A missing binding keeps the task non-ready, and missing evidence makes the Handoff non-consumable.
+
+Diagnosis is for one hard unexplained defect, never a routine known-cause repair or unchanged re-entry. Every task and semantic attempt receives exact-revision worker smoke. Fresh independent verification occurs at declared consumable isolated-lineage, integrated, final single-lineage, and explicit high-consequence boundaries—not between sequential tasks merely because another task follows. Integration accepts all and only exact verified isolated lineages and never chooses a semantic winner. Review receives only the exact final verified target and runs the sole Standards and Specification pass without repair. Its Standards lens uses one primary `delete|reuse|stdlib|native|yagni|shrink` tag on each evidence-backed simplicity finding, retains existing blocking/advisory severity, and carries the tag plus a concrete contract-preserving replacement in the existing Review Handoff; it adds no stage, schema, verdict, repair authority, metric, or shipping signal.
 
 The parent outcome inherits at most one post-assurance repair token. Aggregate every available blocking criterion or finding once; authorize one consolidated owner repair only when the token is unused; rerun impacted smoke and proof, then the first eligible review or sole review rerun. A remaining blocker, inconclusive proof, repeated frontier, unchanged hypothesis, exhausted three-attempt task budget, consumed repair token, or consumed review rerun stops without a second repair, fourth attempt, diagnosis re-entry, planning reset, or lifecycle reset.
+
+Any Learning Candidate that may mutate guidance carries a reporter-owned, non-authoritative evaluation proposal. Before curator dispatch, `dev-implementation` validates and freezes its exact source case, independent adjacent case, expectations, proof mode, and canonical digest in the existing Task Contract/Context Pack seam. The curator cannot rewrite that bar: deterministic proof needs no second evaluator, semantic proof needs one fresh read-only non-curator result, and incomplete, stale, tampered, flaky, inconclusive, or unsafe-restoration evidence blocks mutation without adding a lifecycle stage, outcome, payload field, or Handoff.
 
 Standard assurance ends with one neutral affected-artifact learning assessment; compact dispatches learning only after its qualifying trigger screen; Deep maintenance requires explicit human authority or settled recurring, cross-contract, stale/conflicting-canonical, or severe-systemic evidence and is a separate route by default. Counts, calendars, background mining, and user-level mutation never trigger it. Shipping is never part of local completion and requires separate exact human authorization.
 

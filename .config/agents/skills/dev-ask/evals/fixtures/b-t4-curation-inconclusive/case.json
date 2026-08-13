@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-INCONCLUSIVE-1 is backend-frozen, but the post-mutation adjacent check cannot establish the frozen observable because its required capability is unavailable. Return BLOCKED with the inconclusive proof and exact capability-bound resume condition. Do not infer a pass, weaken or replace the tuple, return CURATED, or silently substitute another proof method."
+  },
+  "scripted_replies": []
+}

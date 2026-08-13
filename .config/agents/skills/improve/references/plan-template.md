@@ -1,6 +1,6 @@
 # Improvement Plan
 
-Read `.config/agents/rules/plan.md` and `.config/agents/rules/plan-repo-storage.md` first. `plan.md` owns the core lifecycle and content metadata (`Datetime`/`Scope`/`Summary`/`Status`), `## Tasks` checkbox rules, stable task reference codes, completion timestamps, and Completion Summary. `plan-repo-storage.md` owns filenames, active/archive locations, and archive mechanics. This template adds `/improve`-specific `Mode` plus proportional standard/deep plan shapes.
+Read `.config/agents/rules/plan.md` and `.config/agents/rules/plan-repo-storage.md` first. `plan.md` owns the core lifecycle and canonical content metadata (`Datetime`/`Authority kind`/optional `Mode`/`Scope`/`Summary`/`Status`), `## Tasks` checkbox rules, stable task reference codes, completion timestamps, and Completion Summary. `plan-repo-storage.md` owns filenames, active/archive locations, and archive mechanics. `/improve` writes its plan directly to the repository, so this template emits exact `Authority kind: direct-repository` bytes followed by `/improve`-specific `Mode`.
 
 When used by `/improve`, the `<slug>` must follow `IMPROVE_<mode-or-params>` (e.g. `2026-06-14-1530_IMPROVE_deep.md`, `..._IMPROVE_security.md`, `..._IMPROVE_standard`). Use `date +%Y-%m-%d-%H%M` for the prefix.
 
@@ -22,6 +22,7 @@ Use this shape for default `/improve` unless the audit finds broad or risky work
 # Improvement Plan: <imperative title of what will be true>
 
 **Datetime**: <YYYY-MM-DD-HHMM>
+**Authority kind**: direct-repository
 **Mode**: standard
 **Scope**: <bounded area of work>
 **Summary**: <1-2 sentences on the main opportunity and outcome>
@@ -115,6 +116,6 @@ Use these sections for `/improve deep`, larger refactors, migrations, security w
 - Every task has enough file/path detail to act without re-discovering the whole problem.
 - Verification is concrete and targeted.
 - STOP conditions are plan-specific risks, not boilerplate.
-- The plan follows `plan.md` for header metadata, stable task reference codes, `## Tasks`, completion timestamps, and Completion Summary; `plan-repo-storage.md` owns its repository identity and archive lifecycle.
+- The plan follows `plan.md` for the exact `Datetime → Authority kind: direct-repository → Mode → Scope → Summary → Status` header, stable task reference codes, `## Tasks`, completion timestamps, and Completion Summary; `plan-repo-storage.md` owns its repository identity and archive lifecycle.
 - The plan is proportional: small standard plans stay short; deep plans carry enough detail to avoid unsafe guessing.
 - No secret material.

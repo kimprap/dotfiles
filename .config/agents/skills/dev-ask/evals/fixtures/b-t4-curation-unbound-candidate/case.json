@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: a reporter supplies a Learning Candidate that may mutate project guidance but omits its Evaluation proposal. The backend must reject curator readiness before any write, return BLOCKED with the exact missing reporter proposal and resume condition, and preserve the candidate as evidence only. Do not let the curator invent or bind a tuple, mutate guidance, or return CURATED."
+  },
+  "scripted_replies": []
+}

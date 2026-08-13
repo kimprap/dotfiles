@@ -1,85 +1,64 @@
 ---
-description: Use whenever creating, revising, executing, or completing a durable execution plan, including repository plans and harness-managed plan artifacts.
+description: Apply when creating, revising, executing, or completing a durable execution plan, whether repository- or harness-managed.
 ---
 
 # Execution plan contract
 
-Apply this contract to any durable execution plan, regardless of where or how it is stored. This includes repository files, harness- or session-local artifacts, and handoffs intended for later execution.
+Apply this portable contract to durable repository plans, harness/session artifacts, and handoffs intended for later execution. Skip informal suggestions, conversational checklists, non-execution meanings of “plan,” and read-only summaries of archived plans.
 
-Skip this contract for informal suggestions, conversational checklists, subscription or pricing plans, database query plans, and read-only summaries of archived plans.
+## Ownership and transport
 
-## Transport precedence
+- A harness-assigned path changes only storage and naming; this content and lifecycle contract still applies.
+- Update the authoritative artifact. Copies, forks, and repository projections preserve its complete header and never become authority merely through presence or equality.
+- Implementation-body, repository-storage, and harness-transport companions own their specialized mechanics; do not duplicate them here.
 
-- A harness-assigned artifact path or filename overrides only storage and naming conventions. The metadata, task, verification, and status lifecycle below still applies.
-- Harness copies and forks preserve the complete header metadata block. Execution and later overrides update that authoritative harness artifact; its repository projection never becomes authority.
-- Keep repository identity, location, byte-exact projection, and archive mechanics in a repository storage companion rather than this portable contract.
-
-## Required content
+## Required structure
 
 ### Header metadata
 
-Place these fields immediately after the H1 and before the first `##` section:
+Place one contiguous block immediately after the H1 and before the first H2, in this order:
 
 ```markdown
 **Datetime**: <YYYY-MM-DD-HHMM>
+**Authority kind**: <local-authority|direct-repository>
+**Mode**: <optional nonempty canonical value>
 **Scope**: <bounded area of work>
 **Summary**: <one or two sentences describing the intended outcome>
 **Status**: PENDING
 ```
 
-- Start every new plan at `PENDING`.
-- `Datetime` is immutable plan-identity metadata after creation, including in harness copies and forks.
-- Approval alone does not change status.
-- Change status to `IN_PROGRESS` when execution of `T1` begins.
-- Use `CLOSED` only when the user explicitly cancels the plan.
+- Omit `Mode` when unused; no other field may occupy this block. Use exact `**Field**: value` spelling with nonempty, unpadded values.
+- Input is nonempty strict UTF-8 without a BOM. The complete bytes, including line endings and final-newline presence, define the revision; do not normalize them.
+- `Authority kind` records provenance, not approval: `local-authority` means the harness/session artifact is authoritative; `direct-repository` means the exact repository plan path is authoritative. The transport selects it from actual storage, never provider or context.
+- `Datetime` and `Authority kind` are immutable. Never infer, add, switch, adopt, or promote them during editing or synchronization. Unmarked plans fail closed until separately migrated per identity and freshly approved.
+- Start at `PENDING`; change to `IN_PROGRESS` when `T1` starts. Approval alone never changes status. Use `CLOSED` only for explicit user cancellation.
 
-### Tasks and execution order
+### Tasks
 
-- Include a `## Tasks` checklist as the canonical execution order.
-- Give every task a stable monotonic code: `T1`, `T2`, and so on.
-- Create tasks as unchecked Markdown checkboxes: `- [ ] T1. Task description`.
-- Keep task codes and historical outcomes stable. When a task completes, check it and add an indented `completed <YYYY-MM-DD-HHMM>` line immediately below it.
-- When detailed execution sections are present, map them one-to-one to the task codes and preserve the same order.
+- `## Tasks` is the canonical execution order.
+- Use stable monotonic codes and unchecked boxes: `- [ ] T1. Task description`.
+- Keep codes and historical outcomes stable. On completion, check the task and add an indented `completed <YYYY-MM-DD-HHMM>` line immediately below it.
+- Detailed execution sections, when present, map one-to-one to task codes in the same order.
 
 ### Verification and completion
 
-- Include `## Verification / Done criteria` with objective checks or observable behavior.
-- Leave each criterion unchecked until it has actually been observed.
-- Do not complete the final task until every required verification criterion passes.
-- Set `Status: DONE` only after every task is checked with a completion timestamp and a concise `## Completion Summary` has been appended at the end.
-- In the Completion Summary, record material findings, decisions, delivered behavior, residual risks, and later user overrides. Append later overrides without changing identity or rewriting historical task outcomes.
+- Include `## Verification / Done criteria` with objective, observable checks; check a criterion only after observing it.
+- Do not complete the final task until every required criterion passes.
+- Set `Status: DONE` only when every task is checked and timestamped and a nonempty final `## Completion Summary` records material findings, decisions, delivered behavior, and residual risks.
+- Append later user overrides to the Completion Summary without changing plan identity or rewriting historical outcomes.
 
-## Proportionality and decision completeness
+## Plan quality
 
-Plans are execution contracts, not transcripts. Include only the context, anchors, sequencing, decisions, and verification a fresh executor needs. Scale detail with risk and scope, prefer concise references over copied source, and leave no material implementation choice for the executor to invent.
+Plans are execution contracts, not transcripts. Include only the context, anchors, sequence, decisions, and proof a fresh executor needs. Scale detail with risk, reference canonical authority instead of copying it, and leave no material implementation choice unresolved. Apply the implementation-plan companion only when a later executor needs implementation-grade detail.
 
-Use an implementation-plan companion when a later executor needs implementation-grade detail. Keep specialized body requirements outside this base.
+## Approval and execution boundary
+
+- A plan records authority but cannot approve itself. At every new or resumed start, native harness review remains the sole plan-execution approval authority and binds the exact authority identity/URI, complete bytes and SHA-256 revision, current status, and explicit human approval. Missing or stale approval, changed identity/bytes, or `DONE`/`CLOSED` status stops execution.
+- Executor Plans use the shared production `executor_plan.py`: planner validation proves structure only; backend readiness requires a fresh `executor-plan-preflight/v1` `eligible` result for the transport-bound current locators, with valid nested structure and one digest matching both current authority bytes and the unchanged native-approved revision. Missing locator mapping or a no-locator backend call keeps all tasks non-ready.
+- Storage adapters supply exact locators only. They never supply role, authority outcome, approval, a second parser, or an alternate ready transition. Preflight itself accepts no approval or caller-asserted role.
+- New or revised executable plans must not contain the obsolete `## Execution gate`. Revise active old-contract plans under their own authority; do not rewrite immutable historical plans or add compatibility aliases.
+- Plan approval authorizes only plan execution. Repository, shared configuration, delivery, profile, vault, instance, shipping, and other effects retain their own authority gates. Synchronization and archival are storage effects, never approval or readiness evidence.
 
 ## Activation checks
 
-Expected matches:
-
-- Creating a durable repository execution plan.
-- Revising a harness- or session-local plan artifact.
-- Executing tasks or completing the lifecycle of an existing plan.
-
-Near misses:
-
-- Comparing subscription or pricing plans.
-- Explaining a database query plan.
-- Giving informal conversational bullets with no durable artifact.
-- Reading or summarizing an archived plan without revising or executing it.
-
-## Native execution authority and transport separation
-
-At every new or resumed approved start, native harness review binds the exact authoritative identity and URI, the complete authoritative bytes and SHA-256 revision, the current lifecycle status, and the human's explicit approval of that exact presentation. Only an exact match permits execution. Missing approval, another identity or revision, changed bytes, and `DONE` or `CLOSED` status stop before plan-authorized work; a later resumed start requires a fresh review of the then-current bytes.
-
-A plan records authority but cannot approve itself, and a projection or synchronization receipt never supplies approval. A new or revised executable plan must not contain the obsolete `## Execution gate` section. Historical immutable plans remain untouched; an active old-contract plan must be explicitly revised under its own authority, with no compatibility alias.
-
-Native approval grants only plan-execution authority. Repository, shared-configuration, delivery, profile, vault, instance, source-observation, shipping, and other effects still require their own exact authority.
-
-Portable structural validation remains separate from transport. Executor Plans use the shared `executor_plan.py` validator before publication and backend mutation; ordinary durable plans use their applicable lifecycle and stage contracts. Storage adapters do not add another semantic parser or gate.
-
-An adapter may observe native approval metadata only when the harness exposes it through a documented runtime API. It must not infer approval from prompt prose, current-byte hashing, a projection, or a synchronization result. When approval metadata is not exposed, native OMP itself owns the stop; an adapter does not manufacture approval or denial.
-
-Synchronization and archival are storage effects only. They do not approve a plan, clear blockers, authorize execution, or replace current-authority checks.
+Use this rule when creating or changing a durable plan artifact, executing its tasks, or completing its lifecycle. Do not use it for pricing/subscription plans, database query plans, informal conversational bullets, or read-only archived-plan review.

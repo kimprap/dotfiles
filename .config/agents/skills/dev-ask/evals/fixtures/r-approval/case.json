@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The current route sends a bounded factual gap to dev-research with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections, with concise indented content and no Plan Summary, Why, Artifacts, Gates, Execution, or First action sections. The user replies approve. Record the immediately-pre-dispatch identity recheck as an explicit event."
+    "request": "The current route sends a bounded factual gap to dev-research and returns to dev-ask, with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections. Under Route, render a numbered ordered list with dev-research first and dev-ask second, one owner per line; never use an inline arrow chain, route table, or unordered list. Keep other content concise and indented, omit Plan Summary, Why, Artifacts, Gates, Execution, and First action sections, then after the user replies approve record the immediately-pre-dispatch identity recheck as an explicit event."
   },
   "scripted_replies": [
     "approve"

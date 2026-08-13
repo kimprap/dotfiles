@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "The desired behavior, acceptance, compatibility, failure behavior, architecture, and proof seams are settled. The only uncertainty is which solution-discipline rung the worker will select after reading the real flow; that fact cannot change the first owner. Present only the one recommended numbered Route, request approval, and after approve dispatch only dev-implementation without a gating question or route candidates."
+  },
+  "scripted_replies": [
+    "approve"
+  ]
+}
