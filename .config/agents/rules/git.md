@@ -1,6 +1,6 @@
 ---
-description: Use before running git-related commands, staging changes, committing, pushing, or writing commit messages.
-condition: "\\b(?:git\\s|dot-add\\b|dot\\s+(?:status|diff|add|commit|push|log|show|stash|branch))"
+description: Use before Git commands, staging, committing, pushing, or writing commit messages in any repository.
+condition: "\\bgit(?:\\s|$)"
 scope:
   - "tool:bash"
 interruptMode: "tool-only"
@@ -13,30 +13,31 @@ interruptMode: "tool-only"
 Use Conventional Commits:
 
 ```text
-type(scope): subject
+<type>[optional scope][!]: <description>
+
+[optional body]
+
+[optional footer(s)]
 ```
 
-- `type`: `feat`, `fix`, `refactor`, `style`, `test`, `docs`, or `chore`; use `build`, `ci`, or `perf` only when exact.
-- `scope`: affected subsystem when useful; omit when the change is broad or the scope would be noise.
-- `subject`: imperative, lowercase after the colon, no trailing period, <=72 chars.
-- Add a short body only when the why/impact is not obvious; do not use the body as a file list.
-- Mark breaking changes with `type(scope)!: subject` only when truly breaking.
+- `type`: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`.
+- `scope`: an affected subsystem in parentheses when useful; omit it when broad or noisy.
+- `description`: imperative, lowercase after the colon, no trailing period, and fewer than 72 characters.
+- Add a short body only when the reason or effect is not clear; do not use it as a file list.
+- Use `!`, a `BREAKING CHANGE: <description>` footer, or both only for a real breaking change.
+- Add issue trailers such as `Refs: #456` or `Closes: #123` only when applicable.
 
-Examples:
+Determine the message from the actual staged diff. Before committing, validate the literal first line against this format.
 
-```text
-feat(nvim): add codediff git view and diagnostic pickers
-fix(zsh): init brew PATH before starship
-chore(nvim): ignore nvim-pack-lock churn
-```
+## Safe Git workflow
 
-Before committing, explicitly check the first commit-message line against the format above. If using `-m`, validate the literal message before running `git commit`.
+1. Inspect status and the relevant diff before staging. If files are already staged, inspect that staged diff first.
+2. Stage only the intended paths through the repository's documented helper when one exists. Never broad-stage unrelated work.
+3. Keep one logical change per commit unless the user requests a batch commit.
+4. Run the targeted verification required by the repository or change. Do not suppress failures.
+5. Inspect the final staged diff for unrelated files, secrets, credentials, and machine-local or private configuration.
+6. Validate the final message, then commit.
 
-## Safe git workflow
+Do not change Git configuration, bypass hooks with `--no-verify`, or use destructive history operations without explicit user authorization. Do not stash, amend, rebase, reset, force-push, delete branches, or push unless explicitly requested. Never force-push a protected or default branch.
 
-- Inspect status and relevant diffs before staging or committing.
-- Stage only intended paths; prefer documented staging helpers, never broad-stage unrelated work.
-- Keep commits scoped to one logical change unless the user asks for a batch commit.
-- Before committing, inspect the staged diff and ensure it contains no secrets or machine-local/private config.
-- Run targeted verification when repo conventions or the change require it; do not suppress failures.
-- Do not stash, amend, rebase, reset, force-push, delete branches, or push unless explicitly requested.
+If a hook rejects a commit, fix the cause and run a new commit command. Do not bypass the hook or amend unrelated history.
