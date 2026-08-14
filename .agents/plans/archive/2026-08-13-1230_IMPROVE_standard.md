@@ -5,7 +5,7 @@
 **Mode**: standard
 **Scope**: Second-pass refinement of the five shared global plan rules changed in the current worktree
 **Summary**: Restore a few precision clauses lost during compression, correct one inaccurate storage-helper claim, and remove generic preflight duplication from the harness shims without changing ADR-0002 semantics or executable behavior.
-**Status**: PENDING
+**Status**: DONE
 
 ## Findings
 
@@ -32,31 +32,34 @@
 
 ## Tasks
 
-- [ ] T1. Restore precision in the shared base and companions
+- [x] T1. Restore precision in the shared base and companions
+  - completed 2026-08-13-1538
   - Keep every rule description-only; add no `alwaysApply`, TTSR condition, scope, or interrupt metadata.
   - Add one concise header-compatibility sentence to `plan.md`; do not restore parser implementation prose elsewhere.
   - In `plan-impl-spec.md`, clarify that plans project authority, require an explicit authority-backed `none` effect, make capability mismatch fail closed absent the approved downgrade, and use the exact repository-relative parser path.
   - In `plan-repo-storage.md`, distinguish the existing local projection helper from a protocol-conforming direct writer; preserve the five-step generation protocol unchanged.
-- [ ] T2. Reduce OMP and Grok transports to adapter-only policy
+- [x] T2. Reduce OMP and Grok transports to adapter-only policy
+  - completed 2026-08-13-1538
   - Reference the shared parser contract instead of repeating schema, digest, eligibility, and generic approval rules.
   - Retain each harness's exact `context`, presented-path, local-counterpart, and unavailable-mapping behavior.
   - Keep Grok's session/direct authority mapping and direct-writer boundary.
   - Keep OMP native review, `local://` lifecycle, automatic projection sync/archive, warning/effect handling, and orchestration attestation; remove repository-native instructions that contradict its local-only activation surface.
-- [ ] T3. Verify preservation, activation, and net reduction
+- [x] T3. Verify preservation, activation, and net reduction
+  - completed 2026-08-13-1613
   - Re-run targeted parser and projection tests, fresh-session rule discovery, and positive/near-miss activation checks.
   - Confirm all five frontmatter blocks contain only `description`, every load-bearing contract fragment remains, generic preflight duplication decreases, and combined bytes do not increase from 24,852.
   - Review only the five-rule diff; preserve unrelated work and update no ADR unless a semantic decision actually changes.
 
 ## Verification / Done criteria
 
-- [ ] `python3 .config/agents/skills/dev-implementation/scripts/test_executor_plan.py` exits 0 with 16 tests passing.
-- [ ] `bun test ./.config/agents/harnesses/omp/extensions/plan-artifact-sync.test.js` exits 0 with 48 tests passing.
-- [ ] A fresh `omp -p --no-session --tools=read` session resolves all five `rule://` names and sees the revised headings/contracts.
-- [ ] A durable OMP implementation-plan scenario selects `plan`, `plan-impl-spec`, `plan-omp-transport`, and `plan-repo-storage`; a SaaS subscription-plan comparison selects none.
-- [ ] Frontmatter validation reports exactly one nonempty `description` field per rule and no TTSR or always-apply metadata.
-- [ ] The combined five-rule size is at most 24,852 bytes and generic preflight semantics have one portable owner plus only adapter-specific bindings.
-- [ ] `git diff --check -- .config/agents/rules/plan.md .config/agents/rules/plan-impl-spec.md .config/agents/rules/plan-repo-storage.md .config/agents/rules/plan-grok-transport.md .config/agents/rules/plan-omp-transport.md` exits 0.
-- [ ] The final scoped diff changes only the five named rule files and preserves ADR-0002's portable-plan, authority, lifecycle, storage, OMP, and Grok decisions.
+- [x] `python3 .config/agents/skills/dev-implementation/scripts/test_executor_plan.py` exits 0 with 16 tests passing.
+- [x] `bun test ./.config/agents/harnesses/omp/extensions/plan-artifact-sync.test.js` exits 0 with 48 tests passing.
+- [x] A fresh `omp -p --no-session --tools=read` session resolves all five `rule://` names and sees the revised headings/contracts.
+- [x] A durable OMP implementation-plan scenario selects `plan`, `plan-impl-spec`, `plan-omp-transport`, and `plan-repo-storage`; a SaaS subscription-plan comparison selects none.
+- [x] Frontmatter validation reports exactly one nonempty `description` field per rule and no TTSR or always-apply metadata.
+- [x] The combined five-rule size is at most 24,852 bytes and generic preflight semantics have one portable owner plus only adapter-specific bindings.
+- [x] `git diff --check -- .config/agents/rules/plan.md .config/agents/rules/plan-impl-spec.md .config/agents/rules/plan-repo-storage.md .config/agents/rules/plan-grok-transport.md .config/agents/rules/plan-omp-transport.md` exits 0.
+- [x] The final scoped diff changes only the five named rule files and preserves ADR-0002's portable-plan, authority, lifecycle, storage, OMP, and Grok decisions.
 
 ## STOP conditions
 
@@ -64,3 +67,13 @@
 - A proposed cut removes unique authority, lifecycle, locator, generation, sync/archive, warning/effect, or capability semantics rather than duplicated explanation.
 - Evidence shows OMP's local transport currently owns repository-native direct-authority execution; resolve that contract before removing its direct-path clauses.
 - Correctness requires changing executable helpers, skills, workflow authority, or ADR-0002; stop and route that broader change separately.
+
+## Completion Summary
+
+- Restored exact LF/CRLF/mixed-line handling, residual-CR rejection, misplaced authority-marker rejection, authority-backed no-effect declarations, fail-closed orchestration capability handling, and the repository-relative shared parser path.
+- Centralized generic Executor Plan validation and readiness semantics in `plan-impl-spec.md`; Grok and OMP now retain only their transport-specific context, locator, authority, and failure bindings.
+- Corrected repository storage guidance: the existing helper is local-projection-only, while direct writers must implement the unchanged five-step generation protocol. OMP transport is consistently local-authority-only.
+- Targeted verification passed: executor-plan tests 16/16, plan-artifact synchronization tests 48/48, fresh OMP rule resolution and activation/near-miss smoke, description-only frontmatter, scoped diff check, and 24,307 combined rule bytes.
+- Independent verification `agent://PlanRuleVerifier2` returned `VERIFIED` at the exact five-file manifest. Final review `agent://PlanRuleReviewer` returned Standards `PASS`, Specification `PASS`, Overall `APPROVED`, with no blockers or advisories.
+- Terminal Standard assessment returned `NO DURABLE LEARNING`; no additional guidance mutation, papercut settlement, ADR, workflow, executable helper, staging, commit, or shipping effect was warranted.
+- Residual risk: live activation coverage used one fresh OMP run without a multi-run flake estimate; Grok transport behavior was verified structurally rather than through a live Grok execution.

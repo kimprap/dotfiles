@@ -1,9 +1,5 @@
 ---
-description: Use with the generic Git rule for staging or committing changes in this dotfiles repository.
-condition: "\\b(?:git(?:\\s|$)|dot-add\\b|dot\\s+(?:status|diff|add|commit|push|log|show|stash|branch))"
-scope:
-  - "tool:bash"
-interruptMode: "tool-only"
+description: Use with the generic Git conventions when changing state in this dotfiles repository.
 ---
 
 # Dotfiles Git workflow

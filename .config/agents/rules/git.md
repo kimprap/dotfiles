@@ -1,12 +1,10 @@
 ---
-description: Use before Git commands, staging, committing, pushing, or writing commit messages in any repository.
-condition: "\\bgit(?:\\s|$)"
-scope:
-  - "tool:bash"
-interruptMode: "tool-only"
+description: Use for Git workflows that change repository state or author commit messages; read-only inspection does not need this rule.
 ---
 
 # Git conventions
+
+Read-only commands such as `git status`, `git diff`, `git log`, `git show`, and `git rev-parse` do not require this workflow.
 
 ## Commit messages
 

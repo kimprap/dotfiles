@@ -33,7 +33,7 @@ Apply `plan.md` first. This companion owns repository identity, location, byte-e
 
 ## Shared generation protocol
 
-Use the repository's existing helper/adapter implementation; do not emulate it with an ordinary write or rename. Every local adapter and direct writer that creates, replaces, or archives a plan must honor the same protocol or stop without mutation:
+Use the existing repository helper only for `local-authority` projections. A `direct-repository` writer must implement the same protocol below; it must not call the local projection helper or fall back to an ordinary write or rename. Every writer that creates, replaces, or archives a plan must honor this protocol or stop without mutation:
 
 1. Canonicalize repository root and plan identity; key the generation by `sha256(<canonical-root> + NUL + <plan-id>)` at `${TMPDIR}/omp-plan-artifact-locks/<digest>.lock`.
 2. Claim the lock directory and `owner.json` without overwrite using one `pid`, ISO `createdAt`, and unguessable token. Only that generation may observe or mutate the identity; hold it through observation, staging, transition, and postcondition, then remove only the still-owned generation.

@@ -18,16 +18,14 @@ Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-st
 ## Approval and readiness
 
 - OMP native review is the sole plan-execution approval authority. Each new or resumed start binds the exact authority identity/URI, complete bytes and SHA-256 revision, lifecycle status, and explicit human approval. Missing/stale approval, identity or byte drift, and `DONE`/`CLOSED` stop before plan-authorized work. The provenance marker never approves.
-- OMP-created session authority uses `local-authority`; repository-native authority uses `direct-repository`. Actual verified location selects it; `context=omp` and the sync extension do not.
-- Executor Plan publication runs `executor_plan.py PLAN --context omp --consumer planner` without locators and consumes only `executor-plan-validation/v1`.
-- Before readiness, OMP binds the current canonical repository root, session-local root, exact `<slug>-plan.md` counterpart, slug, and presented authority path, then runs `executor_plan.py PLAN --context omp --consumer backend --slug SLUG --repository-root ABS_REPOSITORY_ROOT --local-root ABS_LOCAL_ROOT --local-plan ABS_LOCAL_PLAN`. `PLAN` presents the exact local path or direct active/archive path; the same local counterpart is always supplied, including when safely absent.
-- Only a fresh `executor-plan-preflight/v1` `eligible` result whose locator identity and current top-level/nested digests match the same Context Pack and unchanged native-approved revision may advance. A planner result, missing locator, marker, sync receipt, prior result, or approval alone cannot mark a task ready. Preflight accepts no approval or role assertion.
+- OMP-created session authority uses `local-authority`. Actual verified location selects it; `context=omp` and the sync extension do not.
+- Executor Plan publication invokes the shared parser contract from `plan-impl-spec.md` with `--context omp --consumer planner` and no locators.
+- Before readiness, OMP binds the current canonical repository root, session-local root, exact `<slug>-plan.md` counterpart, slug, and presented local-authority path, then invokes the shared parser with `--context omp --consumer backend --slug SLUG --repository-root ABS_REPOSITORY_ROOT --local-root ABS_LOCAL_ROOT --local-plan ABS_LOCAL_PLAN`. `PLAN` is the exact local authority path; inability to resolve the current local mapping is `PLAN_PREFLIGHT_UNAVAILABLE`.
 
 ## Synchronization boundary
 
-- After each successful local-authority `write` or `edit`, `plan-artifact-sync` passes the exact slug and bytes once to the repository helper. The extension identifies paths only; the helper owns validation, generation locking, byte-exact publication, replacement, archival, and postconditions from `plan-repo-storage.md`.
+- After each successful local-authority `write` or `edit`, `plan-artifact-sync` passes the exact slug and bound content-file path once to the repository helper. The extension identifies paths only; the helper owns validation, generation locking, byte-exact publication, replacement, archival, and postconditions from `plan-repo-storage.md`.
 - The helper permits only absence or a valid same-identity local projection. Direct, unclassified, invalid, ambiguous, unsafe, stale, or lock-failed state returns one warning and no inferred recovery. Treat `effect=none|possible-complete` exactly; never auto-retry, roll back, force-write, adopt, promote, or infer success from equality.
-- A direct-repository create, replace, or archive must use the shared repository generation protocol; inability to honor it blocks the write.
 - The extension never approves, mutates, or archives the `local://` authority and adds no second parser, ledger, approval handler, fallback, alias, or alternate authority.
 
 ## Orchestration capability

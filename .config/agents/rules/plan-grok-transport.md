@@ -14,13 +14,7 @@ Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-st
 
 ## Validation and backend preflight
 
-Planner publication runs:
-
-```text
-executor_plan.py PLAN --context grok --consumer planner
-```
-
-It supplies no locators and consumes only `executor-plan-validation/v1`.
+Planner publication invokes the shared parser contract from `plan-impl-spec.md` with `--context grok --consumer planner` and no locators.
 
 Before readiness, the Grok adapter binds the current canonical repository root, actual session/local root, exact same-identity session counterpart, stable slug, and presented authority path, then runs:
 
@@ -34,7 +28,7 @@ executor_plan.py PLAN --context grok --consumer backend \
 
 `PLAN` is the exact session path for local authority or exact active/archive path for direct authority. Always supply the exact session counterpart, including when safely absent. If the adapter cannot name this mapping, stop with `PLAN_PREFLIGHT_UNAVAILABLE`.
 
-Only a fresh `executor-plan-preflight/v1` `eligible` result may advance: locator identity and current top-level/nested digests must match the same Context Pack and unchanged native-approved revision. Structural-only evidence, missing/invalid markers, marker/location mismatch, direct/local conflict, path ambiguity, digest drift, or unavailable mapping keeps every task non-ready. Preflight accepts no approval, role, authority outcome, or expected-state assertion.
+Apply the shared backend result contract from `plan-impl-spec.md`. Missing mapping, marker/location mismatch, direct/local conflict, or exact-path ambiguity keeps every task non-ready. The adapter supplies no approval, role, authority outcome, or expected-state assertion.
 
 ## Adapter boundary
 

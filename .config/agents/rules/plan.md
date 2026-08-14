@@ -28,7 +28,7 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 ```
 
 - Omit `Mode` when unused; no other field may occupy this block. Use exact `**Field**: value` spelling with nonempty, unpadded values.
-- Input is nonempty strict UTF-8 without a BOM. The complete bytes, including line endings and final-newline presence, define the revision; do not normalize them.
+- Input is nonempty strict UTF-8 without a BOM. Validation accepts LF, CRLF, and mixed LF/CRLF by removing at most one terminal `\r` per physical line; residual `\r` in the H1/header and any `Authority kind` outside the block are invalid. Complete bytes—including line endings and final-newline presence—define the revision; never normalize them.
 - `Authority kind` records provenance, not approval: `local-authority` means the harness/session artifact is authoritative; `direct-repository` means the exact repository plan path is authoritative. The transport selects it from actual storage, never provider or context.
 - `Datetime` and `Authority kind` are immutable. Never infer, add, switch, adopt, or promote them during editing or synchronization. Unmarked plans fail closed until separately migrated per identity and freshly approved.
 - Start at `PENDING`; change to `IN_PROGRESS` when `T1` starts. Approval alone never changes status. Use `CLOSED` only for explicit user cancellation.
@@ -54,8 +54,7 @@ Plans are execution contracts, not transcripts. Include only the context, anchor
 ## Approval and execution boundary
 
 - A plan records authority but cannot approve itself. At every new or resumed start, native harness review remains the sole plan-execution approval authority and binds the exact authority identity/URI, complete bytes and SHA-256 revision, current status, and explicit human approval. Missing or stale approval, changed identity/bytes, or `DONE`/`CLOSED` status stops execution.
-- Executor Plans use the shared production `executor_plan.py`: planner validation proves structure only; backend readiness requires a fresh `executor-plan-preflight/v1` `eligible` result for the transport-bound current locators, with valid nested structure and one digest matching both current authority bytes and the unchanged native-approved revision. Missing locator mapping or a no-locator backend call keeps all tasks non-ready.
-- Storage adapters supply exact locators only. They never supply role, authority outcome, approval, a second parser, or an alternate ready transition. Preflight itself accepts no approval or caller-asserted role.
+- Executor Plans use the single planner/backend validation and readiness contract in `plan-impl-spec.md`; no other rule, adapter, report, marker, synchronization receipt, or approval creates an alternate ready transition.
 - New or revised executable plans must not contain the obsolete `## Execution gate`. Revise active old-contract plans under their own authority; do not rewrite immutable historical plans or add compatibility aliases.
 - Plan approval authorizes only plan execution. Repository, shared configuration, delivery, profile, vault, instance, shipping, and other effects retain their own authority gates. Synchronization and archival are storage effects, never approval or readiness evidence.
 

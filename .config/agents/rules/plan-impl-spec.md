@@ -27,12 +27,12 @@ After the base header, include each H2 exactly once in this order:
 | Section | Required contract |
 |---|---|
 | `Objective` | One stable `OUT-...` ID, observable end state, and criterion- or blocker-level progress signal. Activity, elapsed time, agent count, or token use is not progress. |
-| `Authority` | `Authority ID \| Kind \| URI \| Revision \| Approval`; stable `AUTH-...` IDs and exact non-placeholder revisions/states. Project authority; never expand it. |
+| `Authority` | `Authority ID \| Kind \| URI \| Revision \| Approval`; stable `AUTH-...` IDs and exact non-placeholder revisions/states. Project the governing authority; never expand it. |
 | `Governing decisions` | `Decision ID \| Revision \| Execution effect`; only active relevant decisions and constraining rejected alternatives, referenced rather than reproduced. |
-| `Scope, non-goals, and prohibited effects` | Explicit `Read surfaces`, `Change surfaces`, `Non-goals`, and `Prohibited effects`, plus `Effect ID \| Kind \| Authority \| Limit / reversibility`. Every permitted effect has a stable `EFF-...` ID; tasks may cause only referenced effects. |
+| `Scope, non-goals, and prohibited effects` | Explicit `Read surfaces`, `Change surfaces`, `Non-goals`, and `Prohibited effects`, plus `Effect ID \| Kind \| Authority \| Limit / reversibility`. Every permitted effect has a stable `EFF-...` ID; tasks may cause only referenced effects. `none` is valid only as an explicit no-effect declaration backed by the authority boundary. |
 | `Fixed shared contracts` | `Contract ID \| Surface \| Owner task \| Revision \| Consumers`; stable `CONTRACT-...` IDs for fixed interface, state, data, compatibility, degraded behavior, and approved break/removal ownership. Exactly one implementation owner; all references resolve. |
 | `Target map` | `Target ID \| Path / surface \| Owner task \| Base identity \| Callers / fixtures \| Criteria`; stable `TGT-...` IDs covering every changed/produced path, symbol, behavior, caller, fixture, and criterion boundary. Exactly one implementation owner; every target is tasked. |
-| `Execution policy` | Declare `Assurance`, `Topology`, `Max concurrency`, `Isolation`, `Lineages`, `Fan-in task`, `Fan-in inputs`, `Contention policy`, `Decomposition`, `Effect limit`, and `Orchestrator profile`. Keep lifecycle, assurance, and topology independent. Default to one owner. Multiple isolated lineages require distinct IDs, neutral fan-in of every input, and post-fan-in proof. Any one-owner/sequential downgrade must be pre-approved and contract-preserving. |
+| `Execution policy` | Declare `Assurance`, `Topology`, `Max concurrency`, `Isolation`, `Lineages`, `Fan-in task`, `Fan-in inputs`, `Contention policy`, `Decomposition`, `Effect limit`, and `Orchestrator profile`. Keep lifecycle, assurance, and topology independent. Default to one owner. Multiple isolated lineages require distinct IDs, neutral fan-in of every input, and post-fan-in proof. Missing or mismatched full-orchestration capability stops unless this section pre-approves a contract-preserving one-owner/sequential projection. |
 | `Acceptance` | `Criterion ID \| Condition / input \| Expected observable / threshold \| Surface \| Owning task`; stable `AC-...` IDs, exactly one owner each, and no duplicate or orphan. |
 | `Result / Handoff` | `Output ID \| Producing task \| Artifact / identity \| Allowed outcomes \| Receiver \| Handoff contract`; each `OUTP-...` appears once, has one receiver, and uses the Common Handoff from `dev-handoff`. Outcomes and receivers stay within the Task Contract. |
 | `Blockers and recovery` | `Blocker ID \| Owner \| Recovery evidence \| Affected tasks \| Revision / approval boundary \| Ready condition`; stable `BLK-...` IDs with exact recovery, dependency cone, and reapproval rule. Keep runtime attempt state out of the plan. |
@@ -78,12 +78,12 @@ Give every `AC-...` exactly one `VR-...` recipe naming its scenario/fixture, evi
 Before publication, run:
 
 ```text
-executor_plan.py PLAN --context <omp|grok> --consumer planner
+.config/agents/skills/dev-implementation/scripts/executor_plan.py PLAN --context <omp|grok> --consumer planner
 ```
 
 Consume only its `executor-plan-validation/v1` result. It enforces the base header, ordered body, stable references, ownership, DAG/waves, effects, outputs/receivers, recovery, topology/fan-in, and placeholder rules against the complete-byte revision. Context never infers authority.
 
-Before backend readiness, the transport invokes the same file with `--consumer backend` and current `--slug`, `--repository-root`, `--local-root`, and `--local-plan` locators. Only a fresh `executor-plan-preflight/v1` `eligible` result with valid nested structure and matching current/native-approved digests may advance. Structural validity alone supplies no provenance, approval, product/architecture authority, storage authority, or runtime state.
+Before backend readiness, the transport invokes the same file with `--consumer backend` and current `--slug`, `--repository-root`, `--local-root`, and `--local-plan` locators. Only a fresh `executor-plan-preflight/v1` `eligible` result with valid nested structure and matching current/native-approved digests may advance. Adapters supply only those exact locators; preflight accepts no approval, role, authority outcome, or expected-state assertion, and there is no alternate ready transition. Structural validity alone supplies no provenance, approval, product/architecture authority, storage authority, or runtime state.
 
 ## Activation checks
 

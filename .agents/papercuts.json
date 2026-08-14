@@ -1,4 +1,20 @@
 {
-  "records": {},
+  "records": {
+    "pc-e1c8b1660bfd1b81": {
+      "first_seen": "2026-08-13",
+      "last_seen": "2026-08-13",
+      "observations": [
+        {
+          "date": "2026-08-13",
+          "friction": "plan.md forbids ## Execution gate on new or revised executable plans, but executor_plan.py --consumer planner reports status=valid when that section is present",
+          "workaround": "after planner validation, inspect headings for ## Execution gate and reject or remove it before publication"
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "planner validator accepts obsolete Execution gate",
+      "surface": "executor_plan.py planner validation"
+    }
+  },
   "version": 2
 }
