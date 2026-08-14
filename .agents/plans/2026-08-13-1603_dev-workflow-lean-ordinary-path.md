@@ -1,0 +1,578 @@
+# Lean ordinary path for the generic engineering workflow
+
+**Datetime**: 2026-08-13-1603
+**Authority kind**: local-authority
+**Scope**: Default `dev-*` route composition, compact proof, attempt/repair bounds, and ceremony required for ordinary coding work
+**Summary**: Make the generic engineering workflow a short, deterministic default for settled one-context coding work in any project, without adding a state engine, harness adapters, or extra lifecycle skills. Leave the mechanical-convergence plan untouched.
+**Status**: PENDING
+
+## Objective
+
+- Outcome: OUT-DEV-WORKFLOW-LEAN-ORDINARY-PATH
+- Observable end state: a settled, reversible, one-context, one-lineage coding task with no compact disqualifier is routed to one `dev-implementation` owner, proved by criterion-complete worker smoke, and completed through `dev-ask` with no extra authority stage and no independent verification, review, or continual-learning dispatch; compact is the default when no listed disqualifier fires; two semantic attempts and one repair are the hard stop for every assurance profile; Executor Plan files, plan preflight, and materialized Task Contract, Context Pack, and Handoff files are not required on that path; same-context compact binds the Task Contract directly; a Context Pack is required only when context crosses; in-conversation semantic bindings remain.
+- Progress signal: one named AC-LEAN observable, one named blocker resolution, or an authorized revision change. Extra stages, files, reviews, or elapsed time is not progress.
+
+## Authority
+
+| Authority ID | Kind | URI | Revision | Approval |
+|---|---|---|---|---|
+| AUTH-USER-LEAN | human decision | current user request for a lean, robust, deterministic, harness-agnostic ordinary-path workflow, plus the 2026-08-13 and 2026-08-14 instructions to revise this same local plan | USER-LEAN-20260813-r6 | Implementation requires approval of this revised plan |
+| AUTH-REVIEW-R1 | plan review | same-session first revise Handoff against SHA-256 `c16af125aaaa2f7b61a4a5422579668ba55adc32c59ef09461377734d14b3ce5` | PLAN-B01 through PLAN-B08 | Closed in revision r2; retained as history |
+| AUTH-REVIEW-R2 | plan review | same-session second revise Handoff against SHA-256 `ef4f6a60b8eff25c5c770b099038fc41ae4b2ba07fd0c1335c90e6a18abfaee8` | REV-B01 through REV-B07 | Closed in revision r3; retained as history |
+| AUTH-REVIEW-R3 | plan review | same-session third revise Handoff against SHA-256 `62b15033eda6dc5fb060ed1b6f739fd3b4c2b6dd5cee6b35530fd363651d6369` | FINAL-B01 through FINAL-B04 | Closed in revision r4; retained as history |
+| AUTH-REVIEW-R4 | plan review | same-session fourth revise Handoff against SHA-256 `583be9c12a560d7f3cad2305c783972e15b7d91e3e3029c8a2ad4e23e45936b5` | FINAL-R4-B01 through FINAL-R4-B03 | Closed in revision r5; retained as history |
+| AUTH-REVIEW-R5 | plan review | same-session fifth revise Handoff against SHA-256 `15d471146de79516045efb9acbbc5b0b3f0d5903c1f3f5f37ab5ffd2da96ccce` | FINAL-R5-B01 through FINAL-R5-B02 | Blocking findings this revision must close before approval |
+| AUTH-WORKFLOW-CURRENT | current repository authority | `docs/adr/INDEX.md`; `docs/adr/0001-dev-workflow-authority-and-routing.md`; `docs/adr/0002-executor-plans-and-orchestration.md`; `docs/adr/0003-bounded-assurance-and-repair.md`; `docs/adr/0004-canonical-discovery-and-continual-learning.md`; `.config/agents/skills/dev-ask/WORKFLOW.md` | INDEX `c57d552afcc131303d3da827edba18a052fc6e2191b55d17bf2735b7369e4ae7`; ADR-0001 `a612526034620f35de859459dfc5721668aa4fedd61089ab95f524b42dc2eeac`; ADR-0002 `f551f1cd80e725074c2bed7083430335c719e39bcf866ac61396db730cfc7df0`; ADR-0003 `3f6f67aa3b069f5ff3eff8d733735ad342022fa808b43cd9afc8d912e9f73393`; ADR-0004 `1aa1958e60a8f6cd112455c9ba61c26f6f82f7e68240a7a7c931b80f68f66dd2`; WORKFLOW `90f468754c39b8a9f884b648725e97bcaf1ae025af319fde702152a7f6cb32a1` | Revise only the decisions named here after plan approval |
+| AUTH-MECHANICAL-UNTOUCHED | preservation | `.agents/plans/2026-08-13-0119_dev-workflow-mechanical-convergence.md` and `/Users/kim/.omp/agent/sessions/-.dotfiles/2026-08-12T13-57-29-688Z_019ff643-8bd8-7000-bce5-45f639634afd/local/dev-workflow-mechanical-convergence-plan.md` | both SHA-256 `24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d` | Do not edit, adopt, or execute |
+| AUTH-PAPERCUT-CURRENT | preservation | ADR-0007 D24 plus the unchanged papercut rule, skill, helper, workflow, evals, and ledger | ADR-0007 `052806a41a605c81461edb5e38e1d504a3b59cc6029f697e4b1d9ad747e13246`; rule `272b302f560178c560ccb014b31d860fc2d3386e71d9c504671ec7140f89dd4a`; skill `864385d73605107cc0a37b71d4639537c4d41e177874726d0ef3bb6c1bb9e311`; helper `2c1d15522362d2aebcb1de58635dc8fa61454ebe6567d61f820f2b552f97e431`; papercut WORKFLOW `e7123d22ab5e96c3d124f823524b49323c8fc8f00eb4935c67dcc2cf92009626`; papercut evals `46367562a028441fb207580c5e81043f35374d06d10744fe4f7b3cd508c37774`; ledger `69aa97070cc5b1dca8b7487f301b1ba505d2cb29995c1bece4a73a3d807b8070` | No papercut redesign, D24 weakening, or ledger write |
+
+## Governing decisions
+
+| Decision ID | Revision | Execution effect |
+|---|---|---|
+| DEC-LEAN-DEFAULT | AUTH-USER-LEAN r6 | Compact is the default assurance profile when every existing compact disqualifier is false. `standard` is no longer the fallback. Implementation size, duration, or solution-rung choice never adds requirements, specification, ticketing, grilling, diagnosis, or planning. |
+| DEC-LEAN-PROOF | AUTH-USER-LEAN r6 | On compact, criterion-complete worker smoke is the terminal proof. Independent `dev-verification` and `dev-code-review` run only after compact is disqualified. Compact never dispatches `dev-continual-learning`. A mutating Learning Candidate that would write durable guidance is deferred to a separately approved standard or high-consequence maintenance route so D24 stays intact. |
+| DEC-LEAN-CEREMONY | AUTH-USER-LEAN r6 | Compact one-owner work does not require an Executor Plan, orchestrator profile, plan preflight, or filesystem Task Contract, Context Pack, or Handoff file. It still binds a minimal revision-bound Task Contract in conversation or backend state. Same-context compact binds that Task Contract directly. A Context Pack is required only when context crosses. Emit one in-conversation Common Handoff. Amend D21 to match that Context Pack applicability. Keep D09: todo `Assurance` still shows worker smoke. |
+| DEC-LEAN-BUDGET | AUTH-USER-LEAN r6 | Every assurance profile, including high-consequence and the repair Task Contract, has one initial semantic attempt and at most one retry. Attempt 2 is authorized only from attempt-1 evidence of criterion progress, blocker resolution, or an authorized materially changed falsifiable hypothesis. An unchanged-hypothesis retry is rejected before it runs. Attempt 3 on the same Task Contract revision is forbidden. Derivative revisions inherit consumed attempts. A genuinely new materially reapproved outcome may receive a new budget. One run-wide post-assurance repair token remains distinct and is not restored by revision churn. Two safe idempotent transport retries stay unchanged. Encode this in skills, checklists, and evals only. |
+| DEC-LEAN-CHECKLIST | AUTH-USER-LEAN r6 | Replace soft ordinary-path instructions with two short mandatory gate lists whose exact items are fixed below. Inline the router gates in `.config/agents/skills/dev-ask/SKILL.md`. Keep the compact gates in `.config/agents/skills/dev-implementation/references/compact-checklist.md` and require that file to be read when the bound profile is compact, before the first ready transition. Items are harness-agnostic, repo-neutral, and predicate-level. |
+| DEC-LEAN-CATALOG | AUTH-USER-LEAN r6 | Keep the existing skill catalog. Do not add a convergence skill, merge assurance roles, or delete unused skills in this plan. Prepend a catalog skill only when its existing intake predicate is true. |
+| DEC-LEAN-ATOMIC | AUTH-USER-LEAN r6 | One implementation task publishes the complete authority, skill, checklist, evaluator, and eval cutover. No intermediate completed Handoff may leave active ADRs, WORKFLOW, skills, or fixtures in conflict. D13 remains. |
+| DEC-LEAN-ASSURANCE-RETURN | AUTH-USER-LEAN r6 | Verification, review, and learning each return one Common Handoff to `dev-implementation backend`. The backend validates that Handoff and dispatches the next required owner. Terminal accounting returns to `dev-ask`. |
+| DEC-LEAN-LEARN-ASSESS | AUTH-USER-LEAN r6 | This plan's required high-consequence learning pass is assessment-only. It may not mutate guidance. The only successful curator outcome is `NO DURABLE LEARNING`. Any mutating candidate is deferred. The reviewed implementation identity stays the T1 digest. |
+| ADR-0001 | ACTIVE D10, D11, D13, D14, D18 plus new D26 | Keep one thin router, independent dimensions, clean cutover, separate shipping, and compact presentation. Amend D11 so compact is the eligible default. Add D26 for the ordinary-work default path and the router gates. |
+| ADR-0002 | ACTIVE D08, D09, D21 | Amend D08 so Executor Plans are required only when durable graph, recovery, or multiple owners need them. Keep D09. Amend D21: solution discipline still binds through the Task Contract; same-context compact may bind that Task Contract directly; cross-context dispatch still requires a Context Pack that carries the same discipline block. |
+| ADR-0003 | ACTIVE D03, D04, D22 | Amend D03 to two semantic attempts plus one repair for every profile, including the repair Task Contract. Amend D04 so compact terminal proof is criterion-complete worker smoke. Amend D22 so the final-review invariant applies only when the assurance profile requires review. |
+| ADR-0004 | ACTIVE D07, D23 | Amend D07 so compact never dispatches Standard learning; mutating guidance still requires the existing bound evaluation plus independent verification and review on a non-compact route. Keep D23 provenance shape. |
+| ADR-0007 | ACTIVE D24 preservation | Do not weaken D24. Durable guidance still requires its current owner, bound evaluation, independent verification, and final review. |
+| DEC-LEAN-REJECT-MECHANICAL | AUTH-USER-LEAN r6 | Do not implement the mechanical-convergence ships: state schema, CAS snapshot, OMP/Grok adapters, speculative review, feedback ladder, or papercut record-id plumbing. |
+
+Closed from AUTH-REVIEW-R4 and kept: observation producer ownership and T1/T2 separation; bind/seal receipts; comparator responsibility; independent owners and first-owner tests; expected-field and ordered-event comparison; scanner coverage apart from the arrow defect; pinned Git-blob keep comparison; all 29 changed-case observations; canonical TGT-LEAN-FINAL; preservation; settled workflow design.
+
+Finding-to-change matrix for AUTH-REVIEW-R5:
+
+| Finding | Resolution in this revision |
+|---|---|
+| FINAL-R5-B01 | Observation files live only under the session-local roots named below. Add EFF-LEAN-OBS and TGT-LEAN-OBS-T1/T2. Exclude those files from TGT-LEAN-FINAL. Embed each complete sealed receipt in the producing Common Handoff. T5 verifies receipts, deletes only those two trees, confirms absence, then emits OUTP-LEAN-ASSURANCE. Never create `t1-obs` or `t2-obs` under the repository root. |
+| FINAL-R5-B02 | Normalize `→`, `->`, and `⇒` to ` then ` before matching. The compact-suffix stale-needle self-test uses the current arrow-form sentence from `.config/agents/skills/dev-ask/SKILL.md`. |
+
+Low-value ceremony skipped: extra backend-dispatch tasks; curator mutation identity model; a second compact-learning branch; a separate `ROUTE-CHECKLIST.md`; always-loaded checklist pointers in `.agents/AGENTS.md`.
+
+Router gates, inlined in `.config/agents/skills/dev-ask/SKILL.md`, in this order:
+
+1. Classify safety and whether current evidence already answers the request.
+2. If an existing catalog intake predicate is true, prepend that exact owner and do not compose ordinary compact.
+3. If any existing compact disqualifier is true, select standard or high-consequence and keep independent verification, review, and required learning.
+4. Otherwise select compact. First owner is `dev-implementation`. Completed route is `dev-implementation` then `dev-ask completion presentation`.
+5. Implementation size, duration, or solution-rung choice alone does not prepend a catalog skill and does not raise assurance.
+6. Present one owner per numbered Route line and dispatch only the first owner after approval.
+
+Compact gates, stored at `.config/agents/skills/dev-implementation/references/compact-checklist.md` and read when the bound profile is compact, before the first ready transition, in this order:
+
+1. Bind a minimal revision-bound Task Contract in conversation or backend state. Do not require an Executor Plan, plan preflight, or filesystem Task Contract, Context Pack, or Handoff file.
+2. Same-context compact binds that Task Contract directly. Cross-context dispatch adds one Context Pack.
+3. Bind solution discipline on the Task Contract. Copy it into a Context Pack only when a pack exists.
+4. Map every owned acceptance criterion to one deterministic smoke scenario against the exact final target and environment.
+5. Run every scenario and record expected and observed results. Missing, partial, stale, or failed smoke blocks completion.
+6. Any criterion that requires an independent proof class disqualifies compact and returns to the router.
+7. Attempt 2 only from attempt-1 criterion progress, blocker resolution, or an authorized changed hypothesis. Reject an unchanged-hypothesis retry before it runs. Attempt 3 is forbidden. Derivative revisions inherit the count. The repair Task Contract also has at most two attempts. Two transport retries remain.
+8. Do not dispatch verification, review, or continual learning. Defer a mutating Learning Candidate.
+9. Advance `accepted` to `ready` to `running` to `handed-off` to `complete`. Omit `verifying`, `verified`, `reviewing`, and `reviewed`. Emit one in-conversation Common Handoff.
+
+## Scope, non-goals, and prohibited effects
+
+- Read surfaces: current ADRs including ADR-0007 D24; `WORKFLOW.md`; `.agents/AGENTS.md`; `dev-ask`, `dev-implementation`, `dev-handoff`, `dev-verification`, `dev-code-review`, `dev-continual-learning`; the closed fixture inventory; both mechanical-convergence plan copies; the listed papercut projections.
+- Change surfaces: named TGT-LEAN repository targets only after plan approval. Session-local observation trees are EFF-LEAN-OBS only. `.agents/AGENTS.md` is not a change surface.
+- Non-goals: executing or revising the mechanical-convergence plan; a state engine or harness adapter; papercut or product-workflow redesign; deleting the skill catalog; shipping; mutating user-level `/Users/kim/.agents/AGENTS.md`; changing repository `.agents/AGENTS.md`.
+- Prohibited effects: any write to either mechanical-convergence plan copy; any write to `.agents/papercuts.json` or the listed papercut projections; user-level AGENTS or Mnemopi mutation; staging, commit, push, or other delivery; any `t1-obs` or `t2-obs` path under the repository root.
+
+| Effect ID | Kind | Authority | Limit / reversibility |
+|---|---|---|---|
+| EFF-LEAN-REPO | permitted repository write | AUTH-USER-LEAN after plan approval | Only named TGT-LEAN change surfaces; preserve unrelated bytes; locally reversible |
+| EFF-LEAN-PRESERVE | prohibited mutation | AUTH-MECHANICAL-UNTOUCHED and AUTH-PAPERCUT-CURRENT | Both mechanical-convergence copies stay `24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d`; every AUTH-PAPERCUT-CURRENT hash stays exact; `.agents/AGENTS.md` stays `840c44a316e5266ab38b9fe9784f6d32bad8b904dda82f2fdbc898e72b38ebe4` |
+| EFF-LEAN-EXTERNAL | prohibited delivery | AUTH-USER-LEAN | No staging, commit, push, review request, release, deploy, or tracker write |
+| EFF-LEAN-USER | prohibited user/global mutation | AUTH-WORKFLOW-CURRENT | Do not edit `/Users/kim/.agents/AGENTS.md` at `1ab60d54c0ba71feae07fe64361a0f2acd749ebf368290998a83a11cbd4998e9`, Mnemopi data, product authority, or unrelated dotfiles |
+| EFF-LEAN-OBS | permitted session-local evidence write | AUTH-USER-LEAN after plan approval | Only the two exact obs roots named in TGT-LEAN-OBS-T1 and TGT-LEAN-OBS-T2; never under the repository root; T5 deletes both trees after receipt verification and before emitting OUTP-LEAN-ASSURANCE |
+
+## Fixed shared contracts
+
+| Contract ID | Surface | Owner task | Revision | Consumers |
+|---|---|---|---|---|
+| CONTRACT-LEAN-CUTOVER | D26 plus amended D03, D04, D07, D08, D11, D21, D22; INDEX; five-section WORKFLOW; inlined router gates; compact-checklist file and read seam; `observe_case.py`; `compare_trace.py`; `scan_stale_contracts.py`; `compare_trace_selftest.json`; closed eval inventory; pinned keep blob; canonical TGT-LEAN-FINAL manifest; atomic publication of every T1 change surface | T1 | LEAN-CUTOVER-20260813-r6 | T2 |
+| CONTRACT-LEAN-VERIFY | Intake is the unchanged TGT-LEAN-FINAL manifest digest, OUTP-LEAN-FINAL, and pre/post identity equality; fresh independent verification of that identity; Verifier Handoff is TGT-LEAN-VERIFY-EVIDENCE and returns only to `dev-implementation backend` | T2 | LEAN-VERIFY-20260813-r6 | T3, T5 |
+| CONTRACT-LEAN-REVIEW | Intake is the unchanged TGT-LEAN-FINAL digest, OUTP-LEAN-VERIFIED, and pre/post identity equality; separate high-consequence review of that identity; Review Handoff is TGT-LEAN-REVIEW-EVIDENCE and returns only to `dev-implementation backend` | T3 | LEAN-REVIEW-20260813-r6 | T4, T5 |
+| CONTRACT-LEAN-LEARN | Intake is the unchanged TGT-LEAN-FINAL digest, OUTP-LEAN-REVIEWED, and pre/post identity equality; assessment-only Standard learning; no guidance write; Curator Handoff is TGT-LEAN-LEARN-EVIDENCE and returns only to `dev-implementation backend` | T4 | LEAN-LEARN-20260813-r6 | T5 |
+| CONTRACT-LEAN-ACCOUNT | Backend validates T2 then dispatches T3; validates T3 then dispatches T4; then terminal accounting to `dev-ask` | T5 | LEAN-ACCOUNT-20260813-r6 | none |
+
+## Target map
+
+| Target ID | Path / surface | Owner task | Base identity | Callers / fixtures | Criteria |
+|---|---|---|---|---|---|
+| TGT-LEAN-ADR | `docs/adr/0001-dev-workflow-authority-and-routing.md`; `docs/adr/0002-executor-plans-and-orchestration.md`; `docs/adr/0003-bounded-assurance-and-repair.md`; `docs/adr/0004-canonical-discovery-and-continual-learning.md`; `docs/adr/INDEX.md`; `.config/agents/skills/dev-ask/WORKFLOW.md` | T1 | INDEX `c57d552afcc131303d3da827edba18a052fc6e2191b55d17bf2735b7369e4ae7`; ADR-0001 `a612526034620f35de859459dfc5721668aa4fedd61089ab95f524b42dc2eeac`; ADR-0002 `f551f1cd80e725074c2bed7083430335c719e39bcf866ac61396db730cfc7df0`; ADR-0003 `3f6f67aa3b069f5ff3eff8d733735ad342022fa808b43cd9afc8d912e9f73393`; ADR-0004 `1aa1958e60a8f6cd112455c9ba61c26f6f82f7e68240a7a7c931b80f68f66dd2`; WORKFLOW `90f468754c39b8a9f884b648725e97bcaf1ae025af319fde702152a7f6cb32a1` | Router, backend, evals | AC-LEAN-01 |
+| TGT-LEAN-ROUTER | `.config/agents/skills/dev-ask/SKILL.md` at `e8dbc6ef281c25659277f240e7b8483082e53aa44f7c094bf06fe5bd95098131` with the six router gates inlined | T1 | `e8dbc6ef281c25659277f240e7b8483082e53aa44f7c094bf06fe5bd95098131` | Route evals | AC-LEAN-02, AC-LEAN-03, AC-LEAN-06, AC-LEAN-12 |
+| TGT-LEAN-BACKEND | `.config/agents/skills/dev-implementation/SKILL.md`; new `.config/agents/skills/dev-implementation/references/compact-checklist.md`; `.config/agents/skills/dev-handoff/SKILL.md`; compact-suffix clauses in `.config/agents/skills/dev-verification/SKILL.md`, `.config/agents/skills/dev-code-review/SKILL.md`, and `.config/agents/skills/dev-continual-learning/SKILL.md` | T1 | implementation `95a04b54a70f6b24aecc861db68f3ec8322df360c041464978422839d2a1863b`; handoff `870224549018c9decf5cd0d3386aa91431860442229fd3e70b45cc05014a24b8`; verification `b674230f4133ff703d371d113974231d827de1a4f186ae8355ac6fd3fe0d080f`; review `2c86ce53f1bfdb772810f1c7fcb807c6416402fd57435f0062b8d206cafc91c6`; learning `26d5a964b69ab67624cea2d552239c2f7840c34fe8be0cdf1f7409f9b1fc26a1`; compact-checklist absent | Backend and completion evals | AC-LEAN-04, AC-LEAN-05 |
+| TGT-LEAN-EVAL | `.config/agents/skills/dev-ask/evals/evals.json`; new `.config/agents/skills/dev-ask/evals/observe_case.py`; new `.config/agents/skills/dev-ask/evals/compare_trace.py`; new `.config/agents/skills/dev-ask/evals/compare_trace_selftest.json`; new `.config/agents/skills/dev-ask/evals/scan_stale_contracts.py`; every fixture path in the closed inventory below | T1 | evals.json `353197c7447bf06d22b438587d7302f5217a3618d8ff9b0a37d20a890ea12344` recovered from git blob `c46c314f5ff7d422f5f5b5a65d655a7e08531ea2` at commit `fc4e3b60e8bdecd0f5bc4fbc88ff0825c4b54e6c`; observe_case.py absent; compare_trace.py absent; compare_trace_selftest.json absent; scan_stale_contracts.py absent; fixture hashes in the closed inventory | Semantic regression, producer receipts, and comparator self-test | AC-LEAN-07 |
+| TGT-LEAN-PRESERVE | Both mechanical-convergence copies; `.agents/papercuts.json`; `/Users/kim/.agents/AGENTS.md`; `.agents/AGENTS.md`; `.agents/GENERIC-AGENTS.md`; `docs/adr/0005-product-development-workflow-and-prd-authority.md`; `docs/adr/0008-repository-agent-integration-setup.md`; `.config/agents/skills/product-ask/WORKFLOW.md`; `.config/agents/skills/product-ask/SKILL.md`; `.config/agents/skills/dev-shipping/SKILL.md`; `.config/agents/rules/papercut.md`; `.config/agents/skills/papercut/SKILL.md`; `.config/agents/skills/papercut/scripts/papercut_ledger.py`; `.config/agents/skills/papercut/WORKFLOW.md`; `.config/agents/skills/papercut/evals/evals.json` | T1 | mechanical both `24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d`; papercuts `69aa97070cc5b1dca8b7487f301b1ba505d2cb29995c1bece4a73a3d807b8070`; user AGENTS `1ab60d54c0ba71feae07fe64361a0f2acd749ebf368290998a83a11cbd4998e9`; repo AGENTS `840c44a316e5266ab38b9fe9784f6d32bad8b904dda82f2fdbc898e72b38ebe4`; GENERIC-AGENTS `3ce780b05a9dbcd62aae05c3c4fbde39b8c7e05d72f074b2c4eaa51a92c6093c`; ADR-0005 `5c4978ccb225ea04a65dde02742c1b39c2366ef27ca848d73ee1a70a1624a9ff`; ADR-0008 `e5f3940639e9997e2fcbf3d3bdea5d2a11e91461109b83b95cd01c92a2d382e3`; product WORKFLOW `4c030c4641c50274c81a6b6bf6e5ca7c95d1fb4c3a78c054987ce9b643da6530`; product SKILL `8b29f210590abe1a91eba01c9faefedca9a6d27f4d04d75c3183865c672888c4`; shipping `0b472f2c25a0313e8efde1323f18e9b9e0a64a7b7f9e5e7f94d660e29fdb7966`; papercut hashes in AUTH-PAPERCUT-CURRENT | Negative-effect checks | AC-LEAN-07 |
+| TGT-LEAN-FINAL | Canonical changed-path manifest defined in the TGT-LEAN-FINAL identity subsection | T1 | Absent now; produced by T1 after smoke | T2 through T5 inspect this identity | AC-LEAN-07 |
+| TGT-LEAN-OBS-T1 | `/Users/kim/.grok/sessions/%2FUsers%2Fkim%2F.dotfiles/019ffa40-6314-7e91-9729-a3a5e4e204e2/obs/t1/CASEID/` | T1 | Absent now | T1 producer receipts; T2 must not read this tree; T5 deletes after receipt verification | AC-LEAN-07 |
+| TGT-LEAN-OBS-T2 | `/Users/kim/.grok/sessions/%2FUsers%2Fkim%2F.dotfiles/019ffa40-6314-7e91-9729-a3a5e4e204e2/obs/t2/CASEID/` | T2 | Absent until T2 | T2 producer receipts; T5 deletes after receipt verification | AC-LEAN-08 |
+| TGT-LEAN-VERIFY-EVIDENCE | Role output: Verifier Handoff naming the frozen TGT-LEAN-FINAL digest, OUTP-LEAN-FINAL, and pre/post identity check | T2 | Absent until T2 | Backend then T3 | AC-LEAN-08 |
+| TGT-LEAN-REVIEW-EVIDENCE | Role output: Review Handoff naming the same TGT-LEAN-FINAL digest, OUTP-LEAN-VERIFIED, and pre/post identity check | T3 | Absent until T3 | Backend then T4 | AC-LEAN-09 |
+| TGT-LEAN-LEARN-EVIDENCE | Role output: Curator Handoff naming the unchanged TGT-LEAN-FINAL digest, OUTP-LEAN-REVIEWED, and pre/post identity check | T4 | Absent until T4 | Backend then T5 | AC-LEAN-10 |
+| TGT-LEAN-TERMINAL | Terminal evidence index to `dev-ask` naming the unchanged T1 digest, T2/T3 verdicts, T4 `NO DURABLE LEARNING`, and zero curator paths | T5 | T4 output identity | `dev-ask` | AC-LEAN-11 |
+
+Added cases, all absent now, owned by T1 as part of TGT-LEAN-EVAL:
+
+| Case ID | Path | Expected owners or trace | Proves |
+|---|---|---|---|
+| R-ORDINARY-COMPACT-DIRECT | `.config/agents/skills/dev-ask/evals/fixtures/r-ordinary-compact-direct/case.json` | `dev-implementation`, `dev-ask completion presentation` | Gate 4 |
+| R-ORDINARY-COMPACT-NEAR-MISS-DISQUALIFIER | `.config/agents/skills/dev-ask/evals/fixtures/r-ordinary-compact-near-miss-disqualifier/case.json` | compact rejected; verification, review, and learning present | Gate 3 |
+| R-ORDINARY-SIZE-ONLY | `.config/agents/skills/dev-ask/evals/fixtures/r-ordinary-size-only/case.json` | one implementation owner; no prepended catalog skill | Gate 5 |
+| R-ORDINARY-FACTUAL-GAP-PREPENDS-RESEARCH | `.config/agents/skills/dev-ask/evals/fixtures/r-ordinary-factual-gap-prepends-research/case.json` | first owner `dev-research`; route `dev-research` then `dev-ask` | Gate 2 and AC-LEAN-12 |
+| B-ORDINARY-COMPACT-SMOKE-PASS | `.config/agents/skills/dev-ask/evals/fixtures/b-ordinary-compact-smoke-pass/case.json` | `accepted` to `complete` after criterion-complete smoke; no file ceremony; same-context Task Contract only | Compact gates 1-5 and 9 |
+| B-ORDINARY-COMPACT-SMOKE-FAIL | `.config/agents/skills/dev-ask/evals/fixtures/b-ordinary-compact-smoke-fail/case.json` | failed or incomplete smoke never reaches `complete` | Compact gate 5 |
+| B-RETRY-STANDARD | `.config/agents/skills/dev-ask/evals/fixtures/b-retry-standard/case.json` | two-attempt bound on standard | Compact gate 7 global |
+| B-RETRY-HIGH-CONSEQUENCE | `.config/agents/skills/dev-ask/evals/fixtures/b-retry-high-consequence/case.json` | two-attempt bound on high-consequence | Compact gate 7 global |
+| B-COMPACT-DEFERRED-LEARNING-CANDIDATE | `.config/agents/skills/dev-ask/evals/fixtures/b-compact-deferred-learning-candidate/case.json` | mutating candidate deferred; no learning dispatch; complete after smoke | Compact gate 8 |
+
+Closed existing-case inventory. Count is 138. Disposition is decided here; T1 must not reclassify.
+
+| Disposition | Case ID | Path | SHA-256 | Reason |
+|---|---|---|---|---|
+| keep | R-DIRECT | `.config/agents/skills/dev-ask/evals/fixtures/r-direct/case.json` | `4b72f457e97998c74f351be83bf520d7ade900ea01ee39e398458146af54a45d` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-DIRECT-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-direct-near-miss/case.json` | `e49df6787beee0b896b32da41b74b14889bd307fcecdb5f7ff903d368373e336` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-RESEARCH | `.config/agents/skills/dev-ask/evals/fixtures/r-research/case.json` | `c12f7e37e772ece476631b676c391e569a718013c3a287e6e64045c9dcf3e28a` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-RESEARCH-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-research-near-miss/case.json` | `e6e17f5136f0e7832e116950f9e6d1167256841ef990038ae12fab3c099a8743` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-PRODUCT-AUTHORITY | `.config/agents/skills/dev-ask/evals/fixtures/r-product-authority/case.json` | `3fd4da06d8af828c23a5639197d91e74b33dc5b82616b0d3901d5025f4be7ed5` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-PRODUCT-AUTHORITY-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-product-authority-near-miss/case.json` | `d47939ee6cb6fa9a29e47e507f3119183a24090d12b90876caac5c70a02b967a` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-REQUIREMENTS | `.config/agents/skills/dev-ask/evals/fixtures/r-requirements/case.json` | `b048f4f61c21e3e8b649a8c39dcdea2e9ea971d5caf1fda308c8cb2549af1d9d` | spec, ticket, fan-in, or explicit standard lane; long suffix remains |
+| rewrite | R-REQUIREMENTS-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-requirements-near-miss/case.json` | `a8bef9d4b4837d5d8abfb5a4298ff6d79d6d7cfe4633312cda3388660ec3a3b7` | settled one-context impl; invert default to compact |
+| keep | R-BUG | `.config/agents/skills/dev-ask/evals/fixtures/r-bug/case.json` | `11a5fc756585e190dc957a17bebbca0dc6f0c6cf487f4eb98a515428e2e7a256` | hard diagnosis disqualifies compact; retain verify/review/learning tail |
+| rewrite | R-BUG-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-bug-near-miss/case.json` | `7514720a011b5f617aca55370c0a00ebef85754b1704d87fce6f44d33b4db08f` | known/routine fix; compact impl then completion |
+| keep | R-GRILL | `.config/agents/skills/dev-ask/evals/fixtures/r-grill/case.json` | `058807f17278bb795a3e3129dc4c7a157ecbd763db2bef08ee9fac07387acf92` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-APPROACH-REFINEMENT | `.config/agents/skills/dev-ask/evals/fixtures/r-approach-refinement/case.json` | `8466be8408d2395d05358f1c31c17916fa3b91fda49fa714b3177495c4c9b955` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT | `.config/agents/skills/dev-ask/evals/fixtures/r-approach-refinement-near-miss-direct/case.json` | `126a6380ed9684d9365be3bc40c8ff4657550903a3f996a08e4be62ae466540d` | settled direct impl; compact |
+| keep | R-APPROACH-REFINEMENT-NEAR-MISS-READONLY | `.config/agents/skills/dev-ask/evals/fixtures/r-approach-refinement-near-miss-readonly/case.json` | `e1b9f1ef57deae489817d4ca9edf24fe8f7f735c29bae873813906b5041f9707` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-APPROACH-REFINEMENT-NEAR-MISS-REQUIREMENTS | `.config/agents/skills/dev-ask/evals/fixtures/r-approach-refinement-near-miss-requirements/case.json` | `154413654c2a5f0fc91f1da5c0f760937c529e9db6f1b951374bcba26187b100` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-GRILL-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-grill-near-miss/case.json` | `0cc48549f2a6fb853febb1a6424e8b3d0417796c3e5b5e4cab667f1a1343f90b` | spec, ticket, fan-in, or explicit standard lane; long suffix remains |
+| keep | R-WAYFINDER | `.config/agents/skills/dev-ask/evals/fixtures/r-wayfinder/case.json` | `65ff448919017aa4d6b3d75194b81dd1802578fc3761cd07abff3ac316ceb718` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-WAYFINDER-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-wayfinder-near-miss/case.json` | `a0e2f1b542d43981661c8cc65a8f54872d6841c3d1326261c4d53bba52cfcc89` | not fog; compact impl |
+| keep | R-PROTOTYPE | `.config/agents/skills/dev-ask/evals/fixtures/r-prototype/case.json` | `35e4a61ec2e1b4ba5a7d67506c6c5257b1f04083c36d8b50820624b81e4b1584` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-PROTOTYPE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-prototype-near-miss/case.json` | `2f7361aa5772d8f7d8f1d4f9d8e860a7c0c443a94cd035a224fb438abd54a916` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-ARCHITECTURE | `.config/agents/skills/dev-ask/evals/fixtures/r-architecture/case.json` | `b69036b1b55a8ecd1439d9825e5a106d5a731a0ea0dd88ce45cda6b83b6fd75f` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-ARCHITECTURE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-architecture-near-miss/case.json` | `feb241007f829ce5f7019e0e55d9f07f5abc012fcdae94559474c5101c1e59e1` | not a survey; compact impl |
+| keep | R-ARTIFACT-LANE | `.config/agents/skills/dev-ask/evals/fixtures/r-artifact-lane/case.json` | `051e3d96938cfbcffe281f03a50a30f817338dc29a6954877f44abf64b7ea23f` | spec, ticket, fan-in, or explicit standard lane; long suffix remains |
+| rewrite | R-ARTIFACT-LANE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-artifact-lane-near-miss/case.json` | `d354f4d988cb6bdf07e156f4ae430f0ce10b6cd2b25c0f9fa838c96c59a18f0d` | not spec/ticket; compact impl |
+| keep | R-EXPLICIT-STAGE | `.config/agents/skills/dev-ask/evals/fixtures/r-explicit-stage/case.json` | `f58411e9cdd6741833ac4eff312447e1c3fca6545e16547cc31bb705f4a2b5b3` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-EXPLICIT-STAGE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-explicit-stage-near-miss/case.json` | `8cb51f05d8038764864611c0ea744d14aa5fa83fcd88fea4a7cc2ed774f9eb75` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-APPROVAL | `.config/agents/skills/dev-ask/evals/fixtures/r-approval/case.json` | `b00b898bf66edbf4b2c9027b09726bc1b5be35ff5c8bc6cdc8b45cee35ee4db2` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-APPROVAL-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-approval-near-miss/case.json` | `9253325304e99d62fdc160a5a2d39440d3d2a74e4f2fbc1db7432ba66ffbeb65` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-DRIFT | `.config/agents/skills/dev-ask/evals/fixtures/r-drift/case.json` | `d674a1ee1b83dc6d39b0f7d76b70af779692300aa897c54b0a6ffb8b43cfae09` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-DRIFT-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-drift-near-miss/case.json` | `d35f737b2145b148c9c921a13c8a159384546afd671e72d9508ea440e14542dd` | non-material drift on ordinary impl; compact tail |
+| keep | R-COMPLETE | `.config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json` | `619af87ea32632be5f3e07cd613098f54785c565b1a9e6ff6ba7b1da1dcf513b` | already mid-lifecycle or explicit standard completion |
+| rewrite | R-COMPLETE-COMPACT-NO-LEARNING | `.config/agents/skills/dev-ask/evals/fixtures/r-complete-compact-no-learning/case.json` | `98def6bc22326514bcf814bea88fbcd3f2dbef83754fe972124725d2c68c529f` | old compact still had verify/review |
+| keep | R-COMPLETE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-complete-near-miss/case.json` | `c4036c5071c8acc49f67808ec9b64866bc6b83219604e4480ff0e250491c8cbc` | already mid-lifecycle or explicit standard completion |
+| keep | B-AUTHORITY | `.config/agents/skills/dev-ask/evals/fixtures/b-authority/case.json` | `87930ea2ac78001b5d8870707bc5b0f62593a722cebccd0da2d4e0b888b40e99` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-APPLICATION-COMPATIBILITY | `.config/agents/skills/dev-ask/evals/fixtures/b-application-compatibility/case.json` | `6153c711dd2d09f08b6b0bc18d0fef8f8854ed474493df39720bdf47b52215b9` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-APPLICATION-COMPATIBILITY-NEAR-MISS-MISSING-AUTHORITY | `.config/agents/skills/dev-ask/evals/fixtures/b-application-compatibility-near-miss-missing-authority/case.json` | `07e2a19d71786b7e794c95158a03586f6c70b65d3d62432d958dee25451056ea` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-SINGLE | `.config/agents/skills/dev-ask/evals/fixtures/b-single/case.json` | `47df89a06536ea3007ff9cf17286dbcf70d7938a013c7aaa6f630bf3d27e5868` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-BATCH | `.config/agents/skills/dev-ask/evals/fixtures/b-batch/case.json` | `a84ec43c58641a1ec7559b17875da4a8b8ebd248e2bcb80a8a39a3044d7a5c80` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-FULL | `.config/agents/skills/dev-ask/evals/fixtures/b-full/case.json` | `dca98adaef3ec3955b6e1f96ab1cce3c9cfccbf437aac5bf53a6d0ad7a0c08b7` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-DEPENDENCY | `.config/agents/skills/dev-ask/evals/fixtures/b-dependency/case.json` | `ac24efa3af1eca787266cb179b6186037354ef574ced660d650bb5d9005eaa17` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-ROLES | `.config/agents/skills/dev-ask/evals/fixtures/b-roles/case.json` | `eea021cc6cbd1878738918731cf57bbd06cc401d4adf96f5ecd034ef72bc93c5` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-HANDOFF | `.config/agents/skills/dev-ask/evals/fixtures/b-handoff/case.json` | `dc7e221e41b442588cc8a722d1d7aeaf4ca390a6885a875472935ce89932ff64` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | B-RETRY | `.config/agents/skills/dev-ask/evals/fixtures/b-retry/case.json` | `0d31c045b653b52d6a50d64eeeefb47d3072f22666e426b75100b4e9b2f42cfa` | replace attempt-3 with two-attempt + evidence gate |
+| keep | B-FALLBACK | `.config/agents/skills/dev-ask/evals/fixtures/b-fallback/case.json` | `7db8c9cc398e3faf4879adfcd41271f1dce88e32c7e461c635391dc454244f91` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-VERIFY | `.config/agents/skills/dev-ask/evals/fixtures/b-verify/case.json` | `7a0c2f87fd0fdb5cdeb12c779340c39708e54be2011a2d8727cc1dffa274689a` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-INTEGRATE | `.config/agents/skills/dev-ask/evals/fixtures/b-integrate/case.json` | `3a19f877cc1c34e715717b604de50dff6b7e68061be495d71adbd8071359ab63` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-REVIEW | `.config/agents/skills/dev-ask/evals/fixtures/b-review/case.json` | `c82a6d0eb0c5ee9a05245cdaa17695f2def29ec0135a63624c2bd7ab754b5c47` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-SHIPPING | `.config/agents/skills/dev-ask/evals/fixtures/b-shipping/case.json` | `73843f4ab7ed1e9a1e806cfb65a9619bbcf752e9d4b240c88281e039912a36bc` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-LEARNING | `.config/agents/skills/dev-ask/evals/fixtures/b-learning/case.json` | `8b9fda27f5f69a6c9df355aeda898fa09981c408f4b099c6d0dc1f9656043802` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-COMPLETION | `.config/agents/skills/dev-ask/evals/fixtures/b-completion/case.json` | `911ddf35d0f2bdc7fca14424c34743417aaa889ea7d02863e6dd86458f242fb5` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | B-COMPACT | `.config/agents/skills/dev-ask/evals/fixtures/b-compact/case.json` | `4527107da28858966e9741d2064afe789acf74dedb2de2132f0d8119c0af21c2` | compact smoke is terminal; no verify/review/learning |
+| rewrite | B-COMPACT-CURATION-TRIGGER | `.config/agents/skills/dev-ask/evals/fixtures/b-compact-curation-trigger/case.json` | `3fb5d922ab3ffe4c37d1769c6425c329d8a5c25be4564adb01113f4b54250a7c` | compact never learns; defer mutating candidate |
+| keep | B-COMPACT-NEAR-MISS-HIGH-CONSEQUENCE | `.config/agents/skills/dev-ask/evals/fixtures/b-compact-near-miss-high-consequence/case.json` | `8a75f38a42d5fc4a2c20f3f163d33ffb2e2787aadbe2b06313733c32da29c5da` | compact disqualifier to high-consequence; retain independent assurance |
+| keep | B-SINGLE-NEAR-MISS-COHESIVE-LARGE | `.config/agents/skills/dev-ask/evals/fixtures/b-single-near-miss-cohesive-large/case.json` | `0bee5bc965a73aef4a0d08d5b8218cc1b24f5addf157eb6317f95e73f563e985` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-BATCH-NEAR-MISS-DEPENDENT-CONCURRENCY | `.config/agents/skills/dev-ask/evals/fixtures/b-batch-near-miss-dependent-concurrency/case.json` | `916dcd857a96ecece345aebbe700a4002efc8a7e2dd6097371672eb9ee9728f6` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-FULL-NEAR-MISS-EAGER-DECOMPOSITION | `.config/agents/skills/dev-ask/evals/fixtures/b-full-near-miss-eager-decomposition/case.json` | `2ef0896d4952d68b7fd86f3618860ef33dbae68ad45846e00191319cd33e9345` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-RETRY-NEAR-MISS-TOKEN-ESCALATION | `.config/agents/skills/dev-ask/evals/fixtures/b-retry-near-miss-token-escalation/case.json` | `6c574dc2da7676f527a7510486c516a5493226f6b15b71391e9cb8ff4a2273f3` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-FALLBACK-NEAR-MISS-SILENT-DOWNGRADE | `.config/agents/skills/dev-ask/evals/fixtures/b-fallback-near-miss-silent-downgrade/case.json` | `ef3f6e1b56ff0a4ac3b7bfe67366c8e3dea2cc8ce9a9929faedcb983a02b163f` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-SHIPPING-NEAR-MISS-LOCAL-COMPLETION | `.config/agents/skills/dev-ask/evals/fixtures/b-shipping-near-miss-local-completion/case.json` | `e972aacd0385509408c2faac827af9692b4dd91289ed7317f5774d66e5fae878` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | L-ROUTING | `.config/agents/skills/dev-ask/evals/fixtures/l-routing/case.json` | `b4d7730eb9cbb7b9a7d789d36abff103d7ca6967fd4e36a4fefd862147f8c971` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | L-MUTATION | `.config/agents/skills/dev-ask/evals/fixtures/l-mutation/case.json` | `3af0cdddbd1597b35f44c8737d6f5f2ca905d1c29d947dcd2e69b3a3760957d6` | compact live path is smoke then completion |
+| keep | L-ONE-OWNER | `.config/agents/skills/dev-ask/evals/fixtures/l-one-owner/case.json` | `a416e4d081a1eeca402be30b7f8fbe39078263c8a7c49a96231a80541cd43730` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | L-DELEGATION | `.config/agents/skills/dev-ask/evals/fixtures/l-delegation/case.json` | `c70fb58afcfe44ff0c198fbc41c4a490fec879fa5301fb36fbff06e576b9feb8` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | L-FULL | `.config/agents/skills/dev-ask/evals/fixtures/l-full/case.json` | `83e426dff194fe7506483e1677178037fe5db2bf29f05d9560204799fbb8b188` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | R-OUTCOME-CONTINUATION | `.config/agents/skills/dev-ask/evals/fixtures/r-outcome-continuation/case.json` | `82ed5f858284fda082ff9fed00c5eaae440584d4b5fbc02c15870a396cc15aeb` | unmet ordinary AC; compact continuation |
+| keep | R-UNCHANGED-HANDOFF | `.config/agents/skills/dev-ask/evals/fixtures/r-unchanged-handoff/case.json` | `e72fd21a9e6c6b5b4ddc3f7243cc25a3f6f43ff59f9d79255e968f53d3247da6` | already mid-lifecycle or explicit standard completion |
+| keep | R-MATERIAL-REAPPROVAL | `.config/agents/skills/dev-ask/evals/fixtures/r-material-reapproval/case.json` | `e61633b2daf26983a7fb4c9b5a04a52897b09a0e820d3cf66f76a2278e7de832` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-GRILL-ROUND-BOUND | `.config/agents/skills/dev-ask/evals/fixtures/r-grill-round-bound/case.json` | `89ef8503033acbf9b7ba28a797b209d903186ac2af77f71e9bc66554211b7ee7` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-TO-DO-PROJECTION-EQUIVALENT-A | `.config/agents/skills/dev-ask/evals/fixtures/r-todo-projection-equivalent-a/case.json` | `f4e2f87ca9751ca3da1030feb8cd1c329fa10c907e4c9dbd913b2ffdf7163f02` | spec, ticket, fan-in, or explicit standard lane; long suffix remains; table id joins to the registry id by deleting the hyphen after TO |
+| keep | R-TO-DO-PROJECTION-EQUIVALENT-B | `.config/agents/skills/dev-ask/evals/fixtures/r-todo-projection-equivalent-b/case.json` | `45d37a397acfa1778ae419f18c57d65c2451a764ca6ba6f48e69aa1966c13898` | spec, ticket, fan-in, or explicit standard lane; long suffix remains; table id joins to the registry id by deleting the hyphen after TO |
+| keep | B-T4-DIAGNOSIS-ROUTINE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-diagnosis-routine/case.json` | `3d1c182845f4c72c0ee27729ef8ae906b345c4856c857e013d552eabe582d0cf` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-DIAGNOSIS-HARD | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-diagnosis-hard/case.json` | `7bf25394c4cb5aa899126fbd96c38990a355490a1f5060bc1355710813652bdd` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-DIAGNOSIS-UNCHANGED-STOP | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-diagnosis-unchanged-stop/case.json` | `98f6effef9a824b6feb191fba3a81380c9763298074468d06d8d40f3f33ababf` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-BOUNDARY-SHARED-LINEAGE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-boundary-shared-lineage/case.json` | `bc1c6b4733513b3ce02eb6d4b2192d5b013f5a46d44349941948e11d25797f04` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-FANIN-VERIFIED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-fanin-verified/case.json` | `b5a9bd1d5cd31dc34cf8c27f2097ca537dd94abc79ce8359aba10e498385632e` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-FANIN-UNSAFE-FINAL-ONLY | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-fanin-unsafe-final-only/case.json` | `fe8bdd58a6d1f5204a3599242db22fd6f5ee7b53e2a99316f9047727ba756c8f` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-REPAIR-CONSOLIDATED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-repair-consolidated/case.json` | `bbcfb2c7205d655848858260b2d5ba703b66fcce144d5f1c24558c6d5ecff21c` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | B-T4-REPAIR-REMAINING-BLOCKER | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-repair-remaining-blocker/case.json` | `f22ec7f174c26c65d0f63c3bfbb7cedbefbff5c07769f67e3b293985b691ad63` | repair budget is 2/2 not 3/3; still no fourth |
+| keep | B-T4-LEARNING-STANDARD | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-standard/case.json` | `9e87f5499fe1525d6ead1c166895e1745f98c534166fc847563b8f3520fdfa28` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-DEEP-EXPLICIT | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-deep-explicit/case.json` | `9c5ed37290149724fb2adc01e0ccc4c910cda23717985ba29f9b6c0f1a566a0a` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-DEEP-EVENT | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-deep-event/case.json` | `cc8578b6046cbebff62653835acec2601e3027331446d34917c240cdca164894` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-COUNT-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-count-near-miss/case.json` | `f920b65fd1c4093fae57256feda1ca8d1ab1dfbb44b30bd5682dfc2dd8c31ef2` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-CALENDAR-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-calendar-near-miss/case.json` | `62e8f919db74c3008252c6a9e64f67429d4b4b981803122beae2bd62f4173008` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-BACKGROUND-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-background-near-miss/case.json` | `2062d6caf4e02ffea82a9d72bee7b692bd935d66e1c0438852da90ea3746c6e7` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-LEARNING-USER-LEVEL-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-learning-user-level-near-miss/case.json` | `7a00be5ecd84711db6f367dc0744ef163fbf5073a78d5a1e1eef1422e879be68` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-NO-DURABLE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-no-durable/case.json` | `8b8952ca854a533ce13e57223f0aa4f81b1ccfd46116282d996f605363dd51ec` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-UNBOUND-CANDIDATE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-unbound-candidate/case.json` | `49ff39f10995ab66b959b8f187c1054caf0f1491b96f4c34176e0a26467a1e2a` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-TUPLE-DRIFT | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-tuple-drift/case.json` | `bb8344ba10d5dc9062877b69a0cbe171820c69d67832f0c5360dea7531fd7823` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-DETERMINISTIC-FAILURE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-deterministic-failure/case.json` | `5c64531a7a879e84a48f6ea990b8306ea76a0901ec75cc37b4dfb81b72bb5584` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-SEMANTIC-VERDICT | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-semantic-verdict/case.json` | `ddd61807c4f0b434f31581a646e8da444cfb85edc8244a5d1e378ecfaa8965a5` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-SEMANTIC-FAILURE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-semantic-failure/case.json` | `e22eb4fe09276fa33911d7c952107bd67b17af0c2e8320b7093c819017087a18` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-SEMANTIC-VERDICT-MISSING | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-semantic-verdict-missing/case.json` | `590ae7ac88fd30fc1d61c0bd04d80cbec62e9b43a14fd46acd6bfea89d4d1fb5` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-FLAKY | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-flaky/case.json` | `ca29dff44ce0d272d8a7a77915f0d849ea9a486c2728b3201972778c645ffa70` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-INCONCLUSIVE | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-inconclusive/case.json` | `5c6155feaea51be26eee7daf8e359364320f89a66e26d4f995f2032ddadacfef` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-CURATION-BLOCKED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-blocked/case.json` | `3e173e948ea36aa76dec2ee9957f8f114f4964e5cd32fcd11d5d74f5f2bc6822` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| rewrite | B-T4-CURATION-COMPACT-NOT-TRIGGERED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-curation-compact-not-triggered/case.json` | `c444e2eb678e61d6371985c98d7e6c0ec785713790f5cc03f5676a4e9baf83bc` | no post-review compact trigger screen |
+| keep | R-T5-REAPPROVAL-AUTHORITY | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-authority/case.json` | `408cbb63fc23b75981e4772fa14350a677a0aeaeaa08f1760cdc943aeea4491a` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-SCOPE | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-scope/case.json` | `c1c739a0635affac9bf67f01e3be252bdaed4b58eac58df68a34bda46d418a23` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-ACCEPTANCE | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-acceptance/case.json` | `ff2456776fdfb50d36a04a05cbc6e0ba8699194a560627b05f638467e0617494` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-TOPOLOGY | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-topology/case.json` | `add048738528b7a891b140694910dade7ff408e6a2b40fd842ef75a04828a680` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-DESTRUCTIVE-EFFECT | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-destructive-effect/case.json` | `1bb31b1a59f53ffb57932f6bb1b4083fc14f2ab106b36520ba024b8004d29a68` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-SHIPPING | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-shipping/case.json` | `47afff70762811763e6d5093e455417afc1efe22840fce22f26b58c5d3479fc0` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | B-T5-EXECUTOR-PLAN-OMP | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-executor-plan-omp/case.json` | `bbf384b1840e666273ff1cd83d87de557ca3620218a5496b4ac31d4bf1c6702c` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-EXECUTOR-PLAN-GROK | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-executor-plan-grok/case.json` | `dcb75033adfbbeec9f1cb7dc5e995d5b0a2b3132821b4500427796df1097dc4f` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-EXECUTOR-PLAN-MISSING | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-executor-plan-missing/case.json` | `9e8c0918154be17617bc071fa70546354419f88b442d86a2153cda5b84ac0321` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-EXECUTOR-PLAN-DANGLING | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-executor-plan-dangling/case.json` | `e1870ddb64e0e33080b523fc0f894b0e74836aa5b90ec48e0e5d9a120537da57` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-EXECUTOR-PLAN-CYCLE | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-executor-plan-cycle/case.json` | `634593f40b9c784bad69f3a2305f6c20a7fe5b0d5b8292d1383ac74552b7c196` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-PARENT-PROFILE-PASS | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-parent-profile-pass/case.json` | `be2bc5dc54cda4b4a9d186f150a940e18907a9b8763ecadcaa95486479580c8c` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-PARENT-PROFILE-MISMATCH | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-parent-profile-mismatch/case.json` | `c6d9d93c6e62bf29420ab8f792d14da96b28b7a6080fc0d4a9f9a690555862a2` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-PARENT-PROFILE-DOWNGRADE | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-parent-profile-downgrade/case.json` | `be9c48e0c07ec2e4241a0ce656764dd8dd560d391dfde718cf9cf5e2e221550f` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | R-T5-CANONICAL-DISCOVERY | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-canonical-discovery/case.json` | `d2e1ff1404601120aa5e080a2add94c63179b100b9c4f35af3f5ce1236aa9c57` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-HISTORY-NONEXECUTION | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-history-nonexecution/case.json` | `5212f0985e8f8dac15551d59e0989b353af95feae38fdb8fe72f7480446a94dd` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-T5-ORDINARY-DIRECT-NO-EAGER-HISTORY | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-ordinary-direct-no-eager-history/case.json` | `b6ce9f467e176ef69a3be12b70b3898640677ff65152f8743258912619c4674b` | ordinary settled direct; compact |
+| keep | B-T5-COMPLETION-ASSURED | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-completion-assured/case.json` | `2844c26f9f981f06b8896e8f5615b41a7d005408530fe7c603ce36fe4b09aee8` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T5-COMPLETION-MISSING-ASSURANCE | `.config/agents/skills/dev-ask/evals/fixtures/b-t5-completion-missing-assurance/case.json` | `79c2a3a8d71166bfe46bb813a5909dee665fe3689d835604a224b0b1783abe30` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | R-T5-REAPPROVAL-ROUTE | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-route/case.json` | `84444c697683bfc2375f05a7ee56d2f95fa4084ba2d1f5bcabba21460b067179` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-SHARED-ASSUMPTION | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-shared-assumption/case.json` | `f9f16f98781ecbd4c74023db55eb23cc4bcf0a3b4fffa07cc1a44a1814c54ef7` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-NON-EQUIVALENT-CAPABILITY | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-non-equivalent-capability/case.json` | `0af1d7cc038767505375ac4e4cba0435456498188fd9795c49c49bc1144ead44` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-T5-REAPPROVAL-AUTHORITY-IDENTITY-DRIFT | `.config/agents/skills/dev-ask/evals/fixtures/r-t5-reapproval-authority-identity-drift/case.json` | `471bf78da8188b98694a1ff44af4f27883d58fda0f3fff82a99d9261f6bdded0` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-TRIAGE | `.config/agents/skills/dev-ask/evals/fixtures/r-triage/case.json` | `f267d5aec463a1d51b30dbfcdac71e518b2a4913f5835a0fe153c24ea057e583` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-TRIAGE-NEAR-MISS-PROJECT-TICKET | `.config/agents/skills/dev-ask/evals/fixtures/r-triage-near-miss-project-ticket/case.json` | `7cb0daa84425846b36150c9ad6f6a1c5eff6dfab948d77f151a13d8559dc6a6f` | project ticket impl; compact |
+| keep | R-TRIAGE-EXTERNAL-EFFECT | `.config/agents/skills/dev-ask/evals/fixtures/r-triage-external-effect/case.json` | `c419cebaf475c01f33052e3787e8473d0688d6c317a87ed9f06a8168a3c9fa2d` | other catalog owner or stop; not ordinary compact-eligible impl |
+| keep | R-TRIAGE-WONTFIX | `.config/agents/skills/dev-ask/evals/fixtures/r-triage-wontfix/case.json` | `f3b043cf91770cdbd1a034b78a81eeb0f4fa964162ee215fd311f5ff0fbffaaa` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-ROUTE-PRESENTATION-NEAR-MISS-INLINE | `.config/agents/skills/dev-ask/evals/fixtures/r-route-presentation-near-miss-inline/case.json` | `61c6bd68ab0a2c47edc697f88a7d15fa671dd71eadd9863f2c4dee664c2563ef` | settled impl presentation; compact owners |
+| rewrite | R-ROUTE-CANDIDATES | `.config/agents/skills/dev-ask/evals/fixtures/r-route-candidates/case.json` | `83f7b6dfcdbd8fd096dc01db4cbf37b6d498b6e25a9dc39787c8579ca586e69a` | recommended compact; alternative keeps spec+standard |
+| keep | R-ROUTE-GATING-QUESTION | `.config/agents/skills/dev-ask/evals/fixtures/r-route-gating-question/case.json` | `d4aea5e1b7df509f40c3b84a80fc4dbf4485f4e11181083ec0ec123a5803fe07` | other catalog owner or stop; not ordinary compact-eligible impl |
+| rewrite | R-ROUTE-GATING-QUESTION-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/r-route-gating-question-near-miss/case.json` | `f43fd999c52f8625d798e0a83c3d6f20928dcd33ab44bf573099e343c4469e59` | solution-rung only; compact no gating question |
+| keep | B-WORKER-SOLUTION-DISCIPLINE | `.config/agents/skills/dev-ask/evals/fixtures/b-worker-solution-discipline/case.json` | `8367058be78c9afc79cec24ccca546226138a31f66dda5f70139d1be08bd052d` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-WORKER-SOLUTION-DISCIPLINE-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-worker-solution-discipline-near-miss/case.json` | `db7e874f35bd8807658380a9667c79b3dd27b2e50fcc997b1bddd9a5387ee16e` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-REVIEW-COMPLEXITY-LENS | `.config/agents/skills/dev-ask/evals/fixtures/b-review-complexity-lens/case.json` | `babcc5019c36f28c5014ad2d7524f3c37d247407b596519a09b4e7146ffe68c3` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-REVIEW-COMPLEXITY-LENS-NEAR-MISS | `.config/agents/skills/dev-ask/evals/fixtures/b-review-complexity-lens-near-miss/case.json` | `6d1f26e3592402baca08e179967f68ffa8dc0fa85e9c56f1291d017950be94e7` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-CANDIDATE-BINDING | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-candidate-binding/case.json` | `75a4221b45263972ff054b4920c067ce6e9a37a26493b80b68e204f173dc2bfa` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-SETTLEMENT-FIXED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-settlement-fixed/case.json` | `d7dec23d073fe0f2207e81084b21539a23cd4a5e5cbf5234f685a11854a57c9d` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-SETTLEMENT-REJECTED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-settlement-rejected/case.json` | `0ce78574753a516f6c8b9af0aedeee525ffd2c8ff72ec590898fd9906311e116` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-SETTLEMENT-SUPERSEDED | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-settlement-superseded/case.json` | `eb2bd95e3bc72d97a3b518913bf8c318db9a364ac714ab2277890a4a364cc643` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-SETTLEMENT-OPEN | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-settlement-open/case.json` | `27e26776d6abb0fc10442e8e251478b66cbb42b75db84c4769f6f1b3ed823cb4` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-SETTLEMENT-GLOBAL | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-settlement-global/case.json` | `d4fc5dedc410bf4028cbb9917efe21db20d954f28201497baccb07425f42569b` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+| keep | B-T4-PAPERCUT-NARROW-AUTHORITY | `.config/agents/skills/dev-ask/evals/fixtures/b-t4-papercut-narrow-authority/case.json` | `806055e2a3623f7bf3a6638bcdf7828d21995455a99a132df40d045715a31ee7` | standard or high-consequence backend, topology, proof, learning, papercut, or plan-when-required |
+
+TGT-LEAN-FINAL identity:
+
+The immutable identity is the SHA-256 digest of one canonical manifest. The manifest itself is the identity serialization.
+
+1. Encoding is UTF-8 with no BOM. Newlines are LF only.
+2. Include every T1 change-surface file that exists after T1 smoke: the TGT-LEAN-ADR, TGT-LEAN-ROUTER, TGT-LEAN-BACKEND, and TGT-LEAN-EVAL paths, including added files. Do not include TGT-LEAN-PRESERVE paths. Do not include TGT-LEAN-OBS-T1 or TGT-LEAN-OBS-T2 files; those are generated against the already-frozen TGT-LEAN-FINAL identity.
+3. Paths are repository-relative from the canonical repository root, POSIX `/` separators, no leading `./`.
+4. Sort records by the path column using raw UTF-8 byte order, ascending.
+5. Each record is `path`, then one TAB, then the 64-character lowercase hex SHA-256 of that file's complete bytes, then one LF. No blank lines and no extra spaces.
+6. The file ends with the last record's LF and nothing after it.
+7. `TGT-LEAN-FINAL` equals SHA-256 of those complete manifest bytes, lowercase hex.
+8. T1 copies the exact manifest bytes and digest into OUTP-LEAN-FINAL. Recompute by hashing each listed file, rebuilding the manifest, and comparing the digest. A pre/post mismatch invalidates every later Handoff.
+
+Inventory join rule:
+
+- A table Case ID that does not contain `-TO-DO-` equals the `evals.json` `id`.
+- A table Case ID that starts with `R-TO-DO-` equals the registry `id` formed by deleting the hyphen after `TO`. That maps `R-TO-DO-PROJECTION-EQUIVALENT-A` to the exact registry identity and likewise for the B row. Fixture paths and SHA-256 values remain the join proof. The extra hyphen exists only so this plan does not contain the planner placeholder token.
+
+Observation producer contract:
+
+- Path: `.config/agents/skills/dev-ask/evals/observe_case.py`, created by T1, currently absent.
+- Bind: `python3 .config/agents/skills/dev-ask/evals/observe_case.py bind --registry .config/agents/skills/dev-ask/evals/evals.json --case-id CASEID --skill SKILL.md --fixture fixtures/CASE/case.json --target-digest DIGEST --producer PRODUCER --attempt-id ATTEMPTID --out-dir OUTDIR`
+- Seal: `python3 .config/agents/skills/dev-ask/evals/observe_case.py seal --out-dir OUTDIR`
+- Router cases bind `.config/agents/skills/dev-ask/SKILL.md`. Backend and live cases bind `.config/agents/skills/dev-implementation/SKILL.md`.
+- `bind` writes `input-binding.json` with the current skill SHA-256, fixture-file SHA-256, exact `inputs.request` bytes, registry case id, TGT-LEAN-FINAL digest, producer, and attempt id. It does not write an observation.
+- The named producer then reads those bound skill bytes and the fixture request and writes `raw-result.txt` plus `observation.json` in the same out-dir. `raw-result.txt` is the producer notes, not a copy of `expected`.
+- `seal` writes `receipt.json` with schema `lean-eval-receipt/v1` and keys `schema`, `case_id`, `producer`, `attempt_id`, `skill_sha256`, `fixture_sha256`, `request_sha256`, `target_digest`, `raw_result_sha256`, `observation_sha256`. It exits 1 if `raw-result.txt` is missing or empty, if `raw_result_sha256` equals the SHA-256 of the registry `expected` object as sorted-key compact UTF-8 JSON, or if any bind hash no longer matches the files.
+- T1 uses producer `lean-implementation-owner`, attempt ids `T1-OBS-CASEID`, and out-dir `/Users/kim/.grok/sessions/%2FUsers%2Fkim%2F.dotfiles/019ffa40-6314-7e91-9729-a3a5e4e204e2/obs/t1/CASEID`. T2 uses producer `dev-verification`, attempt ids `T2-OBS-CASEID`, and out-dir `/Users/kim/.grok/sessions/%2FUsers%2Fkim%2F.dotfiles/019ffa40-6314-7e91-9729-a3a5e4e204e2/obs/t2/CASEID`. Those two roots are disjoint. T2 must not read or copy T1 observation, raw-result, or receipt files. `observe_case.py` refuses an `--out-dir` under the canonical repository root.
+- The producing task Common Handoff embeds each complete sealed `receipt.json` and names its SHA-256 and attempt id. That Handoff, not `compare_trace.py`, establishes freshness. Keep the two obs trees until T5. T5 first verifies each embedded receipt SHA-256 against the still-present file, then deletes only TGT-LEAN-OBS-T1 and TGT-LEAN-OBS-T2, then verifies both roots are absent and no sibling or session path was removed, then emits OUTP-LEAN-ASSURANCE. Never create `t1-obs` or `t2-obs` under the repository root.
+
+Evaluator contract:
+
+- Path: `.config/agents/skills/dev-ask/evals/compare_trace.py`, created by T1, currently absent.
+- Compare invocation: `python3 .config/agents/skills/dev-ask/evals/compare_trace.py --registry .config/agents/skills/dev-ask/evals/evals.json --case-id CASEID --observed OUTDIR/observation.json --target-digest DIGEST`
+- Self-test invocation: `python3 .config/agents/skills/dev-ask/evals/compare_trace.py --self-test --self-test-file .config/agents/skills/dev-ask/evals/compare_trace_selftest.json`
+- Keep-check invocation: `python3 .config/agents/skills/dev-ask/evals/compare_trace.py --keep-check --baseline-blob c46c314f5ff7d422f5f5b5a65d655a7e08531ea2 --baseline-commit fc4e3b60e8bdecd0f5bc4fbc88ff0825c4b54e6c --baseline-sha256 353197c7447bf06d22b438587d7302f5217a3618d8ff9b0a37d20a890ea12344 --current .config/agents/skills/dev-ask/evals/evals.json --repo-root` the canonical repository root
+- Observation schema name: `lean-eval-observation/v1`. Required keys: `schema`, `case_id`, `fixture_sha256`, `target_digest`, `artifacts`, `first_owner`, `gates`, `mode`, `outcome`, `owners`, `route`, `events`. Include `assurance_profile`, `todo_phases`, `material_reapproval_triggers`, or `state_trace` only when the registry case declares that expected field. Do not use a provenance object as authenticity evidence.
+- `compare_trace.py` validates structure and semantics only. It does not authenticate freshness or producer identity. Freshness is the producer Handoff plus `receipt.json`.
+- Result schema name: `lean-eval-trace/v1`. One JSON object with keys `schema`, `status`, `case_id`, and `mismatches`. Exit 0 when `status` is `pass`; exit 1 when `status` is `fail`.
+- Pass condition: `case_id` exists; `fixture_sha256` equals the fixture file digest; `target_digest` equals the supplied digest; every key present on `expected` matches exactly; `required_events` is an ordered subsequence of `events`; no `forbidden_events` entry appears anywhere in `events`; when `expected.state_trace` is present it equals `state_trace` exactly. Do not default a compact success trace.
+- Fail nonzero for unknown `case_id`, malformed JSON, missing required keys, schema mismatch, digest mismatch, and any field mismatch.
+- `--keep-check` runs `git -C REPO cat-file blob c46c314f5ff7d422f5f5b5a65d655a7e08531ea2`, refuses `HEAD`, verifies those bytes hash to `353197c7447bf06d22b438587d7302f5217a3618d8ff9b0a37d20a890ea12344`, parses both registries, and requires exact parsed-object equality for every keep-row `id`. Fixture files continue to be compared by the inventory SHA-256 values. T1 and T2 both run this from the pinned blob.
+- `compare_trace_selftest.json` contains exactly these canned checks, each with a fixed observation and expected `status`: `pass-observation`, `route-mismatch`, `owners-mismatch`, `first-owner-mismatch`, `missing-required-event`, `forbidden-event`, `wrong-event-order`, `wrong-state-trace`, `malformed-input`, `unknown-case`. `--self-test` exits 0 only when every check produces its expected status. `owners-mismatch` changes only `owners`. `first-owner-mismatch` changes only `first_owner`.
+
+Scanner contract:
+
+- Path: `.config/agents/skills/dev-ask/evals/scan_stale_contracts.py`, created by T1, currently absent.
+- Invocation: `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py`
+- Preserve invocation: `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py --preserve`
+- Self-test: `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py --self-test`
+- Normalize each line before match: Unicode casefold; delete backtick characters; replace `→`, `->`, and `⇒` with ` then `; replace hyphen, en dash, em dash, and underscore with a space; collapse whitespace.
+- Stale needles, matched after normalize: `standard is the fallback`; `three semantic attempts`; `three attempt task budget`; `three semantic attempt ceiling`; `no fourth attempt`; `compact uses dev-implementation then dev-verification`; `compact uses an ordered separate reviewer`; `compact uses a separate ordered reviewer attempt after verified`; `compact binds two ordered semantic attempts`; `compact uses one fresh non-implementer identity for two ordered semantic attempts`; `after compact review, the backend screens`; `compact work reaches this skill only when`; `compact dispatches learning only after`.
+- Required needles, matched after normalize, must appear in the scanned set: `compact is the default`; `two semantic attempts`; `compact never dispatches`; `dev-implementation then dev-ask completion presentation`. Deletion of stale text without these required phrases is `fail`.
+- Exact scan paths: `.config/agents/skills/dev-ask/SKILL.md`; `.config/agents/skills/dev-implementation/SKILL.md`; `.config/agents/skills/dev-implementation/references/compact-checklist.md`; `.config/agents/skills/dev-handoff/SKILL.md`; `.config/agents/skills/dev-verification/SKILL.md`; `.config/agents/skills/dev-code-review/SKILL.md`; `.config/agents/skills/dev-continual-learning/SKILL.md`; `docs/adr/0001-dev-workflow-authority-and-routing.md`; `docs/adr/0002-executor-plans-and-orchestration.md`; `docs/adr/0003-bounded-assurance-and-repair.md`; `docs/adr/0004-canonical-discovery-and-continual-learning.md`; `docs/adr/INDEX.md`; `.config/agents/skills/dev-ask/WORKFLOW.md`; `.config/agents/skills/dev-ask/evals/evals.json`; every rewrite and added fixture `case.json`; `.config/agents/personas/planner/PERSONA.md` at SHA-256 `c22e40fa8f6f92572552c7666ae454e1f721589cd387a929df52374ae326c563`.
+- Skip a line only when it sits under a heading whose text is `Rejected alternatives / why not` or whose first characters are `Historical`, or when the line itself contains `rejected alternative` or `superseded by`. Each of those three exclusion forms is a separate rule.
+- Result schema name: `lean-stale-scan/v1`. Keys: `schema`, `status`, `hits`, `missing_required`, `scanned`. Each hit has `path`, `line`, `needle`, `text`. Exit 0 only when `hits` is empty and `missing_required` is empty; otherwise exit 1.
+- `--preserve` hashes every TGT-LEAN-PRESERVE path and exits 0 only when each digest equals the frozen value in the TGT-LEAN-PRESERVE row.
+- `--self-test` runs one isolated case per stale needle, one isolated case per required needle, and one isolated case per exclusion form. Each stale needle must fail on its own. The stale needle `compact uses dev-implementation then dev-verification` is tested with the current arrow-form source sentence from `.config/agents/skills/dev-ask/SKILL.md`, not a constructed word-then line. Each required needle must fail when omitted and pass when present with no stale text. Each exclusion form must pass when the only stale phrase sits inside that form. Exit 0 only when every isolated case behaves.
+
+Do not create `.config/agents/skills/dev-ask/ROUTE-CHECKLIST.md` or `.config/agents/skills/dev-implementation/COMPACT-CHECKLIST.md`.
+
+## Execution policy
+
+- Assurance: high-consequence
+- Topology: one-owner-sequential
+- Max concurrency: 1
+- Isolation: no implementation worktree
+- Lineages: shared
+- Fan-in task: none
+- Fan-in inputs: none
+- Contention policy: preserve all current user work, including both untouched mechanical-convergence copies; reread and digest each target before edit; stop at BLK-LEAN-DRIFT on semantic conflict
+- Decomposition: prohibited for T1; T2 through T5 are the required high-consequence assurance owners, not implementation slices
+- Effect limit: EFF-LEAN-REPO, EFF-LEAN-PRESERVE, EFF-LEAN-EXTERNAL, EFF-LEAN-USER, EFF-LEAN-OBS
+- Orchestrator profile: approved one-qualified-owner sequential projection; no fallback, adapter, or topology escalation
+
+This implementation is high-consequence because it changes default assurance. Its own T2 through T5 remain independent even though later compact user work will not run those stages. T2, T3, and T4 start only after `dev-implementation backend` validates the previous Handoff.
+
+## Tasks
+
+- [ ] T1. Publish the atomic lean ordinary-path cutover
+  - Owner: lean-implementation-owner
+  - Wave: W0
+  - Depends on: none
+  - Targets: TGT-LEAN-ADR, TGT-LEAN-ROUTER, TGT-LEAN-BACKEND, TGT-LEAN-EVAL, TGT-LEAN-PRESERVE, TGT-LEAN-FINAL, TGT-LEAN-OBS-T1
+  - Contracts: CONTRACT-LEAN-CUTOVER
+  - Criteria: AC-LEAN-01, AC-LEAN-02, AC-LEAN-03, AC-LEAN-04, AC-LEAN-05, AC-LEAN-06, AC-LEAN-07, AC-LEAN-12
+  - Effects: EFF-LEAN-REPO, EFF-LEAN-PRESERVE, EFF-LEAN-EXTERNAL, EFF-LEAN-USER, EFF-LEAN-OBS
+  - Output: OUTP-LEAN-FINAL
+  - Receiver: dev-implementation backend
+  - Verification: VR-LEAN-01, VR-LEAN-02, VR-LEAN-03, VR-LEAN-04, VR-LEAN-05, VR-LEAN-06, VR-LEAN-07, VR-LEAN-12
+  - Lineage: shared
+- [ ] T2. Independently verify the frozen T1 target
+  - Owner: dev-verification
+  - Wave: W1
+  - Depends on: T1
+  - Targets: TGT-LEAN-FINAL, TGT-LEAN-VERIFY-EVIDENCE, TGT-LEAN-OBS-T2
+  - Contracts: CONTRACT-LEAN-CUTOVER, CONTRACT-LEAN-VERIFY
+  - Criteria: AC-LEAN-08
+  - Effects: EFF-LEAN-OBS
+  - Output: OUTP-LEAN-VERIFIED
+  - Receiver: dev-implementation backend
+  - Verification: VR-LEAN-08
+  - Lineage: shared
+- [ ] T3. Review the verified high-consequence target
+  - Owner: dev-code-review
+  - Wave: W2
+  - Depends on: T2
+  - Targets: TGT-LEAN-FINAL, TGT-LEAN-REVIEW-EVIDENCE
+  - Contracts: CONTRACT-LEAN-VERIFY, CONTRACT-LEAN-REVIEW
+  - Criteria: AC-LEAN-09
+  - Effects: none
+  - Output: OUTP-LEAN-REVIEWED
+  - Receiver: dev-implementation backend
+  - Verification: VR-LEAN-09
+  - Lineage: shared
+- [ ] T4. Run required high-consequence assessment-only learning
+  - Owner: dev-continual-learning
+  - Wave: W3
+  - Depends on: T3
+  - Targets: TGT-LEAN-FINAL, TGT-LEAN-LEARN-EVIDENCE
+  - Contracts: CONTRACT-LEAN-REVIEW, CONTRACT-LEAN-LEARN
+  - Criteria: AC-LEAN-10
+  - Effects: none
+  - Output: OUTP-LEAN-LEARNED
+  - Receiver: dev-implementation backend
+  - Verification: VR-LEAN-10
+  - Lineage: shared
+- [ ] T5. Account terminal evidence to dev-ask
+  - Owner: dev-implementation backend
+  - Wave: W4
+  - Depends on: T4
+  - Targets: TGT-LEAN-TERMINAL, TGT-LEAN-OBS-T1, TGT-LEAN-OBS-T2
+  - Contracts: CONTRACT-LEAN-VERIFY, CONTRACT-LEAN-REVIEW, CONTRACT-LEAN-LEARN, CONTRACT-LEAN-ACCOUNT
+  - Criteria: AC-LEAN-11
+  - Effects: EFF-LEAN-OBS
+  - Output: OUTP-LEAN-ASSURANCE
+  - Receiver: dev-ask
+  - Verification: VR-LEAN-11
+  - Lineage: shared
+
+T1 writes D26 and amends D03, D04, D07, D08, D11, D21, and D22; updates INDEX discovery; rewrites only the WORKFLOW statements that set default assurance, compact suffix, attempt budget, ceremony, D21 Context Pack applicability, and the compact-checklist pointer; inlines the six router gates in `dev-ask/SKILL.md`; writes the compact checklist and its read seam; updates handoff, verification, review, and continual-learning skills only where they currently force compact through those stages; writes `observe_case.py`, `compare_trace.py`, `compare_trace_selftest.json`, and `scan_stale_contracts.py`; produces T1 observation receipts; applies the closed keep/rewrite/add inventory; records the TGT-LEAN-FINAL manifest; scans planner persona `c22e40fa8f6f92572552c7666ae454e1f721589cd387a929df52374ae326c563` plus active skills, ADRs, WORKFLOW, checklists, and evals for three-attempt, standard-fallback, and compact-always-verify text; proves every TGT-LEAN-PRESERVE hash; and produces the changed-path manifest and aggregate digest. Keep the five-section WORKFLOW shape. Do not copy the mechanical-convergence contract. Do not weaken D24. Do not edit `.agents/AGENTS.md`. Do not emit a completed Handoff until those surfaces agree.
+
+T2 binds TGT-LEAN-FINAL and OUTP-LEAN-FINAL, rehashes before and after, regenerates its own observations under TGT-LEAN-OBS-T2 without reading TGT-LEAN-OBS-T1, reruns VR-LEAN-01 through VR-LEAN-07 and VR-LEAN-12 against that identity including `--keep-check` from the pinned blob, and returns the Verifier Handoff only to `dev-implementation backend`.
+
+T3 starts only after the backend accepts T2 as `VERIFIED`. It binds the same TGT-LEAN-FINAL digest and OUTP-LEAN-VERIFIED, rehashes before and after, and returns the Review Handoff only to the backend.
+
+T4 starts only after the backend accepts T3 as `APPROVED`. It binds the same TGT-LEAN-FINAL digest and OUTP-LEAN-REVIEWED, rehashes before and after, writes no guidance, and returns `NO DURABLE LEARNING`.
+
+T5 validates T4, accounts the unchanged T1 digest, the T2 and T3 verdicts, the T4 verdict, zero curator paths, unused or consumed repair state, and the embedded T1/T2 receipts; verifies each embedded receipt SHA-256 against the still-present obs file; deletes only TGT-LEAN-OBS-T1 and TGT-LEAN-OBS-T2; verifies both roots are absent and no sibling or session path was removed; then emits OUTP-LEAN-ASSURANCE to `dev-ask`.
+
+## Acceptance
+
+| Criterion ID | Condition / input | Expected observable / threshold | Surface | Owning task |
+|---|---|---|---|---|
+| AC-LEAN-01 | ADR/index/workflow after D26 and D03/D04/D07/D08/D11/D21/D22 amendments | Compact is the eligible default; compact suffix is implementation then completion with no learning dispatch; two attempts plus one repair are current for every profile; Executor Plans are not required for compact one-owner work; D21 same-context compact binds the Task Contract directly and requires a Context Pack only when context crosses; D22 review applies only when the profile requires review; D07 compact never dispatches learning; D24 unchanged; no active conflict with D10/D13/D14; mechanical-convergence text is not current authority | TGT-LEAN-ADR | T1 |
+| AC-LEAN-02 | Settled reversible one-context one-lineage coding task with no compact disqualifier | Prospective and completed human Routes are exactly `dev-implementation` then `dev-ask completion presentation`; no requirements, specification, ticketing, grilling, diagnosis, verification, review, or learning owner appears | TGT-LEAN-ROUTER | T1 |
+| AC-LEAN-03 | Same shape as AC-LEAN-02 except one existing compact disqualifier is true | Route uses standard or high-consequence suffix with independent verification, review, and required learning; compact is rejected | TGT-LEAN-ROUTER | T1 |
+| AC-LEAN-04 | Compact one-owner implementation attempt | Ready without Executor Plan, preflight, orchestrator profile, or materialized contract files; a minimal in-conversation Task Contract exists; same-context work has no Context Pack; every owned acceptance criterion has a deterministic smoke scenario run against the exact final target with expected and observed results; completion occurs only when every criterion passes; missing, partial, stale, or failed smoke blocks completion; any independent-proof criterion disqualifies compact; state trace has no `verifying`, `verified`, `reviewing`, or `reviewed` | TGT-LEAN-BACKEND | T1 |
+| AC-LEAN-05 | Compact, standard, and high-consequence failures with unchanged hypothesis, third attempt, revision rewrite, or second repair | Attempt 2 is authorized only from attempt-1 progress, blocker resolution, or authorized changed hypothesis; unchanged-hypothesis retry is rejected before it runs; attempt 3 is forbidden; derivative revisions inherit counts; one repair token is not restored; the repair Task Contract also has at most two attempts; two transport retries remain | TGT-LEAN-BACKEND | T1 |
+| AC-LEAN-06 | Large cohesive settled coding task whose only extra facts are implementation size, duration, or solution-rung choice, while authority, design, compatibility, acceptance, effects, and proof stay settled | One implementation owner; no catalog skill is prepended | TGT-LEAN-ROUTER | T1 |
+| AC-LEAN-07 | Final T1 bytes versus the closed inventory and preservation surfaces | Every listed existing case has the planned keep or rewrite; every added case exists; stale compact-always-verify, standard-fallback, and three-attempt contracts are gone; required compact-default, two-attempt, and never-learning phrases are present; every TGT-LEAN-PRESERVE hash matches its frozen value; every keep registry object equals the object in git blob `c46c314f5ff7d422f5f5b5a65d655a7e08531ea2`; TGT-LEAN-FINAL digest is recorded; T1 receipts exist only under TGT-LEAN-OBS-T1 | TGT-LEAN-EVAL, TGT-LEAN-PRESERVE, TGT-LEAN-FINAL, TGT-LEAN-OBS-T1 | T1 |
+| AC-LEAN-08 | Frozen TGT-LEAN-FINAL manifest digest plus OUTP-LEAN-FINAL | Fresh `dev-verification` rehashes TGT-LEAN-FINAL before and after the pass, reruns VR-LEAN-01 through VR-LEAN-07 and VR-LEAN-12 against that identity, and returns `VERIFIED` to the backend; Handoff names the same digest and embeds T2 receipts from TGT-LEAN-OBS-T2 | TGT-LEAN-VERIFY-EVIDENCE, TGT-LEAN-OBS-T2 | T2 |
+| AC-LEAN-09 | Unchanged TGT-LEAN-FINAL digest plus OUTP-LEAN-VERIFIED | Separate high-consequence `dev-code-review` rehashes TGT-LEAN-FINAL before and after the pass and returns `APPROVED` to the backend; Handoff names the same digest | TGT-LEAN-REVIEW-EVIDENCE | T3 |
+| AC-LEAN-10 | Unchanged TGT-LEAN-FINAL digest plus OUTP-LEAN-REVIEWED | Required Standard `dev-continual-learning` rehashes TGT-LEAN-FINAL before and after the pass and returns `NO DURABLE LEARNING`; no guidance path changes; digest equals the T1 manifest; user-level AGENTS unchanged | TGT-LEAN-LEARN-EVIDENCE | T4 |
+| AC-LEAN-11 | Complete T2-T4 outcomes plus still-present T1/T2 receipt files | Backend verifies every embedded receipt against its still-present file, deletes only TGT-LEAN-OBS-T1 and TGT-LEAN-OBS-T2, confirms both roots are absent and no sibling or session path was removed, then emits the evidence index proving every task/criterion/effect terminal; names the unchanged T1 digest, T2 `VERIFIED`, T3 `APPROVED`, T4 `NO DURABLE LEARNING`, zero curator paths, and confirmed cleanup; no shipping and no required nonterminal work | TGT-LEAN-TERMINAL | T5 |
+| AC-LEAN-12 | Same settled compact-eligible facts plus one bounded factual engineering gap that is not in current evidence | First owner is `dev-research`; route is `dev-research` then `dev-ask`; `R-ORDINARY-SIZE-ONLY` still has one implementation owner | TGT-LEAN-ROUTER | T1 |
+
+## Verification / Done criteria
+
+- [ ] VR-LEAN-01. Prove lean ordinary-path authority
+  - Criterion: AC-LEAN-01
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py` and `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py --self-test`; plus INDEX rows for D26 and amended D03, D04, D07, D08, D11, D21, D22
+  - Evidence form: `lean-stale-scan/v1` `status=pass`, empty `missing_required`, and `--self-test` exit 0; INDEX has D26 and the amended decisions; D21 states same-context compact binds the Task Contract directly; D24 text unchanged
+  - Target recheck: TGT-LEAN-ADR
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-02. Prove ordinary settled coding route
+  - Criterion: AC-LEAN-02
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 `observe_case.py bind` and `seal` for `R-ORDINARY-COMPACT-DIRECT` under TGT-LEAN-OBS-T1, then `compare_trace.py --observed` that directory's `observation.json --target-digest` the TGT-LEAN-FINAL digest
+  - Evidence form: T1 receipt in OUTP-LEAN-FINAL; `lean-eval-trace/v1` `status=pass`; owners are `dev-implementation` and `dev-ask completion presentation`
+  - Target recheck: TGT-LEAN-ROUTER
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-03. Prove compact disqualifier still escalates
+  - Criterion: AC-LEAN-03
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 sealed TGT-LEAN-OBS-T1 `R-ORDINARY-COMPACT-NEAR-MISS-DISQUALIFIER` through `compare_trace.py`
+  - Evidence form: `status=pass`; compact rejected; verification, review, and learning owners present
+  - Target recheck: TGT-LEAN-ROUTER
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-04. Prove compact smoke-as-proof and no file ceremony
+  - Criterion: AC-LEAN-04
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 sealed TGT-LEAN-OBS-T1 `B-ORDINARY-COMPACT-SMOKE-PASS` and `B-ORDINARY-COMPACT-SMOKE-FAIL` through `compare_trace.py`
+  - Evidence form: pass trace is `accepted`, `ready`, `running`, `handed-off`, `complete` with per-criterion expected/observed smoke; fail trace never reaches `complete`; no `verifying`/`verified`/`reviewing`/`reviewed`; no required plan or contract files
+  - Target recheck: TGT-LEAN-BACKEND
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-05. Prove two-attempt and one-repair stop
+  - Criterion: AC-LEAN-05
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 sealed TGT-LEAN-OBS-T1 receipts for rewritten `B-RETRY`, `B-RETRY-STANDARD`, `B-RETRY-HIGH-CONSEQUENCE`, and `B-T4-REPAIR-REMAINING-BLOCKER` through `compare_trace.py`
+  - Evidence form: attempt 2 only after attempt-1 evidence; unchanged-hypothesis retry absent; no attempt-3 event; repair token consumed once; repair owner stops at 2/2
+  - Target recheck: TGT-LEAN-BACKEND
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-06. Prove size does not add stages
+  - Criterion: AC-LEAN-06
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 sealed TGT-LEAN-OBS-T1 `R-ORDINARY-SIZE-ONLY` through `compare_trace.py`
+  - Evidence form: `status=pass`; one implementation owner; no prepended catalog skill
+  - Target recheck: TGT-LEAN-ROUTER
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-07. Prove closed eval cutover and preservation
+  - Criterion: AC-LEAN-07
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py --preserve` against the TGT-LEAN-PRESERVE map; `python3 .config/agents/skills/dev-ask/evals/scan_stale_contracts.py`; `python3 .config/agents/skills/dev-ask/evals/compare_trace.py --self-test --self-test-file .config/agents/skills/dev-ask/evals/compare_trace_selftest.json`; `python3 .config/agents/skills/dev-ask/evals/compare_trace.py --keep-check --baseline-blob c46c314f5ff7d422f5f5b5a65d655a7e08531ea2 --baseline-commit fc4e3b60e8bdecd0f5bc4fbc88ff0825c4b54e6c --baseline-sha256 353197c7447bf06d22b438587d7302f5217a3618d8ff9b0a37d20a890ea12344 --current .config/agents/skills/dev-ask/evals/evals.json --repo-root` the canonical repository root; T1 `observe_case.py bind` and `seal` plus `compare_trace.py` for each of `R-REQUIREMENTS-NEAR-MISS`, `R-BUG-NEAR-MISS`, `R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT`, `R-WAYFINDER-NEAR-MISS`, `R-ARCHITECTURE-NEAR-MISS`, `R-ARTIFACT-LANE-NEAR-MISS`, `R-DRIFT-NEAR-MISS`, `R-COMPLETE-COMPACT-NO-LEARNING`, `B-RETRY`, `B-COMPACT`, `B-COMPACT-CURATION-TRIGGER`, `L-MUTATION`, `R-OUTCOME-CONTINUATION`, `B-T4-REPAIR-REMAINING-BLOCKER`, `B-T4-CURATION-COMPACT-NOT-TRIGGERED`, `R-T5-ORDINARY-DIRECT-NO-EAGER-HISTORY`, `R-TRIAGE-NEAR-MISS-PROJECT-TICKET`, `R-ROUTE-PRESENTATION-NEAR-MISS-INLINE`, `R-ROUTE-CANDIDATES`, `R-ROUTE-GATING-QUESTION-NEAR-MISS`, `R-ORDINARY-COMPACT-DIRECT`, `R-ORDINARY-COMPACT-NEAR-MISS-DISQUALIFIER`, `R-ORDINARY-SIZE-ONLY`, `R-ORDINARY-FACTUAL-GAP-PREPENDS-RESEARCH`, `B-ORDINARY-COMPACT-SMOKE-PASS`, `B-ORDINARY-COMPACT-SMOKE-FAIL`, `B-RETRY-STANDARD`, `B-RETRY-HIGH-CONSEQUENCE`, and `B-COMPACT-DEFERRED-LEARNING-CANDIDATE`; keep-row fixture hashes equal the inventory; keep registry objects equal the pinned blob; registry contains exactly the 138 existing IDs plus the nine added IDs
+  - Evidence form: every preserve hash equals the frozen value; scanner `status=pass` with empty `missing_required`; comparator self-test exit 0; keep-check exit 0 against the pinned blob; T1 receipts for all 29 cases; all 29 `lean-eval-trace/v1` `status=pass`; keep fixture hashes unchanged; TGT-LEAN-FINAL digest recorded
+  - Target recheck: TGT-LEAN-EVAL, TGT-LEAN-PRESERVE, TGT-LEAN-FINAL, TGT-LEAN-OBS-T1
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-08. Independently verify the frozen target
+  - Criterion: AC-LEAN-08
+  - Proof class: independent verification
+  - Scenario / environment / fixture: bind the TGT-LEAN-FINAL digest from OUTP-LEAN-FINAL; rehash the manifest before work; rerun VR-LEAN-01 through VR-LEAN-07 and VR-LEAN-12 against that identity using TGT-LEAN-OBS-T2 and `--keep-check` from the pinned blob, not TGT-LEAN-OBS-T1 files; rehash after work
+  - Evidence form: one Verifier Handoff with `VERIFIED`, the same digest, matching pre/post hashes, complete embedded T2 receipts distinct from T1, and no implementation edit, returned to the backend
+  - Target recheck: TGT-LEAN-VERIFY-EVIDENCE, TGT-LEAN-OBS-T2
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-09. Review the verified target
+  - Criterion: AC-LEAN-09
+  - Proof class: review
+  - Scenario / environment / fixture: bind the same TGT-LEAN-FINAL digest and OUTP-LEAN-VERIFIED; rehash the manifest before and after the pass; high-consequence Standards and Specification pass including D22 lens
+  - Evidence form: one Review Handoff `APPROVED` naming the same digest and matching pre/post hashes, returned to the backend
+  - Target recheck: TGT-LEAN-REVIEW-EVIDENCE
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-10. Settle high-consequence learning without mutation
+  - Criterion: AC-LEAN-10
+  - Proof class: other authorized class
+  - Scenario / environment / fixture: bind the same TGT-LEAN-FINAL digest and OUTP-LEAN-REVIEWED; rehash the manifest before and after the pass; no curator write authorized
+  - Evidence form: Curator Handoff `NO DURABLE LEARNING`; TGT-LEAN-FINAL digest unchanged and equal to the T1 manifest; `/Users/kim/.agents/AGENTS.md` still `1ab60d54c0ba71feae07fe64361a0f2acd749ebf368290998a83a11cbd4998e9`
+  - Target recheck: TGT-LEAN-LEARN-EVIDENCE
+  - Receiver: dev-implementation backend
+- [ ] VR-LEAN-11. Account completion
+  - Criterion: AC-LEAN-11
+  - Proof class: other authorized class
+  - Scenario / environment / fixture: T2-T4 Handoffs plus the T1 changed-path manifest plus the embedded T1/T2 receipts; verify each receipt against the still-present file; delete only TGT-LEAN-OBS-T1 and TGT-LEAN-OBS-T2; confirm both roots are absent and no sibling or session path was removed; then emit OUTP-LEAN-ASSURANCE
+  - Evidence form: terminal evidence index emitted only after receipt verification and confirmed cleanup, with every AC/VR, unused or consumed repair token, unchanged T1 digest, zero curator paths, and no shipping
+  - Target recheck: TGT-LEAN-TERMINAL
+  - Receiver: dev-ask
+- [ ] VR-LEAN-12. Prove a factual gap still prepends research
+  - Criterion: AC-LEAN-12
+  - Proof class: worker smoke
+  - Scenario / environment / fixture: T1 sealed TGT-LEAN-OBS-T1 `R-ORDINARY-FACTUAL-GAP-PREPENDS-RESEARCH` and `R-ORDINARY-SIZE-ONLY` through `compare_trace.py`
+  - Evidence form: first owner `dev-research`; size-only remains one implementation owner
+  - Target recheck: TGT-LEAN-ROUTER
+  - Receiver: dev-implementation backend
+
+## Result / Handoff
+
+| Output ID | Producing task | Artifact / identity | Allowed outcomes | Receiver | Handoff contract |
+|---|---|---|---|---|---|
+| OUTP-LEAN-FINAL | T1 | TGT-LEAN-FINAL digest, closed classification table, preservation hashes, complete T1 sealed receipts | completed, blocked, failed, timed-out, cancelled, transport-unavailable, authority-change-required | dev-implementation backend | One in-conversation Common Handoff with AC-LEAN-01 through AC-LEAN-07 and AC-LEAN-12 smoke plus each complete T1 `lean-eval-receipt/v1` object, SHA-256, and attempt id; emitted only after atomic cutover |
+| OUTP-LEAN-VERIFIED | T2 | Verifier Handoff on frozen T1 digest plus complete T2 sealed receipts | completed, blocked, failed | dev-implementation backend | One Common Handoff extended as a Verifier Handoff with `VERIFIED` or blocking AC IDs plus each complete T2 `lean-eval-receipt/v1` object, SHA-256, and attempt id |
+| OUTP-LEAN-REVIEWED | T3 | Review Handoff on the same digest | completed, blocked, failed | dev-implementation backend | One Common Handoff extended as a Review Handoff with `APPROVED` or blocking findings |
+| OUTP-LEAN-LEARNED | T4 | Curator Handoff on the unchanged digest | completed, blocked, failed | dev-implementation backend | One Common Handoff extended as a Curator Handoff with `NO DURABLE LEARNING` only |
+| OUTP-LEAN-ASSURANCE | T5 | Terminal evidence index after receipt verification and confirmed obs-tree deletion | completed, blocked, failed | dev-ask | One Common Handoff from the backend emitted only after receipt verification and confirmed cleanup, with every AC/VR, repair state, unchanged T1 digest, zero curator paths, embedded receipt SHA-256 values, and completion eligibility |
+
+Do not materialize these Handoffs as repository files.
+
+## Blockers and recovery
+
+| Blocker ID | Owner | Recovery evidence | Affected tasks | Revision / approval boundary | Ready condition |
+|---|---|---|---|---|---|
+| BLK-LEAN-DRIFT | current authority owner | Exact changed bytes and affected criteria | T1 | Material authority or route change needs revised approval | Current bytes preserve this plan or an approved revision replaces it |
+| BLK-LEAN-DISQUALIFIER | lean-implementation-owner | Named compact disqualifier that would make the ordinary path unsafe | T1 | Do not silently keep verify/review on compact to paper over an unclear disqualifier | Disqualifier list stays the existing implementation list, or a named amendment is approved |
+| BLK-LEAN-D24 | ADR-0007 owner | Any proposed compact durable-guidance write | T1, T4 | No D24 weakening inside this plan | Mutating candidates remain deferred; T4 stays assessment-only |
+| BLK-LEAN-PRESERVE | lean-implementation-owner | Mechanical-convergence, papercut, or `.agents/AGENTS.md` hash mismatch | T1, T2 | No edit of either mechanical-convergence copy, the papercut projections, or `.agents/AGENTS.md` | Restored exact preserved hashes |
+| BLK-LEAN-ASSURANCE | dev-implementation backend | Deduplicated AC/finding IDs and unused repair token | T2, T3, T4, T5 | One consolidated repair only if unused; no lifecycle reset | Repaired target passes impacted proof, or the outcome stops |
+
+A failed task quarantines its descendants. Recovery does not scan artifacts or reset attempt counts.
+
+## Critical anchors and assumptions
+
+| Anchor ID | Kind | Exact reference | Execution role |
+|---|---|---|---|
+| ANC-LEAN-USER | human request | AUTH-USER-LEAN USER-LEAN-20260813-r6 | Defines the lean ordinary-path goal and forbids the mechanical-convergence ships |
+| ANC-LEAN-REVIEW-R5 | review Handoff | AUTH-REVIEW-R5 FINAL-R5-B01 through FINAL-R5-B02 against `15d471146de79516045efb9acbbc5b0b3f0d5903c1f3f5f37ab5ffd2da96ccce` | Names the blockers this revision must close |
+| ANC-LEAN-COMPACT-NOW | current contract | `dev-implementation` compact disqualifiers and `dev-ask` standard-is-the-fallback plus compact suffix `dev-implementation` then `dev-verification` then `dev-code-review` then optional learning then completion | Names the ceremony to remove |
+| ANC-LEAN-D04 | active ADR | ADR-0003 D04 `3f6f67aa3b069f5ff3eff8d733735ad342022fa808b43cd9afc8d912e9f73393` | Amend so compact no longer requires final independent verification and review |
+| ANC-LEAN-D07 | active ADR | ADR-0004 D07 `1aa1958e60a8f6cd112455c9ba61c26f6f82f7e68240a7a7c931b80f68f66dd2` | Amend so compact never dispatches Standard learning |
+| ANC-LEAN-D13 | active ADR | ADR-0001 D13 same ADR-0001 hash | Require atomic cutover of ADRs, skills, WORKFLOW, and fixtures |
+| ANC-LEAN-D21 | active ADR | ADR-0002 D21 same ADR-0002 hash | Amend Context Pack applicability for same-context compact |
+| ANC-LEAN-D22 | active ADR | ADR-0003 D22 same ADR-0003 hash | Amend so final review applies only when the profile requires review |
+| ANC-LEAN-D24 | preservation ADR | ADR-0007 D24 `052806a41a605c81461edb5e38e1d504a3b59cc6029f697e4b1d9ad747e13246` | Durable guidance still needs independent verification and review |
+| ANC-LEAN-MECHANICAL | preservation | both copies `24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d` | Leave untouched; not current authority |
+| ANC-LEAN-PLAN | portable plan boundary | `rule://plan` and current `executor_plan.py` | Validate this plan; do not add an Execution gate |
+
+- ASM-LEAN-01: The existing compact disqualifier list remains the escalation trigger; if a required new disqualifier appears, stop at BLK-LEAN-DISQUALIFIER instead of inventing one.
+- ASM-LEAN-02: One implementation owner can change authority, skills, and evals in one atomic publication; isolated lineages need revised approval.
+- ASM-LEAN-03: Both mechanical-convergence copies remain `PENDING` and unedited for the life of this plan.
+- ASM-LEAN-04: Live harness evals may still be judged by a human or model against `evals.json`. This plan's executable proof is `observe_case.py` receipts plus `compare_trace.py` plus the named Python scanners.
+- ASM-LEAN-05: Git blob `c46c314f5ff7d422f5f5b5a65d655a7e08531ea2` remains readable for the life of this plan and continues to hash to `353197c7447bf06d22b438587d7302f5217a3618d8ff9b0a37d20a890ea12344`.
