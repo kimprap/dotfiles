@@ -1,5 +1,20 @@
 {
   "records": {
+    "pc-127bb3af1002afa4": {
+      "first_seen": "2026-08-15",
+      "last_seen": "2026-08-15",
+      "observations": [
+        {
+          "date": "2026-08-15",
+          "friction": "The OMP LSP rule interrupted a Prettier check for unrelated plan-rule files even though its policy excludes unrelated repository toolchain work.",
+          "workaround": "Use the background formatter result and continue without applying the unrelated LSP guidance."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Narrow the OMP LSP rule activation so unrelated formatter commands do not interrupt.",
+      "surface": "OMP omp-lsp TTSR activation"
+    },
     "pc-e1c8b1660bfd1b81": {
       "first_seen": "2026-08-13",
       "last_seen": "2026-08-13",
