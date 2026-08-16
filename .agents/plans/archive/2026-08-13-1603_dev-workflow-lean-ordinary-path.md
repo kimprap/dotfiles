@@ -4,7 +4,7 @@
 **Authority kind**: local-authority
 **Scope**: Default `dev-*` route composition, compact proof, attempt/repair bounds, assurance intake, executable eval evidence, and terminal accounting for ordinary coding work
 **Summary**: Make the generic engineering workflow a short, deterministic default for settled one-context coding work in any project while enforcing exact blocker closure, outcome-relevant review blockers with causal no-effect evidence, complete non-consuming assurance intake, complete executable-fixture proof, failure-safe terminal cleanup, and profile-aware discovery metadata. Do not add a state engine, harness adapters, extra lifecycle skills, or a terminal stage. Leave the mechanical-convergence plan untouched.
-**Status**: PENDING
+**Status**: CLOSED
 
 ## Objective
 
