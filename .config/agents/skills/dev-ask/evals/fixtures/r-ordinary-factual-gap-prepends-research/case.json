@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "The implementation route cannot yet be selected because one bounded factual question remains: does the pinned upstream API support atomic compare-and-swap on this platform? Current repository evidence is insufficient. Route to dev-research for that exact fact, then back to dev-ask; do not approve or dispatch implementation."
+  },
+  "scripted_replies": []
+}

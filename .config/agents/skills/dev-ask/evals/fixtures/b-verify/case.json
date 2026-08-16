@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "A worker reports smoke success on one immutable target. Show independent criterion proof and target-mutation invalidation. dev-verification must own verifying and verified evidence; backend only initiates/invalidates. Do not invent an invalidated lifecycle state. After target mutation, emit a backend-owned state:blocked transition whose output records the old verdict as historical and non-consumable and requires a new task revision."
+    "request": "Read-only standard verification trace. The immutable target changes universal invariant INV-1. Its finite current consumer map contains direct-caller, effect-consumer, and successor-like-consumer. Direct-caller and effect-consumer pass their declared proofs, but successor-like-consumer has no observed result. Return NOT VERIFIED naming AC-INV-1 and successor-like-consumer. Do not emit VERIFIED or dispatch review."
   },
   "scripted_replies": []
 }

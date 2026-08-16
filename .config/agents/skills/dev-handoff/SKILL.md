@@ -13,7 +13,7 @@ Own the one Common Handoff emitted by every semantic attempt, including non-succ
 
 ## Intake
 
-Require the exact parent `OUT-...` ID and authority revision, Task Contract revision, owned `AC-...` IDs, expected progress signal, current frontier, inherited semantic-attempt budget and run-wide post-assurance repair token, attempt number, role, governing and dependency revisions, exact produced or inspected target identity, observed evidence, and exactly one eligible receiver. The repair field is exact: `unused 1/1` or `consumed 1/1` plus the consuming repair revision when consumed. A derivative revision inherits that state and cannot restore the token. A stale or missing revision makes the attempt non-consumable.
+Require the exact parent `OUT-...` ID and authority revision, Task Contract revision, owned `AC-...` IDs, expected progress signal, current frontier, inherited two-attempt semantic budget and run-wide post-assurance repair token, attempt number, role, governing and dependency revisions, exact produced or inspected target identity, observed evidence, and exactly one eligible receiver. The repair field is exact: `unused 1/1` or `consumed 1/1` plus the consuming repair revision when consumed. A derivative revision inherits attempts and repair state. A stale or missing revision makes the attempt non-consumable.
 
 Attempt outcomes are exactly `completed`, `blocked`, `failed`, `timed-out`, `cancelled`, `transport-unavailable`, and `authority-change-required`. Progress return classes are exactly `completed`, `proved`, `blocker-resolved`, `authority-change`, and `no-progress-stop`; they do not replace the attempt outcome.
 
@@ -21,7 +21,7 @@ Attempt outcomes are exactly `completed`, `blocked`, `failed`, `timed-out`, `can
 
 1. Recheck the Task Contract, parent outcome/revision, governing authority, owned criteria, and declared dependency revisions. Record stale, missing, or conflicting authority instead of hiding it.
 2. Classify the attempt outcome, progress return class, and pre/post task state. Once output-producing reasoning, mutation, or an external effect may have begun, count the semantic attempt.
-3. Compare the Task Contract's expected signal with the observed criterion or blocker delta. Name criteria advanced and unchanged, each exact blocker resolved or remaining, and any falsifiable hypothesis changed by authorized diagnostic evidence.
+3. Compare the Task Contract's expected signal with the observed criterion or blocker delta. Name criteria advanced and unchanged, each exact blocker resolved or remaining, and any falsifiable hypothesis changed by authorized diagnostic evidence. A `blocker-resolved` claim is consumable only when it maps the stable blocker/finding ID to the affected `AC-...`, exact target/caller/failure path, impacted proof recipe, expected result, and observed result on the repaired identity. A universal changed invariant also binds its finite current consumer/callsite map and proves every entry.
 4. Record only exact target and criterion/finding-level evidence. Deduplicate every available blocking criterion, conflict, and review finding ID within its role payload; link artifacts, logs, measurements, or screenshots without pasting transcripts, secrets, canonical documents, or stale reasoning.
 5. State bounded choices, assumptions confirmed or disproved, route impact, residual risk, partial effects, inherited attempt/repair state, whether output is diagnostic-only or stale, and whether an initial eligible review already ran.
 6. Name the next unmet criterion and exactly one Task-Contract-eligible receiver with required preconditions. A Handoff cannot grant authority or permissions absent from its Task Contract.
@@ -49,6 +49,8 @@ Attempt outcomes are exactly `completed`, `blocked`, `failed`, `timed-out`, `can
 - Criteria unchanged
 - Expected delta → observed delta
 - Exact blocking criterion/conflict/finding IDs resolved or remaining, deduplicated
+- Blocker-resolution closure: stable ID → affected `AC-...` → exact target/caller/failure path → impacted proof recipe → expected result → observed result on repaired identity
+- Universal changed invariant → finite current consumer/callsite map → proof for every entry
 - Changed falsifiable hypothesis and evidence identity, if authorized
 - Route impact: unchanged | changed
 ## Result
@@ -62,7 +64,7 @@ Attempt outcomes are exactly `completed`, `blocked`, `failed`, `timed-out`, `can
 - Bounded implementation choices
 - Assumptions confirmed or disproved
 ## Convergence and recovery
-- Inherited semantic attempts: <used>/<maximum>; no fourth attempt on this revision
+- Inherited semantic attempts: <used>/2; attempt 3 forbidden on this outcome revision and derivatives inherit consumption
 - Run-wide post-assurance repair: unused 1/1 | consumed 1/1 by <repair revision>
 - Initial eligible review: not run | run once; review rerun: unused | consumed
 - Impacted smoke/verification/review reruns required or observed
@@ -77,14 +79,14 @@ Attempt outcomes are exactly `completed`, `blocked`, `failed`, `timed-out`, `can
 
 A Handoff that advances no criterion, resolves no named blocker, changes no governing authority, and adds no authorized diagnostic evidence with a materially changed falsifiable hypothesis is `no-progress-stop`. It cannot authorize another semantic attempt or wave. Another audit, unchanged Handoff, inconclusive proof, repeated frontier, elapsed time, artifact/agent count, calendar/invocation count, or remaining local slot is not progress.
 
-Planner/subplanner Handoffs add Executor Plan or child-graph revision, structural-validator evidence, acceptance accounting, dependency rationale, and gates. Worker Handoffs add changed artifacts, effects, exact-revision implementer smoke for every attempt, choices, risks, and any split request. Verifier Handoffs add exact boundary/target, criterion evidence, fixtures, reproduction, aggregate verdict, and deduplicated blocking `AC-...` IDs. Integrator Handoffs add the parent `OUT-...`, affected `AC-...` IDs, inherited budget, every exact independently verified isolated input, conflict IDs, permitted resolutions, combined revision, and integrated smoke. Reviewer Handoffs add the exact verified final target, initial-pass or rerun identity, `APPROVED | CHANGES REQUIRED | INCONCLUSIVE` verdict, deduplicated blocking finding IDs, and terminal advisories. Curator Handoffs add the exact reviewed target and `CURATED | NO DURABLE LEARNING | BLOCKED` outcome with the narrow guidance destination or exact current-contract blocker.
+Planner/subplanner Handoffs add an applicable Executor Plan or child-graph revision, structural-validator evidence, acceptance accounting, dependency rationale, and gates. Worker Handoffs add changed artifacts, effects, exact-revision implementer smoke for every attempt, choices, risks, and any split request; compact worker Handoffs map every owned criterion to deterministic exact-target smoke with expected/observed evidence and one completion receiver. Verifier Handoffs add exact boundary/target, criterion evidence, fixtures, reproduction, aggregate verdict, deduplicated blocking `AC-...` IDs, and every proved entry in any finite current consumer/callsite map. Integrator Handoffs add the parent `OUT-...`, affected `AC-...` IDs, inherited budget, every exact independently verified isolated input, conflict IDs, permitted resolutions, combined revision, and integrated smoke. Reviewer Handoffs add the exact verified final target, initial-pass or rerun identity, `APPROVED | CHANGES REQUIRED | INCONCLUSIVE` verdict, deduplicated eligible blocking finding IDs, causal no-effect boundary, and terminal advisories. Each blocking review finding maps to exact authority or `AC-...`, a changed surface or required existing consumer, and direct evidence. Curator Handoffs add the exact reviewed standard/high-consequence target and `CURATED | NO DURABLE LEARNING | BLOCKED` outcome with the narrow guidance destination or exact current-contract blocker.
 
 ## Non-success recovery payload
 
 For every non-success, additionally fill the Common Handoff with:
 
 - failure outcome/class and pre/post task state;
-- inherited semantic attempt count/maximum, run-wide post-assurance repair state and consuming revision, and any pre-semantic retry count;
+- inherited semantic attempt count out of two, run-wide post-assurance repair state and consuming revision, and any pre-semantic retry count;
 - exact base/current/partial revisions, last criterion or blocker progress, running effects, and termination certainty;
 - exact deduplicated blocking criterion/conflict/finding IDs;
 - symptom, feedback scenario, reproduction rate, hypotheses, and probes;
@@ -93,8 +95,8 @@ For every non-success, additionally fill the Common Handoff with:
 - retry eligibility, materially changed hypothesis/approach, freshness needs, and capability rationale; and
 - required owner action, impacted smoke/proof/review scope, initial review/rerun state, next unmet criterion, one eligible receiver, and the exact resume condition.
 
-Partial, failed, timed-out, cancelled, stale, or interrupted output is diagnostic only until a new authorized revision is fully verified. `no-progress-stop`, a repeated frontier, an unchanged hypothesis, inconclusive proof, exhausted local attempts, a remaining blocker after repair, or a consumed run-wide repair token has no retry eligibility and cannot reset the lifecycle.
+Partial, failed, timed-out, cancelled, stale, or interrupted output is diagnostic only until a new authorized revision satisfies its full required proof. `no-progress-stop`, a repeated frontier, an unchanged hypothesis, inconclusive proof, exhausted two-attempt budget, a remaining blocker after repair, or a consumed run-wide repair token has no retry eligibility and cannot reset the lifecycle.
 
 ## Stop and next owner
 
-Stop on missing immutable identity, secret-bearing evidence, ambiguous external effects, unresolved authority, an ineligible or multiple receiver, or any attempt to restore consumed budget. `CURATED`, `NO DURABLE LEARNING`, and compact `curation not triggered` are terminal. Curator `BLOCKED` names the exact current-contract conflict or missing authority and cannot begin an audit loop. Return the Common Handoff to `dev-implementation` or the current lifecycle owner; never dispatch, retry, integrate, review, curate, or complete work inside this skill.
+Stop on missing immutable identity, secret-bearing evidence, ambiguous external effects, unresolved authority, an ineligible or multiple receiver, or any attempt to restore consumed budget. Compact criterion-complete smoke is terminal after the backend validates its in-conversation Common Handoff; compact never dispatches review or curation, and a mutating Learning Candidate is deferred. `CURATED` and `NO DURABLE LEARNING` are terminal for eligible standard/high-consequence assessment. Curator `BLOCKED` names the exact current-contract conflict or missing authority and cannot begin an audit loop. Return the Common Handoff to `dev-implementation` or the current lifecycle owner; never dispatch, retry, integrate, review, curate, or complete work inside this skill.

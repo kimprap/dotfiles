@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard backend prefix trace. Canonical discovery proves rules RULE-A and RULE-B apply to the immutable target, but the Context Pack manifest contains only RULE-A. Fail closed before dispatching verification or review. Preserve the semantic-attempt count, repair token, initial-review state, and target identity exactly."
+  },
+  "scripted_replies": []
+}

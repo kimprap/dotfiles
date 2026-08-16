@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "Read-only convergence trace: final verification returns NOT VERIFIED for AC-11A and AC-11B before any review. Aggregate both IDs once, consume inherited repair token 1/1 at authorization of one consolidated owner repair revision, smoke the repair, reverify impacted and preserved behavior, then run the first eligible final review once. No assurance role edits."
+    "request": "Read-only standard convergence trace. Final verification returns NOT VERIFIED for AC-11A at caller-A and AC-11B at failure-path-B before review. Aggregate both once and consume repair token 1/1. The repair Handoff maps each stable blocker ID to its AC, exact caller/path, impacted proof, expected result, and observed result on repaired-target-2; invariant INV-11 also proves every entry in its finite consumer map. Reverify, then run the first eligible review once."
   },
   "scripted_replies": []
 }

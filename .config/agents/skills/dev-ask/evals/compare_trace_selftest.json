@@ -1,0 +1,85 @@
+{
+  "checks": [
+    {
+      "expected_status": "pass",
+      "name": "pass-observation"
+    },
+    {
+      "expected_status": "pass",
+      "name": "router-skill-binding"
+    },
+    {
+      "expected_status": "pass",
+      "name": "live-skill-binding"
+    },
+    {
+      "expected_status": "fail",
+      "name": "skill-digest-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "unsupported-layer"
+    },
+    {
+      "expected_status": "fail",
+      "name": "raw-result-contradiction"
+    },
+    {
+      "expected_status": "fail",
+      "name": "route-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "owners-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "first-owner-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "missing-required-event"
+    },
+    {
+      "expected_status": "fail",
+      "name": "forbidden-event"
+    },
+    {
+      "expected_status": "fail",
+      "name": "wrong-event-order"
+    },
+    {
+      "expected_status": "fail",
+      "name": "wrong-state-trace"
+    },
+    {
+      "expected_status": "fail",
+      "name": "missing-scripted-reply"
+    },
+    {
+      "expected_status": "fail",
+      "name": "wrong-scripted-reply-order"
+    },
+    {
+      "expected_status": "fail",
+      "name": "runtime-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "undeclared-runtime-mutation"
+    },
+    {
+      "expected_status": "fail",
+      "name": "source-fixture-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "malformed-input"
+    },
+    {
+      "expected_status": "fail",
+      "name": "unknown-case"
+    }
+  ],
+  "schema": "lean-eval-trace-selftest/v1"
+}

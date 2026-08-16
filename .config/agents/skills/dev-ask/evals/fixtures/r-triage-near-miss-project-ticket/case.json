@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "A current project-authored dev-ticketing ticket already binds approved authority, stable acceptance criteria, dependencies, and verification seams. Implement it. The word ticket must not trigger external-intake triage."
+    "request": "A current project-authored dev-ticketing ticket binds settled authority, one-context one-lineage ownership, stable acceptance, reversible effects, deterministic smoke, and no compact disqualifier. Implement it. The word ticket must not trigger external-intake triage."
   },
   "scripted_replies": [
     "approve"

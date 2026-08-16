@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "The implementation authority, acceptance, compatibility, failure behavior, and proof seams are settled. I explicitly request that the human Route be written as one inline arrow chain. Apply the active presentation contract instead: show the one recommended prospective Route as a numbered ordered list with one owner per line, keep the internal machine route identity unchanged, request approval, and after approve dispatch only dev-implementation first."
+    "request": "The compact-eligible implementation authority, acceptance, compatibility, failure behavior, reversible effects, and deterministic smoke are settled. I request one inline arrow chain. Apply the active presentation contract instead: show the compact Route as a numbered ordered list with one owner per line, request approval, and after approve dispatch only dev-implementation first."
   },
   "scripted_replies": [
     "approve"

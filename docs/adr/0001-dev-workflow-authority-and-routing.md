@@ -2,8 +2,8 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-11  
-**Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20
+**Updated:** 2026-08-15
+**Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
 
@@ -54,10 +54,10 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D11 — Independent workflow dimensions
 
 - **Scope:** Route lifecycle depth, assurance profile, and execution topology.
-- **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. A route may choose compact, standard, or high-consequence assurance separately from lifecycle depth and one-owner, bounded-parallel, or another approved topology.
-- **Why:** Consequence, capability, lifecycle need, and dependency shape are distinct facts and cannot be represented truthfully by one coupled label.
-- **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology hides distinct route facts and can add ceremony or weaken proof for the wrong reason.
-- **Consequences:** A change in one dimension does not silently change the others; any topology or assurance consequence remains explicit in the route.
+- **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. Compact is the default when every existing compact disqualifier is false; otherwise select standard or high-consequence from consequence evidence. Implementation size, duration, and solution-rung choice do not change lifecycle depth or assurance. A route may choose one-owner, bounded-parallel, or another approved topology independently.
+- **Why:** Consequence, capability, lifecycle need, and dependency shape are distinct facts. Defaulting eligible ordinary work to compact avoids making ceremony a proxy for safety.
+- **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology hides distinct route facts and can add ceremony or weaken proof for the wrong reason. Defaulting eligible ordinary work to standard adds independent assurance without a disqualifying risk.
+- **Consequences:** A change in one dimension does not silently change the others. Compact remains eligible across implementation size or duration, while every real disqualifier remains an explicit escalation trigger.
 - **Reopen when:** These dimensions are redefined, merged, or made dependent on one another.
 
 ### D12 — Human authority at consequential boundaries
@@ -140,6 +140,15 @@ The workflow needs one current route and one durable explanation of why its boun
 - **Rejected alternatives / why not:** Always listing candidates burdens predictable choices; interviewing every prompt overlaps other owners; keyword routing misses context.
 - **Consequences:** Candidate routes are exceptional decision support, not a catalog tour. The router still considers every applicable skill predicate internally.
 - **Reopen when:** Route-discriminating authority or catalog semantics change.
+
+### D26 — Lean ordinary implementation path
+
+- **Scope:** Settled, reversible, one-context, one-lineage coding work with deterministic proof and no existing compact disqualifier.
+- **Decision:** Route eligible ordinary work through `dev-implementation` then `dev-ask completion presentation`. Criterion-complete worker smoke on the exact final target is terminal proof. Same-context compact binds a minimal revision-bound Task Contract directly; an existing ownership/context-change or durable-recovery crossing predicate adds exactly one Context Pack carrying that Task Contract and its solution discipline. Compact does not require an Executor Plan, plan preflight, filesystem Task Contract, Handoff file, independent verification, final review, or continual-learning dispatch. Standard and high-consequence retain their required independent assurance.
+- **Why:** Settled ordinary work is safest when the route is deterministic, proof is tied directly to acceptance, and lifecycle ceremony appears only for an evidenced boundary.
+- **Rejected alternatives / why not:** Standard-by-default assurance makes elapsed work or implementation size a hidden risk proxy. Always requiring plans, Context Packs, verification, review, or learning adds transfer and audit stages without improving criterion proof for bounded same-context work. Removing compact disqualifiers would weaken safety rather than remove ceremony.
+- **Consequences:** The router applies one fixed six-gate order, selects compact only after catalog predicates and disqualifiers are checked, dispatches one first owner, and presents one owner per numbered Route line. The implementation backend applies the compact checklist before its first ready transition and stops or returns to the router when independent proof is required.
+- **Reopen when:** Compact disqualifiers, terminal proof, same-context/cross-context ownership, ordinary-route owners, or the size/duration independence boundary changes.
 
 ## Affected contracts
 

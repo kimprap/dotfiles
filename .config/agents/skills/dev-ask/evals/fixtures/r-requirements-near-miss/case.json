@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "Observable behavior, scope, constraints, named acceptance, architecture, and verification seams are complete. Show the full prospective implementation, verification, final-review, learning, and completion route, but dispatch only dev-implementation first."
+    "request": "Observable behavior, scope, constraints, named acceptance, architecture, and deterministic smoke seams are complete for one reversible context and lineage with no compact disqualifier. Present the compact implementation-and-completion Route and dispatch only dev-implementation first."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

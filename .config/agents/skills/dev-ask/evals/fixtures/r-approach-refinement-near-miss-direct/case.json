@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "The desired behavior, scope, architecture, compatibility, failure behavior, named acceptance, and verification seams are already settled. Apply the bounded approved edit now. Present only the one recommended prospective Route as a numbered ordered list with one owner per line in the exact internal owner order, with no route candidates or gating question. After approval, dispatch only dev-implementation first."
+    "request": "The desired behavior, scope, architecture, compatibility, failure behavior, named acceptance, and deterministic smoke are settled for one reversible context and lineage with no compact disqualifier. Apply the bounded approved edit now. Present only the one recommended compact Route as a numbered ordered list with one owner per line. After approval, dispatch only dev-implementation first."
   },
   "scripted_replies": [
     "APPROVE the current Route Overview"

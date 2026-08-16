@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "The desired behavior, acceptance, compatibility, failure behavior, architecture, and proof seams are settled. The only uncertainty is which solution-discipline rung the worker will select after reading the real flow; that fact cannot change the first owner. Present only the one recommended numbered Route, request approval, and after approve dispatch only dev-implementation without a gating question or route candidates."
+    "request": "The desired behavior, acceptance, compatibility, failure behavior, architecture, reversible effects, deterministic smoke, and compact eligibility are settled. The only uncertainty is which solution-discipline rung the worker will select; it cannot change the first owner or assurance. Present only the compact numbered Route, request approval, and dispatch only dev-implementation without a gating question."
   },
   "scripted_replies": [
     "approve"

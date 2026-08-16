@@ -34,8 +34,17 @@ Read only enough to classify. Do not mutate, dispatch, persist, create an artifa
 6. **One-context intent decisions** — when the user presents a candidate approach, hypothesis, plan, or design direction and asks to refine, challenge, stress-test, compare, validate, or choose it, use `grill-with-docs` if current repository evidence bears on the decision and otherwise `grill-me`. A detailed preferred proposal remains unsettled intent. Grilling returns immutable decision evidence and one Handoff for recomputation; user confirmation completes that interview artifact and is not another router approval gate.
 7. **Outcome-first continuation** — when current executable authority and named acceptance are complete and any named criterion remains unmet, route to `dev-implementation`. Renewed planning, diagnosis, audit, or review is invalid unless it implements or proves a criterion, resolves a named blocker, or produces decision evidence that changes authority. An unchanged Handoff, another artifact or pass, and a repeated hypothesis are not progress.
 8. **Artifact depth and decision support** — choose direct implementation, specification plus tickets, or Wayfinder. Use `dev-prototype` only for a runnable/visible fidelity question owned by requirements, grilling, or specification. Use `dev-improve-codebase-architecture` only for an explicitly requested broad survey whose selected change is not yet settled.
-9. **Assurance** — select immutable `compact`, `standard`, or `high-consequence` from consequence evidence after artifact depth and before topology. `standard` is the fallback unless compact eligibility is fully established or a high-consequence trigger applies. Keep assurance independent from lifecycle depth and topology.
+9. **Assurance** — select immutable `compact`, `standard`, or `high-consequence` from consequence evidence after artifact depth and before topology. Compact is the default when every existing compact disqualifier is false. If any disqualifier is true, select standard or high-consequence. Keep assurance independent from lifecycle depth and topology.
 10. **Execution topology** — send executable authority to `dev-implementation`, which chooses one owner by default, a bounded independent batch, or full orchestration.
+
+For ordinary implementation route composition, apply these mandatory router gates in order:
+
+1. Classify safety and whether current evidence already answers the request.
+2. If an existing catalog intake predicate is true, prepend that exact owner and do not compose ordinary compact.
+3. If any existing compact disqualifier is true, select standard or high-consequence and keep independent verification, review, and required learning.
+4. Otherwise select compact. First owner is `dev-implementation`. Completed route is `dev-implementation` then `dev-ask completion presentation`.
+5. Implementation size, duration, or solution-rung choice alone does not prepend a catalog skill and does not raise assurance.
+6. Present one owner per numbered Route line and dispatch only the first owner after approval.
 
 Keep the near misses distinct: sufficient read-only evidence → direct answer; a bounded factual gap → `dev-research`; raw external tracker intake → `dev-triage`; incomplete observable acceptance without a candidate → `dev-requirements`; a hard unexplained defect → diagnosis; a known or routine fix → implementation; settled direct authority → implementation; a large current graph → implementation; fidelity evidence → prototype; an explicit broad survey → architecture survey; and genuine multi-context route fog → Wayfinder. `bro` remains an exact-name manual response-rewrite fallback, never an automatic workflow route.
 
@@ -88,7 +97,7 @@ Choose only from:
 - **Validated direct-stage lane** for an explicit request to verify, integrate, review, ship, curate, use TDD, or maintain domain authority. Validate that leaf's exact intake and human gates. Shipping always requires separate delivery authority.
 - **Completion presentation** only from current backend/stage terminal evidence. If the approved route already names it and material facts remain current, present it without a separate completion approval.
 
-Whenever current facts determine an implementation lifecycle, the prospective `Route` must end with the assurance-specific suffix: standard and high-consequence use `dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation`; compact uses `dev-implementation → dev-verification → dev-code-review → [dev-continual-learning only if the post-review trigger screen qualifies] → dev-ask completion presentation`. Insert neutral `dev-integration → dev-verification` only when multiple isolated verified lineages require fan-in. Requirements, grilling, research, diagnosis, prototype, specification, ticketing, survey, or Wayfinder owners appear before that suffix only when applicable. If a decision-stage result is required before downstream ownership can be known, end the current route at its one recomputation receiver rather than inventing owners.
+Whenever current facts determine an implementation lifecycle, the prospective `Route` must end with the assurance-specific suffix. Compact uses `dev-implementation` then `dev-ask completion presentation`. Standard and high-consequence use `dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation`. Insert neutral `dev-integration → dev-verification` only when multiple isolated verified lineages require fan-in. Requirements, grilling, research, diagnosis, prototype, specification, ticketing, survey, or Wayfinder owners appear before that suffix only when an existing intake predicate is true. Implementation size, duration, or solution-rung choice does not add an owner. If a decision-stage result is required before downstream ownership can be known, end the current route at its one recomputation receiver rather than inventing owners.
 
 `direct answer` is terminal, never a lifecycle owner or a downstream segment. Research returned to the named requesting owner, state-mapped triage returns—including `wontfix` to `dev-ask` for terminal presentation—and any unchanged stage Handoff are stable-route continuations, not reapproval triggers.
 ## Product-authority stop
@@ -115,8 +124,7 @@ For dispatchable or executable work, present exactly these standalone H2 section
 
 ## Route
 1. `<first owner>`
-2. `<next owner>`
-3. `dev-ask completion presentation`
+2. `<next owner or dev-ask completion presentation>`
 
 ## Plan
   <one or two concise sentences covering the observable work and assurance>
@@ -127,6 +135,7 @@ For dispatchable or executable work, present exactly these standalone H2 section
 ## Approval
   Reply **approve** to start.
 ```
+Repeat the second route row for each actually prospective owner; the final row is always `dev-ask completion presentation`. Compact therefore has exactly two route rows.
 
 Do not add a `Plan Summary`, `Why`, `Artifacts`, `Gates`, `Execution`, or `First action` section. Omit diagnosis IDs, artifact inventories, target hashes, gate machinery, and execution metadata unless one changes the user's decision. For a material reapproval, keep the same five sections, state only the changed decision-bearing facts, and use `Reply **approve** to continue.`
 
@@ -138,7 +147,7 @@ Immediately before dispatch, reread every load-bearing artifact and capability i
 
 After valid approval, dispatch exactly one first owner. Never dispatch a batch of prospective stage owners from the router.
 
-`dev-implementation` is the common execution backend for every dispatched semantic stage, including pre-implementation and post-completion leaves. It binds approved authority into an immutable Task Contract, Context Pack when context crosses, role, attempt identity, and eligible transition without performing the leaf procedure. Each stage emits one common Handoff with `route-impact: unchanged|changed` and exactly one eligible receiver. The backend validates that return; support stages do not authorize implementation.
+`dev-implementation` is the common execution backend for every dispatched semantic stage, including pre-implementation and post-completion leaves. It binds approved authority into an immutable Task Contract, role, attempt identity, and eligible transition without performing a leaf procedure. Same-context compact binds that Task Contract directly; a Context Pack is added only when context crosses. Each attempt emits one in-conversation common Handoff with `route-impact: unchanged|changed` and exactly one eligible receiver; no filesystem Handoff is required. The backend validates that return, and support stages do not authorize implementation.
 
 The approved Route Overview delegates downstream derivation while preserving human authority:
 
@@ -171,8 +180,7 @@ Present terminal evidence with the same heading-and-indented-content style. Incl
 ```markdown
 ## Route
 1. `<first completed owner>`
-2. `<next completed owner>`
-3. `dev-ask completion presentation`
+2. `<next completed owner or dev-ask completion presentation>`
 
 ## Result
   <observable outcome and changed behavior>
@@ -186,12 +194,13 @@ Present terminal evidence with the same heading-and-indented-content style. Incl
 ## Next
   <one required next action>
 ```
+Repeat the second route row for each owner that actually completed; the final row is always `dev-ask completion presentation`. Compact therefore has exactly two route rows.
 
 `Route` and `Result` are required. Include `Verification` when checks ran, `Risks` only for a material residual risk, and `Next` only when user action remains. Do not add artifact inventories, gate mechanics, or approval requests to a terminal completion.
 
 ## Completion and stops
 
-Present completion only when terminal evidence proves current authority and approvals; task and criterion accounting; implementer smoke; required independent verification; verified fan-in and post-proof when needed; final Standards and Specification pass; curation evidence when the immutable assurance contract requires it or compact curation was triggered; no blocker, stale/partial result, semantic conflict, failed dependency, or required check; residual risk; and no required nonterminal work.
+Present completion only when terminal evidence proves current authority and approvals; task and criterion accounting; criterion-complete implementer smoke; any profile- or topology-required independent verification, verified fan-in, final Standards and Specification review, and noncompact curation; no blocker, stale/partial result, semantic conflict, failed dependency, or required check; residual risk; and no required nonterminal work. Compact terminal evidence contains the exact acceptance-to-smoke map and no verification, review, or continual-learning dispatch.
 
 Stop before dispatchable or executable work when overview approval is missing or stale. Stop during execution for unresolved human authority, material scope/route change, destructive approval, broken shared contract, irreconcilable authority conflict, unavailable non-equivalent capability, unsafe or ambiguous partial effects, or an evidence-backed blocker. Do not infer success from a worker Handoff, passing build alone, partial output, or unintegrated lineage.
 

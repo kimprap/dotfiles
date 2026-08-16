@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "The first bounded attempt fails; one exact-loop same-owner repair is eligible; a final fresh-context changed approach may run. Show exhaustion behavior. Explicitly classify the failure before each retry. In attempt 3 output, explicitly state that the fresh context independently re-established the falsifiable loop before executing the changed approach."
+    "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker. Stop at 2/2; reject attempt 3, revision reset, or unchanged-hypothesis continuation."
   },
   "scripted_replies": []
 }

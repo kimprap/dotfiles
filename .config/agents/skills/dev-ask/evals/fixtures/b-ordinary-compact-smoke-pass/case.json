@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only compact state trace. The current Task Contract is settled and every checklist item passes. The worker implements the reversible change and proves AC-1 and AC-2 on the exact target with deterministic smoke. Validate the in-conversation Handoff and complete directly."
+  },
+  "scripted_replies": []
+}

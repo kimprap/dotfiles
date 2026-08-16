@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "Read-only convergence trace: an eligible initial review on a verified target aggregates blocking findings FIND-1 and FIND-2. One consolidated owner repair consumes inherited token 1/1. After impacted smoke, verification, and the sole review rerun, FIND-2 remains and local repair attempts are 3/3. Stop with exact evidence: no second repair, no second review rerun, no fourth attempt, no diagnosis re-entry, and no lifecycle reset."
+    "request": "Read-only convergence and terminal-accounting trace. Initial review aggregates FIND-1 and FIND-2. One repair consumes token 1/1. Attempt 1 advances FIND-1; attempt 2 runs and generic suites pass, but required caller-B for FIND-2 lacks the stable-ID/AC/caller/proof/expected/observed closure. Stop at 2/2 without VERIFIED or review rerun. Then T5 backend finalization alone verifies available sealed receipts, inventories one partial directory without consuming it, removes only the exact t1/t2 observation roots, preserves the cleanup sentinel and every semantic/repair/review counter, and reports no completion."
   },
   "scripted_replies": []
 }

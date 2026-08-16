@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "Observable behavior, acceptance, compatibility, failure behavior, and proof are settled. Two materially different routes are explicitly valid: a bounded direct change without durable recovery artifacts, or specification plus ticket graph because I may require durable handoff and recovery. Whether that durability is worth the extra artifact work is my trade-off, and I have not selected it. Present exactly two candidates: recommend the direct route, label the alternative, give each its own numbered one-owner-per-line Route list and one concise trade-off sentence, ask one selection question, and do not request approval or dispatch."
+    "request": "Observable behavior, acceptance, compatibility, failure behavior, and deterministic proof are settled. Two materially different routes are valid: a reversible one-context direct compact change without durable recovery artifacts, or specification plus ticket graph with standard assurance because I may require durable handoff and recovery. That durability trade-off is mine and remains unselected. Present exactly two labeled candidates, recommend compact direct, ask one selection question, and do not request approval or dispatch."
   },
   "scripted_replies": []
 }

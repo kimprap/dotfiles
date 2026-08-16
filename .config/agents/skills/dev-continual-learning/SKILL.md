@@ -24,9 +24,9 @@ settled reviewed outcome
 
 ### Standard
 
-Run exactly once after a settled standard or high-consequence outcome. The target is the exact verified/integrated/reviewed outcome and its affected-artifact manifest. Inspect only affected artifacts and update only directly impacted current project-owned guidance. A write is optional; `NO DURABLE LEARNING` is valid.
+Run exactly once after a settled standard or high-consequence outcome. The target is the exact verified/integrated/reviewed outcome, its affected-artifact manifest, and the complete applicable-project-rule manifest already validated for assurance. Inspect only affected artifacts and update only directly impacted current project-owned guidance. A write is optional; `NO DURABLE LEARNING` is valid.
 
-Compact work reaches this skill only when the backend's post-review screen finds an explicit durable correction or decision, a qualified settled recurring process fact, a Learning Candidate, or a severe qualifying incident. Otherwise the backend records compact `curation not triggered` plus checked trigger facts as terminal evidence without dispatching this skill or creating a curation Handoff.
+Compact never dispatches this skill. A mutating Learning Candidate found during compact work is deferred to a separately approved standard or high-consequence maintenance route with the existing bound evaluation, independent verification, and final review. Compact completion does not create a curation task, trigger screen, or Handoff.
 
 ### Deep
 
@@ -41,7 +41,7 @@ Invocation counts, every-Nth-run counters, elapsed time, calendars, router state
 
 ## Qualification and authority
 
-Any role may report a non-authoritative candidate with the proposed durable statement, exact source revisions, project scope and current destination, recurrence or severity evidence, prevention relationship, sensitivity/redaction, conflicts or supersession, and—for any candidate that may mutate guidance—a complete `Evaluation proposal`. A candidate and its proposal are not authority. A papercut-originated candidate additionally carries exactly one immutable originating `PC-ID`; a missing or mismatched ID leaves it evidence-only, and a non-papercut candidate carries none.
+Any role on an eligible standard/high-consequence route may report a non-authoritative candidate with the proposed durable statement, exact source revisions, project scope and current destination, complete applicable-project-rule manifest, recurrence or severity evidence, prevention relationship, sensitivity/redaction, conflicts or supersession, and—for any candidate that may mutate guidance—a complete `Evaluation proposal`. A candidate and its proposal are not authority. A papercut-originated candidate additionally carries exactly one immutable originating `PC-ID`; a missing or mismatched ID leaves it evidence-only, and a non-papercut candidate carries none.
 
 - Explicit durable corrections and verified stable project facts may qualify from one settled occurrence.
 - Ordinary process guidance requires two independent settled outcomes.
@@ -71,8 +71,8 @@ Exact settled source evidence may be reused only while target revision, environm
 
 ## Procedure
 
-1. Use one neutral curator that did not author or assure the settled outcome. Bind the exact target, affected-artifact manifest, source evidence, terminal assurance, current destination revisions, and any backend-frozen mutating-candidate tuple.
-2. Inspect only those affected artifacts. For each candidate, verify recurrence or severity, scope, sensitivity, authority, conflict status, direct impact, and whether a valid bound evaluation authorizes mutation. Standard never broadens into a canonical-set audit.
+1. Use one neutral curator that did not author or assure the settled outcome. Bind the exact target, affected-artifact manifest, complete applicable-project-rule manifest and canonical source identity, source evidence, terminal assurance, current destination revisions, and any backend-frozen mutating-candidate tuple. Reject compact intake.
+2. Recheck the complete rule manifest against the backend-bound source identity, then inspect only affected artifacts. For each candidate, verify recurrence or severity, scope, sensitivity, authority, conflict status, direct impact, and whether a valid bound evaluation authorizes mutation. Standard never broadens into a canonical-set audit.
 3. Prefer the least-specific sufficient verified rule: the narrowest durable statement and current destination that cover the source case without capturing the independent adjacent case. This is a curation heuristic, not a formal score.
 4. Snapshot and digest the destination, then reread immediately before apply. Recompute a semantic merge after concurrent change; never reset unrelated work or apply a stale patch. Block on an exact current-contract conflict, missing authority, or invalid evaluation binding that prevents a correct outcome.
 5. Make the smallest authorized update. Preserve unrelated guidance, precedence, privacy, provider boundaries, and the human-owned user-level file.
@@ -105,4 +105,4 @@ Use the Common Handoff with exactly one curation outcome: `CURATED`, `NO DURABLE
 
 ## Stop and next owner
 
-`CURATED`, `NO DURABLE LEARNING`, and compact `curation not triggered` are terminal. `BLOCKED` preserves the verified implementation and blocks only the current adaptive-workflow gate until its exact conflict is resolved or a human changes scope. Return the Handoff to `dev-implementation`; that backend alone validates and applies any terminal `Papercut outcome` through the portable papercut settlement seam. Do not read or mutate papercut storage, repair implementation, change authority, dispatch Deep, ship, or declare completion here.
+`CURATED` and `NO DURABLE LEARNING` are terminal for an eligible standard/high-consequence assessment. `BLOCKED` preserves the verified implementation and blocks only the current adaptive-workflow gate until its exact conflict is resolved or a human changes scope. Reject compact intake; its mutating candidates are deferred before dispatch. Return the Handoff to `dev-implementation`; that backend alone validates and applies any terminal `Papercut outcome` through the portable papercut settlement seam. Do not read or mutate papercut storage, repair implementation, change authority, dispatch Deep, ship, or declare completion here.

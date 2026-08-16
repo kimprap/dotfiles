@@ -1,7 +1,6 @@
 {
-  "additional_files": [],
   "inputs": {
-    "request": "Read-only terminal state-trace simulation owned by the dev-implementation backend. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: backend compact post-review screening finds no Learning Candidate, durable correction/decision, qualified recurrence, or severe incident. Record compact curation not triggered with checked facts as terminal evidence. Do not dispatch dev-continual-learning or create a curation Handoff."
+    "request": "Read-only terminal-evidence snapshot. Compact criterion-complete exact-target smoke is accepted and no blocker remains. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output>. Do not run a post-review trigger screen, dispatch dev-continual-learning, or create a curation Handoff."
   },
   "scripted_replies": []
 }

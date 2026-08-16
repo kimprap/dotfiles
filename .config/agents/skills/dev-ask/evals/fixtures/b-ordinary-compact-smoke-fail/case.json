@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only compact state trace. AC-1 smoke passes, but AC-2 expects counter 2 and observes counter 1 on the exact target. Record the exact failure and stop. Do not emit a successful Handoff, completion, verification, review, or learning."
+  },
+  "scripted_replies": []
+}
