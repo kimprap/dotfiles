@@ -109,8 +109,6 @@ ADDED_IDS = {
 }
 PLANNER_SHA256 = "c22e40fa8f6f92572552c7666ae454e1f721589cd387a929df52374ae326c563"
 PRESERVED = {
-    ".agents/plans/2026-08-13-0119_dev-workflow-mechanical-convergence.md": "24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d",
-    "/Users/kim/.omp/agent/sessions/-.dotfiles/2026-08-12T13-57-29-688Z_019ff643-8bd8-7000-bce5-45f639634afd/local/dev-workflow-mechanical-convergence-plan.md": "24f9059f6880b146aacabd3a4ae70e2a95a1937c7bcca1fdadde044c15170b4d",
     "docs/adr/0007-automated-papercut-lifecycle-and-lean-evidence.md": "052806a41a605c81461edb5e38e1d504a3b59cc6029f697e4b1d9ad747e13246",
     ".config/agents/skills/dev-ask/evals/fixtures/l-mutation/counter.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
     ".agents/papercuts.json": "69aa97070cc5b1dca8b7487f301b1ba505d2cb29995c1bece4a73a3d807b8070",
