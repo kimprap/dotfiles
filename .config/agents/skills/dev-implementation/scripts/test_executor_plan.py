@@ -308,6 +308,63 @@ class ExecutorPlanTests(unittest.TestCase):
                     body_secret, json.dumps(report.payload(), sort_keys=True)
                 )
 
+    def test_completed_at_is_omitted_until_done(self) -> None:
+        done = replace_once(COMPLETE, "**Status**: PENDING", "**Status**: DONE")
+        done_with_stamp = replace_once(
+            done,
+            "**Status**: DONE",
+            "**Status**: DONE\n**Completed At**: 2026-08-09-1800",
+        )
+        self.assertTrue(
+            executor_plan.validate_text(
+                done_with_stamp, context="grok", consumer="planner"
+            ).valid
+        )
+        closed_with_stamp = replace_once(
+            COMPLETE,
+            "**Status**: PENDING",
+            "**Status**: CLOSED\n**Completed At**: 2026-08-09-1800",
+        )
+        cases = {
+            "pending-present": (
+                replace_once(
+                    COMPLETE,
+                    "**Status**: PENDING",
+                    "**Status**: PENDING\n**Completed At**: 2026-08-09-1800",
+                ),
+                "HEADER_FIELD_VALUE",
+            ),
+            "done-missing": (done, "HEADER_FIELD_MISSING"),
+            "done-empty": (
+                replace_once(
+                    done,
+                    "**Status**: DONE",
+                    "**Status**: DONE\n**Completed At**: ",
+                ),
+                "HEADER_FIELD_VALUE",
+            ),
+            "done-malformed": (
+                replace_once(
+                    done,
+                    "**Status**: DONE",
+                    "**Status**: DONE\n**Completed At**:",
+                ),
+                "HEADER_FIELD_MALFORMED",
+            ),
+            "done-invalid-calendar": (
+                replace_once(
+                    done,
+                    "**Status**: DONE",
+                    "**Status**: DONE\n**Completed At**: 2026-13-09-1800",
+                ),
+                "HEADER_FIELD_VALUE",
+            ),
+            "closed-present": (closed_with_stamp, "HEADER_FIELD_VALUE"),
+        }
+        for label, (text, code) in cases.items():
+            with self.subTest(case=label):
+                self.assert_issue(text, code)
+
     def test_lowercase_todo_is_domain_prose_uppercase_placeholder_fails_and_consumer_is_preserved(
         self,
     ) -> None:
@@ -1022,7 +1079,9 @@ class ExecutorPlanPreflightTests(unittest.TestCase):
 
 
         terminal_text = replace_once(
-            COMPLETE, "**Status**: PENDING", "**Status**: DONE"
+            COMPLETE,
+            "**Status**: PENDING",
+            "**Status**: DONE\n**Completed At**: 2026-08-09-1800",
         )
         repository_root, local_root, local_plan, active, _, _ = self.layout()
         active.write_text(terminal_text)

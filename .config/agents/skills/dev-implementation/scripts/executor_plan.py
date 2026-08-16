@@ -136,7 +136,15 @@ PLACEHOLDER = re.compile(
     r"(?:\b(?:TODO|TBD|TBC|FIXME|XXX)\b|<[^>\n]+>|\?{3,}|\{\{[^}\n]+\}\})"
 )
 
-HEADER_FIELDS = ("Datetime", "Authority kind", "Mode", "Scope", "Summary", "Status")
+HEADER_FIELDS = (
+    "Datetime",
+    "Authority kind",
+    "Mode",
+    "Scope",
+    "Summary",
+    "Status",
+    "Completed At",
+)
 HEADER_REQUIRED_FIELDS = ("Datetime", "Authority kind", "Scope", "Summary", "Status")
 HEADER_AUTHORITY_KINDS = ("local-authority", "direct-repository")
 HEADER_STATUSES = ("PENDING", "IN_PROGRESS", "DONE", "CLOSED")
@@ -343,6 +351,8 @@ def _inspect_header_bytes(data: bytes) -> HeaderInspection:
             _header_issue(issues, "HEADER_FIELD_DUPLICATE", field)
     if len(values["Mode"]) > 1:
         _header_issue(issues, "HEADER_FIELD_DUPLICATE", "Mode")
+    if len(values["Completed At"]) > 1:
+        _header_issue(issues, "HEADER_FIELD_DUPLICATE", "Completed At")
 
     order = {field: index for index, field in enumerate(HEADER_FIELDS)}
     if exact_names != sorted(exact_names, key=order.__getitem__):
@@ -379,6 +389,26 @@ def _inspect_header_bytes(data: bytes) -> HeaderInspection:
             _header_issue(issues, "HEADER_FIELD_VALUE", field)
     if values["Status"] and values["Status"][0] not in HEADER_STATUSES:
         _header_issue(issues, "HEADER_FIELD_VALUE", "Status")
+
+    completed_values = values["Completed At"]
+    status_value = values["Status"][0] if values["Status"] else None
+    if status_value == "DONE":
+        if not completed_values:
+            _header_issue(issues, "HEADER_FIELD_MISSING", "Completed At")
+        else:
+            completed = completed_values[0]
+            try:
+                valid_completed = bool(
+                    re.fullmatch(r"\d{4}-\d{2}-\d{2}-\d{4}", completed)
+                )
+                if valid_completed:
+                    datetime.strptime(completed, "%Y-%m-%d-%H%M")
+            except ValueError:
+                valid_completed = False
+            if not valid_completed:
+                _header_issue(issues, "HEADER_FIELD_VALUE", "Completed At")
+    elif completed_values:
+        _header_issue(issues, "HEADER_FIELD_VALUE", "Completed At")
 
     for index, line in enumerate(lines[first_h2:], start=first_h2 + 1):
         if _AUTHORITY_MARKER_LINE.fullmatch(line):

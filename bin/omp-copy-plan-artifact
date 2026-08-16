@@ -128,7 +128,15 @@ function normalizedLines(source) {
     return source.split("\n").map((line) => (line.endsWith("\r") ? line.slice(0, -1) : line));
 }
 
-const HEADER_FIELDS = ["Datetime", "Authority kind", "Mode", "Scope", "Summary", "Status"];
+const HEADER_FIELDS = [
+    "Datetime",
+    "Authority kind",
+    "Mode",
+    "Scope",
+    "Summary",
+    "Status",
+    "Completed At",
+];
 const REQUIRED_HEADER_FIELDS = ["Datetime", "Authority kind", "Scope", "Summary", "Status"];
 const AUTHORITY_KINDS = ["local-authority", "direct-repository"];
 const HEADER_STATUSES = ["PENDING", "IN_PROGRESS", "DONE", "CLOSED"];
@@ -260,13 +268,19 @@ function inspectHeaderBytes(bytes) {
     if (values.get("Mode").length > 1) {
         issue("HEADER_FIELD_DUPLICATE", `header field appears ${values.get("Mode").length} times: Mode`);
     }
+    if (values.get("Completed At").length > 1) {
+        issue(
+            "HEADER_FIELD_DUPLICATE",
+            `header field appears ${values.get("Completed At").length} times: Completed At`
+        );
+    }
 
     const order = new Map(HEADER_FIELDS.map((field, index) => [field, index]));
     const orderedNames = [...exactNames].sort((left, right) => order.get(left) - order.get(right));
     if (exactNames.some((name, index) => name !== orderedNames[index])) {
         issue(
             "HEADER_FIELD_ORDER",
-            "header fields are not in Datetime, Authority kind, optional Mode, Scope, Summary, Status order"
+            "header fields are not in Datetime, Authority kind, optional Mode, Scope, Summary, Status, optional Completed At order"
         );
     }
 
@@ -288,6 +302,16 @@ function inspectHeaderBytes(bytes) {
     const status = values.get("Status")[0];
     if (status !== undefined && !HEADER_STATUSES.includes(status)) {
         issue("HEADER_FIELD_VALUE", "Status must be PENDING, IN_PROGRESS, DONE, or CLOSED");
+    }
+    const completedAt = values.get("Completed At")[0];
+    if (status === "DONE") {
+        if (completedAt === undefined) {
+            issue("HEADER_FIELD_MISSING", "required header field is missing: Completed At");
+        } else if (!hasValidDatetime(completedAt)) {
+            issue("HEADER_FIELD_VALUE", "Completed At is not a valid calendar value");
+        }
+    } else if (completedAt !== undefined) {
+        issue("HEADER_FIELD_VALUE", "Completed At is only valid when Status is DONE");
     }
     if (
         firstH2 !== -1 &&

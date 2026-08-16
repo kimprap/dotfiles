@@ -25,13 +25,15 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 **Scope**: <bounded area of work>
 **Summary**: <one or two sentences describing the intended outcome>
 **Status**: PENDING
+**Completed At**: <YYYY-MM-DD-HHMM>
 ```
 
-- Omit `Mode` when unused; no other field may occupy this block. Use exact `**Field**: value` spelling with nonempty, unpadded values.
+- Omit `Mode` when unused. Omit `Completed At` unless `Status` is `DONE`. No other field may occupy this block. Use exact `**Field**: value` spelling with nonempty, unpadded values. Never write an empty `Completed At` line.
 - Input is nonempty strict UTF-8 without a BOM. Validation accepts LF, CRLF, and mixed LF/CRLF by removing at most one terminal `\r` per physical line; residual `\r` in the H1/header and any `Authority kind` outside the block are invalid. Complete bytes—including line endings and final-newline presence—define the revision; never normalize them.
 - `Authority kind` records provenance, not approval: `local-authority` means the harness/session artifact is authoritative; `direct-repository` means the exact repository plan path is authoritative. The transport selects it from actual storage, never provider or context.
 - `Datetime` and `Authority kind` are immutable. Never infer, add, switch, adopt, or promote them during editing or synchronization. Unmarked plans fail closed until separately migrated per identity and freshly approved.
-- Start at `PENDING`; change to `IN_PROGRESS` when `T1` starts. Approval alone never changes status. Use `CLOSED` only for explicit user cancellation.
+- Start at `PENDING`; change to `IN_PROGRESS` when `T1` starts. Approval alone never changes status. Use `CLOSED` only for explicit user cancellation. `CLOSED` does not take `Completed At`.
+- Add `Completed At` once, in the same edit that sets `Status: DONE`, using the same `YYYY-MM-DD-HHMM` calendar form as `Datetime`. It is then immutable. Do not rewrite historical `DONE` or `CLOSED` bytes solely to add the field.
 
 ### Tasks
 
@@ -44,7 +46,7 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 
 - Include `## Verification / Done criteria` with objective, observable checks; check a criterion only after observing it.
 - Do not complete the final task until every required criterion passes.
-- Set `Status: DONE` only when every task is checked and timestamped and a nonempty final `## Completion Summary` records material findings, decisions, delivered behavior, and residual risks.
+- Set `Status: DONE` only when every task is checked and timestamped, a nonempty final `## Completion Summary` records material findings, decisions, delivered behavior, and residual risks, and the header includes `**Completed At**: <YYYY-MM-DD-HHMM>`.
 - Append later user overrides to the Completion Summary without changing plan identity or rewriting historical outcomes.
 
 ## Plan quality

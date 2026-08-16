@@ -56,11 +56,14 @@ function planBytes({
     authorityKind = "local-authority",
     mode,
     status = "PENDING",
+    completedAt,
     taskChecked = false,
     criterionChecked = false,
     completion = "Not complete.",
     body = "",
 } = {}) {
+    const completedAtValue =
+        completedAt === undefined && status === "DONE" ? "2026-08-10-0312" : completedAt;
     return Buffer.from(
         [
             "# Mirror probe",
@@ -71,6 +74,7 @@ function planBytes({
             "**Scope**: mirror probe",
             "**Summary**: mirror probe",
             `**Status**: ${status}`,
+            ...(completedAtValue ? [`**Completed At**: ${completedAtValue}`] : []),
             "",
             "## Context",
             body,
@@ -2100,6 +2104,21 @@ describe("omp-copy-plan-artifact", () => {
                 "unknown",
                 Buffer.from(valid.replace("Authority kind", "Authority type")),
                 "HEADER_FIELD_UNKNOWN",
+            ],
+            [
+                "completed-at-before-done",
+                Buffer.from(
+                    valid.replace(
+                        "**Status**: PENDING",
+                        "**Status**: PENDING\n**Completed At**: 2026-08-10-0312"
+                    )
+                ),
+                "HEADER_FIELD_VALUE",
+            ],
+            [
+                "done-missing-completed-at",
+                planBytes({ status: "DONE", completedAt: null }),
+                "HEADER_FIELD_MISSING",
             ],
             [
                 "bad-value",
