@@ -23,8 +23,6 @@ SYMLINKS=(
     "$HOME/.dotfiles/.prettierrc|$HOME/.prettierrc"
     "$HOME/.dotfiles/.stylua.toml|$HOME/.stylua.toml"
     "$HOME/.dotfiles/.config/agents|$HOME/.agents"
-    "$HOME/.dotfiles/.config/agents/harnesses/omp/agents/planner.md|$HOME/.omp/agent/agents/planner.md"
-    "$HOME/.dotfiles/.config/agents/harnesses/grok/agents/planner.md|$HOME/.grok/agents/planner.md"
     "$HOME/.dotfiles/.config/agents/harnesses/grok/config.toml|$HOME/.grok/config.toml"
     "$HOME/.dotfiles/.config/zsh|$HOME/.config/zsh"
     "$HOME/.dotfiles/.config/mise/config.toml|$HOME/.config/mise/config.toml"
@@ -40,6 +38,8 @@ SYMLINKS=(
 )
 
 LEGACY_SYMLINKS=(
+    "$HOME/.dotfiles/.config/agents/harnesses/omp/agents/planner.md|$HOME/.omp/agent/agents/planner.md"
+    "$HOME/.dotfiles/.config/agents/harnesses/grok/agents/planner.md|$HOME/.grok/agents/planner.md"
     "$HOME/.dotfiles/.config/agents/harnesses/grok/roles/planner.toml|$HOME/.grok/roles/planner.toml"
     "$HOME/.dotfiles/.config/agents/harnesses/grok/personas/planner.toml|$HOME/.grok/personas/planner.toml"
 )

@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard final-review prefix. The immutable target target-sha256:91bd44e2 is already VERIFIED, and final-review intake names current governing requirements AUTH-CONFLICT-A and AUTH-CONFLICT-B plus authority owner dev-requirements. AUTH-CONFLICT-A requires response X; AUTH-CONFLICT-B forbids response X; they have equal precedence and no approved rule resolves them, so expected behavior is indeterminate. Return Standards INCONCLUSIVE, Specification INCONCLUSIVE, Overall INCONCLUSIVE in one Review Handoff to dev-requirements. Do not classify a blocker or advisory, authorize repair, mutate the target, dispatch terminal learning, or complete."
+  },
+  "scripted_replies": []
+}

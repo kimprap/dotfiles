@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker. Stop at 2/2; reject attempt 3, revision reset, or unchanged-hypothesis continuation."
+    "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker and exhausts 2/2. A stray Continue grant then appears. Treat that grant as inapplicable: it is not progress and cannot authorize attempt 3 or reset or reclassify the two-attempt budget. Stop failed at 2/2."
   },
   "scripted_replies": []
 }

@@ -11,3 +11,5 @@ Read and apply every gate in order when the bound assurance profile is `compact`
 7. Attempt 2 only from attempt-1 criterion progress, exact blocker resolution, or an authorized changed hypothesis. A blocker-resolution claim is consumable only with the stable-ID/AC/target-or-caller/proof/expected/observed map on the repaired identity; a universal invariant also proves every entry in its finite current consumer map. Reject generic passing suites and unchanged-hypothesis retries before they run. Attempt 3 is forbidden. Derivative revisions inherit the count. The repair Task Contract also has at most two attempts. Two transport retries remain.
 8. Do not dispatch verification, review, or continual learning. Defer a mutating Learning Candidate.
 9. Advance `accepted` to `ready` to `running` to `handed-off` to `complete`. Omit `verifying`, `verified`, `reviewing`, and `reviewed`. Emit one in-conversation Common Handoff.
+
+The standard/high-consequence post-assurance human checkpoint does not change items 7–9: compact keeps its two-attempt bound, smoke-only terminal proof, and prohibition on verifier, reviewer, or opinion dispatch.

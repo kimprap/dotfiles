@@ -29,12 +29,26 @@ STALE_NEEDLES = [
     "compact dispatches learning only after",
     "through bounded work, smoke, independent verification, neutral fan in, review,",
     "lineage, integration, final, or high consequence boundary using fresh read only",
+    "planner-role-profile/v4",
+    "canonical planner persona/projector",
+    "When dispatching the canonical planner, also read",
+    "wording mismatch is a same-outcome blocker",
+    "rerun every parent criterion after repair",
+    "advisory repair restarts verification",
+    "review finding becomes a parent criterion",
+    "Do not create a curation task, Handoff, trigger screen",
 ]
 REQUIRED_NEEDLES = [
     "compact is the default",
     "two semantic attempts",
     "compact never dispatches",
     "dev-implementation then dev-ask completion presentation",
+    "observable changed-contract consumer",
+    "complete causal impact map",
+    "terminal residual risk",
+    "new maintenance outcome",
+    "one in-conversation worker Common Handoff",
+    "curation Handoff",
 ]
 EXPECTED_DESCRIPTIONS = {
     ".config/agents/skills/dev-implementation/SKILL.md": (
@@ -67,7 +81,6 @@ CORE_SCAN_PATHS = [
     "docs/adr/INDEX.md",
     ".config/agents/skills/dev-ask/WORKFLOW.md",
     ".config/agents/skills/dev-ask/evals/evals.json",
-    ".config/agents/personas/planner/PERSONA.md",
 ]
 REWRITE_IDS = {
     "R-REQUIREMENTS-NEAR-MISS",
@@ -106,8 +119,11 @@ ADDED_IDS = {
     "B-RETRY-HIGH-CONSEQUENCE",
     "B-COMPACT-DEFERRED-LEARNING-CANDIDATE",
     "B-ASSURANCE-RULE-MANIFEST-OMISSION",
+    "B-REVIEW-WORDING-ADVISORY",
+    "B-REVIEW-BEHAVIOR-BLOCKER-REPAIR",
+    "B-REVIEW-AUTHORITY-CONFLICT",
+    "R-REVIEW-ADVISORY-MAINTENANCE",
 }
-PLANNER_SHA256 = "c22e40fa8f6f92572552c7666ae454e1f721589cd387a929df52374ae326c563"
 PRESERVED = {
     "docs/adr/0007-automated-papercut-lifecycle-and-lean-evidence.md": "052806a41a605c81461edb5e38e1d504a3b59cc6029f697e4b1d9ad747e13246",
     ".config/agents/skills/dev-ask/evals/fixtures/l-mutation/counter.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
@@ -298,16 +314,6 @@ def scan_repository(root: Path) -> dict[str, Any]:
                         "text": actual or "<missing>",
                     }
                 )
-    planner = root / ".config/agents/personas/planner/PERSONA.md"
-    if planner.exists() and sha256_file(planner) != PLANNER_SHA256:
-        hits.append(
-            {
-                "path": ".config/agents/personas/planner/PERSONA.md",
-                "line": 0,
-                "needle": f"sha256:{PLANNER_SHA256}",
-                "text": f"sha256:{sha256_file(planner)}",
-            }
-        )
     missing_required = sorted(set(REQUIRED_NEEDLES) - required_seen)
     return {
         "schema": SCHEMA,

@@ -2153,7 +2153,7 @@
           "attempt-2 evidence gate"
         ],
         "mode": "one owner",
-        "outcome": "failed after exhausted two-attempt budget; attempt 3 forbidden",
+        "outcome": "failed after exhausted two-attempt budget; attempt 3 forbidden; stray Continue grant rejected as inapplicable without budget reset or reclassification",
         "owners": [
           "backend",
           "worker"
@@ -2161,35 +2161,17 @@
         "route": "dev-implementation backend"
       },
       "fixture_dir": "fixtures/b-retry",
-      "forbidden_events": [
-        "attempt-3",
-        "unchanged-hypothesis-retry",
-        "revision-budget-reset",
-        "implicit shipping",
-        "self-verification"
-      ],
+      "forbidden_events": ["attempt-3","unchanged-hypothesis-retry","revision-budget-reset","implicit shipping","self-verification","attempt-3-after-stray-grant","grant-driven-budget-reset"],
       "id": "B-RETRY",
       "inputs": {
-        "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker. Stop at 2/2; reject attempt 3, revision reset, or unchanged-hypothesis continuation."
+        "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker and exhausts 2/2. A stray Continue grant then appears. Treat that grant as inapplicable: it is not progress and cannot authorize attempt 3 or reset or reclassify the two-attempt budget. Stop failed at 2/2."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
-      "required_events": [
-        "state:accepted|owner:backend|output:unchanged Task Contract and two-attempt budget accepted",
-        "state:ready|owner:backend|output:attempt 1 authorized",
-        "state:running|owner:worker|output:attempt 1 bounded implementation",
-        "state:failed|owner:backend|output:attempt 1 fails after AC-RETRY-1 progress and changed falsifiable hypothesis",
-        "state:ready|owner:backend|output:attempt 2 authorized from attempt-1 evidence",
-        "state:running|owner:worker|output:attempt 2 evidence-gated retry",
-        "state:failed|owner:backend|output:attempt 2 fails; exhausted 2/2; attempt 3 forbidden"
-      ],
-      "rubric": [
-        "Require exactly two semantic attempts.",
-        "Authorize attempt 2 only from named attempt-1 criterion progress or changed falsifiable evidence.",
-        "Reject attempt 3, unchanged-hypothesis retry, and derivative-revision budget reset."
-      ],
+      "required_events": ["state:accepted|owner:backend|output:unchanged Task Contract and two-attempt budget accepted","state:ready|owner:backend|output:attempt 1 authorized","state:running|owner:worker|output:attempt 1 bounded implementation","state:failed|owner:backend|output:attempt 1 fails after AC-RETRY-1 progress and changed falsifiable hypothesis","state:ready|owner:backend|output:attempt 2 authorized from attempt-1 evidence","state:running|owner:worker|output:attempt 2 evidence-gated retry","state:failed|owner:backend|output:attempt 2 fails; exhausted 2/2; attempt 3 forbidden","state:failed|owner:backend|output:stray Continue grant inapplicable after semantic 2/2; no attempt 3, budget reset, or budget reclassification"],
+      "rubric": ["Require exactly two semantic attempts.","Authorize attempt 2 only from named attempt-1 criterion progress or changed falsifiable evidence.","Reject attempt 3, unchanged-hypothesis retry, and derivative-revision budget reset.","Treat the stray Continue grant as inapplicable after 2/2: it is not progress and cannot create attempt 3 or reset or reclassify the semantic budget."],
       "scripted_replies": [],
       "trace_scope": "full"
     },
@@ -4184,7 +4166,7 @@
           "terminal finalizer only"
         ],
         "mode": "one owner",
-        "outcome": "terminal remaining-blocker stop with exact cleanup and no completion",
+        "outcome": "same-plan Continue and same-route Second opinion preserve neutral executing-plan identity and original review-budget precedence; one cycle per grant; FIND-3 ends no-progress-stop with exact terminal finalization and no completion",
         "owners": [
           "backend",
           "worker",
@@ -4194,43 +4176,17 @@
         "route": "dev-implementation backend"
       },
       "fixture_dir": "fixtures/b-t4-repair-remaining-blocker",
-      "forbidden_events": [
-        "state:verified",
-        "review-rerun",
-        "second-repair",
-        "attempt-3",
-        "diagnosis-reentry",
-        "token-reset",
-        "planning-reset",
-        "lifecycle-reset",
-        "state:complete"
-      ],
+      "forbidden_events": ["attempt-3","diagnosis-reentry","token-reset","planning-reset","lifecycle-reset","state:complete","successor-plan","new-outcome","new-authority-uri","automatic-extra-cycle","duplicate-opinion","grant-as-progress","ready-before-record","ready-before-opinion","grant-scoped-review-before-original-budget-consumption"],
       "id": "B-T4-REPAIR-REMAINING-BLOCKER",
       "inputs": {
-        "request": "Read-only convergence and terminal-accounting trace. Initial review aggregates FIND-1 and FIND-2. One repair consumes token 1/1. Attempt 1 advances FIND-1; attempt 2 runs and generic suites pass, but required caller-B for FIND-2 lacks the stable-ID/AC/caller/proof/expected/observed closure. Stop at 2/2 without VERIFIED or review rerun. Then T5 backend finalization alone verifies available sealed receipts, inventories one partial directory without consuming it, removes only the exact t1/t2 observation roots, preserves the cleanup sentinel and every semantic/repair/review counter, and reports no completion."
+        "request": "Read-only convergence and terminal-accounting state trace; emit only canonical events and the final terminal-evidence snapshot, with no prose and no authoritative-plan-file write claim. The executing plan before and after one textual context-resume boundary is Datetime 2030-01-02-0304, slug repair-trace, outcome OUT-REPAIR-TRACE, authority authority://repair-trace, route dev-implementation backend, owner implementation-owner. Initial review aggregates FIND-1 and FIND-2. One repair consumes token 1/1. Attempt 1 advances FIND-1; attempt 2 runs and generic suites pass, but caller-B lacks required FIND-2 closure for AC-TRACE-02. Emit this exact textual checkpoint record and block while pending:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\nA human Continue changes only its grant line to grant: continue 2030-01-02-0305. Cross the textual context-resume boundary, restate the same executing-plan identity including target sha256:2222222222222222222222222222222222222222222222222222222222222222 and remaining AC-TRACE-02 / implementation-owner, and authorize grant cycle 1 with the same owner and consumed token. Grant cycle 1 closes FIND-2, runs fresh impacted verification to VERIFIED, then consumes the still-unused original review rerun; that original rerun, not a grant-scoped review, reports FIND-3. Emit this exact second textual checkpoint record and block while pending:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\nA human Second opinion changes only its grant line to grant: second-opinion 2030-01-02-0307; block while opinion is absent. Reuse existing dev-code-review/HANDOFF-TRACE-03 without another role dispatch, then change only the opinion line to: opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306. Only after that opinion output authorize grant cycle 2. Attempt 1 materially changes the FIND-3 hypothesis without closure, and only that attempt evidence authorizes attempt 2. Attempt 2 repeats the FIND-3 frontier, returns no-progress-stop, and starts no review. Finally run the unchanged non-consuming backend finalizer with FIND-3 exact and no completion."
       },
       "layer": "backend",
       "proof": "Fresh read-only state-trace evaluation against AC11 and exact fixture identity.",
       "repetition_tier": "hard",
       "required_capabilities": [],
-      "required_events": [
-        "state:accepted|owner:backend|output:verified target, unused 1/1 token, and initial review eligibility accepted",
-        "state:reviewing|owner:dev-code-review|output:one pass aggregates FIND-1 and FIND-2",
-        "state:failed|owner:backend|output:FIND-1 and FIND-2 deduplicated once",
-        "state:ready|owner:backend|output:one consolidated repair authorized; token consumed 1/1",
-        "state:running|owner:worker|output:repair attempt 1 advances FIND-1",
-        "state:failed|owner:backend|output:attempt 1 evidence permits attempt 2",
-        "state:ready|owner:backend|output:repair attempt 2 authorized from FIND-1 progress",
-        "state:running|owner:worker|output:repair attempt 2 runs generic suites",
-        "state:handed-off|owner:worker|output:generic suites pass but FIND-2 caller-B closure is absent",
-        "state:failed|owner:backend|output:FIND-2 remains at caller-B; repair attempts 2/2; no VERIFIED or review rerun",
-        "snapshot:terminal-evidence|owner:backend|output:available sealed receipts verified; partial directory inventoried unconsumed; exact t1 and t2 roots removed; cleanup sentinel and all counters unchanged; FIND-2 and unreached assurance reported; no completion"
-      ],
-      "rubric": [
-        "Reject generic passing suites as closure for caller-B.",
-        "Stop the repair at 2/2 with FIND-2 exact.",
-        "Allow only non-consuming terminal finalization after failure; require exact-root cleanup, sentinel/counter preservation, partial-evidence inventory, and no completion."
-      ],
+      "required_events": ["state:accepted|owner:backend|output:executing plan Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; exact verified target; token unused 1/1; initial review eligible","state:reviewing|owner:dev-code-review|output:one initial pass aggregates FIND-1 and FIND-2","state:failed|owner:backend|output:FIND-1 and FIND-2 deduplicated once","state:ready|owner:backend|output:one consolidated repair authorized; token consumed 1/1","state:running|owner:worker|output:repair attempt 1 advances FIND-1","state:failed|owner:backend|output:attempt 1 evidence permits attempt 2","state:ready|owner:backend|output:repair attempt 2 authorized from FIND-1 progress","state:running|owner:worker|output:repair attempt 2 runs generic suites","state:handed-off|owner:worker|output:generic suites pass but FIND-2 caller-B closure is absent","state:failed|owner:backend|output:FIND-2 remains at caller-B for AC-TRACE-02; repair attempts 2/2; falsifiable next approach is close FIND-2 at caller-B","state:blocked|owner:backend|output:executing plan before context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; textual checkpoint record emitted before choices:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\ngrant pending blocks ready","state:blocked|owner:backend|output:Continue changed only the grant line:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: continue 2030-01-02-0305\n  - opinion: absent\ntextual context-resume boundary","state:ready|owner:backend|output:executing plan after context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; target sha256:2222222222222222222222222222222222222222222222222222222222222222; remaining AC-TRACE-02 / implementation-owner; grant cycle 1 authorized for implementation-owner; token remains consumed 1/1","state:running|owner:worker|output:grant cycle 1 attempt 1 closes FIND-2 at caller-B","state:handed-off|owner:worker|output:fresh impacted smoke proves FIND-2 closure for AC-TRACE-02","state:verifying|owner:dev-verification|output:fresh impacted verification runs on the exact repaired target","state:verified|owner:dev-verification|output:VERIFIED FIND-2 closure on the exact repaired target","state:reviewing|owner:dev-code-review|output:still-unused original review rerun consumed before any grant-scoped review; FIND-3 reported","state:failed|owner:backend|output:FIND-3 at caller-C blocks AC-TRACE-03 after the original review rerun","state:blocked|owner:backend|output:second textual checkpoint record emitted:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\ngrant pending blocks ready","state:blocked|owner:backend|output:Second opinion changed only the grant line:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: absent\nopinion absent blocks ready","state:blocked|owner:backend|output:existing dev-code-review/HANDOFF-TRACE-03 reused with no role dispatch; only opinion line changed:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306","state:ready|owner:backend|output:grant cycle 2 authorized only after same-route opinion; executing plan remains Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner","state:running|owner:worker|output:grant cycle 2 attempt 1 materially changes the FIND-3 hypothesis without closure","state:failed|owner:backend|output:attempt 1 evidence, not grant or opinion, authorizes attempt 2","state:ready|owner:backend|output:grant cycle 2 attempt 2 authorized from changed FIND-3 hypothesis evidence","state:running|owner:worker|output:grant cycle 2 attempt 2 rederives caller-C projection","state:handed-off|owner:worker|output:attempt 2 repeats the FIND-3 caller-C frontier","state:failed|owner:backend|output:FIND-3 no-progress-stop; no review and no automatic extra cycle","snapshot:terminal-evidence|owner:backend|output:available sealed receipts verified; partial directory inventoried unconsumed; exact t1 and t2 roots removed; cleanup sentinel and all counters unchanged; FIND-3 exact and no-progress-stop reported; no completion"],
+      "rubric": ["Retain initial FIND-1/FIND-2 aggregation, token consumption 1/1, repair attempts 1/2 and 2/2, and rejection of generic suites as caller-B closure.","Require the exact first eight-line record as read-only output text, pending-before-ready ordering, a one-line Continue transition, and the same neutral Datetime, slug, outcome, authority URI, route, owner, target, and remaining criteria across the textual resume; do not claim an authoritative plan-file write.","Require grant cycle 1 to close FIND-2, reach fresh VERIFIED proof, and consume the still-unused original review rerun before any grant-scoped review; that original rerun reports FIND-3.","Require the exact second record, a one-line Second opinion grant transition, blocked readiness while opinion is absent, reuse of dev-code-review/HANDOFF-TRACE-03 without duplicate dispatch, and a one-line same-route opinion transition before grant cycle 2.","Authorize one cycle per explicit current-record grant. The grant and opinion are not progress: only grant-cycle-2 attempt-1 changed-hypothesis evidence may authorize attempt 2, and its repeated FIND-3 frontier must return no-progress-stop with no review or automatic extra cycle.","Reject attempt 3, successor planning, new outcome or authority URI, token/planning/lifecycle reset, duplicate opinion, ready-before-record or ready-before-opinion, and grant-scoped review before original-budget consumption.","Allow only the unchanged non-consuming terminal finalizer after FIND-3 no-progress-stop; require exact-root cleanup, sentinel/counter preservation, partial-evidence inventory, FIND-3 exact, and no completion."],
       "scripted_replies": [],
       "trace_scope": "prefix"
     },
@@ -7568,6 +7524,7 @@
         "artifacts": [
           "state trace",
           "criterion-complete smoke",
+          "worker Common Handoff",
           "deferred Learning Candidate",
           "terminal evidence"
         ],
@@ -7591,14 +7548,18 @@
         "curation Handoff",
         "trigger screen",
         "dispatch:dev-continual-learning",
+        "dispatch:dev-verification",
+        "dispatch:dev-code-review",
         "CURATED",
         "state:verifying",
+        "state:verified",
         "state:reviewing",
+        "state:reviewed",
         "implicit shipping"
       ],
       "id": "B-COMPACT-DEFERRED-LEARNING-CANDIDATE",
       "inputs": {
-        "request": "Read-only compact state trace. Every acceptance smoke passes. The worker reports a plausible project-guidance change that would mutate a current rule. Preserve it as a deferred Learning Candidate for a separately approved standard or high-consequence maintenance route, then complete compact. Do not create a curation task, Handoff, trigger screen, or dev-continual-learning dispatch."
+        "request": "Read-only compact state trace. Every acceptance smoke passes. The worker reports a plausible project-guidance change that would mutate a current rule. Require one in-conversation worker Common Handoff, preserve the candidate as deferred evidence for a separately approved standard or high-consequence maintenance route, then complete compact. Do not create a curation task, curation Handoff, trigger screen, or dev-continual-learning dispatch."
       },
       "layer": "backend",
       "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
@@ -7608,16 +7569,299 @@
         "state:accepted|owner:backend|output:compact Task Contract and checked disqualifiers accepted",
         "state:ready|owner:backend|output:compact checklist passed; one worker Task Contract and acceptance-to-smoke map ready",
         "state:running|owner:worker|output:bounded reversible implementation",
-        "state:handed-off|owner:worker|output:every acceptance criterion has passing exact-target smoke and one in-conversation Handoff",
+        "state:handed-off|owner:worker|output:every acceptance criterion has passing exact-target smoke and one in-conversation Common Handoff",
         "state:complete|owner:backend|output:criterion-complete smoke accepted; mutating candidate preserved as deferred evidence for separate noncompact maintenance"
       ],
       "rubric": [
-        "Require compact completion from criterion-complete smoke.",
+        "Require exact event equality accepted -> ready -> running -> handed-off -> complete with the worker Common Handoff at handed-off.",
         "Preserve the mutating candidate as deferred evidence for separately approved noncompact maintenance.",
-        "Reject same-route curation task, Handoff, trigger screen, dispatch, or CURATED outcome."
+        "Reject same-route curation task, curation Handoff, trigger screen, verification, review, continual-learning dispatch, CURATED outcome, or any extra state event."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A wording-only review observation remains a terminal advisory when every fixed parent criterion and observable changed-contract consumer is satisfied.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "Review Handoff",
+          "terminal advisory",
+          "terminal Standard learning assessment",
+          "terminal evidence"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "fixed verified target",
+          "complete applicable-rule manifest",
+          "finding relevance",
+          "route-scheduled terminal Standard learning assessment"
+        ],
+        "mode": "one owner",
+        "outcome": "wording advisory recorded; parent completed after one terminal Standard learning assessment without assurance replay",
+        "owners": [
+          "backend",
+          "dev-code-review"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-review-wording-advisory",
+      "forbidden_events": [
+        "state:failed",
+        "state:verifying",
+        "state:verified",
+        "CHANGES REQUIRED",
+        "NOT VERIFIED",
+        "new-parent-criterion",
+        "advisory-in-repair-set",
+        "repair-dispatch",
+        "verification-replay",
+        "review-replay",
+        "second-learning-assessment",
+        "maintenance-dispatch",
+        "implicit shipping"
+      ],
+      "id": "B-REVIEW-WORDING-ADVISORY",
+      "inputs": {
+        "request": "Read-only standard final-review trace. Parent outcome OUT-WORDING has exactly AC-WORDING-1 and AC-WORDING-2, and target-sha256:6de25a31 is already VERIFIED with observable changed-contract consumer consumer-A satisfied. Final review finds only ADV-WORDING-1: frontmatter, scanner, and ADR wording differ, with no broken parent criterion or observable changed-contract consumer. Return Standards PASS, Specification PASS, Overall APPROVED; record ADV-WORDING-1 as terminal residual risk; account for the route-scheduled one terminal Standard learning assessment; then complete. Emit exactly these four current-lifecycle event lines, in this order, and no other lifecycle lines: state:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, and complete rule manifest accepted; state:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only observation; parent criteria and consumer-A remain satisfied; state:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1 advisory residual risk; state:complete|owner:backend|output:ADV-WORDING-1 residual risk and one terminal Standard learning assessment accounted; parent terminal. The inherited VERIFIED status is intake evidence only, not a current transition: never emit a state:verifying or state:verified line for it. Do not add a parent criterion, dispatch repair, replay verification or review, or start maintenance."
+      },
+      "layer": "backend",
+      "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, and complete rule manifest accepted",
+        "state:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only observation; parent criteria and consumer-A remain satisfied",
+        "state:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1 advisory residual risk",
+        "state:complete|owner:backend|output:ADV-WORDING-1 residual risk and one terminal Standard learning assessment accounted; parent terminal"
+      ],
+      "rubric": [
+        "Require the fixed VERIFIED AC-WORDING-1 and AC-WORDING-2 parent set plus satisfied consumer-A before review.",
+        "Classify ADV-WORDING-1 as advisory because no parent criterion or observable changed-contract consumer is broken.",
+        "Require Standards PASS, Specification PASS, Overall APPROVED, one terminal Standard learning assessment, and completion without repair or assurance replay."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "One directly evidenced changed-consumer blocker closes through one owner repair and aggregate verification of the unchanged parent acceptance/proof set.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "frozen parent acceptance/proof set",
+          "eligible behavior blocker",
+          "causal impact map",
+          "repair Common Handoff",
+          "fresh impacted proof",
+          "reused unaffected evidence",
+          "aggregate Verification Handoff"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "fixed verified target",
+          "complete applicable-rule manifest",
+          "eligible directly evidenced behavior blocker",
+          "currently eligible consolidated repair under inherited recovery authority",
+          "immutable parent acceptance/proof set",
+          "complete causal impact map"
+        ],
+        "mode": "one owner",
+        "outcome": "initial Overall CHANGES REQUIRED; repaired target VERIFIED over unchanged parent acceptance; eligible review boundary remains prospective",
+        "owners": [
+          "backend",
+          "worker",
+          "dev-verification",
+          "dev-code-review"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-review-behavior-blocker-repair",
+      "forbidden_events": [
+        "criterion:FIND-CONSUMER",
+        "criterion:changed-path",
+        "criterion:adjacent-fixture",
+        "fresh:PR-PRESERVE",
+        "reuse:EVID-PRESERVE-without-identity",
+        "generic-suite-closure",
+        "whole-parent-reproof",
+        "review-before-reverification",
+        "state:reviewed",
+        "review-boundary-executed",
+        "per-blocker-repair",
+        "recovery-policy-change",
+        "recovery-state-reset",
+        "state:complete",
+        "implicit shipping"
+      ],
+      "id": "B-REVIEW-BEHAVIOR-BLOCKER-REPAIR",
+      "inputs": {
+        "request": "Read-only standard final-review and repair prefix. Parent outcome OUT-BEHAVIOR has exactly AC-CONSUMER with proof recipe PR-CONSUMER and AC-PRESERVE with proof recipe PR-PRESERVE. The first final review of verified-target-1 finds FIND-CONSUMER: consumer-A still invokes the removed contract, violating AC-CONSUMER, with direct static evidence. Return Standards FAIL, Specification FAIL, Overall CHANGES REQUIRED for FIND-CONSUMER and run the one currently eligible consolidated owner repair under inherited current recovery authority without changing its accounting. The repair changes only consumer-A on repaired-target-2. Its causal impact map marks AC-CONSUMER impacted through consumer-A and PR-CONSUMER, and AC-PRESERVE unaffected with reusable evidence EVID-PRESERVE bound to the unchanged target surface and environment. Reverify exactly the unchanged two-criterion set: rerun PR-CONSUMER fresh, reuse EVID-PRESERVE only after target-surface, environment, expectation, proof-method, fixture, dependency, and evidence-integrity identity checks, and return VERIFIED over AC-CONSUMER and AC-PRESERVE. Stop this prefix at VERIFIED; the existing eligible review boundary remains prospective and unchanged. Do not add the finding, a changed path, or an adjacent fixture as a criterion, and do not alter recovery counts, grants, attempts, continuation, or rerun policy."
+      },
+      "layer": "backend",
+      "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:OUT-BEHAVIOR exact AC-CONSUMER PR-CONSUMER and AC-PRESERVE PR-PRESERVE parent set, verified-target-1, and current inherited recovery state accepted",
+        "state:reviewing|owner:dev-code-review|output:FIND-CONSUMER directly proves consumer-A violates AC-CONSUMER on verified-target-1",
+        "state:failed|owner:backend|output:Standards FAIL; Specification FAIL; Overall CHANGES REQUIRED; FIND-CONSUMER aggregated once",
+        "state:ready|owner:backend|output:one currently eligible consolidated repair authorized under inherited recovery authority; parent acceptance and proof recipes frozen; recovery accounting unchanged",
+        "state:running|owner:worker|output:repair FIND-CONSUMER at consumer-A on repaired-target-2",
+        "state:handed-off|owner:worker|output:Common Handoff closes FIND-CONSUMER and maps AC-CONSUMER impacted via consumer-A and PR-CONSUMER; AC-PRESERVE unaffected via EVID-PRESERVE identity",
+        "state:verifying|owner:dev-verification|output:unchanged AC-CONSUMER and AC-PRESERVE set; fresh PR-CONSUMER passes; EVID-PRESERVE reused after target-surface environment expectation proof-method fixture dependency and evidence-integrity identity checks",
+        "state:verified|owner:dev-verification|output:repaired-target-2 VERIFIED over exactly AC-CONSUMER and AC-PRESERVE"
+      ],
+      "rubric": [
+        "Require FIND-CONSUMER to cite AC-CONSUMER, consumer-A, verified-target-1, and direct static evidence before CHANGES REQUIRED.",
+        "Freeze AC-CONSUMER/PR-CONSUMER and AC-PRESERVE/PR-PRESERVE; require a complete causal impact map, fresh PR-CONSUMER proof, and identity-validated EVID-PRESERVE reuse.",
+        "Require one aggregate VERIFIED verdict over exactly the unchanged parent set and no promoted finding, path, or fixture criterion.",
+        "Stop at VERIFIED with the eligible review boundary prospective and recovery accounting unchanged."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Final review returns INCONCLUSIVE to the named authority owner when equal-precedence current governing requirements make expected behavior indeterminate.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "exact authority conflict",
+          "Review Handoff to dev-requirements"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "fixed verified target",
+          "complete applicable-rule manifest",
+          "unresolved equal-precedence governing-authority conflict"
+        ],
+        "mode": "one owner",
+        "outcome": "INCONCLUSIVE authority conflict returned to dev-requirements; no repair or completion",
+        "owners": [
+          "backend",
+          "dev-code-review"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-review-authority-conflict",
+      "forbidden_events": [
+        "state:ready",
+        "state:running",
+        "state:handed-off",
+        "state:verifying",
+        "state:verified",
+        "state:failed",
+        "state:reviewed",
+        "state:complete",
+        "CHANGES REQUIRED",
+        "APPROVED",
+        "blocker:",
+        "advisory:",
+        "repair",
+        "mutation",
+        "dispatch:dev-continual-learning",
+        "implicit shipping"
+      ],
+      "id": "B-REVIEW-AUTHORITY-CONFLICT",
+      "inputs": {
+        "request": "Read-only standard final-review prefix. The immutable target target-sha256:91bd44e2 is already VERIFIED, and final-review intake names current governing requirements AUTH-CONFLICT-A and AUTH-CONFLICT-B plus authority owner dev-requirements. AUTH-CONFLICT-A requires response X; AUTH-CONFLICT-B forbids response X; they have equal precedence and no approved rule resolves them, so expected behavior is indeterminate. Return Standards INCONCLUSIVE, Specification INCONCLUSIVE, Overall INCONCLUSIVE in one Review Handoff to dev-requirements. Do not classify a blocker or advisory, authorize repair, mutate the target, dispatch terminal learning, or complete."
+      },
+      "layer": "backend",
+      "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:fixed target-sha256:91bd44e2, current AUTH-CONFLICT-A and AUTH-CONFLICT-B, and dev-requirements receiver accepted",
+        "state:reviewing|owner:dev-code-review|output:AUTH-CONFLICT-A requires response X; AUTH-CONFLICT-B forbids response X; equal precedence leaves expected behavior indeterminate",
+        "state:blocked|owner:backend|output:Standards INCONCLUSIVE; Specification INCONCLUSIVE; Overall INCONCLUSIVE; AUTH-CONFLICT-A versus AUTH-CONFLICT-B returned to dev-requirements"
+      ],
+      "rubric": [
+        "Require both current authorities, their exact contradiction, equal precedence, and dev-requirements as the receiver.",
+        "Require Standards INCONCLUSIVE, Specification INCONCLUSIVE, and Overall INCONCLUSIVE.",
+        "Reject any guessed blocker or advisory, repair, mutation, terminal learning, completion, or shipping."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "approval_state": "material-change",
+      "criterion": "A terminal wording advisory cleanup request creates a fresh high-consequence maintenance outcome without reopening or inheriting the parent outcome's assurance state.",
+      "expected": {
+        "artifacts": [
+          "terminal parent evidence",
+          "fresh maintenance authority",
+          "fresh maintenance acceptance",
+          "fresh maintenance Task Contract",
+          "fresh recovery-state binding",
+          "high-consequence Context Pack",
+          "terminal evidence (promised downstream output)"
+        ],
+        "assurance_profile": "high-consequence",
+        "first_owner": "dev-implementation",
+        "gates": [
+          "overview approval",
+          "explicit maintenance authority",
+          "high-consequence consequence evidence",
+          "fresh recovery state selected by current authority"
+        ],
+        "mode": "one owner",
+        "outcome": "fresh high-consequence maintenance outcome dispatched",
+        "owners": [
+          "dev-implementation",
+          "dev-verification",
+          "dev-code-review",
+          "dev-continual-learning",
+          "dev-ask"
+        ],
+        "route": "dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation"
+      },
+      "fixture_dir": "fixtures/r-review-advisory-maintenance",
+      "forbidden_events": [
+        "reopen:OUT-WORDING",
+        "unchanged-route-continuation",
+        "parent-repair",
+        "inherited-parent-state",
+        "recovery-policy-change",
+        "dispatch:dev-verification",
+        "dispatch:dev-code-review",
+        "dispatch:dev-continual-learning",
+        "multi-dispatch",
+        "compact-route",
+        "persistence-before-approval",
+        "shipping"
+      ],
+      "id": "R-REVIEW-ADVISORY-MAINTENANCE",
+      "inputs": {
+        "request": "The parent outcome OUT-WORDING is terminal: AC-WORDING-1 and AC-WORDING-2 are satisfied, final review was APPROVED with only ADV-WORDING-1, one terminal Standard learning assessment ran, and completion evidence is current. I now explicitly request cleanup of ADV-WORDING-1 in generic review authority. Classify this as fresh outcome OUT-REVIEW-ADVISORY-MAINTENANCE with authority AUTH-MAINT-1, acceptance AC-MAINT-1, Task Contract TASK-MAINT-1, target target-sha256:7c3a19ef, fresh semantic-attempt and post-assurance-repair state selected by current recovery authority, and high-consequence assurance; inherit no parent repair, verification, review, or learning state. Present the full numbered route dev-implementation, dev-verification, dev-code-review, dev-continual-learning, dev-ask completion presentation; request approval; then dispatch only dev-implementation."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "terminal-evidence-check",
+        "new-outcome:OUT-REVIEW-ADVISORY-MAINTENANCE|authority:AUTH-MAINT-1|criterion:AC-MAINT-1|task:TASK-MAINT-1|target:target-sha256:7c3a19ef|recovery:fresh-current-authority|assurance:high-consequence",
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-implementation"
+      ],
+      "rubric": [
+        "Require current terminal OUT-WORDING evidence before classifying cleanup.",
+        "Require fresh OUT-REVIEW-ADVISORY-MAINTENANCE, AUTH-MAINT-1, AC-MAINT-1, TASK-MAINT-1, target-sha256:7c3a19ef, and recovery state selected by current authority.",
+        "Require high-consequence assurance and the full prospective dev-implementation, dev-verification, dev-code-review, dev-continual-learning, dev-ask completion presentation route.",
+        "Dispatch only dev-implementation after approval; assurance and learning owners remain prospective.",
+        "Reject parent reopening or inherited state, recovery-policy change, multi-dispatch, compact routing, preapproval persistence, and shipping."
+      ],
+      "scripted_replies": [
+        "APPROVE the current Route Overview"
+      ]
     },
     {
       "absent_capabilities": [],
