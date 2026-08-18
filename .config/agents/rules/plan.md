@@ -53,6 +53,8 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 
 Plans are execution contracts, not transcripts. Include only the context, anchors, sequence, decisions, and proof a fresh executor needs. Scale detail with risk, reference canonical authority instead of copying it, and leave no material implementation choice unresolved. Apply the implementation-plan companion only when a later executor needs implementation-grade detail.
 
+When breaking work into `## Tasks`, prefer vertical implementation leaves a fresh worker can finish in one session. Use your best rough estimate of that worker attempt (read, reason, edit, smoke) and aim for about 150k tokens. The number is guidance only: do not block publication, invent an estimate field, split coupled work, or turn verification, review, or learning into numbered tasks to hit it.
+
 ## Approval and execution boundary
 
 - A plan records authority but cannot approve itself. At every new or resumed start, native harness review remains the sole plan-execution approval authority and binds the exact authority identity/URI, complete bytes and SHA-256 revision, current status, and explicit human approval. Missing or stale approval, changed identity/bytes, or `DONE`/`CLOSED` status stops execution.

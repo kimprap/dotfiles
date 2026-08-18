@@ -57,7 +57,7 @@ Use the base checkbox form and monotonic order:
   - Lineage: shared | LIN-...
 ```
 
-Dependencies form a DAG, reference earlier waves, and match topology. Every task has one implementation owner, output, receiver, target, acceptance criterion, and proof recipe for each owned criterion. Workers never invent tasks, criteria, effects, contracts, or receivers.
+Dependencies form a DAG, reference earlier waves, and match topology. Every task has one implementation owner, output, receiver, target, acceptance criterion, and proof recipe for each owned criterion. Workers never invent tasks, criteria, effects, contracts, or receivers. Size each implementation task to one fresh worker context using the same best-effort ~150k guidance in `plan.md`. Do not record or validate the estimate.
 
 ### Verification / Done criteria
 
