@@ -15,6 +15,21 @@
       "summary": "Narrow the OMP LSP rule activation so unrelated formatter commands do not interrupt.",
       "surface": "OMP omp-lsp TTSR activation"
     },
+    "pc-1bbd03aa0a592ee3": {
+      "first_seen": "2026-08-18",
+      "last_seen": "2026-08-18",
+      "observations": [
+        {
+          "date": "2026-08-18",
+          "friction": "The helper requires the target path to exist before git add, so deleted allow-listed files fail with path does not exist.",
+          "workaround": "Stage the exact deleted allow-listed path with git add -- path, matching the helper's add invocation."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Deleted manifest-allowed paths cannot be staged through the helper.",
+      "surface": "bin/dot-add staging helper"
+    },
     "pc-e1c8b1660bfd1b81": {
       "first_seen": "2026-08-13",
       "last_seen": "2026-08-13",
