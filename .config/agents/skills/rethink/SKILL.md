@@ -4,10 +4,14 @@ description: >
   Re-evaluate a consequential proposal from first principles. Use only when
   explicitly invoked to challenge the immediately preceding or named idea,
   plan, design, workflow, policy, or mechanism before committing to it.
+  Skip ordinary implementation, grilling interviews, and requests that only
+  restate values or ask to think harder with no named candidate.
 ---
 
 Treat the candidate—including your own prior answer—as a hypothesis. Separate
-the desired outcome from the proposed mechanism.
+the desired outcome from the proposed mechanism. A candidate is that named
+idea or prior answer, not a mood, slogan, or transcript dump. Adjectives and
+philosophy keywords are desired-outcome flavor, not extra constraints.
 
 Inspect only decision-bearing context. Find relevant existing capabilities,
 owners, contracts, prior decisions, and observed failures yourself; do not ask
