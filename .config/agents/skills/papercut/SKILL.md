@@ -5,11 +5,15 @@ description: Capture, review, initialize, or resolve redacted repository-owned r
 
 # Papercut evidence
 
-Own one portable current-work evidence module. Do not create a workflow stage or host adapter. Resolve `scripts/papercut_ledger.py` relative to this skill. Read `WORKFLOW.md` only when maintaining, auditing, or extending this module.
+Own one portable current-work evidence module. Papercut is never a task, Methods token, workflow or route stage, todo phase, assurance event, or per-task continual-learning trigger; capture changes no task state. Do not create a host adapter. Resolve `scripts/papercut_ledger.py` relative to this skill. Read `WORKFLOW.md` only when maintaining, auditing, or extending this module.
+
+## Activation and post-work look
+
+Candidate-triggered activation remains available throughout current dev, product, custom, and direct work. After a work-task Common Handoff is emitted, the always-applied rule gets exactly one soft look and may qualify at most one current candidate. Run the Handoff first; the look is state-neutral and dispatches no learning. No candidate means this skill is not loaded, no ledger is accessed, and no papercut output is emitted.
 
 ## Modes
 
-- `capture`: automatic only after the always-applied rule notices one plausible current-work candidate.
+- `capture`: automatic only after the always-applied rule qualifies one plausible current-work candidate, either while work is active or in the single post-Handoff soft look.
 - `init`: explicit repository opt-in only.
 - `review`: explicit proposal-only maintenance.
 - `resolve`: explicit maintenance, or automatic exact-record settlement after an authoritative workflow result.
@@ -24,8 +28,8 @@ Exclude task or plan state, tracked/blocking/product defects, secrets, security 
 
 ## Capture and candidate delivery
 
-1. Determine repository root and exact write authority. Do not inspect memory, transcripts, history, trackers, timers, or background state.
-2. Generalize `surface`, `summary`, current `friction`, optional `workaround`, and observation date. Select at most one record semantically; never by count alone.
+1. Determine repository root and exact write authority only after the always-applied rule has qualified the candidate. Do not inspect memory, transcripts, history, trackers, timers, or background state.
+2. Generalize `surface`, `summary`, current `friction`, optional `workaround`, and observation date. Select at most one current record semantically; never by count alone.
 3. If the ledger is absent, malformed, unsafe, or outside authority, report the redacted candidate without initializing or repairing storage.
 4. Otherwise call `list`, then call `record --repo PATH --input FILE` once with exactly `surface`, `summary`, `observed_on`, and observation `{friction, workaround}`. The helper computes identity, deduplicates exact observations, locks, validates, and writes atomically. Do not retry semantically. Use `--dry-run` only to report the prospective result without mutation.
 5. Disclose `recorded`, `updated`, `reopened`, `unchanged`, or report-only with the exact `PC-ID` when known. No candidate means no skill load, storage access, or papercut output.

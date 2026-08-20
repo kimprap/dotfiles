@@ -38,7 +38,8 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 ### Tasks
 
 - `## Tasks` is the canonical execution order.
-- Use stable monotonic codes and unchecked boxes: `- [ ] T1. Task description`.
+- Use one stable monotonic `T*` family and unchecked boxes: `- [ ] T1. Task description`.
+- Give every authored task exactly one `Owner`, one `Receiver`, one short human `Intent` sentence, and one `Methods` value. Intent contains no IDs, paths, or procedure.
 - Keep codes and historical outcomes stable. On completion, check the task and add an indented `completed <YYYY-MM-DD-HHMM>` line immediately below it.
 - Detailed execution sections, when present, map one-to-one to task codes in the same order.
 
@@ -53,7 +54,9 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 
 Plans are execution contracts, not transcripts. Include only the context, anchors, sequence, decisions, and proof a fresh executor needs. Scale detail with risk, reference canonical authority instead of copying it, and leave no material implementation choice unresolved. Apply the implementation-plan companion only when a later executor needs implementation-grade detail.
 
-When breaking work into `## Tasks`, prefer vertical implementation leaves a fresh worker can finish in one session. Use your best rough estimate of that worker attempt (read, reason, edit, smoke) and aim for about 150k tokens. The number is guidance only: do not block publication, invent an estimate field, split coupled work, or turn verification, review, or learning into numbered tasks to hit it.
+When breaking work into `## Tasks`, prefer vertical implementation leaves a fresh worker can finish in one session. Use your best rough estimate of that worker attempt (read, reason, edit, smoke) and aim for about 150k tokens. The number is guidance only: do not block publication, invent an estimate field, split coupled work, or invent verification, review, learning, or any other lifecycle task to hit it.
+
+Standard and high-consequence plans may optionally number one exact final `dev-verification` → `dev-code-review` → `dev-continual-learning` suffix for human readability. When present, that suffix consumes the existing backend profile tail once; when absent, the backend schedules the same profile tail once. Compact work may remain planless; any authored compact plan contains work tasks only and has no numbered profile tail.
 
 ## Approval and execution boundary
 

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only full task-shape observation for a work-only standard Executor Plan valid in the active OMP or Grok context. Its Intent is “Keep the backend-scheduled tail singular.”, Methods is none, final Receiver is dev-implementation backend, plan digest is sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, and exact work target is sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. It has no numbered suffix or missing-tail/TASK_TAIL_INVALID issue. Include the source-entitled executor-plan snapshot, bind none before ready, run one work attempt with exact-revision smoke SMOKE-B and a complete Common Handoff, then select the backend-scheduled tail once. Fresh AC-TAIL-02 proof is VR-TAIL-02-B; the selected original initial review evidence is REVIEW-B APPROVED; the curator result is LEARN-B NO DURABLE LEARNING and is a completion gate. No papercut candidate exists. Backend owns complete."
+  },
+  "scripted_replies": []
+}

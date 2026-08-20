@@ -33,6 +33,7 @@ After the base header, include each H2 exactly once in this order:
 | `Fixed shared contracts` | `Contract ID \| Surface \| Owner task \| Revision \| Consumers`; stable `CONTRACT-...` IDs for fixed interface, state, data, compatibility, degraded behavior, and approved break/removal ownership. Exactly one implementation owner; all references resolve. |
 | `Target map` | `Target ID \| Path / surface \| Owner task \| Base identity \| Callers / fixtures \| Criteria`; stable `TGT-...` IDs covering every changed/produced path, symbol, behavior, caller, fixture, and criterion boundary. Exactly one implementation owner; every target is tasked. |
 | `Execution policy` | Declare `Assurance`, `Topology`, `Max concurrency`, `Isolation`, `Lineages`, `Fan-in task`, `Fan-in inputs`, `Contention policy`, `Decomposition`, `Effect limit`, and `Orchestrator profile`. Keep lifecycle, assurance, and topology independent. Default to one owner. Multiple isolated lineages require distinct IDs, neutral fan-in of every input, and post-fan-in proof. Missing or mismatched full-orchestration capability stops unless this section pre-approves a contract-preserving one-owner/sequential projection. |
+| `Tasks` | One monotonic `T*` family. Every task has exactly one Owner, Receiver, short human Intent sentence, and Methods value; implementation leaves fit one fresh worker session. |
 | `Acceptance` | `Criterion ID \| Condition / input \| Expected observable / threshold \| Surface \| Owning task`; stable `AC-...` IDs, exactly one owner each, and no duplicate or orphan. |
 | `Result / Handoff` | `Output ID \| Producing task \| Artifact / identity \| Allowed outcomes \| Receiver \| Handoff contract`; each `OUTP-...` appears once, has one receiver, and uses the Common Handoff from `dev-handoff`. Outcomes and receivers stay within the Task Contract. |
 | `Blockers and recovery` | `Blocker ID \| Owner \| Recovery evidence \| Affected tasks \| Revision / approval boundary \| Ready condition`; stable `BLK-...` IDs with exact recovery, dependency cone, and reapproval rule. Keep runtime attempt state out of the plan. |
@@ -45,6 +46,8 @@ Use the base checkbox form and monotonic order:
 ```markdown
 - [ ] T1. <bounded vertical task>
   - Owner: <exactly one owner>
+  - Intent: <one short human sentence without IDs, paths, or procedure>
+  - Methods: none | tdd
   - Wave: W0
   - Depends on: none | T...
   - Targets: TGT-...
@@ -57,7 +60,11 @@ Use the base checkbox form and monotonic order:
   - Lineage: shared | LIN-...
 ```
 
-Dependencies form a DAG, reference earlier waves, and match topology. Every task has one implementation owner, output, receiver, target, acceptance criterion, and proof recipe for each owned criterion. Workers never invent tasks, criteria, effects, contracts, or receivers. Size each implementation task to one fresh worker context using the same best-effort ~150k guidance in `plan.md`. Do not record or validate the estimate.
+Dependencies form a DAG, reference earlier waves, and match topology. Every task has one implementation owner, one output, one receiver, one target, one acceptance criterion, and one proof recipe for each owned criterion. Intent is one short human sentence with no IDs, paths, or procedure. Work-task Methods is exactly `none` or `tdd`; every authored profile-tail task uses `none`. `ponytail` is reserved and rejected until a separately authorized skill exists. Workers never invent tasks, criteria, effects, contracts, or receivers. Size each implementation task to one fresh worker context using the same best-effort ~150k guidance in `plan.md`; never record or validate the estimate or invent a lifecycle task to satisfy it.
+
+Standard and high-consequence plans may omit the numbered profile tail or append one exact final suffix owned, in order, by `dev-verification`, `dev-code-review`, and `dev-continual-learning`. A present suffix consumes those existing profile boundaries once. The last work task—or, after fan-in, the last non-tail D04 verification or integration boundary—receives the first suffix task; the suffix then forms one dependency and receiver chain, ending at `dev-implementation backend`. Without the suffix, the last non-tail task receives the existing scheduled owner `dev-verification` or `dev-implementation backend`; never invent a `T*` row solely to satisfy a Receiver. Earlier topology-required D04 verification and neutral integration tasks remain explicit and are not replaced, flattened, or repeated by either shape.
+
+Compact work may use a direct Task Contract without an Executor Plan. If a compact plan is authored, it contains only work tasks and no numbered profile tail. Plan tasks project exact route ownership; the todo view remains a narrower phase projection and need not mirror task rows or route owners.
 
 ### Verification / Done criteria
 

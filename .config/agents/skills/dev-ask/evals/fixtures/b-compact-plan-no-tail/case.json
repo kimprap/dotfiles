@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only full task-shape observation for a compact Executor Plan with digest sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd. Its only work task Intent is “Keep compact work tail-free.”, Methods is none, Receiver is dev-implementation backend, and exact target is sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc. It has no verification, review, learning, or other tail owner. Include the source-entitled executor-plan snapshot, copy Intent/Methods unchanged, bind none before ready, run one semantic attempt, record criterion-complete exact-target smoke SMOKE-C in one complete Common Handoff, then take the silent no-candidate soft look. Backend owns compact completion with tail source none."
+  },
+  "scripted_replies": []
+}

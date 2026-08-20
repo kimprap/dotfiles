@@ -1525,10 +1525,11 @@
     {
       "absent_capabilities": [],
       "approval_state": "current-continuation",
-      "criterion": "A compact result with criterion-complete worker smoke presents the exact implementation-and-completion route without independent assurance or learning.",
+      "criterion": "A compact result with bound Intent/Methods and criterion-complete worker smoke presents the exact implementation-and-completion route without assurance, papercut lifecycle, or learning.",
       "expected": {
         "artifacts": [
-          "terminal evidence index"
+          "terminal evidence index",
+          "Intent/Methods evidence"
         ],
         "assurance_profile": "compact",
         "first_owner": null,
@@ -1545,13 +1546,16 @@
         "dispatch:dev-verification",
         "dispatch:dev-code-review",
         "dispatch:dev-continual-learning",
+        "papercut-stage",
+        "papercut-task",
+        "papercut-method",
         "inline-route",
         "route-table",
         "unordered-route"
       ],
       "id": "R-COMPLETE-COMPACT-NO-LEARNING",
       "inputs": {
-        "request": "The approved compact task is complete: every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, no blocker remains, and no context crossed. Present completion without dispatch or approval. Under Route, render exactly two numbered items in order: dev-implementation; dev-ask completion presentation. Do not claim verification, review, or continual learning ran."
+        "request": "The approved compact task is complete: its human Intent and Methods evidence are preserved, every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, the Common Handoff is complete, its soft papercut look produced no candidate or output, no blocker remains, and no context crossed. Present completion without dispatch or approval. Under Route, render exactly two numbered items in order: dev-implementation; dev-ask completion presentation. Do not claim verification, review, continual learning, or a papercut lifecycle ran."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the compact conditional route and terminal evidence.",
@@ -1563,9 +1567,9 @@
         "completion-presented"
       ],
       "rubric": [
-        "Require criterion-complete exact-target worker smoke before compact completion.",
+        "Require bound Intent/Methods and criterion-complete exact-target worker smoke before compact completion.",
         "Require exactly two numbered Route items: dev-implementation and dev-ask completion presentation.",
-        "Reject independent verification, review, continual learning, a trigger screen, dispatch, or approval at completion."
+        "Reject independent verification, review, continual learning, papercut task/stage/method behavior, dispatch, or approval at completion."
       ],
       "scripted_replies": []
     },
@@ -2161,7 +2165,15 @@
         "route": "dev-implementation backend"
       },
       "fixture_dir": "fixtures/b-retry",
-      "forbidden_events": ["attempt-3","unchanged-hypothesis-retry","revision-budget-reset","implicit shipping","self-verification","attempt-3-after-stray-grant","grant-driven-budget-reset"],
+      "forbidden_events": [
+        "attempt-3",
+        "unchanged-hypothesis-retry",
+        "revision-budget-reset",
+        "implicit shipping",
+        "self-verification",
+        "attempt-3-after-stray-grant",
+        "grant-driven-budget-reset"
+      ],
       "id": "B-RETRY",
       "inputs": {
         "request": "Read-only backend state trace. Attempt 1 fails after advancing AC-RETRY-1 and produces a materially changed falsifiable hypothesis. Authorize attempt 2 from that evidence. Attempt 2 fails with the same blocker and exhausts 2/2. A stray Continue grant then appears. Treat that grant as inapplicable: it is not progress and cannot authorize attempt 3 or reset or reclassify the two-attempt budget. Stop failed at 2/2."
@@ -2170,8 +2182,22 @@
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
-      "required_events": ["state:accepted|owner:backend|output:unchanged Task Contract and two-attempt budget accepted","state:ready|owner:backend|output:attempt 1 authorized","state:running|owner:worker|output:attempt 1 bounded implementation","state:failed|owner:backend|output:attempt 1 fails after AC-RETRY-1 progress and changed falsifiable hypothesis","state:ready|owner:backend|output:attempt 2 authorized from attempt-1 evidence","state:running|owner:worker|output:attempt 2 evidence-gated retry","state:failed|owner:backend|output:attempt 2 fails; exhausted 2/2; attempt 3 forbidden","state:failed|owner:backend|output:stray Continue grant inapplicable after semantic 2/2; no attempt 3, budget reset, or budget reclassification"],
-      "rubric": ["Require exactly two semantic attempts.","Authorize attempt 2 only from named attempt-1 criterion progress or changed falsifiable evidence.","Reject attempt 3, unchanged-hypothesis retry, and derivative-revision budget reset.","Treat the stray Continue grant as inapplicable after 2/2: it is not progress and cannot create attempt 3 or reset or reclassify the semantic budget."],
+      "required_events": [
+        "state:accepted|owner:backend|output:unchanged Task Contract and two-attempt budget accepted",
+        "state:ready|owner:backend|output:attempt 1 authorized",
+        "state:running|owner:worker|output:attempt 1 bounded implementation",
+        "state:failed|owner:backend|output:attempt 1 fails after AC-RETRY-1 progress and changed falsifiable hypothesis",
+        "state:ready|owner:backend|output:attempt 2 authorized from attempt-1 evidence",
+        "state:running|owner:worker|output:attempt 2 evidence-gated retry",
+        "state:failed|owner:backend|output:attempt 2 fails; exhausted 2/2; attempt 3 forbidden",
+        "state:failed|owner:backend|output:stray Continue grant inapplicable after semantic 2/2; no attempt 3, budget reset, or budget reclassification"
+      ],
+      "rubric": [
+        "Require exactly two semantic attempts.",
+        "Authorize attempt 2 only from named attempt-1 criterion progress or changed falsifiable evidence.",
+        "Reject attempt 3, unchanged-hypothesis retry, and derivative-revision budget reset.",
+        "Treat the stray Continue grant as inapplicable after 2/2: it is not progress and cannot create attempt 3 or reset or reclassify the semantic budget."
+      ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
@@ -2584,19 +2610,23 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Eligible same-context compact advances directly through criterion-complete worker smoke to completion with no Context Pack or independent assurance.",
+      "criterion": "Eligible direct compact binds a human Intent, Methods none, and tail source none, advances through exact-target smoke, hands off once, finds no papercut candidate, and completes without a profile tail.",
       "expected": {
         "artifacts": [
           "state trace",
+          "direct compact Intent/Methods binding",
           "criterion-complete smoke",
+          "one Common Handoff",
           "terminal evidence"
         ],
         "assurance_profile": "compact",
         "first_owner": "backend",
         "gates": [
-          "current approved authority",
+          "current approved direct authority",
           "settled compact eligibility",
-          "compact checklist"
+          "direct Intent and Methods none bound before ready",
+          "compact checklist",
+          "case-bound no papercut candidate"
         ],
         "mode": "one owner",
         "outcome": "compact completion after criterion-complete smoke",
@@ -2617,47 +2647,57 @@
         "dispatch:dev-verification",
         "dispatch:dev-code-review",
         "dispatch:dev-continual-learning",
-        "implicit shipping"
+        "profile-tail",
+        "implicit shipping",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
       ],
       "id": "B-COMPACT",
       "inputs": {
-        "request": "Read-only state-trace simulation. A settled reversible one-context one-lineage Task Contract has deterministic acceptance proof, no prior failure, no material consequential surface, and no compact disqualifier. Same-context ownership does not cross. Map every AC to exact-target smoke, pass each scenario, emit one in-conversation Handoff, and complete without Executor Plan, Context Pack, verification, review, or learning."
+        "request": "Read-only compact state-trace simulation. Derive one short human Intent from current direct authority and bind Methods none before ready without loading a method skill. Map every acceptance criterion to exact-target smoke, pass each scenario, emit one Common Handoff, take the silent no-candidate post-Handoff soft look, and complete without Executor Plan, Context Pack, verification, review, learning, papercut access/output, or shipping."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:compact Task Contract and checked disqualifiers accepted",
-        "state:ready|owner:backend|output:compact checklist passed; one worker Task Contract and acceptance-to-smoke map ready",
-        "state:running|owner:worker|output:bounded reversible implementation",
-        "state:handed-off|owner:worker|output:every acceptance criterion has passing exact-target smoke and one in-conversation Handoff",
-        "state:complete|owner:backend|output:criterion-complete smoke accepted; terminal evidence complete; no verification, review, or learning dispatch"
+        "state:accepted|owner:backend|output:compact Task Contract accepted; human Intent derived from current direct authority; Methods none selected; tail source none",
+        "state:ready|owner:backend|output:Methods none bound before ready; no method skill loaded; compact checklist passed; acceptance-to-smoke map ready",
+        "state:running|owner:worker|output:semantic attempt 1/2 performs bounded reversible implementation on the exact compact target",
+        "state:handed-off|owner:worker|output:one complete Common Handoff for the exact compact target carries unchanged Intent, Methods none, no-skill evidence, and passing exact-revision smoke for every acceptance criterion; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:complete|owner:backend|output:exact compact target complete after Common Handoff validation and criterion-complete smoke; tail source none; no profile tail or lifecycle dispatch"
       ],
       "rubric": [
-        "Require the compact checklist and complete AC-to-smoke evidence.",
-        "Require direct accepted, ready, running, handed-off, complete progression.",
-        "Reject Context Pack, Executor Plan, verification, review, learning, or shipping."
+        "Require direct human Intent derivation and Methods none binding with no skill before ready.",
+        "Require accepted, ready, running, handed-off, complete progression and complete acceptance-to-smoke evidence.",
+        "Require the Common Handoff before one silent no-candidate soft look.",
+        "Reject Context Pack, Executor Plan, papercut access/output, verification, review, learning, or shipping."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
     {
       "absent_capabilities": [],
-      "criterion": "Compact completes after criterion smoke and defers a mutating Learning Candidate without verification, review, or curation dispatch.",
+      "criterion": "Direct no-plan compact binds Intent, Methods none, and tail source none, completes after exact-target smoke, and defers an explicitly non-papercut mutating Learning Candidate without profile assurance or papercut output.",
       "expected": {
         "artifacts": [
           "state trace",
+          "direct compact Intent/Methods binding",
           "criterion-complete smoke",
+          "one Common Handoff",
           "deferred Learning Candidate",
           "terminal evidence"
         ],
         "assurance_profile": "compact",
         "first_owner": "backend",
         "gates": [
-          "current approved authority",
+          "current approved direct no-plan authority",
           "settled compact eligibility",
-          "mutating candidate deferred"
+          "Methods none bound before ready",
+          "mutating Learning Candidate explicitly not a papercut candidate",
+          "candidate deferred to separate noncompact maintenance"
         ],
         "mode": "one owner",
         "outcome": "compact completion with mutating candidate deferred",
@@ -2679,27 +2719,32 @@
         "curation task",
         "trigger screen",
         "CURATED",
-        "implicit shipping"
+        "implicit shipping",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
       ],
       "id": "B-COMPACT-CURATION-TRIGGER",
       "inputs": {
-        "request": "Read-only compact state trace. The eligible task passes every deterministic exact-target smoke scenario and also surfaces a mutating Learning Candidate. Defer that candidate to a separately approved standard or high-consequence maintenance route. Complete compact without verification, review, dev-continual-learning, a curation task, or a trigger screen."
+        "request": "Read-only compact case-specific lifecycle projection for direct no-plan work. Bind a derived human Intent, Methods none, and tail source none before ready. The eligible task passes every deterministic exact-target smoke scenario and surfaces one mutating Learning Candidate that the case contract explicitly identifies as not a papercut candidate. Emit one complete Common Handoff, take the silent post-Handoff look, defer the Learning Candidate to a separately approved standard or high-consequence maintenance route, and complete compact without profile assurance, per-task learning, papercut access/output, curation dispatch, or shipping."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:compact Task Contract and checked disqualifiers accepted",
-        "state:ready|owner:backend|output:compact checklist passed; one worker Task Contract and acceptance-to-smoke map ready",
-        "state:running|owner:worker|output:bounded reversible implementation",
-        "state:handed-off|owner:worker|output:every acceptance criterion has passing exact-target smoke and one in-conversation Handoff",
-        "state:complete|owner:backend|output:criterion-complete smoke accepted; mutating Learning Candidate deferred to separate noncompact maintenance; no assurance or curation dispatch"
+        "state:accepted|owner:backend|output:direct no-plan compact Task Contract accepted; human Intent derived from current direct authority; Methods none selected; tail source none",
+        "state:ready|owner:backend|output:Methods none bound before ready; no method skill loaded; compact checklist and acceptance-to-smoke map ready",
+        "state:running|owner:worker|output:semantic attempt 1/2 performs bounded reversible implementation and criterion-complete smoke on the exact compact target",
+        "state:handed-off|owner:worker|output:one complete Common Handoff for the exact compact target carries unchanged Intent, Methods none, exact-revision smoke, and one non-papercut mutating Learning Candidate for separate maintenance; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:complete|owner:backend|output:exact compact target complete after Handoff validation and criterion-complete smoke; mutating Learning Candidate deferred to separate noncompact maintenance; tail source none; no assurance, curation, papercut, or learning dispatch"
       ],
       "rubric": [
-        "Require compact completion from criterion-complete smoke.",
+        "Require direct Intent derivation and Methods none binding before ready.",
+        "Require compact completion from criterion-complete smoke and one Common Handoff.",
         "Defer the mutating candidate to separately approved noncompact maintenance.",
-        "Reject verification, review, learning, curation, trigger screening, and CURATED."
+        "Reject verification, review, per-task learning, papercut access/output, curation, trigger screening, CURATED, and shipping."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -4148,12 +4193,14 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Generic suites cannot close a carried caller blocker; the repair stops at 2/2 and the backend finalizer cleans exact observation roots without semantic continuation.",
+      "criterion": "Generic suites cannot close a carried caller blocker; both eligible checkpoints emit the exact worth frame and actions, outcome-blocking Close is rejected without mutation, and the repair still stops at 2/2 before exact terminal finalization.",
       "expected": {
         "artifacts": [
           "state trace",
           "FIND-1 and FIND-2 initial set",
           "FIND-2 exact caller blocker",
+          "two five-line worth frames and action sets",
+          "outcome-blocking Close rejection",
           "terminal evidence snapshot",
           "cleanup sentinel"
         ],
@@ -4163,10 +4210,12 @@
           "initial review already ran",
           "repair consumed 1/1",
           "repair attempts 2/2",
+          "worth frame before each human action",
+          "outcome-blocking Close rejected without mutation",
           "terminal finalizer only"
         ],
         "mode": "one owner",
-        "outcome": "same-plan Continue and same-route Second opinion preserve neutral executing-plan identity and original review-budget precedence; one cycle per grant; FIND-3 ends no-progress-stop with exact terminal finalization and no completion",
+        "outcome": "same-plan Continue and same-route Second opinion preserve neutral executing-plan identity and original review-budget precedence; both checkpoints frame worth, outcome-blocking Close is rejected without mutation, one cycle runs per eligible grant, and FIND-3 ends no-progress-stop with exact terminal finalization and no completion",
         "owners": [
           "backend",
           "worker",
@@ -4176,17 +4225,79 @@
         "route": "dev-implementation backend"
       },
       "fixture_dir": "fixtures/b-t4-repair-remaining-blocker",
-      "forbidden_events": ["attempt-3","diagnosis-reentry","token-reset","planning-reset","lifecycle-reset","state:complete","successor-plan","new-outcome","new-authority-uri","automatic-extra-cycle","duplicate-opinion","grant-as-progress","ready-before-record","ready-before-opinion","grant-scoped-review-before-original-budget-consumption"],
+      "forbidden_events": [
+        "attempt-3",
+        "diagnosis-reentry",
+        "token-reset",
+        "planning-reset",
+        "lifecycle-reset",
+        "state:complete",
+        "successor-plan",
+        "new-outcome",
+        "new-authority-uri",
+        "automatic-extra-cycle",
+        "duplicate-opinion",
+        "grant-as-progress",
+        "ready-before-record",
+        "ready-before-opinion",
+        "grant-scoped-review-before-original-budget-consumption",
+        "close-completion",
+        "close-proof-reuse",
+        "close-record-mutation",
+        "extra-checkpoint-choice"
+      ],
       "id": "B-T4-REPAIR-REMAINING-BLOCKER",
       "inputs": {
-        "request": "Read-only convergence and terminal-accounting state trace; emit only canonical events and the final terminal-evidence snapshot, with no prose and no authoritative-plan-file write claim. The executing plan before and after one textual context-resume boundary is Datetime 2030-01-02-0304, slug repair-trace, outcome OUT-REPAIR-TRACE, authority authority://repair-trace, route dev-implementation backend, owner implementation-owner. Initial review aggregates FIND-1 and FIND-2. One repair consumes token 1/1. Attempt 1 advances FIND-1; attempt 2 runs and generic suites pass, but caller-B lacks required FIND-2 closure for AC-TRACE-02. Emit this exact textual checkpoint record and block while pending:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\nA human Continue changes only its grant line to grant: continue 2030-01-02-0305. Cross the textual context-resume boundary, restate the same executing-plan identity including target sha256:2222222222222222222222222222222222222222222222222222222222222222 and remaining AC-TRACE-02 / implementation-owner, and authorize grant cycle 1 with the same owner and consumed token. Grant cycle 1 closes FIND-2, runs fresh impacted verification to VERIFIED, then consumes the still-unused original review rerun; that original rerun, not a grant-scoped review, reports FIND-3. Emit this exact second textual checkpoint record and block while pending:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\nA human Second opinion changes only its grant line to grant: second-opinion 2030-01-02-0307; block while opinion is absent. Reuse existing dev-code-review/HANDOFF-TRACE-03 without another role dispatch, then change only the opinion line to: opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306. Only after that opinion output authorize grant cycle 2. Attempt 1 materially changes the FIND-3 hypothesis without closure, and only that attempt evidence authorizes attempt 2. Attempt 2 repeats the FIND-3 frontier, returns no-progress-stop, and starts no review. Finally run the unchanged non-consuming backend finalizer with FIND-3 exact and no completion."
+        "request": "Read-only convergence and terminal-accounting state trace; emit only canonical events and the final terminal-evidence snapshot, with no prose and no authoritative-plan-file write claim. The executing plan before and after one textual context-resume boundary is Datetime 2030-01-02-0304, slug repair-trace, outcome OUT-REPAIR-TRACE, authority authority://repair-trace, route dev-implementation backend, owner implementation-owner. Initial review aggregates FIND-1 and FIND-2. One repair consumes token 1/1. Attempt 1 advances FIND-1; attempt 2 runs and generic suites pass, but caller-B lacks required FIND-2 closure for AC-TRACE-02. Emit this exact textual checkpoint record and block while pending:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\nBefore any choice, emit this exact five-line worth frame followed by exactly these three action labels after the record:\nremaining stable IDs: FIND-2\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-1 advanced, but OUT-REPAIR-TRACE is not satisfied while caller-B closure for AC-TRACE-02 is absent\nchanged falsifiable hypothesis: close FIND-2 at caller-B with caller-specific proof\nrecommendation: continue-differently\nContinue\nSecond opinion\nClose\nA human first selects Close. Emit Human checkpoint action: Close and Close disposition: rejected because FIND-2 is outcome-blocking; the exact record remains byte-identical and no plan, runtime, record, completion, proof-reuse, or cycle state changes. Then a human selects Continue and changes only its grant line to grant: continue 2030-01-02-0305. Cross the textual context-resume boundary, restate the same executing-plan identity including target sha256:2222222222222222222222222222222222222222222222222222222222222222 and remaining AC-TRACE-02 / implementation-owner, and authorize grant cycle 1 with the same owner and consumed token. Grant cycle 1 closes FIND-2, runs fresh impacted verification to VERIFIED, then consumes the still-unused original review rerun; that original rerun, not a grant-scoped review, reports FIND-3. Emit this exact second textual checkpoint record and block while pending:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\nBefore any choice, emit this exact five-line worth frame followed by exactly these three action labels after the second record:\nremaining stable IDs: FIND-3\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-2 closure is freshly VERIFIED, but OUT-REPAIR-TRACE is not satisfied while caller-C projection for AC-TRACE-03 is stale\nchanged falsifiable hypothesis: rederive caller-C projection from the repaired target\nrecommendation: independent check\nContinue\nSecond opinion\nClose\nA human selects Second opinion and changes only its grant line to grant: second-opinion 2030-01-02-0307; block while opinion is absent. Reuse existing dev-code-review/HANDOFF-TRACE-03 without another role dispatch, then change only the opinion line to: opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306. Only after that opinion output authorize grant cycle 2. Attempt 1 materially changes the FIND-3 hypothesis without closure, and only that attempt evidence authorizes attempt 2. Attempt 2 repeats the FIND-3 frontier, returns no-progress-stop, and starts no review. Finally run the unchanged non-consuming backend finalizer with FIND-3 exact and no completion.\n\nEmit exactly the following JSON event strings in this order. The body between each marker pair is one event, including embedded newlines; do not emit the markers:\nEVENT 1 START\nstate:accepted|owner:backend|output:executing plan Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; exact verified target; token unused 1/1; initial review eligible\nEVENT 1 END\nEVENT 2 START\nstate:reviewing|owner:dev-code-review|output:one initial pass aggregates FIND-1 and FIND-2\nEVENT 2 END\nEVENT 3 START\nstate:failed|owner:backend|output:FIND-1 and FIND-2 deduplicated once\nEVENT 3 END\nEVENT 4 START\nstate:ready|owner:backend|output:one consolidated repair authorized; token consumed 1/1\nEVENT 4 END\nEVENT 5 START\nstate:running|owner:worker|output:repair attempt 1 advances FIND-1\nEVENT 5 END\nEVENT 6 START\nstate:failed|owner:backend|output:attempt 1 evidence permits attempt 2\nEVENT 6 END\nEVENT 7 START\nstate:ready|owner:backend|output:repair attempt 2 authorized from FIND-1 progress\nEVENT 7 END\nEVENT 8 START\nstate:running|owner:worker|output:repair attempt 2 runs generic suites\nEVENT 8 END\nEVENT 9 START\nstate:handed-off|owner:worker|output:generic suites pass but FIND-2 caller-B closure is absent\nEVENT 9 END\nEVENT 10 START\nstate:failed|owner:backend|output:FIND-2 remains at caller-B for AC-TRACE-02; repair attempts 2/2; falsifiable next approach is close FIND-2 at caller-B\nEVENT 10 END\nEVENT 11 START\nstate:blocked|owner:backend|output:executing plan before context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; textual checkpoint record emitted before choices:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: FIND-2\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-1 advanced, but OUT-REPAIR-TRACE is not satisfied while caller-B closure for AC-TRACE-02 is absent\nchanged falsifiable hypothesis: close FIND-2 at caller-B with caller-specific proof\nrecommendation: continue-differently\nContinue\nSecond opinion\nClose\ngrant pending blocks ready\nEVENT 11 END\nEVENT 12 START\nstate:blocked|owner:backend|output:Human checkpoint action: Close; Close disposition: rejected; FIND-2 is outcome-blocking for OUT-REPAIR-TRACE; exact first checkpoint record remains byte-identical; no plan, runtime, record, completion, proof reuse, or cycle state changed\nEVENT 12 END\nEVENT 13 START\nstate:blocked|owner:backend|output:Human checkpoint action: Continue; Continue changed only the grant line:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: continue 2030-01-02-0305\n  - opinion: absent\ntextual context-resume boundary\nEVENT 13 END\nEVENT 14 START\nstate:ready|owner:backend|output:executing plan after context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; target sha256:2222222222222222222222222222222222222222222222222222222222222222; remaining AC-TRACE-02 / implementation-owner; grant cycle 1 authorized for implementation-owner; token remains consumed 1/1\nEVENT 14 END\nEVENT 15 START\nstate:running|owner:worker|output:grant cycle 1 attempt 1 closes FIND-2 at caller-B\nEVENT 15 END\nEVENT 16 START\nstate:handed-off|owner:worker|output:fresh impacted smoke proves FIND-2 closure for AC-TRACE-02\nEVENT 16 END\nEVENT 17 START\nstate:verifying|owner:dev-verification|output:fresh impacted verification runs on the exact repaired target\nEVENT 17 END\nEVENT 18 START\nstate:verified|owner:dev-verification|output:VERIFIED FIND-2 closure on the exact repaired target\nEVENT 18 END\nEVENT 19 START\nstate:reviewing|owner:dev-code-review|output:still-unused original review rerun consumed before any grant-scoped review; FIND-3 reported\nEVENT 19 END\nEVENT 20 START\nstate:failed|owner:backend|output:FIND-3 at caller-C blocks AC-TRACE-03 after the original review rerun\nEVENT 20 END\nEVENT 21 START\nstate:blocked|owner:backend|output:second textual checkpoint record emitted:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: FIND-3\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-2 closure is freshly VERIFIED, but OUT-REPAIR-TRACE is not satisfied while caller-C projection for AC-TRACE-03 is stale\nchanged falsifiable hypothesis: rederive caller-C projection from the repaired target\nrecommendation: independent check\nContinue\nSecond opinion\nClose\ngrant pending blocks ready\nEVENT 21 END\nEVENT 22 START\nstate:blocked|owner:backend|output:Human checkpoint action: Second opinion; Second opinion changed only the grant line:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: absent\nopinion absent blocks ready\nEVENT 22 END\nEVENT 23 START\nstate:blocked|owner:backend|output:existing dev-code-review/HANDOFF-TRACE-03 reused with no role dispatch; only opinion line changed:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306\nEVENT 23 END\nEVENT 24 START\nstate:ready|owner:backend|output:grant cycle 2 authorized only after same-route opinion; executing plan remains Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner\nEVENT 24 END\nEVENT 25 START\nstate:running|owner:worker|output:grant cycle 2 attempt 1 materially changes the FIND-3 hypothesis without closure\nEVENT 25 END\nEVENT 26 START\nstate:failed|owner:backend|output:attempt 1 evidence, not grant or opinion, authorizes attempt 2\nEVENT 26 END\nEVENT 27 START\nstate:ready|owner:backend|output:grant cycle 2 attempt 2 authorized from changed FIND-3 hypothesis evidence\nEVENT 27 END\nEVENT 28 START\nstate:running|owner:worker|output:grant cycle 2 attempt 2 rederives caller-C projection\nEVENT 28 END\nEVENT 29 START\nstate:handed-off|owner:worker|output:attempt 2 repeats the FIND-3 caller-C frontier\nEVENT 29 END\nEVENT 30 START\nstate:failed|owner:backend|output:FIND-3 no-progress-stop; no review and no automatic extra cycle\nEVENT 30 END\nEVENT 31 START\nsnapshot:terminal-evidence|owner:backend|output:available sealed receipts verified; partial directory inventoried unconsumed; exact t1 and t2 roots removed; cleanup sentinel and all counters unchanged; FIND-3 exact and no-progress-stop reported; no completion\nEVENT 31 END"
       },
       "layer": "backend",
       "proof": "Fresh read-only state-trace evaluation against AC11 and exact fixture identity.",
       "repetition_tier": "hard",
       "required_capabilities": [],
-      "required_events": ["state:accepted|owner:backend|output:executing plan Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; exact verified target; token unused 1/1; initial review eligible","state:reviewing|owner:dev-code-review|output:one initial pass aggregates FIND-1 and FIND-2","state:failed|owner:backend|output:FIND-1 and FIND-2 deduplicated once","state:ready|owner:backend|output:one consolidated repair authorized; token consumed 1/1","state:running|owner:worker|output:repair attempt 1 advances FIND-1","state:failed|owner:backend|output:attempt 1 evidence permits attempt 2","state:ready|owner:backend|output:repair attempt 2 authorized from FIND-1 progress","state:running|owner:worker|output:repair attempt 2 runs generic suites","state:handed-off|owner:worker|output:generic suites pass but FIND-2 caller-B closure is absent","state:failed|owner:backend|output:FIND-2 remains at caller-B for AC-TRACE-02; repair attempts 2/2; falsifiable next approach is close FIND-2 at caller-B","state:blocked|owner:backend|output:executing plan before context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; textual checkpoint record emitted before choices:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\ngrant pending blocks ready","state:blocked|owner:backend|output:Continue changed only the grant line:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: continue 2030-01-02-0305\n  - opinion: absent\ntextual context-resume boundary","state:ready|owner:backend|output:executing plan after context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; target sha256:2222222222222222222222222222222222222222222222222222222222222222; remaining AC-TRACE-02 / implementation-owner; grant cycle 1 authorized for implementation-owner; token remains consumed 1/1","state:running|owner:worker|output:grant cycle 1 attempt 1 closes FIND-2 at caller-B","state:handed-off|owner:worker|output:fresh impacted smoke proves FIND-2 closure for AC-TRACE-02","state:verifying|owner:dev-verification|output:fresh impacted verification runs on the exact repaired target","state:verified|owner:dev-verification|output:VERIFIED FIND-2 closure on the exact repaired target","state:reviewing|owner:dev-code-review|output:still-unused original review rerun consumed before any grant-scoped review; FIND-3 reported","state:failed|owner:backend|output:FIND-3 at caller-C blocks AC-TRACE-03 after the original review rerun","state:blocked|owner:backend|output:second textual checkpoint record emitted:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\ngrant pending blocks ready","state:blocked|owner:backend|output:Second opinion changed only the grant line:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: absent\nopinion absent blocks ready","state:blocked|owner:backend|output:existing dev-code-review/HANDOFF-TRACE-03 reused with no role dispatch; only opinion line changed:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306","state:ready|owner:backend|output:grant cycle 2 authorized only after same-route opinion; executing plan remains Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner","state:running|owner:worker|output:grant cycle 2 attempt 1 materially changes the FIND-3 hypothesis without closure","state:failed|owner:backend|output:attempt 1 evidence, not grant or opinion, authorizes attempt 2","state:ready|owner:backend|output:grant cycle 2 attempt 2 authorized from changed FIND-3 hypothesis evidence","state:running|owner:worker|output:grant cycle 2 attempt 2 rederives caller-C projection","state:handed-off|owner:worker|output:attempt 2 repeats the FIND-3 caller-C frontier","state:failed|owner:backend|output:FIND-3 no-progress-stop; no review and no automatic extra cycle","snapshot:terminal-evidence|owner:backend|output:available sealed receipts verified; partial directory inventoried unconsumed; exact t1 and t2 roots removed; cleanup sentinel and all counters unchanged; FIND-3 exact and no-progress-stop reported; no completion"],
-      "rubric": ["Retain initial FIND-1/FIND-2 aggregation, token consumption 1/1, repair attempts 1/2 and 2/2, and rejection of generic suites as caller-B closure.","Require the exact first eight-line record as read-only output text, pending-before-ready ordering, a one-line Continue transition, and the same neutral Datetime, slug, outcome, authority URI, route, owner, target, and remaining criteria across the textual resume; do not claim an authoritative plan-file write.","Require grant cycle 1 to close FIND-2, reach fresh VERIFIED proof, and consume the still-unused original review rerun before any grant-scoped review; that original rerun reports FIND-3.","Require the exact second record, a one-line Second opinion grant transition, blocked readiness while opinion is absent, reuse of dev-code-review/HANDOFF-TRACE-03 without duplicate dispatch, and a one-line same-route opinion transition before grant cycle 2.","Authorize one cycle per explicit current-record grant. The grant and opinion are not progress: only grant-cycle-2 attempt-1 changed-hypothesis evidence may authorize attempt 2, and its repeated FIND-3 frontier must return no-progress-stop with no review or automatic extra cycle.","Reject attempt 3, successor planning, new outcome or authority URI, token/planning/lifecycle reset, duplicate opinion, ready-before-record or ready-before-opinion, and grant-scoped review before original-budget consumption.","Allow only the unchanged non-consuming terminal finalizer after FIND-3 no-progress-stop; require exact-root cleanup, sentinel/counter preservation, partial-evidence inventory, FIND-3 exact, and no completion."],
+      "required_events": [
+        "state:accepted|owner:backend|output:executing plan Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; exact verified target; token unused 1/1; initial review eligible",
+        "state:reviewing|owner:dev-code-review|output:one initial pass aggregates FIND-1 and FIND-2",
+        "state:failed|owner:backend|output:FIND-1 and FIND-2 deduplicated once",
+        "state:ready|owner:backend|output:one consolidated repair authorized; token consumed 1/1",
+        "state:running|owner:worker|output:repair attempt 1 advances FIND-1",
+        "state:failed|owner:backend|output:attempt 1 evidence permits attempt 2",
+        "state:ready|owner:backend|output:repair attempt 2 authorized from FIND-1 progress",
+        "state:running|owner:worker|output:repair attempt 2 runs generic suites",
+        "state:handed-off|owner:worker|output:generic suites pass but FIND-2 caller-B closure is absent",
+        "state:failed|owner:backend|output:FIND-2 remains at caller-B for AC-TRACE-02; repair attempts 2/2; falsifiable next approach is close FIND-2 at caller-B",
+        "state:blocked|owner:backend|output:executing plan before context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; textual checkpoint record emitted before choices:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: FIND-2\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-1 advanced, but OUT-REPAIR-TRACE is not satisfied while caller-B closure for AC-TRACE-02 is absent\nchanged falsifiable hypothesis: close FIND-2 at caller-B with caller-specific proof\nrecommendation: continue-differently\nContinue\nSecond opinion\nClose\ngrant pending blocks ready",
+        "state:blocked|owner:backend|output:Human checkpoint action: Close; Close disposition: rejected; FIND-2 is outcome-blocking for OUT-REPAIR-TRACE; exact first checkpoint record remains byte-identical; no plan, runtime, record, completion, proof reuse, or cycle state changed",
+        "state:blocked|owner:backend|output:Human checkpoint action: Continue; Continue changed only the grant line:\n- exhausted token at 2030-01-02-0304\n  - trying: close FIND-2 at caller-B\n  - found: FIND-2 — caller-B lacks required closure for AC-TRACE-02\n  - tried: attempts 1/2 and 2/2; generic suites passed but caller-B proof did not\n  - target: sha256:2222222222222222222222222222222222222222222222222222222222222222\n  - remaining: AC-TRACE-02 / implementation-owner\n  - grant: continue 2030-01-02-0305\n  - opinion: absent\ntextual context-resume boundary",
+        "state:ready|owner:backend|output:executing plan after context resume Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner; target sha256:2222222222222222222222222222222222222222222222222222222222222222; remaining AC-TRACE-02 / implementation-owner; grant cycle 1 authorized for implementation-owner; token remains consumed 1/1",
+        "state:running|owner:worker|output:grant cycle 1 attempt 1 closes FIND-2 at caller-B",
+        "state:handed-off|owner:worker|output:fresh impacted smoke proves FIND-2 closure for AC-TRACE-02",
+        "state:verifying|owner:dev-verification|output:fresh impacted verification runs on the exact repaired target",
+        "state:verified|owner:dev-verification|output:VERIFIED FIND-2 closure on the exact repaired target",
+        "state:reviewing|owner:dev-code-review|output:still-unused original review rerun consumed before any grant-scoped review; FIND-3 reported",
+        "state:failed|owner:backend|output:FIND-3 at caller-C blocks AC-TRACE-03 after the original review rerun",
+        "state:blocked|owner:backend|output:second textual checkpoint record emitted:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: FIND-3\nrelation to OUT-REPAIR-TRACE: outcome-blocking\nwhat already satisfies the goal: FIND-2 closure is freshly VERIFIED, but OUT-REPAIR-TRACE is not satisfied while caller-C projection for AC-TRACE-03 is stale\nchanged falsifiable hypothesis: rederive caller-C projection from the repaired target\nrecommendation: independent check\nContinue\nSecond opinion\nClose\ngrant pending blocks ready",
+        "state:blocked|owner:backend|output:Human checkpoint action: Second opinion; Second opinion changed only the grant line:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: absent\nopinion absent blocks ready",
+        "state:blocked|owner:backend|output:existing dev-code-review/HANDOFF-TRACE-03 reused with no role dispatch; only opinion line changed:\n- exhausted review-rerun at 2030-01-02-0306\n  - trying: close FIND-3 at caller-C\n  - found: FIND-3 — caller-C projection was not rederived for AC-TRACE-03\n  - tried: grant cycle 1 closed FIND-2; original review rerun found FIND-3\n  - target: sha256:3333333333333333333333333333333333333333333333333333333333333333\n  - remaining: AC-TRACE-03 / implementation-owner\n  - grant: second-opinion 2030-01-02-0307\n  - opinion: dev-code-review/HANDOFF-TRACE-03; same-route; rederive caller-C projection; sha256:3333333333333333333333333333333333333333333333333333333333333333; repair-trace#review-rerun-2030-01-02-0306",
+        "state:ready|owner:backend|output:grant cycle 2 authorized only after same-route opinion; executing plan remains Datetime 2030-01-02-0304; slug repair-trace; outcome OUT-REPAIR-TRACE; authority authority://repair-trace; route dev-implementation backend; owner implementation-owner",
+        "state:running|owner:worker|output:grant cycle 2 attempt 1 materially changes the FIND-3 hypothesis without closure",
+        "state:failed|owner:backend|output:attempt 1 evidence, not grant or opinion, authorizes attempt 2",
+        "state:ready|owner:backend|output:grant cycle 2 attempt 2 authorized from changed FIND-3 hypothesis evidence",
+        "state:running|owner:worker|output:grant cycle 2 attempt 2 rederives caller-C projection",
+        "state:handed-off|owner:worker|output:attempt 2 repeats the FIND-3 caller-C frontier",
+        "state:failed|owner:backend|output:FIND-3 no-progress-stop; no review and no automatic extra cycle",
+        "snapshot:terminal-evidence|owner:backend|output:available sealed receipts verified; partial directory inventoried unconsumed; exact t1 and t2 roots removed; cleanup sentinel and all counters unchanged; FIND-3 exact and no-progress-stop reported; no completion"
+      ],
+      "rubric": [
+        "Retain initial FIND-1/FIND-2 aggregation, token consumption 1/1, repair attempts 1/2 and 2/2, and rejection of generic suites as caller-B closure.",
+        "Require each eligible checkpoint to place exactly five ordered worth lines before exactly Continue, Second opinion, and Close; permit no fourth choice or pre-gate frame.",
+        "Require the first human Close selection to be rejected because FIND-2 is outcome-blocking, with the exact record and all plan/runtime/completion/proof/cycle state unchanged before the original Continue path.",
+        "Require the exact first eight-line record as read-only output text, pending-before-ready ordering, a one-line Continue transition, and the same neutral Datetime, slug, outcome, authority URI, route, owner, target, and remaining criteria across the textual resume; do not claim an authoritative plan-file write.",
+        "Require grant cycle 1 to close FIND-2, reach fresh VERIFIED proof, and consume the still-unused original review rerun before any grant-scoped review; that original rerun reports FIND-3.",
+        "Require the exact second record, a one-line Second opinion grant transition, blocked readiness while opinion is absent, reuse of dev-code-review/HANDOFF-TRACE-03 without duplicate dispatch, and a one-line same-route opinion transition before grant cycle 2.",
+        "Authorize one cycle per explicit current-record grant. The grant and opinion are not progress: only grant-cycle-2 attempt-1 changed-hypothesis evidence may authorize attempt 2, and its repeated FIND-3 frontier must return no-progress-stop with no review or automatic extra cycle.",
+        "Reject attempt 3, successor planning, new outcome or authority URI, token/planning/lifecycle reset, duplicate opinion, ready-before-record or ready-before-opinion, and grant-scoped review before original-budget consumption.",
+        "Allow only the unchanged non-consuming terminal finalizer after FIND-3 no-progress-stop; require exact-root cleanup, sentinel/counter preservation, partial-evidence inventory, FIND-3 exact, and no completion."
+      ],
       "scripted_replies": [],
       "trace_scope": "prefix"
     },
@@ -7912,6 +8023,565 @@
         "Compare the complete canonical applicable-rule set against the Context Pack before assurance dispatch.",
         "Name omitted RULE-B and preserve every counter and target identity.",
         "Reject verification, review, silent omission, repair consumption, and shipping."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Proof-ceremony Close completes through existing terminal accounting when the exact delivered artifact already satisfies its parent outcome.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "exact eight-line checkpoint record",
+          "five-line worth frame",
+          "terminal Close accounting"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "all normal route gates terminal",
+          "exact target affirmatively satisfies OUT-CLOSE",
+          "only proof-ceremony IDs remain"
+        ],
+        "mode": "one owner",
+        "outcome": "Close disposition completed-with-residual; normal complete and plan DONE with unchanged record and no route tail",
+        "owners": [
+          "backend"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-t4-checkpoint-proof-close",
+      "forbidden_events": [
+        "state:ready",
+        "state:running",
+        "state:handed-off",
+        "state:verifying",
+        "state:verified",
+        "state:reviewing",
+        "owner:worker",
+        "dev-verification",
+        "dev-code-review",
+        "dev-diagnosing-bugs",
+        "repair-cycle",
+        "opinion-cycle",
+        "state:route-tail",
+        "grant: close",
+        "record-mutation",
+        "CLOSED",
+        "cancelled",
+        "unverified-failure",
+        "extra-assurance"
+      ],
+      "id": "B-T4-CHECKPOINT-PROOF-CLOSE",
+      "inputs": {
+        "request": "Read-only standard backend state trace; emit only canonical state events with no prose. The executing plan is Datetime 2030-02-03-0405, slug proof-close, outcome OUT-CLOSE, authority authority://proof-close, route dev-implementation backend, owner backend, and exact target sha256:4444444444444444444444444444444444444444444444444444444444444444. Implementation smoke, final verification, final review, and the terminal Standard assessment are already sealed and terminal; they affirmatively prove the delivered artifact satisfies OUT-CLOSE. Only PROOF-WF-1 receipt accounting remains, with no causal path to artifact behavior. The D03 checkpoint has this exact eight-line record:\n- exhausted token at 2030-02-03-0405\n  - trying: account sealed proof receipt PROOF-WF-1\n  - found: PROOF-WF-1 — proof receipt accounting remains after OUT-CLOSE is satisfied\n  - tried: implementation, verification, review, and Standard assessment are terminal\n  - target: sha256:4444444444444444444444444444444444444444444444444444444444444444\n  - remaining: PROOF-WF-1 / backend\n  - grant: pending\n  - opinion: absent\nAfter hard-stop gates pass, emit this exact five-line worth frame followed by exactly these action labels:\nremaining stable IDs: PROOF-WF-1\nrelation to OUT-CLOSE: proof-ceremony\nwhat already satisfies the goal: exact target sha256:4444444444444444444444444444444444444444444444444444444444444444 already satisfies OUT-CLOSE with sealed implementation, verification, review, and Standard-assessment evidence\nchanged falsifiable hypothesis: none\nrecommendation: close with residual\nContinue\nSecond opinion\nClose\nThe human selects Close. Emit Human checkpoint action: Close and Close disposition: completed-with-residual. Complete normally with the exact target, sealed evidence identities EVID-CLOSE-1 through EVID-CLOSE-4, residual risk that PROOF-WF-1 was not separately replayed, the checkpoint record byte-identical, run state complete, and plan status DONE. Start no cycle, route tail, semantic/model call, verification, review, diagnosis, or worker context. Never emit CLOSED, cancelled, grant: close, unverified-failure wording, or record mutation.\n\nEmit exactly three JSON event strings. The body between each marker pair is one event, including its embedded newlines; do not emit the markers:\nEVENT 1 START\nstate:accepted|owner:backend|output:standard executing plan proof-close accepted; exact target sha256:4444444444444444444444444444444444444444444444444444444444444444; OUT-CLOSE affirmatively satisfied by sealed EVID-CLOSE-1 through EVID-CLOSE-4; every normal route gate terminal; only PROOF-WF-1 proof-ceremony accounting remains\nEVENT 1 END\nEVENT 2 START\nstate:blocked|owner:backend|output:D03 checkpoint record emitted before choices:\n- exhausted token at 2030-02-03-0405\n  - trying: account sealed proof receipt PROOF-WF-1\n  - found: PROOF-WF-1 — proof receipt accounting remains after OUT-CLOSE is satisfied\n  - tried: implementation, verification, review, and Standard assessment are terminal\n  - target: sha256:4444444444444444444444444444444444444444444444444444444444444444\n  - remaining: PROOF-WF-1 / backend\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: PROOF-WF-1\nrelation to OUT-CLOSE: proof-ceremony\nwhat already satisfies the goal: exact target sha256:4444444444444444444444444444444444444444444444444444444444444444 already satisfies OUT-CLOSE with sealed implementation, verification, review, and Standard-assessment evidence\nchanged falsifiable hypothesis: none\nrecommendation: close with residual\nContinue\nSecond opinion\nClose\nEVENT 2 END\nEVENT 3 START\nstate:complete|owner:backend|output:Human checkpoint action: Close; Close disposition: completed-with-residual; exact target sha256:4444444444444444444444444444444444444444444444444444444444444444; OUT-CLOSE satisfied by sealed EVID-CLOSE-1 through EVID-CLOSE-4; residual risk PROOF-WF-1 not separately replayed; checkpoint record byte-identical with grant pending and opinion absent; no cycle or route-tail event; backend complete; plan DONE\nEVENT 3 END"
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only state-trace evaluation of AC-WF-CLOSE and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:standard executing plan proof-close accepted; exact target sha256:4444444444444444444444444444444444444444444444444444444444444444; OUT-CLOSE affirmatively satisfied by sealed EVID-CLOSE-1 through EVID-CLOSE-4; every normal route gate terminal; only PROOF-WF-1 proof-ceremony accounting remains",
+        "state:blocked|owner:backend|output:D03 checkpoint record emitted before choices:\n- exhausted token at 2030-02-03-0405\n  - trying: account sealed proof receipt PROOF-WF-1\n  - found: PROOF-WF-1 — proof receipt accounting remains after OUT-CLOSE is satisfied\n  - tried: implementation, verification, review, and Standard assessment are terminal\n  - target: sha256:4444444444444444444444444444444444444444444444444444444444444444\n  - remaining: PROOF-WF-1 / backend\n  - grant: pending\n  - opinion: absent\nremaining stable IDs: PROOF-WF-1\nrelation to OUT-CLOSE: proof-ceremony\nwhat already satisfies the goal: exact target sha256:4444444444444444444444444444444444444444444444444444444444444444 already satisfies OUT-CLOSE with sealed implementation, verification, review, and Standard-assessment evidence\nchanged falsifiable hypothesis: none\nrecommendation: close with residual\nContinue\nSecond opinion\nClose",
+        "state:complete|owner:backend|output:Human checkpoint action: Close; Close disposition: completed-with-residual; exact target sha256:4444444444444444444444444444444444444444444444444444444444444444; OUT-CLOSE satisfied by sealed EVID-CLOSE-1 through EVID-CLOSE-4; residual risk PROOF-WF-1 not separately replayed; checkpoint record byte-identical with grant pending and opinion absent; no cycle or route-tail event; backend complete; plan DONE"
+      ],
+      "rubric": [
+        "Require the exact eight-line record before the exact five worth lines and exactly Continue, Second opinion, and Close.",
+        "Require affirmative exact-target OUT-CLOSE satisfaction and proof-ceremony-only remaining work before accepting Close.",
+        "Require completed-with-residual, normal complete and plan DONE with exact sealed evidence and explicit residual risk.",
+        "Reject every cycle, route-tail event, additional assurance role, grant/opinion or record mutation, CLOSED, cancelled, and unverified-failure wording."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "An eligible post-2/2 proof-ceremony ask creates no record and a human-selected Second opinion uses one fresh read-only worker worth context only.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "five-line worth frame",
+          "worker worth Handoff",
+          "no-record boundary"
+        ],
+        "assurance_profile": "high-consequence",
+        "first_owner": "backend",
+        "gates": [
+          "attempts exhausted 2/2",
+          "next receiver otherwise human authority",
+          "exact target satisfies OUT-REVISION-WORTH",
+          "proof-ceremony only"
+        ],
+        "mode": "one owner",
+        "outcome": "one worker worth opinion returns no-progress; no record, assurance-role dispatch, cycle, revision, or automatic Close",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-t4-revision-worth-opinion",
+      "forbidden_events": [
+        "checkpoint-record",
+        "- exhausted token",
+        "- exhausted review-rerun",
+        "state:verifying",
+        "state:verified",
+        "state:reviewing",
+        "dev-verification",
+        "dev-code-review",
+        "dev-diagnosing-bugs",
+        "dispatch:rethink",
+        "duplicate-opinion",
+        "implementation-cycle",
+        "same-plan-revision",
+        "automatic-close",
+        "another-human-action",
+        "attempt-3",
+        "grant-as-progress"
+      ],
+      "id": "B-T4-REVISION-WORTH-OPINION",
+      "inputs": {
+        "request": "Read-only high-consequence backend and advisory-worker state trace; emit only canonical events with no prose. Same-outcome revision REV-WORTH-2 has exhausted semantic attempts 2/2. The inherited post-assurance repair token remains unused 1/1. Exact target sha256:5555555555555555555555555555555555555555555555555555555555555555 already satisfies parent OUT-REVISION-WORTH under sealed behavior evidence EVID-WORTH-1. Only PROOF-RECIPE-WF-2 harness accounting remains and has no causal path to artifact behavior. The next receiver would otherwise be human authority for another same-outcome revision, so hard-stop gates pass and this is an eligible post-2/2 worth ask with record: none. Emit this exact five-line worth frame followed by exactly these action labels:\nremaining stable IDs: PROOF-RECIPE-WF-2\nrelation to OUT-REVISION-WORTH: proof-ceremony\nwhat already satisfies the goal: exact target sha256:5555555555555555555555555555555555555555555555555555555555555555 already satisfies OUT-REVISION-WORTH under sealed behavior evidence EVID-WORTH-1\nchanged falsifiable hypothesis: none\nrecommendation: independent check\nContinue\nSecond opinion\nClose\nThe human selects Second opinion without naming a method. Emit Human checkpoint action: Second opinion and Close disposition: not-selected. Authorize exactly one fresh read-only worker context solely to decide whether another loop is worth doing. Its worth Handoff inspects sha256:5555555555555555555555555555555555555555555555555555555555555555, returns disposition no-progress, and recommends close with residual. Start no implementation cycle or revision, create no record, and dispatch no verifier, reviewer, diagnosis role, or rethink. Emit no second opinion, automatic Close, or another human action."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only backend/worker trace evaluation of AC-WF-FRAME, AC-WF-SO, and AC-WF-RECORD.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:high-consequence same-outcome revision REV-WORTH-2 has exhausted semantic attempts 2/2; inherited post-assurance repair token unused 1/1; exact target sha256:5555555555555555555555555555555555555555555555555555555555555555 satisfies parent OUT-REVISION-WORTH under sealed behavior evidence EVID-WORTH-1; only PROOF-RECIPE-WF-2 harness accounting remains; eligible post-2/2 worth ask; record: none",
+        "remaining stable IDs: PROOF-RECIPE-WF-2\nrelation to OUT-REVISION-WORTH: proof-ceremony\nwhat already satisfies the goal: exact target sha256:5555555555555555555555555555555555555555555555555555555555555555 already satisfies OUT-REVISION-WORTH under sealed behavior evidence EVID-WORTH-1\nchanged falsifiable hypothesis: none\nrecommendation: independent check\nContinue\nSecond opinion\nClose",
+        "Human checkpoint action: Second opinion",
+        "Close disposition: not-selected",
+        "state:ready|owner:backend|output:exactly one fresh read-only worker context authorized solely to decide whether another loop is worth doing; no method named; no implementation cycle or revision authorized; no record created",
+        "state:running|owner:worker|output:bounded read-only worth inspection of exact target sha256:5555555555555555555555555555555555555555555555555555555555555555",
+        "state:handed-off|owner:worker|output:worth Handoff inspected sha256:5555555555555555555555555555555555555555555555555555555555555555; disposition no-progress; recommendation close with residual",
+        "state:blocked|owner:backend|output:no implementation cycle or revision started; no record created; no verifier, reviewer, diagnosis role, or rethink dispatched; no automatic Close or another human action emitted"
+      ],
+      "rubric": [
+        "Require attempts 2/2, token unused 1/1, exact satisfied target, proof-ceremony classification, and explicit record none.",
+        "Require exactly five ordered worth lines followed by exactly Continue, Second opinion, and Close.",
+        "Require exactly one human-selected fresh read-only worker worth context, with existing ready/running/handed-off states used only for the advisory and a no-progress Handoff on the exact target.",
+        "Reject record creation, assurance or diagnosis roles, rethink, duplicate opinion, implementation cycle/revision, attempt 3, automatic Close, and another human action."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Compact remains terminal at its bounded smoke path and never triggers the worth frame, actions, opinion, Close, or assurance tail.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "compact deterministic smoke evidence"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "settled compact Task Contract",
+          "criterion-complete deterministic smoke",
+          "attempts bounded at 2/2"
+        ],
+        "mode": "one owner",
+        "outcome": "compact stops at 2/2 with AC-COMPACT-WF-1 unresolved and no checkpoint or assurance tail",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-t4-compact-worth-not-triggered",
+      "forbidden_events": [
+        "remaining stable IDs",
+        "relation to OUT-",
+        "what already satisfies the goal",
+        "changed falsifiable hypothesis",
+        "recommendation",
+        "Continue",
+        "Second opinion",
+        "Close",
+        "checkpoint-record",
+        "opinion-worker",
+        "dev-verification",
+        "dev-code-review",
+        "dev-continual-learning",
+        "state:verifying",
+        "state:verified",
+        "state:reviewing",
+        "state:complete",
+        "automatic-cycle"
+      ],
+      "id": "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
+      "inputs": {
+        "request": "Read-only compact backend state trace; emit only canonical state events with no prose. Exact compact target sha256:6666666666666666666666666666666666666666666666666666666666666666 has approved criterion AC-COMPACT-WF-1 and deterministic smoke. Attempt 1 changes the target but smoke still fails AC-COMPACT-WF-1; that criterion progress authorizes attempt 2. Attempt 2 runs, smoke still fails the same criterion, and the compact route stops terminally at 2/2 with no completion. Compact has no human continuation checkpoint. Do not emit any worth-frame line, Continue, Second opinion, Close, opinion worker, exhaustion record, independent verification, review, or learning dispatch. Use owner:worker for both running attempt events. A failed smoke transitions directly to backend failed; emit no handed-off event for either failed attempt."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only compact state-trace evaluation of AC-WF-COMPACT and exact fixture identity.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:approved compact Task Contract binds AC-COMPACT-WF-1, deterministic smoke, and exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:ready|owner:backend|output:attempt 1 is ready on current compact authority and exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:running|owner:worker|output:attempt 1 performs bounded implementation on exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:failed|owner:backend|output:attempt 1 changed the target, but deterministic smoke still fails AC-COMPACT-WF-1 on exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:ready|owner:backend|output:attempt-1 criterion progress authorizes attempt 2 on current authority and exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:running|owner:worker|output:attempt 2 performs bounded implementation on exact target sha256:6666666666666666666666666666666666666666666666666666666666666666",
+        "state:failed|owner:backend|output:attempt 2 deterministic smoke still fails AC-COMPACT-WF-1 on exact target sha256:6666666666666666666666666666666666666666666666666666666666666666; compact stops terminally at 2/2 with no completion and no human continuation checkpoint"
+      ],
+      "rubric": [
+        "Require the existing compact accepted, ready, running, failed/retry, and terminal failed sequence with owner:worker on attempts 1/2 and 2/2 and no handed-off event for failed smoke.",
+        "Require deterministic smoke evidence for AC-COMPACT-WF-1 and no completion.",
+        "Reject every worth-frame field, action, opinion, Close, exhaustion record, verification, review, learning, or automatic cycle."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A full task-shape observation consumes one exact numbered profile tail on one exact target with bound Intent/Methods, fresh proof, one review, a curator gate, and backend completion.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "parser-valid numbered Executor Plan",
+          "work Common Handoff",
+          "numbered profile-tail evidence"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "parser-valid exact final numbered suffix",
+          "T1 Intent/Methods none bound before ready",
+          "fresh exact-target AC-TAIL-01 proof",
+          "one eligible exact-target review",
+          "NO DURABLE LEARNING curator gate"
+        ],
+        "mode": "one owner",
+        "outcome": "numbered suffix consumed once with no backend duplicate",
+        "owners": [
+          "backend",
+          "worker",
+          "dev-verification",
+          "dev-code-review",
+          "dev-continual-learning"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-plan-tail-profile",
+      "forbidden_events": [
+        "backend-scheduled-tail",
+        "second-verification",
+        "second-review",
+        "second-learning",
+        "duplicate-tail",
+        "tail-method:tdd",
+        "state:profile-tail-task-created",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
+      ],
+      "id": "B-PLAN-TAIL-PROFILE",
+      "inputs": {
+        "request": "Read-only full task-shape observation for a parser-valid standard Executor Plan. The plan digest is sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd. T1 Intent is “Keep the numbered profile tail singular.” and Methods is none; its exact target is sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa. The exact final numbered suffix is dev-verification, dev-code-review, and dev-continual-learning, each with Methods none. Include the source-entitled executor-plan snapshot, bind T1 before ready, run one work attempt with exact-revision smoke SMOKE-A and a complete Common Handoff, then consume the suffix once. Fresh AC-TAIL-01 proof is VR-TAIL-01-A; the selected original initial review evidence is REVIEW-A APPROVED; the curator result is LEARN-A NO DURABLE LEARNING and is a completion gate. The work has no papercut candidate. Backend owns complete. Never schedule a duplicate tail or create another task, stage, receiver, assurance pass, or learning dispatch."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok state-trace evaluation against the numbered complete-plan contract.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:standard run accepted; T1 Intent Keep the numbered profile tail singular. and Methods none bound; tail source numbered",
+        "snapshot:executor-plan|owner:backend|output:standard plan valid at sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd; exact final numbered dev-verification then dev-code-review then dev-continual-learning suffix; tail source numbered",
+        "state:ready|owner:backend|output:T1 Intent and Methods none copied unchanged; none bound before ready; no method skill loaded",
+        "state:running|owner:worker|output:T1 semantic attempt 1/2 on exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "state:handed-off|owner:worker|output:T1 complete Common Handoff for exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa carries unchanged Intent, Methods none, no-skill evidence, and exact-revision smoke SMOKE-A; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:verifying|owner:dev-verification|output:numbered verification task Methods none; fresh AC-TAIL-01 proof VR-TAIL-01-A on exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "state:verified|owner:dev-verification|output:VERIFIED exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa from fresh AC-TAIL-01 proof VR-TAIL-01-A",
+        "state:reviewing|owner:dev-code-review|output:numbered review task Methods none; original initial pass selected for exact VERIFIED target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa with REVIEW-A evidence",
+        "state:reviewed|owner:dev-code-review|output:APPROVED exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa by REVIEW-A once",
+        "state:complete|owner:backend|output:exact target sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa complete after numbered dev-continual-learning Methods none returned NO DURABLE LEARNING as gate LEARN-A; numbered tail consumed once; no backend duplicate"
+      ],
+      "rubric": [
+        "Require the exact parser-valid numbered suffix as the sole tail source and the bound T1 Intent/Methods.",
+        "Require one work attempt, exact-target smoke, and a complete Common Handoff before the suffix.",
+        "Require fresh exact-target criterion proof, one eligible exact-target review, and the curator result only as a completion gate.",
+        "Require backend-owned complete; reject duplicate proof, papercut output, or generated lifecycle structure."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A full task-shape observation accepts one exact work-only standard plan and backend-schedules one profile tail on one exact target with bound Intent/Methods, fresh proof, one review, a curator gate, and backend completion.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "OMP/Grok omitted-tail parser result",
+          "work Common Handoff",
+          "backend-scheduled profile-tail evidence"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "work-only plan valid with no TASK_TAIL_INVALID",
+          "final non-tail Receiver dev-implementation backend",
+          "work Intent/Methods none bound before ready",
+          "backend-scheduled sole profile-tail source",
+          "fresh exact-target AC-TAIL-02 proof",
+          "one eligible exact-target review",
+          "NO DURABLE LEARNING curator gate"
+        ],
+        "mode": "one owner",
+        "outcome": "omitted suffix accepted and one backend profile tail scheduled",
+        "owners": [
+          "planner",
+          "backend",
+          "worker",
+          "dev-verification",
+          "dev-code-review",
+          "dev-continual-learning"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-plan-tail-omitted",
+      "forbidden_events": [
+        "numbered-tail",
+        "TASK_TAIL_INVALID",
+        "tail-required-error",
+        "second-verification",
+        "second-review",
+        "second-learning",
+        "duplicate-tail",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
+      ],
+      "id": "B-PLAN-TAIL-OMITTED",
+      "inputs": {
+        "request": "Read-only full task-shape observation for a work-only standard Executor Plan valid in the active OMP or Grok context. Its Intent is “Keep the backend-scheduled tail singular.”, Methods is none, final Receiver is dev-implementation backend, plan digest is sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, and exact work target is sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. It has no numbered suffix or missing-tail/TASK_TAIL_INVALID issue. Include the source-entitled executor-plan snapshot, bind none before ready, run one work attempt with exact-revision smoke SMOKE-B and a complete Common Handoff, then select the backend-scheduled tail once. Fresh AC-TAIL-02 proof is VR-TAIL-02-B; the selected original initial review evidence is REVIEW-B APPROVED; the curator result is LEARN-B NO DURABLE LEARNING and is a completion gate. No papercut candidate exists. Backend owns complete."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok parser/runtime observation of the legal omitted-tail shape.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:executor-plan|owner:planner|output:work-only standard plan sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee valid in the active OMP or Grok context; final Receiver dev-implementation backend; no numbered suffix and no missing-tail issue",
+        "state:accepted|owner:backend|output:standard run accepted; work Intent Keep the backend-scheduled tail singular. and Methods none bound; tail source backend-scheduled selected once from final non-tail Receiver",
+        "state:ready|owner:backend|output:work Intent and Methods none copied unchanged; none bound before ready; no method skill loaded",
+        "state:running|owner:worker|output:work semantic attempt 1/2 on exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "state:handed-off|owner:worker|output:complete Common Handoff for exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb carries unchanged Intent, Methods none, no-skill evidence, and exact-revision smoke SMOKE-B; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:verifying|owner:dev-verification|output:backend-scheduled verification Methods none; fresh AC-TAIL-02 proof VR-TAIL-02-B on exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "state:verified|owner:dev-verification|output:VERIFIED exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb from fresh AC-TAIL-02 proof VR-TAIL-02-B",
+        "state:reviewing|owner:dev-code-review|output:backend-scheduled review Methods none; original initial pass selected for exact VERIFIED target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb with REVIEW-B evidence",
+        "state:reviewed|owner:dev-code-review|output:APPROVED exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb by REVIEW-B once",
+        "state:complete|owner:backend|output:exact target sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb complete after backend-scheduled dev-continual-learning Methods none returned NO DURABLE LEARNING as gate LEARN-B; backend-scheduled tail consumed once"
+      ],
+      "rubric": [
+        "Require the exact valid omitted-tail parser fact, legal backend Receiver, and bound work Intent/Methods.",
+        "Require one work attempt, exact-target smoke, and a complete Common Handoff.",
+        "Require one backend-scheduled exact-target verification, one eligible review, and the curator result only as a completion gate.",
+        "Require backend-owned complete; reject a numbered source, duplicate proof, papercut output, or invented receiver task."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A full task-shape observation accepts one exact compact work-only plan, binds its Intent/Methods, runs one exact-target attempt and Handoff, and reaches backend completion with tail source none.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "valid compact work-only parser result",
+          "Intent/Methods binding",
+          "criterion-complete smoke",
+          "one Common Handoff"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "compact work-only plan valid",
+          "exact Intent and Methods none bound before ready",
+          "no tail owner",
+          "criterion-complete exact-target smoke"
+        ],
+        "mode": "one owner",
+        "outcome": "planned compact completes after smoke with no profile tail",
+        "owners": [
+          "planner",
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-compact-plan-no-tail",
+      "forbidden_events": [
+        "TASK_TAIL_INVALID",
+        "state:verifying",
+        "state:verified",
+        "state:reviewing",
+        "state:reviewed",
+        "dev-verification",
+        "dev-code-review",
+        "dev-continual-learning",
+        "profile-tail",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
+      ],
+      "id": "B-COMPACT-PLAN-NO-TAIL",
+      "inputs": {
+        "request": "Read-only full task-shape observation for a compact Executor Plan with digest sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd. Its only work task Intent is “Keep compact work tail-free.”, Methods is none, Receiver is dev-implementation backend, and exact target is sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc. It has no verification, review, learning, or other tail owner. Include the source-entitled executor-plan snapshot, copy Intent/Methods unchanged, bind none before ready, run one semantic attempt, record criterion-complete exact-target smoke SMOKE-C in one complete Common Handoff, then take the silent no-candidate soft look. Backend owns compact completion with tail source none."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok observation of compact work-only parser and runtime behavior.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:compact run accepted; Intent Keep compact work tail-free. and Methods none bound; tail source none",
+        "snapshot:executor-plan|owner:planner|output:compact work-only plan sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd valid; Intent Keep compact work tail-free. present; Methods none; no tail owner",
+        "state:ready|owner:backend|output:plan Intent and Methods none copied unchanged; none bound before ready; no method skill loaded",
+        "state:running|owner:worker|output:compact semantic attempt 1/2 on exact target sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "state:handed-off|owner:worker|output:complete Common Handoff for exact target sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc carries unchanged Intent, Methods none, no-skill evidence, and criterion-complete exact-revision smoke SMOKE-C; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:complete|owner:backend|output:exact target sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc complete after Common Handoff validation and criterion-complete smoke SMOKE-C; tail source none; no profile tail or papercut output"
+      ],
+      "rubric": [
+        "Require the exact parser-valid compact work-only shape with bound Intent, Methods none, and tail source none.",
+        "Require binding before ready, one attempt, exact-target smoke, and one complete Common Handoff.",
+        "Require backend terminal accounting after Handoff validation and smoke.",
+        "Reject any tail owner, assurance state, papercut output, or TASK_TAIL_INVALID."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A bounded read-only preflight observation reports the sole parser’s exact compact-tail rejection and backend ineligibility before ready without creating runtime work.",
+      "expected": {
+        "artifacts": [
+          "invalid compact parser result",
+          "stable TASK_TAIL_INVALID issue"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "planner",
+        "gates": [
+          "compact profile selected",
+          "exact attempted dev-verification tail owner",
+          "single v1 parser returns TASK_TAIL_INVALID",
+          "backend preflight ineligible before ready"
+        ],
+        "mode": "read-only preflight",
+        "outcome": "compact tail rejected before ready",
+        "owners": [
+          "planner",
+          "backend"
+        ],
+        "route": "Executor Plan structural preflight"
+      },
+      "fixture_dir": "fixtures/r-compact-plan-with-tail",
+      "forbidden_events": [
+        "state:ready",
+        "state:running",
+        "state:handed-off",
+        "state:verifying",
+        "state:reviewing",
+        "state:complete",
+        "worker-attempt",
+        "fallback-standard",
+        "tail-consumed"
+      ],
+      "id": "R-COMPACT-PLAN-WITH-TAIL",
+      "inputs": {
+        "request": "Bounded read-only compact Executor Plan negative-preflight observation. The exact plan digest is sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee; it has one valid work task with Intent “Keep compact work tail-free.” and Methods none followed by an attempted dev-verification owner. Include the source-entitled executor-plan snapshot from the single v1 parser in the active OMP or Grok context for planner and backend consumers. Report invalid with TASK_TAIL_INVALID, then project backend blocked before ready with semantic attempt 0. Do not reinterpret as standard, run work, or consume the tail."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok negative preflight observation.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:executor-plan|owner:planner|output:compact plan sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee invalid in the active OMP or Grok context; tail owner dev-verification forbidden; issue TASK_TAIL_INVALID from the single v1 parser",
+        "state:blocked|owner:backend|output:planner and backend preflight not eligible; no ready transition; semantic attempt 0; attempted tail not consumed"
+      ],
+      "rubric": [
+        "Require the source-entitled single-parser snapshot with exact plan identity and TASK_TAIL_INVALID.",
+        "Require backend ineligibility before ready with attempt 0 in both contexts.",
+        "Treat planner as snapshot source, not lifecycle owner.",
+        "Reject fallback to standard, ready/running transitions, or tail consumption."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Two full task-shape prefix observations bind the exact dev-tdd revision and evidence before ready for one standard plan task and one explicit standard direct task without method-generated lifecycle structure.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "plan-backed tdd binding",
+          "direct no-plan tdd binding",
+          "red/green/smoke evidence",
+          "two Common Handoffs"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "plan-backed Methods tdd valid",
+          "direct explicit standard test-first authority",
+          "dev-tdd revision sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0",
+          "AC-METHOD-01 retry-output seam owned by worker",
+          "method binding before ready in each scenario"
+        ],
+        "mode": "one owner",
+        "outcome": "both authorized tdd forms bind before ready with no method-generated lifecycle",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-task-method-tdd",
+      "forbidden_events": [
+        "Methods ponytail",
+        "method-task",
+        "method-stage",
+        "method-receiver",
+        "method-assurance",
+        "dispatch:dev-verification",
+        "dispatch:dev-code-review",
+        "dispatch:dev-continual-learning",
+        "state:ready-before-binding",
+        "self-verification",
+        "skill:papercut",
+        "papercut:capture",
+        "ledger:read",
+        "ledger:write"
+      ],
+      "id": "B-TASK-METHOD-TDD",
+      "inputs": {
+        "request": "Read-only full task-shape prefix observation with two explicitly separated one-owner standard work scenarios; no profile owner is dispatched within either prefix. First, a parser-valid plan task has Intent “Keep retry output stable.”, Methods tdd, backend-scheduled tail source outside the prefix, exact target sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, and explicit test-first authority authority://plan-test-first. Second, direct no-plan work has Intent “Keep direct retry output stable.”, Methods tdd selected by authority://direct-test-first, backend-scheduled tail source outside the prefix, and exact target sha256:1111111111111111111111111111111111111111111111111111111111111111. In each scenario include one source-entitled method-binding snapshot for dev-tdd revision sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, criterion AC-METHOD-01, retry-output seam, worker owner, and the named authority before ready; then run one RED, GREEN, SMOKE cycle and one complete Common Handoff. No papercut candidate exists. Reject ponytail and method-generated lifecycle structure."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok method-ready trace against dev-tdd and backend contracts.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:plan task Intent Keep retry output stable. and Methods tdd copied unchanged; tail source backend-scheduled outside this prefix",
+        "snapshot:method-binding|owner:backend|output:plan-backed dev-tdd sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, AC-METHOD-01, retry-output seam, worker owner, and authority://plan-test-first bound before ready",
+        "state:ready|owner:backend|output:plan-backed tdd binding complete before ready",
+        "state:running|owner:worker|output:plan semantic attempt 1/2 on exact target sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff; RED-P then GREEN-P then SMOKE-P",
+        "state:handed-off|owner:worker|output:plan complete Common Handoff for exact target sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff carries unchanged Intent, Methods tdd, dev-tdd sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, RED-P, GREEN-P, and SMOKE-P; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:accepted|owner:backend|output:direct no-plan Intent Keep direct retry output stable. and Methods tdd derived from authority://direct-test-first; tail source backend-scheduled outside this prefix",
+        "snapshot:method-binding|owner:backend|output:direct dev-tdd sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, AC-METHOD-01, retry-output seam, worker owner, and authority://direct-test-first bound before ready",
+        "state:ready|owner:backend|output:direct tdd binding complete before ready",
+        "state:running|owner:worker|output:direct semantic attempt 1/2 on exact target sha256:1111111111111111111111111111111111111111111111111111111111111111; RED-D then GREEN-D then SMOKE-D",
+        "state:handed-off|owner:worker|output:direct complete Common Handoff for exact target sha256:1111111111111111111111111111111111111111111111111111111111111111 carries Intent Keep direct retry output stable., Methods tdd, dev-tdd sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, RED-D, GREEN-D, and SMOKE-D; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output"
+      ],
+      "rubric": [
+        "Require exact plan and direct Intent/Methods, tail-source accounting outside each prefix, and source-entitled method snapshots.",
+        "Require the exact dev-tdd revision, criterion, seam, owner, and authority before ready.",
+        "Require one attempt plus red, green, smoke, and a complete exact-target Common Handoff in each scenario.",
+        "Reject ponytail and every method-generated task, stage, todo, assurance, receiver, review, learning, or papercut behavior."
       ],
       "scripted_replies": [],
       "trace_scope": "prefix"

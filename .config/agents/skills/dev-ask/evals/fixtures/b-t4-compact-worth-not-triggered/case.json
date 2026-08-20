@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only compact backend state trace; emit only canonical state events with no prose. Exact compact target sha256:6666666666666666666666666666666666666666666666666666666666666666 has approved criterion AC-COMPACT-WF-1 and deterministic smoke. Attempt 1 changes the target but smoke still fails AC-COMPACT-WF-1; that criterion progress authorizes attempt 2. Attempt 2 runs, smoke still fails the same criterion, and the compact route stops terminally at 2/2 with no completion. Compact has no human continuation checkpoint. Do not emit any worth-frame line, Continue, Second opinion, Close, opinion worker, exhaustion record, independent verification, review, or learning dispatch. Use owner:worker for both running attempt events. A failed smoke transitions directly to backend failed; emit no handed-off event for either failed attempt."
+  },
+  "scripted_replies": []
+}

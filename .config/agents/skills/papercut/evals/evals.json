@@ -2,14 +2,25 @@
   "skill_name": "papercut",
   "evals": [
     {
-      "id": "P-CROSS-WORKFLOW",
-      "prompt": "Read-only activation state-trace simulation. Emit only six pipe-delimited lines and no prose. Fixed contract: one portable `papercut` evidence interface loads only after the same plausible repository-owned reusable-friction candidate appears during dev, product, custom-workflow, and direct work; it never becomes a workflow stage or host adapter. Emit `<variant>|skill:<name>|after_candidate:true|workflow_stage:false|adapter:false` for each variant. Then map explicit OMP `/skill:papercut review` and Grok `/papercut review` as `<host>|body:<name>|mode:<mode>`.",
-      "expected_output": "Every variant loads the same portable papercut skill only after the candidate appears. The hosts differ only in invocation syntax; no workflow stage, adapter, or duplicated procedure is introduced.",
+      "id": "P-POST-WORK-HANDOFF",
+      "prompt": "Read-only post-work activation trace with report-only authority and no ledger access. One work task has one qualified current repository-owned reusable-friction candidate. Emit exactly these three lines in this order and no prose:\nstate:handed-off|owner:worker|output:Common Handoff complete\npapercut:soft-look|after_handoff:true|applications:1|candidate:qualified|selected:one|task_state_changed:false\npapercut:capture|result:report-only|ledger_access:false|task:false|methods:false|stage:false|todo:false|assurance:false|learning:false",
+      "expected_output": "The work-task Common Handoff completes before exactly one soft always-rule look. At most one candidate qualifies; report-only capture reads or writes no ledger, changes no task state, and creates no lifecycle or learning event.",
       "assertions": [
-        "All dev, product, custom, and direct variants select papercut rather than a workflow-specific owner or stage",
-        "No variant loads the skill before plausible current friction exists",
+        "The Common Handoff line precedes exactly one soft-look line and one capture result",
+        "The soft look selects at most one current candidate and leaves task state unchanged",
+        "Papercut is not a task, Methods token, stage, todo phase, assurance event, or per-task continual-learning trigger",
+        "Report-only authority causes no live-ledger read or mutation and no learning dispatch"
+      ]
+    },
+    {
+      "id": "P-CROSS-WORKFLOW",
+      "prompt": "Read-only activation state-trace simulation. Emit only six pipe-delimited lines and no prose. Fixed contract: candidate-triggered activation remains available throughout current dev, product, custom, and direct work; each variant loads the same portable `papercut` body only after one plausible current repository-owned reusable-friction candidate qualifies. Papercut is never a task, Methods token, stage, todo phase, assurance event, or per-task learning trigger. Emit `<variant>|skill:papercut|after_candidate:true|task:false|methods:false|stage:false|learning:false` for dev, product, custom, and direct. Then map explicit OMP `/skill:papercut review` and Grok `/papercut review` as `<host>|body:papercut|mode:review`.",
+      "expected_output": "Every current-work variant loads the same portable papercut skill only after one candidate qualifies. The hosts differ only in invocation syntax; no task, method, stage, adapter, assurance event, or learning dispatch appears.",
+      "assertions": [
+        "All dev, product, custom, and direct variants select papercut only after a plausible current candidate qualifies",
+        "No variant makes papercut a task, Methods token, stage, todo phase, assurance event, or per-task learning trigger",
         "OMP and Grok explicit invocations resolve the same SKILL.md review mode",
-        "The response introduces no host adapter or duplicated operational process"
+        "The response introduces no host adapter, duplicated operational process, ledger mutation, or lifecycle dispatch"
       ]
     },
     {
@@ -84,13 +95,13 @@
     },
     {
       "id": "P-NO-CANDIDATE",
-      "prompt": "Read-only activation state-trace simulation. Do not load a skill or inspect storage. Scenario: ordinary work completes without any plausible repository-owned reusable friction, while a repository-local papercut ledger happens to exist. Emit exactly `papercut:inactive|skill_loaded:false|ledger_access:false|output:false` and no prose.",
-      "expected_output": "Nothing papercut-related happens: the skill is not loaded, storage is not read, and no terminal line, heading, empty section, or inventory appears.",
+      "prompt": "Read-only post-work activation state-trace simulation. Ordinary work has emitted its Common Handoff without exposing plausible repository-owned reusable friction, while a repository-local papercut ledger happens to exist. Apply the one soft look without loading a skill or inspecting storage. Emit exactly `papercut:inactive|after_handoff:true|skill_loaded:false|ledger_access:false|output:false|task:false|methods:false|stage:false|todo:false|assurance:false|learning:false` and no prose.",
+      "expected_output": "The post-Handoff soft look stays silent: the skill is not loaded, storage is not read, no output appears, task state is unchanged, and no lifecycle or learning behavior is created.",
       "assertions": [
-        "The papercut skill is not loaded",
-        "The existing ledger is not read or validated",
-        "No papercut output or empty section is emitted",
-        "No count, date, timer, or background mechanism is consulted"
+        "The Common Handoff precedes one silent soft look and the papercut skill is not loaded",
+        "The existing ledger is not read, validated, or mutated",
+        "No papercut output, task, Methods token, stage, todo phase, assurance event, or learning dispatch appears",
+        "No count, date, timer, background mechanism, task-state change, or live-ledger mutation occurs"
       ]
     },
     {

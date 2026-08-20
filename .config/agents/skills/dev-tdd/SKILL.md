@@ -11,9 +11,9 @@ When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and 
 
 ## Support contract
 
-Require a current approved implementation Task Contract, exact acceptance criterion, approved observable test seam, one implementation owner, and explicit test-first authority. TDD changes only the worker's implementation method; it does not add a lifecycle stage, assurance boundary, approval, or receiver.
+Require a current approved implementation Task Contract, exact acceptance criterion, approved observable test seam, and one implementation owner. For a plan-backed work task, `Methods: tdd` is explicit test-first authority: bind this skill and its approved seam before the task can enter `ready`. `Methods: none` loads no method skill. For direct or compact work without an Executor Plan, a current explicit user or approved authority selection of test-first binds this same skill before `ready`; otherwise bind `none`. `ponytail` is reserved and rejected until a separately authorized skill exists.
 
-Each bounded cycle returns its red evidence, minimal green change, smoke, exact target/test identities, and any seam or authority blocker inside the worker's one Common Handoff to exactly one receiver already named by the Task Contract. Stop and return `authority-change-required` to that owner when the seam, behavior, scope, or effects differ from current authority; stop `no-progress-stop` when no plausible observable red case can be established. Never self-verify, review, refactor during review, or choose a new downstream owner.
+TDD changes only the existing worker's implementation method. It creates no task, stage, todo phase, criterion, effect, assurance boundary, approval, or receiver. Each bounded cycle returns its red evidence, minimal green change, smoke, exact target/test identities, and any seam or authority blocker inside the worker's one Common Handoff to exactly one receiver already named by the Task Contract. Stop and return `authority-change-required` to that owner when the seam, behavior, scope, or effects differ from current authority; stop `no-progress-stop` when no plausible observable red case can be established. Never self-verify, review, refactor during review, or choose a new downstream owner.
 
 ## What a good test is
 

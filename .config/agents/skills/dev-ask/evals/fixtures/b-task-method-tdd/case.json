@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only full task-shape prefix observation with two explicitly separated one-owner standard work scenarios; no profile owner is dispatched within either prefix. First, a parser-valid plan task has Intent “Keep retry output stable.”, Methods tdd, backend-scheduled tail source outside the prefix, exact target sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, and explicit test-first authority authority://plan-test-first. Second, direct no-plan work has Intent “Keep direct retry output stable.”, Methods tdd selected by authority://direct-test-first, backend-scheduled tail source outside the prefix, and exact target sha256:1111111111111111111111111111111111111111111111111111111111111111. In each scenario include one source-entitled method-binding snapshot for dev-tdd revision sha256:3d15802f2a90b99d6ab1778e043bac2ce0072b91079893004350a4c23b4343c0, criterion AC-METHOD-01, retry-output seam, worker owner, and the named authority before ready; then run one RED, GREEN, SMOKE cycle and one complete Common Handoff. No papercut candidate exists. Reject ponytail and method-generated lifecycle structure."
+  },
+  "scripted_replies": []
+}

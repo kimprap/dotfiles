@@ -16,8 +16,9 @@ import executor_plan
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 FIXTURE = SCRIPT_DIR / "fixtures/executor_plan/complete.md"
+FAN_IN_FIXTURE = SCRIPT_DIR / "fixtures/executor_plan/fan_in.md"
 COMPLETE = FIXTURE.read_text(encoding="utf-8")
-
+FAN_IN = FAN_IN_FIXTURE.read_text(encoding="utf-8")
 
 def replace_once(text: str, old: str, new: str) -> str:
     if text.count(old) != 1:
@@ -43,6 +44,105 @@ def remove_recipe(text: str, recipe_id: str) -> str:
     return changed
 
 
+def remove_task(text: str, task_id: str) -> str:
+    pattern = re.compile(
+        rf"(?ms)^- \[ \] {re.escape(task_id)}\..*?(?=^- \[ \] T[1-9]\d*\.|^## )"
+    )
+    changed, count = pattern.subn("", text, count=1)
+    if count != 1:
+        raise AssertionError(f"missing task fixture anchor: {task_id}")
+    return changed
+
+
+def remove_table_row(text: str, identifier: str) -> str:
+    pattern = re.compile(rf"(?m)^\| {re.escape(identifier)} \|.*\n")
+    changed, count = pattern.subn("", text, count=1)
+    if count != 1:
+        raise AssertionError(f"missing table row fixture anchor: {identifier}")
+    return changed
+
+
+def without_profile_tail(
+    text: str, *, receiver: str, assurance: str = "standard"
+) -> str:
+    changed = text
+    for task_id in ("T3", "T4", "T5"):
+        changed = remove_task(changed, task_id)
+    for recipe_id in ("VR-AC08", "VR-AC09", "VR-AC10"):
+        changed = remove_recipe(changed, recipe_id)
+    for identifier in (
+        "CONTRACT-VERIFY",
+        "CONTRACT-REVIEW",
+        "CONTRACT-LEARN",
+        "TGT-VERIFY",
+        "TGT-REVIEW",
+        "TGT-LEARN",
+        "AC08",
+        "AC09",
+        "AC10",
+        "OUTP-T3",
+        "OUTP-T4",
+        "OUTP-T5",
+    ):
+        changed = remove_table_row(changed, identifier)
+    changed = replace_once(changed, "- Assurance: standard", f"- Assurance: {assurance}")
+    changed = replace_once(changed, "  - Receiver: T3", f"  - Receiver: {receiver}")
+    changed = replace_once(
+        changed,
+        "| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | T3 | Common Handoff from dev-handoff |",
+        f"| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | {receiver} | Common Handoff from dev-handoff |",
+    )
+    return changed
+
+
+def without_fan_in_profile_tail(text: str) -> str:
+    changed = text
+    for task_id in ("T6", "T7", "T8"):
+        changed = remove_task(changed, task_id)
+    for recipe_id in ("VR-AC06", "VR-AC07", "VR-AC08"):
+        changed = remove_recipe(changed, recipe_id)
+    for identifier in (
+        "CONTRACT-PROFILE-VERIFY",
+        "CONTRACT-PROFILE-REVIEW",
+        "CONTRACT-PROFILE-LEARN",
+        "TGT-PROFILE-VERIFY",
+        "TGT-PROFILE-REVIEW",
+        "TGT-PROFILE-LEARN",
+        "AC06",
+        "AC07",
+        "AC08",
+        "OUTP-T6",
+        "OUTP-T7",
+        "OUTP-T8",
+    ):
+        changed = remove_table_row(changed, identifier)
+    changed = replace_once(
+        changed,
+        "  - Output: OUTP-T5\n  - Receiver: T6",
+        "  - Output: OUTP-T5\n  - Receiver: dev-implementation backend",
+    )
+    changed = replace_once(
+        changed,
+        "| OUTP-T5 | T5 | TGT-INTEGRATE exact revision | completed, blocked | T6 | Common Handoff from dev-handoff |",
+        "| OUTP-T5 | T5 | TGT-INTEGRATE exact revision | completed, blocked | dev-implementation backend | Common Handoff from dev-handoff |",
+    )
+    return changed
+
+
+def with_first_task_methods(text: str, value: str) -> str:
+    before = (
+        "  - Owner: rule-worker\n"
+        "  - Intent: Make the portable contract explicit.\n"
+        "  - Methods: none"
+    )
+    after = (
+        "  - Owner: rule-worker\n"
+        "  - Intent: Make the portable contract explicit.\n"
+        f"  - Methods:{f' {value}' if value else ''}"
+    )
+    return replace_once(text, before, after)
+
+
 class ExecutorPlanTests(unittest.TestCase):
     def assert_issue(self, text: str, code: str) -> None:
         for context in executor_plan.CONTEXTS:
@@ -53,6 +153,71 @@ class ExecutorPlanTests(unittest.TestCase):
                     )
                     self.assertFalse(report.valid)
                     self.assertIn(code, {issue.code for issue in report.issues})
+
+    def assert_valid_matrix(self, cases: dict[str, str]) -> dict[str, str]:
+        digests: dict[str, str] = {}
+        for label, text in cases.items():
+            expected_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+            digests[label] = expected_digest
+            for context in executor_plan.CONTEXTS:
+                for consumer in executor_plan.CONSUMERS:
+                    with self.subTest(
+                        case=label, context=context, consumer=consumer
+                    ):
+                        report = executor_plan.validate_text(
+                            text, context=context, consumer=consumer
+                        )
+                        self.assertTrue(report.valid, report)
+                        self.assertEqual(report.plan_sha256, expected_digest)
+                        self.assertEqual(report.issues, ())
+        return digests
+
+    def assert_backend_blocked(self, text: str, code: str) -> None:
+        for context in executor_plan.CONTEXTS:
+            with self.subTest(context=context, preflight_code=code):
+                with tempfile.TemporaryDirectory(
+                    prefix="executor-plan-task-shape-"
+                ) as temporary:
+                    root = Path(temporary).resolve()
+                    repository_root = root / "repository"
+                    local_root = root / "local"
+                    active = (
+                        repository_root
+                        / ".agents"
+                        / "plans"
+                        / "2026-08-09-1700_demo.md"
+                    )
+                    local_plan = local_root / "demo-plan.md"
+                    active.parent.mkdir(parents=True)
+                    (active.parent / "archive").mkdir()
+                    local_root.mkdir()
+                    active.write_text(text, encoding="utf-8")
+                    report = executor_plan.preflight_file(
+                        active,
+                        context=context,
+                        slug="demo",
+                        repository_root=repository_root,
+                        local_root=local_root,
+                        local_plan=local_plan,
+                    )
+                    self.assertEqual(report.status, "blocked", report.payload())
+                    self.assertEqual(
+                        report.payload()["schema"], "executor-plan-preflight/v1"
+                    )
+                    self.assertEqual(
+                        report.payload()["structural"]["schema"],
+                        "executor-plan-validation/v1",
+                    )
+                    self.assertEqual(
+                        report.payload()["structural"]["status"], "invalid"
+                    )
+                    self.assertIn(
+                        code,
+                        {
+                            issue["code"]
+                            for issue in report.payload()["structural"]["issues"]
+                        },
+                    )
 
     def test_complete_fixture_roles_contexts_report_and_digest_contract(self) -> None:
         local = replace_once(
@@ -125,6 +290,224 @@ class ExecutorPlanTests(unittest.TestCase):
                 "Critical anchors and assumptions",
             ),
         )
+
+    def test_task_shape_positive_matrix_across_contexts_and_consumers(self) -> None:
+        numbered_high = replace_once(
+            COMPLETE, "- Assurance: standard", "- Assurance: high-consequence"
+        )
+        omitted_standard_verification = without_profile_tail(
+            COMPLETE, receiver="dev-verification"
+        )
+        omitted_high_backend = without_profile_tail(
+            COMPLETE,
+            receiver="dev-implementation backend",
+            assurance="high-consequence",
+        )
+        compact = without_profile_tail(
+            COMPLETE,
+            receiver="dev-implementation backend",
+            assurance="compact",
+        )
+        compact_arbitrary_work_owner = replace_once(
+            compact,
+            "  - Owner: rule-worker",
+            "  - Owner: repository-specialist",
+        )
+        omitted_fan_in = without_fan_in_profile_tail(FAN_IN)
+        digests = self.assert_valid_matrix(
+            {
+                "numbered-standard": COMPLETE,
+                "numbered-high-consequence": numbered_high,
+                "omitted-standard-verification": omitted_standard_verification,
+                "omitted-high-consequence-backend": omitted_high_backend,
+                "fan-in-numbered-standard": FAN_IN,
+                "fan-in-omitted-standard": omitted_fan_in,
+                "compact-work-only": compact,
+                "compact-arbitrary-work-owner": compact_arbitrary_work_owner,
+            }
+        )
+        self.assertEqual(len(digests), 8)
+        self.assertEqual(
+            digests["numbered-standard"], hashlib.sha256(FIXTURE.read_bytes()).hexdigest()
+        )
+        self.assertEqual(
+            digests["fan-in-numbered-standard"],
+            hashlib.sha256(FAN_IN_FIXTURE.read_bytes()).hexdigest(),
+        )
+
+    def test_intent_methods_and_extra_field_matrix(self) -> None:
+        valid_tdd = with_first_task_methods(COMPLETE, "tdd")
+        valid_extra = with_first_task_methods(
+            COMPLETE, "none\n  - Notes: unrelated extra fields remain tolerated"
+        )
+        self.assert_valid_matrix(
+            {
+                "methods-none": COMPLETE,
+                "methods-tdd": valid_tdd,
+                "unrelated-extra": valid_extra,
+            }
+        )
+
+        missing_intent = COMPLETE.replace(
+            "  - Intent: Make the portable contract explicit.\n", "", 1
+        )
+        empty_intent = replace_once(
+            COMPLETE,
+            "  - Intent: Make the portable contract explicit.",
+            "  - Intent:",
+        )
+        missing_methods = replace_once(
+            COMPLETE,
+            "  - Intent: Make the portable contract explicit.\n  - Methods: none",
+            "  - Intent: Make the portable contract explicit.",
+        )
+        empty_methods = with_first_task_methods(COMPLETE, "")
+        field_cases = (
+            (missing_intent, "TASK_FIELD_MISSING"),
+            (empty_intent, "TASK_FIELD_MISSING"),
+            (missing_methods, "TASK_FIELD_MISSING"),
+            (empty_methods, "TASK_FIELD_MISSING"),
+        )
+        for text, code in field_cases:
+            self.assert_issue(text, code)
+            self.assert_backend_blocked(text, code)
+        self.assert_issue(empty_methods, "TASK_METHODS_INVALID")
+
+        invalid_methods = {
+            "empty": empty_methods,
+            "ponytail": with_first_task_methods(COMPLETE, "ponytail"),
+            "unknown": with_first_task_methods(COMPLETE, "benchmark"),
+            "duplicate": with_first_task_methods(COMPLETE, "tdd, tdd"),
+            "mixed-none": with_first_task_methods(COMPLETE, "none, tdd"),
+            "case-variant": with_first_task_methods(COMPLETE, "TDD"),
+            "none-case-variant": with_first_task_methods(COMPLETE, "None"),
+        }
+        for label, text in invalid_methods.items():
+            with self.subTest(methods=label):
+                self.assert_issue(text, "TASK_METHODS_INVALID")
+                self.assert_backend_blocked(text, "TASK_METHODS_INVALID")
+
+    def test_assurance_and_profile_tail_negative_matrix(self) -> None:
+        omitted_backend = without_profile_tail(
+            COMPLETE, receiver="dev-implementation backend"
+        )
+        partial_verification_only = remove_task(
+            remove_task(COMPLETE, "T5"), "T4"
+        )
+        wrong_order = replace_once(
+            replace_once(
+                replace_once(
+                    COMPLETE,
+                    "  - Owner: dev-verification",
+                    "  - Owner: temporary-tail-owner",
+                ),
+                "  - Owner: dev-code-review",
+                "  - Owner: dev-verification",
+            ),
+            "  - Owner: temporary-tail-owner",
+            "  - Owner: dev-code-review",
+        )
+        wrong_internal_receiver = replace_once(
+            COMPLETE,
+            "  - Output: OUTP-T3\n  - Receiver: T4",
+            "  - Output: OUTP-T3\n  - Receiver: T5",
+        )
+        invented_receiver = replace_once(
+            replace_once(
+                omitted_backend,
+                "  - Output: OUTP-T2\n  - Receiver: dev-implementation backend",
+                "  - Output: OUTP-T2\n  - Receiver: T99",
+            ),
+            "| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | dev-implementation backend | Common Handoff from dev-handoff |",
+            "| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | T99 | Common Handoff from dev-handoff |",
+        )
+        broken_predecessor_receiver = replace_once(
+            replace_once(
+                COMPLETE,
+                "  - Output: OUTP-T2\n  - Receiver: T3",
+                "  - Output: OUTP-T2\n  - Receiver: T4",
+            ),
+            "| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | T3 | Common Handoff from dev-handoff |",
+            "| OUTP-T2 | T2 | TGT-SCRIPT exact revision | completed, blocked, transport-unavailable | T4 | Common Handoff from dev-handoff |",
+        )
+        broken_final_receiver = replace_once(
+            replace_once(
+                COMPLETE,
+                "  - Output: OUTP-T5\n  - Receiver: dev-implementation backend",
+                "  - Output: OUTP-T5\n  - Receiver: terminal-worker",
+            ),
+            "| OUTP-T5 | T5 | TGT-LEARN exact revision | completed, blocked, transport-unavailable | dev-implementation backend | Common Handoff from dev-handoff |",
+            "| OUTP-T5 | T5 | TGT-LEARN exact revision | completed, blocked, transport-unavailable | terminal-worker | Common Handoff from dev-handoff |",
+        )
+        no_work = remove_task(remove_task(COMPLETE, "T1"), "T2")
+        compact_work_only = without_profile_tail(
+            COMPLETE,
+            receiver="dev-implementation backend",
+            assurance="compact",
+        )
+        compact_with_one_tail_owner = replace_once(
+            compact_work_only,
+            "  - Owner: validator-worker",
+            "  - Owner: dev-verification",
+        )
+        compact_with_verification_receiver = without_profile_tail(
+            COMPLETE,
+            receiver="dev-verification",
+            assurance="compact",
+        )
+        compact_with_integration_owner = replace_once(
+            compact_work_only,
+            "  - Owner: rule-worker",
+            "  - Owner: dev-integration",
+        )
+        compact_with_backend_owner = replace_once(
+            compact_work_only,
+            "  - Owner: rule-worker",
+            "  - Owner: dev-implementation backend",
+        )
+        tail_cases = {
+            "partial-two-rows": remove_task(COMPLETE, "T5"),
+            "partial-verification-only": partial_verification_only,
+            "missing-number": replace_once(
+                COMPLETE, "- [ ] T3. Verify", "- [ ] T6. Verify"
+            ),
+            "wrong-order": wrong_order,
+            "wrong-owner": replace_once(
+                COMPLETE,
+                "  - Owner: dev-code-review",
+                "  - Owner: review-worker",
+            ),
+            "non-none-tail-method": replace_once(
+                COMPLETE,
+                "  - Owner: dev-code-review\n  - Intent: Identify any outcome-relevant defect in the verified result.\n  - Methods: none",
+                "  - Owner: dev-code-review\n  - Intent: Identify any outcome-relevant defect in the verified result.\n  - Methods: tdd",
+            ),
+            "broken-dependency": replace_once(
+                COMPLETE, "  - Depends on: T3", "  - Depends on: T2"
+            ),
+            "broken-internal-receiver": wrong_internal_receiver,
+            "invented-final-receiver": invented_receiver,
+            "no-work-task": no_work,
+            "broken-predecessor-receiver": broken_predecessor_receiver,
+            "broken-final-receiver": broken_final_receiver,
+            "compact-final-triple": replace_once(
+                COMPLETE, "- Assurance: standard", "- Assurance: compact"
+            ),
+            "compact-any-tail-owner": compact_with_one_tail_owner,
+            "compact-verification-receiver": compact_with_verification_receiver,
+            "compact-integration-owner": compact_with_integration_owner,
+            "compact-backend-owner": compact_with_backend_owner,
+        }
+        for label, text in tail_cases.items():
+            with self.subTest(tail=label):
+                self.assert_issue(text, "TASK_TAIL_INVALID")
+                self.assert_backend_blocked(text, "TASK_TAIL_INVALID")
+
+        unsupported = replace_once(
+            COMPLETE, "- Assurance: standard", "- Assurance: maximal"
+        )
+        self.assert_issue(unsupported, "ASSURANCE_PROFILE_INVALID")
+        self.assert_backend_blocked(unsupported, "ASSURANCE_PROFILE_INVALID")
 
     def test_header_mode_line_endings_and_complete_issue_matrix(self) -> None:
         with_mode = replace_once(

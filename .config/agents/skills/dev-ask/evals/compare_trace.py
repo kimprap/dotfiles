@@ -58,42 +58,20 @@ OPTIONAL_EXPECTED_KEYS = {
     "state_trace",
 }
 REWRITE_IDS = {
-    "R-REQUIREMENTS-NEAR-MISS",
-    "R-BUG-NEAR-MISS",
-    "R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT",
-    "R-WAYFINDER-NEAR-MISS",
-    "R-ARCHITECTURE-NEAR-MISS",
-    "R-ARTIFACT-LANE-NEAR-MISS",
-    "R-DRIFT-NEAR-MISS",
-    "R-COMPLETE-COMPACT-NO-LEARNING",
-    "B-RETRY",
-    "B-VERIFY",
-    "B-REVIEW",
     "B-COMPACT",
     "B-COMPACT-CURATION-TRIGGER",
-    "L-MUTATION",
-    "R-OUTCOME-CONTINUATION",
-    "B-T4-REPAIR-CONSOLIDATED",
     "B-T4-REPAIR-REMAINING-BLOCKER",
-    "B-T4-CURATION-COMPACT-NOT-TRIGGERED",
-    "R-T5-ORDINARY-DIRECT-NO-EAGER-HISTORY",
-    "R-TRIAGE-NEAR-MISS-PROJECT-TICKET",
-    "R-ROUTE-PRESENTATION-NEAR-MISS-INLINE",
-    "R-ROUTE-CANDIDATES",
-    "R-ROUTE-GATING-QUESTION-NEAR-MISS",
+    "R-COMPLETE-COMPACT-NO-LEARNING",
 }
 ADDED_IDS = {
-    "R-ORDINARY-COMPACT-DIRECT",
-    "R-ORDINARY-COMPACT-NEAR-MISS-DISQUALIFIER",
-    "R-ORDINARY-SIZE-ONLY",
-    "R-ORDINARY-FACTUAL-GAP-PREPENDS-RESEARCH",
-    "B-ORDINARY-COMPACT-SMOKE-PASS",
-    "B-ORDINARY-COMPACT-CROSS-CONTEXT",
-    "B-ORDINARY-COMPACT-SMOKE-FAIL",
-    "B-RETRY-STANDARD",
-    "B-RETRY-HIGH-CONSEQUENCE",
-    "B-COMPACT-DEFERRED-LEARNING-CANDIDATE",
-    "B-ASSURANCE-RULE-MANIFEST-OMISSION",
+    "B-COMPACT-PLAN-NO-TAIL",
+    "B-PLAN-TAIL-OMITTED",
+    "B-PLAN-TAIL-PROFILE",
+    "B-T4-CHECKPOINT-PROOF-CLOSE",
+    "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
+    "B-T4-REVISION-WORTH-OPINION",
+    "B-TASK-METHOD-TDD",
+    "R-COMPACT-PLAN-WITH-TAIL",
 }
 
 
@@ -747,6 +725,8 @@ def keep_check(args: argparse.Namespace) -> dict[str, Any]:
     output = result("--keep-check", mismatches)
     output["baseline_commit"] = args.baseline_commit
     output["baseline_blob"] = args.baseline_blob
+    output["added_ids"] = sorted(ADDED_IDS)
+    output["rewritten_ids"] = sorted(REWRITE_IDS)
     output["keep_count"] = (
         max(0, len(case_map(baseline).keys() - REWRITE_IDS))
         if "baseline" in locals()

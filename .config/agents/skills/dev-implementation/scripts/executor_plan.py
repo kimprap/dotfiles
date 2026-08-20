@@ -91,6 +91,8 @@ TABLES = {
 }
 TASK_FIELDS = (
     "Owner",
+    "Intent",
+    "Methods",
     "Wave",
     "Depends on",
     "Targets",
@@ -102,6 +104,18 @@ TASK_FIELDS = (
     "Verification",
     "Lineage",
 )
+ASSURANCE_PROFILES = ("compact", "standard", "high-consequence")
+PROFILE_TAIL_OWNERS = (
+    "dev-verification",
+    "dev-code-review",
+    "dev-continual-learning",
+)
+NON_WORK_LIFECYCLE_OWNERS = frozenset(
+    (*PROFILE_TAIL_OWNERS, "dev-integration", "dev-implementation backend")
+)
+COMPACT_FINAL_RECEIVER = "dev-implementation backend"
+FINAL_RECEIVERS = {"dev-verification", "dev-implementation backend"}
+METHOD_TOKENS = {"tdd"}
 VERIFICATION_FIELDS = (
     "Criterion",
     "Proof class",
@@ -547,6 +561,19 @@ def _only_one(value: str) -> bool:
     )
 
 
+def _valid_methods(value: str) -> bool:
+    if value == "none":
+        return True
+    tokens = [token.strip() for token in value.split(",")]
+    return (
+        bool(tokens)
+        and all(tokens)
+        and len(tokens) == len(set(tokens))
+        and "none" not in tokens
+        and set(tokens) <= METHOD_TOKENS
+    )
+
+
 def _labels(lines: Sequence[str]) -> dict[str, str]:
     result: dict[str, str] = {}
     for line in lines:
@@ -581,7 +608,7 @@ def _parse_tasks(
                 }
             current = task_id
             continue
-        field = re.fullmatch(r"  - ([^:]+):\s*(.+)", line)
+        field = re.fullmatch(r"  - ([^:]+):\s*(.*)", line)
         if field and current is not None:
             name, value = field.groups()
             if name in tasks[current]:
@@ -609,12 +636,19 @@ def _parse_tasks(
     if numbers != sorted(numbers) or len(numbers) != len(set(numbers)):
         _issue(issues, "TASK_ORDER", "task IDs are not strictly monotonic", "Tasks")
     for task_id, task in tasks.items():
-        missing = [field for field in TASK_FIELDS if field not in task]
+        missing = [field for field in TASK_FIELDS if not task.get(field, "").strip()]
         if missing:
             _issue(
                 issues,
                 "TASK_FIELD_MISSING",
-                f"{task_id} missing fields: {', '.join(missing)}",
+                f"{task_id} missing or empty fields: {', '.join(missing)}",
+                "Tasks",
+            )
+        if "Methods" in task and not _valid_methods(task["Methods"]):
+            _issue(
+                issues,
+                "TASK_METHODS_INVALID",
+                f"{task_id} Methods must be none or unique closed method tokens",
                 "Tasks",
             )
         if "Owner" in task and not _only_one(task["Owner"]):
@@ -802,6 +836,108 @@ def _graph(
     return graph
 
 
+def _validate_task_shape(
+    tasks: Mapping[str, Mapping[str, str]],
+    graph: Mapping[str, tuple[str, ...]],
+    assurance: str,
+    issues: list[Issue],
+) -> None:
+    if assurance and assurance not in ASSURANCE_PROFILES:
+        _issue(
+            issues,
+            "ASSURANCE_PROFILE_INVALID",
+            "Assurance must be compact, standard, or high-consequence",
+            "Execution policy",
+        )
+        return
+    if assurance not in ASSURANCE_PROFILES or not tasks:
+        return
+
+    task_ids = tuple(tasks)
+    owners = tuple(tasks[task_id].get("Owner", "") for task_id in task_ids)
+    if assurance == "compact":
+        if any(owner in NON_WORK_LIFECYCLE_OWNERS for owner in owners):
+            _issue(
+                issues,
+                "TASK_TAIL_INVALID",
+                "compact plans cannot contain non-work lifecycle owners",
+                "Tasks",
+            )
+        elif tasks[task_ids[-1]].get("Receiver") != COMPACT_FINAL_RECEIVER:
+            _issue(
+                issues,
+                "TASK_TAIL_INVALID",
+                "the final compact task has an invalid receiver",
+                "Tasks",
+            )
+        return
+
+    exact_suffix = (
+        len(task_ids) >= len(PROFILE_TAIL_OWNERS)
+        and owners[-len(PROFILE_TAIL_OWNERS) :] == PROFILE_TAIL_OWNERS
+    )
+    attempted_suffix = exact_suffix or any(
+        owner in PROFILE_TAIL_OWNERS[1:] for owner in owners
+    )
+    if not attempted_suffix:
+        if tasks[task_ids[-1]].get("Receiver") not in FINAL_RECEIVERS:
+            _issue(
+                issues,
+                "TASK_TAIL_INVALID",
+                "the final non-tail task has an invalid receiver",
+                "Tasks",
+            )
+        return
+    if not exact_suffix:
+        _issue(
+            issues,
+            "TASK_TAIL_INVALID",
+            "an attempted profile tail must be the exact final owner sequence",
+            "Tasks",
+        )
+        return
+
+    tail_ids = task_ids[-len(PROFILE_TAIL_OWNERS) :]
+    non_tail_ids = task_ids[: -len(PROFILE_TAIL_OWNERS)]
+    valid = bool(non_tail_ids) and any(
+        tasks[task_id].get("Owner") not in PROFILE_TAIL_OWNERS
+        for task_id in non_tail_ids
+    )
+    valid = valid and not any(
+        tasks[task_id].get("Owner") in PROFILE_TAIL_OWNERS[1:]
+        for task_id in non_tail_ids
+    )
+    if non_tail_ids:
+        predecessor = non_tail_ids[-1]
+        valid = valid and tasks[predecessor].get("Receiver") == tail_ids[0]
+        expected_numbers = tuple(
+            range(int(predecessor[1:]) + 1, int(predecessor[1:]) + 4)
+        )
+        valid = valid and tuple(int(task_id[1:]) for task_id in tail_ids) == (
+            expected_numbers
+        )
+        previous_ids = (predecessor, tail_ids[0], tail_ids[1])
+        valid = valid and all(
+            graph.get(task_id) == (previous_id,)
+            for task_id, previous_id in zip(tail_ids, previous_ids)
+        )
+    valid = valid and all(
+        tasks[task_id].get("Methods") == "none" for task_id in tail_ids
+    )
+    expected_receivers = (tail_ids[1], tail_ids[2], "dev-implementation backend")
+    valid = valid and all(
+        tasks[task_id].get("Receiver") == receiver
+        for task_id, receiver in zip(tail_ids, expected_receivers)
+    )
+    if not valid:
+        _issue(
+            issues,
+            "TASK_TAIL_INVALID",
+            "the final profile tail is incomplete or internally inconsistent",
+            "Tasks",
+        )
+
+
 def _require_exact_refs(
     owner: str,
     text: str,
@@ -980,6 +1116,7 @@ def validate_text(text: str, *, context: str, consumer: str) -> Report:
 
     tasks = _parse_tasks(sections["Tasks"], issues)
     graph = _graph(tasks, issues)
+    _validate_task_shape(tasks, graph, execution.get("Assurance", ""), issues)
     recipes = _parse_verifications(sections["Verification / Done criteria"], issues)
 
     task_target_refs: defaultdict[str, list[str]] = defaultdict(list)

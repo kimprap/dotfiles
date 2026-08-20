@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only full task-shape observation for a parser-valid standard Executor Plan. The plan digest is sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd. T1 Intent is “Keep the numbered profile tail singular.” and Methods is none; its exact target is sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa. The exact final numbered suffix is dev-verification, dev-code-review, and dev-continual-learning, each with Methods none. Include the source-entitled executor-plan snapshot, bind T1 before ready, run one work attempt with exact-revision smoke SMOKE-A and a complete Common Handoff, then consume the suffix once. Fresh AC-TAIL-01 proof is VR-TAIL-01-A; the selected original initial review evidence is REVIEW-A APPROVED; the curator result is LEARN-A NO DURABLE LEARNING and is a completion gate. The work has no papercut candidate. Backend owns complete. Never schedule a duplicate tail or create another task, stage, receiver, assurance pass, or learning dispatch."
+  },
+  "scripted_replies": []
+}
