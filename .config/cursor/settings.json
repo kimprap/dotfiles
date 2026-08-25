@@ -285,5 +285,6 @@
     "claudeCode.preferredLocation": "panel",
     "claudeCode.selectedModel": "default",
     "cursor.composer.conversationDensity": "compact-ungrouped",
-    "workbench.editor.editorActionsLocation": "hidden"
+    "workbench.editor.editorActionsLocation": "hidden",
+    "workbench.agentsWindowButton.enabled": false
 }
