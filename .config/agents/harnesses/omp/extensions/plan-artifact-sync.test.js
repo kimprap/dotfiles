@@ -27,6 +27,8 @@ const { default: planArtifactSync } = await import("./plan-artifact-sync.js");
 const DOTFILES = resolve(import.meta.dir, "../../../../..");
 const HELPER = join(DOTFILES, "bin", "omp-copy-plan-artifact");
 const CONFIG = join(DOTFILES, ".config", "agents", "harnesses", "omp", "config.yml");
+const COPY_PROTOCOL = "plan-artifact-copy/v1";
+const WARNING_RESULT_SCHEMA = "plan-artifact-sync-result/v1";
 const PLAN_FIXTURE = join(
     DOTFILES,
     ".config",
@@ -117,6 +119,11 @@ async function runProcess(command, args, options) {
     return { code, stdout, stderr };
 }
 
+function argumentValue(args, name) {
+    const index = args.indexOf(name);
+    return index === -1 ? undefined : args[index + 1];
+}
+
 function createFakePi(execImpl = runProcess) {
     const listeners = new Map();
     const calls = [];
@@ -154,8 +161,8 @@ async function emit(pi, event, ctx) {
     return await pi.listeners.get("tool_result")(event, ctx);
 }
 
-async function runHelper(root, slug, contentFile) {
-    return await runProcess(HELPER, ["copy", "--slug", slug, "--content-file", contentFile], { cwd: root });
+async function runHelper(root, args) {
+    return await runProcess(HELPER, args, { cwd: root });
 }
 
 afterAll(async () => {
@@ -213,10 +220,15 @@ describe("plan-artifact-sync registration and mutation boundary", () => {
         expect(await readFile(files.active)).toEqual(third);
         expect(pi.calls).toHaveLength(3);
         for (const call of pi.calls) {
-            expect(call.args[0]).toBe("copy");
-            expect(call.args.slice(1, 3)).toEqual(["--slug", "demo"]);
-            expect(call.args[3]).toBe("--content-file");
-            expect(call.args[4]).toBe(await realpath(files.localPath));
+            expect(call.args).toEqual([
+                "copy",
+                "--protocol",
+                COPY_PROTOCOL,
+                "--slug",
+                "demo",
+                "--content-file",
+                await realpath(files.localPath),
+            ]);
             expect(call.options).toEqual({ cwd: files.root });
         }
         expect(notifications).toEqual([]);
@@ -247,7 +259,7 @@ describe("plan-artifact-sync registration and mutation boundary", () => {
         );
         await emit(pi, { toolName: "write", isError: false, input: { path: note } }, ctx);
 
-        expect(pi.calls.map((call) => call.args[2])).toEqual(["alpha", "zeta"]);
+        expect(pi.calls.map((call) => argumentValue(call.args, "--slug"))).toEqual(["alpha", "zeta"]);
         expect(await readFile(planPaths(root, "alpha").active)).toEqual(planBytes({ marker: "alpha" }));
         expect(await readFile(planPaths(root, "zeta").active)).toEqual(planBytes({ marker: "zeta" }));
         expect(notifications).toEqual([]);
@@ -381,7 +393,7 @@ describe("helper protocol and nonblocking continuation", () => {
         }
         const secret = join(root, "raw-secret-path");
         const pi = createFakePi(async (_command, args) => {
-            const slug = args[2];
+            const slug = argumentValue(args, "--slug");
             if (slug === "alpha") {
                 return {
                     code: 1,
@@ -412,20 +424,57 @@ describe("helper protocol and nonblocking continuation", () => {
             .map((slug, index) => `[${join(localRoot, `${slug}-plan.md`)}#${String(index + 1).padStart(4, "A")}]`)
             .join("\n");
 
-        expect(
-            await emit(pi, { toolName: "edit", isError: false, input: { input: `${hashes}\n` } }, ctx)
-        ).toBeUndefined();
-        expect(pi.calls.map((call) => call.args[2])).toEqual(["alpha", "beta", "gamma", "later"]);
-        expect(notifications).toEqual([
-            {
-                message:
-                    'plan-artifact-sync: alpha: ERROR: PLAN_ARTIFACT_INVALID scope="identity" effect=none; ' +
-                    'beta: ERROR: PLAN_SYNC_HELPER_FAILED scope="identity" effect=possible-complete; ' +
-                    'gamma: ERROR: PLAN_SYNC_ACK_INVALID scope="identity" effect=possible-complete',
-                severity: "warning",
+        const event = {
+            toolName: "edit",
+            isError: false,
+            input: { input: `${hashes}\n` },
+            content: [{ type: "text", text: "edit succeeded" }],
+            details: { changed: true },
+        };
+        const result = await emit(pi, event, ctx);
+        expect(pi.calls.map((call) => argumentValue(call.args, "--slug"))).toEqual(["alpha", "beta", "gamma", "later"]);
+        const message =
+            'plan-artifact-sync: alpha: ERROR: PLAN_ARTIFACT_INVALID scope="identity" effect=none; ' +
+            'beta: ERROR: PLAN_SYNC_HELPER_FAILED scope="identity" effect=possible-complete; ' +
+            'gamma: ERROR: PLAN_SYNC_ACK_INVALID scope="identity" effect=possible-complete';
+        expect(result).toEqual({
+            content: [
+                { type: "text", text: "edit succeeded" },
+                { type: "text", text: message },
+            ],
+            details: {
+                changed: true,
+                planArtifactSync: {
+                    schema: WARNING_RESULT_SCHEMA,
+                    status: "failed",
+                    warnings: [
+                        {
+                            kind: "sync",
+                            scope: "identity",
+                            code: "PLAN_ARTIFACT_INVALID",
+                            identity: "alpha",
+                            effect: "none",
+                        },
+                        {
+                            kind: "sync",
+                            scope: "identity",
+                            code: "PLAN_SYNC_HELPER_FAILED",
+                            identity: "beta",
+                            effect: "possible-complete",
+                        },
+                        {
+                            kind: "sync",
+                            scope: "identity",
+                            code: "PLAN_SYNC_ACK_INVALID",
+                            identity: "gamma",
+                            effect: "possible-complete",
+                        },
+                    ],
+                },
             },
-        ]);
-        expect(JSON.stringify(notifications)).not.toContain(secret);
+        });
+        expect(notifications).toEqual([{ message, severity: "warning" }]);
+        expect(JSON.stringify({ notifications, result })).not.toContain(secret);
     });
 
     test("accepts only copied or archived acknowledgements and the narrowed helper errors", async () => {
@@ -477,6 +526,175 @@ describe("helper protocol and nonblocking continuation", () => {
             );
             expect(notifications.map((entry) => entry.message)).toEqual(item.message === null ? [] : [item.message]);
         }
+    });
+});
+
+describe("wire protocol enforcement and live skew", () => {
+    test("accepts only the explicit current protocol", async () => {
+        const current = await fixture();
+        const currentResult = await runHelper(current.root, [
+            "copy",
+            "--protocol",
+            COPY_PROTOCOL,
+            "--slug",
+            "demo",
+            "--content-file",
+            current.localPath,
+        ]);
+        expect(currentResult).toEqual({
+            code: 0,
+            stdout: "plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md\n",
+            stderr: "",
+        });
+        expect(await readFile(current.active)).toEqual(planBytes());
+
+        const unversioned = await fixture();
+        const unversionedResult = await runHelper(unversioned.root, [
+            "copy",
+            "--slug",
+            "demo",
+            "--content-file",
+            unversioned.localPath,
+        ]);
+        expect(unversionedResult).toEqual({
+            code: 2,
+            stdout: "",
+            stderr:
+                "ERROR: PLAN_SYNC_PROTOCOL_MISMATCH: plan=demo state=protocol-unsupported path=none effect=none: " +
+                "helper wire protocol is not supported by this generation\n",
+        });
+        expect(await exists(unversioned.active)).toBe(false);
+
+        const obsolete = await fixture();
+        const obsoleteResult = await runHelper(obsolete.root, [
+            "sync",
+            "--slug",
+            "demo",
+            "--content-file",
+            obsolete.localPath,
+        ]);
+        expect(obsoleteResult).toEqual({ code: 2, stdout: "", stderr: "ERROR: unsupported operation\n" });
+        expect(await exists(obsolete.active)).toBe(false);
+    });
+
+    test("rejects an unknown protocol before repository mutation", async () => {
+        const files = await fixture();
+        const result = await runHelper(files.root, [
+            "copy",
+            "--protocol",
+            "plan-artifact-copy/v2",
+            "--slug",
+            "demo",
+            "--content-file",
+            files.localPath,
+        ]);
+
+        expect(result).toEqual({
+            code: 2,
+            stdout: "",
+            stderr:
+                "ERROR: PLAN_SYNC_PROTOCOL_MISMATCH: plan=demo state=protocol-unsupported path=none effect=none: " +
+                "helper wire protocol is not supported by this generation\n",
+        });
+        expect(await exists(files.active)).toBe(false);
+    });
+
+    test("persists a mismatch when a loaded extension sees a replaced helper", async () => {
+        const files = await fixture();
+        const helperRoot = await temporaryDirectory("omp-plan-helper-generation-");
+        const helperFixture = join(helperRoot, "omp-copy-plan-artifact");
+        await writeFile(
+            helperFixture,
+            '#!/usr/bin/env bun\nconsole.log("plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md");\n'
+        );
+        await chmod(helperFixture, 0o755);
+
+        const pi = createFakePi(async (_command, args, options) => await runProcess(helperFixture, args, options));
+        planArtifactSync(pi);
+
+        await writeFile(
+            helperFixture,
+            `#!/usr/bin/env bun
+const protocolIndex = process.argv.indexOf("--protocol");
+if (protocolIndex === -1 || process.argv[protocolIndex + 1] !== "plan-artifact-copy/v2") {
+    console.error(
+        "ERROR: PLAN_SYNC_PROTOCOL_MISMATCH: plan=demo state=protocol-unsupported path=none effect=none: unsupported"
+    );
+    process.exit(2);
+}
+console.log("plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md");
+`
+        );
+        await chmod(helperFixture, 0o755);
+
+        const notifications = [];
+        const event = {
+            toolName: "write",
+            isError: false,
+            input: { path: files.localPath },
+            content: [{ type: "text", text: "write succeeded" }],
+            details: { path: files.localPath },
+        };
+        const result = await emit(pi, event, context(files.root, files.localRoot, notifications));
+        const message = 'plan-artifact-sync: demo: ERROR: PLAN_SYNC_PROTOCOL_MISMATCH scope="identity" effect=none';
+
+        expect(pi.calls[0].args).toEqual([
+            "copy",
+            "--protocol",
+            COPY_PROTOCOL,
+            "--slug",
+            "demo",
+            "--content-file",
+            await realpath(files.localPath),
+        ]);
+        expect(result).toEqual({
+            content: [
+                { type: "text", text: "write succeeded" },
+                { type: "text", text: message },
+            ],
+            details: {
+                path: files.localPath,
+                planArtifactSync: {
+                    schema: WARNING_RESULT_SCHEMA,
+                    status: "failed",
+                    warnings: [
+                        {
+                            kind: "sync",
+                            scope: "identity",
+                            code: "PLAN_SYNC_PROTOCOL_MISMATCH",
+                            identity: "demo",
+                            effect: "none",
+                        },
+                    ],
+                },
+            },
+        });
+        expect(notifications).toEqual([{ message, severity: "warning" }]);
+        expect(await exists(files.active)).toBe(false);
+    });
+
+    test("copies distinct slugs safely through concurrent current-protocol calls", async () => {
+        const root = await temporaryDirectory("omp-plan-concurrent-repo-");
+        const localRoot = await temporaryDirectory("omp-plan-concurrent-local-");
+        const alpha = join(localRoot, "alpha-plan.md");
+        const zeta = join(localRoot, "zeta-plan.md");
+        await Promise.all([
+            writeFile(alpha, planBytes({ marker: "alpha" })),
+            writeFile(zeta, planBytes({ marker: "zeta" })),
+        ]);
+
+        const results = await Promise.all(
+            [
+                ["alpha", alpha],
+                ["zeta", zeta],
+            ].map(([slug, contentFile]) =>
+                runHelper(root, ["copy", "--protocol", COPY_PROTOCOL, "--slug", slug, "--content-file", contentFile])
+            )
+        );
+
+        expect(results.map((result) => result.code)).toEqual([0, 0]);
+        expect(await readFile(planPaths(root, "alpha").active)).toEqual(planBytes({ marker: "alpha" }));
+        expect(await readFile(planPaths(root, "zeta").active)).toEqual(planBytes({ marker: "zeta" }));
     });
 });
 
@@ -600,13 +818,11 @@ describe("actual parser-backed copy and archive behavior", () => {
         const pi = createFakePi();
         planArtifactSync(pi);
         const notifications = [];
-        expect(
-            await emit(
-                pi,
-                { toolName: "write", isError: false, input: { path: files.localPath } },
-                context(files.root, files.localRoot, notifications)
-            )
-        ).toBeUndefined();
+        await emit(
+            pi,
+            { toolName: "write", isError: false, input: { path: files.localPath } },
+            context(files.root, files.localRoot, notifications)
+        );
         expect(await readFile(sentinel, "utf8")).toBe("outside");
         expect(notifications).toEqual([
             {
@@ -624,11 +840,14 @@ describe("actual parser-backed copy and archive behavior", () => {
         const sourceFiles = await fixture({ bytes: large });
         const sourceReplacement = `${sourceFiles.localPath}.replacement`;
         await writeFile(sourceReplacement, planBytes({ marker: "source replacement" }));
-        const sourceProcess = Bun.spawn([HELPER, "copy", "--slug", "demo", "--content-file", sourceFiles.localPath], {
-            cwd: sourceFiles.root,
-            stdout: "pipe",
-            stderr: "pipe",
-        });
+        const sourceProcess = Bun.spawn(
+            [HELPER, "copy", "--protocol", COPY_PROTOCOL, "--slug", "demo", "--content-file", sourceFiles.localPath],
+            {
+                cwd: sourceFiles.root,
+                stdout: "pipe",
+                stderr: "pipe",
+            }
+        );
         const sourceDeadline = Date.now() + 30_000;
         while (!(await exists(join(sourceFiles.root, ".agents", "plans"))) && Date.now() < sourceDeadline) {
             await Bun.sleep(1);
@@ -647,11 +866,14 @@ describe("actual parser-backed copy and archive behavior", () => {
         await writeFile(targetFiles.active, planBytes({ marker: "initial active" }));
         const targetReplacement = `${targetFiles.active}.replacement`;
         await writeFile(targetReplacement, "target-drift-sentinel");
-        const targetProcess = Bun.spawn([HELPER, "copy", "--slug", "demo", "--content-file", targetFiles.localPath], {
-            cwd: targetFiles.root,
-            stdout: "pipe",
-            stderr: "pipe",
-        });
+        const targetProcess = Bun.spawn(
+            [HELPER, "copy", "--protocol", COPY_PROTOCOL, "--slug", "demo", "--content-file", targetFiles.localPath],
+            {
+                cwd: targetFiles.root,
+                stdout: "pipe",
+                stderr: "pipe",
+            }
+        );
         const targetDeadline = Date.now() + 30_000;
         let staged = false;
         while (!staged && Date.now() < targetDeadline) {

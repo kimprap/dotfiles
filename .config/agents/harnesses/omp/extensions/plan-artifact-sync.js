@@ -17,6 +17,8 @@ const PLAN_ID_RE = new RegExp(`^\\d{4}-\\d{2}-\\d{2}-\\d{4}_(?<slug>${SLUG_SOURC
 const HASHLINE_PATH_RE = /^\[(?<path>[^\]\r\n]+)#[0-9A-F]{4}\]\r?$/gm;
 const MUTATION_TOOLS = new Set(["write", "edit"]);
 const WARNING_PREFIX = "plan-artifact-sync: ";
+const HELPER_PROTOCOL = "plan-artifact-copy/v1";
+const WARNING_RESULT_SCHEMA = "plan-artifact-sync-result/v1";
 
 const DISCOVERY_CODES = new Set([
     "PLAN_SYNC_DISCOVERY_MISSING",
@@ -33,6 +35,7 @@ const HELPER_CODES = new Set([
     "PLAN_SOURCE_STALE",
     "PLAN_TARGET_STALE",
     "PLAN_POSTCONDITION_FAILED",
+    "PLAN_SYNC_PROTOCOL_MISMATCH",
 ]);
 const EXTENSION_SYNC_CODES = new Set([
     "PLAN_SYNC_HELPER_UNAVAILABLE",
@@ -76,18 +79,46 @@ function serializeWarning(record) {
 }
 
 function emitWarnings(ctx, records) {
-    if (records.length === 0) return;
+    if (records.length === 0) return undefined;
     const message = `${WARNING_PREFIX}${records.map(serializeWarning).join("; ")}`;
     try {
         if (ctx?.ui?.notify) {
             ctx.ui.notify(message, "warning");
-            return;
+            return message;
         }
     } catch {
         // Sink failures carry no safe diagnostic data. Preserve the existing
         // console fallback with the already closed message.
     }
     console.error(message);
+    return message;
+}
+
+function warningResultPatch(event, records, message) {
+    if (!message) return undefined;
+    const currentDetails =
+        typeof event.details === "object" && event.details !== null && !Array.isArray(event.details)
+            ? event.details
+            : {};
+    return {
+        content: [
+            ...(Array.isArray(event.content) ? event.content : []),
+            {
+                type: "text",
+                text: message,
+            },
+        ],
+        details: {
+            ...currentDetails,
+            planArtifactSync: {
+                schema: WARNING_RESULT_SCHEMA,
+                status: "failed",
+                warnings: records.map((record) =>
+                    warningRecord(record.kind, record.scope, record.code, record.identity, record.effect)
+                ),
+            },
+        },
+    };
 }
 
 function expandHome(value) {
@@ -370,9 +401,11 @@ async function synchronize(pi, binding, ctx) {
 
     let result;
     try {
-        result = await invoke(executable, ["copy", "--slug", slug, "--content-file", binding.path], {
-            cwd,
-        });
+        result = await invoke(
+            executable,
+            ["copy", "--protocol", HELPER_PROTOCOL, "--slug", slug, "--content-file", binding.path],
+            { cwd }
+        );
     } catch {
         return warningRecord("sync", "identity", "PLAN_SYNC_HELPER_FAILED", slug, "possible-complete");
     }
@@ -407,7 +440,7 @@ export default function planArtifactSync(pi) {
         } catch {
             warnings.push(warningRecord("discovery", "identity", "PLAN_SYNC_UNAVAILABLE"));
         }
-        emitWarnings(ctx, warnings);
-        return undefined;
+        const message = emitWarnings(ctx, warnings);
+        return warningResultPatch(event, warnings, message);
     });
 }

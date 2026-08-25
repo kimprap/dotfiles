@@ -5,7 +5,7 @@
  * never changed.
  *
  * Usage:
- *   omp-copy-plan-artifact copy --slug <slug> --content-file <path>
+ *   omp-copy-plan-artifact copy --protocol plan-artifact-copy/v1 --slug <slug> --content-file <path>
  */
 
 import { createHash, randomUUID } from "node:crypto";
@@ -15,6 +15,7 @@ import { basename, dirname, isAbsolute, join, relative } from "node:path";
 import { tmpdir } from "node:os";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const COPY_PROTOCOL = "plan-artifact-copy/v1";
 const LIFECYCLE_STATUSES = new Set(["PENDING", "IN_PROGRESS", "DONE", "CLOSED"]);
 const TERMINAL_STATUSES = new Set(["DONE", "CLOSED"]);
 const HELPER_ROOT = dirname(dirname(import.meta.path));
@@ -49,7 +50,7 @@ function safeReason(error, fallback) {
 }
 
 function usage() {
-    return "Usage: omp-copy-plan-artifact copy --slug <slug> --content-file <path>";
+    return `Usage: omp-copy-plan-artifact copy --protocol ${COPY_PROTOCOL} --slug <slug> --content-file <path>`;
 }
 
 function parseArguments(argv) {
@@ -59,14 +60,15 @@ function parseArguments(argv) {
         process.exit(0);
     }
     if (operation !== "copy") {
-        throw new PlanArtifactError("expected operation 'copy'", 2);
+        throw new PlanArtifactError("unsupported operation", 2);
     }
 
     let slug;
     let contentFile;
+    let protocol;
     for (let index = 0; index < rest.length; index += 1) {
         const argument = rest[index];
-        if (argument !== "--slug" && argument !== "--content-file") {
+        if (argument !== "--protocol" && argument !== "--slug" && argument !== "--content-file") {
             throw new PlanArtifactError("unknown argument", 2);
         }
         const value = rest[index + 1];
@@ -74,7 +76,10 @@ function parseArguments(argv) {
             throw new PlanArtifactError(`${argument} requires a value`, 2);
         }
         index += 1;
-        if (argument === "--slug") {
+        if (argument === "--protocol") {
+            if (protocol !== undefined) throw new PlanArtifactError("--protocol may be provided only once", 2);
+            protocol = value;
+        } else if (argument === "--slug") {
             if (slug !== undefined) throw new PlanArtifactError("--slug may be provided only once", 2);
             slug = value;
         } else {
@@ -93,6 +98,18 @@ function parseArguments(argv) {
     }
     if (!isAbsolute(contentFile)) {
         throw new PlanArtifactError("--content-file must be an absolute path", 2);
+    }
+
+    if (protocol !== COPY_PROTOCOL) {
+        throw operationError(
+            "PLAN_SYNC_PROTOCOL_MISMATCH",
+            slug,
+            "protocol-unsupported",
+            "none",
+            "none",
+            "helper wire protocol is not supported by this generation",
+            2
+        );
     }
     return { slug, contentFile };
 }
@@ -200,7 +217,11 @@ async function ensureSafeDirectory(root, segments, plan) {
         try {
             currentStat = await lstatOrAbsent(current);
             if (!currentStat) {
-                await mkdir(current);
+                try {
+                    await mkdir(current);
+                } catch (error) {
+                    if (error?.code !== "EEXIST") throw error;
+                }
                 currentStat = await lstat(current);
             }
         } catch (error) {
