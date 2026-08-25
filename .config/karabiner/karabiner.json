@@ -1,5 +1,7 @@
 {
-    "global": { "show_in_menu_bar": false },
+    "global": {
+        "show_in_menu_bar": false
+    },
     "profiles": [
         {
             "complex_modifications": {
@@ -10,9 +12,18 @@
                             {
                                 "from": {
                                     "key_code": "escape",
-                                    "modifiers": { "mandatory": ["control", "shift"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "control",
+                                            "shift"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/System/Applications/Utilities/Activity Monitor.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/System/Applications/Utilities/Activity Monitor.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -23,7 +34,11 @@
                             {
                                 "from": {
                                     "key_code": "escape",
-                                    "modifiers": { "optional": ["any"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
@@ -41,7 +56,11 @@
                                         }
                                     }
                                 ],
-                                "to_if_alone": [{ "key_code": "escape" }],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -68,9 +87,17 @@
                                 ],
                                 "from": {
                                     "key_code": "1",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -92,9 +119,18 @@
                                 ],
                                 "from": {
                                     "key_code": "1",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Brave Browser.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -121,9 +157,17 @@
                                 ],
                                 "from": {
                                     "key_code": "2",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -145,9 +189,18 @@
                                 ],
                                 "from": {
                                     "key_code": "2",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Ghostty.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -174,9 +227,17 @@
                                 ],
                                 "from": {
                                     "key_code": "3",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -198,15 +259,24 @@
                                 ],
                                 "from": {
                                     "key_code": "3",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Grok.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
                     },
                     {
-                        "description": "Claude - built-in",
+                        "description": "ChatGPT - built-in",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -226,16 +296,24 @@
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "5",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "key_code": "4",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/ChatGPT.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
                     },
                     {
-                        "description": "Claude - bluetooth",
+                        "description": "ChatGPT - bluetooth",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -250,10 +328,19 @@
                                     }
                                 ],
                                 "from": {
-                                    "key_code": "5",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "key_code": "4",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/ChatGPT.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -280,9 +367,17 @@
                                 ],
                                 "from": {
                                     "key_code": "d",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -304,9 +399,18 @@
                                 ],
                                 "from": {
                                     "key_code": "d",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Users/kim/Downloads"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -333,9 +437,17 @@
                                 ],
                                 "from": {
                                     "key_code": "f",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -357,9 +469,18 @@
                                 ],
                                 "from": {
                                     "key_code": "f",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Library/CoreServices/Finder.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -386,9 +507,17 @@
                                 ],
                                 "from": {
                                     "key_code": "v",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -410,9 +539,18 @@
                                 ],
                                 "from": {
                                     "key_code": "v",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Cursor.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -439,9 +577,17 @@
                                 ],
                                 "from": {
                                     "key_code": "l",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -463,9 +609,18 @@
                                 ],
                                 "from": {
                                     "key_code": "l",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Line.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -492,9 +647,17 @@
                                 ],
                                 "from": {
                                     "key_code": "y",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -516,9 +679,18 @@
                                 ],
                                 "from": {
                                     "key_code": "y",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Spotify.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -545,9 +717,17 @@
                                 ],
                                 "from": {
                                     "key_code": "u",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -569,9 +749,18 @@
                                 ],
                                 "from": {
                                     "key_code": "u",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/YouTube Music.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -597,10 +786,22 @@
                                     }
                                 ],
                                 "from": {
-                                    "modifiers": { "mandatory": ["option"] },
-                                    "simultaneous": [{ "key_code": "n" }]
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "n"
+                                        }
+                                    ]
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -621,10 +822,23 @@
                                     }
                                 ],
                                 "from": {
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] },
-                                    "simultaneous": [{ "key_code": "n" }]
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    },
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "n"
+                                        }
+                                    ]
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Notion.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -651,9 +865,17 @@
                                 ],
                                 "from": {
                                     "key_code": "k",
-                                    "modifiers": { "mandatory": ["left_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -675,9 +897,18 @@
                                 ],
                                 "from": {
                                     "key_code": "k",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Stickies.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -704,9 +935,17 @@
                                 ],
                                 "from": {
                                     "key_code": "i",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -728,9 +967,18 @@
                                 ],
                                 "from": {
                                     "key_code": "i",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Instagram.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -757,9 +1005,17 @@
                                 ],
                                 "from": {
                                     "key_code": "t",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -781,9 +1037,18 @@
                                 ],
                                 "from": {
                                     "key_code": "t",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/X.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -810,9 +1075,17 @@
                                 ],
                                 "from": {
                                     "key_code": "g",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -834,9 +1107,18 @@
                                 ],
                                 "from": {
                                     "key_code": "g",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Gmail.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -863,9 +1145,17 @@
                                 ],
                                 "from": {
                                     "key_code": "c",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -887,9 +1177,18 @@
                                 ],
                                 "from": {
                                     "key_code": "c",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Calendar.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -916,9 +1215,17 @@
                                 ],
                                 "from": {
                                     "key_code": "p",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -940,9 +1247,18 @@
                                 ],
                                 "from": {
                                     "key_code": "p",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Google Photos.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -969,9 +1285,17 @@
                                 ],
                                 "from": {
                                     "key_code": "0",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -993,9 +1317,18 @@
                                 ],
                                 "from": {
                                     "key_code": "0",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/Parallels Desktop.app'"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1022,9 +1355,17 @@
                                 ],
                                 "from": {
                                     "key_code": "q",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1046,9 +1387,18 @@
                                 ],
                                 "from": {
                                     "key_code": "q",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/1Password.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1075,9 +1425,17 @@
                                 ],
                                 "from": {
                                     "key_code": "w",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1099,9 +1457,18 @@
                                 ],
                                 "from": {
                                     "key_code": "w",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /Applications/Bitwarden.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1128,9 +1495,17 @@
                                 ],
                                 "from": {
                                     "key_code": "e",
-                                    "modifiers": { "mandatory": ["option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1152,9 +1527,18 @@
                                 ],
                                 "from": {
                                     "key_code": "e",
-                                    "modifiers": { "mandatory": ["right_shift", "right_option"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "right_shift",
+                                            "right_option"
+                                        ]
+                                    }
                                 },
-                                "to": [{ "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app" }],
+                                "to": [
+                                    {
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app /System/Applications/Passwords.app"
+                                    }
+                                ],
                                 "type": "basic"
                             }
                         ]
@@ -1165,7 +1549,11 @@
                             {
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": { "optional": ["any"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
@@ -1195,7 +1583,11 @@
                                         }
                                     }
                                 ],
-                                "to_if_alone": [{ "key_code": "escape" }],
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ],
                                 "type": "basic"
                             },
                             {
@@ -1208,12 +1600,18 @@
                                 ],
                                 "from": {
                                     "key_code": "semicolon",
-                                    "modifiers": { "optional": ["any"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "any"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1228,14 +1626,22 @@
                                 ],
                                 "from": {
                                     "key_code": "1",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "1" }
+                                    {
+                                        "key_code": "1"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1249,14 +1655,22 @@
                                 ],
                                 "from": {
                                     "key_code": "2",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "2" }
+                                    {
+                                        "key_code": "2"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1270,14 +1684,22 @@
                                 ],
                                 "from": {
                                     "key_code": "3",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "3" }
+                                    {
+                                        "key_code": "3"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1291,14 +1713,22 @@
                                 ],
                                 "from": {
                                     "key_code": "4",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "4" }
+                                    {
+                                        "key_code": "4"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1312,14 +1742,22 @@
                                 ],
                                 "from": {
                                     "key_code": "5",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "5" }
+                                    {
+                                        "key_code": "5"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1333,14 +1771,22 @@
                                 ],
                                 "from": {
                                     "key_code": "6",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "6" }
+                                    {
+                                        "key_code": "6"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1354,14 +1800,22 @@
                                 ],
                                 "from": {
                                     "key_code": "7",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "7" }
+                                    {
+                                        "key_code": "7"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1375,14 +1829,22 @@
                                 ],
                                 "from": {
                                     "key_code": "8",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "8" }
+                                    {
+                                        "key_code": "8"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1396,14 +1858,22 @@
                                 ],
                                 "from": {
                                     "key_code": "9",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "9" }
+                                    {
+                                        "key_code": "9"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1415,13 +1885,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "h" },
+                                "from": {
+                                    "key_code": "h"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "h" }
+                                    {
+                                        "key_code": "h"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1433,13 +1909,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "j" },
+                                "from": {
+                                    "key_code": "j"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "j" }
+                                    {
+                                        "key_code": "j"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1451,13 +1933,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "k" },
+                                "from": {
+                                    "key_code": "k"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "k" }
+                                    {
+                                        "key_code": "k"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1469,13 +1957,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "l" },
+                                "from": {
+                                    "key_code": "l"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "l" }
+                                    {
+                                        "key_code": "l"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1487,13 +1981,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "c" },
+                                "from": {
+                                    "key_code": "c"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "c" }
+                                    {
+                                        "key_code": "c"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1505,13 +2005,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "v" },
+                                "from": {
+                                    "key_code": "v"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "v" }
+                                    {
+                                        "key_code": "v"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1523,13 +2029,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "r" },
+                                "from": {
+                                    "key_code": "r"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "r" }
+                                    {
+                                        "key_code": "r"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1541,15 +2053,21 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "t" },
+                                "from": {
+                                    "key_code": "t"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
                                     {
                                         "key_code": "t",
-                                        "modifiers": ["shift"]
+                                        "modifiers": [
+                                            "shift"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1562,15 +2080,21 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "p" },
+                                "from": {
+                                    "key_code": "p"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
                                     {
                                         "key_code": "p",
-                                        "modifiers": ["shift"]
+                                        "modifiers": [
+                                            "shift"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1583,13 +2107,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "g" },
+                                "from": {
+                                    "key_code": "g"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "g" }
+                                    {
+                                        "key_code": "g"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1601,13 +2131,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "w" },
+                                "from": {
+                                    "key_code": "w"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "w" }
+                                    {
+                                        "key_code": "w"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1619,13 +2155,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "s" },
+                                "from": {
+                                    "key_code": "s"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "s" }
+                                    {
+                                        "key_code": "s"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1637,13 +2179,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "e" },
+                                "from": {
+                                    "key_code": "e"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "e" }
+                                    {
+                                        "key_code": "e"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1655,13 +2203,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "b" },
+                                "from": {
+                                    "key_code": "b"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "b" }
+                                    {
+                                        "key_code": "b"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1673,13 +2227,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "o" },
+                                "from": {
+                                    "key_code": "o"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "o" }
+                                    {
+                                        "key_code": "o"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1693,16 +2253,24 @@
                                 ],
                                 "from": {
                                     "key_code": "slash",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
                                     {
                                         "key_code": "slash",
-                                        "modifiers": ["shift"]
+                                        "modifiers": [
+                                            "shift"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1717,14 +2285,22 @@
                                 ],
                                 "from": {
                                     "key_code": "hyphen",
-                                    "modifiers": { "optional": ["shift"] }
+                                    "modifiers": {
+                                        "optional": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "hyphen" }
+                                    {
+                                        "key_code": "hyphen"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1736,13 +2312,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "return_or_enter" },
+                                "from": {
+                                    "key_code": "return_or_enter"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "z" }
+                                    {
+                                        "key_code": "z"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1756,14 +2338,22 @@
                                 ],
                                 "from": {
                                     "key_code": "open_bracket",
-                                    "modifiers": { "mandatory": ["control"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "control"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "u" }
+                                    {
+                                        "key_code": "u"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1777,14 +2367,22 @@
                                 ],
                                 "from": {
                                     "key_code": "close_bracket",
-                                    "modifiers": { "mandatory": ["control"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "control"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "i" }
+                                    {
+                                        "key_code": "i"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1798,14 +2396,22 @@
                                 ],
                                 "from": {
                                     "key_code": "open_bracket",
-                                    "modifiers": { "mandatory": ["shift"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "open_bracket" }
+                                    {
+                                        "key_code": "open_bracket"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1819,14 +2425,22 @@
                                 ],
                                 "from": {
                                     "key_code": "close_bracket",
-                                    "modifiers": { "mandatory": ["shift"] }
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "shift"
+                                        ]
+                                    }
                                 },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "close_bracket" }
+                                    {
+                                        "key_code": "close_bracket"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1844,9 +2458,13 @@
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "p" }
+                                    {
+                                        "key_code": "p"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1864,9 +2482,13 @@
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "n" }
+                                    {
+                                        "key_code": "n"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1878,11 +2500,16 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "left_arrow" },
+                                "from": {
+                                    "key_code": "left_arrow"
+                                },
                                 "to": [
                                     {
                                         "key_code": "left_arrow",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": [
+                                            "control",
+                                            "command"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1895,11 +2522,16 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "right_arrow" },
+                                "from": {
+                                    "key_code": "right_arrow"
+                                },
                                 "to": [
                                     {
                                         "key_code": "right_arrow",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": [
+                                            "control",
+                                            "command"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1912,11 +2544,16 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "up_arrow" },
+                                "from": {
+                                    "key_code": "up_arrow"
+                                },
                                 "to": [
                                     {
                                         "key_code": "up_arrow",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": [
+                                            "control",
+                                            "command"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1929,11 +2566,16 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "down_arrow" },
+                                "from": {
+                                    "key_code": "down_arrow"
+                                },
                                 "to": [
                                     {
                                         "key_code": "down_arrow",
-                                        "modifiers": ["control", "command"]
+                                        "modifiers": [
+                                            "control",
+                                            "command"
+                                        ]
                                     }
                                 ],
                                 "type": "basic"
@@ -1946,13 +2588,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "x" },
+                                "from": {
+                                    "key_code": "x"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "x" }
+                                    {
+                                        "key_code": "x"
+                                    }
                                 ],
                                 "type": "basic"
                             },
@@ -1964,13 +2612,19 @@
                                         "value": 1
                                     }
                                 ],
-                                "from": { "key_code": "tab" },
+                                "from": {
+                                    "key_code": "tab"
+                                },
                                 "to": [
                                     {
                                         "key_code": "b",
-                                        "modifiers": ["control"]
+                                        "modifiers": [
+                                            "control"
+                                        ]
                                     },
-                                    { "key_code": "tab" }
+                                    {
+                                        "key_code": "tab"
+                                    }
                                 ],
                                 "type": "basic"
                             }
@@ -1980,15 +2634,29 @@
             },
             "devices": [
                 {
-                    "identifiers": { "is_keyboard": true },
+                    "identifiers": {
+                        "is_keyboard": true
+                    },
                     "simple_modifications": [
                         {
-                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
-                            "to": [{ "key_code": "left_control" }]
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "left_control" },
-                            "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
+                            "from": {
+                                "key_code": "left_control"
+                            },
+                            "to": [
+                                {
+                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -2000,20 +2668,44 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
-                            "to": [{ "key_code": "left_control" }]
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "fn" },
-                            "to": [{ "key_code": "left_control" }]
+                            "from": {
+                                "key_code": "fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "left_command" },
-                            "to": [{ "key_code": "left_option" }]
+                            "from": {
+                                "key_code": "left_command"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_option"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "left_option" },
-                            "to": [{ "key_code": "left_command" }]
+                            "from": {
+                                "key_code": "left_option"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_command"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -2025,41 +2717,85 @@
                     },
                     "simple_modifications": [
                         {
-                            "from": { "consumer_key_code": "dictation" },
-                            "to": [{ "key_code": "f5" }]
+                            "from": {
+                                "consumer_key_code": "dictation"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "f5"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "right_command" },
-                            "to": [{ "key_code": "right_option" }]
+                            "from": {
+                                "key_code": "right_command"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "right_option"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "right_control" },
-                            "to": [{ "key_code": "right_command" }]
+                            "from": {
+                                "key_code": "right_control"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "right_command"
+                                }
+                            ]
                         }
                     ]
                 },
                 {
-                    "identifiers": { "is_keyboard": true },
+                    "identifiers": {
+                        "is_keyboard": true
+                    },
                     "simple_modifications": [
                         {
-                            "from": { "apple_vendor_top_case_key_code": "keyboard_fn" },
-                            "to": [{ "key_code": "left_control" }]
+                            "from": {
+                                "apple_vendor_top_case_key_code": "keyboard_fn"
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_control"
+                                }
+                            ]
                         },
                         {
-                            "from": { "key_code": "left_control" },
-                            "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
+                            "from": {
+                                "key_code": "left_control"
+                            },
+                            "to": [
+                                {
+                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                }
+                            ]
                         }
                     ]
                 }
             ],
             "fn_function_keys": [
                 {
-                    "from": { "key_code": "f4" },
-                    "to": [{ "key_code": "f4" }]
+                    "from": {
+                        "key_code": "f4"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f4"
+                        }
+                    ]
                 },
                 {
-                    "from": { "key_code": "f5" },
-                    "to": [{ "key_code": "f5" }]
+                    "from": {
+                        "key_code": "f5"
+                    },
+                    "to": [
+                        {
+                            "key_code": "f5"
+                        }
+                    ]
                 }
             ],
             "name": "Default profile",
