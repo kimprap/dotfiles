@@ -117,3 +117,5 @@ delivery = "system"
 [ui.sound]
 enabled = true
 
+[experimental]
+kitty_graphics = true
