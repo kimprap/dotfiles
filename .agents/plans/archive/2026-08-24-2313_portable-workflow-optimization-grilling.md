@@ -1,10 +1,9 @@
 # Portable Workflow Optimization Grilling
 
 **Datetime**: 2026-08-24-2313
-**Authority kind**: local-authority
 **Scope**: Read-only documented decision interview for `OUT-WF-PORTABLE-SEAM-1`
 **Summary**: Validate the revised intake as an unsettled repository-bearing architecture candidate, resolve its four human-owned choices, and return immutable decision evidence to `dev-ask`. This plan authorizes no workflow mutation, Executor Plan publication, implementation stage, or external effect.
-**Status**: PENDING
+**Status**: CLOSED
 
 ## Context
 

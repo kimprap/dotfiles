@@ -70,6 +70,30 @@
         "The response prefers each host's native skill invocation before creating a wrapper",
         "The response verifies discovery, invocation timing, and post-load behavior per transport"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "/skill:create-surface-verification-adapter has already established eligibility and received exact approve for an unchanged proposal. Author only the supplied adapter root and file manifest from its caller-owned tuple, then return the changed manifest.",
+      "expected_output": "Craft-skill acts as a thin authoring owner: it rechecks supplied baselines, writes only approved adapter files, validates manual frontmatter and required sections, and returns the exact changed manifest without taking adapter semantics or approval authority.",
+      "files": [],
+      "assertions": [
+        "The response accepts the complete caller-owned adapter tuple without broadening it",
+        "Only the approved root and manifest are writable",
+        "Eligibility, naming, approval, proof semantics, product repair, and shipping stay with the wrapper",
+        "The result contains the exact changed manifest and validation result"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/skill:maintain-surface-verification-adapter passes one exact existing adapter URI/digest, owned file manifest, current baselines, preservation boundary, and re-drive recipe. One product file and one neighboring skill are outside the tuple.",
+      "expected_output": "Craft-skill preserves ownership: it may update only the existing adapter-owned files named in the tuple, leaves the product and neighboring skill unchanged, and cannot create a missing destination or reinterpret a product regression.",
+      "files": [],
+      "assertions": [
+        "The existing adapter root and supplied baselines are rechecked before mutation",
+        "The product file, neighboring skill, and every unlisted path remain unchanged",
+        "A missing adapter destination is blocked rather than created",
+        "The wrapper retains maintenance classification and recipe-rebind authority"
+      ]
     }
   ]
 }

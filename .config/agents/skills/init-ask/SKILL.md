@@ -42,11 +42,13 @@ Report all nine rows in this order. Use only `integrated | proposed | on-demand 
 | Papercuts | `.agents/papercuts.json` plus installed `papercut` skill | `papercut` | `integrated` when current validation succeeds; `proposed` when absent and exact repository opt-in can call `papercut init`; invalid or unsafe storage is `blocked` |
 | Domain context and ADRs | repository-declared context, otherwise `CONTEXT.md`, `CONTEXT-MAP.md`, and `docs/adr/` | `dev-domain-modeling` | `integrated` when current semantic artifacts exist; otherwise `on-demand`; never invent domain content |
 | Product artifacts | repository-declared product path, otherwise `docs/product/` | `product-ask` and `product-prd` | `integrated` when current product authority exists; otherwise `on-demand`; setup grants no product authority |
-| Repository rules and skills | repository-declared rule/skill paths | `craft-rule` and `craft-skill` | `integrated` when current repository-owned modules exist; otherwise `on-demand`; never create empty modules |
+| Repository rules and skills | repository-declared rule/skill paths | `craft-rule` and `craft-skill` | `integrated` when current repository-owned modules exist, including any already-present surface verification adapter; otherwise `on-demand`; may report the manual `create-surface-verification-adapter` and `maintain-surface-verification-adapter` options but never invoke them or create empty modules |
 | Tracker mapping | repository-declared tracker integration | declared tracker owner, such as `dev-triage` | `integrated` when a current repository mapping exists; otherwise `on-demand`; missing/conflicting ownership is `blocked` only when setup is presently required |
 | Agent memory | repository-declared generic agent-memory seam | separately approved future owner | always `planned` until an approved generic implementation exists; existing Mnemopi or user memory is not this integration |
 
 `integrated` means the current repository already has a usable exact seam. `proposed` means one concrete, safe repository-local setup effect is missing and ready for this approval. `on-demand` means its owner exists but no real content currently justifies materialization. `blocked` names the exact conflict, owner, and resume condition. `planned` is reserved for agent memory under the current contract.
+
+The Repository rules and skills row remains one catalog row. It may identify an already-present project adapter by exact path or list the two explicit manual wrapper names as repository-owned on-demand options. Setup never invokes either wrapper, proposes an adapter effect, or gains adapter creation or maintenance ownership.
 
 ## Phase 1 output
 

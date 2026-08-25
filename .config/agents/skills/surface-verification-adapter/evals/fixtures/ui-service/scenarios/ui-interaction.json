@@ -1,0 +1,11 @@
+{
+  "id": "ui-interaction",
+  "action": "submit alpha through the browser form",
+  "expected": {
+    "acknowledgement": "Saved alpha",
+    "state": {
+      "value": "alpha"
+    }
+  },
+  "stable_paths": ["/", "/submit", "/state"]
+}

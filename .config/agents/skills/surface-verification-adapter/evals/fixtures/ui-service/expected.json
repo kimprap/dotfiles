@@ -1,0 +1,11 @@
+{
+  "adapter_name": "surface-verification-ui-service",
+  "creation": "eligible-after-exact-approval",
+  "evidence_survives_cleanup": true,
+  "skill_seam": ".agents/skills",
+  "stable_paths": [
+    "/",
+    "/submit",
+    "/state"
+  ]
+}

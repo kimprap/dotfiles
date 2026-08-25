@@ -1,0 +1,12 @@
+{
+  "additional_files": [
+    "consumer-direct.py",
+    "consumer-effect.py",
+    "consumer-successor.py"
+  ],
+  "inputs": {
+    "request": "Read-only backend readiness observation for a compact direct projection. The caller supplies complete recipe VR-SVA-FINITE-CONSUMER-OMITTED@sha256:1893b41cff996f60e30f1452dda9e15dbab8b7d1162f21755a5bd6cd44443e59 with adapter none and finite current consumer map consumer-direct.py, consumer-effect.py, consumer-successor.py, but its proposed execution coverage names only consumer-direct.py and consumer-effect.py and omits consumer-successor.py. Block before ready and before any worker, verifier, or collector context enters. Return the omitted successor entry and zero entered contexts. Source text, two planned passing consumers, or a generic suite cannot close the universal claim."
+  },
+  "preflight_commands": [],
+  "scripted_replies": []
+}

@@ -9746,6 +9746,253 @@
       ],
       "scripted_replies": [],
       "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A complete direct-projection surface-proof-recipe binds before ready and compact completes only after the documented example, boundary case, and expected failure are actually executed with exact receipts.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "canonical proof recipe",
+          "documented example execution receipt",
+          "boundary execution receipt",
+          "failure execution receipt",
+          "one Common Handoff"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "complete surface-proof-recipe/v1 binding",
+          "adapter none direct projection",
+          "documented example exit 0",
+          "boundary case exit 0",
+          "expected failure exit 2",
+          "criterion-complete compact smoke"
+        ],
+        "mode": "one owner",
+        "outcome": "compact completion after executable recipe proof",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-sva-executable-proof",
+      "forbidden_events": [
+        "state:verifying",
+        "state:verified",
+        "state:reviewing",
+        "state:reviewed",
+        "doctor receipt accepted as proof",
+        "adapter creation",
+        "source inspection accepted",
+        "implicit shipping"
+      ],
+      "id": "B-SVA-EXECUTABLE-PROOF",
+      "inputs": {
+        "request": "Read-only compact lifecycle observation using the copied executable fixture. The caller already bound the complete canonical recipe VR-SVA-EXECUTABLE-PROOF@sha256:887cc7df667de85e165cd52e5db48037562dde45f0aec5204295f516b6ab5ab9 with adapter none. In the disposable runtime, actually execute `python3 documented-example.py 2`, `python3 boundary-case.py 0`, and `python3 failure-case.py -1`; the last command must exit 2. Observe exact stdout and exit status. Only after all three receipts exist may criterion-complete worker smoke, one Common Handoff, and compact completion occur. Do not use source inspection as execution evidence and do not add doctor, an adapter, independent assurance, review, learning, or shipping."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok interaction plus external subprocess and disposable-runtime receipts; source strings alone are not proof.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:compact Task Contract accepted with complete recipe VR-SVA-EXECUTABLE-PROOF@sha256:887cc7df667de85e165cd52e5db48037562dde45f0aec5204295f516b6ab5ab9; adapter none; assurance profile compact unchanged",
+        "state:ready|owner:backend|output:recipe VR-SVA-EXECUTABLE-PROOF@sha256:887cc7df667de85e165cd52e5db48037562dde45f0aec5204295f516b6ab5ab9 recanonicalized; target and fixture identities current; adapter none requires no doctor; executable proof ready",
+        "state:running|owner:worker|output:executed documented-example.py 2 exit 0 stdout {\"case\":\"example\",\"input\":2,\"result\":4,\"status\":\"pass\"}; executed boundary-case.py 0 exit 0 stdout {\"case\":\"boundary\",\"input\":0,\"result\":0,\"status\":\"pass\"}; executed failure-case.py -1 exit 2 stdout {\"case\":\"failure\",\"error\":\"negative-input\",\"input\":-1}",
+        "state:handed-off|owner:worker|output:one complete Common Handoff carries recipe VR-SVA-EXECUTABLE-PROOF@sha256:887cc7df667de85e165cd52e5db48037562dde45f0aec5204295f516b6ab5ab9, all three executable receipts, exact-target criterion-complete smoke, and no doctor evidence substitution; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
+        "state:complete|owner:backend|output:exact compact target complete after documented example, boundary, and expected failure executable proof; adapter none; no profile tail"
+      ],
+      "rubric": [
+        "Require the exact complete recipe identity before ready.",
+        "Require actual exit-status and stdout observations for all three declared scripts.",
+        "Require one Common Handoff and compact completion only after every executable receipt.",
+        "Reject doctor, source inspection, independent assurance, review, learning, or shipping as proof substitutes."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A complete recipe cannot complete when the documented normal example is named but not executed, even if boundary and expected-failure receipts pass.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "canonical proof recipe",
+          "boundary execution receipt",
+          "failure execution receipt",
+          "missing-example blocker"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "complete surface-proof-recipe/v1 binding",
+          "adapter none direct projection",
+          "boundary case exit 0",
+          "expected failure exit 2",
+          "documented example execution required"
+        ],
+        "mode": "one owner",
+        "outcome": "blocked because documented example was not executed",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-sva-example-not-executed",
+      "forbidden_events": [
+        "state:complete",
+        "documented-example.py 2 exit 0",
+        "source inspection accepted",
+        "state:verifying",
+        "state:reviewing",
+        "implicit shipping"
+      ],
+      "id": "B-SVA-EXAMPLE-NOT-EXECUTED",
+      "inputs": {
+        "request": "Read-only compact lifecycle observation using the copied executable fixture. The caller already bound the complete canonical recipe VR-SVA-EXAMPLE-NOT-EXECUTED@sha256:d4245113f472a5b1424dde7650028490413692c844354dbbf6099bb18fbb77ad with adapter none. Actually execute only `python3 boundary-case.py 0` and `python3 failure-case.py -1`; deliberately do not execute `python3 documented-example.py 2`. Decide whether the criterion may complete. Missing documented-example execution must remain INCONCLUSIVE or blocked; source text is not execution evidence. Do not add another proof owner."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok interaction plus external subprocess and disposable-runtime receipts; source strings alone are not proof.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:compact Task Contract accepted with complete recipe VR-SVA-EXAMPLE-NOT-EXECUTED@sha256:d4245113f472a5b1424dde7650028490413692c844354dbbf6099bb18fbb77ad; adapter none; assurance profile compact unchanged",
+        "state:ready|owner:backend|output:recipe VR-SVA-EXAMPLE-NOT-EXECUTED@sha256:d4245113f472a5b1424dde7650028490413692c844354dbbf6099bb18fbb77ad recanonicalized; adapter none requires no doctor; documented example, boundary, and expected failure are all required",
+        "state:running|owner:worker|output:executed boundary-case.py 0 exit 0 and failure-case.py -1 exit 2; documented-example.py 2 deliberately not executed",
+        "state:blocked|owner:backend|output:AC-SVA-EXAMPLE-NOT-EXECUTED INCONCLUSIVE because recipe VR-SVA-EXAMPLE-NOT-EXECUTED@sha256:d4245113f472a5b1424dde7650028490413692c844354dbbf6099bb18fbb77ad lacks a documented-example execution receipt; source text and adjacent receipts cannot satisfy it; no completion"
+      ],
+      "rubric": [
+        "Require the complete recipe and exact missing example obligation.",
+        "Accept boundary and failure receipts only for their own declared actions.",
+        "Require INCONCLUSIVE or blocked and forbid compact completion.",
+        "Reject source text as execution evidence and do not add another proof owner."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A complete recipe cannot complete when its boundary case is named but not executed, even if documented-example and expected-failure receipts pass.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "canonical proof recipe",
+          "documented example execution receipt",
+          "failure execution receipt",
+          "missing-boundary blocker"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "complete surface-proof-recipe/v1 binding",
+          "adapter none direct projection",
+          "documented example exit 0",
+          "expected failure exit 2",
+          "boundary execution required"
+        ],
+        "mode": "one owner",
+        "outcome": "blocked because boundary case was not executed",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-sva-boundary-not-executed",
+      "forbidden_events": [
+        "state:complete",
+        "boundary-case.py 0 exit 0",
+        "source inspection accepted",
+        "state:verifying",
+        "state:reviewing",
+        "implicit shipping"
+      ],
+      "id": "B-SVA-BOUNDARY-NOT-EXECUTED",
+      "inputs": {
+        "request": "Read-only compact lifecycle observation using the copied executable fixture. The caller already bound the complete canonical recipe VR-SVA-BOUNDARY-NOT-EXECUTED@sha256:5f494571562e577a1ca2a3f8d2d9e3aab01787eeab4fa78eaaf473384cf909e0 with adapter none. Actually execute only `python3 documented-example.py 2` and `python3 failure-case.py -1`; deliberately do not execute `python3 boundary-case.py 0`. Decide whether the criterion may complete. Missing boundary execution must remain INCONCLUSIVE or blocked; source text is not execution evidence. Do not add another proof owner."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok interaction plus external subprocess and disposable-runtime receipts; source strings alone are not proof.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:compact Task Contract accepted with complete recipe VR-SVA-BOUNDARY-NOT-EXECUTED@sha256:5f494571562e577a1ca2a3f8d2d9e3aab01787eeab4fa78eaaf473384cf909e0; adapter none; assurance profile compact unchanged",
+        "state:ready|owner:backend|output:recipe VR-SVA-BOUNDARY-NOT-EXECUTED@sha256:5f494571562e577a1ca2a3f8d2d9e3aab01787eeab4fa78eaaf473384cf909e0 recanonicalized; adapter none requires no doctor; documented example, boundary, and expected failure are all required",
+        "state:running|owner:worker|output:executed documented-example.py 2 exit 0 and failure-case.py -1 exit 2; boundary-case.py 0 deliberately not executed",
+        "state:blocked|owner:backend|output:AC-SVA-BOUNDARY-NOT-EXECUTED INCONCLUSIVE because recipe VR-SVA-BOUNDARY-NOT-EXECUTED@sha256:5f494571562e577a1ca2a3f8d2d9e3aab01787eeab4fa78eaaf473384cf909e0 lacks a boundary execution receipt; source text and adjacent receipts cannot satisfy it; no completion"
+      ],
+      "rubric": [
+        "Require the complete recipe and exact missing boundary obligation.",
+        "Accept example and failure receipts only for their own declared actions.",
+        "Require INCONCLUSIVE or blocked and forbid compact completion.",
+        "Reject source text as execution evidence and do not add another proof owner."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A universal changed-invariant recipe remains incomplete when one entry in its finite current consumer map has no executable receipt.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "canonical proof recipe",
+          "finite-consumer coverage check",
+          "omitted-successor blocker",
+          "zero-context accounting"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "backend",
+        "gates": [
+          "complete surface-proof-recipe/v1 binding",
+          "adapter none direct projection",
+          "finite current consumer map bound",
+          "complete proposed execution coverage",
+          "zero contexts on pre-ready failure"
+        ],
+        "mode": "one owner",
+        "outcome": "blocked before ready because one finite consumer was omitted",
+        "owners": [
+          "backend"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-sva-finite-consumer-omitted",
+      "forbidden_events": [
+        "state:ready",
+        "state:running",
+        "state:handed-off",
+        "state:complete",
+        "owner:worker",
+        "owner:dev-verification",
+        "owner:collector",
+        "consumer-successor.py 3 exit 0",
+        "source inspection accepted",
+        "generic passing suite",
+        "implicit shipping"
+      ],
+      "id": "B-SVA-FINITE-CONSUMER-OMITTED",
+      "inputs": {
+        "request": "Read-only backend readiness observation for a compact direct projection. The caller supplies complete recipe VR-SVA-FINITE-CONSUMER-OMITTED@sha256:1893b41cff996f60e30f1452dda9e15dbab8b7d1162f21755a5bd6cd44443e59 with adapter none and finite current consumer map consumer-direct.py, consumer-effect.py, consumer-successor.py, but its proposed execution coverage names only consumer-direct.py and consumer-effect.py and omits consumer-successor.py. Block before ready and before any worker, verifier, or collector context enters. Return the omitted successor entry and zero entered contexts. Source text, two planned passing consumers, or a generic suite cannot close the universal claim."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound OMP and Grok interaction plus external subprocess and disposable-runtime receipts; source strings alone are not proof.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:compact Task Contract accepted with complete recipe VR-SVA-FINITE-CONSUMER-OMITTED@sha256:1893b41cff996f60e30f1452dda9e15dbab8b7d1162f21755a5bd6cd44443e59; adapter none; finite current consumer map has direct, effect, and successor",
+        "state:blocked|owner:backend|output:readiness coverage for recipe VR-SVA-FINITE-CONSUMER-OMITTED@sha256:1893b41cff996f60e30f1452dda9e15dbab8b7d1162f21755a5bd6cd44443e59 omits consumer-successor.py; zero worker, verifier, or collector contexts entered; universal claim INCONCLUSIVE; no ready transition or completion"
+      ],
+      "rubric": [
+        "Require the exact three-entry finite current consumer map.",
+        "Detect the missing successor in proposed execution coverage before ready.",
+        "Require zero worker, verifier, and collector contexts and no semantic attempt consumption.",
+        "Reject source text, a generic suite, or two planned passing consumers as universal proof."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
     }
   ],
   "schema_version": 2,

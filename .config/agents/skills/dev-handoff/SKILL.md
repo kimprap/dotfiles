@@ -59,6 +59,9 @@ Also require the Task Contract's human `Intent`, selected `Methods`, and method-
 - Role-local delta identity: <emitting role, exact target, and SHA-256>
 - Unchanged authority/state/manifest/evidence: <semantic role → exact URI → SHA-256 → expected immutable revision>
 - Reference validation: current | missing | stale | mismatched | contradictory; a non-current result blocks cold-start consumption
+- Proof recipes: <for every owned AC, exact complete `surface-proof-recipe/v1` object identity `VR-...@sha256:...`, target/environment, proof class, adapter `none` or exact URI/digest, fixtures/dependencies, comparison, and finite-consumer coverage>
+- Surface readiness: <for each bound adapter, exact `surface-verification-doctor/v1` receipt identity and status; readiness only, never criterion/smoke/verifier/review evidence | no adapter>
+- Surface evidence: <normal example, boundary, failure, and finite-consumer observed evidence identities; final recipe/adapter rebind after any authorized self-modification | not reached>
 ## Progress
 - Criteria advanced
 - Criteria unchanged

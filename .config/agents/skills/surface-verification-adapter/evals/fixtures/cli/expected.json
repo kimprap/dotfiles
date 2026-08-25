@@ -1,0 +1,13 @@
+{
+  "adapter_name": "surface-verification-cli-state",
+  "creation": "eligible-after-exact-approval",
+  "drive": [
+    "tool.py --state STATE set alpha",
+    "tool.py --state STATE show"
+  ],
+  "expected_output": [
+    "stored:alpha",
+    "alpha"
+  ],
+  "skill_seam": ".agents/skills"
+}

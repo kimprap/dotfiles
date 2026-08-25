@@ -7,6 +7,12 @@ Read and apply every gate in order when the bound assurance profile is `compact`
    Before `ready`, bind `tdd` to the current `dev-tdd` skill and its approved criterion, observable seam, owner, and test-first authority; bind `none` without loading a method skill. An unavailable or mismatched binding blocks before semantic attempt consumption and never falls back to `none`. The method changes only worker procedure and creates no task, stage, criterion, effect, assurance, or receiver.
 2. Same-context compact binds that Task Contract directly. Cross-context dispatch adds one Context Pack.
 3. Bind solution discipline on the Task Contract. Copy it into a Context Pack only when a pack exists.
+
+   Before `ready`, derive or copy one complete `surface-proof-recipe/v1` object for every owned `AC-...`, canonicalize it with the shared adapter-contract helper, and bind its exact `VR-...@sha256:...` identity. A direct compact Task Contract may project settled authority directly, but it may not omit recipe fields or invent unresolved target, environment, fixture, dependency, isolation, cleanup, comparison, or finite-consumer facts.
+
+   Use `adapter: none` unless current authority already names one exact canonical adapter URI and digest. When an adapter is named, rehash its symlink-safe tree and run its doctor once for readiness. Doctor is readiness evidence only; it cannot satisfy criterion smoke. A missing, stale, unsafe, or mismatched recipe, adapter, or doctor receipt keeps compact non-ready.
+
+   The binding adds no independent verification, review, or curation. Adapter presence does not disqualify compact or change the selected profile. If the adapter changes during the task, re-drive the exact changed surface and bind the final adapter digest and final canonical recipe before criterion-complete smoke can be consumed.
 4. Map every owned acceptance criterion to one deterministic smoke scenario against the exact final target and environment.
 5. Run every scenario and record expected and observed results. Missing, partial, stale, or failed smoke blocks completion.
 6. Any criterion that requires an independent proof class disqualifies compact and returns to the router.

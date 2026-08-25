@@ -14,6 +14,8 @@
 
 The five core generic-workflow records are ADR-0001, ADR-0002, ADR-0003, ADR-0004, and ADR-0009. ADR-0005, ADR-0007, and ADR-0008 remain separate ACTIVE concerns; ADR-0006 remains SUPERSEDED. Decision discovery spans D01–D27.
 
+Surface-verification contract discovery remains inside existing decision units rather than creating a new ADR ID: D11 owns profile and route neutrality; D06 separates Orchestrator Role Profile runtime adapters from proof adapters; D08 owns complete `surface-proof-recipe/v1` Task Contract and Context Pack projection; D04 owns doctor-readiness-only, drift, final rebind, compact parity, and assurance consumption; D22 owns final-review identity recheck; D07 owns existing-destination-only maintenance; D13 owns the exact three-name clean cutover; D25 keeps adapters inside the existing repository-rules-and-skills row with no setup invocation; and D27 owns manual OMP/Grok distribution and disabled ordinary discovery.
+
 ## Decision discovery
 
 | Decision ID | Title | Scope | Active ADR |

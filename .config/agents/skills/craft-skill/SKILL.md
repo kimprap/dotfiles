@@ -61,6 +61,12 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 - If a requested skill mostly says “do X, but with Y context”, prefer a short wrapper over copying X.
 - If the requested artifact is a rule file under `.config/agents/rules/`, `.agents/rules/`, `.omp/rules/`, `.cursor/rules/`, `.windsurf/rules/`, or `.clinerules`, use `craft-rule` instead of applying skill frontmatter guidance.
 
+## Caller-owned adapter authoring
+
+For `create-surface-verification-adapter` and `maintain-surface-verification-adapter`, accept exactly one caller-owned tuple: approved adapter root, exact file manifest, manual frontmatter, required sections, absent/current baselines, preservation boundary, and validation recipe.
+
+Own only skill-file authoring and evaluation. Recheck the supplied baselines, preserve every path outside the manifest, apply only the supplied root and files, validate the supplied frontmatter and section contract, and return the exact changed manifest. The wrapper retains eligibility, exact approval, naming, proof semantics, maintenance classification, product behavior, and shipping authority. Never broaden the tuple, create an absent maintenance destination, repair product code, or reinterpret a validation failure.
+
 ## Activation and transport
 
 - Keep the portable process in the skill body. Slash commands, wrappers, globs, and harness metadata are discovery or invocation transports.

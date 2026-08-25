@@ -1,0 +1,5 @@
+{
+  "id": "broken-host",
+  "injection": "host-native launch exits before readiness",
+  "expected": "blocked product evidence with no adapter or product repair"
+}

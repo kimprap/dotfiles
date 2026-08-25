@@ -1,0 +1,31 @@
+{
+  "additional_files": [
+    "boundary-case.py",
+    "documented-example.py",
+    "failure-case.py"
+  ],
+  "inputs": {
+    "request": "Read-only compact lifecycle observation using the copied executable fixture. The caller already bound the complete canonical recipe VR-SVA-BOUNDARY-NOT-EXECUTED@sha256:5f494571562e577a1ca2a3f8d2d9e3aab01787eeab4fa78eaaf473384cf909e0 with adapter none. Actually execute only `python3 documented-example.py 2` and `python3 failure-case.py -1`; deliberately do not execute `python3 boundary-case.py 0`. Decide whether the criterion may complete. Missing boundary execution must remain INCONCLUSIVE or blocked; source text is not execution evidence. Do not add another proof owner."
+  },
+  "preflight_commands": [
+    {
+      "argv": [
+        "python3",
+        "documented-example.py",
+        "2"
+      ],
+      "exit": 0,
+      "stdout": "{\"case\":\"example\",\"input\":2,\"result\":4,\"status\":\"pass\"}\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "failure-case.py",
+        "-1"
+      ],
+      "exit": 2,
+      "stdout": "{\"case\":\"failure\",\"error\":\"negative-input\",\"input\":-1}\n"
+    }
+  ],
+  "scripted_replies": []
+}

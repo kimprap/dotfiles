@@ -113,6 +113,17 @@
         "At most one exact ID reaches caller-owned settlement and unrelated IDs remain untouched",
         "Papercut review stays proposal-only and pointed Deep retains separate authority"
       ]
+    },
+    {
+      "id": "CL-SURFACE-ADAPTER-DESTINATION",
+      "prompt": "Portable assess receives four otherwise complete candidates: update one exact already-authorized existing surface adapter through its maintenance wrapper; create a missing project adapter; create the shared surface-verification-adapter contract; and create either create/maintain wrapper. Classify destination and mutation eligibility.",
+      "expected_output": "Only the exact existing adapter destination is eligible, and only through maintain-surface-verification-adapter with its current URI/digest and ordinary frozen evaluation. Every absent adapter, shared-contract, and wrapper destination is rejected or deferred without a write.",
+      "assertions": [
+        "Assess preserves the exact existing adapter destination and maintenance owner",
+        "An absent project adapter cannot be created by assess",
+        "The shared contract and both wrappers cannot be created by assess",
+        "No destination fallback, broad skill-authoring authority, product repair, or shipping effect appears"
+      ]
     }
   ]
 }

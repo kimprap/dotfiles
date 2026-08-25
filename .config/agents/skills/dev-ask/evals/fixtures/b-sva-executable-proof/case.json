@@ -1,0 +1,40 @@
+{
+  "additional_files": [
+    "boundary-case.py",
+    "documented-example.py",
+    "failure-case.py"
+  ],
+  "inputs": {
+    "request": "Read-only compact lifecycle observation using the copied executable fixture. The caller already bound the complete canonical recipe VR-SVA-EXECUTABLE-PROOF@sha256:887cc7df667de85e165cd52e5db48037562dde45f0aec5204295f516b6ab5ab9 with adapter none. In the disposable runtime, actually execute `python3 documented-example.py 2`, `python3 boundary-case.py 0`, and `python3 failure-case.py -1`; the last command must exit 2. Observe exact stdout and exit status. Only after all three receipts exist may criterion-complete worker smoke, one Common Handoff, and compact completion occur. Do not use source inspection as execution evidence and do not add doctor, an adapter, independent assurance, review, learning, or shipping."
+  },
+  "preflight_commands": [
+    {
+      "argv": [
+        "python3",
+        "documented-example.py",
+        "2"
+      ],
+      "exit": 0,
+      "stdout": "{\"case\":\"example\",\"input\":2,\"result\":4,\"status\":\"pass\"}\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "boundary-case.py",
+        "0"
+      ],
+      "exit": 0,
+      "stdout": "{\"case\":\"boundary\",\"input\":0,\"result\":0,\"status\":\"pass\"}\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "failure-case.py",
+        "-1"
+      ],
+      "exit": 2,
+      "stdout": "{\"case\":\"failure\",\"error\":\"negative-input\",\"input\":-1}\n"
+    }
+  ],
+  "scripted_replies": []
+}

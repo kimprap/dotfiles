@@ -1,0 +1,6 @@
+{
+  "id": "cleanup-retry",
+  "injection": "first owned-process cleanup attempt reports incomplete",
+  "authorization": "one exact recipe-authorized retry",
+  "expected": "second attempt removes only the owned process and scratch; evidence survives"
+}

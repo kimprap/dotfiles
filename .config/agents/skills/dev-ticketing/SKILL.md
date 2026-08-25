@@ -26,6 +26,10 @@ Reject stale or conflicting authority, unresolved product/architecture/scope dec
 5. Give each ticket one observable objective, behavioral/state ownership, fixed shared contracts, explicit non-goals, stable acceptance-criterion IDs, verification scenarios/evidence, decomposition permission, isolation/integration needs, decision gates, and expected receiver. When affected, project the governing specification's compatibility/degraded-behavior decision into those existing fields without reinterpreting it.
 6. Ensure at least one early vertical tracer bullet can exercise the real seam without creating a horizontal scaffold or placeholder.
 7. Account for every specification criterion exactly once as owned work or explicit shared verification. Do not invent retries, runtime mechanisms, adapter bindings, todos, or shipping.
+
+Copy each specification-owned `surface-proof-recipe/v1` object and `VR-...@sha256:...` identity unchanged into the owning vertical ticket. Never split one criterion across recipes, invent an adapter binding, or recanonicalize different bytes as an equivalent recipe. If a direct-authority ticket has no specification, the implementation backend owns complete recipe derivation before readiness.
+
+Ticket dependencies include every recipe fixture and dependency identity, plus every finite current consumer/callsite entry carried in recipe `inputs`. Adapter presence changes no graph edge, proof class, assurance profile, lifecycle depth, topology, owner, or receiver.
 8. Validate the graph before publication. A faithful acyclic projection continues automatically under the approved route. If the graph exposes a changed interface, material ownership/topology change, destructive/external effect, shipping action, or another human-owned decision, stop for confirmation and create a new ticket-set revision after it is settled.
 9. Return an `unchanged` Handoff directly to `dev-implementation` when that is the already-approved next owner. Return to `dev-ask` only when route impact changed.
 

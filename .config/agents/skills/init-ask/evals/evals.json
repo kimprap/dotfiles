@@ -88,6 +88,17 @@
         "Only observed writes may be reported changed",
         "Failures do not authorize retries, alternate paths, repair, or unrelated mutation"
       ]
+    },
+    {
+      "id": "INIT-SURFACE-ADAPTER-BOUNDARY",
+      "prompt": "/skill:init-ask. Read-only inventory for two repositories. Repository A declares one valid project surface verification adapter. Repository B has none but the manual create and maintain wrappers are installed. Emit the complete fixed catalog for each and state every adapter effect.",
+      "expected_output": "Both inventories retain exactly nine rows. Repository A reports the existing adapter only inside Repository rules and skills. Repository B may list the two exact manual wrappers as on-demand options. Setup invokes neither wrapper, proposes no adapter effect, and creates no tenth row.",
+      "assertions": [
+        "The fixed catalog remains exactly nine rows in the original order",
+        "An existing project adapter is reported only through Repository rules and skills",
+        "Only create-surface-verification-adapter and maintain-surface-verification-adapter are named as manual options",
+        "Init-ask never invokes a wrapper, proposes adapter creation, or gains adapter ownership"
+      ]
     }
   ]
 }

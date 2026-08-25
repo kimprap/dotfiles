@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Surface verification fixture</title>
+  </head>
+  <body>
+    <main>
+      <h1>Persist a value</h1>
+      <form id="value-form">
+        <label for="value">Value</label>
+        <input id="value" name="value" required>
+        <button type="submit">Save</button>
+      </form>
+      <output id="result" aria-live="polite"></output>
+    </main>
+    <script>
+      const form = document.querySelector("#value-form");
+      const result = document.querySelector("#result");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const value = new FormData(form).get("value");
+        const response = await fetch("/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ value }),
+        });
+        const body = await response.json();
+        result.textContent = response.ok ? `Saved ${body.acknowledged}` : body.error;
+      });
+    </script>
+  </body>
+</html>

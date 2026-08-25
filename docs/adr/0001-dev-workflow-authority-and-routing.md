@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-24
+**Updated:** 2026-08-25
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -55,6 +55,7 @@ The workflow needs one current route and one durable explanation of why its boun
 
 - **Scope:** Route lifecycle depth, assurance profile, and execution topology.
 - **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. Compact is the default when every existing compact disqualifier is false; otherwise select standard or high-consequence from consequence evidence. Implementation size, duration, and solution-rung choice do not change lifecycle depth or assurance. A route may choose one-owner, bounded-parallel, or another approved topology independently.
+- **Decision:** Optional repository surface-verification adapters are proof machinery, not route, lifecycle, assurance, topology, consequence, or Orchestrator Role Profile inputs. Their existence, absence, age, or complexity cannot change profile selection. Ordinary setup, implementation, testing, verification, and review do not discover, create, or maintain them; only an already-frozen recipe or exact manual invocation may name one.
 - **Why:** Consequence, capability, lifecycle need, and dependency shape are distinct facts. Defaulting eligible ordinary work to compact avoids making ceremony a proxy for safety.
 - **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology hides distinct route facts and can add ceremony or weaken proof for the wrong reason. Defaulting eligible ordinary work to standard adds independent assurance without a disqualifying risk.
 - **Consequences:** A change in one dimension does not silently change the others. Compact remains eligible across implementation size or duration, while every real disqualifier remains an explicit escalation trigger.
@@ -73,6 +74,7 @@ The workflow needs one current route and one durable explanation of why its boun
 
 - **Scope:** Every caller, fixture, document, skill, rule, and active ADR affected by a changed generic workflow contract.
 - **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed. A completion-rendering cutover includes every specialty normalizer and the single presenter.
+- **Decision:** The clean cutover names exactly `surface-verification-adapter`, `create-surface-verification-adapter`, and `maintain-surface-verification-adapter`. The two wrappers remain disabled from ordinary model invocation on both supported hosts. Do not retain upstream names, a `swarm` route, aliases, duplicated wrappers, automatic triggers, or setup rows.
 - **Why:** Dual behavior obscures the active contract, permits drift, and makes it impossible to know which path is authoritative.
 - **Rejected alternatives / why not:** Leaving old callers, aliases, compatibility shims, or obsolete paths after cutover preserves silently competing behavior instead of completing the migration.
 - **Consequences:** A contract change is not complete until every affected projection agrees and obsolete paths are gone. No agent silently chooses a winner when active authorities conflict.
