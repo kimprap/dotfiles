@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard same-outcome repair trace; emit canonical events only. The frozen parent set is AC-A with recipe PR-A and AC-B with recipe PR-B. Repair revision repaired-target-2 changes only surface-A. The repair owner proposes AC-A impacted and AC-B unaffected; the backend freezes both actions. AC-B prior verifier evidence EVID-B-1 has identical target surface, environment, expectation, proof method, fixture, dependency, and integrity identities. Worker smoke exercises both frozen cases but is not verifier evidence. The verifier independently accepts both actions, invokes PR-A exactly once, invokes PR-B zero times by reusing EVID-B-1, and emits a fresh VERIFIED aggregate over AC-A and AC-B. The once-bound target and rule manifests compare equal and are not rebuilt."
+  },
+  "scripted_replies": []
+}

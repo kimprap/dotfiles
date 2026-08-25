@@ -6,9 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
-import stat as stat_module
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -16,10 +14,6 @@ from pathlib import Path
 from typing import Iterable, Mapping, Sequence
 
 SCHEMA = "executor-plan-validation/v1"
-PREFLIGHT_SCHEMA = "executor-plan-preflight/v1"
-SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-CONTEXTS = ("omp", "grok")
-CONSUMERS = ("planner", "backend")
 REQUIRED_SECTIONS = (
     "Objective",
     "Authority",
@@ -152,20 +146,25 @@ PLACEHOLDER = re.compile(
 
 HEADER_FIELDS = (
     "Datetime",
-    "Authority kind",
     "Mode",
     "Scope",
     "Summary",
     "Status",
     "Completed At",
 )
-HEADER_REQUIRED_FIELDS = ("Datetime", "Authority kind", "Scope", "Summary", "Status")
-HEADER_AUTHORITY_KINDS = ("local-authority", "direct-repository")
+HEADER_REQUIRED_FIELDS = ("Datetime", "Scope", "Summary", "Status")
 HEADER_STATUSES = ("PENDING", "IN_PROGRESS", "DONE", "CLOSED")
 _CANONICAL_METADATA = re.compile(r"^\*\*([^*\r\n]+)\*\*: (.*)$")
-_AUTHORITY_MARKER_LINE = re.compile(r"^\*\*authority kind\*\*: .*$", re.IGNORECASE)
 _H1 = re.compile(r"^#\s+\S.*$")
 _H2 = re.compile(r"^##(?:\s|$)")
+_TASK_CHECKBOX = re.compile(r"- \[([ xX])\] (T[1-9]\d*)\.\s+(.+)")
+_VERIFICATION_CHECKBOX = re.compile(
+    r"- \[([ xX])\] (VR-[A-Z0-9][A-Z0-9-]*)\.\s+(.+)"
+)
+_COMPLETION_RECORD = re.compile(
+    r"^  (?:- )?completed (\d{4}-\d{2}-\d{2}-\d{4})$"
+)
+_COMPLETION_RECORD_PREFIX = re.compile(r"^  (?:- )?completed(?:\s|$)")
 ID_PATTERNS = {
     "outcome": re.compile(r"OUT-[A-Z0-9][A-Z0-9-]*"),
     "authority": re.compile(r"AUTH-[A-Z0-9][A-Z0-9-]*"),
@@ -199,9 +198,10 @@ class Issue:
 
 @dataclass(frozen=True)
 class Report:
-    context: str
-    consumer: str
     plan_sha256: str
+    datetime: str | None
+    lifecycle_status: str | None
+    terminal_complete: bool
     issues: tuple[Issue, ...]
 
     @property
@@ -210,19 +210,24 @@ class Report:
 
     def payload(self) -> dict[str, object]:
         return {
-            "consumer": self.consumer,
-            "context": self.context,
-            "issues": [issue.payload() for issue in self.issues],
-            "plan_sha256": self.plan_sha256,
             "schema": SCHEMA,
             "status": "valid" if self.valid else "invalid",
+            "issues": [issue.payload() for issue in self.issues],
+            "plan_sha256": self.plan_sha256,
+            "datetime": self.datetime,
+            "lifecycle_status": self.lifecycle_status,
+            "terminal_complete": self.terminal_complete,
         }
 
 
 def _issue(
     issues: list[Issue], code: str, message: str, section: str | None = None
 ) -> None:
-    if code != "UTF8" and not code.startswith("HEADER_"):
+    if (
+        code != "UTF8"
+        and not code.startswith("HEADER_")
+        and not code.startswith("LIFECYCLE_")
+    ):
         message = f"portable plan violates {code.lower().replace('_', ' ')}"
     issues.append(Issue(code, message, section))
 
@@ -234,7 +239,6 @@ class HeaderInspection:
     first_h2: int | None
     fields: Mapping[str, str | None]
     issues: tuple[Issue, ...]
-    marker_missing_only: bool
 
 
 def _header_issue(
@@ -256,20 +260,35 @@ def _safe_header_field(raw_name: str | None) -> str:
     )
 
 
+def _valid_timestamp(value: str | None) -> bool:
+    if value is None or not re.fullmatch(r"\d{4}-\d{2}-\d{2}-\d{4}", value):
+        return False
+    try:
+        datetime.strptime(value, "%Y-%m-%d-%H%M")
+    except ValueError:
+        return False
+    return True
+
+
+def _empty_header_fields() -> dict[str, None]:
+    return {field: None for field in HEADER_FIELDS}
+
+
 def _inspect_header_bytes(data: bytes) -> HeaderInspection:
-    """Parse the one canonical byte-preserving header without exposing content."""
+    """Parse the canonical byte-preserving header without exposing content."""
     issues: list[Issue] = []
+    empty_fields = _empty_header_fields()
     if not data:
         _header_issue(issues, "HEADER_H1", line_number=1)
-        return HeaderInspection("", (), None, {}, tuple(issues), False)
+        return HeaderInspection("", (), None, empty_fields, tuple(issues))
     if data.startswith(b"\xef\xbb\xbf"):
         _header_issue(issues, "HEADER_BOM", line_number=1)
-        return HeaderInspection("", (), None, {}, tuple(issues), False)
+        return HeaderInspection("", (), None, empty_fields, tuple(issues))
     try:
         source = data.decode("utf-8")
     except UnicodeDecodeError:
         _issue(issues, "UTF8", "plan must be strict UTF-8")
-        return HeaderInspection("", (), None, {}, tuple(issues), False)
+        return HeaderInspection("", (), None, empty_fields, tuple(issues))
 
     lines = tuple(
         line[:-1] if line.endswith("\r") else line for line in source.split("\n")
@@ -283,12 +302,10 @@ def _inspect_header_bytes(data: bytes) -> HeaderInspection:
     )
     if first_h2 is None:
         _header_issue(issues, "HEADER_METADATA_BLOCK")
-        return HeaderInspection(
-            source, lines, None, {}, tuple(issues), False
-        )
+        return HeaderInspection(source, lines, None, empty_fields, tuple(issues))
 
     region = list(enumerate(lines[1:first_h2], start=2))
-    nonblank = [index for index, (_line_number, line) in enumerate(region) if line != ""]
+    nonblank = [index for index, (_line_number, line) in enumerate(region) if line]
     if not nonblank:
         _header_issue(issues, "HEADER_METADATA_BLOCK")
         block: list[tuple[int, str]] = []
@@ -349,13 +366,9 @@ def _inspect_header_bytes(data: bytes) -> HeaderInspection:
                 if canonical_name is not None and canonical_name != raw_name
                 else "HEADER_FIELD_MALFORMED"
             )
-            _header_issue(
-                issues, code, canonical_name or "metadata", line_number
-            )
+            _header_issue(issues, code, canonical_name or "metadata", line_number)
         else:
-            _header_issue(
-                issues, "HEADER_METADATA_BLOCK", "metadata", line_number
-            )
+            _header_issue(issues, "HEADER_METADATA_BLOCK", "metadata", line_number)
 
     for field in HEADER_REQUIRED_FIELDS:
         count = len(values[field])
@@ -363,89 +376,184 @@ def _inspect_header_bytes(data: bytes) -> HeaderInspection:
             _header_issue(issues, "HEADER_FIELD_MISSING", field)
         elif count > 1:
             _header_issue(issues, "HEADER_FIELD_DUPLICATE", field)
-    if len(values["Mode"]) > 1:
-        _header_issue(issues, "HEADER_FIELD_DUPLICATE", "Mode")
-    if len(values["Completed At"]) > 1:
-        _header_issue(issues, "HEADER_FIELD_DUPLICATE", "Completed At")
+    for field in ("Mode", "Completed At"):
+        if len(values[field]) > 1:
+            _header_issue(issues, "HEADER_FIELD_DUPLICATE", field)
 
     order = {field: index for index, field in enumerate(HEADER_FIELDS)}
     if exact_names != sorted(exact_names, key=order.__getitem__):
         _header_issue(issues, "HEADER_FIELD_ORDER")
 
-    datetime_values = values["Datetime"]
-    if datetime_values:
-        value = datetime_values[0]
-        try:
-            valid_datetime = bool(
-                re.fullmatch(r"\d{4}-\d{2}-\d{2}-\d{4}", value)
-            )
-            if valid_datetime:
-                datetime.strptime(value, "%Y-%m-%d-%H%M")
-        except ValueError:
-            valid_datetime = False
-        if not valid_datetime:
-            _header_issue(issues, "HEADER_FIELD_VALUE", "Datetime")
-
-    authority_values = values["Authority kind"]
-    if authority_values:
-        value = authority_values[0]
-        if value not in HEADER_AUTHORITY_KINDS:
-            code = (
-                "HEADER_FIELD_CASE"
-                if value.casefold()
-                in {kind.casefold() for kind in HEADER_AUTHORITY_KINDS}
-                else "HEADER_FIELD_VALUE"
-            )
-            _header_issue(issues, code, "Authority kind")
-
+    if values["Datetime"] and not _valid_timestamp(values["Datetime"][0]):
+        _header_issue(issues, "HEADER_FIELD_VALUE", "Datetime")
     for field in ("Mode", "Scope", "Summary"):
         if values[field] and values[field][0] == "":
             _header_issue(issues, "HEADER_FIELD_VALUE", field)
     if values["Status"] and values["Status"][0] not in HEADER_STATUSES:
         _header_issue(issues, "HEADER_FIELD_VALUE", "Status")
 
-    completed_values = values["Completed At"]
-    status_value = values["Status"][0] if values["Status"] else None
-    if status_value == "DONE":
-        if not completed_values:
-            _header_issue(issues, "HEADER_FIELD_MISSING", "Completed At")
-        else:
-            completed = completed_values[0]
-            try:
-                valid_completed = bool(
-                    re.fullmatch(r"\d{4}-\d{2}-\d{2}-\d{4}", completed)
-                )
-                if valid_completed:
-                    datetime.strptime(completed, "%Y-%m-%d-%H%M")
-            except ValueError:
-                valid_completed = False
-            if not valid_completed:
-                _header_issue(issues, "HEADER_FIELD_VALUE", "Completed At")
-    elif completed_values:
-        _header_issue(issues, "HEADER_FIELD_VALUE", "Completed At")
-
-    for index, line in enumerate(lines[first_h2:], start=first_h2 + 1):
-        if _AUTHORITY_MARKER_LINE.fullmatch(line):
-            _header_issue(
-                issues, "HEADER_FIELD_MISPLACED", "Authority kind", index
-            )
-
-    marker_missing_only = (
-        len(issues) == 1
-        and issues[0].code == "HEADER_FIELD_MISSING"
-        and "Authority kind" in issues[0].message
-    )
     fields = {
         field: values[field][0] if values[field] else None
         for field in HEADER_FIELDS
     }
-    return HeaderInspection(
-        source,
-        lines,
-        first_h2,
-        fields,
+    return HeaderInspection(source, lines, first_h2, fields, tuple(issues))
+
+
+def _lifecycle_issue(
+    issues: list[Issue], code: str, message: str, section: str
+) -> None:
+    _issue(issues, code, message, section)
+
+
+def _validate_lifecycle(
+    header: HeaderInspection,
+    lines: Sequence[str],
+    headings: Sequence[tuple[str, int]],
+    issues: list[Issue],
+) -> bool:
+    status_value = header.fields.get("Status")
+    status = status_value if status_value in HEADER_STATUSES else None
+    consumed_records: set[int] = set()
+
+    for index, line in enumerate(lines):
+        task = _TASK_CHECKBOX.fullmatch(line)
+        if task is None:
+            continue
+        checked = task.group(1).lower() == "x"
+        task_id = task.group(2)
+        records: list[tuple[int, str]] = []
+        record_index = index + 1
+        while (
+            record_index < len(lines)
+            and _COMPLETION_RECORD_PREFIX.match(lines[record_index])
+        ):
+            records.append((record_index, lines[record_index]))
+            consumed_records.add(record_index)
+            record_index += 1
+
+        if checked and not records:
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_TASK_COMPLETION_MISSING",
+                f"{task_id} is checked without an immediate completion record",
+                "Tasks",
+            )
+        if not checked and (status == "DONE" or records):
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_TASK_UNCHECKED",
+                f"{task_id} is not a valid completed task",
+                "Tasks",
+            )
+        if len(records) > 1:
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_TASK_COMPLETION_DUPLICATE",
+                f"{task_id} has multiple immediate completion records",
+                "Tasks",
+            )
+        if records and any(
+            (match := _COMPLETION_RECORD.fullmatch(record)) is None
+            or not _valid_timestamp(match.group(1))
+            for _record_index, record in records
+        ):
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_TASK_COMPLETION_INVALID",
+                f"{task_id} has an invalid immediate completion record",
+                "Tasks",
+            )
+
+    for index, line in enumerate(lines):
+        if (
+            index not in consumed_records
+            and _COMPLETION_RECORD_PREFIX.match(line)
+        ):
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_TASK_COMPLETION_INVALID",
+                f"completion record at line {index + 1} is not immediately below a task",
+                "Tasks",
+            )
+
+    if status == "DONE":
+        for line in lines:
+            recipe = _VERIFICATION_CHECKBOX.fullmatch(line)
+            if recipe is not None and recipe.group(1).lower() != "x":
+                recipe_id = recipe.group(2)
+                _lifecycle_issue(
+                    issues,
+                    "LIFECYCLE_CRITERION_UNCHECKED",
+                    f"{recipe_id} is not checked",
+                    "Verification / Done criteria",
+                )
+
+    completed_at = header.fields.get("Completed At")
+    if status == "DONE":
+        if not _valid_timestamp(completed_at):
+            _lifecycle_issue(
+                issues,
+                "LIFECYCLE_COMPLETED_AT_INVALID",
+                "DONE requires one valid Completed At timestamp",
+                "header",
+            )
+    elif completed_at is not None:
+        _lifecycle_issue(
+            issues,
+            "LIFECYCLE_COMPLETED_AT_INVALID",
+            f"{status or 'invalid status'} forbids Completed At",
+            "header",
+        )
+
+    summary_indexes = [
+        index for name, index in headings if name == "Completion Summary"
+    ]
+    summary_valid = False
+    if len(summary_indexes) == 1:
+        start = summary_indexes[0] + 1
+        end = next(
+            (
+                index
+                for _name, index in headings
+                if index > summary_indexes[0]
+            ),
+            len(lines),
+        )
+        summary_valid = any(line.strip() for line in lines[start:end])
+    if status == "DONE" and not summary_valid:
+        _lifecycle_issue(
+            issues,
+            "LIFECYCLE_COMPLETION_SUMMARY_INVALID",
+            "DONE requires one nonempty final Completion Summary",
+            "Completion Summary",
+        )
+    elif summary_indexes and (len(summary_indexes) != 1 or not summary_valid):
+        _lifecycle_issue(
+            issues,
+            "LIFECYCLE_COMPLETION_SUMMARY_INVALID",
+            "Completion Summary must be unique and nonempty",
+            "Completion Summary",
+        )
+
+    return status in {"DONE", "CLOSED"}
+
+
+def _report(
+    raw: bytes,
+    header: HeaderInspection,
+    terminal_status: bool,
+    issues: Sequence[Issue],
+) -> Report:
+    datetime_value = header.fields.get("Datetime")
+    parsed_datetime = datetime_value if _valid_timestamp(datetime_value) else None
+    status_value = header.fields.get("Status")
+    lifecycle_status = status_value if status_value in HEADER_STATUSES else None
+    return Report(
+        hashlib.sha256(raw).hexdigest(),
+        parsed_datetime,
+        lifecycle_status,
+        terminal_status and not issues,
         tuple(issues),
-        marker_missing_only,
     )
 
 
@@ -965,17 +1073,14 @@ def _require_exact_refs(
     return values
 
 
-def validate_text(text: str, *, context: str, consumer: str) -> Report:
-    if context not in CONTEXTS:
-        raise ValueError(f"unsupported context: {context}")
-    if consumer not in CONSUMERS:
-        raise ValueError(f"unsupported consumer: {consumer}")
+def validate_text(text: str) -> Report:
     issues: list[Issue] = []
     raw = text.encode("utf-8")
     header = _inspect_header_bytes(raw)
     issues.extend(header.issues)
     lines = list(header.lines)
     headings = _headings(lines)
+    terminal_status = _validate_lifecycle(header, lines, headings, issues)
     heading_names = [name for name, _line in headings]
     counts = Counter(heading_names)
     for name in REQUIRED_SECTIONS:
@@ -1001,7 +1106,7 @@ def validate_text(text: str, *, context: str, consumer: str) -> Report:
         )
     sections = _sections(lines, headings)
     if any(name not in sections for name in REQUIRED_SECTIONS):
-        return Report(context, consumer, hashlib.sha256(raw).hexdigest(), tuple(issues))
+        return _report(raw, header, terminal_status, issues)
 
     objective = _labels(sections["Objective"])
     for label in ("Outcome", "Observable end state", "Progress signal"):
@@ -1672,819 +1777,60 @@ def validate_text(text: str, *, context: str, consumer: str) -> Report:
             "Critical anchors and assumptions",
         )
 
-    return Report(context, consumer, hashlib.sha256(raw).hexdigest(), tuple(issues))
+    return _report(raw, header, terminal_status, issues)
 
 
-def validate_file(path: Path, *, context: str, consumer: str) -> Report:
-    data = path.read_bytes()
+def validate_file(path: Path) -> Report:
+    data = Path(path).read_bytes()
     try:
         text = data.decode("utf-8")
     except UnicodeDecodeError:
         issue = Issue("UTF8", "plan must be strict UTF-8")
-        return Report(context, consumer, hashlib.sha256(data).hexdigest(), (issue,))
-    return validate_text(text, context=context, consumer=consumer)
-
-
-@dataclass(frozen=True)
-class PreflightIssue:
-    code: str
-    subject: str
-
-    def payload(self) -> dict[str, str]:
-        messages = {
-            "PLAN_PREFLIGHT_UNAVAILABLE": "required locator state is unavailable",
-            "PLAN_AUTHORITY_MISSING": "required authority path is missing",
-            "PLAN_AUTHORITY_UNREADABLE": "required authority bytes are unreadable",
-            "PLAN_AUTHORITY_UNCLASSIFIED": "authority marker is unclassified",
-            "PLAN_AUTHORITY_CONTEXT": "authority marker conflicts with its path",
-            "PLAN_AUTHORITY_CONFLICT": "local and direct authority claims conflict",
-            "PLAN_IDENTITY_MISMATCH": "plan identity does not match its bound path",
-            "PLAN_PROJECTION_MISSING": "required local projection is missing",
-            "PLAN_PROJECTION_DRIFT": "local authority and projection differ",
-            "PLAN_PROJECTION_AMBIGUOUS": "active and archive paths both exist",
-            "PLAN_FILE_KIND_UNSAFE": "required path kind is unsafe",
-            "PLAN_STATE_STALE": "required path state changed during observation",
-            "PLAN_STATUS_NONEXECUTABLE": "plan status is not executable",
-        }
-        return {
-            "code": self.code,
-            "message": messages[self.code],
-            "subject": self.subject,
-        }
-
-
-@dataclass(frozen=True)
-class PathObservation:
-    path: Path
-    display_path: str
-    state: str
-    signature: tuple[int, ...] | None = None
-    data: bytes | None = None
-    sha256: str | None = None
-    header: HeaderInspection | None = None
-
-    def payload(self, state: str | None = None) -> dict[str, object]:
-        authority_kind = (
-            self.header.fields.get("Authority kind") if self.header is not None else None
+        return Report(
+            hashlib.sha256(data).hexdigest(),
+            None,
+            None,
+            False,
+            (issue,),
         )
-        return {
-            "authority_kind": authority_kind
-            if authority_kind in HEADER_AUTHORITY_KINDS
-            else None,
-            "path": self.display_path,
-            "sha256": self.sha256,
-            "state": state or self.state,
-        }
+    report = validate_text(text)
+    if report.plan_sha256 != hashlib.sha256(data).hexdigest():
+        raise RuntimeError("validation digest does not match the file snapshot")
+    return report
 
-
-@dataclass(frozen=True)
-class PreflightReport:
-    context: str
-    status: str
-    authority_location: str | None
-    authority_outcome: str
-    issues: tuple[PreflightIssue, ...]
-    paths: Mapping[str, object]
-    plan_id: str | None
-    plan_sha256: str | None
-    structural: Mapping[str, object] | None
-
-    def payload(self) -> dict[str, object]:
-        return {
-            "authority_location": self.authority_location,
-            "authority_outcome": self.authority_outcome,
-            "consumer": "backend",
-            "context": self.context,
-            "issues": [issue.payload() for issue in self.issues],
-            "paths": dict(self.paths),
-            "plan_id": self.plan_id,
-            "plan_sha256": self.plan_sha256,
-            "schema": PREFLIGHT_SCHEMA,
-            "status": self.status,
-            "structural": dict(self.structural) if self.structural is not None else None,
-        }
-
-
-def _empty_preflight_paths() -> dict[str, object]:
-    empty = {
-        "authority_kind": None,
-        "path": None,
-        "sha256": None,
-        "state": "missing",
-    }
-    return {
-        "active": dict(empty),
-        "archive": dict(empty),
-        "local": dict(empty),
-        "presented": None,
-    }
-
-
-def _unavailable_preflight(context: str) -> PreflightReport:
-    return PreflightReport(
-        context=context,
-        status="unavailable",
-        authority_location=None,
-        authority_outcome="invalid",
-        issues=(PreflightIssue("PLAN_PREFLIGHT_UNAVAILABLE", "locator"),),
-        paths=_empty_preflight_paths(),
-        plan_id=None,
-        plan_sha256=None,
-        structural=None,
-    )
-
-
-def _is_canonical_root(path: Path) -> bool:
-    if not path.is_absolute() or ".." in path.parts:
-        return False
-    try:
-        info = path.lstat()
-        return (
-            stat_module.S_ISDIR(info.st_mode)
-            and not stat_module.S_ISLNK(info.st_mode)
-            and path.resolve(strict=True) == path
-        )
-    except OSError:
-        return False
-
-
-def _relative_to(path: Path, root: Path) -> Path | None:
-    try:
-        return path.relative_to(root)
-    except ValueError:
-        return None
-
-
-def _safe_parent_chain(root: Path, path: Path) -> bool:
-    relative_path = _relative_to(path, root)
-    if relative_path is None or not relative_path.parts or ".." in relative_path.parts:
-        return False
-    current = root
-    for part in relative_path.parts[:-1]:
-        current = current / part
-        try:
-            info = current.lstat()
-        except OSError:
-            return False
-        if not stat_module.S_ISDIR(info.st_mode) or stat_module.S_ISLNK(info.st_mode):
-            return False
-    return True
-
-
-def _observe_path(root: Path, path: Path, display_path: str) -> PathObservation:
-    relative_path = _relative_to(path, root)
-    if (
-        relative_path is None
-        or not relative_path.parts
-        or ".." in relative_path.parts
-    ):
-        return PathObservation(path, display_path, "unsafe")
-
-    directory_flags = (
-        os.O_RDONLY
-        | getattr(os, "O_DIRECTORY", 0)
-        | getattr(os, "O_NOFOLLOW", 0)
-        | getattr(os, "O_CLOEXEC", 0)
-    )
-    file_flags = (
-        os.O_RDONLY
-        | getattr(os, "O_NOFOLLOW", 0)
-        | getattr(os, "O_CLOEXEC", 0)
-    )
-    root_descriptor: int | None = None
-    parent_descriptor: int | None = None
-    try:
-        try:
-            root_descriptor = os.open(root, directory_flags)
-        except OSError:
-            return PathObservation(path, display_path, "unsafe")
-        parent_descriptor = root_descriptor
-        for part in relative_path.parts[:-1]:
-            try:
-                next_descriptor = os.open(
-                    part, directory_flags, dir_fd=parent_descriptor
-                )
-            except OSError:
-                return PathObservation(path, display_path, "unsafe")
-            if parent_descriptor != root_descriptor:
-                os.close(parent_descriptor)
-            parent_descriptor = next_descriptor
-
-        leaf = relative_path.parts[-1]
-        try:
-            before = os.stat(
-                leaf, dir_fd=parent_descriptor, follow_symlinks=False
-            )
-        except FileNotFoundError:
-            return PathObservation(path, display_path, "missing")
-        except OSError:
-            return PathObservation(path, display_path, "unreadable")
-        if (
-            not stat_module.S_ISREG(before.st_mode)
-            or stat_module.S_ISLNK(before.st_mode)
-        ):
-            return PathObservation(path, display_path, "unsafe")
-        if before.st_mode & (
-            stat_module.S_IRUSR | stat_module.S_IRGRP | stat_module.S_IROTH
-        ) == 0:
-            return PathObservation(path, display_path, "unreadable")
-
-        try:
-            descriptor = os.open(leaf, file_flags, dir_fd=parent_descriptor)
-            try:
-                current = os.fstat(descriptor)
-                if (
-                    not stat_module.S_ISREG(current.st_mode)
-                    or current.st_dev != before.st_dev
-                    or current.st_ino != before.st_ino
-                ):
-                    return PathObservation(path, display_path, "stale")
-                with os.fdopen(descriptor, "rb", closefd=False) as handle:
-                    data = handle.read()
-                after = os.fstat(descriptor)
-                if (
-                    not stat_module.S_ISREG(after.st_mode)
-                    or (
-                        current.st_dev,
-                        current.st_ino,
-                        current.st_mode,
-                        current.st_size,
-                        current.st_mtime_ns,
-                        current.st_ctime_ns,
-                    )
-                    != (
-                        after.st_dev,
-                        after.st_ino,
-                        after.st_mode,
-                        after.st_size,
-                        after.st_mtime_ns,
-                        after.st_ctime_ns,
-                    )
-                    or len(data) != after.st_size
-                ):
-                    return PathObservation(path, display_path, "stale")
-            finally:
-                os.close(descriptor)
-        except OSError:
-            return PathObservation(path, display_path, "unreadable")
-    finally:
-        if parent_descriptor is not None and parent_descriptor != root_descriptor:
-            os.close(parent_descriptor)
-        if root_descriptor is not None:
-            os.close(root_descriptor)
-
-    signature = (
-        after.st_dev,
-        after.st_ino,
-        after.st_mode,
-        after.st_size,
-        after.st_mtime_ns,
-        after.st_ctime_ns,
-    )
-    digest = hashlib.sha256(data).hexdigest()
-    return PathObservation(
-        path,
-        display_path,
-        "regular",
-        signature,
-        data,
-        digest,
-        _inspect_header_bytes(data),
-    )
-
-
-def _same_path_observation(left: PathObservation, right: PathObservation) -> bool:
-    if (
-        left.path != right.path
-        or left.state != right.state
-        or left.signature != right.signature
-        or left.data != right.data
-        or left.sha256 != right.sha256
-    ):
-        return False
-    left_header = left.header
-    right_header = right.header
-    if left_header is None or right_header is None:
-        return left_header is right_header
-    return (
-        left_header.fields == right_header.fields
-        and left_header.marker_missing_only == right_header.marker_missing_only
-        and tuple(issue.payload() for issue in left_header.issues)
-        == tuple(issue.payload() for issue in right_header.issues)
-    )
-
-
-def _regular_header_valid(
-    observation: PathObservation,
-    *,
-    datetime_value: str | None = None,
-    authority_kind: str | None = None,
-) -> bool:
-    if (
-        observation.state != "regular"
-        or observation.header is None
-        or observation.header.issues
-    ):
-        return False
-    if (
-        datetime_value is not None
-        and observation.header.fields.get("Datetime") != datetime_value
-    ):
-        return False
-    if (
-        authority_kind is not None
-        and observation.header.fields.get("Authority kind") != authority_kind
-    ):
-        return False
-    return True
-
-
-def preflight_file(
-    path: Path,
-    *,
-    context: str,
-    slug: str,
-    repository_root: Path,
-    local_root: Path,
-    local_plan: Path,
-) -> PreflightReport:
-    """Prove current authority location and structure for one backend decision."""
-    path = Path(path)
-    repository_root = Path(repository_root)
-    local_root = Path(local_root)
-    local_plan = Path(local_plan)
-    if (
-        context not in CONTEXTS
-        or not SLUG.fullmatch(slug)
-        or not _is_canonical_root(repository_root)
-        or not _is_canonical_root(local_root)
-        or repository_root == local_root
-        or not path.is_absolute()
-        or not local_plan.is_absolute()
-        or ".." in path.parts
-        or ".." in local_plan.parts
-        or _relative_to(local_plan, local_root) is None
-        or not _safe_parent_chain(local_root, local_plan)
-    ):
-        return _unavailable_preflight(context)
-
-    repository_plan_root = repository_root / ".agents" / "plans"
-    if _relative_to(local_plan, repository_plan_root) is not None:
-        return _unavailable_preflight(context)
-
-    presented_root = (
-        local_root
-        if path == local_plan
-        else repository_root
-        if _relative_to(path, repository_root) is not None
-        else None
-    )
-    if presented_root is None or not _safe_parent_chain(presented_root, path):
-        return _unavailable_preflight(context)
-    presented_display = (
-        _relative_to(path, presented_root).as_posix()
-        if _relative_to(path, presented_root) is not None
-        else ""
-    )
-    initial = _observe_path(presented_root, path, presented_display)
-    if initial.state in {"unreadable", "missing"}:
-        code = (
-            "PLAN_AUTHORITY_MISSING"
-            if initial.state == "missing"
-            else "PLAN_AUTHORITY_UNREADABLE"
-        )
-        paths = _empty_preflight_paths()
-        paths["presented"] = "local" if path == local_plan else None
-        return PreflightReport(
-            context,
-            "unavailable",
-            None,
-            "invalid",
-            (PreflightIssue(code, "presented"),),
-            paths,
-            None,
-            None,
-            None,
-        )
-    if initial.state in {"unsafe", "stale"}:
-        code = (
-            "PLAN_FILE_KIND_UNSAFE"
-            if initial.state == "unsafe"
-            else "PLAN_STATE_STALE"
-        )
-        return PreflightReport(
-            context,
-            "blocked" if initial.state == "unsafe" else "unavailable",
-            None,
-            "invalid",
-            (PreflightIssue(code, "presented"),),
-            _empty_preflight_paths(),
-            None,
-            None,
-            None,
-        )
-
-    assert initial.header is not None
-    if initial.header.issues:
-        marker_missing_only = initial.header.marker_missing_only
-        return PreflightReport(
-            context,
-            "blocked",
-            None,
-            "unclassified" if marker_missing_only else "invalid",
-            (
-                PreflightIssue(
-                    "PLAN_AUTHORITY_UNCLASSIFIED"
-                    if marker_missing_only
-                    else "PLAN_IDENTITY_MISMATCH",
-                    "header",
-                ),
-            ),
-            _empty_preflight_paths(),
-            None,
-            initial.sha256,
-            None,
-        )
-    datetime_value = initial.header.fields.get("Datetime")
-    if not isinstance(datetime_value, str):
-        return PreflightReport(
-            context,
-            "blocked",
-            None,
-            "invalid",
-            (PreflightIssue("PLAN_IDENTITY_MISMATCH", "presented"),),
-            _empty_preflight_paths(),
-            None,
-            initial.sha256,
-            None,
-        )
-
-    plan_id = f"{datetime_value}_{slug}"
-    active = repository_plan_root / f"{plan_id}.md"
-    archive = repository_plan_root / "archive" / f"{plan_id}.md"
-    if local_plan in {active, archive}:
-        return _unavailable_preflight(context)
-    if path == local_plan:
-        presented = "local"
-        authority_location = "local"
-    elif path == active:
-        presented = "active"
-        authority_location = "repository-active"
-    elif path == archive:
-        presented = "archive"
-        authority_location = "repository-archive"
-    else:
-        paths = _empty_preflight_paths()
-        paths["active"]["path"] = _relative_to(active, repository_root).as_posix()
-        paths["archive"]["path"] = _relative_to(archive, repository_root).as_posix()
-        paths["local"]["path"] = _relative_to(local_plan, local_root).as_posix()
-        return PreflightReport(
-            context,
-            "unavailable",
-            None,
-            "unclassified",
-            (PreflightIssue("PLAN_IDENTITY_MISMATCH", "presented"),),
-            paths,
-            plan_id,
-            initial.sha256,
-            None,
-        )
-
-    logical_paths = (
-        ("presented", path, presented_root, presented_display),
-        (
-            "local",
-            local_plan,
-            local_root,
-            _relative_to(local_plan, local_root).as_posix(),
-        ),
-        (
-            "active",
-            active,
-            repository_root,
-            _relative_to(active, repository_root).as_posix(),
-        ),
-        (
-            "archive",
-            archive,
-            repository_root,
-            _relative_to(archive, repository_root).as_posix(),
-        ),
-    )
-    first: dict[Path, PathObservation] = {}
-    second: dict[Path, PathObservation] = {}
-    for _label, candidate, root, display_path in logical_paths:
-        if candidate not in first:
-            first[candidate] = _observe_path(root, candidate, display_path)
-    for _label, candidate, root, display_path in logical_paths:
-        if candidate not in second:
-            second[candidate] = _observe_path(root, candidate, display_path)
-
-    changed = {
-        candidate
-        for candidate, observation in first.items()
-        if not _same_path_observation(observation, second[candidate])
-    }
-    current = second
-    path_records = {
-        "active": current[active].payload("stale" if active in changed else None),
-        "archive": current[archive].payload("stale" if archive in changed else None),
-        "local": current[local_plan].payload(
-            "stale" if local_plan in changed else None
-        ),
-        "presented": presented,
-    }
-    if changed or any(
-        observation.state == "stale" for observation in current.values()
-    ):
-        return PreflightReport(
-            context,
-            "unavailable",
-            authority_location,
-            "invalid",
-            (PreflightIssue("PLAN_STATE_STALE", "presented"),),
-            path_records,
-            plan_id,
-            current[path].sha256,
-            None,
-        )
-
-    candidate = current[path]
-    local = current[local_plan]
-    active_observation = current[active]
-    archive_observation = current[archive]
-
-    unsafe_roles = tuple(
-        role
-        for role, observation in (
-            ("active", active_observation),
-            ("archive", archive_observation),
-        )
-        if observation.state == "unsafe"
-    )
-    if unsafe_roles:
-        return PreflightReport(
-            context,
-            "unavailable",
-            None,
-            "invalid",
-            (
-                PreflightIssue(
-                    "PLAN_FILE_KIND_UNSAFE",
-                    "active/archive" if len(unsafe_roles) == 2 else unsafe_roles[0],
-                ),
-            ),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            None,
-        )
-
-    unreadable_roles = tuple(
-        role
-        for role, observation in (
-            ("active", active_observation),
-            ("archive", archive_observation),
-        )
-        if observation.state == "unreadable"
-    )
-    if unreadable_roles:
-        return PreflightReport(
-            context,
-            "unavailable",
-            None,
-            "invalid",
-            (
-                PreflightIssue(
-                    "PLAN_AUTHORITY_UNREADABLE",
-                    "active/archive"
-                    if len(unreadable_roles) == 2
-                    else unreadable_roles[0],
-                ),
-            ),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            None,
-        )
-
-    if (
-        active_observation.state == "regular"
-        and archive_observation.state == "regular"
-    ):
-        return PreflightReport(
-            context,
-            "blocked",
-            None,
-            "ambiguous",
-            (PreflightIssue("PLAN_PROJECTION_AMBIGUOUS", "active/archive"),),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            None,
-        )
-
-
-    assert candidate.header is not None
-    marker = candidate.header.fields.get("Authority kind")
-    issue: PreflightIssue | None = None
-    additional_issue: PreflightIssue | None = None
-    outcome = "invalid"
-    status = "blocked"
-
-    if presented == "local":
-        if marker != "local-authority":
-            issue = PreflightIssue("PLAN_AUTHORITY_CONTEXT", "presented")
-        else:
-            projection = (
-                archive_observation
-                if archive_observation.state != "missing"
-                else active_observation
-            )
-            if projection.state == "missing":
-                issue = PreflightIssue("PLAN_PROJECTION_MISSING", "active/archive")
-            elif projection.state == "unsafe":
-                issue = PreflightIssue("PLAN_FILE_KIND_UNSAFE", "active/archive")
-                status = "unavailable"
-            elif projection.state == "unreadable":
-                issue = PreflightIssue("PLAN_AUTHORITY_UNREADABLE", "active/archive")
-                status = "unavailable"
-            elif _regular_header_valid(
-                projection,
-                datetime_value=datetime_value,
-                authority_kind="direct-repository",
-            ):
-                issue = PreflightIssue("PLAN_AUTHORITY_CONFLICT", "active/archive")
-                outcome = "ambiguous"
-            elif not _regular_header_valid(
-                projection,
-                datetime_value=datetime_value,
-                authority_kind="local-authority",
-            ) or projection.data != candidate.data:
-                issue = PreflightIssue("PLAN_PROJECTION_DRIFT", "active/archive")
-            else:
-                outcome = "local"
-                status = "eligible"
-    else:
-        if marker != "direct-repository":
-            issue = PreflightIssue("PLAN_AUTHORITY_CONTEXT", "presented")
-            if local.state == "unsafe":
-                status = "unavailable"
-                additional_issue = PreflightIssue("PLAN_FILE_KIND_UNSAFE", "local")
-            elif local.state == "unreadable":
-                status = "unavailable"
-                additional_issue = PreflightIssue("PLAN_AUTHORITY_UNREADABLE", "local")
-        elif local.state == "unsafe":
-            issue = PreflightIssue("PLAN_FILE_KIND_UNSAFE", "local")
-            status = "unavailable"
-        elif local.state == "unreadable":
-            issue = PreflightIssue("PLAN_AUTHORITY_UNREADABLE", "local")
-            status = "unavailable"
-        elif local.state != "missing":
-            if _regular_header_valid(
-                local,
-                datetime_value=datetime_value,
-                authority_kind="local-authority",
-            ):
-                issue = PreflightIssue("PLAN_AUTHORITY_CONFLICT", "local")
-                outcome = "ambiguous"
-            else:
-                issue = PreflightIssue("PLAN_PROJECTION_DRIFT", "local")
-        else:
-            outcome = "direct"
-            status = "eligible"
-
-    if issue is not None:
-        return PreflightReport(
-            context,
-            status,
-            authority_location if outcome in {"local", "direct"} else None,
-            outcome,
-            tuple(
-                candidate_issue
-                for candidate_issue in (issue, additional_issue)
-                if candidate_issue is not None
-            ),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            None,
-        )
-
-    plan_status = candidate.header.fields.get("Status")
-    if plan_status in {"DONE", "CLOSED"}:
-        return PreflightReport(
-            context,
-            "blocked",
-            authority_location,
-            outcome,
-            (PreflightIssue("PLAN_STATUS_NONEXECUTABLE", "status"),),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            None,
-        )
-
-    assert candidate.data is not None
-    structural_report = validate_text(
-        candidate.data.decode("utf-8"), context=context, consumer="backend"
-    )
-    structural = structural_report.payload()
-    if (
-        structural_report.plan_sha256 != candidate.sha256
-        or structural["schema"] != SCHEMA
-    ):
-        return PreflightReport(
-            context,
-            "unavailable",
-            authority_location,
-            "invalid",
-            (PreflightIssue("PLAN_STATE_STALE", "structure"),),
-            path_records,
-            plan_id,
-            candidate.sha256,
-            structural,
-        )
-    return PreflightReport(
-        context,
-        "eligible" if structural_report.valid else "blocked",
-        authority_location,
-        outcome,
-        (),
-        path_records,
-        plan_id,
-        candidate.sha256,
-        structural,
-    )
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Validate or preflight portable Executor Plan v1"
-    )
-    parser.add_argument("plan", type=Path)
-    parser.add_argument("--context", choices=CONTEXTS, required=True)
-    parser.add_argument("--consumer", choices=CONSUMERS, required=True)
-    parser.add_argument("--slug")
-    parser.add_argument("--repository-root", type=Path)
-    parser.add_argument("--local-root", type=Path)
-    parser.add_argument("--local-plan", type=Path)
+    parser = argparse.ArgumentParser(description="Validate portable Executor Plan v1")
+    commands = parser.add_subparsers(dest="command", required=True)
+    validate = commands.add_parser("validate", help="validate one plan file")
+    validate.add_argument("plan", type=Path)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    arguments = list(argv) if argv is not None else os.sys.argv[1:]
-    parser = _parser()
-    locator_options = (
-        "--slug",
-        "--repository-root",
-        "--local-root",
-        "--local-plan",
-    )
-    for option in ("--context", "--consumer", *locator_options):
-        if arguments.count(option) > 1:
-            parser.error(f"{option} may be provided only once")
-    args = parser.parse_args(arguments)
-
-    locator_values = (
-        args.slug,
-        args.repository_root,
-        args.local_root,
-        args.local_plan,
-    )
-    if args.consumer == "planner":
-        if any(value is not None for value in locator_values):
-            parser.error("locator options are valid only with --consumer backend")
-        try:
-            report = validate_file(
-                args.plan, context=args.context, consumer=args.consumer
-            )
-        except OSError:
-            payload = {
-                "consumer": args.consumer,
-                "context": args.context,
-                "error": "unreadable plan",
-                "schema": SCHEMA,
-                "status": "unavailable",
-            }
-            print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
-            return 66
-        print(json.dumps(report.payload(), sort_keys=True, separators=(",", ":")))
-        return 0 if report.valid else 2
-
-    if any(value is None for value in locator_values):
-        preflight = _unavailable_preflight(args.context)
-    else:
-        preflight = preflight_file(
-            args.plan,
-            context=args.context,
-            slug=args.slug,
-            repository_root=args.repository_root,
-            local_root=args.local_root,
-            local_plan=args.local_plan,
-        )
-    print(json.dumps(preflight.payload(), sort_keys=True, separators=(",", ":")))
-    return {"eligible": 0, "blocked": 2, "unavailable": 66}[preflight.status]
+    args = _parser().parse_args(argv)
+    try:
+        report = validate_file(args.plan)
+    except OSError:
+        payload = {
+            "schema": SCHEMA,
+            "status": "unavailable",
+            "issues": [
+                {
+                    "code": "FILE_UNAVAILABLE",
+                    "message": "plan file is unavailable",
+                }
+            ],
+            "plan_sha256": None,
+            "datetime": None,
+            "lifecycle_status": None,
+            "terminal_complete": False,
+        }
+        print(json.dumps(payload, separators=(",", ":")))
+        return 66
+    print(json.dumps(report.payload(), separators=(",", ":")))
+    return 0 if report.valid else 2
 
 
 if __name__ == "__main__":

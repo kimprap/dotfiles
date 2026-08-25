@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Consume a current Review Handoff from an original-rerun. FIND-DISJOINT has direct static evidence that consumer-Q still violates existing parent AC-Q, so D22 classification is CHANGES REQUIRED. Its predicate and failure path are disjoint from the exact parent repair delta and accepted impact map; it is non-safety. Return authority-change-required to outcome authority, keep the parent incomplete, and do not silently create same-outcome repair, restart verification/review, dispatch learning, approve, complete, demote to advisory, or synthesize a new parent criterion. Emit concise canonical router events only."
+  },
+  "scripted_replies": []
+}

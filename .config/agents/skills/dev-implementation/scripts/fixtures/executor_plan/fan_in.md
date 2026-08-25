@@ -1,7 +1,6 @@
 # Portable fan-in executor fixture
 
 **Datetime**: 2026-08-19-1200
-**Authority kind**: direct-repository
 **Scope**: Portable isolated-lineage plan validation fixture
 **Summary**: Preserve lineage verification and neutral integration before one optional numbered profile tail.
 **Status**: PENDING

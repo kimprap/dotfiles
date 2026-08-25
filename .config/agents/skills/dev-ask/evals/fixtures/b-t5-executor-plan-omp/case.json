@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only Executor Plan preflight trace: the exact complete plan bytes, approved revision, and plan digest PLAN-SHA are bound. In semantic context omp, run the single executor_plan.py parser first as consumer planner and then as consumer backend. Both results are valid and carry PLAN-SHA. Disclose OMP native approval, local authority, byte-exact repository projection, synchronization extension, and automatic projection-only archival; do not claim Grok-identical transport."
+    "request": "Read-only Executor Plan repository-readiness trace: bind one exact active repository plan path, its approved revision, and PLAN-SHA. The backend runs executor_plan.py validate PLAN exactly once against that file; the valid result carries PLAN-SHA. Report that OMP authored a complete local draft, plan-artifact-sync copied it after every successful draft mutation, and execution and continuation read only the active repository file. Native approval remains OMP-native. The adapter supplies no parser meaning; perform no publication or mutation."
   },
   "scripted_replies": []
 }

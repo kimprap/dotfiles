@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard original-initial review trace; emit canonical events only. Exact target target-post-v is final VERIFIED for AC-CUT and AC-PRESERVE. The verifier receipt is an input, not the review verdict. Independent whole-scope review finds FIND-CALL: consumer-C still invokes the removed contract, directly violating existing AC-CUT. Seal FIND-CALL as a lineage and return Standards FAIL, Specification FAIL, Overall CHANGES REQUIRED. Do not substitute VERIFIED as APPROVED, classify advisory, dispatch learning, or complete."
+  },
+  "scripted_replies": []
+}

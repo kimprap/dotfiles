@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-MISSING-1 is backend-frozen and the curator applies a guidance delta, but no fresh read-only non-curator evaluator result exists for the semantic source and adjacent facets. Return BLOCKED with the missing verdict and exact resume condition; preserve the current bounded outcome without claiming proof. Do not let curator self-assessment substitute, return CURATED, start another lifecycle state, or ship."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete semantic proposal CE-SEMANTIC-MISSING-1 is backend-frozen and the curator applies a guidance delta, but no fresh read-only non-curator evaluator result exists for the semantic source and adjacent facets. Return BLOCKED with the missing verdict and exact resume condition; preserve the current bounded outcome without claiming proof. Do not let curator self-assessment substitute, return CURATED, start another lifecycle state, or ship. The named qualification, procedure, outcome, and seven-field payload are the exact result of one portable `continual-learning assess` invocation through the visible `dev-continual-learning` adapter; the backend snapshot only validates and accounts the returned identity and payload."
   },
   "scripted_replies": []
 }

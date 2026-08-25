@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Terminal evidence snapshot only: implementation smoke exists for TARGET-SHA, but final independent verification is missing, so no final review or Standard terminal assessment is eligible. Block completion presentation with the exact missing assurance evidence and state that shipping is absent."
+    "request": "Terminal evidence snapshot only: implementation smoke exists for TARGET-SHA, but final independent verification is missing, so no final review or Standard terminal assessment is eligible. Block completion-presentation normalization and invocation with the exact missing assurance evidence and state that shipping is absent. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, counters, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/attempt-or-grant tuple returns idempotency-violation before dispatch, consumes no slot or counter, and creates no second Handoff."
   },
   "scripted_replies": []
 }

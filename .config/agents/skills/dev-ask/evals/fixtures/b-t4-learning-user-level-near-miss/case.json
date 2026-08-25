@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Terminal evidence snapshot: a candidate suggests editing /Users/kim/.agents/AGENTS.md. Reject all direct or indirect user-level mutation, report suggested wording only, and keep the settled outcome terminal. Do not create a bypass file, memory, hook, or background task."
+    "request": "Terminal evidence snapshot: a candidate suggests editing /Users/kim/.agents/AGENTS.md. Reject all direct or indirect user-level mutation, report suggested wording only, and keep the settled outcome terminal. Do not create a bypass file, memory, hook, or background task. Attribute mode qualification and the named candidate, skip, or rejection to portable `continual-learning deep`; the backend terminal snapshot only accounts that portable result and never auto-dispatches Deep."
   },
   "scripted_replies": []
 }

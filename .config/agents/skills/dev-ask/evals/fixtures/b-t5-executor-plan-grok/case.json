@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only Executor Plan preflight trace: bind the same exact complete plan bytes, approved revision, and PLAN-SHA used by the paired OMP case. In semantic context grok, run the single executor_plan.py parser first as consumer planner and then as consumer backend. Both results are valid and carry PLAN-SHA. Disclose Grok repository-or-session storage, identity presentation, model, role, tool, and recovery mechanics as adapter-owned and not necessarily OMP-identical. Current project .grok/rules auto-discovery provides the Grok transport rule; it does not prove validator success or parent attestation."
+    "request": "Read-only Executor Plan repository-readiness trace: bind one exact active repository plan path, its approved revision, and the PLAN-SHA used by the paired OMP case. The backend runs executor_plan.py validate PLAN exactly once against that file; the valid result carries PLAN-SHA. Report that Grok discovers the transport rule through .grok/rules, authors the active repository file directly, and uses it for execution and continuation. Identity presentation, model, role, tools, and recovery remain adapter-owned. Discovery supplies no parser meaning, validator success, or parent attestation; perform no publication or mutation."
   },
   "scripted_replies": []
 }

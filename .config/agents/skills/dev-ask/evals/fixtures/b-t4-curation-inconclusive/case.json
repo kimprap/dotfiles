@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-INCONCLUSIVE-1 is backend-frozen, but the post-mutation adjacent check cannot establish the frozen observable because its required capability is unavailable. Return BLOCKED with the inconclusive proof and exact capability-bound resume condition. Do not infer a pass, weaken or replace the tuple, return CURATED, or silently substitute another proof method."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete deterministic proposal CE-INCONCLUSIVE-1 is backend-frozen, but the post-mutation adjacent check cannot establish the frozen observable because its required capability is unavailable. Return BLOCKED with the inconclusive proof and exact capability-bound resume condition. Do not infer a pass, weaken or replace the tuple, return CURATED, or silently substitute another proof method. The named qualification, procedure, outcome, and seven-field payload are the exact result of one portable `continual-learning assess` invocation through the visible `dev-continual-learning` adapter; the backend snapshot only validates and accounts the returned identity and payload."
   },
   "scripted_replies": []
 }

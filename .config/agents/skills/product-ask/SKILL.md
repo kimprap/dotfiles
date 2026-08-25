@@ -9,7 +9,7 @@ description: >
 
 # Product Development Flow
 
-Be the one thin, stateless interface for the product-development workflow. Own route selection, one compact route approval, one first dispatch, material reapproval, and completion presentation. Do not conduct the interview, write a PRD, persist iteration state, make product decisions, or perform engineering work.
+Be the one thin, stateless interface for the product-development workflow. Own route selection, one compact route approval, one first dispatch, material reapproval, and product completion validation and normalization. Do not conduct the interview, write a PRD, persist iteration state, make product decisions, perform engineering work, or render the final completed report.
 
 ## Authority and evidence
 
@@ -102,23 +102,16 @@ Resume condition: <specific evidence or confirmed decision>
 
 ## Completion
 
-Present only:
+Validate completion only when the latest Product Handoff and every referenced iteration, candidate, and approved PRD identity are current; its outcome is exactly `completed`; product authority, approvals, route impact, and evidence are consistent; no unresolved frontier remains; and the existing papercut settlement boundary has finished. Open evidence causes no settlement call and remains valid presentable accounting; a terminal `fixed | rejected | superseded` result has exactly one successful call; narrow authority or helper failure remains valid disclosed report-only/open accounting.
 
-```markdown
-## Route
-  <completed route>
+After validation and settlement, validate and construct exactly one current fenced `completion-presentation-input` JSON object with keys in this exact order: `status`, `outcome`, `changed`, `verification`, `papercut`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, `next`. Status is exactly `completed`. Outcome is one observable product result. Changed has one to three current openable iteration, candidate, or approved PRD identities. Verification names the Product Handoff and exact human-approval check, terminal verdict, and fetchable immutable evidence identity. Papercut is `none` or carries the unchanged `PC-ID`, one capture result from `recorded | updated | reopened | unchanged | report-only`, one settlement result from `open | fixed | rejected | superseded`, and one concise gloss. Learning forwards a settled `NO DURABLE LEARNING — summary` or `CURATED — summary` byte-for-byte; when no assessment ran it is exactly `skipped — no eligible assessment invoked`. Residual risk is current material uncertainty or `none`. Resume from is the current approved PRD or iteration locator plus immutable revision or digest. Handoff is the existing portable Product Handoff locator plus immutable revision or digest, or an approved in-conversation form tied to Resume from. Constraints contains the exact clause `shipping not authorized` exactly once and may include other current caller-supplied boundaries. When the current validated Product Handoff receiver is `dev-ask`, Next is exactly `dev-ask receives the approved PRD.`; an approved Handoff with no continuation receiver uses `none`. Never place shipping in Next.
 
-## Result
-  <confirmed decisions, approved PRD, or exact stop>
+Capture and settlement are independent. Completion does not repeat capture: when no capture mutation occurs during completion, the capture result is exactly `unchanged`, including for an existing candidate that remains open or is settled `fixed | rejected | superseded`. A settlement result never substitutes for the capture result. Completed open and report-only/open rows remain eligible for presentation.
 
-## Artifacts
-  <current iteration and PRD identities>
+Read-only terminal projections preserve the exact stable tokens `normalization-order:settlement-before-normalization`, `presenter:completion-presentation`, `presenter-changed:iteration-and-approved-prd`, `presenter-learning:<normalized-learning-result>`, and `presenter-papercut:<id>;<capture-result>;<settlement>`. Positive completed rows also expose `presenter-input:fenced-same-turn`, durable `presenter-resume-from:<locator@revision>`, approved `presenter-handoff:<locator@revision-or-fallback>`, `presenter-constraints:<caller clauses including shipping not authorized>`, and `presenter-next:<none-or-exact-authorized-action-and-receiver>`. These tokens add no product state.
 
-## Next
-  <one required next action or receiver>
-```
+Once that single current fence exists, apply `completion-presentation` directly in this same agent and emit only the report, never the fence. The presenter creates no product stage, task, dispatch, approval, iteration state, settlement call, evidence rerun, adapter, plan, workflow, or second Handoff. It receives no Product Handoff or lifecycle input and does not decide product completion or imply engineering completion, delivery, publication, or shipping.
 
-Omit `Next` when no action remains. Do not imply engineering completion, delivery, or publication.
-When papercut evidence accompanied the route, include its unchanged originating `PC-ID` and exact settled or open/report-only result under `Artifacts`; do not add another completion section.
+For `paused | blocked | abandoned | authority-change-required`, missing or stale authority, `PRODUCT EVIDENCE REQUIRED`, conflicting evidence, an unresolved frontier, learning `BLOCKED`, invalid durability or constraints, unauthorized Next, or any other non-success input, emit no completed presentation and preserve the applicable product-specific report. Completed `open` and report-only/open papercut accounting are not stops.
 
 Read [WORKFLOW.md](WORKFLOW.md) only when maintaining, auditing, or extending the complete product-development flow.

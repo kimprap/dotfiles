@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only Executor Plan negative: the exact plan omits the required Result / Handoff section. Evaluate the same bytes with executor_plan.py for omp and grok backend consumers. Return SECTION_MISSING and block before any plan-authorized mutation; do not infer or default the section."
+    "request": "Read-only Executor Plan repository-readiness negative: the exact active repository plan has this defect: missing required Result / Handoff section. The backend runs executor_plan.py validate PLAN exactly once against those bytes. Return SECTION_MISSING once and block before ready, publication, or mutation; do not infer, default, repair, publish, or mutate."
   },
   "scripted_replies": []
 }

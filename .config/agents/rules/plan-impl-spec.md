@@ -80,17 +80,17 @@ Compact work may use a direct Task Contract without an Executor Plan. If a compa
 
 Give every `AC-...` exactly one `VR-...` recipe naming its scenario/fixture, evidence, immutable target recheck, and receiver. Prove observable behavior or an explicitly authorized structural contract, not prose presence.
 
-## Structural preflight
+## Validation and readiness
 
-Before publication, run:
+Validate the exact active repository plan once:
 
 ```text
-.config/agents/skills/dev-implementation/scripts/executor_plan.py PLAN --context <omp|grok> --consumer planner
+.config/agents/skills/dev-implementation/scripts/executor_plan.py validate PLAN
 ```
 
-Consume only its `executor-plan-validation/v1` result. It enforces the base header, ordered body, stable references, ownership, DAG/waves, effects, outputs/receivers, recovery, topology/fan-in, and placeholder rules against the complete-byte revision. Context never infers authority.
+Consume only its `executor-plan-validation/v1` result. It enforces the portable header, ordered body, stable references, ownership, DAG/waves, effects, outputs/receivers, recovery, topology/fan-in, lifecycle records, and terminal completeness against the complete-byte revision. The result contains only `schema`, `status`, `issues`, `plan_sha256`, parsed `datetime`, `lifecycle_status`, and `terminal_complete`.
 
-Before backend readiness, the transport invokes the same file with `--consumer backend` and current `--slug`, `--repository-root`, `--local-root`, and `--local-plan` locators. Only a fresh `executor-plan-preflight/v1` `eligible` result with valid nested structure and matching current/native-approved digests may advance. Adapters supply only those exact locators; preflight accepts no approval, role, authority outcome, or expected-state assertion, and there is no alternate ready transition. Structural validity alone supplies no provenance, approval, product/architecture authority, storage authority, or runtime state.
+Before initial readiness, resolve the active repository plan and Task Contract and accept only a valid result with lifecycle `PENDING` or `IN_PROGRESS`, current repository bytes, and current human approval. Bind the exact approved SHA-256. On continuation, parser-valid lifecycle bookkeeping may change without reapproval; every other semantic change follows ADR-0001 D02. Structural validity supplies no approval, product or architecture authority, storage authority, or runtime state, and no adapter supplies an alternate ready transition.
 
 ## Activation checks
 

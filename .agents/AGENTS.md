@@ -17,7 +17,7 @@ Primary areas: Neovim, Zsh, Starship, Ghostty, Yazi, Cursor, helper scripts, and
 - `.config/scripts/bootstrap` owns machine setup: symlinks, Homebrew packages, Ghostty install, SourceCodePro Nerd Font, and minimal `~/.zshrc` sourcing `.config/zsh/zshrc`.
 - Preserve backup-before-overwrite behavior in bootstrap/setup scripts.
 - Target macOS on Apple Silicon; prefer Homebrew paths under `/opt/homebrew`.
-- When changing or diagnosing the generic engineering workflow, read `.config/agents/skills/dev-ask/WORKFLOW.md` and `docs/adr/INDEX.md`; ordinary tasks read only the applicable skill/rule and active ADRs named in their Task Contract.
+- When changing or diagnosing the generic engineering workflow, read `.config/agents/skills/dev-ask/WORKFLOW.md` and `docs/adr/INDEX.md`; the index conditionally exposes the five ACTIVE core workflow ADRs, including ADR-0009 for the seven-event session envelope, portable continual learning, and generic completion presentation. Ordinary tasks read only the applicable skill/rule and active ADRs named in their Task Contract.
 - When maintaining, auditing, or extending the papercut framework, read `.config/agents/skills/papercut/WORKFLOW.md` and the active ADR-0007 and ADR-0008 projections in `docs/adr/INDEX.md`; ordinary papercut capture reads only the applicable rule and `papercut` skill.
 
 ## Key directories

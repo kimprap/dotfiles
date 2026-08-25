@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete mixed proposal CE-FLAKY-1 is backend-frozen. The deterministic facet passes, but the required fresh semantic evaluator reports FLAKY because repeated source observations disagree against the frozen expectation. Return BLOCKED with the tuple identity, flaky proof, and exact resume condition. Do not average or score away the instability, weaken the expectation, return CURATED, or start an optimizer loop."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: complete mixed proposal CE-FLAKY-1 is backend-frozen. The deterministic facet passes, but the required fresh semantic evaluator reports FLAKY because repeated source observations disagree against the frozen expectation. Return BLOCKED with the tuple identity, flaky proof, and exact resume condition. Do not average or score away the instability, weaken the expectation, return CURATED, or start an optimizer loop. The named qualification, procedure, outcome, and seven-field payload are the exact result of one portable `continual-learning assess` invocation through the visible `dev-continual-learning` adapter; the backend snapshot only validates and accounts the returned identity and payload."
   },
   "scripted_replies": []
 }

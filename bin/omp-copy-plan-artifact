@@ -1,26 +1,24 @@
 #!/usr/bin/env bun
 /**
- * Mirror a session-local OMP plan artifact into .agents/plans/. A complete
- * lifecycle is archived atomically in the repository; the source is never
- * changed.
+ * Copy one session-local OMP plan snapshot into repository-owned plan storage.
+ * Parser-invalid bytes never reach an active or archived target. The source is
+ * never changed.
  *
  * Usage:
- *   omp-copy-plan-artifact sync --slug <slug> --content-file <path>
+ *   omp-copy-plan-artifact copy --slug <slug> --content-file <path>
  */
 
 import { createHash, randomUUID } from "node:crypto";
-import { link, lstat, mkdir, open, readFile, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
 import { constants } from "node:fs";
+import { link, lstat, mkdir, mkdtemp, open, realpath, rename, rm } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, relative } from "node:path";
 import { tmpdir } from "node:os";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const DATETIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})-(\d{2})(\d{2})$/;
-const TASK_CHECKBOX_RE = /^\s*(?:[-+*]|\d+[.)])\s+\[/;
-const TASK_ROW_RE = /^\s*-\s+\[[xX]\]\s+(T[1-9]\d*)\.\s+(\S.*)$/;
-const LOCK_WAIT_MS = 15_000;
-const LOCK_RETRY_MS = 25;
-const MALFORMED_LOCK_RECLAIM_AGE_MS = 1_000;
+const LIFECYCLE_STATUSES = new Set(["PENDING", "IN_PROGRESS", "DONE", "CLOSED"]);
+const TERMINAL_STATUSES = new Set(["DONE", "CLOSED"]);
+const HELPER_ROOT = dirname(dirname(import.meta.path));
+const PARSER = join(HELPER_ROOT, ".config", "agents", "skills", "dev-implementation", "scripts", "executor_plan.py");
 
 class PlanArtifactError extends Error {
     constructor(message, exitCode = 1, diagnostic = undefined) {
@@ -31,15 +29,6 @@ class PlanArtifactError extends Error {
     }
 }
 
-class HeaderValidationError extends Error {
-    constructor(code, message, markerMissingOnly = false) {
-        super(message);
-        this.name = "HeaderValidationError";
-        this.code = code;
-        this.markerMissingOnly = markerMissingOnly;
-    }
-}
-
 class SafeDiagnosticError extends Error {
     constructor(message) {
         super(message);
@@ -47,20 +36,20 @@ class SafeDiagnosticError extends Error {
     }
 }
 
-function operationError(kind, plan, state, path, effect, message) {
-    return new PlanArtifactError(message, 1, { kind, plan, state, path, effect });
-}
-
-function safeDiagnosticReason(error, fallback) {
-    return error instanceof SafeDiagnosticError ? error.message : fallback;
+function operationError(kind, plan, state, path, effect, message, exitCode = 1) {
+    return new PlanArtifactError(message, exitCode, { kind, plan, state, path, effect });
 }
 
 function safeFailure(message) {
     return new SafeDiagnosticError(message);
 }
 
+function safeReason(error, fallback) {
+    return error instanceof SafeDiagnosticError ? error.message : fallback;
+}
+
 function usage() {
-    return "Usage: omp-copy-plan-artifact sync --slug <slug> --content-file <path>";
+    return "Usage: omp-copy-plan-artifact copy --slug <slug> --content-file <path>";
 }
 
 function parseArguments(argv) {
@@ -69,8 +58,8 @@ function parseArguments(argv) {
         console.log(usage());
         process.exit(0);
     }
-    if (operation !== "sync") {
-        throw new PlanArtifactError("expected operation 'sync'", 2);
+    if (operation !== "copy") {
+        throw new PlanArtifactError("expected operation 'copy'", 2);
     }
 
     let slug;
@@ -89,7 +78,9 @@ function parseArguments(argv) {
             if (slug !== undefined) throw new PlanArtifactError("--slug may be provided only once", 2);
             slug = value;
         } else {
-            if (contentFile !== undefined) throw new PlanArtifactError("--content-file may be provided only once", 2);
+            if (contentFile !== undefined) {
+                throw new PlanArtifactError("--content-file may be provided only once", 2);
+            }
             contentFile = value;
         }
     }
@@ -106,411 +97,89 @@ function parseArguments(argv) {
     return { slug, contentFile };
 }
 
-function isLeapYear(year) {
-    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+function sha256(bytes) {
+    return createHash("sha256").update(bytes).digest("hex");
 }
 
-function hasValidDatetime(datetime) {
-    const match = DATETIME_PATTERN.exec(datetime);
-    if (!match) return false;
-    const [, yearText, monthText, dayText, hourText, minuteText] = match;
-    const year = Number(yearText);
-    const month = Number(monthText);
-    const day = Number(dayText);
-    const hour = Number(hourText);
-    const minute = Number(minuteText);
-    if (year < 1 || year > 9999 || month < 1 || month > 12 || hour > 23 || minute > 59) return false;
-    const daysByMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    return day >= 1 && day <= daysByMonth[month - 1];
+function statIdentity(value) {
+    return `${value.dev}:${value.ino}:${value.mode}:${value.size}:${value.mtimeMs}:${value.ctimeMs}`;
 }
 
-function normalizedLines(source) {
-    return source.split("\n").map((line) => (line.endsWith("\r") ? line.slice(0, -1) : line));
+function isSafeRegular(value) {
+    return value.isFile() && !value.isSymbolicLink();
 }
 
-const HEADER_FIELDS = [
-    "Datetime",
-    "Authority kind",
-    "Mode",
-    "Scope",
-    "Summary",
-    "Status",
-    "Completed At",
-];
-const REQUIRED_HEADER_FIELDS = ["Datetime", "Authority kind", "Scope", "Summary", "Status"];
-const AUTHORITY_KINDS = ["local-authority", "direct-repository"];
-const HEADER_STATUSES = ["PENDING", "IN_PROGRESS", "DONE", "CLOSED"];
-const HEADER_PRIORITY = [
-    "UTF8",
-    "HEADER_BOM",
-    "HEADER_H1",
-    "HEADER_METADATA_BLOCK",
-    "HEADER_FIELD_CASE",
-    "HEADER_FIELD_UNKNOWN",
-    "HEADER_FIELD_MALFORMED",
-    "HEADER_FIELD_MISSING",
-    "HEADER_FIELD_DUPLICATE",
-    "HEADER_FIELD_ORDER",
-    "HEADER_FIELD_VALUE",
-    "HEADER_FIELD_MISPLACED",
-];
-
-function inspectHeaderBytes(bytes) {
-    if (bytes.length === 0) {
-        return {
-            issues: [{ code: "HEADER_H1", message: "plan artifact is empty" }],
-            markerMissingOnly: false,
-        };
-    }
-    if (bytes.subarray(0, 3).equals(Buffer.from([0xef, 0xbb, 0xbf]))) {
-        return {
-            issues: [{ code: "HEADER_BOM", message: "plan must begin directly with its H1" }],
-            markerMissingOnly: false,
-        };
-    }
-
-    let source;
+async function readOpenedRegular(filePath, before) {
+    let handle;
     try {
-        source = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-    } catch {
-        return {
-            issues: [{ code: "UTF8", message: "plan artifact must be valid UTF-8" }],
-            markerMissingOnly: false,
-        };
-    }
-
-    const lines = normalizedLines(source);
-    const issues = [];
-    const issue = (code, message) => issues.push({ code, message });
-    if ((lines[0] ?? "").includes("\r") || !/^#\s+\S.*$/.test(lines[0] ?? "")) {
-        issue("HEADER_H1", "first line must be a nonempty H1");
-    }
-    const firstH2 = lines.findIndex((line, index) => index > 0 && /^##(?:\s|$)/.test(line));
-    if (firstH2 === -1) {
-        issue("HEADER_METADATA_BLOCK", "plan must contain an H2 after one contiguous metadata block");
-    }
-
-    const region = firstH2 === -1 ? [] : lines.slice(1, firstH2);
-    const nonblank = region.flatMap((line, index) => (line === "" ? [] : [index]));
-    let block = [];
-    if (firstH2 !== -1) {
-        if (nonblank.length === 0) {
-            issue("HEADER_METADATA_BLOCK", "header metadata block is empty");
-        } else {
-            const first = nonblank[0];
-            const last = nonblank.at(-1);
-            if (region.slice(first, last + 1).some((line) => line === "")) {
-                issue("HEADER_METADATA_BLOCK", "header metadata must be one contiguous nonblank block");
-            }
-            block = region.slice(first, last + 1);
-        }
-    }
-
-    const values = new Map(HEADER_FIELDS.map((field) => [field, []]));
-    const exactNames = [];
-    const headerIssue = (code, field = "metadata") =>
-        issue(code, `canonical header violation for ${field}`);
-    for (const line of block) {
-        if (line.includes("\r")) {
-            const rawName = /^\s*\*\*([^*\n]+)\*\*/.exec(line)?.[1];
-            const field =
-                HEADER_FIELDS.find(
-                    (candidate) =>
-                        rawName &&
-                        candidate.toLocaleLowerCase("en-US") === rawName.toLocaleLowerCase("en-US")
-                ) ?? "metadata";
-            headerIssue("HEADER_FIELD_MALFORMED", field);
-            continue;
-        }
-        const match = /^\*\*([^*\r\n]+)\*\*: (.*)$/.exec(line);
-        if (match) {
-            const [, name, value] = match;
-            const canonicalName = HEADER_FIELDS.find(
-                (field) => field.toLocaleLowerCase("en-US") === name.toLocaleLowerCase("en-US")
-            );
-            if (canonicalName && canonicalName !== name) {
-                headerIssue("HEADER_FIELD_CASE", canonicalName);
-                continue;
-            }
-            if (!canonicalName) {
-                headerIssue("HEADER_FIELD_UNKNOWN");
-                continue;
-            }
-            if (value !== value.trim() || value.includes("\t")) {
-                headerIssue("HEADER_FIELD_MALFORMED", canonicalName);
-                continue;
-            }
-            exactNames.push(name);
-            values.get(name).push(value);
-            continue;
-        }
-
-        const boldName = /^\s*\*\*([^*\r\n]+)\*\*/.exec(line)?.[1];
-        if (boldName) {
-            const canonicalName = HEADER_FIELDS.find(
-                (field) => field.toLocaleLowerCase("en-US") === boldName.toLocaleLowerCase("en-US")
-            );
-            if (canonicalName && canonicalName !== boldName) {
-                headerIssue("HEADER_FIELD_CASE", canonicalName);
-            } else {
-                headerIssue("HEADER_FIELD_MALFORMED", canonicalName ?? "metadata");
-            }
-        } else {
-            issue("HEADER_METADATA_BLOCK", "nonmetadata prose is not allowed in the header region");
-        }
-    }
-
-    for (const field of REQUIRED_HEADER_FIELDS) {
-        const count = values.get(field).length;
-        if (count === 0) issue("HEADER_FIELD_MISSING", `required header field is missing: ${field}`);
-        else if (count > 1) issue("HEADER_FIELD_DUPLICATE", `header field appears ${count} times: ${field}`);
-    }
-    if (values.get("Mode").length > 1) {
-        issue("HEADER_FIELD_DUPLICATE", `header field appears ${values.get("Mode").length} times: Mode`);
-    }
-    if (values.get("Completed At").length > 1) {
-        issue(
-            "HEADER_FIELD_DUPLICATE",
-            `header field appears ${values.get("Completed At").length} times: Completed At`
-        );
-    }
-
-    const order = new Map(HEADER_FIELDS.map((field, index) => [field, index]));
-    const orderedNames = [...exactNames].sort((left, right) => order.get(left) - order.get(right));
-    if (exactNames.some((name, index) => name !== orderedNames[index])) {
-        issue(
-            "HEADER_FIELD_ORDER",
-            "header fields are not in Datetime, Authority kind, optional Mode, Scope, Summary, Status, optional Completed At order"
-        );
-    }
-
-    const datetime = values.get("Datetime")[0];
-    if (datetime !== undefined && !hasValidDatetime(datetime)) {
-        issue("HEADER_FIELD_VALUE", "Datetime is not a valid calendar value");
-    }
-    const authorityKind = values.get("Authority kind")[0];
-    if (authorityKind !== undefined && !AUTHORITY_KINDS.includes(authorityKind)) {
-        if (AUTHORITY_KINDS.some((kind) => kind.toLowerCase() === authorityKind.toLowerCase())) {
-            issue("HEADER_FIELD_CASE", "Authority kind value has noncanonical case");
-        } else {
-            issue("HEADER_FIELD_VALUE", "Authority kind must be local-authority or direct-repository");
-        }
-    }
-    for (const field of ["Mode", "Scope", "Summary"]) {
-        if (values.get(field)[0] === "") issue("HEADER_FIELD_VALUE", `${field} must be nonempty`);
-    }
-    const status = values.get("Status")[0];
-    if (status !== undefined && !HEADER_STATUSES.includes(status)) {
-        issue("HEADER_FIELD_VALUE", "Status must be PENDING, IN_PROGRESS, DONE, or CLOSED");
-    }
-    const completedAt = values.get("Completed At")[0];
-    if (status === "DONE") {
-        if (completedAt === undefined) {
-            issue("HEADER_FIELD_MISSING", "required header field is missing: Completed At");
-        } else if (!hasValidDatetime(completedAt)) {
-            issue("HEADER_FIELD_VALUE", "Completed At is not a valid calendar value");
-        }
-    } else if (completedAt !== undefined) {
-        issue("HEADER_FIELD_VALUE", "Completed At is only valid when Status is DONE");
-    }
-    if (
-        firstH2 !== -1 &&
-        lines.slice(firstH2).some((line) => /^\*\*authority kind\*\*: .*$/i.test(line))
-    ) {
-        issue("HEADER_FIELD_MISPLACED", "Authority kind metadata occurs outside the header block");
-    }
-
-    const priority = new Map(HEADER_PRIORITY.map((code, index) => [code, index]));
-    issues.sort((left, right) => priority.get(left.code) - priority.get(right.code));
-    const markerMissingOnly =
-        issues.length === 1 &&
-        issues[0].code === "HEADER_FIELD_MISSING" &&
-        issues[0].message.endsWith("Authority kind");
-    return {
-        source,
-        lines,
-        firstH2,
-        fields: Object.fromEntries(HEADER_FIELDS.map((field) => [field, values.get(field)[0]])),
-        issues,
-        markerMissingOnly,
-    };
-}
-
-function validatePlanBytes(bytes) {
-    const inspection = inspectHeaderBytes(bytes);
-    if (inspection.issues.length > 0) {
-        const first = inspection.issues[0];
-        throw new HeaderValidationError(first.code, first.message, inspection.markerMissingOnly);
-    }
-    return {
-        source: inspection.source,
-        lines: inspection.lines,
-        firstH2: inspection.firstH2,
-        datetime: inspection.fields.Datetime,
-        authorityKind: inspection.fields["Authority kind"],
-        status: inspection.fields.Status,
-    };
-}
-
-function sectionEnd(h2Indexes, index, lineCount) {
-    return h2Indexes.find((candidate) => candidate > index) ?? lineCount;
-}
-
-function terminalLifecycleComplete(parsed) {
-    const { lines } = parsed;
-    if (parsed.status !== "DONE") return false;
-    const h2Indexes = lines.flatMap((line, index) => (/^##(?:\s|$)/.test(line) ? [index] : []));
-    const tasksIndexes = lines.flatMap((line, index) => (line === "## Tasks" ? [index] : []));
-    const verificationIndexes = lines.flatMap((line, index) =>
-        line === "## Verification / Done criteria" ? [index] : []
-    );
-    const completionIndexes = lines.flatMap((line, index) => (line === "## Completion Summary" ? [index] : []));
-    if (
-        tasksIndexes.length !== 1 ||
-        verificationIndexes.length !== 1 ||
-        completionIndexes.length !== 1 ||
-        tasksIndexes[0] >= verificationIndexes[0] ||
-        verificationIndexes[0] >= completionIndexes[0] ||
-        completionIndexes[0] !== h2Indexes.at(-1)
-    )
-        return false;
-
-    const taskLines = lines.slice(tasksIndexes[0] + 1, sectionEnd(h2Indexes, tasksIndexes[0], lines.length));
-    const tasks = [];
-    for (let index = 0; index < taskLines.length; index += 1) {
-        if (!TASK_CHECKBOX_RE.test(taskLines[index])) continue;
-        const match = TASK_ROW_RE.exec(taskLines[index]);
-        if (!match) return false;
-        const completed = /^\s{2}completed (\d{4}-\d{2}-\d{2}-\d{4})$/.exec(taskLines[index + 1] ?? "");
-        if (!completed || !hasValidDatetime(completed[1])) return false;
-        tasks.push(Number(match[1].slice(1)));
-    }
-    if (
-        tasks.length === 0 ||
-        tasks[0] !== 1 ||
-        new Set(tasks).size !== tasks.length ||
-        tasks.some((number, index) => index > 0 && number <= tasks[index - 1])
-    )
-        return false;
-
-    const criterionLines = lines.slice(
-        verificationIndexes[0] + 1,
-        sectionEnd(h2Indexes, verificationIndexes[0], lines.length)
-    );
-    const criteria = criterionLines.filter((line) => TASK_CHECKBOX_RE.test(line));
-    if (criteria.length === 0 || criteria.some((line) => !/^\s*-\s+\[[xX]\]\s+\S/.test(line))) return false;
-    return lines.slice(completionIndexes[0] + 1).join("\n").trim().length > 0;
-}
-
-function inodeIdentity(fileStat) {
-    return `${fileStat.dev}:${fileStat.ino}`;
-}
-
-function sourceBindingFromEnvironment() {
-    const rootIdentity = process.env.OMP_PLAN_ARTIFACT_SYNC_ROOT_IDENTITY;
-    const sourceIdentity = process.env.OMP_PLAN_ARTIFACT_SYNC_SOURCE_IDENTITY;
-    if (rootIdentity === undefined && sourceIdentity === undefined) return undefined;
-    if (
-        !/^\d+:\d+$/.test(rootIdentity ?? "") ||
-        !/^\d+:\d+$/.test(sourceIdentity ?? "")
-    ) {
-        throw safeFailure("source identity binding is unavailable");
-    }
-    return { rootIdentity, sourceIdentity };
-}
-
-async function assertBoundSourceParent(filePath, binding) {
-    if (!binding) return;
-    const parent = await lstat(dirname(filePath));
-    if (
-        !parent.isDirectory() ||
-        parent.isSymbolicLink() ||
-        inodeIdentity(parent) !== binding.rootIdentity
-    ) {
-        throw safeFailure("source parent changed before it could be read safely");
-    }
-}
-
-async function readRegularBytes(filePath, binding = undefined) {
-    await assertBoundSourceParent(filePath, binding);
-    const before = await lstat(filePath);
-    if (
-        !before.isFile() ||
-        before.isSymbolicLink() ||
-        (binding && inodeIdentity(before) !== binding.sourceIdentity)
-    ) {
-        throw safeFailure("required path is not the bound regular non-symlink file");
-    }
-    const handle = await open(filePath, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-    try {
-        const current = await handle.stat();
-        if (
-            !current.isFile() ||
-            current.isSymbolicLink() ||
-            current.dev !== before.dev ||
-            current.ino !== before.ino ||
-            (binding && inodeIdentity(current) !== binding.sourceIdentity)
-        ) {
-            throw safeFailure("required path changed before it could be read safely");
+        handle = await open(filePath, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
+        const opened = await handle.stat();
+        if (!isSafeRegular(opened) || statIdentity(opened) !== statIdentity(before)) {
+            throw safeFailure("regular file identity changed before its verified read");
         }
         const bytes = await handle.readFile();
-        const after = await handle.stat();
-        if (fileIdentity(current) !== fileIdentity(after)) {
-            throw safeFailure("required path changed while it was being read");
+        const afterRead = await handle.stat();
+        const afterPath = await lstat(filePath);
+        if (
+            !isSafeRegular(afterRead) ||
+            !isSafeRegular(afterPath) ||
+            statIdentity(afterRead) !== statIdentity(opened) ||
+            statIdentity(afterPath) !== statIdentity(opened)
+        ) {
+            throw safeFailure("regular file identity changed during its verified read");
         }
-        await assertBoundSourceParent(filePath, binding);
-        return { bytes, stat: after };
+        return { bytes, identity: statIdentity(afterPath) };
+    } catch (error) {
+        if (error instanceof SafeDiagnosticError) throw error;
+        throw safeFailure("regular file could not be read through a verified descriptor");
     } finally {
-        await handle.close();
+        await handle?.close().catch(() => {});
     }
 }
 
-async function readSource(contentFile, slug, binding = undefined) {
-    let snapshot;
+async function captureSource(contentFile, plan) {
+    let sourceStat;
     try {
-        snapshot = await readRegularBytes(contentFile, binding);
+        sourceStat = await lstat(contentFile);
+        if (!isSafeRegular(sourceStat)) {
+            throw safeFailure("source must be a regular non-symlink file");
+        }
+        return await readOpenedRegular(contentFile, sourceStat);
     } catch (error) {
         throw operationError(
             "PLAN_FILE_KIND_UNSAFE",
-            slug,
+            plan,
             "source-unsafe",
             "none",
             "none",
-            safeDiagnosticReason(error, "source path could not be read safely")
+            safeReason(error, "source could not be established as a readable regular non-symlink file")
         );
     }
-    let parsed;
-    try {
-        parsed = validatePlanBytes(snapshot.bytes);
-    } catch (error) {
-        if (!(error instanceof HeaderValidationError)) throw error;
-        const kind = error.markerMissingOnly ? "PLAN_AUTHORITY_UNCLASSIFIED" : "PLAN_HEADER_INVALID";
-        throw operationError(kind, slug, `source:${error.code}`, "none", "none", error.message);
-    }
-    const planId = `${parsed.datetime}_${slug}`;
-    if (parsed.authorityKind !== "local-authority") {
-        throw operationError(
-            "PLAN_AUTHORITY_CONTEXT",
-            planId,
-            "source:direct-repository",
-            "none",
-            "none",
-            "session-local source must declare local-authority"
-        );
-    }
-    return { contentFile, binding, planId, bytes: snapshot.bytes, ...parsed };
 }
 
-async function ensureDirectory(directory, role) {
+async function assertSourceCurrent(contentFile, captured, plan, effect = "none") {
+    let current;
     try {
-        await mkdir(directory, { recursive: true });
-        const directoryStat = await lstat(directory);
-        if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink()) {
-            throw safeFailure(`${role} is not a regular non-symlink directory`);
-        }
+        current = await captureSource(contentFile, plan);
     } catch (error) {
-        if (error instanceof SafeDiagnosticError) throw error;
-        throw safeFailure(`${role} could not be established as a safe directory`);
+        throw operationError(
+            "PLAN_SOURCE_STALE",
+            plan,
+            "source-unreadable",
+            "none",
+            effect,
+            "source could not be re-read safely"
+        );
+    }
+    if (current.identity !== captured.identity || !current.bytes.equals(captured.bytes)) {
+        throw operationError(
+            "PLAN_SOURCE_STALE",
+            plan,
+            "source-changed",
+            "none",
+            effect,
+            "source identity or bytes changed after the snapshot was captured"
+        );
     }
 }
 
@@ -523,745 +192,404 @@ async function lstatOrAbsent(filePath) {
     }
 }
 
-function fileIdentity(fileStat) {
-    return `${fileStat.dev}:${fileStat.ino}:${fileStat.mode}:${fileStat.size}:${fileStat.mtimeMs}:${fileStat.ctimeMs}`;
-}
-function objectIdentity(fileStat) {
-    return `${fileStat.dev}:${fileStat.ino}`;
-}
-
-async function readVerifiedTargetDescriptor(handle, _targetPath, expectedStat) {
-    const current = await handle.stat();
-    if (
-        !current.isFile() ||
-        current.isSymbolicLink() ||
-        current.dev !== expectedStat.dev ||
-        current.ino !== expectedStat.ino
-    ) {
-        return undefined;
-    }
-    const bytes = await handle.readFile();
-    const after = await handle.stat();
-    if (
-        !after.isFile() ||
-        after.isSymbolicLink() ||
-        fileIdentity(current) !== fileIdentity(after) ||
-        bytes.length !== after.size
-    ) {
-        return undefined;
-    }
-    return { bytes, stat: after };
-}
-
-
-async function observeOneTarget(root, targetPath, source) {
-    const relativePath = relative(root, targetPath);
-    let targetStat;
-    try {
-        targetStat = await lstatOrAbsent(targetPath);
-    } catch {
-        return { classification: "invalid:unreadable", path: relativePath };
-    }
-    if (!targetStat) return { classification: "absent", path: relativePath };
-    if (!targetStat.isFile() || targetStat.isSymbolicLink()) {
-        return {
-            classification: "invalid:file-kind",
-            path: relativePath,
-            fileIdentity: fileIdentity(targetStat),
-            objectIdentity: objectIdentity(targetStat),
-        };
-    }
-
-    let bytes;
-    let handle;
-    try {
-        handle = await open(targetPath, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-        const snapshot = await readVerifiedTargetDescriptor(handle, targetPath, targetStat);
-        if (!snapshot) {
-            return {
-                classification: "invalid:stale",
-                path: relativePath,
-                fileIdentity: fileIdentity(targetStat),
-                objectIdentity: objectIdentity(targetStat),
-            };
+async function ensureSafeDirectory(root, segments, plan) {
+    let current = root;
+    for (const segment of segments) {
+        current = join(current, segment);
+        let currentStat;
+        try {
+            currentStat = await lstatOrAbsent(current);
+            if (!currentStat) {
+                await mkdir(current);
+                currentStat = await lstat(current);
+            }
+        } catch (error) {
+            throw operationError(
+                "PLAN_FILE_KIND_UNSAFE",
+                plan,
+                "storage-unsafe",
+                relative(root, current) || "none",
+                "none",
+                "repository plan storage could not be established safely"
+            );
         }
-        bytes = snapshot.bytes;
-        targetStat = snapshot.stat;
+        if (!currentStat.isDirectory() || currentStat.isSymbolicLink()) {
+            throw operationError(
+                "PLAN_FILE_KIND_UNSAFE",
+                plan,
+                "storage-unsafe",
+                relative(root, current) || "none",
+                "none",
+                "repository plan storage must use regular non-symlink directories"
+            );
+        }
+    }
+}
+
+async function observeTarget(root, targetPath, plan) {
+    const safePath = relative(root, targetPath);
+    let before;
+    try {
+        before = await lstatOrAbsent(targetPath);
     } catch {
+        throw operationError(
+            "PLAN_FILE_KIND_UNSAFE",
+            plan,
+            "target-unreadable",
+            safePath,
+            "none",
+            "plan target could not be inspected safely"
+        );
+    }
+    if (!before) return { exists: false };
+    if (!isSafeRegular(before)) {
+        throw operationError(
+            "PLAN_FILE_KIND_UNSAFE",
+            plan,
+            "target-unsafe",
+            safePath,
+            "none",
+            "plan target must be a regular non-symlink file"
+        );
+    }
+    try {
+        const descriptor = await readOpenedRegular(targetPath, before);
         return {
-            classification: "invalid:unreadable",
-            path: relativePath,
-            fileIdentity: fileIdentity(targetStat),
-            objectIdentity: objectIdentity(targetStat),
+            exists: true,
+            identity: descriptor.identity,
+            bytes: descriptor.bytes,
+            digest: sha256(descriptor.bytes),
         };
+    } catch (error) {
+        throw operationError(
+            "PLAN_TARGET_STALE",
+            plan,
+            "target-changed-during-read",
+            safePath,
+            "none",
+            safeReason(error, "plan target changed while it was inspected")
+        );
+    }
+}
+
+function sameObservation(left, right) {
+    if (left.exists !== right.exists) return false;
+    if (!left.exists) return true;
+    return left.identity === right.identity && left.digest === right.digest && left.bytes.equals(right.bytes);
+}
+
+async function assertTargetsCurrent(root, activePath, archivePath, observed, plan) {
+    const current = {
+        active: await observeTarget(root, activePath, plan),
+        archive: await observeTarget(root, archivePath, plan),
+    };
+    if (!sameObservation(observed.active, current.active) || !sameObservation(observed.archive, current.archive)) {
+        throw operationError(
+            "PLAN_TARGET_STALE",
+            plan,
+            "target-changed",
+            "none",
+            "none",
+            "active or archived target changed before publication"
+        );
+    }
+    return current;
+}
+
+async function validateSnapshot(root, slug, bytes) {
+    const digest = sha256(bytes);
+    const temporaryRoot = await mkdtemp(join(tmpdir(), "omp-plan-artifact-"));
+    const snapshotPath = join(temporaryRoot, `${slug}-plan.md`);
+    let report;
+    let exitCode;
+    try {
+        const handle = await open(
+            snapshotPath,
+            constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | (constants.O_NOFOLLOW ?? 0),
+            0o600
+        );
+        try {
+            await handle.writeFile(bytes);
+            await handle.sync();
+        } finally {
+            await handle.close();
+        }
+
+        const parserStat = await lstat(PARSER);
+        if (!isSafeRegular(parserStat)) throw safeFailure("shared parser is unavailable");
+        const child = Bun.spawn(["python3", PARSER, "validate", snapshotPath], {
+            cwd: root,
+            stdout: "pipe",
+            stderr: "pipe",
+        });
+        const [stdout, stderr, status] = await Promise.all([
+            new Response(child.stdout).text(),
+            new Response(child.stderr).text(),
+            child.exited,
+        ]);
+        exitCode = status;
+        if (stderr !== "") throw safeFailure("shared parser emitted an unexpected diagnostic stream");
+        report = JSON.parse(stdout.trim());
+    } catch (error) {
+        throw operationError(
+            "PLAN_ARTIFACT_INVALID",
+            slug,
+            "parser:UNAVAILABLE",
+            "none",
+            "none",
+            safeReason(error, "shared parser did not return a usable validation result")
+        );
     } finally {
-        if (handle) await handle.close().catch(() => {});
+        await rm(temporaryRoot, { recursive: true, force: true }).catch(() => {});
     }
-    const hash = createHash("sha256").update(bytes).digest("hex");
-    const inspection = inspectHeaderBytes(bytes);
-    if (inspection.issues.length > 0) {
-        return {
-            classification: inspection.markerMissingOnly
-                ? "unclassified"
-                : `invalid:${inspection.issues[0].code}`,
-            path: relativePath,
-            fileIdentity: fileIdentity(targetStat),
-            objectIdentity: objectIdentity(targetStat),
-            bytes,
-            hash,
-        };
+
+    const firstIssue = Array.isArray(report?.issues) ? report.issues[0] : undefined;
+    if (report?.status !== "valid" || exitCode !== 0) {
+        const issueCode =
+            typeof firstIssue?.code === "string" && /^[A-Z0-9_]+$/.test(firstIssue.code)
+                ? firstIssue.code
+                : "RESULT_INVALID";
+        throw operationError(
+            "PLAN_ARTIFACT_INVALID",
+            slug,
+            `parser:${issueCode}`,
+            "none",
+            "none",
+            "plan snapshot failed shared parser validation"
+        );
     }
-    const parsed = validatePlanBytes(bytes);
-    if (parsed.datetime !== source.datetime) {
-        return {
-            classification: "invalid:identity",
-            path: relativePath,
-            fileIdentity: fileIdentity(targetStat),
-            objectIdentity: objectIdentity(targetStat),
-            bytes,
-            hash,
-            datetime: parsed.datetime,
-            authorityKind: parsed.authorityKind,
-        };
+
+    const lifecycleStatus = report.lifecycle_status;
+    const terminalComplete = report.terminal_complete;
+    const expectedTerminal = TERMINAL_STATUSES.has(lifecycleStatus);
+    if (
+        report.schema !== "executor-plan-validation/v1" ||
+        !Array.isArray(report.issues) ||
+        report.issues.length !== 0 ||
+        report.plan_sha256 !== digest ||
+        typeof report.datetime !== "string" ||
+        !LIFECYCLE_STATUSES.has(lifecycleStatus) ||
+        typeof terminalComplete !== "boolean" ||
+        terminalComplete !== expectedTerminal
+    ) {
+        throw operationError(
+            "PLAN_ARTIFACT_INVALID",
+            slug,
+            "parser:RESULT_INVALID",
+            "none",
+            "none",
+            "shared parser result did not bind the exact plan snapshot"
+        );
     }
+
     return {
-        classification:
-            parsed.authorityKind === "local-authority" ? "local-projection" : "direct-authority",
-        path: relativePath,
-        fileIdentity: fileIdentity(targetStat),
-        objectIdentity: objectIdentity(targetStat),
-        bytes,
-        hash,
-        datetime: parsed.datetime,
-        authorityKind: parsed.authorityKind,
+        datetime: report.datetime,
+        lifecycleStatus,
+        terminalComplete,
+        digest,
     };
 }
 
-async function observeTargetState(root, activePath, archivePath, source) {
-    const active = await observeOneTarget(root, activePath, source);
-    const archived = await observeOneTarget(root, archivePath, source);
-    const unsafeClassifications = new Set([
-        "invalid:file-kind",
-        "invalid:unreadable",
-        "invalid:stale",
-    ]);
-    if (unsafeClassifications.has(active.classification)) {
-        return { ...active, location: "active" };
-    }
-    if (unsafeClassifications.has(archived.classification)) {
-        return { ...archived, location: "archive" };
-    }
-    if (active.classification !== "absent" && archived.classification !== "absent") {
-        return { classification: "ambiguous", active, archived };
-    }
-    if (active.classification !== "absent") return { ...active, location: "active" };
-    if (archived.classification !== "absent") return { ...archived, location: "archive" };
-    return { classification: "absent", path: "none", location: "active" };
-}
-
-function sameTargetObservation(left, right) {
-    if (
-        left.classification !== right.classification ||
-        left.location !== right.location ||
-        left.path !== right.path ||
-        left.fileIdentity !== right.fileIdentity ||
-        left.objectIdentity !== right.objectIdentity ||
-        left.hash !== right.hash ||
-        left.datetime !== right.datetime ||
-        left.authorityKind !== right.authorityKind
-    )
-        return false;
-    if (left.classification === "ambiguous") {
-        return (
-            sameTargetObservation(left.active, right.active) &&
-            sameTargetObservation(left.archived, right.archived)
-        );
-    }
-    if (left.bytes || right.bytes) return Boolean(left.bytes && right.bytes && left.bytes.equals(right.bytes));
-    return true;
-}
-
 async function stageBytes(targetPath, bytes) {
-    const temporaryPath = join(
-        dirname(targetPath),
-        `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`
+    const temporaryPath = join(dirname(targetPath), `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`);
+    const handle = await open(
+        temporaryPath,
+        constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | (constants.O_NOFOLLOW ?? 0),
+        0o644
     );
-    const generationPath = `${temporaryPath}.generation`;
-    let handle;
     try {
-        handle = await open(temporaryPath, "wx", 0o600);
         await handle.writeFile(bytes);
         await handle.sync();
-        const stagedStat = await handle.stat();
-        await handle.close();
-        handle = undefined;
-        await link(temporaryPath, generationPath);
-        return {
-            path: temporaryPath,
-            generationPath,
-            objectIdentity: objectIdentity(stagedStat),
-        };
     } catch (error) {
-        if (handle) await handle.close().catch(() => {});
-        await rm(generationPath, { force: true }).catch(() => {});
+        await handle.close().catch(() => {});
         await rm(temporaryPath, { force: true }).catch(() => {});
         throw error;
     }
+    await handle.close();
+    return temporaryPath;
 }
 
-async function linkGenerationNoOverwrite(generationPath, targetPath, staleMessage) {
-    try {
-        await link(generationPath, targetPath);
-    } catch (error) {
-        if (error?.code === "EEXIST") throw safeFailure(staleMessage);
-        throw error;
-    }
+async function publishNoOverwrite(temporaryPath, targetPath) {
+    await link(temporaryPath, targetPath);
 }
 
-async function isProcessAlive(pid) {
-    try {
-        process.kill(pid, 0);
-        return true;
-    } catch (error) {
-        return error?.code !== "ESRCH";
-    }
+function requireExactTarget(observation, bytes) {
+    return observation.exists && observation.bytes.equals(bytes);
 }
 
-function validLockRecord(record) {
-    return (
-        Number.isInteger(record?.pid) &&
-        record.pid > 0 &&
-        typeof record.createdAt === "string" &&
-        !Number.isNaN(Date.parse(record.createdAt)) &&
-        typeof record.token === "string" &&
-        record.token.length > 0
-    );
-}
-
-async function readSerialized(filePath) {
-    try {
-        return await readFile(filePath, "utf8");
-    } catch (error) {
-        if (error?.code === "ENOENT") return undefined;
-        throw error;
-    }
-}
-
-async function releaseReclaimClaimIfOwned(claimPath, claim) {
-    try {
-        if ((await readSerialized(claimPath)) === claim) await rm(claimPath, { force: true });
-    } catch {
-        // Another contender owns the claim or the lock generation moved.
-    }
-}
-
-async function reclaimAbandonedClaimIfSafe(claimPath) {
-    const serialized = await readSerialized(claimPath);
-    if (serialized === undefined) return true;
-
-    let claim;
-    let malformed = false;
-    try {
-        claim = JSON.parse(serialized);
-        malformed = !validLockRecord(claim);
-    } catch {
-        malformed = true;
-    }
-    if (!malformed && (await isProcessAlive(claim.pid))) return false;
-    if (malformed) {
-        const claimStat = await stat(claimPath).catch((error) =>
-            error?.code === "ENOENT" ? undefined : Promise.reject(error)
-        );
-        if (!claimStat) return true;
-        if (Date.now() - claimStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
-    }
-    if ((await readSerialized(claimPath)) !== serialized) return false;
-    const tombstone = `${claimPath}.abandoned.${process.pid}.${randomUUID()}`;
-    try {
-        await rename(claimPath, tombstone);
-    } catch (error) {
-        return error?.code === "ENOENT";
-    }
-    await rm(tombstone, { force: true });
-    return true;
-}
-
-async function publishLockRecord(ownerPath, record) {
-    const lockPath = dirname(ownerPath);
-    const lockRoot = dirname(lockPath);
-    const temporaryPath = join(
-        lockRoot,
-        `.${basename(lockPath)}.${process.pid}.${randomUUID()}.owner.tmp`
-    );
-    let handle;
-    try {
-        handle = await open(temporaryPath, "wx", 0o600);
-        await handle.writeFile(record);
-        await handle.sync();
-        await handle.close();
-        handle = undefined;
-        try {
-            await link(temporaryPath, ownerPath);
-            return "published";
-        } catch (error) {
-            if (error?.code === "EEXIST") return "occupied";
-            if (error?.code === "ENOENT") return "missing";
-            throw error;
-        }
-    } finally {
-        if (handle) await handle.close().catch(() => {});
-        await rm(temporaryPath, { force: true }).catch(() => {});
-    }
-}
-
-async function claimUnpublishedLockIfSafe(lockPath, ownerPath) {
-    const lockStat = await stat(lockPath).catch((error) =>
-        error?.code === "ENOENT" ? undefined : Promise.reject(error)
-    );
-    if (!lockStat) return true;
-    if (Date.now() - lockStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
-
-    const claim = JSON.stringify({
-        pid: process.pid,
-        createdAt: new Date().toISOString(),
-        token: randomUUID(),
-    });
-    const publication = await publishLockRecord(ownerPath, claim);
-    if (publication === "missing") return true;
-    if (publication === "occupied") return false;
-
-    let releaseClaim = true;
-    try {
-        if ((await readSerialized(ownerPath)) !== claim) return false;
-        const tombstone = `${lockPath}.reclaim.${process.pid}.${randomUUID()}`;
-        try {
-            await rename(lockPath, tombstone);
-        } catch (error) {
-            return error?.code === "ENOENT";
-        }
-        releaseClaim = false;
-        await rm(tombstone, { recursive: true, force: true });
-        return true;
-    } finally {
-        if (releaseClaim && (await readSerialized(ownerPath)) === claim) {
-            await rm(ownerPath, { force: true }).catch(() => {});
-        }
-    }
-}
-
-async function reclaimLockIfSafe(lockPath) {
-    const ownerPath = join(lockPath, "owner.json");
-    const observedOwner = await readSerialized(ownerPath);
-    if (observedOwner === undefined) {
-        return claimUnpublishedLockIfSafe(lockPath, ownerPath);
-    }
-
-    let owner;
-    let malformed = false;
-    try {
-        owner = JSON.parse(observedOwner);
-        malformed = !validLockRecord(owner);
-    } catch {
-        malformed = true;
-    }
-    if (!malformed && (await isProcessAlive(owner.pid))) return false;
-    if (malformed) {
-        const lockStat = await stat(lockPath).catch((error) =>
-            error?.code === "ENOENT" ? undefined : Promise.reject(error)
-        );
-        if (!lockStat) return true;
-        if (Date.now() - lockStat.mtimeMs <= MALFORMED_LOCK_RECLAIM_AGE_MS) return false;
-    }
-
-    const claimPath = join(lockPath, "reclaim.json");
-    const claim = JSON.stringify({
-        pid: process.pid,
-        createdAt: new Date().toISOString(),
-        token: randomUUID(),
-    });
-    try {
-        await writeFile(claimPath, claim, { flag: "wx" });
-    } catch (error) {
-        if (error?.code === "ENOENT") return true;
-        if (error?.code === "EEXIST") await reclaimAbandonedClaimIfSafe(claimPath);
-        return false;
-    }
-
-    let releaseClaim = true;
-    try {
-        if ((await readSerialized(ownerPath)) !== observedOwner) return false;
-        if (!malformed && (await isProcessAlive(owner.pid))) return false;
-
-        const tombstone = `${lockPath}.reclaim.${process.pid}.${randomUUID()}`;
-        try {
-            await rename(lockPath, tombstone);
-        } catch (error) {
-            return error?.code === "ENOENT";
-        }
-        releaseClaim = false;
-        await rm(tombstone, { recursive: true, force: true });
-        return true;
-    } finally {
-        if (releaseClaim) await releaseReclaimClaimIfOwned(claimPath, claim);
-    }
-}
-
-
-async function acquireLock(root, planId) {
-    const lockRoot = join(tmpdir(), "omp-plan-artifact-locks");
-    await ensureDirectory(lockRoot, "identity lock root");
-    const key = createHash("sha256").update(`${root}\0${planId}`).digest("hex");
-    const lockPath = join(lockRoot, `${key}.lock`);
-    const deadline = Date.now() + LOCK_WAIT_MS;
-    while (Date.now() < deadline) {
-        try {
-            await mkdir(lockPath);
-            const ownerPath = join(lockPath, "owner.json");
-            const owner = JSON.stringify({
-                pid: process.pid,
-                createdAt: new Date().toISOString(),
-                token: randomUUID(),
-            });
-            const publication = await publishLockRecord(ownerPath, owner);
-            if (publication === "published") {
-                return { lockPath, ownerPath, owner };
-            }
-        } catch (error) {
-            if (error?.code !== "EEXIST") throw error;
-            await reclaimLockIfSafe(lockPath);
-        }
-        await Bun.sleep(LOCK_RETRY_MS);
-    }
-    throw safeFailure(`timed out waiting for plan identity lock: ${planId}`);
-}
-
-async function releaseLock(lock) {
-    if ((await readSerialized(lock.ownerPath)) === lock.owner) {
-        await rm(lock.lockPath, { recursive: true, force: true });
-    }
-}
-
-async function assertLockOwnership(lock) {
-    if ((await readSerialized(lock.ownerPath)) !== lock.owner) {
-        throw safeFailure("plan identity lock generation changed before transition");
-    }
-}
-
-async function synchronize(root, slug, source) {
-    const { planId } = source;
-    const activePath = join(root, ".agents", "plans", `${planId}.md`);
-    const archivePath = join(root, ".agents", "plans", "archive", `${planId}.md`);
-    let lock;
-    try {
-        lock = await acquireLock(root, planId);
-    } catch (error) {
+async function copyNonterminal(root, sourcePath, source, activePath, archivePath, plan) {
+    const observed = {
+        active: await observeTarget(root, activePath, plan),
+        archive: await observeTarget(root, archivePath, plan),
+    };
+    if (observed.active.exists && observed.archive.exists) {
         throw operationError(
-            "PLAN_LOCK_UNAVAILABLE",
-            planId,
-            "lock-unavailable",
+            "PLAN_IDENTITY_CONFLICT",
+            plan,
+            "active-and-archive",
             "none",
             "none",
-            safeDiagnosticReason(error, "identity lock storage is unavailable")
+            "active and archived targets both exist for this plan identity"
+        );
+    }
+    if (observed.archive.exists) {
+        throw operationError(
+            "PLAN_ARCHIVE_CONFLICT",
+            plan,
+            "archive-exists",
+            relative(root, archivePath),
+            "none",
+            "a terminal archive already exists for this plan identity"
         );
     }
 
     let temporaryPath;
-    let generationPath;
     let effectStarted = false;
     try {
-        let lockedSource;
-        try {
-            lockedSource = await readRegularBytes(source.contentFile, source.binding);
-        } catch (error) {
-            throw operationError(
-                "PLAN_SOURCE_STALE",
-                planId,
-                "source-unreadable",
-                "none",
-                "none",
-                safeDiagnosticReason(error, "source path could not be re-read safely")
-            );
-        }
-        if (!lockedSource.bytes.equals(source.bytes)) {
-            throw operationError(
-                "PLAN_SOURCE_STALE",
-                planId,
-                "source-changed-under-lock",
-                "none",
-                "none",
-                "source bytes changed while waiting for the identity lock"
-            );
-        }
-
-        try {
-            await ensureDirectory(join(root, ".agents"), "repository metadata directory");
-            await ensureDirectory(join(root, ".agents", "plans"), "repository plan directory");
-            const archiveDirectoryStat = await lstatOrAbsent(dirname(archivePath));
-            if (
-                archiveDirectoryStat &&
-                (!archiveDirectoryStat.isDirectory() || archiveDirectoryStat.isSymbolicLink())
-            ) {
-                throw safeFailure("repository archive parent is not a regular non-symlink directory");
-            }
-        } catch (error) {
-            throw operationError(
-                "PLAN_FILE_KIND_UNSAFE",
-                planId,
-                "storage-unsafe",
-                ".agents/plans",
-                "none",
-                safeDiagnosticReason(error, "repository storage directories could not be established safely")
-            );
-        }
-
-        const observed = await observeTargetState(root, activePath, archivePath, source);
-        if (observed.classification === "ambiguous") {
-            throw operationError(
-                "PLAN_PROJECTION_AMBIGUOUS",
-                planId,
-                "ambiguous",
-                "none",
-                "none",
-                "active and archived targets both exist for this plan identity"
-            );
-        }
-        if (
-            observed.classification === "invalid:file-kind" ||
-            observed.classification === "invalid:unreadable"
-        ) {
-            throw operationError(
-                "PLAN_FILE_KIND_UNSAFE",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                observed.classification === "invalid:file-kind"
-                    ? "existing plan target must be a regular non-symlink file"
-                    : "existing plan target could not be read through its verified descriptor"
-            );
-        }
-        if (observed.classification === "invalid:stale") {
-            throw operationError(
-                "PLAN_TARGET_STALE",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                "existing plan target changed while its descriptor was read"
-            );
-        }
-        if (observed.classification === "direct-authority") {
-            throw operationError(
-                "PLAN_AUTHORITY_CONFLICT",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                "local authority cannot replace a direct repository authority"
-            );
-        }
-        if (observed.classification === "unclassified") {
-            throw operationError(
-                "PLAN_AUTHORITY_UNCLASSIFIED",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                "existing target has no Authority kind and requires separate classification"
-            );
-        }
-        if (observed.classification === "invalid:identity") {
-            throw operationError(
-                "PLAN_IDENTITY_MISMATCH",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                "existing target Datetime does not match its exact repository identity"
-            );
-        }
-        if (observed.classification.startsWith("invalid:")) {
-            throw operationError(
-                "PLAN_HEADER_INVALID",
-                planId,
-                observed.classification,
-                observed.path,
-                "none",
-                "existing target header is invalid"
-            );
-        }
-
-        const terminal = terminalLifecycleComplete(source);
-        const targetPath = observed.location === "archive" ? archivePath : activePath;
-        if (terminal && observed.location !== "archive") {
-            try {
-                await ensureDirectory(dirname(archivePath), "repository archive directory");
-            } catch (error) {
-                throw operationError(
-                    "PLAN_FILE_KIND_UNSAFE",
-                    planId,
-                    "archive-directory-unsafe",
-                    ".agents/plans/archive",
-                    "none",
-                    safeDiagnosticReason(error, "repository archive directory could not be established safely")
-                );
-            }
-        }
-
-        const staged = await stageBytes(targetPath, source.bytes);
-        temporaryPath = staged.path;
-        generationPath = staged.generationPath;
-        let precommitSource;
-        try {
-            precommitSource = await readRegularBytes(source.contentFile, source.binding);
-        } catch (error) {
-            throw operationError(
-                "PLAN_SOURCE_STALE",
-                planId,
-                "source-unreadable-precommit",
-                "none",
-                "none",
-                    safeDiagnosticReason(error, "source path could not be re-read safely before publication")
-            );
-        }
-        if (!precommitSource.bytes.equals(source.bytes)) {
-            throw operationError(
-                "PLAN_SOURCE_STALE",
-                planId,
-                "source-changed-precommit",
-                "none",
-                "none",
-                "source bytes changed before publication"
-            );
-        }
-        await assertLockOwnership(lock);
-        const precommitTarget = await observeTargetState(root, activePath, archivePath, source);
-        if (!sameTargetObservation(observed, precommitTarget)) {
-            throw operationError(
-                "PLAN_TARGET_STALE",
-                planId,
-                "target-changed-precommit",
-                precommitTarget.path ?? "none",
-                "none",
-                "target path, kind, bytes, identity, or authority changed before publication"
-            );
-        }
-
-        if (observed.classification === "absent") {
-            await linkGenerationNoOverwrite(
-                staged.generationPath,
-                targetPath,
-                "target generation appeared at publication"
-            );
+        temporaryPath = await stageBytes(activePath, source.bytes);
+        await assertSourceCurrent(sourcePath, source, plan);
+        await assertTargetsCurrent(root, activePath, archivePath, observed, plan);
+        if (observed.active.exists) {
+            await rename(temporaryPath, activePath);
+            effectStarted = true;
+            temporaryPath = undefined;
         } else {
-            await rename(temporaryPath, targetPath);
+            await publishNoOverwrite(temporaryPath, activePath);
+            effectStarted = true;
+            await rm(temporaryPath);
             temporaryPath = undefined;
         }
-        effectStarted = true;
-        let expectedLocation = observed.location === "archive" ? "archive" : "active";
-        if (terminal && expectedLocation === "active") {
-            await assertLockOwnership(lock);
-            const terminalSource = await readRegularBytes(source.contentFile, source.binding);
-            const publishedActive = await observeOneTarget(root, activePath, source);
-            const emptyArchive = await observeOneTarget(root, archivePath, source);
-            if (
-                !terminalSource.bytes.equals(source.bytes) ||
-                publishedActive.classification !== "local-projection" ||
-                publishedActive.location !== undefined ||
-                publishedActive.path !== relative(root, activePath) ||
-                publishedActive.objectIdentity !== staged.objectIdentity ||
-                publishedActive.datetime !== source.datetime ||
-                publishedActive.authorityKind !== "local-authority" ||
-                !publishedActive.bytes?.equals(source.bytes) ||
-                emptyArchive.classification !== "absent"
-            ) {
-                throw safeFailure("terminal publication barrier failed");
-            }
-            await linkGenerationNoOverwrite(
-                staged.generationPath,
-                archivePath,
-                "terminal archive generation appeared at transition"
-            );
-            const archivedGeneration = await observeOneTarget(root, archivePath, source);
-            const removableActive = await observeOneTarget(root, activePath, source);
-            if (
-                archivedGeneration.classification !== "local-projection" ||
-                archivedGeneration.objectIdentity !== staged.objectIdentity ||
-                !archivedGeneration.bytes?.equals(source.bytes) ||
-                removableActive.classification !== "local-projection" ||
-                removableActive.objectIdentity !== staged.objectIdentity ||
-                !removableActive.bytes?.equals(source.bytes)
-            ) {
-                throw safeFailure("terminal generation changed at transition");
-            }
-            await rm(activePath);
-            expectedLocation = "archive";
-        }
 
-        const postcondition = await observeTargetState(root, activePath, archivePath, source);
-        const expectedPath = expectedLocation === "archive" ? relative(root, archivePath) : relative(root, activePath);
-        if (
-            postcondition.classification !== "local-projection" ||
-            postcondition.location !== expectedLocation ||
-            postcondition.path !== expectedPath ||
-            !postcondition.bytes?.equals(source.bytes)
-        ) {
-            throw safeFailure("target changed after publication");
+        const active = await observeTarget(root, activePath, plan);
+        const archive = await observeTarget(root, archivePath, plan);
+        if (!requireExactTarget(active, source.bytes) || archive.exists) {
+            throw safeFailure("active target did not retain the exact validated snapshot");
         }
-        const finalSource = await readRegularBytes(source.contentFile, source.binding);
-        if (!finalSource.bytes.equals(source.bytes)) {
-            throw safeFailure("source changed after publication");
-        }
-        const confirmedTarget = await observeTargetState(root, activePath, archivePath, source);
-        if (
-            confirmedTarget.classification !== "local-projection" ||
-            confirmedTarget.location !== expectedLocation ||
-            confirmedTarget.path !== expectedPath ||
-            !confirmedTarget.bytes?.equals(source.bytes)
-        ) {
-            throw safeFailure("target changed after publication");
-        }
-        const confirmedSource = await readRegularBytes(source.contentFile, source.binding);
-        if (!confirmedSource.bytes.equals(source.bytes)) {
-            throw safeFailure("source changed after publication");
-        }
-
-        if (observed.location === "archive") {
-            return `plan-artifact-already-archived: ${relative(root, archivePath)}`;
-        }
-        if (expectedLocation === "archive") {
-            return `plan-artifact-archived: ${relative(root, archivePath)}`;
-        }
-        return `plan-artifact-synced: ${relative(root, activePath)}`;
+        await assertSourceCurrent(sourcePath, source, plan, "possible-complete");
+        return `plan-artifact-copied: ${relative(root, activePath)}`;
     } catch (error) {
         if (effectStarted) {
             throw operationError(
                 "PLAN_POSTCONDITION_FAILED",
-                planId,
+                plan,
                 "postcondition-uncertain",
-                "none",
+                relative(root, activePath),
                 "possible-complete",
-                safeDiagnosticReason(error, "publication postcondition could not be established")
+                safeReason(error, "active target postcondition could not be established")
             );
         }
         if (error instanceof PlanArtifactError) throw error;
         throw operationError(
-            "PLAN_TARGET_STALE",
-            planId,
-            "precommit-failed",
+            error?.code === "EEXIST" ? "PLAN_TARGET_STALE" : "PLAN_FILE_KIND_UNSAFE",
+            plan,
+            error?.code === "EEXIST" ? "target-appeared" : "publication-failed",
+            relative(root, activePath),
             "none",
-            "none",
-            safeDiagnosticReason(error, "precommit state could not be established safely")
+            "active target could not be published safely"
         );
     } finally {
         if (temporaryPath) await rm(temporaryPath, { force: true }).catch(() => {});
-        if (generationPath) await rm(generationPath, { force: true }).catch(() => {});
-        await releaseLock(lock);
     }
 }
 
-async function main() {
-    const { slug, contentFile } = parseArguments(process.argv.slice(2));
+async function copyTerminal(root, sourcePath, source, activePath, archivePath, plan) {
+    const observed = {
+        active: await observeTarget(root, activePath, plan),
+        archive: await observeTarget(root, archivePath, plan),
+    };
+    if (observed.active.exists && observed.archive.exists) {
+        throw operationError(
+            "PLAN_IDENTITY_CONFLICT",
+            plan,
+            "active-and-archive",
+            "none",
+            "none",
+            "active and archived targets both exist for this plan identity"
+        );
+    }
+    if (observed.archive.exists) {
+        if (!observed.archive.bytes.equals(source.bytes)) {
+            throw operationError(
+                "PLAN_ARCHIVE_CONFLICT",
+                plan,
+                "archive-divergent",
+                relative(root, archivePath),
+                "none",
+                "existing archive differs from the validated terminal snapshot"
+            );
+        }
+        await assertSourceCurrent(sourcePath, source, plan);
+        const confirmedArchive = await observeTarget(root, archivePath, plan);
+        const confirmedActive = await observeTarget(root, activePath, plan);
+        if (!requireExactTarget(confirmedArchive, source.bytes) || confirmedActive.exists) {
+            throw operationError(
+                "PLAN_TARGET_STALE",
+                plan,
+                "archive-changed",
+                relative(root, archivePath),
+                "none",
+                "existing archive changed before its postcondition was confirmed"
+            );
+        }
+        return `plan-artifact-archived: ${relative(root, archivePath)}`;
+    }
+
+    let temporaryPath;
+    let effectStarted = false;
+    try {
+        temporaryPath = await stageBytes(archivePath, source.bytes);
+        await assertSourceCurrent(sourcePath, source, plan);
+        await assertTargetsCurrent(root, activePath, archivePath, observed, plan);
+        await publishNoOverwrite(temporaryPath, archivePath);
+        effectStarted = true;
+        await rm(temporaryPath);
+        temporaryPath = undefined;
+
+        const archived = await observeTarget(root, archivePath, plan);
+        if (!requireExactTarget(archived, source.bytes)) {
+            throw safeFailure("archive did not retain the exact validated snapshot");
+        }
+        if (observed.active.exists) {
+            const active = await observeTarget(root, activePath, plan);
+            if (!sameObservation(observed.active, active)) {
+                throw safeFailure("active target changed before terminal removal");
+            }
+            await rm(activePath);
+        }
+
+        const finalActive = await observeTarget(root, activePath, plan);
+        const finalArchive = await observeTarget(root, archivePath, plan);
+        if (finalActive.exists || !requireExactTarget(finalArchive, source.bytes)) {
+            throw safeFailure("terminal archive postcondition could not be confirmed");
+        }
+        await assertSourceCurrent(sourcePath, source, plan, "possible-complete");
+        return `plan-artifact-archived: ${relative(root, archivePath)}`;
+    } catch (error) {
+        if (effectStarted) {
+            throw operationError(
+                "PLAN_POSTCONDITION_FAILED",
+                plan,
+                "postcondition-uncertain",
+                relative(root, archivePath),
+                "possible-complete",
+                safeReason(error, "terminal archive postcondition could not be established")
+            );
+        }
+        if (error instanceof PlanArtifactError) throw error;
+        throw operationError(
+            error?.code === "EEXIST" ? "PLAN_TARGET_STALE" : "PLAN_FILE_KIND_UNSAFE",
+            plan,
+            error?.code === "EEXIST" ? "archive-appeared" : "archive-publication-failed",
+            relative(root, archivePath),
+            "none",
+            "terminal archive could not be created safely"
+        );
+    } finally {
+        if (temporaryPath) await rm(temporaryPath, { force: true }).catch(() => {});
+    }
+}
+
+async function copyPlan(root, slug, contentFile) {
     if (basename(contentFile) !== `${slug}-plan.md`) {
         throw operationError(
             "PLAN_IDENTITY_MISMATCH",
@@ -1269,39 +597,55 @@ async function main() {
             "source-basename-mismatch",
             "none",
             "none",
-            `content file identity must match slug '${slug}': expected ${slug}-plan.md`
+            `content file identity must match slug '${slug}'`
         );
     }
+
+    const source = await captureSource(contentFile, slug);
+    const validation = await validateSnapshot(root, slug, source.bytes);
+    const plan = `${validation.datetime}_${slug}`;
+    const activePath = join(root, ".agents", "plans", `${plan}.md`);
+    const archivePath = join(root, ".agents", "plans", "archive", `${plan}.md`);
+
+    await ensureSafeDirectory(root, [".agents"], plan);
+    await ensureSafeDirectory(root, [".agents", "plans"], plan);
+    if (validation.terminalComplete) {
+        await ensureSafeDirectory(root, [".agents", "plans", "archive"], plan);
+        return await copyTerminal(root, contentFile, source, activePath, archivePath, plan);
+    }
+    return await copyNonterminal(root, contentFile, source, activePath, archivePath, plan);
+}
+
+async function main() {
+    const { slug, contentFile } = parseArguments(process.argv.slice(2));
     let root;
     try {
         root = await realpath(process.cwd());
-    } catch {
+        const rootStat = await lstat(root);
+        if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) {
+            throw safeFailure("repository root must be a regular non-symlink directory");
+        }
+    } catch (error) {
         throw operationError(
             "PLAN_FILE_KIND_UNSAFE",
             slug,
             "repository-root-unavailable",
             "none",
             "none",
-            "repository root could not be established safely"
+            safeReason(error, "repository root could not be established safely")
         );
     }
-    const source = await readSource(contentFile, slug, sourceBindingFromEnvironment());
-    console.log(await synchronize(root, slug, source));
+    console.log(await copyPlan(root, slug, contentFile));
 }
-
-export {
-    linkGenerationNoOverwrite,
-    publishLockRecord,
-    readVerifiedTargetDescriptor,
-    releaseLock,
-};
 
 if (import.meta.main) {
     main().catch((error) => {
         if (error instanceof PlanArtifactError) {
             if (error.diagnostic) {
                 const { kind, plan, state, path, effect } = error.diagnostic;
-                console.error(`ERROR: ${kind}: plan=${plan} state=${state} path=${path} effect=${effect}: ${error.message}`);
+                console.error(
+                    `ERROR: ${kind}: plan=${plan} state=${state} path=${path} effect=${effect}: ${error.message}`
+                );
             } else {
                 console.error(`ERROR: ${error.message}`);
             }

@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard original-rerun trace; emit canonical events only. Original-initial review sealed FIND-A and FIND-B in the same file shared/path. FIND-A is invariant INV-A with trigger alpha and affected AC-A; FIND-B is invariant INV-B with trigger beta and affected AC-B. The repair closes FIND-A only. The rerun binds both lineage identities and the repair delta, reviews impacted shared/path, confirms FIND-A closed, and finds FIND-B still incomplete. Return CHANGES REQUIRED for FIND-B as an existing lineage; do not merge by path, invent a new lineage, or return APPROVED."
+  },
+  "scripted_replies": []
+}

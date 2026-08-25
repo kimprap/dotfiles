@@ -30,6 +30,21 @@
       "summary": "Deleted manifest-allowed paths cannot be staged through the helper.",
       "surface": "bin/dot-add staging helper"
     },
+    "pc-ae711c27c4d758b7": {
+      "first_seen": "2026-08-24",
+      "last_seen": "2026-08-24",
+      "observations": [
+        {
+          "date": "2026-08-24",
+          "friction": "Repeated assurance-tail refinements still leave a risk of narrowly scoped proof or duplicated reviewer opinions, which can make repair and rerun work lower-value than intended.",
+          "workaround": "Manually inspect repository verification guidance, freeze criterion-specific proof recipes, and consolidate direct-evidence findings under the existing bounded repair and one-review contracts."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Make repository-specific proof mechanics and bounded evidence partitioning explicit before assurance runs.",
+      "surface": "dev-* assurance-tail evidence selection"
+    },
     "pc-e1c8b1660bfd1b81": {
       "first_seen": "2026-08-13",
       "last_seen": "2026-08-13",

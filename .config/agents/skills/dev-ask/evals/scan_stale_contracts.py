@@ -43,12 +43,19 @@ STALE_NEEDLES = [
     "Task Intent is optional",
     "Methods accepts ponytail",
     "Papercut capture schedules continual learning",
+    "later review repeats the whole scope",
+    "finding lineage is the file path",
+    "a grant admits a repair finding",
+    "verifier verdict becomes the review verdict",
+    "completion reruns criterion proof",
+    "rebuild the applicable project rule manifest",
+    "dev-ask completion presentation",
 ]
 REQUIRED_NEEDLES = [
     "compact is the default",
     "two semantic attempts",
     "compact never dispatches",
-    "dev-implementation then dev-ask completion presentation",
+    "dev-implementation then completion-presentation",
     "observable changed-contract consumer",
     "complete causal impact map",
     "terminal residual risk",
@@ -64,6 +71,18 @@ REQUIRED_NEEDLES = [
     "No candidate means no skill or ledger access and no papercut output",
     "dispatches no learning",
     "Papercut is never a task, Methods token",
+    "frozen acceptance cases, fixtures, oracles",
+    "never independent verifier evidence",
+    "backend freezes one action for every parent criterion",
+    "verifier independently accepts or rejects",
+    "original-initial is the one whole-scope discovery pass",
+    "Paths are evidence, not identity",
+    "disjoint outcome-relevant non-safety defect remains CHANGES REQUIRED",
+    "authority-change-required",
+    "exact URI and SHA-256",
+    "binds each manifest exactly once",
+    "executes zero criterion proof recipes",
+    "Verifier receipts are inputs, never the review verdict",
 ]
 EXPECTED_DESCRIPTIONS = {
     ".config/agents/skills/dev-implementation/SKILL.md": (
@@ -77,14 +96,22 @@ EXPECTED_DESCRIPTIONS = {
     ".config/agents/skills/dev-verification/SKILL.md": (
         "Independently verify declared acceptance criteria at an approved immutable target "
         "only when the selected assurance profile or topology requires independent "
-        "verification. Use fresh read-only evidence; never repair, reformat, merge, or "
-        "trust the implementer's conclusion."
+        "verification. Produce a fresh aggregate verdict from fresh impacted proof and "
+        "independently accepted exact unaffected evidence; never repair, reformat, merge, "
+        "or trust worker conclusions."
     ),
 }
 CORE_SCAN_PATHS = [
+    ".agents/AGENTS.md",
     ".config/agents/rules/plan.md",
     ".config/agents/rules/plan-impl-spec.md",
     ".config/agents/rules/papercut.md",
+    ".config/agents/rules/plan-repo-storage.md",
+    ".grok/rules/plan-repo-storage.md",
+    ".config/agents/rules/plan-omp-transport.md",
+    ".grok/rules/plan-omp-transport.md",
+    ".config/agents/rules/plan-grok-transport.md",
+    ".grok/rules/plan-grok-transport.md",
     ".config/agents/skills/dev-ask/SKILL.md",
     ".config/agents/skills/dev-implementation/SKILL.md",
     ".config/agents/skills/dev-implementation/references/compact-checklist.md",
@@ -93,6 +120,11 @@ CORE_SCAN_PATHS = [
     ".config/agents/skills/dev-verification/SKILL.md",
     ".config/agents/skills/dev-code-review/SKILL.md",
     ".config/agents/skills/dev-continual-learning/SKILL.md",
+    ".config/agents/skills/continual-learning/SKILL.md",
+    ".config/agents/skills/continual-learning/WORKFLOW.md",
+    ".config/agents/skills/completion-presentation/SKILL.md",
+    ".config/agents/skills/product-ask/SKILL.md",
+    ".config/agents/skills/product-ask/WORKFLOW.md",
     ".config/agents/skills/papercut/SKILL.md",
     ".config/agents/skills/papercut/WORKFLOW.md",
     ".config/agents/skills/papercut/evals/evals.json",
@@ -101,20 +133,163 @@ CORE_SCAN_PATHS = [
     "docs/adr/0003-bounded-assurance-and-repair.md",
     "docs/adr/0004-canonical-discovery-and-continual-learning.md",
     "docs/adr/0007-automated-papercut-lifecycle-and-lean-evidence.md",
+    "docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md",
     "docs/adr/INDEX.md",
     ".config/agents/skills/dev-ask/WORKFLOW.md",
     ".config/agents/skills/dev-ask/evals/evals.json",
 ]
+EXECUTOR_PLAN_CASE_IDS = {
+    "B-PLAN-TAIL-OMITTED",
+    "B-T5-EXECUTOR-PLAN-CYCLE",
+    "B-T5-EXECUTOR-PLAN-DANGLING",
+    "B-T5-EXECUTOR-PLAN-GROK",
+    "B-T5-EXECUTOR-PLAN-MISSING",
+    "B-T5-EXECUTOR-PLAN-OMP",
+    "R-COMPACT-PLAN-WITH-TAIL",
+}
+EXECUTOR_PLAN_SCOPED_PATHS = {
+    ".config/agents/rules/plan.md",
+    ".grok/rules/plan.md",
+    ".config/agents/rules/plan-impl-spec.md",
+    ".grok/rules/plan-impl-spec.md",
+    ".config/agents/rules/plan-repo-storage.md",
+    ".grok/rules/plan-repo-storage.md",
+    ".config/agents/rules/plan-omp-transport.md",
+    ".grok/rules/plan-omp-transport.md",
+    ".config/agents/rules/plan-grok-transport.md",
+    ".grok/rules/plan-grok-transport.md",
+    ".config/agents/skills/dev-implementation/SKILL.md",
+    ".config/agents/skills/dev-implementation/references/compact-checklist.md",
+    ".config/agents/skills/dev-implementation/scripts/executor_plan.py",
+    ".config/agents/skills/dev-implementation/scripts/test_executor_plan.py",
+    ".config/agents/skills/dev-implementation/scripts/fixtures/executor_plan/complete.md",
+    ".config/agents/skills/dev-implementation/scripts/fixtures/executor_plan/fan_in.md",
+    ".config/agents/skills/dev-ask/WORKFLOW.md",
+    ".config/agents/skills/improve/references/plan-template.md",
+    "docs/adr/0002-executor-plans-and-orchestration.md",
+    "docs/adr/INDEX.md",
+}
+EXECUTOR_PLAN_OBSOLETE_NEEDLES = (
+    "executor-plan-preflight/v1",
+    "authority_outcome",
+    "--context",
+    "--consumer",
+    "--local-root",
+    "--local-plan",
+    "repository projection",
+    "exact <slug>-plan.md counterpart",
+    "same-identity local counterpart",
+    "same-identity session counterpart",
+    "local authority and projection differ",
+    "local-authority",
+    "direct-repository",
+)
+PLAN_ARTIFACT_SCOPED_NEEDLES = {
+    "bin/omp-copy-plan-artifact": (
+        "omp-copy-plan-artifact sync",
+        "expected operation 'sync'",
+        "inspectHeaderBytes",
+        "validatePlanBytes",
+        "terminalLifecycleComplete",
+    ),
+    ".config/agents/harnesses/omp/extensions/plan-artifact-sync.js": (
+        '["sync", "--slug"',
+        "inspectHeaderBytes",
+        "validatePlanBytes",
+        "terminalLifecycleComplete",
+    ),
+}
 REWRITE_IDS = {
     "B-COMPACT",
     "B-COMPACT-CURATION-TRIGGER",
+    "B-COMPACT-DEFERRED-LEARNING-CANDIDATE",
+    "B-COMPLETION",
+    "B-FULL",
+    "B-LEARNING",
+    "B-REVIEW",
+    "B-REVIEW-WORDING-ADVISORY",
+    "B-T4-CURATION-BLOCKED",
+    "B-T4-CURATION-COMPACT-NOT-TRIGGERED",
+    "B-T4-CURATION-DETERMINISTIC-FAILURE",
+    "B-T4-CURATION-FLAKY",
+    "B-T4-CURATION-INCONCLUSIVE",
+    "B-T4-CURATION-NO-DURABLE",
+    "B-T4-CURATION-SEMANTIC-FAILURE",
+    "B-T4-CURATION-SEMANTIC-VERDICT",
+    "B-T4-CURATION-SEMANTIC-VERDICT-MISSING",
+    "B-T4-CURATION-TUPLE-DRIFT",
+    "B-T4-CURATION-UNBOUND-CANDIDATE",
+    "B-T4-LEARNING-BACKGROUND-NEAR-MISS",
+    "B-T4-LEARNING-CALENDAR-NEAR-MISS",
+    "B-T4-LEARNING-COUNT-NEAR-MISS",
+    "B-T4-LEARNING-DEEP-EVENT",
+    "B-T4-LEARNING-DEEP-EXPLICIT",
+    "B-T4-LEARNING-STANDARD",
+    "B-T4-LEARNING-USER-LEVEL-NEAR-MISS",
+    "B-T4-PAPERCUT-CANDIDATE-BINDING",
+    "B-T4-PAPERCUT-NARROW-AUTHORITY",
+    "B-T4-PAPERCUT-SETTLEMENT-FIXED",
+    "B-T4-PAPERCUT-SETTLEMENT-GLOBAL",
+    "B-T4-PAPERCUT-SETTLEMENT-OPEN",
+    "B-T4-PAPERCUT-SETTLEMENT-REJECTED",
+    "B-T4-PAPERCUT-SETTLEMENT-SUPERSEDED",
     "B-T4-REPAIR-REMAINING-BLOCKER",
+    "B-T5-COMPLETION-ASSURED",
+    "B-T5-COMPLETION-MISSING-ASSURANCE",
+    "B-T5-EXECUTOR-PLAN-CYCLE",
+    "B-T5-EXECUTOR-PLAN-DANGLING",
+    "B-T5-EXECUTOR-PLAN-GROK",
+    "B-T5-EXECUTOR-PLAN-MISSING",
+    "B-T5-EXECUTOR-PLAN-OMP",
+    "L-DELEGATION",
+    "L-FULL",
+    "L-MUTATION",
+    "L-ONE-OWNER",
+    "R-APPROACH-REFINEMENT-NEAR-MISS-DIRECT",
+    "R-ARCHITECTURE-NEAR-MISS",
+    "R-ARTIFACT-LANE",
+    "R-ARTIFACT-LANE-NEAR-MISS",
+    "R-BUG",
+    "R-BUG-NEAR-MISS",
+    "R-COMPLETE",
     "R-COMPLETE-COMPACT-NO-LEARNING",
+    "R-COMPLETE-NEAR-MISS",
+    "R-DRIFT-NEAR-MISS",
+    "R-GRILL-NEAR-MISS",
+    "R-ORDINARY-COMPACT-DIRECT",
+    "R-ORDINARY-COMPACT-NEAR-MISS-DISQUALIFIER",
+    "R-ORDINARY-SIZE-ONLY",
+    "R-OUTCOME-CONTINUATION",
+    "R-REQUIREMENTS",
+    "R-REQUIREMENTS-NEAR-MISS",
+    "R-REVIEW-ADVISORY-MAINTENANCE",
+    "R-ROUTE-CANDIDATES",
+    "R-ROUTE-GATING-QUESTION-NEAR-MISS",
+    "R-ROUTE-PRESENTATION-NEAR-MISS-INLINE",
+    "R-T5-CANONICAL-DISCOVERY",
+    "R-T5-ORDINARY-DIRECT-NO-EAGER-HISTORY",
+    "R-TODO-PROJECTION-EQUIVALENT-A",
+    "R-TODO-PROJECTION-EQUIVALENT-B",
+    "R-TRIAGE-NEAR-MISS-PROJECT-TICKET",
+    "R-UNCHANGED-HANDOFF",
+    "R-WAYFINDER-NEAR-MISS",
 }
 ADDED_IDS = {
+    "B-ASSURANCE-RECEIPT-COMPLETION",
+    "B-ASSURANCE-REUSE-DRIFT",
+    "B-ASSURANCE-REUSE-UNAFFECTED",
     "B-COMPACT-PLAN-NO-TAIL",
     "B-PLAN-TAIL-OMITTED",
     "B-PLAN-TAIL-PROFILE",
+    "B-REVIEW-SET-AGGREGATE-VERDICT",
+    "B-REVIEW-SET-DISJOINT-ADVISORY",
+    "B-REVIEW-SET-DISJOINT-OUTCOME",
+    "B-REVIEW-SET-DISJOINT-SAFETY",
+    "B-REVIEW-SET-GRANT-HYPOTHESIS-ONLY",
+    "B-REVIEW-SET-IDENTITY-COLLISION",
+    "B-REVIEW-SET-POST-VERIFIED-BLOCKER",
+    "B-REVIEW-SET-RENAMED-CLOSURE",
+    "B-REVIEW-SET-REPAIR-REGRESSION",
     "B-T4-CHECKPOINT-PROOF-CLOSE",
     "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
     "B-T4-REVISION-WORTH-OPINION",
@@ -172,18 +347,13 @@ CHECKPOINT_FORBIDDEN_NEEDLES = (
 )
 PRESERVED = {
     ".config/agents/skills/dev-ask/evals/fixtures/l-mutation/counter.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-    ".agents/papercuts.json": "c7a2b0741028aeb5692656b98f08908de828e9881379ecf7744bbf6879cfad44",
+    ".agents/papercuts.json": "6653bf3c12330e7985c9f23dbd1fe84a62c3d6abb0b30a4330f958db0ed83d57",
     "/Users/kim/.agents/AGENTS.md": "1ab60d54c0ba71feae07fe64361a0f2acd749ebf368290998a83a11cbd4998e9",
     ".config/agents/AGENTS.md": "1ab60d54c0ba71feae07fe64361a0f2acd749ebf368290998a83a11cbd4998e9",
-    ".agents/AGENTS.md": "840c44a316e5266ab38b9fe9784f6d32bad8b904dda82f2fdbc898e72b38ebe4",
     ".agents/GENERIC-AGENTS.md": "3ce780b05a9dbcd62aae05c3c4fbde39b8c7e05d72f074b2c4eaa51a92c6093c",
-    ".config/agents/skills/dev-ask/SKILL.md": "ea9917411c115241b91edea9ce5821da3177a01390b897d79ac8ebd06062ef0c",
     ".config/agents/skills/papercut/scripts/papercut_ledger.py": "2c1d15522362d2aebcb1de58635dc8fa61454ebe6567d61f820f2b552f97e431",
-    ".config/agents/skills/dev-continual-learning/SKILL.md": "6a6ccfae27da7ac20412029757ed05d16b9ba63d43bd50e6f4331565cb54d105",
     "docs/adr/0005-product-development-workflow-and-prd-authority.md": "5c4978ccb225ea04a65dde02742c1b39c2366ef27ca848d73ee1a70a1624a9ff",
     "docs/adr/0008-repository-agent-integration-setup.md": "e5f3940639e9997e2fcbf3d3bdea5d2a11e91461109b83b95cd01c92a2d382e3",
-    ".config/agents/skills/product-ask/WORKFLOW.md": "4c030c4641c50274c81a6b6bf6e5ca7c95d1fb4c3a78c054987ce9b643da6530",
-    ".config/agents/skills/product-ask/SKILL.md": "8b29f210590abe1a91eba01c9faefedca9a6d27f4d04d75c3183865c672888c4",
     ".config/agents/skills/dev-shipping/SKILL.md": "0b472f2c25a0313e8efde1323f18e9b9e0a64a7b7f9e5e7f94d660e29fdb7966",
     ".agents/plans/archive/2026-06-16-1608_skill-craft.md": "877a604d6e26d7a810e343a35c2ce1f160daef64666456795b33c24d684fddde",
     ".agents/plans/archive/2026-06-17-0005_IMPROVE_skill-craft.md": "97ee26d4bfb564e60ca7c9d948374640bab85853e8fa2de71813a3af63c4753a",
@@ -273,7 +443,61 @@ def scan_paths(root: Path) -> list[str]:
         fixture_paths.append(
             f".config/agents/skills/dev-ask/evals/{fixture_dir}/case.json"
         )
-    return CORE_SCAN_PATHS + fixture_paths
+    return list(
+        dict.fromkeys(
+            CORE_SCAN_PATHS
+            + sorted(EXECUTOR_PLAN_SCOPED_PATHS | PLAN_ARTIFACT_SCOPED_NEEDLES.keys())
+            + fixture_paths
+        )
+    )
+
+
+def executor_plan_fixture_paths(cases: dict[str, dict[str, Any]]) -> set[str]:
+    paths: set[str] = set()
+    for case_id in EXECUTOR_PLAN_CASE_IDS:
+        fixture_dir = cases[case_id].get("fixture_dir")
+        if not isinstance(fixture_dir, str):
+            raise ScanError(f"fixture_dir missing for {case_id}")
+        paths.add(f".config/agents/skills/dev-ask/evals/{fixture_dir}/case.json")
+    return paths
+
+
+def exact_obsolete_hits(
+    path: str, text: str, *, force_executor_scope: bool = False
+) -> list[dict[str, Any]]:
+    if not force_executor_scope and path not in (
+        EXECUTOR_PLAN_SCOPED_PATHS | PLAN_ARTIFACT_SCOPED_NEEDLES.keys()
+    ):
+        return []
+    needles = list(EXECUTOR_PLAN_OBSOLETE_NEEDLES)
+    needles.extend(PLAN_ARTIFACT_SCOPED_NEEDLES.get(path, ()))
+    hits: list[dict[str, Any]] = []
+    for line_number, source in enumerate(text.splitlines(), 1):
+        for needle in needles:
+            if needle in source:
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": needle,
+                        "text": source,
+                    }
+                )
+    return hits
+
+
+def executor_plan_case_hits(cases: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    hits: list[dict[str, Any]] = []
+    for case_id in sorted(EXECUTOR_PLAN_CASE_IDS):
+        serialized = json.dumps(cases[case_id], ensure_ascii=False, indent=2)
+        hits.extend(
+            exact_obsolete_hits(
+                f".config/agents/skills/dev-ask/evals/evals.json#{case_id}",
+                serialized,
+                force_executor_scope=True,
+            )
+        )
+    return hits
 
 
 def checkpoint_contract_hits(
@@ -686,6 +910,8 @@ def frontmatter_description(text: str) -> str | None:
 def scan_repository(root: Path) -> dict[str, Any]:
     hits: list[dict[str, Any]] = []
     required_seen: set[str] = set()
+    cases = load_registry(root)
+    executor_fixture_paths = executor_plan_fixture_paths(cases)
     paths = scan_paths(root)
     for relative in paths:
         path = root / relative
@@ -704,6 +930,12 @@ def scan_repository(root: Path) -> dict[str, Any]:
         path_hits, path_required = scan_text(relative, text)
         hits.extend(path_hits)
         required_seen.update(path_required)
+        if (
+            relative in EXECUTOR_PLAN_SCOPED_PATHS
+            or relative in PLAN_ARTIFACT_SCOPED_NEEDLES
+            or relative in executor_fixture_paths
+        ):
+            hits.extend(exact_obsolete_hits(relative, text, force_executor_scope=True))
         if relative in EXPECTED_DESCRIPTIONS:
             actual = frontmatter_description(text)
             if actual is None or normalize(actual) != normalize(
@@ -717,7 +949,8 @@ def scan_repository(root: Path) -> dict[str, Any]:
                         "text": actual or "<missing>",
                     }
                 )
-    hits.extend(checkpoint_contract_hits(root, load_registry(root)))
+    hits.extend(executor_plan_case_hits(cases))
+    hits.extend(checkpoint_contract_hits(root, cases))
     missing_required = sorted(set(REQUIRED_NEEDLES) - required_seen)
     return {
         "schema": SCHEMA,
@@ -773,7 +1006,7 @@ def run_selftest(root: Path) -> dict[str, Any]:
         (
             line
             for line in current_router.splitlines()
-            if "Compact uses `dev-implementation` then `dev-ask completion presentation`"
+            if "Compact uses `dev-implementation` then `completion-presentation`"
             in line
         ),
         None,
@@ -784,7 +1017,7 @@ def run_selftest(root: Path) -> dict[str, Any]:
         source = needle
         if needle == "compact uses dev-implementation then dev-verification":
             source = compact_line.replace(
-                "`dev-ask completion presentation`", "`dev-verification`"
+                "`completion-presentation`", "`dev-verification`"
             )
         hits, _ = scan_text("selftest", source)
         if len(hits) != 1 or hits[0]["needle"] != needle:
@@ -834,6 +1067,57 @@ def run_selftest(root: Path) -> dict[str, Any]:
         if hits:
             raise ScanError(f"exclusion self-test failed: {name}")
         checks.append(f"exclusion:{name}")
+    for needle in EXECUTOR_PLAN_OBSOLETE_NEEDLES:
+        found = exact_obsolete_hits(
+            ".config/agents/rules/plan.md",
+            f"active contract contains {needle}",
+            force_executor_scope=True,
+        )
+        if len(found) != 1 or found[0]["needle"] != needle:
+            raise ScanError(f"executor-plan exact-needle self-test failed: {needle}")
+        checks.append(f"executor-plan-stale:{needle}")
+    for path, needles in PLAN_ARTIFACT_SCOPED_NEEDLES.items():
+        for needle in needles:
+            found = exact_obsolete_hits(path, f"obsolete {needle}")
+            if not any(hit["needle"] == needle for hit in found):
+                raise ScanError(
+                    f"plan-artifact exact-needle self-test failed: {path}: {needle}"
+                )
+            checks.append(f"plan-artifact-stale:{path}:{needle}")
+    executor_false_positive_controls = {
+        "generic-projection": (
+            ".config/agents/rules/plan.md",
+            "A todo is a non-authoritative projection of route facts.",
+        ),
+        "d27-terminal-projection": (
+            ".config/agents/skills/dev-ask/WORKFLOW.md",
+            "D27 preserves the terminal projection.",
+        ),
+        "semantic-context": (
+            ".config/agents/skills/dev-ask/WORKFLOW.md",
+            "Generic semantic context remains portable.",
+        ),
+        "protected-d26-plan-preflight": (
+            "docs/adr/0001-dev-workflow-authority-and-routing.md",
+            "Compact requires no Executor Plan or plan preflight.",
+        ),
+        "portable-authority-section": (
+            ".config/agents/rules/plan.md",
+            "## Authority",
+        ),
+        "exact-plan-sha": (
+            ".config/agents/rules/plan.md",
+            "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ),
+        "orp-fields": (
+            ".config/agents/rules/plan.md",
+            "Orchestrator Role Profile fields remain provider-neutral.",
+        ),
+    }
+    for name, (path, source) in executor_false_positive_controls.items():
+        if exact_obsolete_hits(path, source):
+            raise ScanError(f"executor-plan false-positive self-test failed: {name}")
+        checks.append(f"executor-plan-allowed:{name}")
     cases = load_registry(root)
     baseline_checkpoint_hits = checkpoint_contract_hits(root, cases)
     if baseline_checkpoint_hits:

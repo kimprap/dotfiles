@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Terminal evidence snapshot: two independent settled outcomes prove the same cross-contract defect across RULE-A and SKILL-B. Record this qualifying recurring/cross-contract event as a Deep candidate and propose a separate route. Current guidance is not contradictory, so the settled run remains terminal and no Deep audit starts now."
+    "request": "Terminal evidence snapshot: two independent settled outcomes prove the same cross-contract defect across RULE-A and SKILL-B. Record this qualifying recurring/cross-contract event as a Deep candidate and propose a separate route. Current guidance is not contradictory, so the settled run remains terminal and no Deep audit starts now. Attribute mode qualification and the named candidate, skip, or rejection to portable `continual-learning deep`; the backend terminal snapshot only accounts that portable result and never auto-dispatches Deep."
   },
   "scripted_replies": []
 }

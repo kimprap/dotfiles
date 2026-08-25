@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard review-rerun trace; emit canonical events only. Original-initial review sealed FIND-NAME with violated invariant INV-NAME, trigger input-X, expected valid/observed invalid, affected AC-NAME and consumer-A, causal boundary boundary-N, and evidence EVID-NAME-1 at old/path. Repair revision target-renamed renames old/path to new/path and closes that predicate. The original-rerun binds the prior receipt, FIND-NAME as the remaining lineage, exact rename/fix delta, accepted review impact map to new/path, affected new/path, unchanged surface-U, and exact original review evidence EVID-U-1 for surface-U. Freshly review FIND-NAME closure and new/path; reuse EVID-U-1 because bytes, authority, contract, and dependencies are identical. Treat FIND-NAME as the same lineage, not a new path lineage. Return APPROVED with no blocker."
+  },
+  "scripted_replies": []
+}

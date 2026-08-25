@@ -118,11 +118,11 @@
     },
     {
       "id": "P-DOCUMENTATION-DISCOVERY",
-      "prompt": "Compare two read-only discovery traces. Trace A explicitly maintains, audits, or extends the papercut framework. Trace B performs ordinary current-candidate capture. Name only the repository guidance, skill, workflow document, ADR index, and active ADR bodies each trace may load.",
-      "expected_output": "Maintenance reads the repository conditional pointer, papercut skill, five-section WORKFLOW.md, ADR index, and active ADR-0007/0008 authority. Ordinary capture uses the always-applied activation rule and papercut skill only; it does not load WORKFLOW.md or ADR bodies.",
+      "prompt": "Compare two read-only discovery traces. Trace A maintains, audits, or extends the papercut framework at its portable assessment and generic completion-presentation intersection. Trace B performs ordinary current-candidate capture. Name only the repository guidance, skill, workflow document, ADR index, and active ADR bodies each trace may load.",
+      "expected_output": "Maintenance reads the repository conditional pointers, papercut skill, five-section WORKFLOW.md, ADR index, active ADR-0007/0008 authority, and focused ADR-0004/0009 only for the named assessment/presentation intersection. Ordinary capture uses the always-applied activation rule and papercut skill only; it does not load WORKFLOW.md, ADR bodies, continual-learning, or completion-presentation.",
       "assertions": [
-        "Maintenance discovery reaches `.config/agents/skills/papercut/WORKFLOW.md` and active ADR-0007/0008 through `docs/adr/INDEX.md`",
-        "Ordinary candidate capture loads only the activation rule and public papercut skill",
+        "Maintenance discovery reaches `.config/agents/skills/papercut/WORKFLOW.md` and active ADR-0007/0008 plus the focused ADR-0004/0009 intersection through `docs/adr/INDEX.md`",
+        "Ordinary candidate capture loads only the activation rule and public papercut skill, without eager portable-learning or presenter loading",
         "The workflow document keeps exactly Human overview, Module design, Current flow, Included/excluded/deferred, and Authority/maintenance concerns",
         "Neither trace copies implementation history into current guidance or invents a second authority source"
       ]

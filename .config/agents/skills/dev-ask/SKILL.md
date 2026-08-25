@@ -9,7 +9,7 @@ description: >
 
 # Engineering Flow
 
-Be a thin, stateless, always-safe-to-invoke classifier and dispatcher. Own route selection, approval of executable or routed work, one first dispatch, reapproval, and evidence-backed presentation—not any stage procedure or run state.
+Be a thin, stateless, always-safe-to-invoke classifier and dispatcher. Own route selection, approval of executable or routed work, one first dispatch, reapproval, and engineering completion validation and normalization—not any stage procedure, run state, or final rendering.
 
 ## Evidence and precedence
 
@@ -30,7 +30,7 @@ Read only enough to classify. Do not mutate, dispatch, persist, create an artifa
 2. **Raw external intake** — use `dev-triage` only when the user explicitly asks to inspect or triage an external issue, pull request, or tracker intake. Project-authored tickets, Executor Plans, and current implementation graphs are already qualified and skip triage.
 3. **Fog** — use `wayfinder` only when the destination or decision route cannot fit one reliable context. Large work with a current specification and implementation graph is not fog.
 4. **Product authority and engineering requirements** — unresolved product strategy routes to `product-ask` only when the user explicitly asks to establish or refine product authority; otherwise stop with `PRODUCT AUTHORITY REQUIRED`. Sufficient product authority with incomplete observable behavior, acceptance, engineering scope, or constraints routes to `dev-requirements`, except when item 6's candidate-approach intent is the current engineering decision.
-5. **Expected behavior** — route a hard unexplained reproducible bug or performance regression to `dev-diagnosing-bugs` only after expected behavior is settled. A known cause or routine implementation failure routes directly to bounded `dev-implementation` repair. A proof/review observation continues same-outcome repair only when it is an eligible directly evidenced blocker of an existing parent criterion or observable changed-contract consumer; a terminal advisory leaves the approved parent route unchanged, while indeterminate governing authority returns to its owner.
+5. **Expected behavior** — route a hard unexplained reproducible bug or performance regression to `dev-diagnosing-bugs` only after expected behavior is settled. A known cause or routine implementation failure routes directly to bounded `dev-implementation` repair. After original-initial review, continue same-outcome repair only for incomplete closure of an existing finding lineage or a repair-caused new lineage with direct evidence from the exact repaired revision, changed bytes or contract delta, accepted impact-map edge, observable failure path, and fresh affected proof. A grant or changed hypothesis alone cannot admit a finding. A disjoint non-outcome observation is a terminal advisory; independently serious safety returns separate-authority intake; a disjoint outcome-relevant non-safety defect remains `CHANGES REQUIRED` and returns `authority-change-required` to the outcome authority without silent same-outcome repair, verification restart, learning, approval, or completion. Indeterminate governing authority returns to its owner.
 6. **One-context intent decisions** — when the user presents a candidate approach, hypothesis, plan, or design direction and asks to refine, challenge, stress-test, compare, validate, or choose it, use `grill-with-docs` if current repository evidence bears on the decision and otherwise `grill-me`. A detailed preferred proposal remains unsettled intent. Grilling returns immutable decision evidence and one Handoff for recomputation; user confirmation completes that interview artifact and is not another router approval gate.
 7. **Outcome-first continuation** — when current executable authority and named acceptance are complete and any named criterion remains unmet, route to `dev-implementation`. Renewed planning, diagnosis, audit, or review is invalid unless it implements or proves a criterion, resolves a named blocker, or produces decision evidence that changes authority. An unchanged Handoff, another artifact or pass, and a repeated hypothesis are not progress. If cleanup is later elected, dev-ask classifies a new maintenance outcome with fresh authority, acceptance, Task Contract, target, attempts, and assurance; no parent repair, verification, review, or learning state is inherited.
 8. **Artifact depth and decision support** — choose direct implementation, specification plus tickets, or Wayfinder. Use `dev-prototype` only for a runnable/visible fidelity question owned by requirements, grilling, or specification. Use `dev-improve-codebase-architecture` only for an explicitly requested broad survey whose selected change is not yet settled.
@@ -42,7 +42,7 @@ For ordinary implementation route composition, apply these mandatory router gate
 1. Classify safety and whether current evidence already answers the request.
 2. If an existing catalog intake predicate is true, prepend that exact owner and do not compose ordinary compact.
 3. If any existing compact disqualifier is true, select standard or high-consequence and keep independent verification, review, and required learning.
-4. Otherwise select compact. First owner is `dev-implementation`. Completed route is `dev-implementation` then `dev-ask completion presentation`.
+4. Otherwise select compact. First owner is `dev-implementation`. The prospective route ends with the non-dispatchable terminal marker `completion-presentation`.
 5. Implementation size, duration, or solution-rung choice alone does not prepend a catalog skill and does not raise assurance.
 6. Present one owner per numbered Route line and dispatch only the first owner after approval.
 
@@ -91,13 +91,13 @@ Choose only from:
 - **`dev-diagnosing-bugs`** for hard unexplained bugs or performance regressions with settled expected behavior. A valid fix contract continues through implementation under the stable route; a known or routine fix skips diagnosis.
 - **`dev-improve-codebase-architecture`** for explicit survey and selection only. Return the selected candidate and constraints for route recomputation; do not silently start the refactor.
 - **`dev-prototype`** only when `dev-requirements`, `dev-grilling`, or `dev-specification` needs runnable or visible fidelity. It returns disposable decision evidence to that exact owner and never folds into production.
-- **Direct implementation lane** when current authority, architecture, named acceptance, and verification seams are settled and durable specification/ticket recovery is unnecessary. Eligible directly evidenced blockers may continue bounded same-outcome repair; wording-only advisory cleanup requested after terminal completion enters this lane only as a fresh maintenance outcome with fresh authority and state.
+- **Direct implementation lane** when current authority, architecture, named acceptance, and verification seams are settled and durable specification/ticket recovery is unnecessary. Before original-initial review, eligible directly evidenced blockers may enter the one bounded repair. After it, only incomplete closure of a sealed finding lineage or a directly evidenced repair-caused regression may continue same-outcome repair. A disjoint outcome-relevant blocker returns `authority-change-required`; wording-only advisory cleanup requested after terminal completion enters this lane only as a fresh maintenance outcome with fresh authority and state.
 - **Specification/ticket lane** when durable technical decisions, multiple owners, independent slices or fan-in, shared interfaces or migrations, recovery, or durable acceptance seams require it. Derived specifications and ticket graphs continue automatically under the current approved Route Overview unless they introduce a new human-owned decision, material trigger, or separately gated effect.
 - **Wayfinder lane** only when the route itself is not specifiable. A resolved map returns for route recomputation and never authorizes implementation.
 - **Validated direct-stage lane** for an explicit request to verify, integrate, review, ship, curate, use TDD, or maintain domain authority. Validate that leaf's exact intake and human gates. Shipping always requires separate delivery authority.
-- **Completion presentation** only from current backend/stage terminal evidence. If the approved route already names it and material facts remain current, present it without a separate completion approval.
+- **Completion normalization** only from current backend/stage terminal evidence. If the approved route already names the `completion-presentation` marker and material facts remain current, validate completion, settlement, filled fields, durability, constraints, and continuation authority; build exactly one current `completion-presentation-input` fence; then apply the presenter directly in the same agent without a separate completion approval.
 
-Whenever current facts determine an implementation lifecycle, the prospective `Route` must end with the assurance-specific suffix. Compact uses `dev-implementation` then `dev-ask completion presentation`. Standard and high-consequence use `dev-implementation → dev-verification → dev-code-review → dev-continual-learning → dev-ask completion presentation`. Insert neutral `dev-integration → dev-verification` only when multiple isolated verified lineages require fan-in. Requirements, grilling, research, diagnosis, prototype, specification, ticketing, survey, or Wayfinder owners appear before that suffix only when an existing intake predicate is true. Implementation size, duration, or solution-rung choice does not add an owner. A terminal advisory does not alter or replay the approved suffix; later elected cleanup recomputes a fresh maintenance outcome and route. If a decision-stage result is required before downstream ownership can be known, end the current route at its one recomputation receiver rather than inventing owners.
+Whenever current facts determine an implementation lifecycle, the prospective `Route` must end with the assurance-specific suffix and non-dispatchable presenter marker. Compact uses `dev-implementation` then `completion-presentation`; the latter is the marker, not a dispatchable owner. Standard and high-consequence use `dev-implementation → dev-verification → dev-code-review → dev-continual-learning → completion-presentation`, where the last segment is likewise only the marker. Insert neutral `dev-integration → dev-verification` only when multiple isolated verified lineages require fan-in. Requirements, grilling, research, diagnosis, prototype, specification, ticketing, survey, or Wayfinder owners appear before that suffix only when an existing intake predicate is true. Implementation size, duration, or solution-rung choice does not add an owner. A terminal advisory does not alter or replay the approved Route; elected cleanup is a new classified maintenance outcome.
 
 `direct answer` is terminal, never a lifecycle owner or a downstream segment. Research returned to the named requesting owner, state-mapped triage returns—including `wontfix` to `dev-ask` for terminal presentation—and any unchanged stage Handoff are stable-route continuations, not reapproval triggers.
 ## Product-authority stop
@@ -116,7 +116,7 @@ Do not interview around the stop, infer product strategy, or create a substitute
 
 ## Compact approval presentation
 
-For dispatchable or executable work, present exactly these standalone H2 sections before any effect. Render every human-facing prospective `Route` as an ordered list with one exact owner or terminal-presentation segment per line; never use an inline arrow chain, route table, or unordered list:
+For dispatchable or executable work, present exactly these standalone H2 sections before any effect. Render every human-facing prospective `Route` as an ordered list with one exact owner per line and the exact final terminal marker `completion-presentation`; never use an inline arrow chain, route table, or unordered list. The marker is never dispatched and receives no task, Task Contract, Context Pack, backend attempt, Handoff, state, transition, or approval:
 
 ```markdown
 ## Goal
@@ -124,7 +124,7 @@ For dispatchable or executable work, present exactly these standalone H2 section
 
 ## Route
 1. `<first owner>`
-2. `<next owner or dev-ask completion presentation>`
+2. `<next owner or completion-presentation>`
 
 ## Plan
   <one or two concise sentences covering the observable work and assurance>
@@ -135,7 +135,7 @@ For dispatchable or executable work, present exactly these standalone H2 section
 ## Approval
   Reply **approve** to start.
 ```
-Repeat the second route row for each actually prospective owner; the final row is always `dev-ask completion presentation`. Compact therefore has exactly two route rows.
+Repeat the second route row for each actually prospective owner; the final row is always the non-dispatchable `completion-presentation` marker. Compact therefore has exactly two route rows.
 
 Do not add a `Plan Summary`, `Why`, `Artifacts`, `Gates`, `Execution`, or `First action` section. Omit diagnosis IDs, artifact inventories, target hashes, gate machinery, and execution metadata unless one changes the user's decision. For a material reapproval, keep the same five sections, state only the changed decision-bearing facts, and use `Reply **approve** to continue.`
 
@@ -147,7 +147,7 @@ Immediately before dispatch, reread every load-bearing artifact and capability i
 
 After valid approval, dispatch exactly one first owner. Never dispatch a batch of prospective stage owners from the router.
 
-`dev-implementation` is the common execution backend for every dispatched semantic stage, including pre-implementation and post-completion leaves. It binds approved authority into an immutable Task Contract, role, attempt identity, and eligible transition without performing a leaf procedure. Same-context compact binds that Task Contract directly; a Context Pack is added only when context crosses. Each attempt emits one in-conversation common Handoff with `route-impact: unchanged|changed` and exactly one eligible receiver; no filesystem Handoff is required. The backend validates that return, and support stages do not authorize implementation. An eligible blocker continues only inside the unchanged parent acceptance/proof set; an advisory leaves the route unchanged; an authority conflict returns to its owner. Later advisory cleanup requires fresh maintenance authority, identities, state, and route.
+`dev-implementation` is the common execution backend for every dispatched semantic stage, including pre-implementation and post-completion leaves. It binds approved authority into an immutable Task Contract, role, attempt identity, and eligible transition without performing a leaf procedure. Same-context compact binds that Task Contract directly; a Context Pack is added only when context crosses. Each attempt emits one in-conversation common Handoff with `route-impact: unchanged|changed` and exactly one eligible receiver; no filesystem Handoff is required. The backend validates that return, and support stages do not authorize implementation. Before original-initial review, an eligible directly evidenced blocker may enter the bounded parent repair. After it, only incomplete closure of an existing lineage or a directly evidenced repair-caused regression may continue same-outcome repair; a disjoint non-outcome observation is advisory, independently serious safety is separate intake, a disjoint outcome-relevant blocker returns `authority-change-required`, and an authority conflict returns to its owner. Later advisory cleanup requires fresh maintenance authority, identities, state, and route.
 
 The approved Route Overview delegates downstream derivation while preserving human authority:
 
@@ -173,35 +173,16 @@ Recompute the route after a changed Handoff. Request material reapproval exactly
 
 No other stage return, Handoff, artifact count, audit, review, unchanged evidence, or unrelated target byte drift authorizes or requires another route approval. Capability fallback order is verified native → contract-equivalent substitute → safe disclosed contract-preserving downgrade → stop; a non-equivalent substitution is a material trigger, not an automatic fallback.
 
-## Compact completion presentation
-
-Present terminal evidence with the same heading-and-indented-content style. Include the resolved completed path of the approved prospective route as the same one-owner-per-line ordered list, omitting every untriggered conditional stage, then only the completion sections that add decision-bearing value:
-
-```markdown
-## Route
-1. `<first completed owner>`
-2. `<next completed owner or dev-ask completion presentation>`
-
-## Result
-  <observable outcome and changed behavior>
-
-## Verification
-  <fresh checks and verdict>
-
-## Risks
-  <real residual risk>
-
-## Next
-  <one required next action>
-```
-Repeat the second route row for each owner that actually completed; the final row is always `dev-ask completion presentation`. Compact therefore has exactly two route rows.
-
-`Route` and `Result` are required. Include `Verification` when checks ran, `Risks` only for a material residual risk, and `Next` only when user action remains. Do not add artifact inventories, gate mechanics, or approval requests to a terminal completion.
-
 ## Completion and stops
 
-Present completion only when terminal evidence proves current authority and approvals; task and criterion accounting; criterion-complete implementer smoke; any profile- or topology-required independent verification, verified fan-in, final Standards and Specification review, and noncompact curation; no blocker, authority conflict, stale/partial result, semantic conflict, failed dependency, or required check; terminal advisories recorded as residual risk; and no required nonterminal work. Advisory-only approval completes after the route's one terminal Standard assessment without assurance replay. Compact terminal evidence contains the exact acceptance-to-smoke map and no verification, review, or continual-learning dispatch.
+Present completion only when terminal evidence proves current authority and approvals; task and criterion accounting; criterion-complete implementer smoke; any profile- or topology-required independent verification, verified fan-in, final Standards and Specification review, and noncompact curation; no blocker, authority conflict, disjoint outcome-relevant finding, stale/partial result, semantic conflict, failed dependency, or required check; terminal advisories recorded as residual risk; and no required nonterminal work. Advisory-only approval completes after the route's one terminal Standard assessment without assurance replay. Compact terminal evidence contains the exact acceptance-to-smoke map and no verification, review, or continual-learning dispatch.
 
-Stop before dispatchable or executable work when overview approval is missing or stale. Stop during execution for unresolved human authority, material scope/route change, destructive approval, broken shared contract, irreconcilable authority conflict, unavailable non-equivalent capability, unsafe or ambiguous partial effects, or an evidence-backed blocker. Do not infer success from a worker Handoff, passing build alone, partial output, or unintegrated lineage. Do not reopen a terminal parent for advisory cleanup; classify the explicit cleanup request as a fresh maintenance outcome.
+After that evidence validates and existing papercut and learning results settle, validate all eleven terminal values and construct exactly one current fenced `completion-presentation-input` JSON object with keys in this exact order: `status`, `outcome`, `changed`, `verification`, `papercut`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, `next`. Status is exactly `completed`. Changed has one to three openable human or canonical artifacts. Verification has a named check, terminal verdict, and fetchable evidence locator plus immutable revision or digest. Papercut is `none` or preserves its existing machine fields plus concise gloss. Learning preserves `skipped — compact assurance`, `NO DURABLE LEARNING — ...`, or `CURATED — ...` exactly. Residual risk is current material uncertainty or `none`. Resume from is a durable openable locator plus immutable revision or digest: planned work prefers the archived plan Completion Summary; compact uses an already-produced changed artifact or receipt and never manufactures a plan. Handoff is the existing portable immutable Common Handoff locator, exact `in-conversation (see Resume from)`, or the approved full-digest in-conversation form tied to Resume from. Constraints contains the exact clause `shipping not authorized` exactly once and may contain current caller-supplied boundaries. Local engineering Next is exactly `none`.
+
+Once that single current fence exists, apply `completion-presentation` directly in this same agent and emit only its report, never the fence. The presenter is not dispatched and receives no task, Task Contract, Context Pack, backend attempt, Handoff, state, transition, approval, or completed Route. It creates no evidence rerun, plan, workflow, Handoff, or shipping effect.
+
+Missing, stale, prior-turn, duplicate, malformed, reordered, unknown/duplicate/missing-key, empty, placeholder, changed-cardinality, durability-invalid, constraint-invalid, unauthorized-Next, non-`completed`, learning-`BLOCKED`, or otherwise conflicting input emits no completed presentation. Preserve the applicable engineering stop, `wontfix`, authority-change, blocker, or shipping report instead.
+
+Stop before dispatchable or executable work when overview approval is missing or stale. Stop during execution for unresolved human authority, material scope/route change, destructive approval, broken shared contract, irreconcilable authority conflict, unavailable non-equivalent capability, unsafe or ambiguous partial effects, an evidence-backed blocker, or a disjoint outcome-relevant review defect returned as `authority-change-required`. Do not infer success from a worker Handoff, passing build alone, partial output, or unintegrated lineage. Do not restart verification, dispatch learning, approve, or complete after that authority return. Do not reopen a terminal parent for advisory cleanup; classify the explicit cleanup request as a fresh maintenance outcome.
 
 Read [WORKFLOW.md](WORKFLOW.md) only when understanding, auditing, maintaining, or extending the complete engineering flow; do not load it for ordinary routing.

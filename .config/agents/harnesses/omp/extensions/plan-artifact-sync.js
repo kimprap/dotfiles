@@ -1,9 +1,9 @@
 // OMP extension: plan-artifact-sync
 //
-// A session-local local://<slug>-plan.md artifact is authoritative. After each
-// successful write or edit, this extension asks the repository helper to mirror
-// that exact artifact and, when its lifecycle is complete, archive only the
-// repository projection.
+// A session-local local://<slug>-plan.md artifact is an adapter-owned draft.
+// After every successful write or edit, this extension asks the repository
+// helper to copy that exact draft into the active repository plan or archive
+// valid terminal bytes.
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
@@ -25,16 +25,13 @@ const DISCOVERY_CODES = new Set([
     "PLAN_SYNC_UNAVAILABLE",
 ]);
 const HELPER_CODES = new Set([
-    "PLAN_HEADER_INVALID",
-    "PLAN_AUTHORITY_UNCLASSIFIED",
-    "PLAN_AUTHORITY_CONTEXT",
-    "PLAN_AUTHORITY_CONFLICT",
+    "PLAN_ARTIFACT_INVALID",
     "PLAN_IDENTITY_MISMATCH",
-    "PLAN_PROJECTION_AMBIGUOUS",
+    "PLAN_IDENTITY_CONFLICT",
+    "PLAN_ARCHIVE_CONFLICT",
     "PLAN_FILE_KIND_UNSAFE",
     "PLAN_SOURCE_STALE",
     "PLAN_TARGET_STALE",
-    "PLAN_LOCK_UNAVAILABLE",
     "PLAN_POSTCONDITION_FAILED",
 ]);
 const EXTENSION_SYNC_CODES = new Set([
@@ -128,9 +125,7 @@ function eventPathCandidates(event) {
 
 function errorCode(error) {
     try {
-        return typeof error === "object" && error !== null && typeof error.code === "string"
-            ? error.code
-            : undefined;
+        return typeof error === "object" && error !== null && typeof error.code === "string" ? error.code : undefined;
     } catch {
         return undefined;
     }
@@ -173,12 +168,7 @@ async function discoverCandidate(candidate, ctx) {
             physical = resolveLocalUrlToPath(candidate.value, ctx.localProtocolOptions);
             if (typeof physical !== "string") {
                 return {
-                    warning: warningRecord(
-                        "discovery",
-                        "identity",
-                        "PLAN_SYNC_UNAVAILABLE",
-                        candidate.slug
-                    ),
+                    warning: warningRecord("discovery", "identity", "PLAN_SYNC_UNAVAILABLE", candidate.slug),
                 };
             }
             physical = path.resolve(physical);
@@ -189,29 +179,15 @@ async function discoverCandidate(candidate, ctx) {
         const before = await fs.lstat(physical);
         if (!before.isFile() || before.isSymbolicLink()) {
             return {
-                warning: warningRecord(
-                    "discovery",
-                    "identity",
-                    "PLAN_SYNC_DISCOVERY_UNSAFE",
-                    candidate.slug
-                ),
+                warning: warningRecord("discovery", "identity", "PLAN_SYNC_DISCOVERY_UNSAFE", candidate.slug),
             };
         }
         await fs.access(physical, fs.constants.R_OK);
         const canonical = await fs.realpath(physical);
         const after = await fs.lstat(canonical);
-        if (
-            !after.isFile() ||
-            after.isSymbolicLink() ||
-            fileIdentity(before) !== fileIdentity(after)
-        ) {
+        if (!after.isFile() || after.isSymbolicLink() || fileIdentity(before) !== fileIdentity(after)) {
             return {
-                warning: warningRecord(
-                    "discovery",
-                    "identity",
-                    "PLAN_SYNC_UNAVAILABLE",
-                    candidate.slug
-                ),
+                warning: warningRecord("discovery", "identity", "PLAN_SYNC_UNAVAILABLE", candidate.slug),
             };
         }
         return {
@@ -235,9 +211,7 @@ async function discoverLocalRoot(ctx) {
         const candidate =
             typeof configured === "string"
                 ? path.resolve(configured)
-                : path.dirname(
-                      resolveLocalUrlToPath("local://plan-artifact-root-plan.md", ctx?.localProtocolOptions)
-                  );
+                : path.dirname(resolveLocalUrlToPath("local://plan-artifact-root-plan.md", ctx?.localProtocolOptions));
         const before = await fs.lstat(candidate);
         if (!before.isDirectory() || before.isSymbolicLink()) {
             return { warning: warningRecord("discovery", "local root", "PLAN_SYNC_DISCOVERY_UNSAFE") };
@@ -245,11 +219,7 @@ async function discoverLocalRoot(ctx) {
         await fs.access(candidate, fs.constants.R_OK | fs.constants.X_OK);
         const canonical = await fs.realpath(candidate);
         const after = await fs.lstat(canonical);
-        if (
-            !after.isDirectory() ||
-            after.isSymbolicLink() ||
-            fileIdentity(before) !== fileIdentity(after)
-        ) {
+        if (!after.isDirectory() || after.isSymbolicLink() || fileIdentity(before) !== fileIdentity(after)) {
             return { warning: warningRecord("discovery", "local root", "PLAN_SYNC_UNAVAILABLE") };
         }
         return { root: { path: canonical, identity: fileIdentity(after) } };
@@ -286,13 +256,11 @@ async function candidatesFromMutation(event, ctx) {
     if (!rootResult.root) return { candidates: [], warnings: [...warnings, rootResult.warning] };
 
     const candidates = [];
-    for (const slug of slugOrder) {
+    for (const slug of [...slugOrder].sort()) {
         const binding = discoveredBySlug.get(slug);
         if (!binding) continue;
         if (!isDirectChild(rootResult.root.path, binding.path)) {
-            warnings.push(
-                warningRecord("discovery", "identity", "PLAN_SYNC_DISCOVERY_UNSAFE", binding.slug)
-            );
+            warnings.push(warningRecord("discovery", "identity", "PLAN_SYNC_DISCOVERY_UNSAFE", binding.slug));
             continue;
         }
         candidates.push({ ...binding, root: rootResult.root });
@@ -314,12 +282,7 @@ async function revalidateCandidate(binding) {
 
         const candidateBefore = await fs.lstat(binding.path);
         if (!candidateBefore.isFile() || candidateBefore.isSymbolicLink()) {
-            return warningRecord(
-                "discovery",
-                "identity",
-                "PLAN_SYNC_DISCOVERY_UNSAFE",
-                binding.slug
-            );
+            return warningRecord("discovery", "identity", "PLAN_SYNC_DISCOVERY_UNSAFE", binding.slug);
         }
         if (!sameIdentity(candidateBefore, binding.identity)) {
             return warningRecord("discovery", "identity", "PLAN_SYNC_UNAVAILABLE", binding.slug);
@@ -327,12 +290,7 @@ async function revalidateCandidate(binding) {
         await fs.access(binding.path, fs.constants.R_OK);
         const canonical = await fs.realpath(binding.path);
         if (canonical !== binding.path || !isDirectChild(binding.root.path, canonical)) {
-            return warningRecord(
-                "discovery",
-                "identity",
-                "PLAN_SYNC_DISCOVERY_UNSAFE",
-                binding.slug
-            );
+            return warningRecord("discovery", "identity", "PLAN_SYNC_DISCOVERY_UNSAFE", binding.slug);
         }
 
         const candidateAfter = await fs.lstat(binding.path);
@@ -345,11 +303,7 @@ async function revalidateCandidate(binding) {
         }
         phase = "local root";
         const rootAfter = await fs.lstat(binding.root.path);
-        if (
-            !rootAfter.isDirectory() ||
-            rootAfter.isSymbolicLink() ||
-            !sameIdentity(rootAfter, binding.root.identity)
-        ) {
+        if (!rootAfter.isDirectory() || rootAfter.isSymbolicLink() || !sameIdentity(rootAfter, binding.root.identity)) {
             return warningRecord("discovery", "local root", "PLAN_SYNC_UNAVAILABLE");
         }
         return undefined;
@@ -369,7 +323,7 @@ function hasExactAcknowledgement(stdout, slug) {
     const escapedSlug = slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const identity = `\\d{4}-\\d{2}-\\d{2}-\\d{4}_${escapedSlug}\\.md`;
     return new RegExp(
-        `^(?:plan-artifact-synced: \\.agents/plans/${identity}|plan-artifact-(?:archived|already-archived): \\.agents/plans/archive/${identity})\\n?$`
+        `^(?:plan-artifact-copied: \\.agents/plans/${identity}|plan-artifact-archived: \\.agents/plans/archive/${identity})\\n?$`
     ).test(stdout);
 }
 
@@ -377,9 +331,10 @@ function helperProtocolWarning(stderr, slug) {
     if (typeof stderr !== "string" || stderr.includes("\r")) return undefined;
     const line = stderr.endsWith("\n") ? stderr.slice(0, -1) : stderr;
     if (line.includes("\n")) return undefined;
-    const match = /^ERROR: (?<code>[A-Z0-9_]+): plan=(?<plan>[^ ]+) state=(?<state>[A-Za-z0-9:_-]+) path=(?<path>[^ ]+) effect=(?<effect>none|possible-complete): [^\n]*$/.exec(
-        line
-    );
+    const match =
+        /^ERROR: (?<code>[A-Z0-9_]+): plan=(?<plan>[^ ]+) state=(?<state>[A-Za-z0-9:_-]+) path=(?<path>[^ ]+) effect=(?<effect>none|possible-complete): [^\n]*$/.exec(
+            line
+        );
     if (!match || !HELPER_CODES.has(match.groups.code)) return undefined;
 
     const fullIdentity = PLAN_ID_RE.exec(match.groups.plan);
@@ -387,9 +342,10 @@ function helperProtocolWarning(stderr, slug) {
 
     let scope = "identity";
     if (match.groups.path !== "none") {
-        const pathMatch = /^\.agents\/plans\/(?:(?<archive>archive)\/)?(?<identity>\d{4}-\d{2}-\d{2}-\d{4}_[a-z0-9]+(?:-[a-z0-9]+)*)\.md$/.exec(
-            match.groups.path
-        );
+        const pathMatch =
+            /^\.agents\/plans\/(?:(?<archive>archive)\/)?(?<identity>\d{4}-\d{2}-\d{2}-\d{4}_[a-z0-9]+(?:-[a-z0-9]+)*)\.md$/.exec(
+                match.groups.path
+            );
         if (!pathMatch || PLAN_ID_RE.exec(pathMatch.groups.identity)?.groups?.slug !== slug) return undefined;
         if (fullIdentity && pathMatch.groups.identity !== match.groups.plan) return undefined;
         scope = pathMatch.groups.archive ? "archive" : "active";
@@ -414,13 +370,8 @@ async function synchronize(pi, binding, ctx) {
 
     let result;
     try {
-        result = await invoke(executable, ["sync", "--slug", slug, "--content-file", binding.path], {
+        result = await invoke(executable, ["copy", "--slug", slug, "--content-file", binding.path], {
             cwd,
-            env: {
-                ...process.env,
-                OMP_PLAN_ARTIFACT_SYNC_ROOT_IDENTITY: binding.root.identity,
-                OMP_PLAN_ARTIFACT_SYNC_SOURCE_IDENTITY: binding.identity,
-            },
         });
     } catch {
         return warningRecord("sync", "identity", "PLAN_SYNC_HELPER_FAILED", slug, "possible-complete");

@@ -1,42 +1,25 @@
 ---
-description: Apply to Grok materialized execution plans that bind repository or session storage to the portable plan contract and shared validator.
+description: Apply when Grok or another direct-writing harness authors an execution plan in repository-owned storage.
 ---
 
-# Grok plan transport
+# Grok and direct-writing plan transport
 
-Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-storage.md` for repository materialization. This companion owns only Grok discovery and transport binding.
+Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-storage.md` for storage. This companion owns only discovery and direct repository authoring.
 
-## Discovery and authority
+## Discovery
 
-- Grok discovers this shared rule through `.grok/rules/plan-grok-transport.md`; do not invent a config key or register a duplicate. Discovery proves availability only—not activation, approval, identity, validation, or capability.
-- A session-backed authority declares `Authority kind: local-authority`; an authority stored directly at its exact repository active/archive path declares `direct-repository`.
-- Actual verified storage selects the marker. `context=grok`, provider name, equality, path presence, and history never infer or change authority.
+- Grok discovers this rule through `.grok/rules/plan-grok-transport.md`; do not invent a config key or register a duplicate.
+- Discovery proves availability only. It supplies no activation, approval, validation, runtime state, or orchestration capability.
 
-## Validation and backend preflight
+## Direct repository path
 
-Planner publication invokes the shared parser contract from `plan-impl-spec.md` with `--context grok --consumer planner` and no locators.
+- Author and revise the complete portable plan directly at `.agents/plans/<Datetime>_<slug>.md` using ordinary repository tools.
+- Run `executor_plan.py validate PLAN` against that exact active file before publication and readiness. Execution and continuation use the same current repository file.
+- Other harnesses without an OMP local-draft adapter follow this same direct repository path.
+- Use `plan-repo-storage.md` for exact identity, conflicts, safe terminal movement, and storage-failure behavior. Storage success supplies no approval or completion evidence.
 
-Before readiness, the Grok adapter binds the current canonical repository root, actual session/local root, exact same-identity session counterpart, stable slug, and presented authority path, then runs:
-
-```text
-executor_plan.py PLAN --context grok --consumer backend \
-  --slug SLUG \
-  --repository-root ABS_REPOSITORY_ROOT \
-  --local-root ABS_LOCAL_ROOT \
-  --local-plan ABS_LOCAL_PLAN
-```
-
-`PLAN` is the exact session path for local authority or exact active/archive path for direct authority. Always supply the exact session counterpart, including when safely absent. If the adapter cannot name this mapping, stop with `PLAN_PREFLIGHT_UNAVAILABLE`.
-
-Apply the shared backend result contract from `plan-impl-spec.md`. Missing mapping, marker/location mismatch, direct/local conflict, or exact-path ambiguity keeps every task non-ready. The adapter supplies no approval, role, authority outcome, or expected-state assertion.
-
-## Adapter boundary
-
-- Grok storage, identity, tools, model, and recovery may differ from OMP. Disclose actual mechanics; never promise transport equivalence.
-- A direct repository writer must use the shared generation protocol in `plan-repo-storage.md` or fail without mutation. Do not use the OMP projection helper for direct authoring.
-- Do not reinterpret portable sections, add a semantic sidecar/parser, infer approval from storage, or put provider, model, role, tool, credential, fallback, or runtime state in the portable plan.
-- Full orchestration requires a fresh provider-neutral parent-profile assessment. Rule/config discovery cannot attest capability. On mismatch, stop `transport-unavailable` unless the plan already approves a contract-preserving one-qualified-owner sequential projection.
+Harness-specific identity presentation, model, role, tools, and recovery stay in the adapter and out of the portable artifact. Disclose actual mechanics without promising transport equivalence. Full orchestration still requires a current provider-neutral Orchestrator Role Profile; rule discovery cannot attest it.
 
 ## Activation checks
 
-Use this rule for creation, revision, validation, or execution of a materialized Grok plan backed by session or repository storage. Skip OMP-local transport and non-plan Markdown.
+Use this rule for Grok discovery or any harness that writes and executes a repository plan directly. Skip OMP local-draft copying and non-plan Markdown.

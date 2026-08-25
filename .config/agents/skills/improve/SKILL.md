@@ -73,7 +73,7 @@ Apply in all modes (depth varies):
 
 **standard mode (creates dated plan):**
 - Balanced audit of scope using core criteria.
-- Write one dated plan in `.agents/plans/YYYY-MM-DD-HHMM_IMPROVE_<variant>.md` (use `date +%Y-%m-%d-%H%M`; `<variant>` is the effective mode or focus, e.g. `IMPROVE_deep`, `IMPROVE_security`, `IMPROVE_standard`).
+- Write one dated plan in `.agents/plans/YYYY-MM-DD-HHMM_improve-<variant>.md` (use `date +%Y-%m-%d-%H%M`; `<variant>` is the unprefixed effective mode or focus, e.g. `deep`, `security`, `standard`, so the literal `improve-` prefix appears exactly once).
 - Follow `references/plan-template.md`: compact by default, expanded only when risk or scope earns it.
 - Verify plan realism + coverage of main findings.
 - Present plan location. Do not execute unless told.
@@ -81,14 +81,14 @@ Apply in all modes (depth varies):
 **deep mode (creates dated plan):**
 - Same as standard, but broader/thorough coverage and deeper analysis.
 - Plan reflects the extra depth in findings and grouping.
-- Use the same improve naming convention (filename will reflect the mode, e.g. `..._IMPROVE_deep`), same location, template, and "present" rules.
+- Use the same improve naming convention (filename will reflect the mode, e.g. `..._improve-deep.md`), same location, template, and "present" rules.
 
 No mode keyword → standard plan. `direct` or `no-plan` suppresses plan creation and uses standard-depth direct work.
 
 ## Guardrails
 
 - Quick and direct/no-plan: never write plans; quick stays shallow, direct/no-plan uses standard-depth review before editing.
-- Standard/deep: always produce a dated plan in `.agents/plans/` using the improve naming convention (`IMPROVE_<variant>` slug) + the header metadata block + Tasks checklist per the base plan rule.
+- Standard/deep: always produce a dated plan in `.agents/plans/` using the improve naming convention (`improve-<variant>` slug) + the header metadata block + Tasks checklist per the base plan rule.
 - Never destructive actions.
 - Respect current changes; do not ignore the actual diff for unrelated work.
 - If scope or mode remains ambiguous after parsing keywords, clarify briefly.

@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "A settled outcome completes its existing run through the one terminal continual-learning assessment. Emit the complete trace beginning at accepted and continuing through ready, running, handed-off, verifying, verified, reviewing, and reviewed before terminal curation. Show CURATED, NO DURABLE LEARNING, and BLOCKED gate meanings. Choose CURATED; identify dev-continual-learning as owner of the bounded curation evidence artifact, but never as owner of a lifecycle state transition. The backend accounts for that evidence and owns complete. Explicitly record that no background/recurring learning, user-level AGENTS mutation, or shipping occurred."
+    "request": "A settled outcome completes its existing run through the one terminal continual-learning assessment. Emit the complete trace beginning at accepted and continuing through ready, running, handed-off, verifying, verified, reviewing, and reviewed before terminal curation. Show CURATED, NO DURABLE LEARNING, and BLOCKED gate meanings. Choose CURATED; identify dev-continual-learning as owner of the bounded curation evidence artifact, but never as owner of a lifecycle state transition. The backend accounts for that evidence and owns complete. Explicitly record that no background/recurring learning, user-level AGENTS mutation, or shipping occurred. The visible `dev-continual-learning` tail owner invokes portable `continual-learning assess` exactly once inside its existing task and returns the exact portable result identity and seven-field payload through that task's one Common Handoff; add no portable owner state, task, or second Handoff."
   },
   "scripted_replies": []
 }

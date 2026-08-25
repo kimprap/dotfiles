@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-15
+**Updated:** 2026-08-24
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -72,7 +72,7 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D13 — Clean cutover
 
 - **Scope:** Every caller, fixture, document, skill, rule, and active ADR affected by a changed generic workflow contract.
-- **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed.
+- **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed. A completion-rendering cutover includes every specialty normalizer and the single presenter.
 - **Why:** Dual behavior obscures the active contract, permits drift, and makes it impossible to know which path is authoritative.
 - **Rejected alternatives / why not:** Leaving old callers, aliases, compatibility shims, or obsolete paths after cutover preserves silently competing behavior instead of completing the migration.
 - **Consequences:** A contract change is not complete until every affected projection agrees and obsolete paths are gone. No agent silently chooses a winner when active authorities conflict.
@@ -117,20 +117,20 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D18 — Compact approval and completion presentation
 
 - **Scope:** Human-facing initial route approval and terminal completion output.
-- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal presentation contains the exact completed `Route`, `Result`, and only relevant `Verification`, `Risks`, or `Next`. Internal artifact identities and gate mechanics remain available to the engine but are omitted unless they affect the human decision.
-- **Why:** Compact output keeps the human's decision or result visible instead of burying it in execution machinery.
-- **Rejected alternatives / why not:** Verbose templates, artifact inventories, gate machinery, and execution metadata obscure the one decision or result the user needs.
-- **Consequences:** Presentation remains route-truthful and concise while internal evidence remains available when material.
-- **Reopen when:** The human approval fields, completion fields, or threshold for exposing internal mechanics changes.
+- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal completed presentation projects D27's exact `Completed`, `Evidence`, and `Continuation` report from one current validated `completion-presentation-input` fence. It carries filled changed-artifact and verification evidence plus durable Resume from, the existing Handoff, Constraints containing `shipping not authorized`, and specialty-authorized Next; it contains no completed `Route`, exposed fence, or presenter lifecycle mechanics.
+- **Why:** Compact output keeps the human's decision or result visible, while D27's filled evidence and durable continuation let the report support later resumption without copying internal manifests or gate machinery.
+- **Rejected alternatives / why not:** Verbose templates, implementation inventories, mutable resume pointers, gate machinery, and execution metadata obscure the one decision or result the user needs or fail to support reliable continuation.
+- **Consequences:** Presentation remains route-truthful and concise; the human receives current material evidence and a durable resume index, while detailed internal accounting stays behind the existing Handoff.
+- **Reopen when:** The human approval fields, completion fields, durability boundary, or threshold for exposing internal mechanics changes.
 
 ### D19 — Ordered route presentation
 
-- **Scope:** `dev-ask` prospective and completion presentation
-- **Decision:** Render every human-facing prospective and completed Route as an ordered list, one route owner per line, preserving exact order. Never render an inline arrow chain. If materially different candidates are required, give each candidate its own labeled ordered list.
-- **Why:** Ordered lists scan and wrap better while preserving sequence.
-- **Rejected alternatives / why not:** Arrow chains are dense; unordered bullets lose order; route tables expose unnecessary mechanics.
-- **Consequences:** Approval and completion templates, examples, and paired eval fixtures must use ordered route lists without changing internal route identity or ordering.
-- **Reopen when:** Route ordering or the compact presentation contract changes.
+- **Scope:** `dev-ask` prospective route presentation
+- **Decision:** Render every human-facing prospective `Route` as an ordered list, one route owner per line, preserving exact order and ending with the literal marker `completion-presentation`. Never render an inline arrow chain. If materially different candidates are required, give each candidate its own labeled ordered list. The final marker is prospective terminal projection only: it is never a dispatchable owner or worker and receives no task, Task Contract, Context Pack, backend attempt, Handoff, state, transition, approval, or completed Route.
+- **Why:** Ordered lists scan and wrap better while preserving sequence; treating the final marker as non-dispatchable keeps presentation from becoming a second lifecycle owner.
+- **Rejected alternatives / why not:** Arrow chains are dense; unordered bullets lose order; route tables expose unnecessary mechanics; dispatching the presenter duplicates specialty completion ownership and Handoff transfer.
+- **Consequences:** Approval templates, prospective examples, and paired eval fixtures use ordered route lists without changing internal route identity or ordering. The same specialty caller applies D27 after it constructs the current valid fence. Completed outputs carry no `Route`.
+- **Reopen when:** Prospective route ordering, the terminal projection marker, or presenter ownership changes.
 
 ### D20 — Recommended route and conditional decision support
 
@@ -144,7 +144,7 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D26 — Lean ordinary implementation path
 
 - **Scope:** Settled, reversible, one-context, one-lineage coding work with deterministic proof and no existing compact disqualifier.
-- **Decision:** Route eligible ordinary work through `dev-implementation` then `dev-ask completion presentation`. Criterion-complete worker smoke on the exact final target is terminal proof. Same-context compact binds a minimal revision-bound Task Contract directly; an existing ownership/context-change or durable-recovery crossing predicate adds exactly one Context Pack carrying that Task Contract and its solution discipline. Compact does not require an Executor Plan, plan preflight, filesystem Task Contract, Handoff file, independent verification, final review, or continual-learning dispatch. Standard and high-consequence retain their required independent assurance.
+- **Decision:** Route eligible ordinary work through `dev-implementation` then `completion-presentation`. Criterion-complete worker smoke on the exact final target is terminal proof. Same-context compact binds a minimal revision-bound Task Contract directly; an existing ownership/context-change or durable-recovery crossing predicate adds exactly one Context Pack carrying that Task Contract and its solution discipline. Compact does not require an Executor Plan, plan preflight, filesystem Task Contract, Handoff file, independent verification, final review, or continual-learning dispatch. Standard and high-consequence retain their required independent assurance.
 - **Decision:** Compact may remain planless. Its direct Task Contract still binds one short human Intent and one Methods value; if compact work uses an Executor Plan, that plan contains work tasks only and never numbers a verification, review, or continual-learning profile tail.
 - **Why:** Settled ordinary work is safest when the route is deterministic, proof is tied directly to acceptance, and lifecycle ceremony appears only for an evidenced boundary.
 - **Rejected alternatives / why not:** Standard-by-default assurance makes elapsed work or implementation size a hidden risk proxy. Always requiring plans, Context Packs, verification, review, or learning adds transfer and audit stages without improving criterion proof for bounded same-context work. Removing compact disqualifiers would weaken safety rather than remove ceremony.
@@ -156,7 +156,7 @@ The workflow needs one current route and one durable explanation of why its boun
 - `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior.
 - `.config/agents/skills/dev-requirements/SKILL.md`, `dev-research/SKILL.md`, `dev-triage/SKILL.md`, `dev-grilling/SKILL.md`, `grill-me/SKILL.md`, `grill-with-docs/SKILL.md`, `dev-prototype/SKILL.md`, `dev-specification/SKILL.md`, `dev-ticketing/SKILL.md`, `dev-implementation/SKILL.md`, `dev-improve-codebase-architecture/SKILL.md`, and `wayfinder/SKILL.md` for targeted confirmation, iterative decision frontiers, optional intake, semantic revision rebinding, adapters, route impact, stops, and exactly one receiver.
 - `.config/agents/skills/dev-ask/evals/evals.json` and its route, reapproval, continuation, presentation, discovery, triage, and ordinary-context fixture directories.
-- `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the four ACTIVE generic-workflow ADRs.
+- `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the five ACTIVE generic-workflow ADRs.
 - Human approval boundaries for product, architecture, material scope, acceptance, topology/independence, destructive/external effects, and shipping.
 
 These current executable/documentation contracts and this ACTIVE ADR are synchronized under the approved plan authority. The ADR remains decision authority rather than implementation or run state.
@@ -182,7 +182,7 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes it an
 
 ## Verification expectations
 
-- **AC01:** A fresh read-only agent given only repository guidance finds the single minimal pointer, opens `docs/adr/INDEX.md`, identifies the four ACTIVE generic-workflow records and the separate concurrent product-workflow ADR-0005, and does not load every ADR for ordinary unrelated work.
+- **AC01:** A fresh read-only agent given only repository guidance finds the single minimal pointer, opens `docs/adr/INDEX.md`, identifies the five ACTIVE generic-workflow records and the separate concurrent product-workflow ADR-0005, and does not load every ADR for ordinary unrelated work.
 - **AC02:** Every D01-D23 decision and its relevant rejection is represented exactly once by one decision unit in one focused ACTIVE ADR, with approval and supersession semantics.
 - Route fixtures must distinguish direct answers, research, optional raw external triage, missing requirements, candidate refinement/grilling, hard bugs, known-cause repair, settled implementation, and large specified work without keyword-only routing.
 - Approval fixtures must show unchanged derivative stages continue on one route approval, only newly exposed human-owned decisions or material semantic drift reopen approval, route presentation is an ordered list, route candidates remain exceptional, compact presentation is stable, and completion does not produce a shipping action.

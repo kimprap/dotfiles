@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Read-only compact state trace. Every acceptance smoke passes. The worker reports a plausible project-guidance change that would mutate a current rule. Require one in-conversation worker Common Handoff, preserve the candidate as deferred evidence for a separately approved standard or high-consequence maintenance route, then complete compact. Do not create a curation task, curation Handoff, trigger screen, or dev-continual-learning dispatch."
+    "request": "Read-only compact state trace. Every acceptance smoke passes. The worker reports a plausible project-guidance change that would mutate a current rule. Require one in-conversation worker Common Handoff, preserve the candidate as deferred evidence for a separately approved standard or high-consequence maintenance route, then complete compact. Do not create a curation task, curation Handoff, trigger screen, or dev-continual-learning dispatch. Compact invokes neither the visible dev adapter nor portable `continual-learning`; any mutating Learning Candidate remains deferred evidence for a separately approved noncompact maintenance route."
   },
   "scripted_replies": []
 }

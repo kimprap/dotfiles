@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Read-only terminal-evidence snapshot. Compact criterion-complete exact-target smoke is accepted and no blocker remains. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output>. Do not run a post-review trigger screen, dispatch dev-continual-learning, or create a curation Handoff."
+    "request": "Read-only terminal-evidence snapshot. Compact criterion-complete exact-target smoke is accepted and no blocker remains. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output>. Do not run a post-review trigger screen, dispatch dev-continual-learning, or create a curation Handoff. Compact invokes neither the visible dev adapter nor portable `continual-learning`; any mutating Learning Candidate remains deferred evidence for a separately approved noncompact maintenance route."
   },
   "scripted_replies": []
 }

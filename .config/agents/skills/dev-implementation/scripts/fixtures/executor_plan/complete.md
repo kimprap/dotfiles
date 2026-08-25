@@ -1,7 +1,6 @@
 # Portable executor fixture
 
 **Datetime**: 2026-08-09-1700
-**Authority kind**: direct-repository
 **Scope**: Portable plan validation fixture
 **Summary**: Change one rule and its shared validator without provider-specific semantics.
 **Status**: PENDING
@@ -49,8 +48,8 @@
 
 | Target ID | Path / surface | Owner task | Base identity | Callers / fixtures | Criteria |
 |---|---|---|---|---|---|
-| TGT-RULE | rules/plan-impl-spec.md | T1 | sha256:2222222222222222222222222222222222222222222222222222222222222222 | planner persona and complete fixture | AC06 |
-| TGT-SCRIPT | scripts/executor_plan.py | T2 | sha256:3333333333333333333333333333333333333333333333333333333333333333 | planner and backend preflight | AC07 |
+| TGT-RULE | rules/plan-impl-spec.md | T1 | sha256:2222222222222222222222222222222222222222222222222222222222222222 | plan author and complete fixture | AC06 |
+| TGT-SCRIPT | scripts/executor_plan.py | T2 | sha256:3333333333333333333333333333333333333333333333333333333333333333 | helper and backend readiness | AC07 |
 | TGT-VERIFY | verification receipt | T3 | sha256:4444444444444444444444444444444444444444444444444444444444444444 | independent verifier | AC08 |
 | TGT-REVIEW | review receipt | T4 | sha256:5555555555555555555555555555555555555555555555555555555555555555 | final reviewer | AC09 |
 | TGT-LEARN | learning receipt | T5 | sha256:6666666666666666666666666666666666666666666666666666666666666666 | terminal assessor | AC10 |
@@ -146,19 +145,19 @@
 
 | Criterion ID | Condition / input | Expected observable / threshold | Surface | Owning task |
 |---|---|---|---|---|
-| AC06 | Complete portable body | One validator result is valid in each semantic harness context. | TGT-RULE | T1 |
-| AC07 | Mismatched required structure | Preflight stops before mutation with exact structural issues. | TGT-SCRIPT | T2 |
+| AC06 | Complete portable body | One validation result is valid from complete repository bytes. | TGT-RULE | T1 |
+| AC07 | Mismatched required structure | Validation stops before mutation with exact structural issues. | TGT-SCRIPT | T2 |
 | AC08 | Structurally complete result | Independent validation reproduces the expected report. | TGT-VERIFY | T3 |
 | AC09 | Verified immutable result | One final review settles without mutation. | TGT-REVIEW | T4 |
 | AC10 | Settled reviewed result | One terminal assessment records the learning outcome. | TGT-LEARN | T5 |
 
 ## Verification / Done criteria
 
-- [ ] VR-AC06. Validate the same complete bytes in both semantic contexts
+- [ ] VR-AC06. Validate the complete repository bytes once
   - Criterion: AC06
   - Proof class: independent verification
-  - Scenario / environment / fixture: complete.md in each supported semantic context
-  - Evidence form: valid reports with one identical plan digest
+  - Scenario / environment / fixture: complete.md as an active repository plan
+  - Evidence form: one valid report with the exact plan digest
   - Target recheck: TGT-RULE
   - Receiver: verifier
 - [ ] VR-AC07. Reject a load-bearing structural omission
@@ -204,13 +203,13 @@
 
 | Blocker ID | Owner | Recovery evidence | Affected tasks | Revision / approval boundary | Ready condition |
 |---|---|---|---|---|---|
-| BLK-AUTHORITY | implementation-parent | Current exact authority and matching structural preflight | all | New authority revision and approval when semantics change | Exact approved bytes validate before mutation. |
+| BLK-AUTHORITY | implementation-parent | Current exact authority and matching structural validation | all | New authority revision and approval when semantics change | Exact approved bytes validate before mutation. |
 
 ## Critical anchors and assumptions
 
 | Anchor ID | Kind | Exact reference | Execution role |
 |---|---|---|---|
 | ANC-PLAN-RULE | rule | rules/plan-impl-spec.md | Defines portable semantics. |
-| ANC-VALIDATOR | script | scripts/executor_plan.py | Performs structural preflight. |
+| ANC-VALIDATOR | script | scripts/executor_plan.py | Performs structural and lifecycle validation. |
 
 - Assumptions: none

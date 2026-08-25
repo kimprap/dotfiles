@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: one required Standard assessment has no bound mutating candidate and finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record the source plus adjacent-near-miss assessment in Validation, set Papercut outcome to none, and keep the gate terminal. Do not invent an Evaluation proposal, mutate guidance, start Deep, or begin another audit."
+    "request": "Read-only terminal state-trace simulation. Emit only snapshot:terminal-evidence|owner:backend|output:<observable output> with no prose. Scenario: one required Standard assessment has no bound mutating candidate and finds no qualified durable statement. Return NO DURABLE LEARNING, name every exact source in Skipped, use none for Updated, Added, and Removed, record the source plus adjacent-near-miss assessment in Validation, set Papercut outcome to none, and keep the gate terminal. Do not invent an Evaluation proposal, mutate guidance, start Deep, or begin another audit. The named qualification, procedure, outcome, and seven-field payload are the exact result of one portable `continual-learning assess` invocation through the visible `dev-continual-learning` adapter; the backend snapshot only validates and accounts the returned identity and payload."
   },
   "scripted_replies": []
 }
