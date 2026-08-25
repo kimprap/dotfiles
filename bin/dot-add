@@ -26,7 +26,7 @@ resolve_path() {
   local path="$name"
 
   case "$path" in
-    .agents|.agents/*|.config/*|.scratch|.scratch/*|archive|archive/*|docs|docs/*|README.md|.gitignore|manifest|bin|bin/*|.mise.toml|.prettierrc|.stylua.toml|WATCHDOG.yml) ;;
+    .agents|.agents/*|.omp|.omp/*|.config/*|.scratch|.scratch/*|archive|archive/*|docs|docs/*|README.md|.gitignore|manifest|bin|bin/*|.mise.toml|.prettierrc|.stylua.toml|WATCHDOG.yml) ;;
     *) path=".config/$path" ;;
   esac
 

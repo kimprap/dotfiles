@@ -1,0 +1,24 @@
+{
+    "servers": {
+        "basedpyright": {
+            "rootMarkers": [".git"]
+        },
+        "ruff": {
+            "rootMarkers": [".git"]
+        },
+        "typescript-language-server": {
+            "rootMarkers": [".git"],
+            "initOptions": {
+                "hostInfo": "omp-coding-agent",
+                "preferences": {
+                    "includeInlayParameterNameHints": "all",
+                    "includeInlayVariableTypeHints": true,
+                    "includeInlayFunctionParameterTypeHints": true
+                },
+                "tsserver": {
+                    "path": ".config/agents/harnesses/omp/extensions/node_modules/typescript/lib/tsserver.js"
+                }
+            }
+        }
+    }
+}

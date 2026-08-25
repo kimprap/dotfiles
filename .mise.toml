@@ -13,6 +13,7 @@
 "aqua:sxyazi/yazi" = "26.5.6"
 node = "26.3.1"
 "npm:prettier" = "3.8.4"
+"npm:typescript-language-server" = "6.0.0"
 
 [tasks.verify-bootstrap]
 description = "Syntax-check the dotfiles bootstrap script"

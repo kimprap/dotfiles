@@ -30,6 +30,21 @@
       "summary": "Deleted manifest-allowed paths cannot be staged through the helper.",
       "surface": "bin/dot-add staging helper"
     },
+    "pc-4a26350015d31957": {
+      "first_seen": "2026-08-25",
+      "last_seen": "2026-08-25",
+      "observations": [
+        {
+          "date": "2026-08-25",
+          "friction": "Each valid case duplicates the rendered report in both prompt and expected_output; a format change can update one copy while leaving the other stale.",
+          "workaround": "Parse each input fence and rewrite both report copies from the same changed array, then assert they match."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Keep embedded prompt goldens and expected outputs synchronized.",
+      "surface": ".config/agents/skills/completion-presentation/evals/evals.json"
+    },
     "pc-ae711c27c4d758b7": {
       "first_seen": "2026-08-24",
       "last_seen": "2026-08-24",

@@ -63,12 +63,14 @@ If compact completion has no already-produced durable changed artifact or receip
 
 ## Mechanical rendering
 
-For valid input, emit exactly the following shape. Replace each lowercase binding with its corresponding fence value. Join two or three `changed` items in input order with `; `. Render one item alone.
+For valid input, emit exactly the following shape. Replace each lowercase binding with its corresponding fence value. Render `changed` as a nested list under its label, with one nested bullet per item in input order. Use the same nested-list shape for one item. No other current field is an artifact-valued array; keep the scalar locator fields inline.
 
 ```markdown
 ## Completed
 - Outcome: the outcome value
-- Changed: the joined changed values
+- Changed:
+  - the first changed value
+  - the next changed value, when present
 
 ## Evidence
 - Verification: the verification value
@@ -93,7 +95,8 @@ Compact:
 ```markdown
 ## Completed
 - Outcome: Ghostty's Cmd-K binding clears the terminal as intended.
-- Changed: `.config/ghostty/config`
+- Changed:
+  - `.config/ghostty/config`
 
 ## Evidence
 - Verification: Ghostty config load and Cmd-K smoke — PASS (`.config/ghostty/config@sha256:6ef1f5a019a2021af780e7bbc77d180b841ae2dbacf23808002ad0eceb98f1b4`)
@@ -114,7 +117,10 @@ Standard or high-consequence:
 ```markdown
 ## Completed
 - Outcome: Portable session envelope, continual-learning, and generic completion presentation are live; the archived plan is DONE.
-- Changed: `docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md#d27--session-lifecycle-envelope-and-portable-workflow-owners`; `.config/agents/skills/continual-learning/SKILL.md` + `.config/agents/skills/completion-presentation/SKILL.md`; `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md#completion-summary`
+- Changed:
+  - `docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md#d27--session-lifecycle-envelope-and-portable-workflow-owners`
+  - `.config/agents/skills/continual-learning/SKILL.md` + `.config/agents/skills/completion-presentation/SKILL.md`
+  - `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md#completion-summary`
 
 ## Evidence
 - Verification: all three T3 criteria — VERIFIED; final Standards and Specification review — APPROVED (`.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md@sha256:a06c625ece27cb6b725620a62049d46668ad2f11e7344f27e1746798df448dee#completion-summary`)

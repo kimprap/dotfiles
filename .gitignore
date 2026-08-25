@@ -27,5 +27,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# JavaScript dependencies
+node_modules/
+
 # OMP Mnemopi per-project banks (machine-local SQLite; created under cwd when scoping is per-project*)
 banks/
