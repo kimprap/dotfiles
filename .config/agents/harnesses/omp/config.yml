@@ -28,6 +28,8 @@ statusLine:
         showUntracked: true
 symbolPreset: nerd
 defaultThinkingLevel: medium
+tier:
+  subagent: inherit
 memory: 
   backend: mnemopi
 mnemopi: 
@@ -93,6 +95,12 @@ dev:
 codexResets: 
   autoRedeem: "no"
 compaction: 
-  thresholdTokens: 300000
+  thresholdTokens: 200000
+  idleEnabled: true
 composer: 
   shape: claude
+extendedContext: false
+terminal: 
+  showProgress: true
+astGrep: 
+  enabled: false
