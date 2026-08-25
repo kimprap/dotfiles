@@ -4,7 +4,8 @@
 **Authority kind**: local-authority
 **Scope**: Engineering workflow assurance execution, evidence transport, and bounded evaluation
 **Summary**: Keep independent verification, one final review, and terminal learning. Clarify existing reuse, smoke, manifest, Handoff, later-slot closure, and completion seams so the tail does not rebuild valid proof, restate unchanged state, or silently admit a disjoint finding into another same-outcome repair cycle.
-**Status**: PENDING
+**Status**: DONE
+**Completed At**: 2026-08-21-1840
 
 ## Objective
 
@@ -92,7 +93,8 @@
 
 ## Tasks
 
-- [ ] T1. Synchronize assurance execution contracts
+- [x] T1. Synchronize assurance execution contracts
+  completed 2026-08-20-2321
   - Owner: dev-implementation
   - Intent: Make existing proof reuse, later-slot closure, and evidence transport deterministic without weakening a gate.
   - Methods: none
@@ -106,7 +108,8 @@
   - Receiver: T2
   - Verification: VR-SMOKE-PARITY, VR-REPAIR-REUSE, VR-REVIEW-SET, VR-REVIEW-ADMISSION, VR-HANDOFF-DELTA, VR-MANIFEST-COMPLETION
   - Lineage: shared
-- [ ] T2. Add bounded quality and near-miss evals
+- [x] T2. Add bounded quality and near-miss evals
+  completed 2026-08-21-0115
   - Owner: dev-implementation
   - Intent: Prove the clarified contracts reject every quality-reducing shortcut.
   - Methods: none
@@ -120,7 +123,8 @@
   - Receiver: T3
   - Verification: VR-EVAL-QUALITY, VR-EVAL-PORTABILITY, VR-PROOF-INVOCATION
   - Lineage: shared
-- [ ] T3. Seal preservation and the final target identity
+- [x] T3. Seal preservation and the final target identity
+  completed 2026-08-21-0119
   - Owner: dev-implementation
   - Intent: Prove the existing gates and excluded surfaces stayed intact.
   - Methods: none
@@ -153,77 +157,77 @@
 
 ## Verification / Done criteria
 
-- [ ] VR-SMOKE-PARITY. Check worker smoke against frozen acceptance coverage
+- [x] VR-SMOKE-PARITY. Check worker smoke against frozen acceptance coverage
   - Criterion: AC-SMOKE-PARITY
   - Proof class: worker smoke
   - Scenario / environment / fixture: TGT-EXECUTION smoke and Handoff clauses on current bytes
   - Evidence form: exact-target smoke showing frozen-case coverage and an explicit not-verifier-evidence boundary
   - Target recheck: TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-REPAIR-REUSE. Check impact-map acceptance and unaffected reuse
+- [x] VR-REPAIR-REUSE. Check impact-map acceptance and unaffected reuse
   - Criterion: AC-REPAIR-REUSE
   - Proof class: worker smoke
   - Scenario / environment / fixture: ADR-0003 D04 plus verification and implementation repair clauses
   - Evidence form: exact clauses that assign propose, freeze, and accept roles and define freshness as identity, impacted proof, and aggregate verdict
   - Target recheck: TGT-AUTHORITY, TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-REVIEW-SET. Check later-slot lineage, closure, and aggregate verdict
+- [x] VR-REVIEW-SET. Check later-slot lineage, closure, and aggregate verdict
   - Criterion: AC-REVIEW-SET
   - Proof class: worker smoke
   - Scenario / environment / fixture: ADR-0003 D03/D22, docs/adr/INDEX.md ADR-0003/D03/D04/D22 rows, WORKFLOW, `dev-ask` skill, implementation, and review later-slot clauses
   - Evidence form: exact agreeing clauses across ADR, index, skill, and WORKFLOW that keep D22 classification, bind lineage by ANC-LINEAGE, require later-slot intake bindings, and define aggregate APPROVED without verifier-verdict substitution
   - Target recheck: TGT-AUTHORITY, TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-REVIEW-ADMISSION. Check same-outcome repair admission
+- [x] VR-REVIEW-ADMISSION. Check same-outcome repair admission
   - Criterion: AC-REVIEW-ADMISSION
   - Proof class: worker smoke
   - Scenario / environment / fixture: ADR-0003 D03/D22, docs/adr/INDEX.md D03/D22 rows, implementation, review, and `dev-ask` router admission clauses
   - Evidence form: exact agreeing clauses across ADR, index, skill, and WORKFLOW that admit only incomplete lineage and causal repair regression, reject grant-hypothesis-only expansion, and route disjoint outcome-relevant defects to authority-change-required without advisory demotion or silent same-outcome repair
   - Target recheck: TGT-AUTHORITY, TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-HANDOFF-DELTA. Check role-local Handoff references
+- [x] VR-HANDOFF-DELTA. Check role-local Handoff references
   - Criterion: AC-HANDOFF-DELTA
   - Proof class: worker smoke
   - Scenario / environment / fixture: Common Handoff contract on TGT-EXECUTION
   - Evidence form: exact delta-and-reference requirement plus a missing-reference hard stop
   - Target recheck: TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-MANIFEST-COMPLETION. Check bind-once manifests and receipt-only completion
+- [x] VR-MANIFEST-COMPLETION. Check bind-once manifests and receipt-only completion
   - Criterion: AC-MANIFEST-COMPLETION
   - Proof class: worker smoke
   - Scenario / environment / fixture: WORKFLOW and implementation dispatch and completion clauses
   - Evidence form: exact bind-once-and-compare requirement and a completion path that names receipt validation with zero recipe execution
   - Target recheck: TGT-AUTHORITY, TGT-EXECUTION
   - Receiver: T2
-- [ ] VR-EVAL-QUALITY. Run the focused quality and near-miss matrix
+- [x] VR-EVAL-QUALITY. Run the focused quality and near-miss matrix
   - Criterion: AC-EVAL-QUALITY
   - Proof class: worker smoke
   - Scenario / environment / fixture: observe_case.py --self-test; scan_stale_contracts.py --self-test; scan_stale_contracts.py normal scan; scan_stale_contracts.py --preserve; compare_trace.py --self-test --self-test-file .config/agents/skills/dev-ask/evals/compare_trace_selftest.json; compare_trace.py --keep-check against baseline blob 3a2053bb1f03e7b32a77895b8fe8748189cda170, commit 479dce6de60cde01c8c87627241618765ef05454, SHA-256 bd5a27fe1b676f69731b7bb5eb931388725f3293a9ebc9db37d9f4bc3db086ba; and every declared changed or new ANC-EVAL-CASES identity under both OMP and Grok
   - Evidence form: sealed receipts and comparator results with hard-quality counters at zero, keep-check pass, and scanner preserve/normal-scan pass
   - Target recheck: TGT-EVAL
   - Receiver: T3
-- [ ] VR-EVAL-PORTABILITY. Compare OMP and Grok decisions on the same frozen cases
+- [x] VR-EVAL-PORTABILITY. Compare OMP and Grok decisions on the same frozen cases
   - Criterion: AC-EVAL-PORTABILITY
   - Proof class: worker smoke
   - Scenario / environment / fixture: the T2 sealed cases under both semantic contexts
   - Evidence form: equivalent contract decisions and no provider-specific workflow clause
   - Target recheck: TGT-EVAL
   - Receiver: T3
-- [ ] VR-PROOF-INVOCATION. Count recipe executions on frozen fixtures
+- [x] VR-PROOF-INVOCATION. Count recipe executions on frozen fixtures
   - Criterion: AC-PROOF-INVOCATION
   - Proof class: worker smoke
   - Scenario / environment / fixture: same-outcome repair, later-slot review, learning, and completion cases with normalized proof fingerprints
   - Evidence form: invocation counts showing impacted-only re-execution, later-slot closure/impact review, sealed-receipt consumption downstream, zero completion recipes, and unused cancelled partial proof
   - Target recheck: TGT-EVAL
   - Receiver: T3
-- [ ] VR-PRESERVE-TAIL. Recheck protected learning and excluded contracts
+- [x] VR-PRESERVE-TAIL. Recheck protected learning and excluded contracts
   - Criterion: AC-PRESERVE-TAIL
   - Proof class: worker smoke
   - Scenario / environment / fixture: pre/post hashes of every ANC-PRESERVE path
   - Evidence form: byte equality on each protected path and unchanged review-slot owner, order, count, and independence clauses
   - Target recheck: TGT-PRESERVE
   - Receiver: dev-verification
-- [ ] VR-CUTOVER. Seal the changed-path manifest
+- [x] VR-CUTOVER. Seal the changed-path manifest
   - Criterion: AC-CUTOVER
   - Proof class: worker smoke
   - Scenario / environment / fixture: sorted changed-path inventory after T2 including docs/adr/INDEX.md, compare_trace.py, and scan_stale_contracts.py, empty staged set, and no new runtime store or process
@@ -251,6 +255,21 @@
 | BLK-REVIEW-SAFETY | T1 | Evidence that a later-slot disjoint observation is independently serious safety | T1, T2 | Return separate-authority safety intake; never consume the parent repair set | Safety intake is named; same-outcome repair set is unchanged |
 | BLK-TRANSPORT | T2 | Exact failed job or harness IDs after the existing two safe retries | T2 | No new retry budget or scheduler | Return transport-unavailable with those IDs |
 
+- exhausted token at 2026-08-21-0303
+  - trying: prove repaired B-T4 oracle and current-registry OMP/Grok parity
+  - found: SEMANTIC-PARITY-B-REVIEW — Grok omitted required lifecycle events in both repair attempts
+  - tried: corrected B-T4 EVENT 19/20; deterministic smoke and B-T4 OMP/Grok passed; isolated attempt 2 repeated B-REVIEW failure
+  - target: sha256:243f333528221644efed98462dc45e31547a8e366bae09cd6650a7d0320e835c
+  - remaining: AC-EVAL-QUALITY, AC-EVAL-PORTABILITY / Main
+  - grant: continue 2026-08-21-0846
+  - opinion: absent
+
+- resolved 2026-08-21-1840
+  - `FIND-EVAL-EVENT-ORACLE-1` closed on the corrected B-T4 EVENT 19/20 producer/oracle contract
+  - `SEMANTIC-PARITY-B-REVIEW` closed under grant `continue 2026-08-21-0846` on target `sha256:2b2e53e78bee8e22c38c86b8d63fdaca127add8c2de85112cf2d727c8539e94c`
+  - worker smoke passed `11/11`; fresh independent verification returned `VERIFIED`; the original-rerun returned `APPROVED`; the terminal Standard assessment returned `NO DURABLE LEARNING`
+  - no criterion, review lineage, authority conflict, safety intake, or transport blocker remains
+
 ## Critical anchors and assumptions
 
 | Anchor ID | Kind | Exact reference | Execution role |
@@ -276,3 +295,12 @@
 - ASM-NO-CACHE: Current receipts do not bind a safe cross-run semantic cache class. Fallback: keep one fresh independent verifier attempt and consume its sealed receipts as review inputs, never as the review verdict.
 - ASM-SESSION-PAUSE: Named AUTH-SESSION pause and AUTH-SESSION2 ask-response waits are human-wait, not workflow cost. Fallback: report gross, human-wait, and agent-active separately in diagnostic notes only.
 - ASM-FINDING-SET: Later-slot lineage plus repair-admission prevent disjoint automatic same-outcome frontier expansion. They do not guarantee termination while Continue remains uncapped, because causal repair regressions can still form a chain. Fallback: disjoint outcome-relevant uses BLK-REVIEW-ADMISSION; independently serious safety uses BLK-REVIEW-SAFETY; do not demote a D22 blocker to advisory.
+
+## Completion Summary
+
+- Delivered behavior: frozen worker smoke now fails before assurance without becoming verifier evidence; same-outcome repair carries a complete impacted/unaffected action map; later review slots close predicate-bound lineages and inspect only accepted impact surfaces; disjoint outcome-relevant findings remain `CHANGES REQUIRED` with `authority-change-required`; target/rule manifests and Common Handoffs use exact digest-bound identities; terminal completion consumes receipts and runs zero criterion recipes.
+- Exact proof: granted-cycle worker smoke `local://assurance-tail-grant-cycle-1-worker-smoke.json` at SHA-256 `9bf081775ae41a018ff02168782dd3aecfab3051146a5215f46f3aef158d6c4d` passed all 11 criteria on target `sha256:2b2e53e78bee8e22c38c86b8d63fdaca127add8c2de85112cf2d727c8539e94c`; independent verification `local://assurance-tail-independent-verification-v3.md` at SHA-256 `ebd6069141525081c33101dcd541d5e980f3aa9b0265ce1a17e68251644eafc8` returned `VERIFIED` with `11/11 PASS`.
+- Review and learning: original-initial finding `FIND-EVAL-EVENT-ORACLE-1` was repaired once; `local://assurance-tail-final-review-rerun.md` at SHA-256 `5bb4c7e5659747a3c1d6293da84a23ed31e515a751c7759a1594ed276227d4ec` closed the lineage and returned Standards `PASS`, Specification `PASS`, Overall `APPROVED`; `local://assurance-tail-terminal-learning.md` at SHA-256 `cb7b66246e6f0fbd30b5209e49b076f34a0f8bb06ca43dcdcfe7524a0d4a664b` returned `NO DURABLE LEARNING`.
+- Decisions: retained independent verification, both original review slots, grant-scoped review availability after those slots, and one terminal Standard assessment; reused only exact independently accepted unaffected evidence; rejected a scheduler, cache, ledger, state service, provider fallback, compatibility shim, extra review pass, or proof replay.
+- Recovery accounting: semantic attempts remain consumed `2/2`; the sole post-assurance repair remains consumed `1/1`; original-initial and original-rerun are consumed exactly once; grant-scoped review remains unused; terminal learning is consumed exactly once. Failed attempt-1 and partial evidence remain inventory-only and unconsumed.
+- Preservation and residual risk: all 15 protected paths stayed byte-exact; four unrelated user-owned paths stayed behaviorally excluded and target-accounted; the staged set remained empty; no shipping occurred. Reviewer/verifier model-family metadata was unavailable, but family separation was not a Task Contract requirement. The terminal plan-status/archive mutation is storage-only and receives a projection-only identity rebind without replaying implementation proof.
