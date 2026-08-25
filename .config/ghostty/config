@@ -40,3 +40,4 @@ keybind = cmd+0=reset_font_size
 custom-shader = ~/.config/ghostty/shaders/cursor_sweep.glsl
 custom-shader-animation = always
 
+config-file = ?tode/keybinds.ghostty
