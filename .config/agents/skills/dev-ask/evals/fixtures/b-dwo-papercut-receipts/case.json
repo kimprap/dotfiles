@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only papercut accounting trace. Work child A seals HANDOFF-A then performs one no-candidate soft look. Work child B seals HANDOFF-B then returns material RESULT-B for pc-b. Work child C seals HANDOFF-C and becomes unavailable before the soft look; only then ROOT-P performs the fallback and returns material RESULT-C for pc-c. Retain all receipts internally. Normalize completion with ordered papercuts [RESULT-B, RESULT-C] in work-Handoff order, omit A because it is none-only, render nested material bullets, and reject a scalar papercut field."
+  },
+  "scripted_replies": []
+}

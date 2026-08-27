@@ -23,6 +23,8 @@ SYMLINKS=(
     "$HOME/.dotfiles/.prettierrc|$HOME/.prettierrc"
     "$HOME/.dotfiles/.stylua.toml|$HOME/.stylua.toml"
     "$HOME/.dotfiles/.config/agents|$HOME/.agents"
+    "$HOME/.dotfiles/.config/agents/harnesses/omp/agents/test-audit-opinion-a.md|$HOME/.omp/agent/agents/test-audit-opinion-a.md"
+    "$HOME/.dotfiles/.config/agents/harnesses/omp/agents/test-audit-opinion-b.md|$HOME/.omp/agent/agents/test-audit-opinion-b.md"
     "$HOME/.dotfiles/.config/agents/harnesses/grok/config.toml|$HOME/.grok/config.toml"
     "$HOME/.dotfiles/.config/zsh|$HOME/.config/zsh"
     "$HOME/.dotfiles/.config/mise/config.toml|$HOME/.config/mise/config.toml"

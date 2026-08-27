@@ -68,6 +68,55 @@ class OrchestratorProfileTests(unittest.TestCase):
         self.assertEqual(result.decision, "full-orchestration")
         self.assertEqual(result.mismatches, ())
         self.assertEqual(result.profile_plan_sha256, PLAN_DIGEST)
+        self.assertEqual(
+            profile_contract.PROFILE_SCHEMA, "orchestrator-role-profile/v1"
+        )
+        self.assertEqual(
+            profile_contract.ATTESTATION_SCHEMA, "orchestrator-attestation/v1"
+        )
+        self.assertEqual(
+            profile_contract.ASSESSMENT_SCHEMA,
+            "orchestrator-profile-assessment/v1",
+        )
+
+    def test_plan_backed_exact_live_profile_requires_no_downgrade(self) -> None:
+        expected = profile()
+        observed = attestation(expected)
+        result = profile_contract.assess_plan_backed(expected, observed)
+        self.assertEqual(result.decision, "full-orchestration")
+        self.assertEqual(result.mismatches, ())
+        self.assertEqual(result.profile_plan_sha256, PLAN_DIGEST)
+        self.assertEqual(
+            result.payload()["schema"], "orchestrator-profile-assessment/v1"
+        )
+
+    def test_plan_backed_prohibits_an_approved_generic_downgrade(self) -> None:
+        expected = profile(downgrade=True)
+        observed = attestation(expected)
+        self.assertEqual(
+            profile_contract.assess(expected, observed).decision,
+            "full-orchestration",
+        )
+        result = profile_contract.assess_plan_backed(expected, observed)
+        self.assertEqual(result.decision, "transport-unavailable")
+        self.assertEqual(result.profile_plan_sha256, PLAN_DIGEST)
+        self.assertTrue(
+            any("profile.downgrade" in mismatch for mismatch in result.mismatches)
+        )
+
+    def test_plan_backed_rejects_a_non_full_assessment(self) -> None:
+        expected = profile()
+        observed = attestation(expected)
+        observed["capabilities"]["delegate"] = "unavailable"  # type: ignore[index]
+        generic = profile_contract.assess(expected, observed)
+        self.assertEqual(generic.decision, "transport-unavailable")
+        result = profile_contract.assess_plan_backed(expected, observed)
+        self.assertEqual(result.decision, "transport-unavailable")
+        self.assertEqual(result.profile_plan_sha256, PLAN_DIGEST)
+        self.assertTrue(
+            any("assessment.decision" in mismatch for mismatch in result.mismatches)
+        )
+
 
     def test_parent_identity_model_authority_and_plan_mismatches_fail_closed(
         self,
@@ -176,6 +225,74 @@ class OrchestratorProfileTests(unittest.TestCase):
             self.assertEqual(payload["decision"], "one-owner-sequential")
             self.assertEqual(expected_path.read_bytes(), expected_bytes)
             self.assertEqual(observed_path.read_bytes(), observed_bytes)
+
+    def test_plan_backed_cli_exits_zero_only_for_full_without_downgrade(
+        self,
+    ) -> None:
+        full_profile = profile()
+        full_attestation = attestation(full_profile)
+        downgrade_profile = profile(downgrade=True)
+        downgrade_attestation = attestation(downgrade_profile)
+        downgrade_attestation["capabilities"]["delegate"] = "unavailable"  # type: ignore[index]
+        downgrade_attestation["capabilities"]["observe"] = "unavailable"  # type: ignore[index]
+        downgrade_attestation["capabilities"]["control"] = "unavailable"  # type: ignore[index]
+        downgrade_attestation["limits"]["max_child_depth"] = 0  # type: ignore[index]
+        downgrade_attestation["limits"]["max_concurrency"] = 1  # type: ignore[index]
+        self.assertEqual(
+            profile_contract.assess(
+                downgrade_profile, downgrade_attestation
+            ).decision,
+            "one-owner-sequential",
+        )
+        non_full_profile = profile()
+        non_full_attestation = attestation(non_full_profile)
+        non_full_attestation["capabilities"]["delegate"] = "unavailable"  # type: ignore[index]
+        cases = (
+            ("full", full_profile, full_attestation, 0, "full-orchestration"),
+            (
+                "prohibited-downgrade",
+                downgrade_profile,
+                downgrade_attestation,
+                69,
+                "transport-unavailable",
+            ),
+            (
+                "non-full",
+                non_full_profile,
+                non_full_attestation,
+                69,
+                "transport-unavailable",
+            ),
+        )
+        with tempfile.TemporaryDirectory(prefix="plan-backed-profile-") as temporary:
+            root = Path(temporary)
+            for label, expected, observed, expected_code, expected_decision in cases:
+                with self.subTest(case=label):
+                    expected_path = root / f"{label}-profile.json"
+                    observed_path = root / f"{label}-attestation.json"
+                    expected_path.write_text(
+                        json.dumps(expected, sort_keys=True), encoding="utf-8"
+                    )
+                    observed_path.write_text(
+                        json.dumps(observed, sort_keys=True), encoding="utf-8"
+                    )
+                    stream = io.StringIO()
+                    with contextlib.redirect_stdout(stream):
+                        code = profile_contract.main(
+                            [
+                                "assess-plan-backed",
+                                "--profile",
+                                str(expected_path),
+                                "--attestation",
+                                str(observed_path),
+                            ]
+                        )
+                    payload = json.loads(stream.getvalue())
+                    self.assertEqual(code, expected_code)
+                    self.assertEqual(payload["decision"], expected_decision)
+                    self.assertEqual(
+                        payload["schema"], "orchestrator-profile-assessment/v1"
+                    )
 
 
 if __name__ == "__main__":

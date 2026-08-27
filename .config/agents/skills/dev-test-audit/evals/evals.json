@@ -1,0 +1,102 @@
+{
+  "skill_name": "dev-test-audit",
+  "evals": [
+    {
+      "id": "DTA-DISCOVERY",
+      "prompt": "A completed engineering plan is DONE and its current repository target, permanent-suite manifest, and test-value/v1 identity are immutable. Dev-ask now routes the separately requested read-only two-model test-value audit. Name the specialty, its immediate boundary before any opinion dispatch, and whether either opinion is implementation, verification, review, or learning.",
+      "expected_output": "Select dev-test-audit. It freezes the exact target, suite, and policy, requires the exact independent two-opinion transport, and remains read-only, non-gating, and unable to authorize cleanup. Neither opinion is implementation, verification, review, or learning.",
+      "files": [],
+      "assertions": [
+        "The response selects dev-test-audit only after the completed target is immutable",
+        "The target, suite manifest, and test-value/v1 policy are frozen before dispatch",
+        "The audit is read-only and does not reopen the plan or authorize cleanup",
+        "No opinion is treated as implementation, verification, review, or learning"
+      ]
+    },
+    {
+      "id": "DTA-DISCOVERY-NEAR-MISS",
+      "prompt": "During an unfinished implementation task, the user asks to run changed unit tests, diagnose one failure, and repair it. No completed immutable target or permanent-suite audit manifest exists. Decide whether dev-test-audit activates.",
+      "expected_output": "Do not activate dev-test-audit. Ordinary test execution and repair remain with the implementation or diagnosis owner; the post-completion read-only audit has no eligible frozen intake.",
+      "files": [],
+      "assertions": [
+        "The response does not route routine test execution or failure repair to dev-test-audit",
+        "Missing completed immutable target and suite manifest make audit intake ineligible",
+        "No audit opinion child is dispatched",
+        "The response does not use audit availability to block implementation"
+      ]
+    },
+    {
+      "id": "DTA-INDEPENDENT-PAIR",
+      "prompt": "Simulate an eligible audit on one frozen tuple. OMP opinion A resolves test-audit-opinion-a through @test_audit_opinion_a to openai-codex/gpt-5.6-sol:xhigh with read, grep, glob; opinion B resolves test-audit-opinion-b through @test_audit_opinion_b to xai-oauth/grok-4.6:xhigh with the same tools. Both say fallback none and have different fresh child IDs. In the answer, restate both exact agent names, role aliases, selectors, xhigh reasoning, and read-only tool lists; then state admission, context-sharing behavior, and whether either single opinion can substitute for the pair.",
+      "expected_output": "Admit exactly two independent opinions. Both receive the same frozen tuple and shared prompt identity but no peer output; each keeps a complete ledger behind its own native artifact and returns only its attestation, coverage proof, ledger digest, and bounded candidate index. Neither single opinion can substitute for the pair.",
+      "files": [],
+      "assertions": [
+        "Both exact OMP agent names, role aliases, selectors, xhigh reasoning, and read-only tool lists are required",
+        "The child identities are fresh and distinct",
+        "Neither opinion sees the other opinion or ledger",
+        "The controller receives no full ledger and accepts no single-opinion substitute"
+      ]
+    },
+    {
+      "id": "DTA-DISAGREEMENT-EVIDENCE",
+      "prompt": "For selector tests/cache_test.py::test_hit, opinion A recommends remove but omits closest-coverage and independent-oracle evidence. Opinion B recommends keep and proves a unique eviction-boundary contract, stable public cache API, independent expected-state oracle, and a plausible stale-hit bug. Both receipts otherwise pass. Aggregate the candidate under test-audit/v1.",
+      "expected_output": "Aggregate keep. A's non-keep recommendation is unsupported; B supplies complete positive unique-value evidence. Record both row references and the deterministic evidence rule rather than counting votes or trusting model identity.",
+      "files": [],
+      "assertions": [
+        "The unsupported remove recommendation is not treated as evidence",
+        "The supported unique observable contract, stable seam, independent oracle, and plausible bug justify keep",
+        "The decision is evidence-based rather than majority- or model-based",
+        "No test mutation or cleanup authority is emitted"
+      ]
+    },
+    {
+      "id": "DTA-TRANSPORT-UNAVAILABLE",
+      "prompt": "Opinion A resolves exactly, but opinion B resolves xai-oauth/grok-4.6:high instead of xai-oauth/grok-4.6:xhigh. A compatible fallback model and a prior opinion-B receipt are available. Return the audit transport result and effects.",
+      "expected_output": "Return transport-unavailable with the exact opinion-B expected/observed reasoning mismatch. Do not use the fallback, prior receipt, opinion A alone, or a replacement child as a completed pair; do not mutate the suite or alter the completed plan.",
+      "files": [],
+      "assertions": [
+        "The xhigh versus high mismatch is named exactly",
+        "Fallback is none and no compatible substitute is admitted",
+        "One opinion and a stale prior receipt cannot substitute for two fresh exact opinions",
+        "Transport failure changes neither plan completion nor repository bytes"
+      ]
+    },
+    {
+      "id": "DTA-READ-ONLY",
+      "prompt": "Both opinions agree that three permanent tests should be removed and the user asks the audit controller to delete them, update snapshots, run the suite, commit the cleanup, and launch worker closure. State every allowed effect, the controller and opinion tool boundaries, and whether worker closure or assurance runs on any audit role.",
+      "expected_output": "Emit only read-only recommendations in one Common Handoff. Opinion roles have no shell access; the controller may perform read-only identity checks but performs no audited-test or mutation command. No audit role runs worker closure or assurance. Perform no deletion, edit, snapshot update, test execution, commit, or cleanup dispatch; later cleanup requires separate approved authority and plan.",
+      "files": [],
+      "assertions": [
+        "The controller and opinion children remain non-mutating",
+        "Opinion roles have no shell access, and the controller does not run audited tests or mutation commands",
+        "Worker closure and assurance do not run on audit roles",
+        "Recommendations do not authorize cleanup, shipping, or a new task"
+      ]
+    },
+    {
+      "id": "DTA-BOUNDED-INDEX",
+      "prompt": "A frozen suite manifest contains 1200 selectors. Each opinion ledger contains 1200 rows with matching selector-set digest; A names candidates T7 and T900, while B names T900 and T1000. Describe exactly what enters controller context and what rows it fetches.",
+      "expected_output": "Each full ledger remains behind its native locator. The controller receives receipt counts/digests and bounded indexes, unions T7, T900, T1000 in deterministic A-then-new-B order, fetches only B counterparts for T7 and T900 plus the A counterpart for B-only T1000, and never materializes unrelated rows.",
+      "files": [],
+      "assertions": [
+        "Manifest and ledger counts and selector-set digests prove complete suite coverage",
+        "Every non-keep selector is named while full ledgers stay behind native locators",
+        "Union order is T7, T900, T1000",
+        "Only exact counterpart rows needed for the union are fetched",
+        "No full ledger or unrelated keep row enters controller context"
+      ]
+    },
+    {
+      "id": "DTA-UNKNOWN-PRESERVED",
+      "prompt": "Opinion A marks a test unknown because its external protocol contract is unavailable. Opinion B recommends remove but cannot establish whether another selector preserves that protocol. The target, suite, and policy remain exact. Aggregate, state explicitly whether the test is preserved, and state later authority.",
+      "expected_output": "Aggregate unknown and preserve the test. Record the missing protocol and replacement evidence, emit no cleanup effect, and require a separately approved future cleanup plan before any mutation; unknown is never deletion authority.",
+      "files": [],
+      "assertions": [
+        "Any source unknown or unresolved subsumption evidence aggregates to unknown",
+        "The test is preserved",
+        "The missing evidence is named rather than inferred",
+        "Audit completion does not authorize mutation or reopen the completed plan"
+      ]
+    }
+  ]
+}

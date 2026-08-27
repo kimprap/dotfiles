@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only shared-tree admission matrix. Ready tasks A and B declare disjoint targets/effects and may overlap. Tasks C and D declare overlap and serialize. Task E has unknown overlap and task F owns an exclusive resource; each serializes. Portable fan-in PLAN-F remains Executor Plan v1 valid; runtime either preserves declared isolated lineages and neutral integration or stops transport-unavailable if shared-tree transport cannot preserve them. Child CHILD-U declares only target/u.txt but writes target/rogue.txt; stop CHILD-U immediately and mechanically reject its Handoff. The root performs no semantic work or repair."
+  },
+  "scripted_replies": []
+}

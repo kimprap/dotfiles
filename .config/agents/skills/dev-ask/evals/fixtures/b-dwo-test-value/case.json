@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only test-value/v1 matrix. Evaluate: unique regression U through public API with independent literal oracle and plausible bug BUG-U; existing test E already covers the contract; duplicate D repeats E; subsumed S is covered by retained selector E; tautology T asserts its own setup; implementation-coupled I calls production logic as oracle; incidental snapshot N freezes formatting; coverage-only C names no behavior; explicit-TDD tracer R has valid red/green proof but is redundant after the durable public-seam test. Produce changed-test Common Handoff rows with path selector, observable contract or concrete absence, closest coverage, seam, oracle, plausible bug, evidence, and keep/merge/remove disposition."
+  },
+  "scripted_replies": []
+}

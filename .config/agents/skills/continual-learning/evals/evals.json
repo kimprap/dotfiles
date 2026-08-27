@@ -1,129 +1,131 @@
 {
-  "skill_name": "continual-learning",
   "evals": [
     {
-      "id": "CL-ENVELOPE-SEQUENCE",
-      "prompt": "Model a dev specialty and a custom specialty through the portable session envelope. Include a silent papercut skip in one, a silent assessment skip in the other, and treat repair, reapproval, user promotion, explicit review, shipping, pause, and compaction as re-entry events. State the only ordered envelope and whether any item creates a stage, DAG edge, presenter state, or second Handoff.",
-      "expected_output": "Both specialties use intake → classify → work-specialty → Handoff → papercut look/skip → assess/skip → present. Specialty internals stay opaque, optional skips are silent, present is terminal projection, and every listed re-entry remains an event rather than a stage or persisted edge.",
       "assertions": [
-        "The seven events appear exactly once and in the fixed order",
-        "Papercut and assessment may skip silently after the existing Handoff",
+        "Each work child Handoff precedes one same-child papercut look, with root fallback only for child unavailability",
+        "Compact papercut receipts remain ordered by work Handoff and presentation receives ordered papercuts",
+        "Assessment remains one terminal boundary event rather than one per work child",
         "Present is outside specialty state and creates no task, transition, approval, or Handoff",
         "Repair, reapproval, promotion, review, shipping, pause, and compaction are not added as stages or DAG edges"
-      ]
+      ],
+      "expected_output": "Work-child Handoff → same-child papercut look repeats once per work child; unavailable-child fallback is root-owned once. Receipt order is work-Handoff order. The workflow then assesses or skips once and presents ordered papercuts. Specialty internals remain opaque and no optional event creates a stage, DAG edge, presenter state, or second Handoff.",
+      "id": "CL-ENVELOPE-SEQUENCE",
+      "prompt": "Model a planned dev workflow with two work children and a custom direct workflow. Each work child seals its existing Common Handoff before exactly one same-child papercut look; root fallback is eligible only for concrete child unavailability. Retain compact receipts in Handoff order, then assess or skip once at the existing terminal boundary and present ordered papercuts. Treat repair, reapproval, user promotion, explicit review, shipping, pause, and compaction as re-entry events. State whether any item creates a stage, DAG edge, presenter state, or second Handoff."
     },
     {
-      "id": "CL-ASSESS-ELIGIBILITY",
-      "prompt": "Classify four assess inputs: an unnamed single-session plan run with a completed Handoff and affected plan artifact; a titled session with no affected artifact; an open-ended discussion; and a settled affected-artifact outcome containing one complete and one incomplete Learning Candidate. State activation, candidate handling, and allowed terminal result.",
-      "expected_output": "The unnamed plan run and settled affected-artifact outcome are eligible. Complete candidates are forwarded and incomplete candidates remain evidence only. The title-only session and open discussion do not auto-load or emit learning output.",
       "assertions": [
         "A completed Handoff plus nonempty affected artifact qualifies even without a session name",
         "A title or name never supplies eligibility",
         "Every complete candidate is forwarded while incomplete candidates remain named evidence",
         "Open discussion without settled artifacts causes no automatic skill load or output"
-      ]
+      ],
+      "expected_output": "The unnamed plan run and settled affected-artifact outcome are eligible. Complete candidates are forwarded and incomplete candidates remain evidence only. The title-only session and open discussion do not auto-load or emit learning output.",
+      "id": "CL-ASSESS-ELIGIBILITY",
+      "prompt": "Classify four assess inputs: an unnamed single-session plan run with a completed Handoff and affected plan artifact; a titled session with no affected artifact; an open-ended discussion; and a settled affected-artifact outcome containing one complete and one incomplete Learning Candidate. State activation, candidate handling, and allowed terminal result."
     },
     {
-      "id": "CL-ASSESS-SKIP-EMPTY",
-      "prompt": "Compare three cases: a nonempty affected-artifact outcome with zero complete candidates; no affected artifact and no candidate under ordinary envelope flow; and an explicit assess invocation with the same empty input. State whether the skill loads and what it may return.",
-      "expected_output": "The nonempty affected-artifact outcome remains eligible and may return NO DURABLE LEARNING. Ordinary empty flow skips silently without loading. Explicit empty invocation reports only missing eligibility and reads no unrelated evidence.",
       "assertions": [
         "Zero complete candidates does not disqualify a nonempty affected-artifact outcome",
         "No affected artifact and no complete candidate is a silent ordinary skip",
         "An explicit ineligible invocation reports the missing boundary without broad inspection",
         "No title, count, timer, or ambient evidence is used to manufacture eligibility"
-      ]
+      ],
+      "expected_output": "The nonempty affected-artifact outcome remains eligible and may return NO DURABLE LEARNING. Ordinary empty flow skips silently without loading. Explicit empty invocation reports only missing eligibility and reads no unrelated evidence.",
+      "id": "CL-ASSESS-SKIP-EMPTY",
+      "prompt": "Compare three cases: a nonempty affected-artifact outcome with zero complete candidates; no affected artifact and no candidate under ordinary envelope flow; and an explicit assess invocation with the same empty input. State whether the skill loads and what it may return."
     },
     {
-      "id": "CL-REVIEW-POINTED-EVIDENCE",
-      "prompt": "Invoke continual-learning review separately with an explicit pointer to this session, one file path, one record ID, and a session title only. For each, name readable evidence, mutation authority, dispatch behavior, and output class.",
-      "expected_output": "The first three explicit pointers constrain review to the pointed evidence and permit proposals or missing-evidence reports only. The title alone is not a pointer. No case mutates, dispatches, scores, or persists state.",
       "assertions": [
         "This-session, path, and ID pointers each bound the evidence read",
         "A title-only request is rejected as unpointed",
         "Review is proposal-only and performs no mutation or dispatch",
         "No transcript corpus, background scan, score, or review state appears"
-      ]
+      ],
+      "expected_output": "The first three explicit pointers constrain review to the pointed evidence and permit proposals or missing-evidence reports only. The title alone is not a pointer. No case mutates, dispatches, scores, or persists state.",
+      "id": "CL-REVIEW-POINTED-EVIDENCE",
+      "prompt": "Invoke continual-learning review separately with an explicit pointer to this session, one file path, one record ID, and a session title only. For each, name readable evidence, mutation authority, dispatch behavior, and output class."
     },
     {
-      "id": "CL-DEEP-TRIGGERS",
-      "prompt": "Classify Deep activation for an explicit human request, one severe independently verified systemic incident, settled recurring cross-contract evidence, a stale canonical conflict, every tenth run, a monthly timer, many artifacts, and an unchanged Handoff. State authorization and whether the settled run is blocked.",
-      "expected_output": "Explicit authority and settled severe, recurring, cross-contract, stale, or conflicting evidence qualify. Count, calendar, volume, and unchanged Handoff do not. Deep stays separately authorized unless an exact current contradiction blocks correctness.",
       "assertions": [
         "Only explicit or settled severity/recurrence/conflict evidence qualifies",
         "Count, time, calendar, volume, and unchanged-Handoff near misses are rejected",
         "Deep does not begin in place without its separate authority",
         "Only an exact current correctness conflict blocks the settled run"
-      ]
+      ],
+      "expected_output": "Explicit authority and settled severe, recurring, cross-contract, stale, or conflicting evidence qualify. Count, calendar, volume, and unchanged Handoff do not. Deep stays separately authorized unless an exact current contradiction blocks correctness.",
+      "id": "CL-DEEP-TRIGGERS",
+      "prompt": "Classify Deep activation for an explicit human request, one severe independently verified systemic incident, settled recurring cross-contract evidence, a stale canonical conflict, every tenth run, a monthly timer, many artifacts, and an unchanged Handoff. State authorization and whether the settled run is blocked."
     },
     {
-      "id": "CL-REVIEW-NAME-COLLISIONS",
-      "prompt": "A user says only review, then separately requests dev-code-review, papercut review, and continual-learning review with an explicit evidence path. Classify the owner and allowed behavior for each without using the bare word to guess.",
-      "expected_output": "The bare word is ambiguous and selects nothing. Dev code review, papercut review, and pointed continual-learning review remain distinct owners with their existing boundaries; continual-learning review is read-only and proposal-only.",
       "assertions": [
         "Bare review never selects a mode or owner",
         "Code review, papercut review, and continual-learning review remain distinct",
         "Continual-learning review requires the explicit pointer",
         "No extra review pass, tail, mutation, or state is created"
-      ]
+      ],
+      "expected_output": "The bare word is ambiguous and selects nothing. Dev code review, papercut review, and pointed continual-learning review remain distinct owners with their existing boundaries; continual-learning review is read-only and proposal-only.",
+      "id": "CL-REVIEW-NAME-COLLISIONS",
+      "prompt": "A user says only review, then separately requests dev-code-review, papercut review, and continual-learning review with an explicit evidence path. Classify the owner and allowed behavior for each without using the bare word to guess."
     },
     {
-      "id": "CL-FROZEN-EVALUATION",
-      "prompt": "Evaluate deterministic, semantic, and mixed mutation proposals against the exact reporter tuple. Include valid pass, stable deterministic failure, bound semantic FAIL, stale source, stale adjacent, tuple drift, missing semantic verdict, FLAKY, INCONCLUSIVE, tampering, and unsafe restoration. Map source reuse, adjacent freshness, write eligibility, restoration, terminal outcome, and the seven result fields.",
-      "expected_output": "Only a complete bound pass can yield CURATED. Stable safe deterministic failure or bound semantic FAIL restores only the curator delta and yields NO DURABLE LEARNING. Missing, stale, drifted, tampered, flaky, inconclusive, or unsafe cases write nothing or stop restoration and yield BLOCKED. The adjacent baseline is always fresh and all results use the seven fixed fields.",
       "assertions": [
         "No guidance write occurs before the caller freezes the complete reporter tuple and CE digest",
         "Source evidence is reused only under exact identity while the adjacent baseline is always fresh",
         "Semantic facets use one fresh read-only non-curator PASS, FAIL, FLAKY, or INCONCLUSIVE verdict bound to the tuple",
         "Stable safe failure restores only the curator delta; unsafe or invalid proof returns BLOCKED",
         "Updated, Added, Removed, Skipped, Validation, Deep candidate, and Papercut outcome appear exactly once"
-      ]
+      ],
+      "expected_output": "Only a complete bound pass can yield CURATED. Stable safe deterministic failure or bound semantic FAIL restores only the curator delta and yields NO DURABLE LEARNING. Missing, stale, drifted, tampered, flaky, inconclusive, or unsafe cases write nothing or stop restoration and yield BLOCKED. The adjacent baseline is always fresh and all results use the seven fixed fields.",
+      "id": "CL-FROZEN-EVALUATION",
+      "prompt": "Evaluate deterministic, semantic, and mixed mutation proposals against the exact reporter tuple. Include valid pass, stable deterministic failure, bound semantic FAIL, stale source, stale adjacent, tuple drift, missing semantic verdict, FLAKY, INCONCLUSIVE, tampering, and unsafe restoration. Map source reuse, adjacent freshness, write eligibility, restoration, terminal outcome, and the seven result fields."
     },
     {
-      "id": "CL-PORTABLE-ADAPTER-BOUNDARY",
-      "prompt": "Run the same read-only classification in OMP and Grok with only the portable skill body. Cover an adapter-owned engineering outcome followed by a duplicate direct assess attempt; an eligible custom outcome with no adapter and one explicit assess; envelope-only intake; pause or compaction with unchanged caller-supplied completed stages, slot, counters, terminal state, artifact identities, and manifest digests; the exact issued tuple; a distinct authorized review slot; and a recorded pre-semantic safe transport retry.",
-      "expected_output": "Both hosts produce the same semantics. Adapter-owned work rejects a second direct invocation; the custom outcome permits one explicit assess; envelope-only intake auto-dispatches none. Re-entry preserves caller identities after manifest equality, the exact duplicate blocks as idempotency-violation without consumption, and the distinct slot and safe retry remain eligible.",
       "assertions": [
         "OMP and Grok differ only in invocation transport",
         "One adapter-owned invocation excludes a duplicate direct path while no-adapter eligible work permits one explicit mode",
         "The envelope never auto-dispatches continual learning",
         "Pause and compaction preserve caller-owned stages, slot, counters, terminal state, artifacts, receipts, and once-bound manifest identities",
         "The exact duplicate tuple consumes nothing; a distinct authorized slot and recorded safe transport retry are not duplicates"
-      ]
+      ],
+      "expected_output": "Both hosts produce the same semantics. Adapter-owned work rejects a second direct invocation; the custom outcome permits one explicit assess; envelope-only intake auto-dispatches none. Re-entry preserves caller identities after manifest equality, the exact duplicate blocks as idempotency-violation without consumption, and the distinct slot and safe retry remain eligible.",
+      "id": "CL-PORTABLE-ADAPTER-BOUNDARY",
+      "prompt": "Run the same read-only classification in OMP and Grok with only the portable skill body. Cover an adapter-owned engineering outcome followed by a duplicate direct assess attempt; an eligible custom outcome with no adapter and one explicit assess; envelope-only intake; pause or compaction with unchanged caller-supplied completed stages, slot, counters, terminal state, artifact identities, and manifest digests; the exact issued tuple; a distinct authorized review slot; and a recorded pre-semantic safe transport retry."
     },
     {
-      "id": "CL-NO-TRANSCRIPT-SCORE-LEDGER-RETHINK",
-      "prompt": "Reject a proposal to mine transcripts and JSONL each evening, score weak sessions, store an evaluation or learning ledger, auto-run rethink, create a host adapter, copy framework ADRs into consumer repositories, add an init-ask row, and start assessment from a session title. State every access and effect boundary for OMP and Grok.",
-      "expected_output": "Reject before transcript, JSONL, score, ledger, rethink, setup, ADR-copy, or host effects. Both hosts use the same portable body, titles do not qualify, and no memory, state service, adapter, second task, tail, or Handoff is created.",
       "assertions": [
         "No transcript, JSONL, memory, background, or score input is read",
         "No evaluation, learning, session, or presentation ledger or state service is created",
         "Rethink, setup registration, host adapters, and consumer ADR copies are not invoked",
         "A title does not qualify a mode and the response creates no task, tail, or Handoff"
-      ]
+      ],
+      "expected_output": "Reject before transcript, JSONL, score, ledger, rethink, setup, ADR-copy, or host effects. Both hosts use the same portable body, titles do not qualify, and no memory, state service, adapter, second task, tail, or Handoff is created.",
+      "id": "CL-NO-TRANSCRIPT-SCORE-LEDGER-RETHINK",
+      "prompt": "Reject a proposal to mine transcripts and JSONL each evening, score weak sessions, store an evaluation or learning ledger, auto-run rethink, create a host adapter, copy framework ADRs into consumer repositories, add an init-ask row, and start assessment from a session title. State every access and effect boundary for OMP and Grok."
     },
     {
-      "id": "CL-PAPERCUT-ID-BOUNDARY",
-      "prompt": "After one completed work Handoff and one papercut soft look, classify no candidate, an incomplete candidate, a complete candidate with one originating PC-ID, a mismatched or additional ID, candidate-specific CURATED, final rejection, replacement, BLOCKED, broad guidance work, helper failure, recurrence, explicit papercut review, and separately authorized pointed Deep reconsideration. Use disposable-ledger facts only and state who may settle.",
-      "expected_output": "Assessment stays separate from capture and never accesses the ledger. One complete candidate carries one unchanged PC-ID. Candidate-specific durable correction maps fixed, final rejection maps rejected, replacement maps superseded, and every blocked, incomplete, broad, narrow, helper-failure, or unrelated result maps open. Only the current lifecycle caller may settle one exact terminal ID.",
       "assertions": [
-        "The work Handoff precedes the soft look and assessment is a separate optional event",
+        "Each work Handoff precedes its same-child soft look; root fallback requires child-unavailable evidence",
         "The portable owner never reads or writes the ledger and returns exactly one unchanged originating PC-ID",
         "Only candidate-specific fixed, rejected, or superseded outcomes are terminal; all other branches remain open",
         "At most one exact ID reaches caller-owned settlement and unrelated IDs remain untouched",
+        "Compact receipts project as ordered papercuts in work-Handoff order; none-only receipts remain accounted but do not render",
         "Papercut review stays proposal-only and pointed Deep retains separate authority"
-      ]
+      ],
+      "expected_output": "Each work child returns one compact result after its Handoff; root fallback is unavailable-only. Assessment stays separate from capture and never accesses the ledger. One complete candidate carries one unchanged PC-ID. Candidate-specific correction maps fixed, final rejection maps rejected, replacement maps superseded, and every other result stays open. Only the current lifecycle caller may settle; completion retains material ordered papercuts in work-Handoff order.",
+      "id": "CL-PAPERCUT-ID-BOUNDARY",
+      "prompt": "After two completed work-child Handoffs and their same-child papercut looks, classify none-only, incomplete, one complete originating PC-ID, mismatched or additional ID, candidate-specific CURATED, final rejection, replacement, BLOCKED, broad guidance work, helper failure, recurrence, explicit papercut review, and separately authorized pointed Deep reconsideration. Preserve compact result receipts in work-Handoff order, permit root fallback only for concrete child unavailability, and project ordered papercuts. Use disposable-ledger facts only and state who may settle."
     },
     {
-      "id": "CL-SURFACE-ADAPTER-DESTINATION",
-      "prompt": "Portable assess receives four otherwise complete candidates: update one exact already-authorized existing surface adapter through its maintenance wrapper; create a missing project adapter; create the shared surface-verification-adapter contract; and create either create/maintain wrapper. Classify destination and mutation eligibility.",
-      "expected_output": "Only the exact existing adapter destination is eligible, and only through maintain-surface-verification-adapter with its current URI/digest and ordinary frozen evaluation. Every absent adapter, shared-contract, and wrapper destination is rejected or deferred without a write.",
       "assertions": [
         "Assess preserves the exact existing adapter destination and maintenance owner",
         "An absent project adapter cannot be created by assess",
         "The shared contract and both wrappers cannot be created by assess",
         "No destination fallback, broad skill-authoring authority, product repair, or shipping effect appears"
-      ]
+      ],
+      "expected_output": "Only the exact existing adapter destination is eligible, and only through maintain-surface-verification-adapter with its current URI/digest and ordinary frozen evaluation. Every absent adapter, shared-contract, and wrapper destination is rejected or deferred without a write.",
+      "id": "CL-SURFACE-ADAPTER-DESTINATION",
+      "prompt": "Portable assess receives four otherwise complete candidates: update one exact already-authorized existing surface adapter through its maintenance wrapper; create a missing project adapter; create the shared surface-verification-adapter contract; and create either create/maintain wrapper. Classify destination and mutation eligibility."
     }
-  ]
+  ],
+  "skill_name": "continual-learning"
 }

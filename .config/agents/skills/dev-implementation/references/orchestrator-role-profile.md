@@ -86,4 +86,18 @@ Results are exactly:
 - `one-owner-sequential`: full orchestration is unavailable only because delegation/observation/control or child-depth/concurrency cannot satisfy the profile, while the exact approved downgrade, core direct capabilities, authority, identity/model/reasoning, isolation/fan-in, effects, and digests remain live and exact.
 - `transport-unavailable`: every other missing, malformed, inferred, mismatched, unavailable, fallback, or unapproved case.
 
+## Plan-backed launch
+
+Every approved parser-valid implementation Executor Plan uses the stricter plan-backed assessment:
+
+```text
+python3 scripts/orchestrator_profile.py assess-plan-backed \
+  --profile <exact-profile.json> \
+  --attestation <fresh-launch-attestation.json>
+```
+
+Plan-backed execution continues only when the result is `full-orchestration` and the bound profile's `downgrade` is exactly `none`. Any generic direct-downgrade result, non-full result, or non-`none` downgrade is `transport-unavailable`; it never authorizes the plan root to perform a work task. The root remains a mechanical control plane and dispatches every authored work owner as a fresh child. A compact work-only plan uses the same gate and child ownership while remaining tail-free.
+
+For `PROMOTE-SERIAL-DEFAULT`, full orchestration uses runtime concurrency one by default. This is ordinary scheduling under the full profile, not `one-owner-sequential`, a sequential-child profile, or a downgrade. The recorded comparison supports only that default and no general efficiency claim.
+
 Task/plan digest, authority, runtime identity, adapter, selector/source/resolved model, reasoning, fallback, isolation, fan-in, and effect mismatches always fail closed; they cannot select the downgrade. The assessor is read-only and provider-neutral. Each supported OMP or Grok backend launch binds its fresh adapter-supplied attestation and the exact no-fallback assessment before dispatch; adapter config, rule/persona discovery, or a model mapping is never attestation. Adapters own how live fields are obtained and disclose their different identity, model, tool, isolation, storage, and recovery mechanics without changing this contract.

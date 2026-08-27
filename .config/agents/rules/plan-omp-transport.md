@@ -17,7 +17,7 @@ Execution and continuation read and edit `.agents/plans/<Datetime>_<slug>.md`, n
 
 Copy or archive success grants no approval, execution state, specialty completion, Handoff, or presentation eligibility. `completion-presentation`, not this adapter, may proceed before archive only when the parser-valid terminal active repository plan remains readable, the current Common Handoff exists, and `Resume from` binds that active file's exact SHA-256. Without either a durable archive or that active-plan durability, generic completion presentation cannot proceed.
 
-Full orchestration separately requires a current provider-neutral Orchestrator Role Profile. This transport rule cannot attest capability.
+Full orchestration separately requires a current provider-neutral Orchestrator Role Profile. For every approved parser-valid implementation plan, bind a fresh attestation and use `assess-plan-backed`; continue only on `full-orchestration` with `downgrade: none`. OMP plan transport never attests capability, authorizes root work, or supplies a fallback topology. Under `PROMOTE-SERIAL-DEFAULT`, native child dispatch uses full orchestration with runtime concurrency one by default, not a sequential-child mode, and makes no general efficiency claim.
 
 ## Activation checks
 

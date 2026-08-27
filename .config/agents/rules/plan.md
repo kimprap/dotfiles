@@ -46,7 +46,8 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 
 - Include `## Verification / Done criteria` with objective, observable checks; check a criterion only after observing it.
 - Do not complete the final task until every required criterion passes.
-- Set `Status: DONE` only when every task and criterion is checked, every task has exactly one valid immediate completion record, a nonempty final `## Completion Summary` records material findings, decisions, delivered behavior, and residual risks, and the header includes a valid `**Completed At**: <YYYY-MM-DD-HHMM>`.
+- Set `Status: DONE` only when every task and criterion is checked, every task has exactly one valid immediate completion record, a nonempty final `## Completion Summary` records the delivered outcome, material findings and decisions, immutable evidence identities, current residual risks, and the exact target manifest reference, and the header includes a valid `**Completed At**: <YYYY-MM-DD-HHMM>`. Keep exhaustive changed-path inventory in that manifest and/or the existing Handoff rather than copying it into the summary.
+
 - Append later user overrides to the Completion Summary without changing plan identity or rewriting historical outcomes.
 
 ## Plan quality

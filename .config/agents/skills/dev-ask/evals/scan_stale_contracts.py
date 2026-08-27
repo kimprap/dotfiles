@@ -257,6 +257,7 @@ REWRITE_IDS = {
     "B-T5-EXECUTOR-PLAN-GROK",
     "B-T5-EXECUTOR-PLAN-MISSING",
     "B-T5-EXECUTOR-PLAN-OMP",
+    "B-T5-PARENT-PROFILE-DOWNGRADE",
     "L-DELEGATION",
     "L-FULL",
     "L-MUTATION",
@@ -311,55 +312,108 @@ ADDED_IDS = {
     "B-T4-REVISION-WORTH-OPINION",
     "B-TASK-METHOD-TDD",
     "R-COMPACT-PLAN-WITH-TAIL",
+    "B-DWO-PAPERCUT-RECEIPTS",
+    "B-DWO-TEST-VALUE",
+    "B-DWO-UNDECLARED-MUTATION",
+    "B-DWO-WORKER-CLOSURE",
+    "R-DWO-TEST-AUDIT",
 }
-CHECKPOINT_CASE_IDS = (
+DWO_PROJECTION_PATHS = {
+    ".config/agents/rules/plan-impl-spec.md",
+    ".config/agents/rules/plan-omp-transport.md",
+    ".config/agents/rules/plan-grok-transport.md",
+    ".config/agents/rules/papercut.md",
+    ".config/agents/skills/dev-ask/SKILL.md",
+    ".config/agents/skills/dev-ask/WORKFLOW.md",
+    ".config/agents/skills/dev-implementation/SKILL.md",
+    ".config/agents/skills/dev-implementation/references/orchestrator-role-profile.md",
+    ".config/agents/skills/dev-implementation/references/compact-checklist.md",
+    ".config/agents/skills/dev-handoff/SKILL.md",
+    ".config/agents/skills/dev-code-review/SKILL.md",
+    ".config/agents/skills/dev-continual-learning/SKILL.md",
+    ".config/agents/skills/continual-learning/SKILL.md",
+    ".config/agents/skills/continual-learning/WORKFLOW.md",
+    ".config/agents/skills/dev-tdd/SKILL.md",
+    ".config/agents/skills/completion-presentation/SKILL.md",
+    ".config/agents/skills/product-ask/SKILL.md",
+    ".config/agents/skills/product-ask/WORKFLOW.md",
+    ".config/agents/skills/papercut/SKILL.md",
+    ".config/agents/skills/papercut/WORKFLOW.md",
+    "docs/adr/0001-dev-workflow-authority-and-routing.md",
+    "docs/adr/0002-executor-plans-and-orchestration.md",
+    "docs/adr/0003-bounded-assurance-and-repair.md",
+    "docs/adr/0004-canonical-discovery-and-continual-learning.md",
+    "docs/adr/0007-automated-papercut-lifecycle-and-lean-evidence.md",
+    "docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md",
+    "docs/adr/INDEX.md",
+}
+DWO_STALE_PROJECTION_FRAGMENTS = (
+    "grant counter",
+    "grant cycle",
+    "grant-scoped",
+    "worth frame",
+    "same-plan exhaustion record",
+    "grant: pending",
+    "Close disposition:",
+    "Continue**, **Second opinion**, and **Close",
+    "Continue / Second opinion / Close",
+    '"papercut":',
+    "parent-as-worker",
+    "parent as worker",
+    "root-as-worker",
+    "root worker fallback",
+    "root performs semantic work",
+)
+DWO_PLAN_ROOT_FALLBACK_FRAGMENTS = (
+    "A shallow graph without one of those triggers remains one owner or a bounded batch",
+    "uses an already approved, contract-preserving sequential or one-qualified-owner projection",
+)
+DWO_CONTINUATION_CASE_IDS = (
+    "B-REVIEW-SET-GRANT-HYPOTHESIS-ONLY",
     "B-T4-REPAIR-REMAINING-BLOCKER",
     "B-T4-CHECKPOINT-PROOF-CLOSE",
     "B-T4-REVISION-WORTH-OPINION",
     "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
 )
-CHECKPOINT_RECORD_PREFIXES = (
-    "- exhausted ",
-    "  - trying: ",
-    "  - found: ",
-    "  - tried: ",
-    "  - target: ",
-    "  - remaining: ",
-    "  - grant: ",
-    "  - opinion: ",
+DWO_RESUME_CASE_FIXTURES = {
+    "B-FULL": ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
+    "B-T5-COMPLETION-ASSURED": (
+        ".config/agents/skills/dev-ask/evals/fixtures/b-t5-completion-assured/case.json"
+    ),
+    "B-T5-COMPLETION-MISSING-ASSURANCE": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-t5-completion-missing-assurance/case.json"
+    ),
+}
+DWO_RESUME_STALE_FRAGMENTS = (
+    "grant counter",
+    "attempt-or-grant",
 )
-CHECKPOINT_SCOPE_HEADINGS = (
-    (
-        "docs/adr/0003-bounded-assurance-and-repair.md",
-        "### D03 — Post-assurance repair",
-        "### D04 — Assurance boundaries",
-    ),
-    (
-        ".config/agents/skills/dev-implementation/SKILL.md",
-        "## Consolidated post-assurance repair",
-        None,
-    ),
-    (
-        ".config/agents/skills/dev-ask/WORKFLOW.md",
-        "## Engine reference",
-        "## Skill catalog",
-    ),
-    (
-        ".config/agents/skills/dev-handoff/SKILL.md",
-        "## Intake",
-        None,
-    ),
+DWO_RESUME_ACTIVE_PATHS = frozenset(
+    (*DWO_RESUME_CASE_FIXTURES, *DWO_RESUME_CASE_FIXTURES.values())
 )
-CHECKPOINT_FORBIDDEN_NEEDLES = (
-    "--model",
-    "model selector:",
-    "reasoning level:",
-    "reasoning_effort",
-    "provider=openai",
-    "provider=anthropic",
-    "provider=xai",
-    "omp run",
-    "grok run",
+DWO_PLAN_BACKED_CASE_IDS = (
+    "B-COMPACT-PLAN-NO-TAIL",
+    "B-PLAN-TAIL-OMITTED",
+    "B-PLAN-TAIL-PROFILE",
+)
+DWO_COMPLETION_CASE_IDS = (
+    "R-COMPLETE",
+    "R-COMPLETE-COMPACT-NO-LEARNING",
+    "B-COMPLETION",
+    "L-MUTATION",
+    "L-ONE-OWNER",
+    "L-DELEGATION",
+    "L-FULL",
+    "B-T5-COMPLETION-ASSURED",
+    "B-T4-PAPERCUT-CANDIDATE-BINDING",
+    "B-T4-PAPERCUT-SETTLEMENT-FIXED",
+    "B-T4-PAPERCUT-SETTLEMENT-REJECTED",
+    "B-T4-PAPERCUT-SETTLEMENT-SUPERSEDED",
+    "B-T4-PAPERCUT-SETTLEMENT-OPEN",
+    "B-T4-PAPERCUT-SETTLEMENT-GLOBAL",
+    "B-T4-PAPERCUT-NARROW-AUTHORITY",
+    "B-ASSURANCE-RECEIPT-COMPLETION",
 )
 PRESERVED = {
     ".config/agents/skills/dev-ask/evals/fixtures/l-mutation/counter.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
@@ -462,7 +516,11 @@ def scan_paths(root: Path) -> list[str]:
     return list(
         dict.fromkeys(
             CORE_SCAN_PATHS
-            + sorted(EXECUTOR_PLAN_SCOPED_PATHS | PLAN_ARTIFACT_SCOPED_NEEDLES.keys())
+            + sorted(
+                EXECUTOR_PLAN_SCOPED_PATHS
+                | PLAN_ARTIFACT_SCOPED_NEEDLES.keys()
+                | DWO_PROJECTION_PATHS
+            )
             + fixture_paths
         )
     )
@@ -516,332 +574,368 @@ def executor_plan_case_hits(cases: dict[str, dict[str, Any]]) -> list[dict[str, 
     return hits
 
 
-def checkpoint_contract_hits(
-    root: Path, cases: dict[str, dict[str, Any]]
-) -> list[dict[str, Any]]:
+def dwo_projection_hits(path: str, text: str) -> list[dict[str, Any]]:
+    if path not in DWO_PROJECTION_PATHS:
+        return []
     hits: list[dict[str, Any]] = []
-    frame_prefixes = (
-        "remaining stable IDs:",
-        "relation to OUT-",
-        "what already satisfies the goal:",
-        "changed falsifiable hypothesis:",
-        "recommendation:",
-    )
-    actions = ("Continue", "Second opinion", "Close")
-    expected_frames = {
-        "B-T4-REPAIR-REMAINING-BLOCKER": (2, "outcome-blocking"),
-        "B-T4-CHECKPOINT-PROOF-CLOSE": (1, "proof-ceremony"),
-        "B-T4-REVISION-WORTH-OPINION": (1, "proof-ceremony"),
-        "B-T4-COMPACT-WORTH-NOT-TRIGGERED": (0, None),
-    }
-    record_cases = {
-        "B-T4-REPAIR-REMAINING-BLOCKER",
-        "B-T4-CHECKPOINT-PROOF-CLOSE",
-    }
-
-    for case_id in CHECKPOINT_CASE_IDS:
-        case = cases.get(case_id)
-        if case is None:
-            hits.append(
-                {
-                    "path": "evals.json",
-                    "line": 0,
-                    "needle": "checkpoint case present",
-                    "text": case_id,
-                }
-            )
-            continue
-        fixture_dir = case.get("fixture_dir")
-        request = case.get("inputs", {}).get("request")
-        events = case.get("required_events")
+    for line_number, folded, source in active_normalized_lines(text.splitlines()):
+        for fragment in DWO_STALE_PROJECTION_FRAGMENTS:
+            if normalize(fragment) in folded:
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"removed DWO projection: {fragment}",
+                        "text": source,
+                    }
+                )
         if (
-            not isinstance(fixture_dir, str)
-            or not isinstance(request, str)
-            or not isinstance(events, list)
-            or any(not isinstance(event, str) for event in events)
+            "full orchestration" in folded
+            or "plan-backed" in folded
+            or "executor plan" in folded
+        ):
+            for fragment in DWO_PLAN_ROOT_FALLBACK_FRAGMENTS:
+                if normalize(fragment) in folded:
+                    hits.append(
+                        {
+                            "path": path,
+                            "line": line_number,
+                            "needle": f"plan root-worker fallback: {fragment}",
+                            "text": source,
+                        }
+                    )
+        if "one owner sequential" in folded and (
+            "plan backed" in folded
+            or "approved parser valid implementation plan" in folded
         ):
             hits.append(
                 {
-                    "path": case_id,
-                    "line": 0,
-                    "needle": "well-formed checkpoint case",
-                    "text": "missing fixture, request, or required events",
+                    "path": path,
+                    "line": line_number,
+                    "needle": "plan-backed one-owner-sequential selection",
+                    "text": source,
                 }
             )
-            continue
+    return hits
 
-        fixture_path = (
-            root / ".config/agents/skills/dev-ask/evals" / fixture_dir / "case.json"
+
+def dwo_contract_hit(path: str, needle: str, text: str) -> dict[str, Any]:
+    return {"path": path, "line": 0, "needle": needle, "text": text}
+
+
+def dwo_resume_projection_hits(path: str, text: str) -> list[dict[str, Any]]:
+    if path not in DWO_RESUME_ACTIVE_PATHS:
+        return []
+    folded = normalize(text)
+    return [
+        dwo_contract_hit(
+            path,
+            f"removed resume state: {fragment}",
+            text,
         )
+        for fragment in DWO_RESUME_STALE_FRAGMENTS
+        if normalize(fragment) in folded
+    ]
+
+
+def dwo_registry_contract_hits(
+    root: Path, cases: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    hits: list[dict[str, Any]] = []
+    for case_id, fixture_relative in DWO_RESUME_CASE_FIXTURES.items():
+        case = cases[case_id]
+        active = {
+            key: case.get(key)
+            for key in ("criterion", "expected", "inputs", "required_events", "rubric")
+        }
+        hits.extend(
+            dwo_resume_projection_hits(
+                case_id,
+                json.dumps(active, ensure_ascii=False),
+            )
+        )
+        fixture_path = root / fixture_relative
         try:
             fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
-            fixture_request = fixture.get("inputs", {}).get("request")
         except (OSError, UnicodeError, json.JSONDecodeError) as error:
-            hits.append(
-                {
-                    "path": str(fixture_path.relative_to(root)),
-                    "line": 0,
-                    "needle": "checkpoint request byte parity",
-                    "text": str(error),
-                }
+            raise ScanError(
+                f"cannot parse DWO resume fixture {fixture_relative}: {error}"
+            ) from error
+        fixture_active = {"inputs": fixture.get("inputs")}
+        hits.extend(
+            dwo_resume_projection_hits(
+                fixture_relative,
+                json.dumps(fixture_active, ensure_ascii=False),
             )
-            fixture_request = None
-        if not isinstance(fixture_request, str) or request.encode(
-            "utf-8"
-        ) != fixture_request.encode("utf-8"):
+        )
+
+    for case_id in DWO_CONTINUATION_CASE_IDS:
+        events = cases[case_id].get("required_events", [])
+        serialized = "\n".join(events) if isinstance(events, list) else ""
+        stale = (
+            "grant cycle",
+            "worth frame",
+            "human checkpoint action",
+            "close disposition",
+            "grant:",
+            "opinion:",
+        )
+        for needle in stale:
+            if needle.casefold() in serialized.casefold():
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"removed continuation state: {needle}",
+                        serialized,
+                    )
+                )
+        if (
+            "no state change" not in serialized
+            or "continuation receipt" not in serialized
+        ):
             hits.append(
-                {
-                    "path": case_id,
-                    "line": 0,
-                    "needle": "checkpoint request byte parity",
-                    "text": "registry and fixture request differ",
-                }
+                dwo_contract_hit(
+                    case_id,
+                    "changed-hypothesis continuation controls",
+                    serialized,
+                )
             )
 
-        event_lines = [
-            line
-            for event in events
-            for line in event.split("|output:", 1)[-1].splitlines()
-        ]
-        frames = 0
-        for index, line in enumerate(event_lines):
-            if not line.startswith(frame_prefixes[0]):
-                continue
-            frames += 1
-            block = event_lines[index : index + 8]
-            valid_prefixes = len(block) == 8 and all(
-                block[offset].startswith(prefix)
-                for offset, prefix in enumerate(frame_prefixes)
+    for case_id in DWO_PLAN_BACKED_CASE_IDS:
+        case = cases[case_id]
+        expected = case.get("expected", {})
+        events = "\n".join(case.get("required_events", []))
+        if expected.get("mode") != "full orchestration":
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "plan-backed full orchestration mode",
+                    repr(expected.get("mode")),
+                )
             )
-            valid_actions = len(block) == 8 and tuple(block[5:8]) == actions
-            relation = (
-                block[1].rsplit(": ", 1)[-1]
-                if len(block) > 1 and ": " in block[1]
-                else ""
+        if "downgrade none" not in events or "distinct" not in events:
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "plan-backed no-downgrade distinct-child evidence",
+                    events,
+                )
             )
-            recommendation = (
-                block[4].removeprefix(frame_prefixes[4]).strip()
-                if len(block) > 4
-                else ""
+        if "one-owner-sequential" in events:
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "plan-backed one-owner-sequential selection",
+                    events,
+                )
             )
+
+    downgrade = cases["B-T5-PARENT-PROFILE-DOWNGRADE"]
+    downgrade_events = "\n".join(downgrade.get("required_events", []))
+    if (
+        downgrade.get("expected", {}).get("outcome")
+        != "plan-backed downgrade rejected as transport-unavailable"
+        or "one-owner-sequential" in downgrade_events
+    ):
+        hits.append(
+            dwo_contract_hit(
+                "B-T5-PARENT-PROFILE-DOWNGRADE",
+                "plan-backed downgrade rejection",
+                downgrade_events,
+            )
+        )
+
+    for case_id in DWO_COMPLETION_CASE_IDS:
+        case = cases[case_id]
+        active = {
+            key: case.get(key)
+            for key in ("criterion", "expected", "inputs", "required_events", "rubric")
+        }
+        serialized = json.dumps(active, ensure_ascii=False)
+        active_text = "\n".join(
+            [
+                str(case.get("criterion", "")),
+                str(case.get("inputs", {}).get("request", "")),
+                *[str(item) for item in case.get("required_events", [])],
+                *[str(item) for item in case.get("rubric", [])],
+            ]
+        )
+        if (
+            '"papercut":' in active_text
+            or "normalized papercut" in active_text.casefold()
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "scalar completion papercut",
+                    serialized,
+                )
+            )
+        if "papercuts" not in serialized.casefold():
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "plural completion papercuts",
+                    serialized,
+                )
+            )
+        if (
+            '"changed":' in active_text
+            or "one to three changed artifacts" in active_text.casefold()
+            or "outcome, changed" in active_text.casefold()
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "legacy completion changed field",
+                    serialized,
+                )
+            )
+        if "completion-input:scope-key-artifacts" not in serialized:
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "completion scope and key artifacts",
+                    serialized,
+                )
+            )
+        if (
+            "completion-input:resume-summary-index" not in serialized
+            or "exact target manifest reference" not in serialized.casefold()
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "completion summary resume index",
+                    serialized,
+                )
+            )
+
+    completion_path = (
+        root / ".config/agents/skills/completion-presentation/evals/evals.json"
+    )
+    completion = json.loads(completion_path.read_text(encoding="utf-8"))
+    for case in completion.get("evals", []):
+        serialized = json.dumps(case, ensure_ascii=False)
+        raw_text = (
+            str(case.get("prompt", "")) + "\n" + str(case.get("expected_output", ""))
+        )
+        case_id = str(case.get("id"))
+        if case_id == "CP-INCOMPLETE-STOP":
+            lowered = raw_text.casefold()
+            if '"papercut":' not in raw_text or "scalar" not in lowered:
+                hits.append(
+                    dwo_contract_hit(
+                        str(completion_path.relative_to(root)),
+                        "scalar papercut near miss",
+                        case_id,
+                    )
+                )
             if (
-                not valid_prefixes
-                or not valid_actions
-                or relation not in {"outcome-blocking", "proof-ceremony"}
-                or recommendation
-                not in {
-                    "continue-differently",
-                    "independent check",
-                    "close with residual",
-                }
+                '"changed"' not in raw_text
+                or "scalar change_scope" not in lowered
+                or "scalar key_artifacts" not in lowered
+                or "completion summary missing the exact manifest reference"
+                not in lowered
             ):
                 hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "five-line worth frame",
-                        "text": "\\n".join(block),
-                    }
+                    dwo_contract_hit(
+                        str(completion_path.relative_to(root)),
+                        "scope artifact and summary near misses",
+                        case_id,
+                    )
                 )
-            if index + 8 < len(event_lines) and event_lines[index + 8] in actions:
-                hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "exactly three checkpoint actions",
-                        "text": event_lines[index + 8],
-                    }
-                )
-        expected_count, expected_relation = expected_frames[case_id]
-        if frames != expected_count:
-            hits.append(
-                {
-                    "path": case_id,
-                    "line": 0,
-                    "needle": "five-line worth frame",
-                    "text": f"expected {expected_count}, observed {frames}",
-                }
-            )
-        for action in actions:
-            if event_lines.count(action) != expected_count:
-                hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "exactly three checkpoint actions",
-                        "text": (
-                            f"{action}: expected {expected_count}, "
-                            f"observed {event_lines.count(action)}"
-                        ),
-                    }
-                )
-        if expected_relation is not None:
-            observed_relations = {
-                line.rsplit(": ", 1)[-1]
-                for line in event_lines
-                if line.startswith(frame_prefixes[1]) and ": " in line
-            }
-            if observed_relations != {expected_relation}:
-                hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "checkpoint worth classification",
-                        "text": repr(sorted(observed_relations)),
-                    }
-                )
-
-        record_lines = (request + "\n" + "\n".join(events)).splitlines()
-        records = 0
-        for index, line in enumerate(record_lines):
-            if not line.startswith(CHECKPOINT_RECORD_PREFIXES[0]):
-                continue
-            records += 1
-            block = record_lines[index : index + len(CHECKPOINT_RECORD_PREFIXES)]
-            valid = len(block) == len(CHECKPOINT_RECORD_PREFIXES) and all(
-                block[offset].startswith(prefix)
-                for offset, prefix in enumerate(CHECKPOINT_RECORD_PREFIXES)
-            )
-            ninth_field = index + len(CHECKPOINT_RECORD_PREFIXES) < len(
-                record_lines
-            ) and record_lines[index + len(CHECKPOINT_RECORD_PREFIXES)].startswith(
-                "  - "
-            )
-            grant = (
-                block[6].removeprefix(CHECKPOINT_RECORD_PREFIXES[6])
-                if len(block) > 6
-                else ""
-            )
-            valid_grant = grant == "pending" or bool(
-                re.fullmatch(
-                    r"(?:continue|second-opinion) \d{4}-\d{2}-\d{2}-\d{4}",
-                    grant,
-                )
-            )
-            if not valid or ninth_field or not valid_grant:
-                hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "exact eight-line checkpoint record",
-                        "text": "\\n".join(
-                            record_lines[
-                                index : index + len(CHECKPOINT_RECORD_PREFIXES) + 1
-                            ]
-                        ),
-                    }
-                )
-        if case_id in record_cases and records == 0:
-            hits.append(
-                {
-                    "path": case_id,
-                    "line": 0,
-                    "needle": "exact eight-line checkpoint record",
-                    "text": "record absent",
-                }
-            )
-        if case_id not in record_cases and records:
-            hits.append(
-                {
-                    "path": case_id,
-                    "line": 0,
-                    "needle": "no second checkpoint record",
-                    "text": f"observed {records}",
-                }
-            )
-
-        if case_id == "B-T4-COMPACT-WORTH-NOT-TRIGGERED":
-            compact_forbidden = (
-                "owner:dev-verification",
-                "owner:dev-code-review",
-                "owner:dev-continual-learning",
-                "state:verifying",
-                "state:verified",
-                "state:reviewing",
-                "state:complete",
-            )
-            compact_hits = [
-                needle
-                for needle in compact_forbidden
-                if any(needle in event for event in events)
-            ]
-            if compact_hits:
-                hits.append(
-                    {
-                        "path": case_id,
-                        "line": 0,
-                        "needle": "compact checkpoint exclusion",
-                        "text": repr(compact_hits),
-                    }
-                )
-
-    scope_texts: list[tuple[str, str]] = []
-    for relative, start_heading, end_heading in CHECKPOINT_SCOPE_HEADINGS:
-        try:
-            text = (root / relative).read_text(encoding="utf-8")
-            start = text.index(start_heading)
-            end = text.index(end_heading, start) if end_heading else len(text)
-        except (OSError, UnicodeError, ValueError) as error:
-            hits.append(
-                {
-                    "path": relative,
-                    "line": 0,
-                    "needle": "checkpoint source projection",
-                    "text": str(error),
-                }
-            )
             continue
-        scope_texts.append((relative, text[start:end]))
-
-    combined_scope = "\n".join(text for _, text in scope_texts)
-    required_projection = (
-        "remaining stable IDs",
-        "relation to OUT-...",
-        "what already satisfies the goal",
-        "changed falsifiable hypothesis",
-        "recommendation",
-        "outcome-blocking",
-        "proof-ceremony",
-        "Continue",
-        "Second opinion",
-        "Close",
-        "post-2/2",
-        "completed-with-residual",
-        "proof-reuse-reaccounted",
-        "accepted Close",
-        "rejected Close",
-        "continuation-only gates",
-        "Proof-ceremony may frame hypothesis",
-    )
-    for needle in required_projection:
-        if normalize(needle) not in normalize(combined_scope):
+        if '"papercut":' in raw_text or '"papercuts":' not in raw_text:
             hits.append(
-                {
-                    "path": "<checkpoint scopes>",
-                    "line": 0,
-                    "needle": "checkpoint source projection",
-                    "text": needle,
-                }
+                dwo_contract_hit(
+                    str(completion_path.relative_to(root)),
+                    "completion eval plural papercuts",
+                    case_id,
+                )
+            )
+        if (
+            '"changed":' in raw_text
+            or "- Changed:" in raw_text
+            or '"change_scope":' not in raw_text
+            or '"key_artifacts":' not in raw_text
+            or "- Change scope:" not in raw_text
+            or "- Key artifacts:" not in raw_text
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    str(completion_path.relative_to(root)),
+                    "completion eval scope and key artifacts",
+                    case_id,
+                )
+            )
+        if (
+            "#completion-summary" not in raw_text
+            or "exact applicable manifest reference" not in raw_text.casefold()
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    str(completion_path.relative_to(root)),
+                    "completion eval summary resume index",
+                    case_id,
+                )
             )
 
-    portable_case_scope = "\n".join(
-        str(cases[case_id].get("inputs", {}).get("request", ""))
-        + "\n"
-        + "\n".join(cases[case_id].get("required_events", []))
-        for case_id in CHECKPOINT_CASE_IDS
-        if case_id in cases
-    )
-    provider_scope = combined_scope + "\n" + portable_case_scope
-    for needle in CHECKPOINT_FORBIDDEN_NEEDLES:
-        if needle.casefold() in provider_scope.casefold():
+    product_path = root / ".config/agents/skills/product-ask/evals/evals.json"
+    product = json.loads(product_path.read_text(encoding="utf-8"))
+    for case in product.get("evals", []):
+        serialized = json.dumps(case, ensure_ascii=False)
+        if (
+            "presenter-papercut:" in serialized
+            or "presenter-papercuts" not in serialized
+        ):
             hits.append(
-                {
-                    "path": "<checkpoint scopes>",
-                    "line": 0,
-                    "needle": "provider-neutral checkpoint contract",
-                    "text": needle,
-                }
+                dwo_contract_hit(
+                    str(product_path.relative_to(root)),
+                    "product plural papercuts",
+                    str(case.get("id")),
+                )
             )
+        if (
+            "presenter-changed" in serialized
+            or "presenter-change-scope" not in serialized
+            or "presenter-key-artifacts" not in serialized
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    str(product_path.relative_to(root)),
+                    "product scope and key artifacts",
+                    str(case.get("id")),
+                )
+            )
+        if (
+            "presenter-summary-index" not in serialized
+            or "#completion-summary" not in serialized
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    str(product_path.relative_to(root)),
+                    "product summary resume index",
+                    str(case.get("id")),
+                )
+            )
+
+    papercut_path = root / ".config/agents/skills/papercut/evals/evals.json"
+    papercut = json.loads(papercut_path.read_text(encoding="utf-8"))
+    papercut_ids = {case.get("id") for case in papercut.get("evals", [])}
+    required_papercut_ids = {
+        "P-POST-WORK-HANDOFF",
+        "P-ROOT-FALLBACK",
+        "P-RECEIPT-ORDER",
+    }
+    if not required_papercut_ids <= papercut_ids:
+        hits.append(
+            dwo_contract_hit(
+                str(papercut_path.relative_to(root)),
+                "per-child fallback and receipt-order papercut cases",
+                repr(sorted(papercut_ids)),
+            )
+        )
     return hits
 
 
@@ -946,6 +1040,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
         path_hits, path_required = scan_text(relative, text)
         hits.extend(path_hits)
         required_seen.update(path_required)
+        hits.extend(dwo_projection_hits(relative, text))
         if (
             relative in EXECUTOR_PLAN_SCOPED_PATHS
             or relative in PLAN_ARTIFACT_SCOPED_NEEDLES
@@ -966,7 +1061,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
                     }
                 )
     hits.extend(executor_plan_case_hits(cases))
-    hits.extend(checkpoint_contract_hits(root, cases))
+    hits.extend(dwo_registry_contract_hits(root, cases))
     missing_required = sorted(set(REQUIRED_NEEDLES) - required_seen)
     return {
         "schema": SCHEMA,
@@ -1134,86 +1229,208 @@ def run_selftest(root: Path) -> dict[str, Any]:
         if exact_obsolete_hits(path, source):
             raise ScanError(f"executor-plan false-positive self-test failed: {name}")
         checks.append(f"executor-plan-allowed:{name}")
+    for fragment in DWO_STALE_PROJECTION_FRAGMENTS:
+        source = f"Active workflow selects {fragment}."
+        found = dwo_projection_hits(
+            ".config/agents/skills/dev-implementation/SKILL.md", source
+        )
+        if not any(fragment in hit["needle"] for hit in found):
+            raise ScanError(f"DWO projection stale self-test failed: {fragment}")
+        checks.append(f"dwo-stale:{fragment}")
+
+    for fragment in DWO_PLAN_ROOT_FALLBACK_FRAGMENTS:
+        source = f"Full orchestration selects {fragment}."
+        found = dwo_projection_hits(
+            ".config/agents/skills/dev-implementation/SKILL.md", source
+        )
+        if not any(fragment in hit["needle"] for hit in found):
+            raise ScanError(f"DWO plan-root fallback self-test failed: {fragment}")
+        checks.append(f"dwo-stale:plan-root:{fragment}")
+
+    plan_downgrade = dwo_projection_hits(
+        ".config/agents/skills/dev-implementation/SKILL.md",
+        "Plan-backed execution selects one-owner-sequential.",
+    )
+    if not any(
+        hit["needle"] == "plan-backed one-owner-sequential selection"
+        for hit in plan_downgrade
+    ):
+        raise ScanError("plan-backed downgrade stale self-test failed")
+    checks.append("dwo-stale:plan-backed-one-owner-sequential")
+
+    allowed_dwo_controls = {
+        "generic-direct-downgrade": (
+            ".config/agents/skills/dev-implementation/SKILL.md",
+            "A planless direct assessment may return one-owner-sequential.",
+        ),
+        "generic-direct-approved-downgrade": (
+            "docs/adr/0002-executor-plans-and-orchestration.md",
+            "A direct route uses an already approved, contract-preserving sequential or one-qualified-owner projection.",
+        ),
+        "executor-plan-v1": (
+            ".config/agents/rules/plan-impl-spec.md",
+            "Executor Plan v1 remains the portable grammar.",
+        ),
+        "compact": (
+            ".config/agents/rules/plan-impl-spec.md",
+            "A compact work-only plan remains valid.",
+        ),
+        "optional-tail": (
+            ".config/agents/rules/plan-impl-spec.md",
+            "The optional profile tail remains valid.",
+        ),
+        "fan-in": (
+            ".config/agents/rules/plan-impl-spec.md",
+            "Portable fan-in remains valid.",
+        ),
+        "direct-integration": (
+            ".config/agents/rules/plan-impl-spec.md",
+            "Direct dev-integration remains available.",
+        ),
+        "historical-scalar": (
+            ".config/agents/skills/completion-presentation/SKILL.md",
+            '## Historical context\nThe prior input used "papercut":.',
+        ),
+    }
+    for name, (path, source) in allowed_dwo_controls.items():
+        if dwo_projection_hits(path, source):
+            raise ScanError(f"DWO false-positive self-test failed: {name}")
+        checks.append(f"dwo-allowed:{name}")
+
     cases = load_registry(root)
-    baseline_checkpoint_hits = checkpoint_contract_hits(root, cases)
-    if baseline_checkpoint_hits:
-        raise ScanError(
-            f"checkpoint baseline self-test failed: {baseline_checkpoint_hits}"
+    baseline_dwo_hits = dwo_registry_contract_hits(root, cases)
+    if baseline_dwo_hits:
+        raise ScanError(f"DWO registry baseline self-test failed: {baseline_dwo_hits}")
+    checks.append("dwo-registry:baseline")
+
+    stale_resume_grant = copy.deepcopy(cases)
+    stale_resume_grant["B-FULL"]["required_events"].append(
+        "snapshot:resume|owner:backend|output:grant counter restored"
+    )
+    if not any(
+        hit["path"] == "B-FULL"
+        and hit["needle"] == "removed resume state: grant counter"
+        for hit in dwo_registry_contract_hits(root, stale_resume_grant)
+    ):
+        raise ScanError("DWO resume grant-counter stale self-test failed")
+    checks.append("dwo-registry:resume-grant-counter")
+
+    stale_resume_tuple = copy.deepcopy(cases)
+    stale_resume_tuple["B-T5-COMPLETION-ASSURED"]["inputs"]["request"] += (
+        " Exact duplicate attempt-or-grant tuple."
+    )
+    if not any(
+        hit["path"] == "B-T5-COMPLETION-ASSURED"
+        and hit["needle"] == "removed resume state: attempt-or-grant"
+        for hit in dwo_registry_contract_hits(root, stale_resume_tuple)
+    ):
+        raise ScanError("DWO resume attempt-or-grant stale self-test failed")
+    checks.append("dwo-registry:resume-attempt-or-grant")
+
+    for fragment in DWO_RESUME_STALE_FRAGMENTS:
+        stale_fixture = dwo_resume_projection_hits(
+            DWO_RESUME_CASE_FIXTURES["B-T5-COMPLETION-MISSING-ASSURANCE"],
+            json.dumps({"inputs": {"request": f"restore the {fragment} state"}}),
         )
-    checks.append("checkpoint:baseline")
+        if not any(
+            hit["needle"] == f"removed resume state: {fragment}"
+            for hit in stale_fixture
+        ):
+            raise ScanError(f"DWO resume fixture {fragment} stale self-test failed")
+        checks.append(f"dwo-fixture:resume-{fragment}")
 
-    missing_frame = copy.deepcopy(cases)
-    missing_events = missing_frame["B-T4-REVISION-WORTH-OPINION"]["required_events"]
-    frame_event_index = next(
-        index
-        for index, event in enumerate(missing_events)
-        if "remaining stable IDs:" in event
+    historical_resume = (
+        "## Historical context\n"
+        "The prior attempt-or-grant tuple restored a grant counter."
     )
-    frame_lines = missing_events[frame_event_index].splitlines()
-    del frame_lines[
-        next(
-            index
-            for index, line in enumerate(frame_lines)
-            if line.startswith("what already satisfies the goal:")
-        )
-    ]
-    missing_events[frame_event_index] = "\n".join(frame_lines)
-    if not any(
-        hit["needle"] == "five-line worth frame"
-        for hit in checkpoint_contract_hits(root, missing_frame)
+    if dwo_projection_hits(
+        ".config/agents/skills/dev-implementation/SKILL.md",
+        historical_resume,
+    ) or dwo_resume_projection_hits(
+        ".config/agents/skills/dev-ask/evals/fixtures/history/case.json",
+        historical_resume,
     ):
-        raise ScanError("checkpoint missing-frame self-test failed")
-    checks.append("checkpoint:missing-frame")
+        raise ScanError("DWO resume historical-prose false-positive self-test failed")
+    checks.append("dwo-allowed:historical-resume-prose")
 
-    ninth_field = copy.deepcopy(cases)
-    close_events = ninth_field["B-T4-CHECKPOINT-PROOF-CLOSE"]["required_events"]
-    record_event_index = next(
-        index for index, event in enumerate(close_events) if "- exhausted " in event
-    )
-    close_events[record_event_index] = close_events[record_event_index].replace(
-        "  - opinion: absent\n",
-        "  - opinion: absent\n  - ninth: forbidden\n",
-        1,
+    stale_continuation = copy.deepcopy(cases)
+    stale_continuation["B-T4-REPAIR-REMAINING-BLOCKER"]["required_events"].append(
+        "state:ready|owner:backend|output:grant cycle 1"
     )
     if not any(
-        hit["needle"] == "exact eight-line checkpoint record"
-        for hit in checkpoint_contract_hits(root, ninth_field)
+        hit["needle"] == "removed continuation state: grant cycle"
+        for hit in dwo_registry_contract_hits(root, stale_continuation)
     ):
-        raise ScanError("checkpoint ninth-field self-test failed")
-    checks.append("checkpoint:ninth-field")
+        raise ScanError("DWO continuation stale self-test failed")
+    checks.append("dwo-registry:removed-continuation")
 
-    parity_drift = copy.deepcopy(cases)
-    parity_drift["B-T4-CHECKPOINT-PROOF-CLOSE"]["inputs"]["request"] += " parity drift"
+    stale_plan = copy.deepcopy(cases)
+    stale_plan["B-COMPACT-PLAN-NO-TAIL"]["expected"]["mode"] = "one owner"
     if not any(
-        hit["needle"] == "checkpoint request byte parity"
-        for hit in checkpoint_contract_hits(root, parity_drift)
+        hit["needle"] == "plan-backed full orchestration mode"
+        for hit in dwo_registry_contract_hits(root, stale_plan)
     ):
-        raise ScanError("checkpoint parity-drift self-test failed")
-    checks.append("checkpoint:parity-drift")
+        raise ScanError("DWO plan mode stale self-test failed")
+    checks.append("dwo-registry:plan-mode")
 
-    forbidden_binding = copy.deepcopy(cases)
-    forbidden_binding["B-T4-REVISION-WORTH-OPINION"]["required_events"].append(
-        "state:blocked|owner:backend|output:portable policy requires --model vendor-x"
+    stale_downgrade = copy.deepcopy(cases)
+    stale_downgrade["B-T5-PARENT-PROFILE-DOWNGRADE"]["required_events"].append(
+        "snapshot:orchestrator-profile|owner:backend|output:one-owner-sequential"
     )
     if not any(
-        hit["needle"] == "provider-neutral checkpoint contract"
-        for hit in checkpoint_contract_hits(root, forbidden_binding)
+        hit["needle"] == "plan-backed downgrade rejection"
+        for hit in dwo_registry_contract_hits(root, stale_downgrade)
     ):
-        raise ScanError("checkpoint forbidden-binding self-test failed")
-    checks.append("checkpoint:forbidden-binding")
+        raise ScanError("DWO downgrade stale self-test failed")
+    checks.append("dwo-registry:plan-downgrade")
 
-    compact_case = cases["B-T4-COMPACT-WORTH-NOT-TRIGGERED"]
-    if (
-        "Close" not in compact_case["inputs"]["request"]
-        or "Close" not in compact_case["forbidden_events"]
+    scalar_completion = copy.deepcopy(cases)
+    scalar_completion["B-COMPLETION"]["required_events"].append(
+        'completion-input:{"papercut":"none"}'
+    )
+    if not any(
+        hit["needle"] == "scalar completion papercut"
+        for hit in dwo_registry_contract_hits(root, scalar_completion)
     ):
-        raise ScanError("checkpoint compact false-positive control is incomplete")
-    if any(
-        hit["path"] == "B-T4-COMPACT-WORTH-NOT-TRIGGERED"
-        for hit in baseline_checkpoint_hits
+        raise ScanError("DWO scalar completion self-test failed")
+    checks.append("dwo-registry:scalar-papercut")
+
+    legacy_changed = copy.deepcopy(cases)
+    legacy_changed["B-COMPLETION"]["required_events"].append(
+        'completion-input:{"changed":["artifact"]}'
+    )
+    if not any(
+        hit["needle"] == "legacy completion changed field"
+        for hit in dwo_registry_contract_hits(root, legacy_changed)
     ):
-        raise ScanError("checkpoint compact false-positive self-test failed")
-    checks.append("checkpoint:compact-false-positive")
+        raise ScanError("DWO legacy completion changed self-test failed")
+    checks.append("dwo-registry:legacy-changed")
+
+    missing_scope_artifacts = copy.deepcopy(cases)
+    scope_case = missing_scope_artifacts["B-COMPLETION"]
+    scope_case["required_events"].remove("completion-input:scope-key-artifacts")
+    scope_case["inputs"]["request"] = scope_case["inputs"]["request"].replace(
+        "completion-input:scope-key-artifacts\n", ""
+    )
+    if not any(
+        hit["needle"] == "completion scope and key artifacts"
+        for hit in dwo_registry_contract_hits(root, missing_scope_artifacts)
+    ):
+        raise ScanError("DWO completion scope and artifacts self-test failed")
+    checks.append("dwo-registry:completion-scope-artifacts")
+
+    missing_summary_index = copy.deepcopy(cases)
+    missing_case = missing_summary_index["B-COMPLETION"]
+    missing_case["required_events"].remove("completion-input:resume-summary-index")
+    missing_case["inputs"]["request"] = missing_case["inputs"]["request"].replace(
+        "completion-input:resume-summary-index\n", ""
+    )
+    if not any(
+        hit["needle"] == "completion summary resume index"
+        for hit in dwo_registry_contract_hits(root, missing_summary_index)
+    ):
+        raise ScanError("DWO completion summary index self-test failed")
+    checks.append("dwo-registry:completion-summary-index")
     return {
         "schema": "lean-stale-scan-selftest/v1",
         "status": "pass",

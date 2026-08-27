@@ -82,6 +82,8 @@ modelRoles:
   task: openai-codex/gpt-5.6-sol:xhigh
   tiny: openai-codex/gpt-5.6-sol:xhigh
   designer: openai-codex/gpt-5.6-sol:xhigh
+  test_audit_opinion_a: openai-codex/gpt-5.6-sol:xhigh
+  test_audit_opinion_b: xai-oauth/grok-4.6:xhigh
 vault: 
   enabled: true
 browser: 

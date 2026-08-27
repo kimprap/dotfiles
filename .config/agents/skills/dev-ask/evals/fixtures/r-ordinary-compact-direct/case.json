@@ -1,8 +1,6 @@
 {
   "inputs": {
-    "request": "Implement this settled one-context one-lineage config change. Acceptance and exact smoke are named, effects are reversible, no compact disqualifier is true, and no durable recovery artifact is required. Present the compact numbered Route, request approval, then dispatch only dev-implementation."
+    "request": "Implement this settled one-context config change under a direct Task Contract. No Executor Plan exists. Acceptance and exact smoke are named, effects are reversible, and no compact disqualifier is true. Present the compact Route, request approval, then keep implementation in the same dev-implementation context. Do not call executor-plan validation, assess-plan-backed, or dispatch a work child."
   },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
+  "scripted_replies": []
 }

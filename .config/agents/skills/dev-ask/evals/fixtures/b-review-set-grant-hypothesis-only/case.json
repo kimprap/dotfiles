@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Read-only standard grant-scoped review trace; emit canonical events only. Both original review slots were consumed, and grant GRANT-9 authorizes one pass with hypothesis that consumer-Z may fail. The intake has no exact repaired byte or contract delta reaching consumer-Z, no accepted D04 impact-map edge, and no fresh affected proof. The grant is authority only. Return INCONCLUSIVE for causal admission and block with no same-outcome repair, no approval, and no completion. Do not fabricate a causal chain or demote a proved outcome defect."
+    "request": "Read-only exhausted review control. Both original review slots are consumed. Input one carries legacy label GRANT-9 plus hypothesis “consumer-Z may fail,” but does not explicitly authorize a continuation or bind the active plan, target, blocked task, remaining criteria, authorizer/time, cycle, and inherited token. It causes no state change. Input two explicitly authorizes PLAN-REVIEW and TARGET-REVIEW with changed falsifiable hypothesis “exercise consumer-Z through its public seam” and supplies every continuation field. Create CONT-REVIEW-1, but do not infer causal review admission; fresh work evidence remains required."
   },
   "scripted_replies": []
 }

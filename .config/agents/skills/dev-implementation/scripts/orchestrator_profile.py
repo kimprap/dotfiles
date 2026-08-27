@@ -313,6 +313,30 @@ def assess(
             plan_digest if isinstance(plan_digest, str) else None,
         )
 
+def assess_plan_backed(
+    profile: Mapping[str, object], attestation: Mapping[str, object]
+) -> Assessment:
+    result = assess(profile, attestation)
+    mismatches = list(result.mismatches)
+    if profile.get("downgrade") != "none":
+        mismatches.append(
+            "profile.downgrade: plan-backed orchestration requires exactly 'none'"
+        )
+    if result.decision != "full-orchestration":
+        mismatches.append(
+            "assessment.decision: plan-backed orchestration requires "
+            f"'full-orchestration', observed {result.decision!r}"
+        )
+    if mismatches:
+        return Assessment(
+            "transport-unavailable",
+            tuple(dict.fromkeys(mismatches)),
+            result.profile_plan_sha256,
+        )
+    return result
+
+
+
 
 def _read_document(path: Path) -> Mapping[str, object]:
     info = os.lstat(path)
@@ -328,9 +352,10 @@ def _read_document(path: Path) -> Mapping[str, object]:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Assess an Orchestrator Role Profile")
     subparsers = parser.add_subparsers(dest="command", required=True)
-    assess_parser = subparsers.add_parser("assess")
-    assess_parser.add_argument("--profile", type=Path, required=True)
-    assess_parser.add_argument("--attestation", type=Path, required=True)
+    for command in ("assess", "assess-plan-backed"):
+        command_parser = subparsers.add_parser(command)
+        command_parser.add_argument("--profile", type=Path, required=True)
+        command_parser.add_argument("--attestation", type=Path, required=True)
     return parser
 
 
@@ -339,12 +364,17 @@ def main(argv: list[str] | None = None) -> int:
     try:
         profile = _read_document(args.profile)
         attestation = _read_document(args.attestation)
-        result = assess(profile, attestation)
+        if args.command == "assess-plan-backed":
+            result = assess_plan_backed(profile, attestation)
+        else:
+            result = assess(profile, attestation)
     except (OSError, ProfileError) as exc:
         result = Assessment(
             "transport-unavailable", (f"profile-integrity: {exc}",), None
         )
     print(json.dumps(result.payload(), sort_keys=True, separators=(",", ":")))
+    if args.command == "assess-plan-backed":
+        return 0 if result.decision == "full-orchestration" else 69
     return (
         0 if result.decision in {"full-orchestration", "one-owner-sequential"} else 69
     )

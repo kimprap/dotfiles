@@ -29,6 +29,22 @@ enabled = true
 browser-use = true
 planner = true
 
+[subagents.roles.test-audit-opinion-a]
+description = "Independent read-only permanent-test value opinion A"
+default_capability_mode = "read-only"
+model = "gpt-5.6-sol"
+reasoning_effort = "xhigh"
+prompt_file = ".config/agents/skills/dev-test-audit/references/opinion-agent.md"
+default_isolation = "none"
+
+[subagents.roles.test-audit-opinion-b]
+description = "Independent read-only permanent-test value opinion B"
+default_capability_mode = "read-only"
+model = "grok-4.6"
+reasoning_effort = "xhigh"
+prompt_file = ".config/agents/skills/dev-test-audit/references/opinion-agent.md"
+default_isolation = "none"
+
 
 [marketplace]
 official_marketplace_auto_installed = true

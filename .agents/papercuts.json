@@ -45,6 +45,21 @@
       "summary": "Keep embedded prompt goldens and expected outputs synchronized.",
       "surface": ".config/agents/skills/completion-presentation/evals/evals.json"
     },
+    "pc-a556fa1f9529ba9a": {
+      "first_seen": "2026-08-26",
+      "last_seen": "2026-08-26",
+      "observations": [
+        {
+          "date": "2026-08-26",
+          "friction": "When existing baseline cases were revised, keep-check rejected eight of them even though they were already classified in ADDED_IDS, because baseline keep exclusion consults REWRITE_IDS separately. Maintainers must know when one case ID belongs in both sets.",
+          "workaround": "Run the pinned keep-check after every registry edit and duplicate each changed baseline-present ID into REWRITE_IDS."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Make changed-case classification follow the pinned baseline without overlapping manual ID sets.",
+      "surface": ".config/agents/skills/dev-ask/evals/compare_trace.py keep-check ID lifecycle"
+    },
     "pc-ae711c27c4d758b7": {
       "first_seen": "2026-08-24",
       "last_seen": "2026-08-24",

@@ -9,7 +9,7 @@ Own one portable current-work evidence module. Papercut is never a task, Methods
 
 ## Activation and post-work look
 
-Candidate-triggered activation remains available throughout current dev, product, custom, and direct work. After a work-task Common Handoff is emitted, the always-applied rule gets exactly one soft look and may qualify at most one current candidate. Run the Handoff first; the look is state-neutral and dispatches no learning. No candidate means this skill is not loaded, no ledger is accessed, and no papercut output is emitted.
+Candidate-triggered activation remains available throughout current dev, product, custom, and direct work. After a work-task Common Handoff is emitted, the same work child applies the always-applied rule exactly once and may qualify at most one current candidate; the root falls back only when that child is unavailable. Run the Handoff first, bind any compact capture or report-only result to that Handoff, and retain accounting in deterministic work-Handoff order. The look is state-neutral and dispatches no learning. No candidate means this skill is not loaded, no ledger is accessed, and no papercut output is emitted.
 
 ## Modes
 
@@ -32,7 +32,7 @@ Exclude task or plan state, tracked/blocking/product defects, secrets, security 
 2. Generalize `surface`, `summary`, current `friction`, optional `workaround`, and observation date. Select at most one current record semantically; never by count alone.
 3. If the ledger is absent, malformed, unsafe, or outside authority, report the redacted candidate without initializing or repairing storage.
 4. Otherwise call `list`, then call `record --repo PATH --input FILE` once with exactly `surface`, `summary`, `observed_on`, and observation `{friction, workaround}`. The helper computes identity, deduplicates exact observations, locks, validates, and writes atomically. Do not retry semantically. Use `--dry-run` only to report the prospective result without mutation.
-5. Disclose `recorded`, `updated`, `reopened`, `unchanged`, or report-only with the exact `PC-ID` when known. No candidate means no skill load, storage access, or papercut output.
+5. Disclose `recorded`, `updated`, `reopened`, `unchanged`, or report-only with the exact `PC-ID` when known and the work-Handoff identity that preceded the look. No candidate means no skill load, storage access, or papercut output.
 
 Independent evidence may support one Learning Candidate. Include the proposed durable statement; exact source revisions; project scope and destination; recurrence or severity; prevention; redaction; conflicts or supersession; and one complete Evaluation proposal with source case, independent adjacent case, frozen expectations, proof methods, freshness, and deterministic, semantic, or mixed mode. Carry exactly one immutable originating `PC-ID`. Deliver it only to the current authorized lifecycle owner, or in the final response when none exists. Incomplete evidence remains evidence-only with its missing field named. Never dispatch, curate, repair, retain memory, create tracker state, stage, ship, or persist candidate/workflow state.
 

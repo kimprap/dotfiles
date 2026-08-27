@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-25
+**Updated:** 2026-08-26
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -44,23 +44,23 @@ The workflow needs one current route and one durable explanation of why its boun
 
 ### D10 — Sole thin, stateless router
 
-- **Scope:** External generic engineering route classification and lifecycle dispatch.
-- **Decision:** Keep `dev-ask` the sole thin, stateless external router. It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches the applicable owner; handles material reapproval; and presents completion. It owns no baton ledger, workflow state machine, execution state, or competing routing policy.
-- **Why:** One semantic router prevents contradictory lifecycle authority and keeps runtime state with the implementation backend.
-- **Rejected alternatives / why not:** A competing router, baton ledger, workflow state machine, or router-owned execution state duplicates classification and creates contradictory authority. A model/provider-specific router breaks semantic portability. A new routing stage, generic evaluator, issue tracker, workflow service, or coordination authority duplicates existing owners.
-- **Consequences:** Route judgments cite relevant evidence and preserve one owner per responsibility. Router state cannot become a hidden continuation or scheduling authority.
-- **Reopen when:** Sole router ownership, statelessness, classification responsibility, or backend ownership of execution state changes.
-
+- **Scope:** External generic engineering classification, lifecycle dispatch, completion normalization, and post-plan audit routing.
+- **Decision:** Keep `dev-ask` the sole thin, stateless external router. It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches one first owner; handles material reapproval; validates terminal evidence; constructs the current completion fence; and, only after an implementation plan is `DONE`, routes the separate read-only `dev-test-audit` and stops on its Handoff or `transport-unavailable`.
+- **Decision:** The router owns no baton ledger, workflow state machine, execution state, semantic plan work, audit opinion, test mutation, or competing routing policy. Post-plan audit availability never delays assurance, completion, or plan `DONE` and never authorizes cleanup.
+- **Why:** One semantic router prevents contradictory lifecycle authority while keeping execution state with `dev-implementation`, audit opinions with the audit specialty, and rendering with `completion-presentation`.
+- **Rejected alternatives / why not:** A competing router, runtime ledger, routing stage, generic evaluator, issue tracker, or provider-specific coordination authority duplicates existing owners. Treating a post-plan audit as a numbered implementation task or completion gate couples read-only assessment to delivery.
+- **Consequences:** Route judgments remain evidence-backed and stateless. The router can invoke the completed-target audit without reopening the completed lifecycle.
+- **Reopen when:** Sole router ownership, statelessness, completion normalization, post-plan audit routing, or backend execution-state ownership changes.
 ### D11 — Independent workflow dimensions
 
-- **Scope:** Route lifecycle depth, assurance profile, and execution topology.
-- **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. Compact is the default when every existing compact disqualifier is false; otherwise select standard or high-consequence from consequence evidence. Implementation size, duration, and solution-rung choice do not change lifecycle depth or assurance. A route may choose one-owner, bounded-parallel, or another approved topology independently.
-- **Decision:** Optional repository surface-verification adapters are proof machinery, not route, lifecycle, assurance, topology, consequence, or Orchestrator Role Profile inputs. Their existence, absence, age, or complexity cannot change profile selection. Ordinary setup, implementation, testing, verification, and review do not discover, create, or maintain them; only an already-frozen recipe or exact manual invocation may name one.
-- **Why:** Consequence, capability, lifecycle need, and dependency shape are distinct facts. Defaulting eligible ordinary work to compact avoids making ceremony a proxy for safety.
-- **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology hides distinct route facts and can add ceremony or weaken proof for the wrong reason. Defaulting eligible ordinary work to standard adds independent assurance without a disqualifying risk.
-- **Consequences:** A change in one dimension does not silently change the others. Compact remains eligible across implementation size or duration, while every real disqualifier remains an explicit escalation trigger.
-- **Reopen when:** These dimensions are redefined, merged, or made dependent on one another.
-
+- **Scope:** Route lifecycle depth, assurance profile, execution topology, plan-backed activation, and proof adapters.
+- **Decision:** Keep lifecycle depth, assurance profile, and execution topology independent. Compact is the default when every compact disqualifier is false; otherwise select standard or high-consequence from consequence evidence. Implementation size, duration, and solution-rung choice do not change lifecycle depth or assurance.
+- **Decision:** Planless direct work remains the lean one-owner same-context lane. Every approved parser-valid implementation Executor Plan uses full orchestration with `downgrade: none`, including compact work-only plans; compact assurance remains tail-free. `PROMOTE-SERIAL-DEFAULT` sets runtime concurrency one by default inside full orchestration, not a different profile or downgrade, and supports no general efficiency claim.
+- **Decision:** Optional repository surface-verification adapters are proof machinery, not route, lifecycle, assurance, topology, consequence, or Orchestrator Role Profile inputs. Their existence, absence, age, or complexity cannot change profile selection.
+- **Why:** Consequence, lifecycle, proof, and graph execution are distinct facts. Strict plan-backed child ownership prevents assurance or task count from becoming permission for root semantic work while preserving lean planless direct work.
+- **Rejected alternatives / why not:** Coupling lifecycle depth to assurance or topology adds or removes ceremony for the wrong reason. A separate sequential-child profile or plan-root semantic fallback disguises unavailable orchestration as equivalent execution.
+- **Consequences:** A change in one dimension does not silently change another. Compact remains eligible across size or duration; a compact plan still dispatches child work, while planless compact stays same-context.
+- **Reopen when:** These dimensions, the plan-backed activation gate, serial default, direct-path separation, or proof-adapter neutrality changes.
 ### D12 — Human authority at consequential boundaries
 
 - **Scope:** Product, architecture, scope, acceptance, topology/independence, destructive, and external-effect decisions.
@@ -73,13 +73,15 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D13 — Clean cutover
 
 - **Scope:** Every caller, fixture, document, skill, rule, and active ADR affected by a changed generic workflow contract.
-- **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed. A completion-rendering cutover includes every specialty normalizer and the single presenter.
-- **Decision:** The clean cutover names exactly `surface-verification-adapter`, `create-surface-verification-adapter`, and `maintain-surface-verification-adapter`. The two wrappers remain disabled from ordinary model invocation on both supported hosts. Do not retain upstream names, a `swarm` route, aliases, duplicated wrappers, automatic triggers, or setup rows.
-- **Why:** Dual behavior obscures the active contract, permits drift, and makes it impossible to know which path is authoritative.
-- **Rejected alternatives / why not:** Leaving old callers, aliases, compatibility shims, or obsolete paths after cutover preserves silently competing behavior instead of completing the migration.
-- **Consequences:** A contract change is not complete until every affected projection agrees and obsolete paths are gone. No agent silently chooses a winner when active authorities conflict.
-- **Reopen when:** The repository adopts a different explicit migration or compatibility policy, or atomic synchronization becomes impossible under approved authority.
-
+- **Decision:** Migrate every affected caller, fixture, and document and remove obsolete paths rather than leaving aliases or compatibility shims. Active skills, rules, `WORKFLOW.md`, and active ADRs must agree atomically; a conflict fails closed.
+- **Decision:** The orchestration cutover has a closed canonical caller inventory. It removes plan-root semantic fallback and plan-specific downgrade language while preserving planless direct behavior, compact plan validity, optional profile tails, portable fan-in, direct `dev-integration`, and generic direct capability downgrade support.
+- **Decision:** The completion cutover cleanly renames the unversioned fence field to ordered `papercuts` across engineering, product, custom, direct, and presenter callers. None-only accounting becomes `[]`; scalar input is rejected without a compatibility reader.
+- **Decision:** The completion presentation cutover removes the legacy `changed` field and `Changed` label across every active caller and fixture. One ordered `change_scope` list carries concise aggregate count/category statements; one ordered `key_artifacts` list carries one to three durable entry points; exhaustive inventory remains in the exact target manifest and/or Handoff. `resume_from` now targets a durable Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact applicable manifest reference. There is no compatibility reader.
+- **Decision:** The clean surface-verification cutover still names exactly `surface-verification-adapter`, `create-surface-verification-adapter`, and `maintain-surface-verification-adapter`, with both wrappers disabled from ordinary model invocation.
+- **Why:** Dual behavior obscures the active contract and makes authoritative selection impossible.
+- **Rejected alternatives / why not:** Aliases, compatibility readers, obsolete callers, a second completion schema, or a second orchestration mode preserve silently competing behavior.
+- **Consequences:** The cutover is complete only when every owned projection agrees and the closed caller scan passes. An outside live canonical caller requires authority change rather than silent scope expansion.
+- **Reopen when:** The repository adopts a different migration policy, canonical caller ownership changes, or atomic synchronization becomes impossible under approved authority.
 ### D14 — Separate shipping authority
 
 - **Scope:** Staging, commit, push, review request, release, deploy, rollout, and other delivery effects.
@@ -119,7 +121,8 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D18 — Compact approval and completion presentation
 
 - **Scope:** Human-facing initial route approval and terminal completion output.
-- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal completed presentation projects D27's exact `Completed`, `Evidence`, and `Continuation` report from one current validated `completion-presentation-input` fence. It carries filled changed-artifact and verification evidence plus durable Resume from, the existing Handoff, Constraints containing `shipping not authorized`, and specialty-authorized Next; it contains no completed `Route`, exposed fence, or presenter lifecycle mechanics.
+- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal completed presentation projects D27's exact `Completed`, `Evidence`, and `Continuation` report from one current validated `completion-presentation-input` fence. It carries ordered aggregate Change scope, one to three durable Key artifacts, filled verification evidence, and a durable Completion Summary Resume from, plus the existing Handoff, Constraints containing `shipping not authorized`, and specialty-authorized Next; it contains no `Changed` label, exhaustive implementation inventory, completed `Route`, exposed fence, or presenter lifecycle mechanics.
+
 - **Why:** Compact output keeps the human's decision or result visible, while D27's filled evidence and durable continuation let the report support later resumption without copying internal manifests or gate machinery.
 - **Rejected alternatives / why not:** Verbose templates, implementation inventories, mutable resume pointers, gate machinery, and execution metadata obscure the one decision or result the user needs or fail to support reliable continuation.
 - **Consequences:** Presentation remains route-truthful and concise; the human receives current material evidence and a durable resume index, while detailed internal accounting stays behind the existing Handoff.
@@ -145,14 +148,13 @@ The workflow needs one current route and one durable explanation of why its boun
 
 ### D26 — Lean ordinary implementation path
 
-- **Scope:** Settled, reversible, one-context, one-lineage coding work with deterministic proof and no existing compact disqualifier.
-- **Decision:** Route eligible ordinary work through `dev-implementation` then `completion-presentation`. Criterion-complete worker smoke on the exact final target is terminal proof. Same-context compact binds a minimal revision-bound Task Contract directly; an existing ownership/context-change or durable-recovery crossing predicate adds exactly one Context Pack carrying that Task Contract and its solution discipline. Compact does not require an Executor Plan, plan preflight, filesystem Task Contract, Handoff file, independent verification, final review, or continual-learning dispatch. Standard and high-consequence retain their required independent assurance.
-- **Decision:** Compact may remain planless. Its direct Task Contract still binds one short human Intent and one Methods value; if compact work uses an Executor Plan, that plan contains work tasks only and never numbers a verification, review, or continual-learning profile tail.
-- **Why:** Settled ordinary work is safest when the route is deterministic, proof is tied directly to acceptance, and lifecycle ceremony appears only for an evidenced boundary.
-- **Rejected alternatives / why not:** Standard-by-default assurance makes elapsed work or implementation size a hidden risk proxy. Always requiring plans, Context Packs, verification, review, or learning adds transfer and audit stages without improving criterion proof for bounded same-context work. Removing compact disqualifiers would weaken safety rather than remove ceremony.
-- **Consequences:** The router applies one fixed six-gate order, selects compact only after catalog predicates and disqualifiers are checked, dispatches one first owner, and presents one owner per numbered Route line. The implementation backend applies the compact checklist before its first ready transition and stops or returns to the router when independent proof is required.
-- **Reopen when:** Compact disqualifiers, terminal proof, same-context/cross-context ownership, ordinary-route owners, or the size/duration independence boundary changes.
-
+- **Scope:** Settled, reversible, one-context, one-lineage coding work with deterministic proof and no compact disqualifier.
+- **Decision:** Route eligible planless ordinary work through `dev-implementation` then `completion-presentation`. Criterion-complete worker smoke on the exact final target is terminal proof. Same-context compact binds a minimal Task Contract directly; a real ownership/context-change or durable-recovery crossing adds one Context Pack. It requires no Executor Plan, independent verification, final review, or continual-learning dispatch.
+- **Decision:** Compact may remain planless. Its direct Task Contract binds one human Intent and one Methods value. If compact work has an Executor Plan, that plan remains work-only and tail-free but enters the plan-backed full/no-downgrade gate and dispatches every authored work owner as a fresh child. The root remains mechanical.
+- **Why:** Bounded direct work should avoid graph ceremony, while an authored durable plan must preserve the same root/child ownership boundary as every other implementation plan.
+- **Rejected alternatives / why not:** Requiring plans for direct work adds no proof value. Letting a compact plan execute in the root would make task count or assurance select a hidden topology and conflict with plan-backed orchestration.
+- **Consequences:** The router preserves the planless same-context lane. The compact checklist distinguishes planless binding from planned child dispatch without adding an assurance tail.
+- **Reopen when:** Compact disqualifiers, terminal proof, same-context ownership, compact-plan activation, or the size/duration independence boundary changes.
 ## Affected contracts
 
 - `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior.

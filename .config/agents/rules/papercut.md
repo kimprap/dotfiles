@@ -5,5 +5,5 @@ description: Notice only plausible current repository-owned reusable friction an
 # Papercut activation
 
 Notice at most one plausible current repository-owned reusable-friction candidate during current dev, product, custom, or direct work.
-Candidate-triggered activation remains available throughout that work. After every work-task Common Handoff is emitted, apply this rule exactly once as a soft look; if one current candidate qualifies, load `papercut` before the terminal response.
+After every work-task Common Handoff is emitted, apply this rule exactly once as a soft look. The same work child owns that look; the root falls back only when the child is unavailable. If one current candidate qualifies, load `papercut` before the terminal response and bind the result to that Handoff. Retain the accounting in deterministic work-Handoff order.
 No candidate means no skill or ledger access and no papercut output. The look and any capture change no task state and are never a task, Methods token, workflow or route stage, todo phase, assurance event, or per-task continual-learning trigger.

@@ -18,7 +18,7 @@ Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-st
 - Other harnesses without an OMP local-draft adapter follow this same direct repository path.
 - Use `plan-repo-storage.md` for exact identity, conflicts, safe terminal movement, and storage-failure behavior. Storage success supplies no approval or completion evidence.
 
-Harness-specific identity presentation, model, role, tools, and recovery stay in the adapter and out of the portable artifact. Disclose actual mechanics without promising transport equivalence. Full orchestration still requires a current provider-neutral Orchestrator Role Profile; rule discovery cannot attest it.
+Harness-specific identity presentation, model, role, tools, and recovery stay in the adapter and out of the portable artifact. Disclose actual mechanics without promising transport equivalence. For every approved parser-valid implementation plan, bind a current provider-neutral Orchestrator Role Profile and fresh attestation and use `assess-plan-backed`; continue only on `full-orchestration` with `downgrade: none`. Rule discovery cannot attest capability, authorize root work, or supply a fallback topology. Under `PROMOTE-SERIAL-DEFAULT`, native child dispatch uses full orchestration with runtime concurrency one by default, not a sequential-child mode, and makes no general efficiency claim.
 
 ## Activation checks
 
