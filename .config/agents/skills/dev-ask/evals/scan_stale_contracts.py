@@ -11,6 +11,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from compare_trace import compare_semantic_case
+
 
 SCHEMA = "lean-stale-scan/v1"
 STALE_NEEDLES = [
@@ -91,6 +93,10 @@ REQUIRED_NEEDLES = [
     "normal example, boundary case, and failure case",
     "disabled from ordinary model invocation",
     "cannot create a missing adapter",
+    "validate_recipe_generation(...)",
+    "criterion → old recipe ID → new recipe ID → target-delta edge or none → fresh-or-reuse",
+    "invalid current intake",
+    "one fresh complete aggregate",
 ]
 EXPECTED_DESCRIPTIONS = {
     ".config/agents/skills/dev-implementation/SKILL.md": (
@@ -216,6 +222,8 @@ PLAN_ARTIFACT_SCOPED_NEEDLES = {
     ),
 }
 REWRITE_IDS = {
+    "B-ASSURANCE-REUSE-DRIFT",
+    "B-ASSURANCE-REUSE-UNAFFECTED",
     "B-COMPACT",
     "B-COMPACT-CURATION-TRIGGER",
     "B-COMPACT-DEFERRED-LEARNING-CANDIDATE",
@@ -293,6 +301,9 @@ REWRITE_IDS = {
 }
 ADDED_IDS = {
     "B-ASSURANCE-RECEIPT-COMPLETION",
+    "B-ASSURANCE-GENERATION-CONFLICT",
+    "B-ASSURANCE-RECIPE-CONSTRUCTION",
+    "B-ASSURANCE-REUSE-DISPOSITIONS",
     "B-ASSURANCE-REUSE-DRIFT",
     "B-ASSURANCE-REUSE-UNAFFECTED",
     "B-COMPACT-PLAN-NO-TAIL",
@@ -327,6 +338,7 @@ DWO_PROJECTION_PATHS = {
     ".config/agents/skills/dev-ask/WORKFLOW.md",
     ".config/agents/skills/dev-implementation/SKILL.md",
     ".config/agents/skills/dev-implementation/references/orchestrator-role-profile.md",
+    ".config/agents/skills/dev-implementation/references/plan-orchestration.md",
     ".config/agents/skills/dev-implementation/references/compact-checklist.md",
     ".config/agents/skills/dev-handoff/SKILL.md",
     ".config/agents/skills/dev-code-review/SKILL.md",
@@ -375,7 +387,7 @@ DWO_CONTINUATION_CASE_IDS = (
     "B-T4-REVISION-WORTH-OPINION",
     "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
 )
-DWO_RESUME_CASE_FIXTURES = {
+DWO_SEMANTIC_CASE_FIXTURES = {
     "B-FULL": ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
     "B-T5-COMPLETION-ASSURED": (
         ".config/agents/skills/dev-ask/evals/fixtures/b-t5-completion-assured/case.json"
@@ -384,13 +396,23 @@ DWO_RESUME_CASE_FIXTURES = {
         ".config/agents/skills/dev-ask/evals/fixtures/"
         "b-t5-completion-missing-assurance/case.json"
     ),
+    "R-COMPLETE": ".config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json",
+    "R-COMPLETE-COMPACT-NO-LEARNING": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "r-complete-compact-no-learning/case.json"
+    ),
 }
+DWO_RESUME_CASE_IDS = (
+    "B-FULL",
+    "B-T5-COMPLETION-ASSURED",
+    "B-T5-COMPLETION-MISSING-ASSURANCE",
+)
 DWO_RESUME_STALE_FRAGMENTS = (
     "grant counter",
     "attempt-or-grant",
 )
-DWO_RESUME_ACTIVE_PATHS = frozenset(
-    (*DWO_RESUME_CASE_FIXTURES, *DWO_RESUME_CASE_FIXTURES.values())
+DWO_RESUME_ACTIVE_PATHS = frozenset(DWO_RESUME_CASE_IDS) | frozenset(
+    DWO_SEMANTIC_CASE_FIXTURES[case_id] for case_id in DWO_RESUME_CASE_IDS
 )
 DWO_PLAN_BACKED_CASE_IDS = (
     "B-COMPACT-PLAN-NO-TAIL",
@@ -642,7 +664,37 @@ def dwo_registry_contract_hits(
     root: Path, cases: dict[str, dict[str, Any]]
 ) -> list[dict[str, Any]]:
     hits: list[dict[str, Any]] = []
-    for case_id, fixture_relative in DWO_RESUME_CASE_FIXTURES.items():
+    semantic_fixtures: dict[str, Any] = {}
+    for case_id, fixture_relative in DWO_SEMANTIC_CASE_FIXTURES.items():
+        fixture_path = root / fixture_relative
+        try:
+            fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ScanError(
+                f"cannot parse DWO semantic fixture {fixture_relative}: {error}"
+            ) from error
+        semantic_fixtures[case_id] = fixture
+        comparison = compare_semantic_case(cases, case_id, fixture)
+        for mismatch in comparison["mismatches"]:
+            hits.append(
+                dwo_contract_hit(
+                    fixture_relative,
+                    f"semantic case parity: {mismatch}",
+                    case_id,
+                )
+            )
+
+    if "R-COMPLETE-NEAR-MISS" in DWO_SEMANTIC_CASE_FIXTURES:
+        hits.append(
+            dwo_contract_hit(
+                "R-COMPLETE-NEAR-MISS",
+                "near miss excluded from semantic parity map",
+                repr(DWO_SEMANTIC_CASE_FIXTURES),
+            )
+        )
+
+    for case_id in DWO_RESUME_CASE_IDS:
+        fixture_relative = DWO_SEMANTIC_CASE_FIXTURES[case_id]
         case = cases[case_id]
         active = {
             key: case.get(key)
@@ -654,20 +706,65 @@ def dwo_registry_contract_hits(
                 json.dumps(active, ensure_ascii=False),
             )
         )
-        fixture_path = root / fixture_relative
-        try:
-            fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError) as error:
-            raise ScanError(
-                f"cannot parse DWO resume fixture {fixture_relative}: {error}"
-            ) from error
-        fixture_active = {"inputs": fixture.get("inputs")}
+        fixture = semantic_fixtures[case_id]
+        fixture_active = {
+            "inputs": fixture.get("inputs") if isinstance(fixture, dict) else None
+        }
         hits.extend(
             dwo_resume_projection_hits(
                 fixture_relative,
                 json.dumps(fixture_active, ensure_ascii=False),
             )
         )
+
+    assurance_case_needles = {
+        "B-ASSURANCE-RECIPE-CONSTRUCTION": (
+            "lifecycle identity changes produce zero recipe ID changes",
+            "only the already-listed digest changes and URI set remains exact",
+        ),
+        "B-ASSURANCE-GENERATION-CONFLICT": (
+            "recipe_generation_binding_conflict",
+            "verifier dispatches=0",
+            "proof invocations=0",
+        ),
+        "B-ASSURANCE-REUSE-UNAFFECTED": (
+            "AC-A → PR-A-OLD → PR-A-NEW → "
+            "(file://target-a, sha256:old-a, sha256:new-a) → fresh",
+            "AC-B → PR-B → PR-B → none → reuse",
+            "fresh aggregate VERIFIED over complete current AC-A and AC-B set",
+        ),
+        "B-ASSURANCE-REUSE-DRIFT": (
+            "PR-B invocations=1 fresh",
+            "INCONCLUSIVE before proof",
+            "proof invocations=0",
+        ),
+        "B-ASSURANCE-REUSE-DISPOSITIONS": (
+            "missing prior aggregate → all-fresh",
+            "ambiguous edge → all-fresh",
+            "approved semantic change → all-fresh",
+            "unapproved semantic change → authority-change-required",
+            "AC-A → PR-A-OLD → PR-A-NEW → "
+            "(file://target-a, sha256:old-a, sha256:new-a) → fresh",
+            "AC-B → PR-B → PR-B → none → reuse",
+        ),
+    }
+    for case_id, needles in assurance_case_needles.items():
+        case = cases.get(case_id)
+        if case is None:
+            hits.append(
+                dwo_contract_hit(case_id, "required assurance case", "<missing>")
+            )
+            continue
+        serialized = normalize(json.dumps(case, ensure_ascii=False))
+        for needle in needles:
+            if normalize(needle) not in serialized:
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"assurance contract: {needle}",
+                        serialized,
+                    )
+                )
 
     for case_id in DWO_CONTINUATION_CASE_IDS:
         events = cases[case_id].get("required_events", [])
@@ -1303,6 +1400,58 @@ def run_selftest(root: Path) -> dict[str, Any]:
         raise ScanError(f"DWO registry baseline self-test failed: {baseline_dwo_hits}")
     checks.append("dwo-registry:baseline")
 
+    expected_semantic_pairs = (
+        (
+            "B-FULL",
+            ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
+        ),
+        (
+            "B-T5-COMPLETION-ASSURED",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-t5-completion-assured/case.json",
+        ),
+        (
+            "B-T5-COMPLETION-MISSING-ASSURANCE",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-t5-completion-missing-assurance/case.json",
+        ),
+        (
+            "R-COMPLETE",
+            ".config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json",
+        ),
+        (
+            "R-COMPLETE-COMPACT-NO-LEARNING",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-complete-compact-no-learning/case.json",
+        ),
+    )
+    if tuple(DWO_SEMANTIC_CASE_FIXTURES.items()) != expected_semantic_pairs:
+        raise ScanError("DWO semantic parity map inventory self-test failed")
+    if "R-COMPLETE-NEAR-MISS" in DWO_SEMANTIC_CASE_FIXTURES:
+        raise ScanError("DWO semantic near-miss exclusion self-test failed")
+    checks.append("dwo-semantic:exact-map-and-near-miss-exclusion")
+
+    registry_only_mutation = copy.deepcopy(cases)
+    registry_only_mutation["B-FULL"]["inputs"]["request"] += " Registry mutation."
+    if not any(
+        hit["needle"] == "semantic case parity: field inputs mismatch"
+        for hit in dwo_registry_contract_hits(root, registry_only_mutation)
+    ):
+        raise ScanError("DWO semantic registry-only mutation self-test failed")
+    checks.append("dwo-semantic:registry-only-mutation")
+
+    fixture_relative = DWO_SEMANTIC_CASE_FIXTURES["B-FULL"]
+    fixture_only_mutation = json.loads(
+        (root / fixture_relative).read_text(encoding="utf-8")
+    )
+    fixture_only_mutation["scripted_replies"].append("Fixture mutation.")
+    fixture_comparison = compare_semantic_case(
+        cases, "B-FULL", fixture_only_mutation
+    )
+    if fixture_comparison["mismatches"] != ["field scripted_replies mismatch"]:
+        raise ScanError("DWO semantic fixture-only mutation self-test failed")
+    checks.append("dwo-semantic:fixture-only-mutation")
+
     stale_resume_grant = copy.deepcopy(cases)
     stale_resume_grant["B-FULL"]["required_events"].append(
         "snapshot:resume|owner:backend|output:grant counter restored"
@@ -1329,7 +1478,9 @@ def run_selftest(root: Path) -> dict[str, Any]:
 
     for fragment in DWO_RESUME_STALE_FRAGMENTS:
         stale_fixture = dwo_resume_projection_hits(
-            DWO_RESUME_CASE_FIXTURES["B-T5-COMPLETION-MISSING-ASSURANCE"],
+            DWO_SEMANTIC_CASE_FIXTURES[
+                "B-T5-COMPLETION-MISSING-ASSURANCE"
+            ],
             json.dumps({"inputs": {"request": f"restore the {fragment} state"}}),
         )
         if not any(

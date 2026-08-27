@@ -79,6 +79,58 @@
     {
       "expected_status": "fail",
       "name": "unknown-case"
+    },
+    {
+      "expected_status": "pass",
+      "name": "semantic-equality"
+    },
+    {
+      "expected_status": "pass",
+      "name": "semantic-empty-list-defaults"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-registry-only-mutation"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-fixture-only-mutation"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-additional-files-mismatch"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-field-mismatch-order"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-malformed-registry"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-malformed-fixture"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-unsafe-additional-path"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-duplicate-additional-path"
+    },
+    {
+      "expected_status": "fail",
+      "name": "semantic-unknown-case"
+    },
+    {
+      "expected_status": "pass",
+      "name": "semantic-deep-copy"
+    },
+    {
+      "expected_status": "pass",
+      "name": "ordinary-non-parity"
     }
   ],
   "schema": "lean-eval-trace-selftest/v1"

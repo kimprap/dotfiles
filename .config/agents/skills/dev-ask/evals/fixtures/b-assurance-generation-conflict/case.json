@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only standard-assurance backend invalid-intake trace; emit canonical events only. The exact current acceptance set is AC-A and AC-B. Native current file://, local://, and agent:// binding resolution and live adapter-tree validation complete, but the frozen current recipe wrappers plus flattened manifest bind file://target-a to sha256:current-a in AC-A and sha256:conflict-a in AC-B. Call validate_recipe_generation once on this current generation. It returns recipe_generation_binding_conflict. Classify invalid intake, dispatch no verifier, execute no criterion proof, and do not all-fresh-fallback, repair, union another generation, or mutate the package."
+  },
+  "scripted_replies": []
+}

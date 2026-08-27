@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only promoted standard-assurance recipe-construction trace; emit canonical events only. Construct current canonical recipes for AC-A and AC-B using only bytes their criterion scenarios read. AC-A lists dependency file://target-a at sha256:old-a; AC-B does not list that URI. First change only lifecycle state, a Context Pack copy, Common Handoff identity, prior evidence identity, papercut identity, attempt authority, and wrapper-manifest identity while keeping every recipe field and scenario-read byte exact. Every recipe ID must remain exact. Then apply the approved target delta (file://target-a, sha256:old-a, sha256:new-a) and change only that already-listed digest. Only AC-A receives a new recipe ID; AC-B remains exact. Do not place lifecycle, Context Pack, Handoff, evidence, papercut, attempt, or wrapper-manifest bytes in the recipe and do not infer a narrower claim for an unlisted whole-file binding."
+  },
+  "scripted_replies": []
+}

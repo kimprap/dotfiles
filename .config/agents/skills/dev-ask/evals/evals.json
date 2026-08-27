@@ -8991,84 +8991,262 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Same-outcome verification reruns only impacted proof, independently accepts exact unaffected evidence, and emits a fresh aggregate verdict without consuming worker smoke.",
+      "criterion": "Recipe identity contains only criterion-scenario-read bytes: lifecycle and provenance changes alter no recipe ID, while one declared target digest changes only recipes that already list that URI.",
       "expected": {
         "artifacts": [
           "state trace",
-          "criterion action map",
-          "proof invocation counts",
-          "fresh aggregate verdict"
+          "before/after recipe identity sets",
+          "declared target-delta edge"
         ],
         "assurance_profile": "standard",
         "first_owner": "backend",
         "gates": [
-          "frozen parent set",
-          "backend-frozen criterion actions",
-          "once-bound manifests"
+          "canonical surface-proof-recipe/v1",
+          "criterion-read byte inventory",
+          "approved target delta"
         ],
         "mode": "one owner",
-        "outcome": "impacted proof executed once; exact unaffected evidence reused; fresh aggregate VERIFIED",
+        "outcome": "lifecycle-only changes preserve all recipe IDs; one target digest changes exactly the binding subset",
         "owners": [
-          "backend",
-          "worker",
-          "dev-verification"
+          "backend"
         ],
         "route": "dev-implementation backend"
       },
-      "fixture_dir": "fixtures/b-assurance-reuse-unaffected",
+      "fixture_dir": "fixtures/b-assurance-recipe-construction",
       "forbidden_events": [
-        "PR-B invocations=1",
-        "worker-smoke-as-verifier-evidence",
-        "stale-reuse-accepted",
-        "manifest-rebuild",
-        "mixed-target-aggregate",
-        "cancelled-partial-reuse"
+        "lifecycle-byte-in-recipe",
+        "handoff-byte-in-recipe",
+        "evidence-byte-in-recipe",
+        "papercut-byte-in-recipe",
+        "AC-B recipe ID changed",
+        "undeclared-delta",
+        "new-recipe-field"
       ],
-      "id": "B-ASSURANCE-REUSE-UNAFFECTED",
+      "id": "B-ASSURANCE-RECIPE-CONSTRUCTION",
       "inputs": {
-        "request": "Read-only standard same-outcome repair trace; emit canonical events only. The frozen parent set is AC-A with recipe PR-A and AC-B with recipe PR-B. Repair revision repaired-target-2 changes only surface-A. The repair owner proposes AC-A impacted and AC-B unaffected; the backend freezes both actions. AC-B prior verifier evidence EVID-B-1 has identical target surface, environment, expectation, proof method, fixture, dependency, and integrity identities. Worker smoke exercises both frozen cases but is not verifier evidence. The verifier independently accepts both actions, invokes PR-A exactly once, invokes PR-B zero times by reusing EVID-B-1, and emits a fresh VERIFIED aggregate over AC-A and AC-B. The once-bound target and rule manifests compare equal and are not rebuilt."
+        "request": "Read-only promoted standard-assurance recipe-construction trace; emit canonical events only. Construct current canonical recipes for AC-A and AC-B using only bytes their criterion scenarios read. AC-A lists dependency file://target-a at sha256:old-a; AC-B does not list that URI. First change only lifecycle state, a Context Pack copy, Common Handoff identity, prior evidence identity, papercut identity, attempt authority, and wrapper-manifest identity while keeping every recipe field and scenario-read byte exact. Every recipe ID must remain exact. Then apply the approved target delta (file://target-a, sha256:old-a, sha256:new-a) and change only that already-listed digest. Only AC-A receives a new recipe ID; AC-B remains exact. Do not place lifecycle, Context Pack, Handoff, evidence, papercut, attempt, or wrapper-manifest bytes in the recipe and do not infer a narrower claim for an unlisted whole-file binding."
       },
       "layer": "backend",
-      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend contract.",
+      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend and verifier contracts.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:frozen AC-A/PR-A and AC-B/PR-B; target and rule manifests bound once",
-        "state:running|owner:worker|output:repair surface-A on repaired-target-2",
-        "state:handed-off|owner:worker|output:frozen acceptance smoke passes for AC-A and AC-B; smoke is not verifier evidence",
-        "state:verifying|owner:dev-verification|output:AC-A impacted action accepted; PR-A invocations=1; AC-B unaffected reuse EVID-B-1 accepted; PR-B invocations=0",
-        "state:verified|owner:dev-verification|output:fresh aggregate VERIFIED over unchanged AC-A and AC-B set"
+        "state:accepted|owner:backend|output:AC-A and AC-B canonical recipes contain only criterion scenario-read bindings; lifecycle identity changes produce zero recipe ID changes",
+        "snapshot:recipe-identity|owner:backend|output:before and after lifecycle recipe ID sets are exact equal; lifecycle, Context Pack, Handoff, evidence, papercut, attempt, and wrapper manifest remain outside recipe identity",
+        "snapshot:recipe-identity|owner:backend|output:approved edge (file://target-a, sha256:old-a, sha256:new-a); AC-A old/new canonical recipes otherwise byte-equal; only the already-listed digest changes and URI set remains exact; changed IDs={AC-A}; unchanged IDs={AC-B}; no narrower impact inferred for an unlisted whole-file binding"
       ],
       "rubric": [
-        "Require one backend-frozen action for every frozen parent criterion.",
-        "Require fresh PR-A exactly once and exact EVID-B-1 reuse with PR-B invocation count zero.",
-        "Reject worker smoke as independent evidence, stale or partial reuse, manifest rebuild, and a mixed-target aggregate."
+        "Require zero recipe-ID changes for lifecycle and provenance bytes outside criterion scenario reads.",
+        "Require the changed recipe-ID set to equal exactly the recipes already listing file://target-a.",
+        "Reject lifecycle/provenance inclusion, undeclared digest substitution, URI-set change, and a whole-file impact claim narrower than the declared bindings."
       ],
       "scripted_replies": [],
       "trace_scope": "prefix"
     },
     {
       "absent_capabilities": [],
-      "criterion": "A verifier rejects proposed unaffected evidence after dependency drift, runs the frozen recipe fresh, and still emits one fresh aggregate verdict.",
+      "criterion": "A current proof generation that binds one URI to two digests is invalid backend intake and dispatches neither verifier nor proof.",
       "expected": {
         "artifacts": [
           "state trace",
-          "reuse rejection",
-          "proof invocation counts",
-          "fresh aggregate verdict"
+          "generation validator failure code",
+          "zero dispatch and proof counts"
         ],
         "assurance_profile": "standard",
         "first_owner": "backend",
         "gates": [
-          "frozen parent set",
-          "dependency identity comparison",
-          "backend-frozen criterion actions"
+          "native current binding resolution",
+          "live adapter-tree validation",
+          "current generation consistency"
         ],
         "mode": "one owner",
-        "outcome": "drifted reuse rejected; both frozen recipes executed once; fresh aggregate VERIFIED",
+        "outcome": "current generation rejected as invalid intake; verifier and proof counts remain zero",
+        "owners": [
+          "backend"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-assurance-generation-conflict",
+      "forbidden_events": [
+        "state:verifying",
+        "state:verified",
+        "all-fresh fallback",
+        "package mutation",
+        "generation union",
+        "verifier dispatches=1",
+        "proof invocations=1"
+      ],
+      "id": "B-ASSURANCE-GENERATION-CONFLICT",
+      "inputs": {
+        "request": "Read-only standard-assurance backend invalid-intake trace; emit canonical events only. The exact current acceptance set is AC-A and AC-B. Native current file://, local://, and agent:// binding resolution and live adapter-tree validation complete, but the frozen current recipe wrappers plus flattened manifest bind file://target-a to sha256:current-a in AC-A and sha256:conflict-a in AC-B. Call validate_recipe_generation once on this current generation. It returns recipe_generation_binding_conflict. Classify invalid intake, dispatch no verifier, execute no criterion proof, and do not all-fresh-fallback, repair, union another generation, or mutate the package."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend and verifier contracts.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:current-intake|owner:backend|output:current native binding resolution and live adapter-tree validation complete before generation admission",
+        "state:invalid-intake|owner:backend|output:validate_recipe_generation returns recipe_generation_binding_conflict for file://target-a; verifier dispatches=0; proof invocations=0"
+      ],
+      "rubric": [
+        "Require the deterministic recipe_generation_binding_conflict result for one current URI with two digests.",
+        "Require backend invalid intake with verifier dispatches=0 and proof invocations=0.",
+        "Reject all-fresh fallback, verifier repair, generation union, or package mutation."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "The five fixed later-cycle dispositions are deterministic, preserve D02, and either run the complete current set all-fresh, stop for authority, or execute one exact typed mixed action set.",
+      "expected": {
+        "artifacts": [
+          "five disposition traces",
+          "typed criterion action map",
+          "proof invocation counts",
+          "fresh complete aggregates",
+          "authority-change-required stop"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "valid current intake",
+          "D02 authority",
+          "last complete aggregate when present",
+          "approved target delta when unambiguous"
+        ],
+        "mode": "one owner",
+        "outcome": "three all-fresh dispositions, one authority stop, and one valid mixed fresh/reuse disposition are exact",
         "owners": [
           "backend",
-          "worker",
+          "dev-verification"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-assurance-reuse-dispositions",
+      "forbidden_events": [
+        "partial-action-map",
+        "partial-reuse",
+        "stale-reuse-accepted",
+        "old-digest evidence consumed=1",
+        "worker-smoke-as-verifier-evidence",
+        "fresh-proof-cures-missing-authority",
+        "mixed-target-aggregate",
+        "manifest-rebuild"
+      ],
+      "id": "B-ASSURANCE-REUSE-DISPOSITIONS",
+      "inputs": {
+        "request": "Read-only promoted standard-assurance disposition matrix; emit canonical events only for five independent valid-current scenarios. (1) Missing prior aggregate → all-fresh: dispatch no reuse action, invoke current PR-A and PR-B once each, and emit one complete aggregate. (2) Ambiguous edge → all-fresh with the same complete proof and no reuse action or authority stop. (3) Approved semantic change → all-fresh under the approved current contract and emit one complete aggregate. (4) Unapproved semantic change → authority-change-required with verifier dispatches=0 and proof invocations=0; fresh proof must not cure missing authority. (5) Valid exact delta/no-edge: the exact prior snapshot and current package validate separately; freeze AC-A → PR-A-OLD → PR-A-NEW → (file://target-a, sha256:old-a, sha256:new-a) → fresh and AC-B → PR-B → PR-B → none → reuse. The verifier independently accepts both, invokes PR-A-NEW once with zero old-digest evidence, reuses exact current-target EVID-B-1 with PR-B=0, and emits one fresh complete aggregate over current AC-A and AC-B. Never leave a partial map or reuse stale evidence."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend and verifier contracts.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:missing prior aggregate → all-fresh; no reuse action",
+        "state:verified|owner:dev-verification|output:missing-prior current PR-A invocations=1 and PR-B invocations=1; fresh complete aggregate over AC-A and AC-B",
+        "state:accepted|owner:backend|output:ambiguous edge → all-fresh; no reuse action or authority stop",
+        "state:verified|owner:dev-verification|output:ambiguous-edge current PR-A invocations=1 and PR-B invocations=1; fresh complete aggregate over AC-A and AC-B",
+        "state:accepted|owner:backend|output:approved semantic change → all-fresh under current contract; no reuse action",
+        "state:verified|owner:dev-verification|output:approved-change current PR-A invocations=1 and PR-B invocations=1; fresh complete aggregate over AC-A and AC-B",
+        "state:authority-change-required|owner:backend|output:unapproved semantic change → authority-change-required; verifier dispatches=0; proof invocations=0",
+        "state:accepted|owner:backend|output:valid exact-delta current and exact frozen prior packages validate separately; last complete aggregate identities exact; approved delta unambiguous",
+        "snapshot:criterion-actions|owner:backend|output:AC-A → PR-A-OLD → PR-A-NEW → (file://target-a, sha256:old-a, sha256:new-a) → fresh; AC-B → PR-B → PR-B → none → reuse",
+        "state:verifying|owner:dev-verification|output:valid exact-delta actions accepted; PR-A-NEW invocations=1 fresh; old-digest evidence consumed=0; EVID-B-1 exact reuse accepted; PR-B invocations=0",
+        "state:verified|owner:dev-verification|output:valid-delta fresh complete aggregate VERIFIED over current AC-A and AC-B; one verdict per current criterion"
+      ],
+      "rubric": [
+        "Require missing prior, ambiguous edge, and approved semantic change to run the complete current set all-fresh without reuse.",
+        "Require unapproved semantic change to stop authority-change-required before verifier or proof.",
+        "Require the valid exact-delta/no-edge rows, fresh rebound execution, exact evidence reuse, independent decisions, and complete aggregate."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "A valid later same-outcome cycle runs an exact-delta rebound current recipe fresh, independently reuses one exact no-edge evidence item, and emits one complete current aggregate.",
+      "expected": {
+        "artifacts": [
+          "state trace",
+          "separate generation receipts",
+          "typed criterion action map",
+          "proof invocation counts",
+          "fresh complete aggregate"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "exact last complete aggregate snapshot",
+          "separate current/prior generation validation",
+          "approved target delta",
+          "independent action decisions"
+        ],
+        "mode": "one owner",
+        "outcome": "rebound current recipe executed once; exact no-edge evidence reused; fresh complete aggregate VERIFIED",
+        "owners": [
+          "backend",
+          "dev-verification"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-assurance-reuse-unaffected",
+      "forbidden_events": [
+        "PR-A-OLD evidence consumed=1",
+        "PR-B invocations=1",
+        "worker-smoke-as-verifier-evidence",
+        "stale-reuse-accepted",
+        "manifest-rebuild",
+        "mixed-target-aggregate",
+        "partial-reuse",
+        "generation-union"
+      ],
+      "id": "B-ASSURANCE-REUSE-UNAFFECTED",
+      "inputs": {
+        "request": "Read-only promoted standard-assurance later-cycle trace; emit canonical events only. The last complete aggregate freezes prior AC-A with PR-A-OLD, prior AC-B with PR-B, the exact prior manifest, and evidence EVID-B-1. The current set is AC-A with PR-A-NEW and AC-B with unchanged PR-B. Native current resolution and live adapter-tree validation pass. Validate current and frozen prior generations in separate calls without union or live prior reread. The approved target delta is (file://target-a, sha256:old-a, sha256:new-a); that URI already appears in both AC-A recipes and the old/new recipes are otherwise byte-equal. Freeze exactly AC-A → PR-A-OLD → PR-A-NEW → (file://target-a, sha256:old-a, sha256:new-a) → fresh and AC-B → PR-B → PR-B → none → reuse. The verifier independently repeats resolution, both generation checks, and map consistency; accepts both actions; invokes PR-A-NEW exactly once with zero PR-A-OLD evidence; invokes PR-B zero times by accepting exact current-target EVID-B-1; and emits one fresh complete VERIFIED aggregate over current AC-A and AC-B."
+      },
+      "layer": "backend",
+      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend and verifier contracts.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:accepted|owner:backend|output:native current bindings and live adapter tree valid; current and frozen prior generations pass separately; last complete aggregate identities exact",
+        "snapshot:criterion-actions|owner:backend|output:AC-A → PR-A-OLD → PR-A-NEW → (file://target-a, sha256:old-a, sha256:new-a) → fresh; AC-B → PR-B → PR-B → none → reuse",
+        "state:verifying|owner:dev-verification|output:current resolution, separate generation checks, and typed action map independently valid; both actions accepted",
+        "state:verifying|owner:dev-verification|output:PR-A-NEW invocations=1 fresh; PR-A-OLD evidence consumed=0; EVID-B-1 exact current-target reuse accepted; PR-B invocations=0",
+        "state:verified|owner:dev-verification|output:fresh aggregate VERIFIED over complete current AC-A and AC-B set; one verdict per current criterion"
+      ],
+      "rubric": [
+        "Require separate prior/current validation and the exact old/new/edge/fresh-or-reuse rows.",
+        "Require PR-A-NEW=1 with zero old-digest evidence and exact EVID-B-1 reuse with PR-B=0.",
+        "Require independent decisions and one complete current aggregate; reject partial, stale, mixed-target, worker, or old-digest evidence."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "prefix"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Dependency drift rejects proposed unaffected repair evidence and runs fresh, while a separate verifier-detected invalid current binding returns INCONCLUSIVE before proof without repair or downgrade.",
+      "expected": {
+        "artifacts": [
+          "two state traces",
+          "reuse rejection",
+          "proof invocation counts",
+          "fresh repair aggregate",
+          "INCONCLUSIVE receipt"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "frozen repair parent set",
+          "dependency identity comparison",
+          "backend-frozen repair actions",
+          "independent current binding recheck"
+        ],
+        "mode": "one owner",
+        "outcome": "repair drift runs both recipes fresh and verifies; independently detected invalid current binding is INCONCLUSIVE before proof",
+        "owners": [
+          "backend",
           "dev-verification"
         ],
         "route": "dev-implementation backend"
@@ -9079,26 +9257,32 @@
         "PR-B invocations=0",
         "stale-reuse-accepted",
         "manifest-rebuild",
-        "worker-smoke-as-verifier-evidence"
+        "worker-smoke-as-verifier-evidence",
+        "silent-all-fresh-downgrade",
+        "verifier-repair",
+        "package-mutation",
+        "aggregate after invalid current binding"
       ],
       "id": "B-ASSURANCE-REUSE-DRIFT",
       "inputs": {
-        "request": "Read-only standard same-outcome repair trace; emit canonical events only. Frozen AC-A/PR-A and AC-B/PR-B remain unchanged. Repair changes surface-A and proposes exact reuse EVID-B-OLD for AC-B, but dependency dep-B changed from sha256:old-b to sha256:new-b after the backend froze the action map. Worker smoke passes but is not verifier evidence. The verifier independently accepts impacted AC-A, rejects AC-B reuse because the dependency identity drifted, invokes PR-A once and PR-B once fresh, and emits one fresh VERIFIED aggregate. Do not accept stale reuse or rebuild the bound manifests."
+        "request": "Read-only standard assurance trace with two separate scenarios; emit canonical events only. Scenario one preserves the current repair-only control: frozen AC-A/PR-A and AC-B/PR-B remain unchanged; repair changes surface-A and proposes EVID-B-OLD for AC-B, but dep-B changed from sha256:old-b to sha256:new-b after the backend froze repair actions. The verifier rejects reuse, invokes PR-A once and PR-B once fresh, and emits one fresh VERIFIED aggregate. Scenario two starts from a separately valid backend freeze for a promoted later-cycle package. After dispatch, the verifier independently resolves current file://dep-b and detects sha256:stale-b where the validated current package binds sha256:current-b. Return INCONCLUSIVE before proof with proof invocations=0, no fresh fallback, no repair, no mutation, and no aggregate verdict."
       },
       "layer": "backend",
-      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend contract.",
+      "proof": "Fresh receipt-bound read-only evaluation of the exact fixture under the current backend and verifier contracts.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:frozen AC-A/PR-A and AC-B/PR-B; action map and manifests bound once",
-        "state:handed-off|owner:worker|output:repair smoke passes; worker smoke is not verifier evidence",
+        "state:accepted|owner:backend|output:repair frozen AC-A/PR-A and AC-B/PR-B; action map and manifests bound once",
         "state:verifying|owner:dev-verification|output:AC-A impacted action accepted; PR-A invocations=1; AC-B reuse EVID-B-OLD rejected because dep-B sha256:old-b != sha256:new-b; PR-B invocations=1 fresh",
-        "state:verified|owner:dev-verification|output:fresh aggregate VERIFIED over unchanged AC-A and AC-B set"
+        "state:verified|owner:dev-verification|output:fresh aggregate VERIFIED over unchanged repair AC-A and AC-B set",
+        "state:accepted|owner:backend|output:separate later-cycle current and frozen prior packages valid; typed action map frozen and dispatched",
+        "state:verifying|owner:dev-verification|output:independent current resolution detects file://dep-b sha256:stale-b != sha256:current-b; current binding invalid; INCONCLUSIVE before proof; proof invocations=0",
+        "state:inconclusive|owner:dev-verification|output:no fresh fallback, repair, package mutation, reuse decision, or aggregate verdict"
       ],
       "rubric": [
-        "Require the verifier to compare dependency identity and independently reject stale reuse.",
-        "Require PR-A=1 and PR-B=1 on the frozen recipes before the fresh aggregate verdict.",
-        "Reject stale acceptance, zero PR-B invocation, worker-evidence substitution, and manifest rebuild."
+        "Preserve the repair dependency-drift control with PR-A=1, PR-B=1 fresh, and one repaired-target aggregate.",
+        "Require separately detected invalid current binding to return INCONCLUSIVE before proof with zero proof invocations.",
+        "Reject stale reuse, silent all-fresh downgrade, verifier repair, mutation, or an aggregate after invalid intake."
       ],
       "scripted_replies": [],
       "trace_scope": "prefix"

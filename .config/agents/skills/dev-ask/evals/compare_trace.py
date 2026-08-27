@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import hashlib
 import json
 import os
@@ -62,6 +63,8 @@ OPTIONAL_EXPECTED_KEYS = {
 }
 REWRITE_IDS = {
     "B-ASSURANCE-RECEIPT-COMPLETION",
+    "B-ASSURANCE-REUSE-DRIFT",
+    "B-ASSURANCE-REUSE-UNAFFECTED",
     "B-COMPACT-PLAN-NO-TAIL",
     "B-COMPACT",
     "B-COMPACT-CURATION-TRIGGER",
@@ -146,6 +149,9 @@ REWRITE_IDS = {
 }
 ADDED_IDS = {
     "B-ASSURANCE-RECEIPT-COMPLETION",
+    "B-ASSURANCE-GENERATION-CONFLICT",
+    "B-ASSURANCE-RECIPE-CONSTRUCTION",
+    "B-ASSURANCE-REUSE-DISPOSITIONS",
     "B-ASSURANCE-REUSE-DRIFT",
     "B-ASSURANCE-REUSE-UNAFFECTED",
     "B-SVA-BOUNDARY-NOT-EXECUTED",
@@ -311,26 +317,62 @@ def enumerate_runtime(runtime_root: Path, declared_files: set[str]) -> dict[str,
     return dict(sorted(result.items()))
 
 
-def fixture_sources(
-    fixture_path: Path, fixture: Any
-) -> tuple[str, list[str], dict[str, str]]:
-    if not isinstance(fixture, dict):
+def canonical_semantic_case(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
         raise CompareError("fixture must be a JSON object")
-    inputs = fixture.get("inputs")
+    inputs = value.get("inputs")
     if not isinstance(inputs, dict) or not isinstance(inputs.get("request"), str):
         raise CompareError("fixture inputs.request must be a string")
-    replies = fixture.get("scripted_replies", [])
+    replies = value.get("scripted_replies", [])
     if not isinstance(replies, list) or any(
         not isinstance(reply, str) for reply in replies
     ):
         raise CompareError("fixture scripted_replies must be a string list")
-    additional = fixture.get("additional_files", [])
+    additional = value.get("additional_files", [])
     if not isinstance(additional, list):
         raise CompareError("fixture additional_files must be a list")
-    paths = [safe_additional_path(value) for value in additional]
-    names = [path.as_posix() for path in paths]
+    names = [safe_additional_path(raw).as_posix() for raw in additional]
     if len(names) != len(set(names)):
         raise CompareError("fixture additional_files contains a duplicate")
+    return {
+        "inputs": deepcopy(inputs),
+        "scripted_replies": list(replies),
+        "additional_files": names,
+    }
+
+
+def compare_semantic_case(
+    registry: dict[str, dict[str, Any]], case_id: str, fixture: Any
+) -> dict[str, Any]:
+    if case_id not in registry:
+        return result(case_id, [f"unknown case id: {case_id}"])
+    mismatches: list[str] = []
+    registry_case: dict[str, Any] | None = None
+    fixture_case: dict[str, Any] | None = None
+    try:
+        registry_case = canonical_semantic_case(registry[case_id])
+    except CompareError as error:
+        mismatches.append(f"registry: {error}")
+    try:
+        fixture_case = canonical_semantic_case(fixture)
+    except CompareError as error:
+        mismatches.append(f"fixture: {error}")
+    if registry_case is not None and fixture_case is not None:
+        for field in ("inputs", "scripted_replies", "additional_files"):
+            if registry_case[field] != fixture_case[field]:
+                mismatches.append(f"field {field} mismatch")
+    return result(case_id, mismatches)
+
+
+def fixture_sources(
+    fixture_path: Path, fixture: Any
+) -> tuple[str, list[str], dict[str, str]]:
+    semantic_case = canonical_semantic_case(fixture)
+    inputs = semantic_case["inputs"]
+    replies = semantic_case["scripted_replies"]
+    paths = [
+        PurePosixPath(name) for name in semantic_case["additional_files"]
+    ]
     manifest: dict[str, str] = {}
     root = fixture_path.parent.resolve(strict=True)
     for relative in paths:
@@ -1074,7 +1116,7 @@ def run_selftest(path: Path) -> dict[str, Any]:
     checks = definition.get("checks")
     if not isinstance(checks, list):
         raise CompareError("self-test checks must be a list")
-    expected_names = [
+    original_names = [
         "pass-observation",
         "router-skill-binding",
         "live-skill-binding",
@@ -1096,8 +1138,23 @@ def run_selftest(path: Path) -> dict[str, Any]:
         "malformed-input",
         "unknown-case",
     ]
+    semantic_names = [
+        "semantic-equality",
+        "semantic-empty-list-defaults",
+        "semantic-registry-only-mutation",
+        "semantic-fixture-only-mutation",
+        "semantic-additional-files-mismatch",
+        "semantic-field-mismatch-order",
+        "semantic-malformed-registry",
+        "semantic-malformed-fixture",
+        "semantic-unsafe-additional-path",
+        "semantic-duplicate-additional-path",
+        "semantic-unknown-case",
+        "semantic-deep-copy",
+        "ordinary-non-parity",
+    ]
     names = [item.get("name") if isinstance(item, dict) else None for item in checks]
-    if names != expected_names:
+    if names != original_names + semantic_names:
         raise CompareError("self-test must contain the exact ordered canned checks")
     results: list[dict[str, str]] = []
     with tempfile.TemporaryDirectory(prefix="compare-trace-selftest-") as temporary:
@@ -1105,25 +1162,144 @@ def run_selftest(path: Path) -> dict[str, Any]:
         for index, check in enumerate(checks):
             if set(check) != {"name", "expected_status"}:
                 raise CompareError(f"malformed self-test check: {check}")
+            name = check["name"]
             root = base / str(index)
             root.mkdir()
-            paths = selftest_base(root)
-            case_id = apply_selftest_mutation(check["name"], paths)
-            observed = compare_case(
-                paths["registry"],
-                case_id,
-                paths["observation"],
-                paths["interaction"],
-                paths["runtime_evidence"],
-                paths["runtime"],
-                "b" * 64,
-            )
+            if name not in semantic_names:
+                paths = selftest_base(root)
+                case_id = apply_selftest_mutation(name, paths)
+                observed = compare_case(
+                    paths["registry"],
+                    case_id,
+                    paths["observation"],
+                    paths["interaction"],
+                    paths["runtime_evidence"],
+                    paths["runtime"],
+                    "b" * 64,
+                )
+            elif name == "ordinary-non-parity":
+                paths = selftest_base(root)
+                registry_document = load_json(paths["registry"])
+                cases = case_map(registry_document)
+                cases["CASE"].update(
+                    {
+                        "inputs": {"request": "intentionally different"},
+                        "scripted_replies": [],
+                        "additional_files": ["different.txt"],
+                    }
+                )
+                fixture = load_json(paths["fixture"])
+                semantic_observed = compare_semantic_case(cases, "CASE", fixture)
+                if semantic_observed["status"] != "fail":
+                    raise CompareError(
+                        "ordinary non-parity control must differ semantically"
+                    )
+                write_json(paths["registry"], registry_document)
+                observed = compare_case(
+                    paths["registry"],
+                    "CASE",
+                    paths["observation"],
+                    paths["interaction"],
+                    paths["runtime_evidence"],
+                    paths["runtime"],
+                    "b" * 64,
+                )
+            else:
+                case_id = "SEMANTIC"
+                semantic_case = {
+                    "inputs": {
+                        "request": "semantic self-test",
+                        "metadata": {"steps": ["one", "two"]},
+                    },
+                    "scripted_replies": ["approve", "continue"],
+                    "additional_files": ["notes/context.txt"],
+                }
+                registry = {case_id: deepcopy(semantic_case)}
+                fixture = deepcopy(semantic_case)
+                expected_mismatches: list[str] = []
+                if name == "semantic-empty-list-defaults":
+                    registry[case_id] = {
+                        "inputs": deepcopy(semantic_case["inputs"])
+                    }
+                    fixture = {
+                        "inputs": deepcopy(semantic_case["inputs"]),
+                        "scripted_replies": [],
+                        "additional_files": [],
+                    }
+                elif name == "semantic-registry-only-mutation":
+                    registry[case_id]["inputs"]["metadata"]["steps"].append(
+                        "registry-only"
+                    )
+                    expected_mismatches = ["field inputs mismatch"]
+                elif name == "semantic-fixture-only-mutation":
+                    fixture["scripted_replies"].append("fixture-only")
+                    expected_mismatches = ["field scripted_replies mismatch"]
+                elif name == "semantic-additional-files-mismatch":
+                    fixture["additional_files"] = ["notes/other.txt"]
+                    expected_mismatches = ["field additional_files mismatch"]
+                elif name == "semantic-field-mismatch-order":
+                    fixture["inputs"]["request"] = "different"
+                    fixture["scripted_replies"] = ["different"]
+                    fixture["additional_files"] = ["notes/different.txt"]
+                    expected_mismatches = [
+                        "field inputs mismatch",
+                        "field scripted_replies mismatch",
+                        "field additional_files mismatch",
+                    ]
+                elif name == "semantic-malformed-registry":
+                    registry[case_id]["inputs"]["request"] = 7
+                    expected_mismatches = [
+                        "registry: fixture inputs.request must be a string"
+                    ]
+                elif name == "semantic-malformed-fixture":
+                    fixture["scripted_replies"].append(7)
+                    expected_mismatches = [
+                        "fixture: fixture scripted_replies must be a string list"
+                    ]
+                elif name == "semantic-unsafe-additional-path":
+                    fixture["additional_files"] = ["../escape"]
+                    expected_mismatches = [
+                        "fixture: unsafe additional path: '../escape'"
+                    ]
+                elif name == "semantic-duplicate-additional-path":
+                    registry[case_id]["additional_files"].append(
+                        "notes/context.txt"
+                    )
+                    expected_mismatches = [
+                        "registry: fixture additional_files contains a duplicate"
+                    ]
+                elif name == "semantic-unknown-case":
+                    case_id = "UNKNOWN"
+                    expected_mismatches = ["unknown case id: UNKNOWN"]
+                registry_before = deepcopy(registry)
+                fixture_before = deepcopy(fixture)
+                if name == "semantic-deep-copy":
+                    canonical = canonical_semantic_case(fixture)
+                    canonical["inputs"]["metadata"]["steps"].append("changed")
+                    canonical["scripted_replies"].append("changed")
+                    canonical["additional_files"].append("notes/changed.txt")
+                    if fixture != fixture_before:
+                        raise CompareError(
+                            "canonical semantic case mutated its input"
+                        )
+                    observed = result(case_id, [])
+                else:
+                    observed = compare_semantic_case(registry, case_id, fixture)
+                    if registry != registry_before or fixture != fixture_before:
+                        raise CompareError(
+                            f"semantic self-test {name} mutated an input"
+                        )
+                if observed["mismatches"] != expected_mismatches:
+                    raise CompareError(
+                        f"semantic self-test {name} mismatch order changed: "
+                        f"{observed['mismatches']}"
+                    )
             actual = observed["status"]
             if actual != check["expected_status"]:
                 raise CompareError(
-                    f"self-test {check['name']} expected {check['expected_status']} got {actual}"
+                    f"self-test {name} expected {check['expected_status']} got {actual}"
                 )
-            results.append({"name": check["name"], "status": actual})
+            results.append({"name": name, "status": actual})
     return {
         "schema": "lean-eval-trace-selftest-result/v1",
         "status": "pass",

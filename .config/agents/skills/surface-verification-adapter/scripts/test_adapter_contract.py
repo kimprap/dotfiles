@@ -65,11 +65,13 @@ class AdapterContractTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def recipe(self, adapter: object = "none") -> dict[str, object]:
+    def recipe(
+        self, adapter: object = "none", acceptance_id: str = "AC-DEMO-01"
+    ) -> dict[str, object]:
         return {
             "schema": contract.RECIPE_SCHEMA,
             "acceptance": {
-                "id": "AC-DEMO-01",
+                "id": acceptance_id,
                 "claim": "submission persists",
                 "expected": "state contains the submitted value",
             },
@@ -138,7 +140,10 @@ class AdapterContractTests(unittest.TestCase):
         first = contract.canonical_recipe(value)
         second = contract.canonical_recipe(json.loads(json.dumps(value)))
         self.assertEqual(first, second)
-        self.assertTrue(first["identity"].startswith("VR-DEMO-01@sha256:"))
+        self.assertEqual(
+            first["identity"],
+            "VR-DEMO-01@sha256:78016dfe8ee2c9f1b4c19dc45b522afacff676b5a657b3d595939af85ee75bce",
+        )
         self.assertEqual(
             [item["uri"] for item in first["recipe"]["fixtures"]],
             ["file:///tmp/a", "file:///tmp/z"],
@@ -155,6 +160,150 @@ class AdapterContractTests(unittest.TestCase):
         (self.root / "notes.txt").write_text("drift\n", encoding="utf-8")
         with self.assertRaisesRegex(contract.ContractError, "stale_adapter_binding"):
             contract.canonical_recipe(self.recipe(binding))
+        contract.validate_recipe_generation(["AC-DEMO-01"], [result], [])
+
+    def test_generation_requires_exact_unique_acceptance_coverage(self) -> None:
+        first = contract.canonical_recipe(self.recipe())
+        second = contract.canonical_recipe(
+            self.recipe(acceptance_id="AC-DEMO-02")
+        )
+        self.assertIsNone(
+            contract.validate_recipe_generation(
+                ["AC-DEMO-01", "AC-DEMO-02"], [first, second], []
+            )
+        )
+
+        for label, acceptance_ids in (
+            ("malformed", ["DEMO-01"]),
+            ("duplicate", ["AC-DEMO-01", "AC-DEMO-01"]),
+        ):
+            with self.subTest(acceptance_list=label):
+                with self.assertRaises(contract.ContractError) as raised:
+                    contract.validate_recipe_generation(
+                        acceptance_ids, [first], []
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "recipe_generation_acceptance_invalid",
+                )
+
+        for label, acceptance_ids, recipes in (
+            ("missing", ["AC-DEMO-01", "AC-DEMO-02"], [first]),
+            ("extra", ["AC-DEMO-01"], [first, second]),
+            (
+                "duplicate",
+                ["AC-DEMO-01", "AC-DEMO-02"],
+                [first, first, second],
+            ),
+        ):
+            with self.subTest(coverage=label):
+                with self.assertRaises(contract.ContractError) as raised:
+                    contract.validate_recipe_generation(
+                        acceptance_ids, recipes, []
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "recipe_generation_coverage_invalid",
+                )
+
+    def test_generation_rejects_malformed_or_mismatched_wrappers(self) -> None:
+        valid = contract.canonical_recipe(self.recipe())
+        wrong_identity = json.loads(json.dumps(valid))
+        wrong_identity["identity"] = f"VR-DEMO-01@sha256:{'0' * 64}"
+        noncanonical_recipe = json.loads(json.dumps(valid))
+        noncanonical_recipe["recipe"]["fixtures"].reverse()
+
+        for label, wrapper in (
+            ("malformed", {}),
+            ("identity", wrong_identity),
+            ("nested-recanonicalization", noncanonical_recipe),
+        ):
+            with self.subTest(wrapper=label):
+                with self.assertRaises(contract.ContractError) as raised:
+                    contract.validate_recipe_generation(
+                        ["AC-DEMO-01"], [wrapper], []
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "recipe_generation_recipe_invalid",
+                )
+
+    def test_generation_enforces_one_digest_per_uri(self) -> None:
+        first = contract.canonical_recipe(self.recipe())
+        second = contract.canonical_recipe(
+            self.recipe(acceptance_id="AC-DEMO-02")
+        )
+        repeated = {"uri": "file:///tmp/a", "digest": "1" * 64}
+        self.assertIsNone(
+            contract.validate_recipe_generation(
+                ["AC-DEMO-01", "AC-DEMO-02"],
+                [first, second],
+                [repeated, repeated],
+            )
+        )
+
+        conflicting_recipe = self.recipe(acceptance_id="AC-DEMO-02")
+        conflicting_recipe["dependencies"] = [
+            {"uri": "file:///tmp/a", "digest": "3" * 64}
+        ]
+        conflict_wrapper = contract.canonical_recipe(conflicting_recipe)
+        for label, recipes, manifest in (
+            (
+                "recipe-arrays",
+                [first, conflict_wrapper],
+                [],
+            ),
+            (
+                "flattened-manifest",
+                [first],
+                [{"uri": "file:///tmp/a", "digest": "3" * 64}],
+            ),
+        ):
+            with self.subTest(conflict=label):
+                with self.assertRaises(contract.ContractError) as raised:
+                    contract.validate_recipe_generation(
+                        [item["recipe"]["acceptance"]["id"] for item in recipes],
+                        recipes,
+                        manifest,
+                    )
+                self.assertEqual(
+                    raised.exception.code,
+                    "recipe_generation_binding_conflict",
+                )
+
+        with self.assertRaises(contract.ContractError) as raised:
+            contract.validate_recipe_generation(
+                ["AC-DEMO-01"], [first], [{"uri": "file:///tmp/a"}]
+            )
+        self.assertEqual(
+            raised.exception.code,
+            "recipe_generation_binding_invalid",
+        )
+
+    def test_generation_validates_old_and_current_bindings_separately(self) -> None:
+        uri = "file:///tmp/target.py"
+        old_value = self.recipe()
+        old_value["fixtures"] = [{"uri": uri, "digest": "1" * 64}]
+        current_value = self.recipe()
+        current_value["fixtures"] = [{"uri": uri, "digest": "2" * 64}]
+        old = contract.canonical_recipe(old_value)
+        current = contract.canonical_recipe(current_value)
+
+        self.assertIsNone(
+            contract.validate_recipe_generation(
+                ["AC-DEMO-01"],
+                [old],
+                [{"uri": uri, "digest": "1" * 64}],
+            )
+        )
+        self.assertIsNone(
+            contract.validate_recipe_generation(
+                ["AC-DEMO-01"],
+                [current],
+                [{"uri": uri, "digest": "2" * 64}],
+            )
+        )
+        self.assertNotEqual(old["identity"], current["identity"])
 
     def test_doctor_is_readiness_only_and_requires_current_binding(self) -> None:
         identity = contract.adapter_identity(self.root)

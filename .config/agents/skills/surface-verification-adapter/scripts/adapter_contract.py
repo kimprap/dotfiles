@@ -234,7 +234,9 @@ def adapter_identity(root_value: str | os.PathLike[str]) -> dict[str, Any]:
     }
 
 
-def _canonical_binding(binding: Any, code: str) -> dict[str, str]:
+def _canonical_binding(
+    binding: Any, code: str, *, verify_adapter: bool
+) -> dict[str, str]:
     binding = _require_object(binding, {"uri", "digest"}, code)
     uri = _require_text(binding["uri"], code)
     parsed = urlparse(uri)
@@ -248,10 +250,11 @@ def _canonical_binding(binding: Any, code: str) -> dict[str, str]:
     ):
         raise ContractError(code)
     digest = _require_sha256(binding["digest"], code)
-    skill_path = Path(unquote(parsed.path))
-    identity = adapter_identity(skill_path.parent)
-    if identity["uri"] != uri or identity["digest"] != digest:
-        raise ContractError("stale_adapter_binding")
+    if verify_adapter:
+        skill_path = Path(unquote(parsed.path))
+        identity = adapter_identity(skill_path.parent)
+        if identity["uri"] != uri or identity["digest"] != digest:
+            raise ContractError("stale_adapter_binding")
     return {"uri": uri, "digest": digest}
 
 
@@ -271,7 +274,7 @@ def _canonical_manifest(value: Any, code: str) -> list[dict[str, str]]:
     return sorted(result, key=lambda item: (item["uri"], item["digest"]))
 
 
-def canonical_recipe(value: Any) -> dict[str, Any]:
+def _canonical_recipe(value: Any, *, verify_adapter: bool) -> dict[str, Any]:
     value = _require_object(value, RECIPE_KEYS, "recipe_fields_invalid")
     if value["schema"] != RECIPE_SCHEMA:
         raise ContractError("recipe_schema_invalid")
@@ -298,7 +301,11 @@ def canonical_recipe(value: Any) -> dict[str, Any]:
     if value["adapter"] == "none":
         adapter = "none"
     else:
-        adapter = _canonical_binding(value["adapter"], "adapter_binding_invalid")
+        adapter = _canonical_binding(
+            value["adapter"],
+            "adapter_binding_invalid",
+            verify_adapter=verify_adapter,
+        )
     comparison: str | dict[str, Any]
     if value["comparison"] == "none":
         comparison = "none"
@@ -337,6 +344,96 @@ def canonical_recipe(value: Any) -> dict[str, Any]:
     }
 
 
+def canonical_recipe(value: Any) -> dict[str, Any]:
+    return _canonical_recipe(value, verify_adapter=True)
+
+
+def _record_generation_binding(
+    digests_by_uri: dict[str, str], binding: dict[str, str]
+) -> None:
+    uri = binding["uri"]
+    digest = binding["digest"]
+    existing = digests_by_uri.get(uri)
+    if existing is not None and existing != digest:
+        raise ContractError("recipe_generation_binding_conflict")
+    digests_by_uri[uri] = digest
+
+
+def validate_recipe_generation(
+    acceptance_ids: list[str],
+    recipes: list[dict[str, Any]],
+    manifest_bindings: list[dict[str, str]],
+) -> None:
+    if not isinstance(acceptance_ids, list):
+        raise ContractError("recipe_generation_acceptance_invalid")
+    expected_acceptance: set[str] = set()
+    for acceptance_id in acceptance_ids:
+        if (
+            not isinstance(acceptance_id, str)
+            or ACCEPTANCE_ID_RE.fullmatch(acceptance_id) is None
+            or acceptance_id in expected_acceptance
+        ):
+            raise ContractError("recipe_generation_acceptance_invalid")
+        expected_acceptance.add(acceptance_id)
+
+    if not isinstance(recipes, list):
+        raise ContractError("recipe_generation_recipe_invalid")
+    canonical_recipes: list[dict[str, Any]] = []
+    actual_acceptance: list[str] = []
+    for wrapper in recipes:
+        try:
+            wrapper = _require_object(
+                wrapper,
+                {"schema", "identity", "digest", "recipe"},
+                "recipe_generation_recipe_invalid",
+            )
+            if wrapper["schema"] != RECIPE_SCHEMA:
+                raise ContractError("recipe_generation_recipe_invalid")
+            canonical = _canonical_recipe(wrapper["recipe"], verify_adapter=False)
+            if wrapper != canonical:
+                raise ContractError("recipe_generation_recipe_invalid")
+        except (ContractError, TypeError, ValueError, OverflowError):
+            raise ContractError("recipe_generation_recipe_invalid") from None
+        canonical_recipes.append(canonical)
+        actual_acceptance.append(canonical["recipe"]["acceptance"]["id"])
+
+    if (
+        len(actual_acceptance) != len(set(actual_acceptance))
+        or set(actual_acceptance) != expected_acceptance
+    ):
+        raise ContractError("recipe_generation_coverage_invalid")
+
+    digests_by_uri: dict[str, str] = {}
+    for wrapper in canonical_recipes:
+        recipe = wrapper["recipe"]
+        if recipe["adapter"] != "none":
+            _record_generation_binding(digests_by_uri, recipe["adapter"])
+        for key in ("fixtures", "dependencies"):
+            for binding in recipe[key]:
+                _record_generation_binding(digests_by_uri, binding)
+
+    if not isinstance(manifest_bindings, list):
+        raise ContractError("recipe_generation_binding_invalid")
+    for binding in manifest_bindings:
+        try:
+            binding = _require_object(
+                binding,
+                {"uri", "digest"},
+                "recipe_generation_binding_invalid",
+            )
+            canonical_binding = {
+                "uri": _require_text(
+                    binding["uri"], "recipe_generation_binding_invalid"
+                ),
+                "digest": _require_sha256(
+                    binding["digest"], "recipe_generation_binding_invalid"
+                ),
+            }
+        except (ContractError, TypeError, ValueError):
+            raise ContractError("recipe_generation_binding_invalid") from None
+        _record_generation_binding(digests_by_uri, canonical_binding)
+
+
 def canonical_doctor(value: Any) -> dict[str, Any]:
     value = _require_object(value, DOCTOR_KEYS, "doctor_fields_invalid")
     if value["schema"] != DOCTOR_SCHEMA:
@@ -344,7 +441,9 @@ def canonical_doctor(value: Any) -> dict[str, Any]:
     recipe_id = _require_text(value["recipe_id"], "doctor_recipe_invalid")
     if not re.fullmatch(r"VR-[A-Z0-9-]+@sha256:[0-9a-f]{64}", recipe_id):
         raise ContractError("doctor_recipe_invalid")
-    adapter = _canonical_binding(value["adapter"], "doctor_adapter_invalid")
+    adapter = _canonical_binding(
+        value["adapter"], "doctor_adapter_invalid", verify_adapter=True
+    )
     if value["status"] not in {"ready", "blocked"}:
         raise ContractError("doctor_status_invalid")
     receipt = dict(value)

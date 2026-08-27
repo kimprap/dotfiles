@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "request": "Read-only promoted standard-assurance disposition matrix; emit canonical events only for five independent valid-current scenarios. (1) Missing prior aggregate → all-fresh: dispatch no reuse action, invoke current PR-A and PR-B once each, and emit one complete aggregate. (2) Ambiguous edge → all-fresh with the same complete proof and no reuse action or authority stop. (3) Approved semantic change → all-fresh under the approved current contract and emit one complete aggregate. (4) Unapproved semantic change → authority-change-required with verifier dispatches=0 and proof invocations=0; fresh proof must not cure missing authority. (5) Valid exact delta/no-edge: the exact prior snapshot and current package validate separately; freeze AC-A → PR-A-OLD → PR-A-NEW → (file://target-a, sha256:old-a, sha256:new-a) → fresh and AC-B → PR-B → PR-B → none → reuse. The verifier independently accepts both, invokes PR-A-NEW once with zero old-digest evidence, reuses exact current-target EVID-B-1 with PR-B=0, and emits one fresh complete aggregate over current AC-A and AC-B. Never leave a partial map or reuse stale evidence."
+  },
+  "scripted_replies": []
+}
