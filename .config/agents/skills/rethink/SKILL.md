@@ -6,6 +6,7 @@ description: >
   plan, design, workflow, policy, or mechanism before committing to it.
   Skip ordinary implementation, grilling interviews, and requests that only
   restate values or ask to think harder with no named candidate.
+disable-model-invocation: true
 ---
 
 Treat the candidate—including your own prior answer—as a hypothesis. Separate
