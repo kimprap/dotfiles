@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure."
+    "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
   },
   "scripted_replies": []
 }

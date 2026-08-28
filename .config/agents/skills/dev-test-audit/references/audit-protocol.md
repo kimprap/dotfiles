@@ -1,19 +1,25 @@
 # Test audit protocol v1
 
-`test-audit/v1` is identified by the SHA-256 digest of this file. It defines the read-only opinion receipt and the audit extension to the existing Common Handoff. It is not a cleanup request, a second completion envelope, an implementation task, or an assurance gate.
+`test-audit/v1` is identified by the SHA-256 digest of this file. It defines exact-target intake, the read-only opinion receipt, deterministic evidence aggregation, and the audit extension to the existing Common Handoff. It is not a cleanup request, a second completion envelope, an implementation task, an assurance gate, or a scheduler.
 
 ## Frozen audit tuple
 
 Before dispatch, bind one tuple:
 
-- completed parent outcome and immutable repository target manifest locator/digest;
+- evidence locator for the explicit user or external-scheduler request;
+- an exact target locator and identity for either a content-addressed working-tree manifest or commit;
+- one complete repository-suite boundary, or one complete named-subsystem boundary with the subsystem's stable name;
 - permanent-suite manifest locator/digest, discovery rule/boundary, ordered stable selectors, content identities, and selector-set digest;
+- optional completed-plan or parent-outcome provenance identity, with authority `none`;
 - `test-value/v1` URI/digest;
 - this protocol URI/digest;
-- harness identity and the exact role table from `../SKILL.md`; and
+- portable opinion-prompt URI/digest;
+- exact controller-supplied role-table URI/digest and one native binding attestation for each logical opinion; and
 - the allowed Common Handoff receiver.
 
-The suite manifest is complete only when its discovery boundary accounts for every permanent test in scope and every manifest row has one stable selector and current content identity. Generated artifacts, temporary comparison data, audit data, and non-permanent tracer tests stay outside the suite only when the bound discovery rule excludes them explicitly. The two opinions receive the same frozen tuple and no other opinion's output.
+The target is exact only when it is a commit or the working-tree manifest content-addresses the complete declared target. The suite manifest is complete only when its discovery boundary accounts for every permanent test in the declared repository or named-subsystem scope and every manifest row has one stable selector and current content identity. A named subsystem excludes repository tests outside its declared boundary but must enumerate every permanent test inside it. Generated artifacts, temporary comparison data, audit data, and non-permanent tracer tests stay outside the suite only when the bound discovery rule excludes them explicitly. Changed-tests-only, incomplete, stale, moving, or contradictory target/suite intake is ineligible and returns `blocked` before either opinion dispatch. Completed-plan provenance is optional and contributes no authority.
+
+The two opinions receive the same frozen target, suite, policy, protocol, prompt, role-table, and request-provenance identities; each receives only its own controller-supplied binding attestation and no other opinion output.
 
 ## Opinion receipt
 
@@ -22,14 +28,14 @@ Each opinion returns one native child artifact whose controller-facing projectio
 ```text
 outcome: completed | transport-unavailable
 opinion: A | B
-attestation: agent name; fresh child identity; harness; logical role; requested model; resolved model; reasoning; capability/tools; isolation; fallback none; target identity; suite identity; policy identity; protocol identity
+attestation: exact agent and logical role; fresh child identity; role-table identity; native binding identity; requested and resolved model; reasoning; capability/tool boundary; isolation; fallback none; target identity; suite identity; policy identity; protocol identity
 coverage: manifest row count; ledger row count; selector-set digest; disposition counts; duplicate or omitted selectors
 ledger: native artifact locator; SHA-256 digest
 candidate index: one bounded entry for every non-keep ledger row
 transport mismatches: exact expected and observed values
 ```
 
-A completed receipt requires every attestation field to match the frozen tuple, zero duplicate or omitted selectors, equal manifest/ledger counts, equal selector-set digests, and disposition counts that sum to the manifest count. A mismatch returns `transport-unavailable`; the child does not continue the audit and the controller does not substitute another role.
+A completed receipt requires every attestation field to match the frozen tuple and controller-supplied binding, zero duplicate or omitted selectors, equal manifest/ledger counts, equal selector-set digests, and disposition counts that sum to the manifest count. A mismatch returns `transport-unavailable`; the child does not continue and the controller does not substitute another role. Transport failure changes only this explicit audit.
 
 The complete ledger remains behind its native locator. It contains exactly one row per manifest selector:
 
@@ -53,7 +59,7 @@ The bounded candidate index is not a partial ledger. It contains every non-`keep
 
 ## Controller admission
 
-Reject the pair as `transport-unavailable` when either receipt is missing, mismatched, fallback-backed, not read-only, not exact-model/exact-reasoning, not fresh, or shares a child identity. Never accept a single opinion, sequential self-opinions from one child, a copied ledger, or a model-family substitute.
+Reject the pair as `transport-unavailable` when either receipt is missing, mismatched, fallback-backed, not read-only, not exact-model/exact-reasoning, not fresh, fails its supplied binding attestation, or shares a child identity. Never accept a single opinion, sequential self-opinions from one child, a copied ledger, or a substitute role or model.
 
 For an admitted pair:
 
@@ -71,21 +77,21 @@ Recommendation count, confidence adjectives, model reputation, test length, file
 
 ## Stability and result
 
-After counterpart reads, rehash the target manifest, suite manifest, and policy. Any drift yields a non-mutating blocked Common Handoff naming the changed identity; do not publish stale candidates. When exact, emit one existing Common Handoff extended with:
+After counterpart reads, rehash the exact target, suite manifest, selector set, and policy. Any drift yields a non-mutating blocked Common Handoff naming the changed identity; do not publish stale candidates. When exact, emit one existing Common Handoff extended with:
 
 ```markdown
 ## Test audit
 - Protocol identity: test-audit/v1 URI and digest
-- Frozen target, suite, selector-set, and policy identities
-- Opinion A: exact role/attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
-- Opinion B: exact role/attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
+- Frozen target, suite, selector-set, and policy identities; evidence prose states explicit user or external-scheduler provenance, target kind, repository-complete or named-subsystem repository-partial scope, and optional completed-plan/parent-outcome provenance with authority none
+- Opinion A: exact binding attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
+- Opinion B: exact binding attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
 - Pair admission and distinct-identity result
 - Candidate union order and exact counterpart rows fetched
 - Aggregate selector → keep | merge | remove | unknown → evidence rule → opinion row references
 - Unsupported and unknown selectors preserved
 - Pre/post identity equality and repository no-mutation evidence
-- Audit outcome: completed | transport-unavailable | blocked
+- Audit outcome: completed | transport-unavailable | blocked; evidence prose labels named-subsystem results partial relative to the repository
 - Cleanup authority: none
 ```
 
-The Handoff references native artifacts instead of copying ledgers. `transport-unavailable` names every expected/observed mismatch and any unstarted or cancelled counterpart. `blocked` names stale or incomplete non-transport input. Neither outcome changes the completed plan, assurance, repair token, or suite. No audit role runs worker closure.
+The Handoff references native artifacts instead of copying ledgers. `transport-unavailable` names every expected/observed binding mismatch and any unstarted or cancelled counterpart. `blocked` names the exact ineligible, incomplete, stale, or moving non-transport field and records opinion dispatch count zero when preflight fails. Neither outcome changes implementation, assurance, repair, review, learning, completion, plan, or suite state. No audit role runs worker closure.

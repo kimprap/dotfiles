@@ -2,7 +2,7 @@
 
 ## Human overview
 
-This workflow carries a current engineering request or approved product authority through the smallest safe route to a locally complete result. It keeps one thin stateless router, stable human authority, immutable assurance, one semantic owner per responsibility, bounded attempts, criterion-complete worker smoke, exact profile-required proof and review, one terminal noncompact learning assessment, and separately authorized shipping.
+This workflow carries a current engineering request or approved product authority through the smallest safe route to a locally complete terminal result. It keeps one thin stateless router, stable human authority, immutable assurance, one semantic owner per responsibility, bounded attempts, criterion-complete worker smoke, exact profile-required proof and review, one terminal noncompact learning assessment, explicit read-only portfolio-audit intake, and separately authorized shipping.
 
 Engineering composes inside exactly `intake → classify → work-specialty → Handoff → papercut look/skip → assess/skip → present`. Specialty internals remain opaque. The same work child performs one soft papercut look after each work Handoff; the root falls back only when that child is unavailable. The specialty retains accounting in work-Handoff order and sends only ordered material results to the unversioned completion fence.
 
@@ -20,7 +20,7 @@ Common routes are:
 - hard unexplained defect → `dev-diagnosing-bugs`;
 - genuine multi-context route fog → `wayfinder`;
 - separately authorized delivery → `dev-shipping`;
-- immutable completed-plan test assessment → `dev-test-audit`, only after the plan is `DONE`.
+- explicit user or external-scheduler permanent-suite assessment → `dev-test-audit` against an exact frozen target and complete repository or named-subsystem boundary.
 
 Initial route approval authorizes the named prospective route. Reapprove only for a material change in authority, route, scope, acceptance, topology/independence, effects, shipping, shared assumptions, or equivalent capability.
 
@@ -51,6 +51,7 @@ Durable workflow decisions and supersession links are indexed in [`docs/adr/INDE
 | `papercut` | D24 |
 | `completion-presentation` | D18, D19, D27 |
 | `dev-shipping` | D12, D14 |
+| `dev-test-audit` | D04, D10, D15, D28 |
 
 ## Engine reference
 
@@ -70,8 +71,8 @@ Classification stops at the first matching current predicate:
 | Durable multi-context technical decisions remain | `dev-specification`, then optional `dev-ticketing` | Faithful derivative authority |
 | Exact approved implementation plan exists | `dev-implementation` plan root | Full/no-downgrade child orchestration |
 | Destination or decision route cannot fit one context | `wayfinder` | Resolved decision map |
-| Current terminal evidence is complete | `dev-ask` plus same-agent presenter | Fixed completed report |
-| An implementation plan is already `DONE` | `dev-test-audit` | Read-only Common Handoff or `transport-unavailable`, then stop |
+| An explicit user or external scheduler requests an exact complete portfolio audit | `dev-test-audit` | Read-only Common Handoff or `transport-unavailable`, then stop |
+| Current terminal evidence is complete | `dev-ask` plus same-agent presenter | Fixed completed report, then terminal state |
 | Human separately authorizes delivery | `dev-shipping` | Delivery and rollback evidence |
 
 Every criterion binds one complete canonical `surface-proof-recipe/v1` identity before readiness. Surface adapters are optional proof machinery, not route, assurance, topology, or Orchestrator Role Profile inputs.
@@ -88,11 +89,11 @@ Compact plans dispatch their authored work owners as children and remain tail-fr
 
 ### Worker attempts, closure, and test value
 
-Each unchanged Task Contract has attempt one and at most one eligible fresh-child attempt two. Attempt two requires criterion progress, exact blocker resolution, or an already authorized materially changed falsifiable hypothesis. Work attempts and admitted Build repair use same-child `worker-closure/v1`: mandatory round one, round two only after a contract-relevant correction, no third round, then task-local smoke and one Common Handoff. Assurance, learning, and audit roles never use closure.
+Each semantic work shape—planless same-context owner, plan-backed task child, eligible attempt-two child, and admitted Build-repair worker—uses same-owner `worker-closure/v1` after its candidate and before task-local smoke and one Common Handoff. The sole exact prompt makes mandatory round one cover correctness, preservation, effects, owned acceptance, the first-sufficient solution ladder, candidate-local structural regression, and changed permanent tests or a concrete no-new-contract decision. Directly evidenced contract violations are repaired even when correctness adds complexity; quality correction requires an exact defect, exact earlier-rung/smaller replacement or test disposition, and preservation proof. Any actual correction triggers one correction/regression-only round two; no correction means one round, and no branch runs a third. Assurance, integration, learning, audit, and review roles never use closure.
 
 After exhaustion, bare continue, elapsed time, another opinion, or an unchanged hypothesis changes no state. Only explicit human authorization naming the active plan and a materially changed falsifiable hypothesis creates a continuation receipt and fresh attempt-one/two cycle. The receipt binds plan/target identities, blocked task, remaining criteria, authorizer/time, cycle, and inherited repair-token state. No separate recovery envelope exists.
 
-Permanent tests follow `test-value/v1`: require an uncovered observable contract, regression, or invariant; reuse or extend the closest current test; use a stable public seam and independent oracle; name one plausible unique bug; reject duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, and production-logic-oracle cases; retain the smallest unique set. Explicit TDD keeps red/green evidence but consolidates redundant tracer tests.
+Permanent tests follow unchanged `test-value/v1`: require an uncovered observable contract, regression, or invariant; reuse or extend the closest current test; use a stable public seam and independent oracle; name one plausible unique bug; reject duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, and production-logic-oracle cases; retain the smallest unique set. Settle each changed test as `keep`, `merge`, or `remove`, or record a concrete existing-coverage/no-new-contract basis, before final smoke. Closure never scans untouched portfolio tests. Explicit TDD keeps red/green evidence but consolidates redundant tracer tests.
 
 ### Assurance and repair
 
@@ -100,7 +101,7 @@ Compact ends with criterion-complete exact-target smoke and one Handoff. Standar
 
 The run owns one post-assurance repair token. A blocking verifier or reviewer Handoff may consume it once for causally implicated task IDs only. Each Build repair uses a fresh child, unchanged Task Contract, worker closure, impacted smoke, and one Handoff. Canonical projections rerun their last owner when affected. The repaired target receives fresh impacted proof and one review on its new identity.
 
-The read-only post-plan audit is separate and non-gating. It begins only after normal plan `DONE`, never changes completion, runs no closure, mutates no test, consumes no repair token, and cannot authorize cleanup.
+Normal engineering completion is terminal and schedules no audit. An explicit user or external-scheduler request may separately enter read-only `dev-test-audit` with an exact content-addressed working-tree manifest or commit and a complete repository or named-subsystem suite manifest; completed-plan provenance is optional. Changed-tests-only, incomplete, stale, or moving intake stops before opinions. The audit never changes completion, runs closure, mutates tests, consumes repair, or authorizes cleanup.
 
 ### Handoff, papercuts, and completion
 
@@ -110,17 +111,17 @@ After each work Handoff, the same child performs one soft papercut look; root fa
 
 After terminal evidence and settlement, `dev-ask` validates exactly `status`, `outcome`, `change_scope`, `key_artifacts`, `verification`, `papercuts`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, and `next` in one current `completion-presentation-input` fence. `change_scope` and `key_artifacts` are ordered one-to-three-item arrays; the legacy `changed` key, scalar list values, and legacy singular papercut key are invalid. The same agent applies `completion-presentation`; all fields use its uniform hanging projection, with `[]` papercuts rendered as the presenter-owned hanging scalar `none` and each nonempty array item rendered as one hanging child bullet.
 
-Completion requires current authority and approvals; all task/criterion/smoke and Handoff accounting; required verification, fan-in, review, and noncompact learning; stable target and manifest identities; no blocker, stale result, failed dependency, or required check; residual advisories recorded; a durable `#completion-summary` Resume from whose summary contains outcome, decisions, evidence identities, residual risk, and the exact target manifest reference; the existing immutable Handoff; `shipping not authorized`; and exact authorized Next.
+Completion requires current authority and approvals; all task/criterion/smoke and Handoff accounting; required verification, fan-in, review, and noncompact learning; stable target and manifest identities; no blocker, stale result, failed dependency, or required check; residual advisories recorded; a durable `#completion-summary` Resume from whose summary contains outcome, decisions, evidence identities, residual risk, and the exact target manifest reference; the existing immutable Handoff; `shipping not authorized`; and exact authorized Next. Its profile-specific presentation is terminal and dispatches no portfolio audit.
 
 ## Skill catalog
 
-- [`dev-ask`](SKILL.md) — thin router, route approval, first dispatch, completion normalization, and post-plan audit routing.
-- [`dev-implementation`](../dev-implementation/SKILL.md) — direct execution, plan root, attempts, closure control, smoke, assurance scheduling, repair, and completion accounting.
+- [`dev-ask`](SKILL.md) — thin router, route approval, first dispatch, explicit portfolio-audit intake, and terminal completion normalization.
+- [`dev-implementation`](../dev-implementation/SKILL.md) — direct execution, plan root, attempts, same-owner closure control, task-local test settlement and smoke, assurance scheduling, repair, and completion accounting.
 - [`dev-verification`](../dev-verification/SKILL.md) — fresh independent criterion proof.
 - [`dev-integration`](../dev-integration/SKILL.md) — neutral fan-in of every named verified isolated lineage.
 - [`dev-code-review`](../dev-code-review/SKILL.md) — one current-target Standards and Specification review using `test-value/v1`.
 - [`dev-continual-learning`](../dev-continual-learning/SKILL.md) — thin visible terminal learning adapter.
-- [`dev-test-audit`](../dev-test-audit/SKILL.md) — separately routed two-opinion read-only audit after plan completion.
+- [`dev-test-audit`](../dev-test-audit/SKILL.md) — separately routed explicit user or external-scheduler two-opinion read-only audit against an exact complete frozen repository or named-subsystem suite boundary; completed-plan provenance is optional.
 - [`dev-handoff`](../dev-handoff/SKILL.md) — sole revision-bound result and recovery envelope.
 - [`papercut`](../papercut/SKILL.md) — candidate-triggered current-work friction evidence and exact-record settlement.
 - [`completion-presentation`](../completion-presentation/SKILL.md) — sole renderer for one specialty-validated current fence.

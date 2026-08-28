@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-26
+**Updated:** 2026-08-28
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -44,13 +44,14 @@ The workflow needs one current route and one durable explanation of why its boun
 
 ### D10 — Sole thin, stateless router
 
-- **Scope:** External generic engineering classification, lifecycle dispatch, completion normalization, and post-plan audit routing.
-- **Decision:** Keep `dev-ask` the sole thin, stateless external router. It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches one first owner; handles material reapproval; validates terminal evidence; constructs the current completion fence; and, only after an implementation plan is `DONE`, routes the separate read-only `dev-test-audit` and stops on its Handoff or `transport-unavailable`.
-- **Decision:** The router owns no baton ledger, workflow state machine, execution state, semantic plan work, audit opinion, test mutation, or competing routing policy. Post-plan audit availability never delays assurance, completion, or plan `DONE` and never authorizes cleanup.
+- **Scope:** External generic engineering classification, lifecycle dispatch, explicit portfolio-audit intake, and terminal completion normalization.
+- **Decision:** Keep `dev-ask` the sole thin, stateless external router. It classifies from intent, authority, evidence, consequence, and lifecycle facts; dispatches one first owner; handles material reapproval; validates terminal evidence; constructs the current completion fence; and routes an explicit user or external-scheduler portfolio-audit request through the existing validated direct-stage seam.
+- **Decision:** Successful normal engineering completion is terminal after its profile-specific presentation. No audit is scheduled from presentation, plan `DONE`, assurance, review, or learning. An explicit audit is a new intake against its own exact frozen target and complete repository or named-subsystem suite boundary; completed-plan provenance is optional and grants no authority.
+- **Decision:** The router owns no baton ledger, workflow state machine, execution state, semantic plan work, audit opinion, audit scheduler, test mutation, cleanup authority, or competing routing policy. A later explicit cleanup request is fresh maintenance: bounded, cohesive, settled one-context work may be planless; broad, dependency-ordered, fan-in, or recovery-sensitive work requires a new Executor Plan.
 - **Why:** One semantic router prevents contradictory lifecycle authority while keeping execution state with `dev-implementation`, audit opinions with the audit specialty, and rendering with `completion-presentation`.
-- **Rejected alternatives / why not:** A competing router, runtime ledger, routing stage, generic evaluator, issue tracker, or provider-specific coordination authority duplicates existing owners. Treating a post-plan audit as a numbered implementation task or completion gate couples read-only assessment to delivery.
-- **Consequences:** Route judgments remain evidence-backed and stateless. The router can invoke the completed-target audit without reopening the completed lifecycle.
-- **Reopen when:** Sole router ownership, statelessness, completion normalization, post-plan audit routing, or backend execution-state ownership changes.
+- **Rejected alternatives / why not:** A competing router, runtime ledger, routing stage, generic evaluator, issue tracker, scheduler, automatic completion-tail audit, or provider-specific coordination authority duplicates existing owners and couples read-only assessment to delivery.
+- **Consequences:** Route judgments remain evidence-backed and stateless. Normal completion terminates without audit; a separately requested audit or cleanup starts fresh and cannot reopen or inherit authority from completed work.
+- **Reopen when:** Sole router ownership, statelessness, completion normalization, explicit audit routing, fresh maintenance classification, or backend execution-state ownership changes.
 ### D11 — Independent workflow dimensions
 
 - **Scope:** Route lifecycle depth, assurance profile, execution topology, plan-backed activation, and proof adapters.
@@ -78,6 +79,7 @@ The workflow needs one current route and one durable explanation of why its boun
 - **Decision:** The completion cutover cleanly renames the unversioned fence field to ordered `papercuts` across engineering, product, custom, direct, and presenter callers. None-only accounting becomes `[]`; scalar input is rejected without a compatibility reader.
 - **Decision:** The completion presentation cutover removes the legacy `changed` field and `Changed` label across every active caller and fixture. One ordered `change_scope` list carries concise aggregate count/category statements; one ordered `key_artifacts` list carries one to three durable entry points; exhaustive inventory remains in the exact target manifest and/or Handoff. `resume_from` now targets a durable Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact applicable manifest reference. There is no compatibility reader.
 - **Decision:** The clean surface-verification cutover still names exactly `surface-verification-adapter`, `create-surface-verification-adapter`, and `maintain-surface-verification-adapter`, with both wrappers disabled from ordinary model invocation.
+- **Decision:** The terminal-completion and explicit-audit cutover removes every automatic post-`DONE` or post-presentation audit transition. It keeps `test-audit/v1` only as an explicit validated direct-stage intake and leaves no compatibility path from normal completion.
 - **Why:** Dual behavior obscures the active contract and makes authoritative selection impossible.
 - **Rejected alternatives / why not:** Aliases, compatibility readers, obsolete callers, a second completion schema, or a second orchestration mode preserve silently competing behavior.
 - **Consequences:** The cutover is complete only when every owned projection agrees and the closed caller scan passes. An outside live canonical caller requires authority change rather than silent scope expansion.

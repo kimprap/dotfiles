@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-26
+**Updated:** 2026-08-28
 **Decision IDs:** D06, D08, D09, D21
 
 ## Scope
@@ -42,21 +42,22 @@ Large, approved work needs enough structure that a fresh or less-capable executo
 - **Decision:** The root projects only authored task IDs and declared backend boundaries. It computes dependency readiness, shared-tree admission, attempts, blockers, and receiver transitions mechanically; it never invents, splits, merges, substitutes, or semantically repairs a task.
 - **Decision:** Todo state is subordinate runtime bookkeeping, not a second plan. A task completes only after its owned criteria and smoke pass, target identity is stable, one Common Handoff is mechanically accepted, and its post-Handoff papercut look is accounted. Non-success preserves completed Handoffs and the exact remaining frontier.
 - **Decision:** When the numbered graph omits an optional assurance tail, the backend schedules fresh current-target `dev-verification`, then one current-target `dev-code-review`, then terminal `dev-continual-learning`. If the plan authors the optional tail, those same semantic boundaries run exactly once through the task graph.
-- **Decision:** A completed plan may be followed by the separately routed read-only audit; audit availability or findings do not change task state, assurance, repair, or `DONE`.
+- **Decision:** Successful normal engineering completion is terminal. A later explicit portfolio audit is a new router intake; it is never a projected task, hidden tail, completion transition, or source of task, assurance, repair, or `DONE` state.
 - **Why:** One authoritative plan plus derived mechanical state is enough for scheduling and recovery.
-- **Rejected alternatives / why not:** A generated hidden tail, invented repair task, second runtime plan, or audit task changes authored authority. Letting the root judge semantic sufficiency collapses ownership and assurance.
-- **Consequences:** Completion and recovery can be audited against plan IDs, Handoffs, target identities, and proof receipts without inspecting child transcripts.
-- **Reopen when:** Runtime projection, optional-tail semantics, backend scheduling, or post-plan audit status changes.
+- **Rejected alternatives / why not:** A generated hidden tail, invented repair task, second runtime plan, or automatic audit transition changes authored authority. Letting the root judge semantic sufficiency collapses ownership and assurance.
+- **Consequences:** Completion and recovery can be audited against plan IDs, Handoffs, target identities, and proof receipts without inspecting child transcripts. Explicit later audits remain outside plan state.
+- **Reopen when:** Runtime projection, optional-tail semantics, backend scheduling, or terminal completion semantics change.
 ### D21 — Worker solution discipline
 
-- **Scope:** Work attempts, admitted Build repair, progressive implementation instructions, and permanent-test decisions.
-- **Decision:** Resolve the task against its unchanged Task Contract using the smallest coherent implementation. Check current patterns before editing; prefer direct use, local helper, existing boundary extension, then only a justified deep module. Delete obsolete paths in the same cutover.
-- **Decision:** Work attempt one, eligible fresh-child attempt two, and admitted Build repair use `worker-closure/v1` in the same child. Round one is mandatory. Round two runs only after round one causes a contract-relevant correction and checks only corrected findings and repair-caused regressions. Repair every concrete finding, run task-local smoke, and emit one Common Handoff. There is no third round. Verification, review, learning, audit controller, and audit opinions never use worker closure.
-- **Decision:** Permanent tests use `test-value/v1`: name an uncovered observable contract, regression, or invariant; reuse or extend current coverage first; use a stable public seam and independent oracle; name a plausible unique bug; reject duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, and production-logic-oracle tests; keep the smallest unique set. Explicit TDD retains red/green evidence and consolidates redundant tracer tests before Handoff.
-- **Why:** Mandatory challenge at the semantic worker catches omissions without making the mechanical root or independent assurance roles repair work. Value-gated testing prevents permanent suite growth without unique protection.
-- **Rejected alternatives / why not:** Root-conducted challenge violates the control-plane boundary. Unbounded review rounds prevent terminality. Coverage-only test creation and duplicated tracer cases add maintenance cost without a distinct contract.
-- **Consequences:** Each work Handoff identifies closure rounds/findings/corrections/smoke and changed-test rows or a concrete no-new-contract decision.
-- **Reopen when:** Closure ownership, round bound, solution discipline, or shared permanent-test policy changes.
+- **Scope:** Planless same-context work, plan-backed task children, eligible attempt-two children, admitted Build-repair workers, and permanent-test decisions.
+- **Decision:** Resolve the task against its unchanged Task Contract using the first sufficient rung: reuse current code, then the standard library, then the native platform, then an installed dependency, then minimum new code. Delete obsolete paths in the same cutover without reducing approved behavior, preservation, safety, accessibility, or proof.
+- **Decision:** Each of the four semantic work shapes uses `worker-closure/v1` in the same semantic owner after a candidate and before task-local smoke and one Common Handoff. The sole exact prompt in `worker-closure.md` makes round one cover correctness, preservation, declared effects, owned acceptance, the first-sufficient ladder, candidate-local structural regression, and every changed permanent test or a concrete no-new-contract decision.
+- **Decision:** Admit and repair every directly evidenced correctness, preservation, effect, or owned-acceptance violation even when the smallest correct repair adds code or complexity. Admit a simplification, structural, or permanent-test quality correction only when it names the exact surface and defect, an exact earlier-rung or smaller replacement or test disposition, and preservation proof; otherwise record no quality correction and do not turn the proposal into a correctness blocker.
+- **Decision:** Any actual admitted correction triggers exactly one round two limited to corrected findings and plausible correction-caused regressions. No correction skips round two; no branch runs a third round or reopens unaffected candidate work. Settle changed permanent tests under unchanged `test-value/v1`, or record the concrete no-new-contract basis, before final smoke and the sole Handoff. Untouched portfolio tests are outside closure.
+- **Why:** Mandatory bounded challenge at the semantic worker catches contract omissions without turning the mechanical root or independent assurance roles into repair owners. Exact quality admission and task-local test settlement prevent speculative rewrites and unbounded portfolio review.
+- **Rejected alternatives / why not:** Root-conducted challenge violates the control-plane boundary. A complexity gate on correctness can suppress required repair; blanket quality admission, copied prompts, untouched-suite scanning, or unbounded review rounds prevent safe terminality.
+- **Consequences:** Each work Handoff identifies the exact closure digest, rounds, findings, corrections, dispositions, final smoke, and changed-test rows or concrete no-new-contract decision.
+- **Reopen when:** Closure ownership, applicability, admission, round bound, solution discipline, smoke/Handoff order, or shared permanent-test policy changes.
 ## Affected contracts
 
 - `.config/agents/rules/plan.md`, `.config/agents/rules/plan-impl-spec.md`, `.config/agents/rules/plan-repo-storage.md`, `.config/agents/rules/plan-omp-transport.md`, and `.config/agents/rules/plan-grok-transport.md` for portable grammar, repository storage, and thin authoring adapters.

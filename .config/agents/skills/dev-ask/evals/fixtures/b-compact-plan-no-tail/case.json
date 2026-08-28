@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning."
+    "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
   },
   "scripted_replies": []
 }

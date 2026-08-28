@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task."
+    "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
   },
   "scripted_replies": []
 }

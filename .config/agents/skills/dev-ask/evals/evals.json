@@ -1477,7 +1477,7 @@
     {
       "absent_capabilities": [],
       "approval_state": "current-continuation",
-      "criterion": "A valid standard completion normalizes settled engineering evidence to the fixed generic completed report without a completed Route, new dispatch, approval, evidence replay, or second Handoff. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts.",
+      "criterion": "A valid standard completion normalizes settled engineering evidence to the fixed generic completed report without a completed Route, new dispatch, approval, evidence replay, or second Handoff. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "normalized terminal input",
@@ -1488,9 +1488,11 @@
           "durable Completion Summary Resume from and existing Handoff references"
         ],
         "first_owner": null,
-        "gates": [],
+        "gates": [
+          "zero automatic portfolio-audit events"
+        ],
         "mode": "none",
-        "outcome": "fixed terminal report presented automatically",
+        "outcome": "fixed terminal report presented automatically; terminal without audit epilogue",
         "owners": [],
         "route": "completion-presentation"
       },
@@ -1509,11 +1511,13 @@
         "presenter-dispatch",
         "presenter-task",
         "presenter-Handoff",
-        "shipping-in-next"
+        "shipping-in-next",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "R-COMPLETE",
       "inputs": {
-        "request": "The initially approved standard prospective route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and completion-presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, NO DURABLE LEARNING result, papercut soft look, residual risk, and one immutable Common Handoff are accounted with no remaining work. Normalize one specialty-validated status completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Outcome, Change scope, and Key artifacts; final VERIFIED and APPROVED evidence; Papercuts: none; Learning: NO DURABLE LEARNING — no guidance change; Residual risk: none; the immutable Common Handoff reference; and Next: none. Emit no Route, route history, internal manifest, counter, raw receipt, second Handoff, or shipping claim. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary."
+        "request": "The initially approved standard prospective route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and completion-presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, NO DURABLE LEARNING result, papercut soft look, residual risk, and one immutable Common Handoff are accounted with no remaining work. Normalize one specialty-validated status completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Outcome, Change scope, and Key artifacts; final VERIFIED and APPROVED evidence; Papercuts: none; Learning: NO DURABLE LEARNING — no guidance change; Residual risk: none; the immutable Common Handoff reference; and Next: none. Emit no Route, route history, internal manifest, counter, raw receipt, second Handoff, or shipping claim. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1526,20 +1530,22 @@
         "completion-input:scope-key-artifacts",
         "completion-input:resume-summary-index",
         "completion-input:fenced-same-turn",
-        "completion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route"
+        "completion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require current complete standard evidence, final VERIFIED and APPROVED receipts, terminal NO DURABLE LEARNING, settled papercut accounting, no blocker, and one immutable Common Handoff before normalization.",
         "Require exactly Completed, Evidence, and Continuation with Outcome, Change scope, Key artifacts, Verification, Papercuts, Learning, Residual risk, State, Handoff, and Next.",
         "Forbid a completed Route or route history, new dispatch or approval, assurance replay, raw internal mechanics, a second Handoff, and shipping.",
-        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none."
+        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": []
     },
     {
       "absent_capabilities": [],
       "approval_state": "current-continuation",
-      "criterion": "A valid compact completion with bound Intent/Methods, criterion-complete exact-target smoke, one Common Handoff, and a silent papercut look normalizes to the fixed generic completed report without assurance or learning dispatch. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts.",
+      "criterion": "A valid compact completion with bound Intent/Methods, criterion-complete exact-target smoke, one Common Handoff, and a silent papercut look normalizes to the fixed generic completed report without assurance or learning dispatch. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "normalized terminal input",
@@ -1552,9 +1558,11 @@
         ],
         "assurance_profile": "compact",
         "first_owner": null,
-        "gates": [],
+        "gates": [
+          "zero automatic portfolio-audit events"
+        ],
         "mode": "none",
-        "outcome": "fixed compact terminal report presented automatically",
+        "outcome": "fixed compact terminal report presented automatically; terminal without audit epilogue",
         "owners": [],
         "route": "completion-presentation"
       },
@@ -1579,11 +1587,13 @@
         "presenter-dispatch",
         "presenter-task",
         "presenter-Handoff",
-        "shipping-in-next"
+        "shipping-in-next",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "R-COMPLETE-COMPACT-NO-LEARNING",
       "inputs": {
-        "request": "The approved compact task is complete: its human Intent and Methods evidence are preserved, every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, the Common Handoff is complete, its soft papercut look produced no candidate or output, no blocker remains, and no context crossed. Normalize one specialty-validated completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance; emit no Route and do not claim verification, review, continual learning, or a papercut lifecycle ran. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary."
+        "request": "The approved compact task is complete: its human Intent and Methods evidence are preserved, every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, the Common Handoff is complete, its soft papercut look produced no candidate or output, no blocker remains, and no context crossed. Normalize one specialty-validated completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance; emit no Route and do not claim verification, review, continual learning, or a papercut lifecycle ran. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the compact conditional route and terminal evidence.",
@@ -1596,13 +1606,15 @@
         "completion-input:scope-key-artifacts",
         "completion-input:resume-summary-index",
         "completion-input:fenced-same-turn",
-        "completion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route"
+        "completion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require bound Intent and Methods, every passing deterministic exact-target smoke result, one complete Common Handoff, and the silent no-candidate papercut look before normalization.",
         "Require exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance.",
         "Forbid completed Route or route history, independent verification, review, continual-learning or papercut invocation, new dispatch or approval, a second Handoff, and shipping.",
-        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none."
+        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": []
     },
@@ -1937,7 +1949,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "The observed backend trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects. One visible dev adapter invocation accounts one unchanged portable assess result without a second task, state, or Handoff. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption.",
+      "criterion": "The observed backend trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects. One visible dev adapter invocation accounts one unchanged portable assess result without a second task, state, or Handoff. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "state trace",
@@ -1953,10 +1965,11 @@
           "approved recursive durable graph",
           "one visible dev-continual-learning adapter invocation",
           "current once-bound manifest equality on re-entry",
-          "duplicate dispatch tuple rejection before consumption"
+          "duplicate dispatch tuple rejection before consumption",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "full orchestration",
-        "outcome": "full orchestrated run complete",
+        "outcome": "full orchestrated run complete; terminal without audit epilogue",
         "owners": [
           "backend",
           "planner",
@@ -1981,11 +1994,13 @@
         "completed-stage-reopen",
         "duplicate-role-dispatch",
         "resume-counter-increment",
-        "second-resume-Handoff"
+        "second-resume-Handoff",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-FULL",
       "inputs": {
-        "request": "An approved recursive durable graph requires decomposition, dependency waves, independent proof, recoverable attempts, and neutral fan-in. All unspecified authority, capability-profile, identity, adapter, smoke, and verifier prerequisites are current and satisfied. The current full-orchestration Route Overview is explicitly human-approved. Emit separate owner:planner running/handed-off decomposition events for the current parent or session owner's bounded decomposition and separate owner:worker running/handed-off implementation events; the planner label is an evidence source only, never a dedicated custom planner dispatch, and a merged owner such as worker/planner is invalid. Identify owner:dev-continual-learning explicitly on the bounded curation evidence artifact, but not on a lifecycle state transition. The visible `dev-continual-learning` tail owner invokes portable `continual-learning assess` exactly once inside its existing task and returns the exact portable result identity and seven-field payload through that task's one Common Handoff; add no portable owner state, task, or second Handoff. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff."
+        "request": "An approved recursive durable graph requires decomposition, dependency waves, independent proof, recoverable attempts, and neutral fan-in. All unspecified authority, capability-profile, identity, adapter, smoke, and verifier prerequisites are current and satisfied. The current full-orchestration Route Overview is explicitly human-approved. Emit separate owner:planner running/handed-off decomposition events for the current parent or session owner's bounded decomposition and separate owner:worker running/handed-off implementation events; the planner label is an evidence source only, never a dedicated custom planner dispatch, and a merged owner such as worker/planner is invalid. Identify owner:dev-continual-learning explicitly on the bounded curation evidence artifact, but not on a lifecycle state transition. The visible `dev-continual-learning` tail owner invokes portable `continual-learning assess` exactly once inside its existing task and returns the exact portable result identity and seven-field payload through that task's one Common Handoff; add no portable owner state, task, or second Handoff. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -2009,7 +2024,8 @@
         "state:reviewing|owner:dev-code-review|output:fresh Standards and Specification review",
         "state:reviewed|owner:dev-code-review|output:final review PASS and APPROVED",
         "state:complete|owner:backend|output:curation evidence accounted and no required work remains; one dev-continual-learning adapter Common Handoff carries unchanged portable assess result identity and seven-field payload; no second task, state, or Handoff",
-        "snapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff"
+        "snapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Derive the justified backend trace from the supplied scenario and embedded candidate authority; compare its authority, topology, state order, role ownership, gates, artifacts, outcome, and stop or continuation boundary with the observation.",
@@ -2018,7 +2034,8 @@
         "Reject readiness without current authority/dependencies, illegal retries, dependent continuation after invalidation, silent fallback, premature integration/review/completion, inferred shipping, or lineage loss.",
         "Runtime and source fixtures remain read-only; missing or contradictory proof is not semantic success.",
         "Require the visible dev-continual-learning owner to invoke portable assess once inside its existing task and pass the exact result through its one Common Handoff; reject a direct portable tail row or duplicate lifecycle structure.",
-        "Require current once-bound manifests and the same completed stages, selected role slot, semantic-attempt identity, repair/review/learning state, current continuation receipt identity when applicable, terminal state, and artifact identities after pause/compaction; reject an exact duplicate tuple before dispatch with no attempt or role-slot consumption and no second Handoff."
+        "Require current once-bound manifests and the same completed stages, selected role slot, semantic-attempt identity, repair/review/learning state, current continuation receipt identity when applicable, terminal state, and artifact identities after pause/compaction; reject an exact duplicate tuple before dispatch with no attempt or role-slot consumption and no second Handoff.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -2421,11 +2438,12 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Review blocks a changed-contract caller defect but keeps unrelated mutable-environment drift advisory under the declared causal no-effect boundary.",
+      "criterion": "One final review blocks direct changed-contract consumer harm and directly evidenced material suite degradation while keeping unrelated mutable-environment drift advisory under the declared causal no-effect boundary.",
       "expected": {
         "artifacts": [
           "state trace",
-          "eligible review blocker",
+          "direct contract blocker",
+          "material suite-degradation blocker",
           "causal no-effect evidence",
           "terminal advisory"
         ],
@@ -2434,10 +2452,11 @@
         "gates": [
           "fixed verified target",
           "complete applicable-rule manifest",
-          "finding relevance"
+          "finding relevance",
+          "direct material test evidence"
         ],
         "mode": "one owner",
-        "outcome": "changed-contract caller blocker returned; unrelated drift advisory",
+        "outcome": "direct caller and material suite-degradation blockers returned; unrelated drift advisory",
         "owners": [
           "backend",
           "worker",
@@ -2450,12 +2469,14 @@
       "forbidden_events": [
         "sidecar-in-repair-set",
         "unsupported-suspicion-blocker",
+        "non-material-test-blocker",
         "reviewer-repair",
+        "second-review",
         "implicit shipping"
       ],
       "id": "B-REVIEW",
       "inputs": {
-        "request": "Read-only standard review trace for fixed verified target target-sha256:4a6f2d9b. Review finds FIND-CALLER: required existing consumer caller-A still uses the removed contract, violating AC-CUTOVER, with direct static evidence. It also observes mutable sidecar drift outside the declared pre/post causal boundary. Return CHANGES REQUIRED for FIND-CALLER only; keep sidecar drift advisory and do not let it enter the repair set. Emit exactly the following eight candidate event lines, byte-for-byte and in this order, and emit no other event line:\nstate:accepted|owner:backend|output:fixed target-sha256:4a6f2d9b and complete review manifest accepted\nstate:ready|owner:backend|output:worker contract ready\nstate:running|owner:worker|output:implementation on fixed target\nstate:handed-off|owner:worker|output:Handoff and smoke for fixed target\nstate:verifying|owner:dev-verification|output:fresh proof of fixed target and finite consumers\nstate:verified|owner:dev-verification|output:fixed target VERIFIED\nstate:reviewing|owner:dev-code-review|output:FIND-CALLER violates AC-CUTOVER at required caller-A; sidecar drift outside causal boundary advisory\nstate:failed|owner:backend|output:CHANGES REQUIRED with FIND-CALLER only; sidecar advisory cannot reopen repair"
+        "request": "Read-only standard review trace for fixed verified target target-sha256:4a6f2d9b. Review finds FIND-CALLER: required existing consumer caller-A still uses the removed contract, violating AC-CUTOVER, with direct static evidence. Review also finds FIND-SUITE: the changed permanent test removes the sole independent eviction-boundary oracle, with direct before/after evidence that the suite would no longer fail on a plausible stale-hit regression; this is material suite degradation. It also observes mutable sidecar drift outside the declared pre/post causal boundary. Return CHANGES REQUIRED for FIND-CALLER and FIND-SUITE only; keep sidecar drift advisory and do not let it enter the repair set. Run one Standards/Specification review, use the existing six tags, perform no reviewer repair or second review, and emit exactly the following eight candidate event lines, byte-for-byte and in this order, and emit no other event line:\nstate:accepted|owner:backend|output:fixed target-sha256:4a6f2d9b and complete review manifest accepted\nstate:ready|owner:backend|output:worker contract ready\nstate:running|owner:worker|output:implementation on fixed target\nstate:handed-off|owner:worker|output:Handoff and smoke for fixed target\nstate:verifying|owner:dev-verification|output:fresh proof of fixed target, finite consumers, and changed permanent-test evidence\nstate:verified|owner:dev-verification|output:fixed target VERIFIED\nstate:reviewing|owner:dev-code-review|output:FIND-CALLER violates AC-CUTOVER at required caller-A; FIND-SUITE directly proves material suite degradation because the changed test removes the sole eviction-boundary oracle; sidecar drift outside causal boundary advisory\nstate:failed|owner:backend|output:CHANGES REQUIRED with FIND-CALLER and FIND-SUITE only; sidecar advisory cannot reopen repair"
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -2466,15 +2487,16 @@
         "state:ready|owner:backend|output:worker contract ready",
         "state:running|owner:worker|output:implementation on fixed target",
         "state:handed-off|owner:worker|output:Handoff and smoke for fixed target",
-        "state:verifying|owner:dev-verification|output:fresh proof of fixed target and finite consumers",
+        "state:verifying|owner:dev-verification|output:fresh proof of fixed target, finite consumers, and changed permanent-test evidence",
         "state:verified|owner:dev-verification|output:fixed target VERIFIED",
-        "state:reviewing|owner:dev-code-review|output:FIND-CALLER violates AC-CUTOVER at required caller-A; sidecar drift outside causal boundary advisory",
-        "state:failed|owner:backend|output:CHANGES REQUIRED with FIND-CALLER only; sidecar advisory cannot reopen repair"
+        "state:reviewing|owner:dev-code-review|output:FIND-CALLER violates AC-CUTOVER at required caller-A; FIND-SUITE directly proves material suite degradation because the changed test removes the sole eviction-boundary oracle; sidecar drift outside causal boundary advisory",
+        "state:failed|owner:backend|output:CHANGES REQUIRED with FIND-CALLER and FIND-SUITE only; sidecar advisory cannot reopen repair"
       ],
       "rubric": [
-        "Require the blocker to cite AC-CUTOVER, required caller-A, and direct evidence.",
-        "Bind no-effect evidence to the declared causal pre/post boundary.",
-        "Keep unrelated mutable sidecar drift advisory and outside the repair set."
+        "Require FIND-CALLER to cite AC-CUTOVER, required caller-A, and direct evidence.",
+        "Require FIND-SUITE to cite changed-test before/after evidence, the lost sole independent oracle, and a plausible regression, establishing material suite degradation.",
+        "Bind no-effect evidence to the declared causal pre/post boundary and keep unrelated sidecar drift advisory outside the repair set.",
+        "Require exactly one Standards/Specification review with the existing six tags, no reviewer repair, and no second review."
       ],
       "scripted_replies": [],
       "trace_scope": "prefix"
@@ -2697,7 +2719,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Eligible direct compact binds a human Intent, Methods none, and tail source none, advances through exact-target smoke, hands off once, finds no papercut candidate, and completes without a profile tail. Compact performs no portable continual-learning invocation.",
+      "criterion": "Eligible direct compact binds a human Intent, Methods none, and tail source none, advances through exact-target smoke, hands off once, finds no papercut candidate, and completes without a profile tail. Compact performs no portable continual-learning invocation. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "state trace",
@@ -2714,10 +2736,11 @@
           "direct Intent and Methods none bound before ready",
           "compact checklist",
           "case-bound no papercut candidate",
-          "portable continual-learning skipped for compact assurance"
+          "portable continual-learning skipped for compact assurance",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "one owner",
-        "outcome": "compact completion after criterion-complete smoke",
+        "outcome": "compact completion after criterion-complete smoke; terminal without audit epilogue",
         "owners": [
           "backend",
           "worker"
@@ -2743,11 +2766,13 @@
         "ledger:write",
         "skill:continual-learning",
         "portable-assess",
-        "portable-deep"
+        "portable-deep",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-COMPACT",
       "inputs": {
-        "request": "Read-only compact state-trace simulation. Derive one short human Intent from current direct authority and bind Methods none before ready without loading a method skill. Map every acceptance criterion to exact-target smoke, pass each scenario, emit one Common Handoff, take the silent no-candidate post-Handoff soft look, and complete without Executor Plan, Context Pack, verification, review, learning, papercut access/output, or shipping."
+        "request": "Read-only compact state-trace simulation. Derive one short human Intent from current direct authority and bind Methods none before ready without loading a method skill. Map every acceptance criterion to exact-target smoke, pass each scenario, emit one Common Handoff, take the silent no-candidate post-Handoff soft look, and complete without Executor Plan, Context Pack, verification, review, learning, papercut access/output, or shipping. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -2758,14 +2783,16 @@
         "state:ready|owner:backend|output:Methods none bound before ready; no method skill loaded; compact checklist passed; acceptance-to-smoke map ready",
         "state:running|owner:worker|output:semantic attempt 1/2 performs bounded reversible implementation on the exact compact target",
         "state:handed-off|owner:worker|output:one complete Common Handoff for the exact compact target carries unchanged Intent, Methods none, no-skill evidence, and passing exact-revision smoke for every acceptance criterion; then papercut-soft-look:no-candidate-silent; no skill, storage access, or output",
-        "state:complete|owner:backend|output:exact compact target complete after Common Handoff validation and criterion-complete smoke; tail source none; no profile tail or lifecycle dispatch; portable continual-learning skipped for compact assurance"
+        "state:complete|owner:backend|output:exact compact target complete after Common Handoff validation and criterion-complete smoke; tail source none; no profile tail or lifecycle dispatch; portable continual-learning skipped for compact assurance",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require direct human Intent derivation and Methods none binding with no skill before ready.",
         "Require accepted, ready, running, handed-off, complete progression and complete acceptance-to-smoke evidence.",
         "Require the Common Handoff before one silent no-candidate soft look.",
         "Reject Context Pack, Executor Plan, papercut access/output, verification, review, learning, or shipping.",
-        "Require compact to skip both dev-continual-learning and portable continual-learning; preserve any mutating candidate only as deferred evidence."
+        "Require compact to skip both dev-continual-learning and portable continual-learning; preserve any mutating candidate only as deferred evidence.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -6127,7 +6154,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Completion presentation is eligible only after exact final assurance and terminal learning evidence, with shipping absent. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption. Valid completion exposes one bounded normalized presenter input only after receipt and settlement validation. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts.",
+      "criterion": "Completion presentation is eligible only after exact final assurance and terminal learning evidence, with shipping absent. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption. Valid completion exposes one bounded normalized presenter input only after receipt and settlement validation. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "exact terminal evidence snapshot",
@@ -6146,10 +6173,11 @@
           "final review APPROVED",
           "terminal learning accounted",
           "current once-bound manifest equality on re-entry",
-          "duplicate dispatch tuple rejection before consumption"
+          "duplicate dispatch tuple rejection before consumption",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "one owner",
-        "outcome": "completion eligible; shipping absent; bounded completed input returned for generic presentation",
+        "outcome": "completion eligible; shipping absent; bounded completed input returned for generic presentation; terminal without audit epilogue",
         "owners": [],
         "route": "dev-implementation backend → completion-presentation"
       },
@@ -6172,11 +6200,13 @@
         "presenter-dispatch",
         "presenter-task",
         "presenter-Handoff",
-        "shipping-in-next"
+        "shipping-in-next",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-T5-COMPLETION-ASSURED",
       "inputs": {
-        "request": "Terminal evidence snapshot only: TARGET-SHA is exact and final VERIFIED; a distinct standard reviewer returned APPROVED on TARGET-SHA; the required Standard assessment returned terminal NO DURABLE LEARNING; every AC and task is terminal; repair remains unused 1/1; no blocker or stale work exists. Return one dev-ask-validated normalized completed input for completion-presentation and state that shipping is absent. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff. After all existing completion evidence validates and papercut and learning results settle, expose one bounded status completed presenter input with outcome, one to three concise aggregate Change scope items and one to three durable Key artifacts, verification evidence and verdict, papercut result, learning result, residual risk, one immutable Common Handoff reference, and exact next action/receiver; dev-ask validates and invokes completion-presentation without a presenter state, evidence rerun, or second Handoff. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nsnapshot:terminal-evidence|owner:backend|output:TARGET-SHA final VERIFIED; distinct standard review APPROVED; NO DURABLE LEARNING terminal; all criteria accounted; repair unused 1/1; shipping absent; return dev-ask normalized status completed input includes outcome, Change scope, Key artifacts, verification verdict, Papercuts, Learning, residual risk, immutable Common Handoff, and next receiver; dev-ask invokes completion-presentation; no completed Route\nsnapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary."
+        "request": "Terminal evidence snapshot only: TARGET-SHA is exact and final VERIFIED; a distinct standard reviewer returned APPROVED on TARGET-SHA; the required Standard assessment returned terminal NO DURABLE LEARNING; every AC and task is terminal; repair remains unused 1/1; no blocker or stale work exists. Return one dev-ask-validated normalized completed input for completion-presentation and state that shipping is absent. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff. After all existing completion evidence validates and papercut and learning results settle, expose one bounded status completed presenter input with outcome, one to three concise aggregate Change scope items and one to three durable Key artifacts, verification evidence and verdict, papercut result, learning result, residual risk, one immutable Common Handoff reference, and exact next action/receiver; dev-ask validates and invokes completion-presentation without a presenter state, evidence rerun, or second Handoff. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nsnapshot:terminal-evidence|owner:backend|output:TARGET-SHA final VERIFIED; distinct standard review APPROVED; NO DURABLE LEARNING terminal; all criteria accounted; repair unused 1/1; shipping absent; return dev-ask normalized status completed input includes outcome, Change scope, Key artifacts, verification verdict, Papercuts, Learning, residual risk, immutable Common Handoff, and next receiver; dev-ask invokes completion-presentation; no completed Route\nsnapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh exact terminal-evidence accounting observation.",
@@ -6189,7 +6219,8 @@
         "completion-input:scope-key-artifacts",
         "completion-input:resume-summary-index",
         "completion-input:fenced-same-turn",
-        "completion-presented"
+        "completion-presented",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require exact target verification, eligible final review approval, terminal learning accounting, and complete task/criterion evidence.",
@@ -6197,14 +6228,15 @@
         "Reject any implied delivery or completion before an assurance gate.",
         "Require current once-bound manifests and the same completed stages, selected role slot, semantic-attempt identity, repair/review/learning state, current continuation receipt identity when applicable, terminal state, and artifact identities after pause/compaction; reject an exact duplicate tuple before dispatch with no attempt or role-slot consumption and no second Handoff.",
         "Require one bounded normalized completed input only after existing evidence and settlement validate; preserve one immutable Common Handoff and reject presenter-owned state, evidence replay, a second Handoff, or completed Route.",
-        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none."
+        "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "terminal-snapshot"
     },
     {
       "absent_capabilities": [],
-      "criterion": "Missing exact final assurance blocks completion presentation and still grants no shipping authority. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption. No normalized completed input or generic presenter invocation is valid.",
+      "criterion": "Missing exact final assurance blocks completion presentation and still grants no shipping authority. Pause or compaction re-entry is monotonic and exact duplicate dispatch is rejected before consumption. No normalized completed input or generic presenter invocation is valid. A separate explicit audit cannot satisfy or bypass the missing assurance gate, and no automatic audit epilogue runs.",
       "expected": {
         "artifacts": [
           "incomplete terminal evidence snapshot",
@@ -6216,10 +6248,11 @@
         "gates": [
           "final verification missing",
           "current once-bound manifest equality on re-entry",
-          "duplicate dispatch tuple rejection before consumption"
+          "duplicate dispatch tuple rejection before consumption",
+          "audit cannot bypass missing assurance"
         ],
         "mode": "none",
-        "outcome": "completion ineligible; shipping absent",
+        "outcome": "completion ineligible; shipping absent; audit cannot bypass; no audit epilogue",
         "owners": [],
         "route": "dev-implementation backend stop"
       },
@@ -6238,11 +6271,14 @@
         "normalized-presenter-input",
         "presenter-invocation",
         "completed-route",
-        "completion-input:fenced-same-turn"
+        "completion-input:fenced-same-turn",
+        "audit-bypass",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-T5-COMPLETION-MISSING-ASSURANCE",
       "inputs": {
-        "request": "Terminal evidence snapshot only: implementation smoke exists for TARGET-SHA, but final independent verification is missing, so no final review or Standard terminal assessment is eligible. Block completion-presentation normalization and invocation with the exact missing assurance evidence and state that shipping is absent. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff. This is a registry-only negative control: construct no completion-presentation-input fence, record no completion-input:fenced-same-turn event, and preserve the current specialty result. The legacy completion-presented event name, if already required, does not authorize the generic presenter.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nsnapshot:terminal-evidence|owner:backend|output:TARGET-SHA lacks final independent verification; completion ineligible; final review and learning not eligible; shipping absent no normalized completed input; no completion-presentation invocation\nsnapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff"
+        "request": "Terminal evidence snapshot only: implementation smoke exists for TARGET-SHA, but final independent verification is missing, so no final review or Standard terminal assessment is eligible. Block completion-presentation normalization and invocation with the exact missing assurance evidence and state that shipping is absent. Also exercise one pause/compaction re-entry: current once-bound target and applicable-rule manifests must still match, and the existing Common Handoff restores the same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities without reopening work. An exact duplicate parent-outcome/manifest-digests/role-slot/semantic-attempt/current-continuation-receipt tuple returns idempotency-violation before dispatch, consumes no attempt or role slot, and creates no second Handoff. This is a registry-only negative control: construct no completion-presentation-input fence, record no completion-input:fenced-same-turn event, and preserve the current specialty result. The legacy completion-presented event name, if already required, does not authorize the generic presenter.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nsnapshot:terminal-evidence|owner:backend|output:TARGET-SHA lacks final independent verification; completion ineligible; final review and learning not eligible; shipping absent no normalized completed input; no completion-presentation invocation\nsnapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff A separate explicit portfolio audit cannot supply the missing verification or bypass this stop; automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh negative terminal-evidence accounting observation.",
@@ -6250,7 +6286,8 @@
       "required_capabilities": [],
       "required_events": [
         "snapshot:terminal-evidence|owner:backend|output:TARGET-SHA lacks final independent verification; completion ineligible; final review and learning not eligible; shipping absent no normalized completed input; no completion-presentation invocation",
-        "snapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff"
+        "snapshot:resume|owner:backend|output:current once-bound target and applicable-rule manifests equal; same completed stages, tail source, selected role slot, semantic-attempt identity, repair state, review state, learning state, current continuation receipt identity when applicable, terminal state, and artifact and receipt identities restored; no completed stage reopened; exact duplicate dispatch tuple rejected as idempotency-violation before dispatch; no attempt or role slot consumed; no second Handoff",
+        "snapshot:assurance-stop|owner:backend|output:missing independent verification remains exact blocker; audit cannot bypass; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Treat implementer smoke as insufficient for completion.",
@@ -6258,7 +6295,8 @@
         "Reject completion presentation, approval inference, or shipping.",
         "Require current once-bound manifests and the same completed stages, selected role slot, semantic-attempt identity, repair/review/learning state, current continuation receipt identity when applicable, terminal state, and artifact identities after pause/compaction; reject an exact duplicate tuple before dispatch with no attempt or role-slot consumption and no second Handoff.",
         "Preserve the exact missing-assurance specialty stop and emit no normalized completed input or generic completed report.",
-        "Forbid the fenced completed input and completion-input:fenced-same-turn; preserve the existing specialty stop or terminal report without generic presentation."
+        "Forbid the fenced completed input and completion-input:fenced-same-turn; preserve the existing specialty stop or terminal report without generic presentation.",
+        "Require the missing assurance stop to remain authoritative: a separate explicit audit cannot bypass it, automatic portfolio-audit dispatches 0, and no audit epilogue runs."
       ],
       "scripted_replies": [],
       "trace_scope": "terminal-snapshot"
@@ -8142,12 +8180,13 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "A wording-only review observation remains a terminal advisory when every fixed parent criterion and observable changed-contract consumer is satisfied. One visible dev adapter invocation accounts one unchanged portable assess result without a second task, state, or Handoff.",
+      "criterion": "Structural preference without direct parent, fixed-contract, or consumer harm and a non-material changed-test concern remain terminal advisories in one final review; the existing learning adapter accounting stays single.",
       "expected": {
         "artifacts": [
           "state trace",
           "Review Handoff",
-          "terminal advisory",
+          "structural advisory",
+          "non-material changed-test advisory",
           "terminal Standard learning assessment",
           "terminal evidence",
           "portable continual-learning assess result identity and seven-field payload"
@@ -8157,12 +8196,13 @@
         "gates": [
           "fixed verified target",
           "complete applicable-rule manifest",
-          "finding relevance",
+          "direct-harm classification",
+          "changed-test materiality classification",
           "route-scheduled terminal Standard learning assessment",
           "one visible dev-continual-learning adapter invocation"
         ],
         "mode": "one owner",
-        "outcome": "wording advisory recorded; parent completed after one terminal Standard learning assessment without assurance replay",
+        "outcome": "structural and non-material test advisories recorded; parent completes after one review and one terminal learning assessment without assurance replay",
         "owners": [
           "backend",
           "dev-code-review"
@@ -8181,6 +8221,7 @@
         "repair-dispatch",
         "verification-replay",
         "review-replay",
+        "second-review",
         "second-learning-assessment",
         "maintenance-dispatch",
         "implicit shipping",
@@ -8190,23 +8231,24 @@
       ],
       "id": "B-REVIEW-WORDING-ADVISORY",
       "inputs": {
-        "request": "Read-only standard final-review trace. Parent outcome OUT-WORDING has exactly AC-WORDING-1 and AC-WORDING-2, and target-sha256:6de25a31 is already VERIFIED with observable changed-contract consumer consumer-A satisfied. Final review finds only ADV-WORDING-1: frontmatter, scanner, and ADR wording differ, with no broken parent criterion or observable changed-contract consumer. Return Standards PASS, Specification PASS, Overall APPROVED; record ADV-WORDING-1 as terminal residual risk; account for the route-scheduled one terminal Standard learning assessment; then complete. Emit exactly these four current-lifecycle event lines, in this order, and no other lifecycle lines: state:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, and complete rule manifest accepted; state:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only observation; parent criteria and consumer-A remain satisfied; state:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1 advisory residual risk; state:complete|owner:backend|output:ADV-WORDING-1 residual risk and one terminal Standard learning assessment accounted; parent terminal; one dev-continual-learning adapter Common Handoff carries unchanged portable assess result identity and seven-field payload; no second task, state, or Handoff. The inherited VERIFIED status is intake evidence only, not a current transition: never emit a state:verifying or state:verified line for it. Do not add a parent criterion, dispatch repair, replay verification or review, or start maintenance. The visible `dev-continual-learning` tail owner invokes portable `continual-learning assess` exactly once inside its existing task and returns the exact portable result identity and seven-field payload through that task's one Common Handoff; add no portable owner state, task, or second Handoff."
+        "request": "Read-only standard final-review trace. Parent outcome OUT-WORDING has exactly AC-WORDING-1 and AC-WORDING-2, and target-sha256:6de25a31 is already VERIFIED with observable changed-contract consumer consumer-A satisfied. Final review finds ADV-WORDING-1: wording differs with no direct harm; ADV-STRUCTURE: a different decomposition is preferred but no parent criterion, fixed contract, or changed consumer is harmed; and ADV-TEST-NONMATERIAL: one changed test repeats a name but preserves its unique observable contract, stable seam, independent oracle, and plausible-bug protection, so suite degradation is non-material. Return Standards PASS, Specification PASS, Overall APPROVED; record all three as terminal advisories; use the existing six tags and one review only; run no repair, second review, or assurance replay; account for the route-scheduled one terminal Standard learning assessment; then complete. Emit exactly these four current-lifecycle event lines, in this order, and no other lifecycle lines:\nstate:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, changed-test materiality evidence bound, and complete rule manifest accepted\nstate:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only; ADV-STRUCTURE prefers a different decomposition but causes no parent, fixed-contract, or consumer harm; ADV-TEST-NONMATERIAL notes naming duplication in one changed test but preserves every oracle and regression contract\nstate:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1, ADV-STRUCTURE, and ADV-TEST-NONMATERIAL advisory residual risks under one review with six existing tags\nstate:complete|owner:backend|output:three advisory residual risks and one terminal Standard learning assessment accounted; parent terminal; one dev-continual-learning adapter Common Handoff carries unchanged portable assess result identity and seven-field payload; no second task, state, Handoff, review, or assurance replay"
       },
       "layer": "backend",
       "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, and complete rule manifest accepted",
-        "state:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only observation; parent criteria and consumer-A remain satisfied",
-        "state:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1 advisory residual risk",
-        "state:complete|owner:backend|output:ADV-WORDING-1 residual risk and one terminal Standard learning assessment accounted; parent terminal; one dev-continual-learning adapter Common Handoff carries unchanged portable assess result identity and seven-field payload; no second task, state, or Handoff"
+        "state:accepted|owner:backend|output:OUT-WORDING exact AC-WORDING-1 and AC-WORDING-2 parent set, target-sha256:6de25a31 VERIFIED, consumer-A satisfied, changed-test materiality evidence bound, and complete rule manifest accepted",
+        "state:reviewing|owner:dev-code-review|output:ADV-WORDING-1 wording-only; ADV-STRUCTURE prefers a different decomposition but causes no parent, fixed-contract, or consumer harm; ADV-TEST-NONMATERIAL notes naming duplication in one changed test but preserves every oracle and regression contract",
+        "state:reviewed|owner:dev-code-review|output:Standards PASS; Specification PASS; Overall APPROVED; ADV-WORDING-1, ADV-STRUCTURE, and ADV-TEST-NONMATERIAL advisory residual risks under one review with six existing tags",
+        "state:complete|owner:backend|output:three advisory residual risks and one terminal Standard learning assessment accounted; parent terminal; one dev-continual-learning adapter Common Handoff carries unchanged portable assess result identity and seven-field payload; no second task, state, Handoff, review, or assurance replay"
       ],
       "rubric": [
-        "Require the fixed VERIFIED AC-WORDING-1 and AC-WORDING-2 parent set plus satisfied consumer-A before review.",
-        "Classify ADV-WORDING-1 as advisory because no parent criterion or observable changed-contract consumer is broken.",
-        "Require Standards PASS, Specification PASS, Overall APPROVED, one terminal Standard learning assessment, and completion without repair or assurance replay.",
-        "Require the visible dev-continual-learning owner to invoke portable assess once inside its existing task and pass the exact result through its one Common Handoff; reject a direct portable tail row or duplicate lifecycle structure."
+        "Require the fixed VERIFIED parent set, satisfied consumer-A, and complete changed-test materiality evidence before review.",
+        "Classify ADV-STRUCTURE as advisory because it is structural preference with no direct parent, fixed-contract, or changed-consumer harm.",
+        "Classify ADV-TEST-NONMATERIAL as advisory because every unique observable contract and oracle remains and suite degradation is not material.",
+        "Require one Standards/Specification review with six existing tags, Overall APPROVED, one terminal learning assessment, and completion without repair, replay, or a second review.",
+        "Require the visible dev-continual-learning owner to invoke portable assess once inside its existing task and pass the exact result through its one Common Handoff; reject duplicate lifecycle structure."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -8658,7 +8700,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid standard plan with the existing optional numbered profile tail dispatches work to a distinct child, preserves the authored tail, and consumes each assurance owner exactly once.",
+      "criterion": "A parser-valid standard plan with the existing optional numbered profile tail dispatches work to a distinct child, preserves the authored tail, and consumes each assurance owner exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
@@ -8673,10 +8715,11 @@
           "full-orchestration with downgrade none",
           "distinct root and work child",
           "same-child work closure",
-          "single numbered assurance sequence"
+          "single numbered assurance sequence",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "full orchestration",
-        "outcome": "preserved optional numbered tail consumed once after child work",
+        "outcome": "preserved optional numbered tail consumed once after child work; terminal without audit epilogue",
         "owners": [
           "backend",
           "worker",
@@ -8695,11 +8738,13 @@
         "second-verification",
         "second-review",
         "second-learning",
-        "assurance-closure"
+        "assurance-closure",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-PLAN-TAIL-PROFILE",
       "inputs": {
-        "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure."
+        "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for preserved optional-tail grammar and runtime execution.",
@@ -8713,19 +8758,21 @@
         "state:handed-off|owner:worker|output:CHILD-P smoke passed; one Common Handoff sealed; one post-Handoff papercut look returned none",
         "state:verifying|owner:dev-verification|output:numbered verification consumed once on TARGET-P; no worker closure",
         "state:reviewing|owner:dev-code-review|output:numbered review consumed once on TARGET-P; no worker closure",
-        "state:complete|owner:backend|output:numbered dev-continual-learning consumed once; no duplicate backend tail"
+        "state:complete|owner:backend|output:numbered dev-continual-learning consumed once; no duplicate backend tail",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Preserve the optional numbered tail as valid Executor Plan v1 grammar.",
         "Require full orchestration, downgrade none, and distinct root/work child.",
-        "Consume the authored tail exactly once and keep worker closure off assurance roles."
+        "Consume the authored tail exactly once and keep worker closure off assurance roles.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid standard work-only plan uses a distinct work child and same-child closure, then the backend schedules the existing verification, review, and learning tail exactly once.",
+      "criterion": "A parser-valid standard work-only plan uses a distinct work child and same-child closure, then the backend schedules the existing verification, review, and learning tail exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
@@ -8741,10 +8788,11 @@
           "full-orchestration with downgrade none",
           "distinct root and work child",
           "same-child closure and smoke",
-          "one backend assurance sequence"
+          "one backend assurance sequence",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "full orchestration",
-        "outcome": "omitted optional tail stays valid and backend schedules assurance once",
+        "outcome": "omitted optional tail stays valid and backend schedules assurance once; terminal without audit epilogue",
         "owners": [
           "backend",
           "worker",
@@ -8764,11 +8812,13 @@
         "second-review",
         "second-learning",
         "audit-gate",
-        "assurance-closure"
+        "assurance-closure",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-PLAN-TAIL-OMITTED",
       "inputs": {
-        "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task."
+        "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for the valid omitted-tail runtime shape.",
@@ -8782,19 +8832,21 @@
         "state:handed-off|owner:worker|output:CHILD-O task-local smoke passed; one Common Handoff sealed; one post-Handoff papercut look returned none",
         "state:verifying|owner:dev-verification|output:backend-scheduled fresh proof on TARGET-O; no worker closure",
         "state:reviewing|owner:dev-code-review|output:one current-target review on TARGET-O; no worker closure",
-        "state:complete|owner:backend|output:terminal dev-continual-learning accounted once; omitted tail consumed by backend scheduling; no audit coupling"
+        "state:complete|owner:backend|output:terminal dev-continual-learning accounted once; omitted tail consumed by backend scheduling; no audit coupling",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require omitted optional-tail grammar to remain valid.",
         "Require the work owner to be a distinct child under full orchestration with downgrade none.",
-        "Require same-child closure only for work, then one backend assurance sequence without audit coupling."
+        "Require same-child closure only for work, then one backend assurance sequence without audit coupling.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid compact work-only plan enters full plan orchestration, dispatches its authored work owner as a distinct child, runs same-child closure and smoke, and remains tail-free.",
+      "criterion": "A parser-valid compact work-only plan enters full plan orchestration, dispatches its authored work owner as a distinct child, runs same-child closure and smoke, and remains tail-free. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
@@ -8812,10 +8864,11 @@
           "distinct root and work child",
           "mandatory same-child closure",
           "criterion-complete smoke",
-          "no assurance tail"
+          "no assurance tail",
+          "zero automatic portfolio-audit events"
         ],
         "mode": "full orchestration",
-        "outcome": "planned compact child completes after closure and smoke with no profile tail",
+        "outcome": "planned compact child completes after closure and smoke with no profile tail; terminal without audit epilogue",
         "owners": [
           "backend",
           "worker"
@@ -8832,11 +8885,13 @@
         "state:verifying",
         "state:reviewing",
         "dev-continual-learning",
-        "profile-tail"
+        "profile-tail",
+        "automatic-portfolio-audit",
+        "audit-epilogue"
       ],
       "id": "B-COMPACT-PLAN-NO-TAIL",
       "inputs": {
-        "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning."
+        "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for planned compact activation and tail-free child execution.",
@@ -8849,12 +8904,14 @@
         "state:running|owner:worker|output:CHILD-C candidate on TARGET-C under unchanged compact Task Contract",
         "closure:round-1|owner:worker|output:CHILD-C applied worker-closure/v1; findings none; round two skipped",
         "state:handed-off|owner:worker|output:CHILD-C smoke SMOKE-C passed; one Common Handoff sealed; papercut soft look after Handoff returned none",
-        "state:complete|owner:backend|output:mechanical admission passed for distinct child, target ownership, closure, smoke coverage, Handoff, and papercut accounting; compact tail absent"
+        "state:complete|owner:backend|output:mechanical admission passed for distinct child, target ownership, closure, smoke coverage, Handoff, and papercut accounting; compact tail absent",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require Executor Plan v1 validity and plan-backed full orchestration with downgrade none.",
         "Require distinct root/work-child identities, same-child closure, task-local smoke, one Handoff, and one post-Handoff papercut look.",
-        "Preserve compact no-tail assurance; reject root work and every independent assurance owner."
+        "Preserve compact no-tail assurance; reject root work and every independent assurance owner.",
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -10109,27 +10166,29 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Work attempt one, eligible fresh attempt two, and Build repair use mandatory same-child worker-closure/v1; only a correction triggers round two, every finding is repaired, smoke follows, and assurance or audit roles never run closure.",
+      "criterion": "Every semantic work shape runs mandatory same-owner worker-closure/v1 over all contract axes, the solution ladder, candidate-local structure, and task-local permanent-test value before smoke and one Common Handoff; correctness is admitted regardless of added complexity, quality requires an exact safe replacement or disposition, correction alone triggers one bounded round two, and non-work roles never run closure.",
       "expected": {
         "artifacts": [
-          "bounded Context Pack",
+          "four bound work-shape identities",
           "candidate identity",
-          "worker-closure/v1 receipt",
+          "worker-closure/v1 round receipt",
+          "test-value/v1 disposition rows",
           "task-local smoke",
           "one Common Handoff"
         ],
         "assurance_profile": "standard",
         "first_owner": "backend",
         "gates": [
-          "distinct root and child",
-          "same child through closure",
-          "mandatory round one",
-          "conditional round two",
-          "all findings repaired",
+          "same semantic owner through closure",
+          "mandatory four-axis round one",
+          "correctness admission without complexity gate",
+          "quality admission with exact safe replacement or disposition",
+          "correction-triggered round two only",
+          "task-local test settlement before smoke",
           "role-negative controls"
         ],
         "mode": "full orchestration",
-        "outcome": "work closes in the same child; assurance and audit remain closure-free",
+        "outcome": "all work shapes close in their semantic owner; non-work roles remain closure-free",
         "owners": [
           "backend",
           "worker"
@@ -10139,38 +10198,43 @@
       "fixture_dir": "fixtures/b-dwo-worker-closure",
       "forbidden_events": [
         "closure:different-child",
+        "correctness-smaller-replacement-gate",
+        "blanket-quality-admission",
+        "quality-without-exact-replacement-or-disposition",
         "closure:round-3",
-        "unrepaired-finding",
-        "smoke-before-closure",
+        "unaffected-candidate-reopen",
+        "untouched-portfolio-read",
+        "smoke-before-closure-or-test-settlement",
         "second-Common-Handoff",
         "parent-semantic-verdict",
-        "assurance-closure",
-        "audit-closure"
+        "non-work-role-closure"
       ],
       "id": "B-DWO-WORKER-CLOSURE",
       "inputs": {
-        "request": "Read-only worker-closure matrix. ROOT-W dispatches CHILD-W attempt 1 with unchanged Task Contract and bounded Context Pack. CHILD-W creates candidate C0. Round one of worker-closure/v1 runs through same-child control, reports WC1-F1 missing criterion-to-smoke mapping, and CHILD-W corrects it in candidate C1. Because a correction occurred, round two runs in CHILD-W only against WC1-F1 and repair-caused regressions, finds none, then CHILD-W runs SMOKE-W and emits exactly one Common Handoff. Repeat identity rules for a fresh eligible attempt-two child and a fresh Build-repair child. In role-negative controls, dev-verification, dev-code-review, dev-continual-learning, audit controller, and audit opinions run no closure. Parent admission is structural only."
+        "request": "Read-only worker-closure/v1 matrix over four independent semantic work shapes: a planless same-context owner, a plan-backed task child, an eligible fresh-child attempt two, and an admitted Build-repair worker. Preserve the same owner or child, task, attempt, unchanged Task Contract, target, and closure identity from candidate through closure. In mandatory round one, check correctness, preservation, effects, and owned acceptance; reconsider the first-sufficient solution ladder and candidate-local structural regression; and inspect only changed permanent tests. Seed (a) a directly evidenced acceptance violation whose in-boundary correctness repair adds code or complexity, (b) an unrepairable-under-authority correctness violation, (c) a qualified structural quality proposal with an exact smaller replacement and preservation proof, (d) an otherwise similar unqualified quality proposal, (e) a redundant changed-test merge with proof, and (f) an unqualified test proposal. Exercise no-correction, correctness-correction, and quality-correction branches with round counts 1, 2, and 2. Round two checks only actual corrections and plausible correction-caused regressions; reject a third round and unaffected-work reopening. Settle unique keep, redundant merge, unsupported remove, and sufficient-existing-coverage no-new-contract branches before smoke; read no untouched portfolio test. Smoke follows closure and test settlement, then exactly one Common Handoff. Mechanical roots, neutral integration, verification, final review, continual learning, audit controllers, and audit opinions run no worker closure."
       },
       "layer": "backend",
-      "proof": "Fresh seeded-omission semantic trace against worker-closure/v1.",
+      "proof": "Fresh four-shape, admission, round-state, and task-local test-value semantic matrix against worker-closure/v1.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "state:running|owner:worker|output:CHILD-W attempt 1 candidate C0 under unchanged Task Contract and bounded Context Pack; child distinct from ROOT-W",
-        "closure:round-1|owner:worker|output:CHILD-W worker-closure/v1 finding WC1-F1 missing criterion-to-smoke mapping",
-        "closure:correction|owner:worker|output:CHILD-W repaired WC1-F1 in candidate C1",
-        "closure:round-2|owner:worker|output:CHILD-W checked corrected WC1-F1 and repair-caused regressions; findings none",
-        "state:handed-off|owner:worker|output:CHILD-W SMOKE-W passed; one Common Handoff carries closure identity, two rounds, WC1-F1 correction, final target, and changed-test decision",
-        "snapshot:attempt-two|owner:backend|output:fresh eligible child CHILD-W2 uses the same worker-closure/v1 sequence; prior child identity not reused",
-        "snapshot:build-repair|owner:backend|output:fresh Build child CHILD-B uses worker-closure/v1 and task-local smoke before one Common Handoff",
-        "snapshot:closure-negative|owner:backend|output:dev-verification, dev-code-review, dev-continual-learning, audit controller, and audit opinions run no worker closure",
-        "state:accepted|owner:backend|output:mechanical admission checked child, task, attempt, target ownership, closure receipt, smoke coverage, Handoff completeness, and papercut accounting without semantic judgment"
+        "snapshot:work-shapes|owner:backend|output:planless same-context owner, plan-backed task child, eligible fresh-child attempt two, and admitted Build-repair worker each retain exact owner or child, task, attempt, Task Contract, target, and worker-closure/v1 identity",
+        "closure:round-1|owner:worker|output:mandatory combined check covers correctness, preservation, effects, and owned acceptance plus first-sufficient ladder, candidate-local structural regression, and changed permanent tests only",
+        "closure:correctness-admission|owner:worker|output:direct acceptance violation admitted and repaired although correctness repair adds code or complexity; unrepairable-under-authority contract violation remains explicit non-success blocker; no smaller-replacement gate",
+        "closure:quality-admission|owner:worker|output:qualified structural replacement and redundant changed-test merge corrected with exact surface, defect, smaller replacement or disposition, and preservation proof; unqualified proposals record no quality correction and no correctness blocker",
+        "snapshot:round-state|owner:worker|output:no-correction, correctness-correction, and quality-correction branches have round counts 1, 2, and 2; each round two checks corrections and plausible correction-caused regressions only; no third round or unaffected reopening",
+        "snapshot:test-value|owner:worker|output:test-value/v1 settles unique keep, redundant merge, unsupported remove, and concrete sufficient-existing-coverage no-new-contract basis before smoke; untouched portfolio selectors absent",
+        "state:handed-off|owner:worker|output:closure and final test settlement precede task-local smoke; smoke passes every owned criterion and correction surface; exactly one Common Handoff carries closure identity, rounds, findings, final target, test rows, and blockers",
+        "snapshot:closure-negative|owner:backend|output:mechanical plan root, neutral integration, dev-verification, dev-code-review, continual learning, audit controller, and audit opinions invoke worker closure zero times",
+        "state:accepted|owner:backend|output:mechanical admission checks identity, target and effect ownership, closure receipt, test settlement, smoke coverage, Handoff completeness, and papercut accounting without semantic reinterpretation"
       ],
       "rubric": [
-        "Require one stable child identity across candidate, both closure rounds, correction, smoke, and Handoff.",
-        "Require round one always and round two only because WC1-F1 caused a correction; prohibit a third round.",
-        "Require fresh child identities for attempt two and Build repair, and no closure on assurance or audit roles.",
-        "Require only mechanical parent admission."
+        "Require exact identity and mandatory round one for all four semantic work shapes, with no closure on excluded roles.",
+        "Require correctness admission even when repair adds complexity; preserve an unrepairable contract finding as non-success.",
+        "Require quality correction only with exact surface, defect, smaller replacement or test disposition, and preservation proof.",
+        "Require correction-triggered round two only, exact round counts 1/2/2, no third round, and no unaffected reopening.",
+        "Require task-local keep, merge, remove, or concrete no-new-contract accounting before smoke, with untouched portfolio tests unread.",
+        "Require task-local smoke after closure and settlement, then exactly one Common Handoff and mechanical parent admission only."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
@@ -10362,10 +10426,11 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Only after plan DONE, dev-ask routes one read-only test-audit/v1 controller that requires two distinct exact-model opinions, preserves bounded evidence and unknowns, and has no one-opinion fallback or cleanup authority.",
+      "criterion": "Explicit user and external-scheduler requests enter the same exact read-only test-audit/v1 protocol when an exact frozen target and complete repository or named-subsystem boundary are eligible; plan provenance is optional, ineligible boundaries stop before opinions, exact adapter-bound transport stays local to audit, evidence aggregation preserves unknowns, and later cleanup is fresh maintenance.",
       "expected": {
         "artifacts": [
-          "completed target tuple",
+          "exact frozen audit tuple",
+          "controller-supplied adapter binding attestations",
           "opinion A receipt",
           "opinion B receipt",
           "bounded candidate union",
@@ -10373,22 +10438,25 @@
         ],
         "first_owner": "dev-test-audit",
         "gates": [
-          "parent plan DONE",
-          "immutable target and suite",
-          "exact GPT-5.6-sol xhigh opinion A",
-          "exact Grok-4.6 xhigh opinion B",
-          "distinct read-only children",
+          "explicit user or external-scheduler request",
+          "exact commit or content-addressed working-tree target",
+          "complete repository or named-subsystem suite boundary",
+          "exact adapter-table identity and binding attestations",
+          "two fresh distinct read-only opinions",
           "fallback none"
         ],
         "mode": "full orchestration",
-        "outcome": "two-opinion read-only audit completes or stops transport-unavailable without reopening plan",
+        "outcome": "eligible explicit audit completes read-only; ineligible intake blocks before opinions; transport failure stays audit-local",
         "owners": [
           "dev-test-audit"
         ],
-        "route": "dev-test-audit → dev-ask"
+        "route": "dev-ask → dev-test-audit"
       },
       "fixture_dir": "fixtures/r-dwo-test-audit",
       "forbidden_events": [
+        "completion-gated-audit",
+        "changed-tests-only-dispatch",
+        "incomplete-boundary-dispatch",
         "one-opinion-result",
         "shared-child-identity",
         "fallback-model",
@@ -10400,30 +10468,37 @@
         "mutation",
         "repair",
         "assurance-gate",
-        "cleanup-authority",
+        "inherited-cleanup-authority",
+        "scheduler-implementation",
         "plan-reopen"
       ],
       "id": "R-DWO-TEST-AUDIT",
       "inputs": {
-        "request": "Read-only post-plan routing matrix. The parent plan is DONE and TARGET-A, permanent-suite manifest SUITE-A, test-value/v1, and test-audit/v1 are frozen. Dispatch distinct opinion child A with exact GPT-5.6-sol xhigh and child B with exact Grok-4.6 xhigh, read-only tools, fallback none, and no peer output. Each complete ledger stays behind a native artifact and returns complete coverage proof plus a bounded non-keep index. The controller unions indexes, fetches only counterpart rows, aggregates by evidence, preserves unsupported and unknown rows, rehashes the tuple, and emits one read-only Common Handoff. In a near miss where B resolves the wrong model or is unavailable, return transport-unavailable; never use A alone. Run no worker closure, tests, mutation, repair, assurance, or cleanup."
+        "request": "Read-only explicit portfolio-audit routing matrix. An explicit user request and an otherwise identical external-scheduler request each name test-audit/v1, the same exact commit or content-addressed working-tree target, test-value/v1, receiver, and a complete repository or complete named-subsystem permanent-suite manifest. Completed-plan provenance is absent in one eligible branch and contributes no authority. A complete named-subsystem branch is eligible and its aggregate and Common Handoff prose say repository-partial. Changed-tests-only, incomplete, stale, and moving boundaries are rejected before opinion dispatch with dispatches 0. For eligible intake, the controller supplies the exact adapter-table identity and per-row binding attestations; exactly two fresh distinct bound opinion roles run read-only with fallback none and no peer output. Full ledgers remain at native locators; the controller unions bounded indexes, fetches counterpart rows only, aggregates by evidence, preserves unsupported and unknown rows, and rehashes stability. A binding mismatch returns transport-unavailable for the explicit audit only and changes no implementation or completion state. A later cleanup request starts fresh through dev-ask: bounded, cohesive, settled, one-context maintenance routes planless, while broad, dependency-ordered, fan-in, or recovery-sensitive maintenance requires a new Executor Plan. No scheduler implementation, completion-tail transition, worker closure, audit mutation, or inherited cleanup authority."
       },
       "layer": "router",
-      "proof": "Fresh router and controller trace against test-audit/v1.",
+      "proof": "Fresh explicit-origin, exact-intake, adapter, aggregation, transport, and cleanup-classification route matrix.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
-        "route:dev-test-audit|owner:dev-ask|output:parent plan DONE; immutable TARGET-A, SUITE-A, test-value/v1, and test-audit/v1 frozen",
-        "audit:opinion-A|owner:dev-test-audit|output:distinct child AUDIT-A; GPT-5.6-sol xhigh exact; read-only; fallback none; full ledger native; bounded non-keep index",
-        "audit:opinion-B|owner:dev-test-audit|output:distinct child AUDIT-B; Grok-4.6 xhigh exact; read-only; fallback none; full ledger native; bounded non-keep index",
-        "audit:aggregate|owner:dev-test-audit|output:union bounded indexes; fetch counterpart rows only; evidence rules applied; unsupported and unknown preserved; target and suite rehashed equal",
-        "state:handed-off|owner:dev-test-audit|output:one read-only Common Handoff; repository unchanged; cleanup authority none; completed plan unchanged",
-        "audit:transport-near-miss|owner:dev-test-audit|output:wrong or unavailable opinion B returns transport-unavailable; opinion A never substitutes; plan remains DONE"
+        "route:manual-audit|owner:dev-ask|output:explicit user request enters dev-test-audit with exact frozen target, complete suite boundary, test-value/v1, test-audit/v1, and receiver",
+        "route:scheduled-audit|owner:dev-ask|output:external-scheduler request with identical tuple enters the same specialty and protocol; origin differs only as request provenance; scheduler implementation absent",
+        "audit:intake-positive|owner:dev-test-audit|output:commit or content-addressed working-tree target plus complete repository manifest eligible without completed-plan provenance",
+        "audit:subsystem-positive|owner:dev-test-audit|output:complete named-subsystem manifest eligible; both ledgers cover each subsystem selector exactly once; result and Common Handoff prose repository-partial relative to repository",
+        "audit:intake-negative|owner:dev-test-audit|output:changed-tests-only, incomplete, stale, and moving boundaries blocked before opinions; dispatches 0; no partial portfolio claim or lifecycle effect",
+        "audit:opinion-pair|owner:dev-test-audit|output:controller-supplied adapter-table identity and exact binding attestations admit two fresh distinct read-only roles; fallback none; peer output absent; native full ledgers and bounded indexes",
+        "audit:aggregate|owner:dev-test-audit|output:deterministic index union and counterpart fetch only; evidence rules applied; unsupported, disputed, and unknown rows preserved; target and suite rehashed equal; cleanup authority none",
+        "audit:transport-near-miss|owner:dev-test-audit|output:binding attestation mismatch returns transport-unavailable for explicit audit only; no single-opinion substitution; implementation and completion state unchanged",
+        "route:cleanup-fresh|owner:dev-ask|output:new maintenance outcome and lifecycle; bounded cohesive settled one-context cleanup planless; broad dependency-ordered fan-in or recovery-sensitive cleanup uses new Executor Plan; no prior opinion or state grants mutation",
+        "state:handed-off|owner:dev-test-audit|output:one read-only Common Handoff; repository unchanged; no worker closure, audit execution, assurance gate, cleanup dispatch, scheduler, or completion-tail transition"
       ],
       "rubric": [
-        "Require exact distinct GPT-5.6-sol xhigh and Grok-4.6 xhigh read-only opinions with fallback none.",
-        "Keep full ledgers behind native artifacts and bound controller context.",
-        "Aggregate by evidence, preserve unknowns, and rehash the frozen tuple.",
-        "Fail transport closed without one-opinion substitution and without reopening the completed plan."
+        "Require manual and external-scheduler origins to share one exact specialty and protocol without a completion tail or scheduler implementation.",
+        "Accept an exact commit or content-addressed working-tree target with a complete repository or named-subsystem suite even without completed-plan provenance.",
+        "Reject changed-tests-only, incomplete, stale, or moving boundaries before either opinion dispatch.",
+        "Require controller-supplied exact adapter-table identity and attestations, two fresh distinct read-only opinions, and fallback none without concrete host literals in this prompt.",
+        "Aggregate deterministically by evidence, preserve unsupported and unknown tests, and keep transport failure local to the explicit audit.",
+        "Keep audit read-only and classify later cleanup as fresh planless-versus-new-plan maintenance with no inherited authority."
       ],
       "scripted_replies": [],
       "trace_scope": "full"

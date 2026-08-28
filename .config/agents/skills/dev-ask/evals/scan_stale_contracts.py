@@ -60,7 +60,7 @@ REQUIRED_NEEDLES = [
     "dev-implementation then completion-presentation",
     "observable changed-contract consumer",
     "complete causal impact map",
-    "terminal residual risk",
+    "terminal advisories recorded as residual risk",
     "new maintenance outcome",
     "one in-conversation worker Common Handoff",
     "curation Handoff",
@@ -388,6 +388,13 @@ DWO_CONTINUATION_CASE_IDS = (
     "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
 )
 DWO_SEMANTIC_CASE_FIXTURES = {
+    "B-DWO-WORKER-CLOSURE": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-dwo-worker-closure/case.json"
+    ),
+    "R-DWO-TEST-AUDIT": (
+        ".config/agents/skills/dev-ask/evals/fixtures/r-dwo-test-audit/case.json"
+    ),
     "B-FULL": ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
     "B-T5-COMPLETION-ASSURED": (
         ".config/agents/skills/dev-ask/evals/fixtures/b-t5-completion-assured/case.json"
@@ -437,6 +444,138 @@ DWO_COMPLETION_CASE_IDS = (
     "B-T4-PAPERCUT-NARROW-AUTHORITY",
     "B-ASSURANCE-RECEIPT-COMPLETION",
 )
+DTA_AUDIT_REGISTRY_PATH = ".config/agents/skills/dev-test-audit/evals/evals.json"
+DTA_AUDIT_CASE_IDS = (
+    "DTA-DISCOVERY",
+    "DTA-DISCOVERY-NEAR-MISS",
+    "DTA-INDEPENDENT-PAIR",
+    "DTA-DISAGREEMENT-EVIDENCE",
+    "DTA-TRANSPORT-UNAVAILABLE",
+    "DTA-READ-ONLY",
+    "DTA-BOUNDED-INDEX",
+    "DTA-UNKNOWN-PRESERVED",
+    "DTA-PARTIAL-BOUNDARY",
+    "DTA-CHANGED-TESTS-ONLY-NEAR-MISS",
+)
+DTA_COMPLETION_CASE_IDS = (
+    "B-COMPACT",
+    "B-COMPACT-PLAN-NO-TAIL",
+    "B-FULL",
+    "B-PLAN-TAIL-OMITTED",
+    "B-PLAN-TAIL-PROFILE",
+    "R-COMPLETE",
+    "R-COMPLETE-COMPACT-NO-LEARNING",
+    "B-T5-COMPLETION-ASSURED",
+    "B-T5-COMPLETION-MISSING-ASSURANCE",
+)
+DTA_SELECTED_FIXTURE_PATHS = {
+    ".config/agents/skills/dev-ask/evals/fixtures/b-dwo-worker-closure/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/r-dwo-test-audit/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-compact/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-compact-plan-no-tail/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-plan-tail-omitted/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-plan-tail-profile/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/"
+    "r-complete-compact-no-learning/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/"
+    "b-t5-completion-assured/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/"
+    "b-t5-completion-missing-assurance/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/b-review/case.json",
+    ".config/agents/skills/dev-ask/evals/fixtures/"
+    "b-review-wording-advisory/case.json",
+}
+DTA_ACTIVE_EXECUTABLE_PATHS = {
+    ".config/agents/skills/dev-ask/SKILL.md",
+    ".config/agents/skills/dev-ask/WORKFLOW.md",
+    ".config/agents/skills/dev-ask/evals/evals.json",
+    ".config/agents/skills/dev-implementation/SKILL.md",
+    ".config/agents/skills/dev-implementation/references/worker-closure.md",
+    ".config/agents/skills/dev-implementation/references/plan-orchestration.md",
+    ".config/agents/skills/dev-implementation/references/compact-checklist.md",
+    ".config/agents/skills/dev-code-review/SKILL.md",
+    ".config/agents/skills/dev-test-audit/SKILL.md",
+    ".config/agents/skills/dev-test-audit/references/audit-protocol.md",
+    ".config/agents/skills/dev-test-audit/references/opinion-agent.md",
+    DTA_AUDIT_REGISTRY_PATH,
+    "docs/adr/0001-dev-workflow-authority-and-routing.md",
+    "docs/adr/0002-executor-plans-and-orchestration.md",
+    "docs/adr/0003-bounded-assurance-and-repair.md",
+    "docs/adr/0004-canonical-discovery-and-continual-learning.md",
+    "docs/adr/INDEX.md",
+} | DTA_SELECTED_FIXTURE_PATHS
+DTA_HOST_BINDING_ALLOWLIST = {
+    ".config/agents/skills/dev-test-audit/SKILL.md",
+    ".config/agents/harnesses/omp/agents/test-audit-opinion-a.md",
+    ".config/agents/harnesses/omp/agents/test-audit-opinion-b.md",
+    ".config/agents/harnesses/omp/config.yml",
+    ".config/agents/harnesses/grok/config.toml",
+}
+DTA_HOST_BINDING_FRAGMENTS = (
+    "openai-codex/",
+    "xai-oauth/",
+    "gpt-5.6-sol",
+    "grok-4.6",
+    "@test_audit_opinion_",
+    "test-audit-opinion-a",
+    "test-audit-opinion-b",
+)
+DTA_SOURCE_BRANDING_FRAGMENTS = (
+    "dietrichgebert/ponytail",
+    "cursor/plugins",
+    "thermo-nuclear-code-quality-review",
+)
+DTA_COMPLETION_AUDIT_FRAGMENTS = (
+    "after plan completion",
+    "only after plan done",
+    "post-completion portfolio audit",
+    "completion-gated audit",
+    "completion tail dispatches dev-test-audit",
+    "completion-presentation then dev-test-audit",
+    "run dev-test-audit after completion",
+    "audit after completion",
+    "completed plan required for audit",
+)
+DTA_BLANKET_CLOSURE_FRAGMENTS = (
+    "admit every quality finding",
+    "repair every simplification proposal",
+    "quality correction without exact replacement",
+    "all quality findings repaired",
+    "every finding is repaired",
+    "all findings repaired",
+)
+DTA_IDENTITY_ALIAS_FRAGMENTS = (
+    "worker-closure/v2",
+    "test-audit/v2",
+    "test-value/v2",
+    "no-new-contract disposition",
+    "no-new-contract enum",
+    "repository-partial schema field",
+)
+DTA_NEGATING_FRAGMENTS = (
+    " no ",
+    " never ",
+    " absent",
+    " zero",
+    " reject",
+    " block",
+    " stop",
+    " ineligible",
+    " cannot ",
+    " not an eligible",
+)
+DTA_PROTECTED_SECTIONS = {
+    (
+        "docs/adr/0001-dev-workflow-authority-and-routing.md",
+        "D14 — Separate shipping authority",
+    ): "6fbf3635ae509400b85c6fe0190126e502159df75b6f555a9ea9911d0097a629",
+    (
+        "docs/adr/0003-bounded-assurance-and-repair.md",
+        "D28 — Permanent test portfolio value",
+    ): "e56ffe40b4c392b3b3b5502d8f8f5b4ac79d5db6560010e283ad27e18c2cbc26",
+}
 PRESERVED = {
     ".config/agents/skills/dev-ask/evals/fixtures/l-mutation/counter.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
     ".agents/papercuts.json": "6653bf3c12330e7985c9f23dbd1fe84a62c3d6abb0b30a4330f958db0ed83d57",
@@ -542,6 +681,7 @@ def scan_paths(root: Path) -> list[str]:
                 EXECUTOR_PLAN_SCOPED_PATHS
                 | PLAN_ARTIFACT_SCOPED_NEEDLES.keys()
                 | DWO_PROJECTION_PATHS
+                | DTA_ACTIVE_EXECUTABLE_PATHS
             )
             + fixture_paths
         )
@@ -692,6 +832,116 @@ def dwo_registry_contract_hits(
                 repr(DWO_SEMANTIC_CASE_FIXTURES),
             )
         )
+    dta_dev_case_needles = {
+        "B-DWO-WORKER-CLOSURE": (
+            "planless same-context owner",
+            "plan-backed task child",
+            "eligible fresh-child attempt two",
+            "admitted Build-repair worker",
+            "correctness, preservation, effects, and owned acceptance",
+            "first-sufficient solution ladder",
+            "candidate-local structural regression",
+            "correctness repair adds code or complexity",
+            "quality correction only with exact surface",
+            "round counts 1, 2, and 2",
+            "no third round",
+            "unique keep, redundant merge, unsupported remove",
+            "no-new-contract",
+            "untouched portfolio selectors absent",
+            "closure and final test settlement precede task-local smoke",
+            "audit opinions invoke worker closure zero times",
+        ),
+        "R-DWO-TEST-AUDIT": (
+            "explicit user request",
+            "external-scheduler request",
+            "completed-plan provenance is absent",
+            "content-addressed working-tree target",
+            "complete repository or complete named-subsystem",
+            "changed-tests-only, incomplete, stale, and moving",
+            "dispatches 0",
+            "controller-supplied adapter-table identity",
+            "transport-unavailable for explicit audit only",
+            "deterministic index union",
+            "starts fresh through dev-ask",
+            "one-context cleanup planless",
+            "uses new Executor Plan",
+        ),
+    }
+    for case_id, needles in dta_dev_case_needles.items():
+        case = cases.get(case_id)
+        if case is None:
+            hits.append(dwo_contract_hit(case_id, "required DTA case", "<missing>"))
+            continue
+        serialized = normalize(json.dumps(case, ensure_ascii=False))
+        for needle in needles:
+            if normalize(needle) not in serialized:
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"DTA semantic contract: {needle}",
+                        serialized,
+                    )
+                )
+
+    for case_id in DTA_COMPLETION_CASE_IDS:
+        case = cases.get(case_id)
+        if case is None:
+            hits.append(
+                dwo_contract_hit(case_id, "required DTA completion case", "<missing>")
+            )
+            continue
+        serialized = normalize(json.dumps(case, ensure_ascii=False))
+        for needle in (
+            "automatic portfolio-audit dispatches 0",
+            "audit epilogue absent",
+        ):
+            if normalize(needle) not in serialized:
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"terminal completion contract: {needle}",
+                        serialized,
+                    )
+                )
+    missing_assurance = normalize(
+        json.dumps(cases["B-T5-COMPLETION-MISSING-ASSURANCE"], ensure_ascii=False)
+    )
+    if normalize("audit cannot bypass") not in missing_assurance:
+        hits.append(
+            dwo_contract_hit(
+                "B-T5-COMPLETION-MISSING-ASSURANCE",
+                "missing assurance audit bypass control",
+                missing_assurance,
+            )
+        )
+
+    review_needles = {
+        "B-REVIEW": (
+            "FIND-CALLER",
+            "FIND-SUITE",
+            "material suite degradation",
+            "CHANGES REQUIRED with FIND-CALLER and FIND-SUITE only",
+            "exactly one Standards/Specification review",
+        ),
+        "B-REVIEW-WORDING-ADVISORY": (
+            "ADV-STRUCTURE",
+            "ADV-TEST-NONMATERIAL",
+            "no parent, fixed-contract, or consumer harm",
+            "suite degradation is not material",
+            "one Standards/Specification review",
+        ),
+    }
+    for case_id, needles in review_needles.items():
+        serialized = normalize(json.dumps(cases[case_id], ensure_ascii=False))
+        for needle in needles:
+            if normalize(needle) not in serialized:
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"review classification contract: {needle}",
+                        serialized,
+                    )
+                )
 
     for case_id in DWO_RESUME_CASE_IDS:
         fixture_relative = DWO_SEMANTIC_CASE_FIXTURES[case_id]
@@ -956,8 +1206,8 @@ def dwo_registry_contract_hits(
             or "- Changed:" in raw_text
             or '"change_scope":' not in raw_text
             or '"key_artifacts":' not in raw_text
-            or "- Change scope:" not in raw_text
-            or "- Key artifacts:" not in raw_text
+            or "- **Change scope**" not in raw_text
+            or "- **Key artifacts**" not in raw_text
         ):
             hits.append(
                 dwo_contract_hit(
@@ -1035,6 +1285,100 @@ def dwo_registry_contract_hits(
         )
     return hits
 
+def dta_audit_registry_hits(root: Path) -> list[dict[str, Any]]:
+    path = root / DTA_AUDIT_REGISTRY_PATH
+    try:
+        registry = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ScanError(f"cannot parse DTA audit registry: {error}") from error
+    evals = registry.get("evals") if isinstance(registry, dict) else None
+    if not isinstance(evals, list):
+        raise ScanError("DTA audit registry evals must be a list")
+    ids = [case.get("id") for case in evals if isinstance(case, dict)]
+    hits: list[dict[str, Any]] = []
+    if tuple(ids) != DTA_AUDIT_CASE_IDS:
+        hits.append(
+            dwo_contract_hit(
+                DTA_AUDIT_REGISTRY_PATH,
+                "exact ten-case DTA audit inventory",
+                repr(ids),
+            )
+        )
+    cases = {
+        case["id"]: case
+        for case in evals
+        if isinstance(case, dict) and isinstance(case.get("id"), str)
+    }
+    case_needles = {
+        "DTA-DISCOVERY": (
+            "content-addressed working-tree manifest",
+            "completed-plan provenance is optional",
+        ),
+        "DTA-DISCOVERY-NEAR-MISS": (
+            "changed-tests-only scope is ineligible",
+            "dispatch count zero",
+            "unfinished plan status alone",
+        ),
+        "DTA-INDEPENDENT-PAIR": (
+            "controller-supplied exact adapter-table identity",
+            "fresh and distinct",
+            "no peer output",
+        ),
+        "DTA-DISAGREEMENT-EVIDENCE": (
+            "deterministic evidence rule",
+            "rather than counting votes",
+        ),
+        "DTA-TRANSPORT-UNAVAILABLE": (
+            "binding attestation mismatch",
+            "stop only the explicit audit",
+        ),
+        "DTA-READ-ONLY": (
+            "Cleanup authority: none",
+            "fresh dev-ask maintenance classification",
+            "routes the bounded cohesive settled one-context request planless",
+            "new Executor Plan",
+        ),
+        "DTA-BOUNDED-INDEX": (
+            "1200 selectors",
+            "T7, T900, T1000",
+        ),
+        "DTA-UNKNOWN-PRESERVED": (
+            "Aggregate unknown and preserve the test",
+            "fresh dev-ask maintenance classification",
+        ),
+        "DTA-PARTIAL-BOUNDARY": (
+            "complete named-subsystem",
+            "partial relative to the repository",
+            "without adding a schema field",
+        ),
+        "DTA-CHANGED-TESTS-ONLY-NEAR-MISS": (
+            "changed-tests-only intake before opinion dispatch",
+            "dispatch count is zero",
+        ),
+    }
+    for case_id, needles in case_needles.items():
+        case = cases.get(case_id)
+        if case is None:
+            hits.append(
+                dwo_contract_hit(
+                    DTA_AUDIT_REGISTRY_PATH,
+                    f"required audit case: {case_id}",
+                    "<missing>",
+                )
+            )
+            continue
+        serialized = normalize(json.dumps(case, ensure_ascii=False))
+        for needle in needles:
+            if normalize(needle) not in serialized:
+                hits.append(
+                    dwo_contract_hit(
+                        DTA_AUDIT_REGISTRY_PATH,
+                        f"{case_id} contract: {needle}",
+                        serialized,
+                    )
+                )
+    return hits
+
 
 def heading(line: str) -> tuple[int, str] | None:
     match = re.match(r"^(#{1,6})\s+(.*?)\s*$", line)
@@ -1043,9 +1387,14 @@ def heading(line: str) -> tuple[int, str] | None:
     return len(match.group(1)), match.group(2)
 
 
-def active_normalized_lines(lines: list[str]) -> list[tuple[int, str, str]]:
+def active_normalized_lines(
+    lines: list[str], *, excluded_heading_prefixes: tuple[str, ...] = ()
+) -> list[tuple[int, str, str]]:
     active: list[tuple[int, str, str]] = []
     skipped_level: int | None = None
+    normalized_exclusions = tuple(
+        normalize(prefix) for prefix in excluded_heading_prefixes
+    )
     for line_number, line in enumerate(lines, 1):
         parsed = heading(line)
         if parsed:
@@ -1053,9 +1402,14 @@ def active_normalized_lines(lines: list[str]) -> list[tuple[int, str, str]]:
             if skipped_level is not None and level <= skipped_level:
                 skipped_level = None
             folded_heading = normalize(text)
-            if folded_heading == normalize(
-                "Rejected alternatives / why not"
-            ) or folded_heading.startswith("historical"):
+            if (
+                folded_heading == normalize("Rejected alternatives / why not")
+                or folded_heading.startswith("historical")
+                or any(
+                    folded_heading.startswith(prefix)
+                    for prefix in normalized_exclusions
+                )
+            ):
                 skipped_level = level
                 continue
         if skipped_level is not None:
@@ -1065,6 +1419,157 @@ def active_normalized_lines(lines: list[str]) -> list[tuple[int, str, str]]:
             continue
         active.append((line_number, folded, line))
     return active
+
+
+def dta_negated(folded: str) -> bool:
+    padded = f" {folded} "
+    return any(fragment in padded for fragment in DTA_NEGATING_FRAGMENTS)
+
+def dta_active_fragment(folded: str, fragment: str) -> bool:
+    normalized_fragment = normalize(fragment)
+    return any(
+        normalized_fragment in clause and not dta_negated(clause)
+        for clause in re.split(r"[.;!?]+", folded)
+    )
+
+def dta_changed_tests_only_active(folded: str) -> bool:
+    fragment = normalize("changed-tests-only")
+    matching_clauses = [
+        clause for clause in re.split(r"[.;!?]+", folded) if fragment in clause
+    ]
+    positive_markers = (" eligible", " admit", " accept", " dispatch", " intake")
+    if any(
+        not dta_negated(clause)
+        and any(marker in f" {clause} " for marker in positive_markers)
+        for clause in matching_clauses
+    ):
+        return True
+    return bool(matching_clauses) and not dta_negated(folded)
+
+
+def dta_executable_lines(path: str, text: str) -> list[tuple[int, str, str]]:
+    if not path.endswith(".json"):
+        excluded = (
+            ("evidence", "source revisions") if path.startswith("docs/adr/") else ()
+        )
+        return active_normalized_lines(
+            text.splitlines(), excluded_heading_prefixes=excluded
+        )
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return active_normalized_lines(text.splitlines())
+
+    strings: list[str] = []
+
+    def collect(value: Any, *, key: str | None = None) -> None:
+        if key in {"id", "absent_capabilities", "forbidden_events"}:
+            return
+        if isinstance(value, dict):
+            for child_key, child in value.items():
+                collect(child, key=child_key)
+        elif isinstance(value, list):
+            for child in value:
+                collect(child)
+        elif isinstance(value, str):
+            strings.extend(value.splitlines() or [""])
+
+    collect(payload)
+    return [
+        (line_number, normalize(source), source)
+        for line_number, source in enumerate(strings, 1)
+    ]
+
+
+def dta_active_contract_hits(path: str, text: str) -> list[dict[str, Any]]:
+    if path not in DTA_ACTIVE_EXECUTABLE_PATHS:
+        return []
+    hits: list[dict[str, Any]] = []
+    for line_number, folded, source in dta_executable_lines(path, text):
+        for fragment in DTA_COMPLETION_AUDIT_FRAGMENTS:
+            if dta_active_fragment(folded, fragment):
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"stale completion-gated audit: {fragment}",
+                        "text": source,
+                    }
+                )
+        for fragment in DTA_BLANKET_CLOSURE_FRAGMENTS:
+            if dta_active_fragment(folded, fragment):
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"blanket closure admission: {fragment}",
+                        "text": source,
+                    }
+                )
+        for fragment in DTA_IDENTITY_ALIAS_FRAGMENTS:
+            if normalize(fragment) in folded:
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"identity or schema alias: {fragment}",
+                        "text": source,
+                    }
+                )
+        if dta_changed_tests_only_active(folded):
+            hits.append(
+                {
+                    "path": path,
+                    "line": line_number,
+                    "needle": "changed-tests-only audit intake",
+                    "text": source,
+                }
+            )
+        for fragment in DTA_SOURCE_BRANDING_FRAGMENTS:
+            if normalize(fragment) in folded:
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"source branding in executable prompt: {fragment}",
+                        "text": source,
+                    }
+                )
+        if path not in DTA_HOST_BINDING_ALLOWLIST:
+            for fragment in DTA_HOST_BINDING_FRAGMENTS:
+                if fragment.casefold() in source.casefold():
+                    hits.append(
+                        {
+                            "path": path,
+                            "line": line_number,
+                            "needle": f"host binding outside allowlist: {fragment}",
+                            "text": source,
+                        }
+                    )
+    return hits
+
+
+def protected_section_bytes(text: str, title: str) -> bytes:
+    lines = text.splitlines(keepends=True)
+    start: int | None = None
+    level: int | None = None
+    end = len(lines)
+    for index, line in enumerate(lines):
+        parsed = heading(line.rstrip("\r\n"))
+        if parsed is None:
+            continue
+        current_level, current_title = parsed
+        if start is None:
+            if normalize(current_title) == normalize(title):
+                start = index
+                level = current_level
+            continue
+        if level is not None and current_level <= level:
+            end = index
+            break
+    if start is None:
+        raise ScanError(f"protected section heading missing: {title}")
+    return "".join(lines[start:end]).encode("utf-8")
 
 
 def scan_text(path: str, text: str) -> tuple[list[dict[str, Any]], set[str]]:
@@ -1138,6 +1643,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
         hits.extend(path_hits)
         required_seen.update(path_required)
         hits.extend(dwo_projection_hits(relative, text))
+        hits.extend(dta_active_contract_hits(relative, text))
         if (
             relative in EXECUTOR_PLAN_SCOPED_PATHS
             or relative in PLAN_ARTIFACT_SCOPED_NEEDLES
@@ -1159,6 +1665,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
                 )
     hits.extend(executor_plan_case_hits(cases))
     hits.extend(dwo_registry_contract_hits(root, cases))
+    hits.extend(dta_audit_registry_hits(root))
     missing_required = sorted(set(REQUIRED_NEEDLES) - required_seen)
     return {
         "schema": SCHEMA,
@@ -1180,6 +1687,31 @@ def preserve_check(root: Path) -> dict[str, Any]:
         except OSError as error:
             hits.append(
                 {"path": raw, "line": 0, "needle": expected, "text": str(error)}
+            )
+            continue
+        if actual != expected:
+            hits.append(
+                {
+                    "path": raw,
+                    "line": 0,
+                    "needle": expected,
+                    "text": actual,
+                }
+            )
+    for (raw, title), expected in DTA_PROTECTED_SECTIONS.items():
+        scanned.append(f"{raw}#{title}")
+        path = root / raw
+        try:
+            text = path.read_text(encoding="utf-8")
+            actual = hashlib.sha256(protected_section_bytes(text, title)).hexdigest()
+        except (OSError, UnicodeError, ScanError) as error:
+            hits.append(
+                {
+                    "path": raw,
+                    "line": 0,
+                    "needle": expected,
+                    "text": str(error),
+                }
             )
             continue
         if actual != expected:
@@ -1394,6 +1926,164 @@ def run_selftest(root: Path) -> dict[str, Any]:
             raise ScanError(f"DWO false-positive self-test failed: {name}")
         checks.append(f"dwo-allowed:{name}")
 
+    dta_stale_controls = {
+        "former-after-plan-completion": (
+            ".config/agents/skills/dev-ask/WORKFLOW.md",
+            "- [`dev-test-audit`](../dev-test-audit/SKILL.md) — separately routed "
+            "two-opinion read-only audit after plan completion.",
+            "stale completion-gated audit:",
+        ),
+        "blanket-quality-admission": (
+            ".config/agents/skills/dev-implementation/references/worker-closure.md",
+            "Admit every quality finding.",
+            "blanket closure admission:",
+        ),
+        "blanket-all-findings": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-dwo-worker-closure/case.json",
+            "Every finding is repaired.",
+            "blanket closure admission:",
+        ),
+        "identity-alias": (
+            ".config/agents/skills/dev-test-audit/references/audit-protocol.md",
+            "Use test-audit/v2 for compatibility.",
+            "identity or schema alias:",
+        ),
+        "changed-tests-only": (
+            DTA_AUDIT_REGISTRY_PATH,
+            "Changed-tests-only audit intake is eligible.",
+            "changed-tests-only audit intake",
+        ),
+        "source-branding": (
+            ".config/agents/skills/dev-test-audit/references/opinion-agent.md",
+            "Portable prompt imports DietrichGebert/ponytail.",
+            "source branding in executable prompt:",
+        ),
+        "host-binding": (
+            ".config/agents/skills/dev-ask/evals/fixtures/b-review/case.json",
+            "Resolve openai-codex/example.",
+            "host binding outside allowlist:",
+        ),
+    }
+    for name, (path, source, needle_prefix) in dta_stale_controls.items():
+        found = dta_active_contract_hits(path, source)
+        if not any(hit["needle"].startswith(needle_prefix) for hit in found):
+            raise ScanError(f"DTA active-contract stale self-test failed: {name}")
+        checks.append(f"dta-stale:{name}")
+
+    dta_prompt_mutations = {
+        "completion-gated-audit": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-dwo-test-audit/case.json",
+            "Run dev-test-audit after completion.",
+            "stale completion-gated audit:",
+        ),
+        "blanket-all-findings": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-dwo-worker-closure/case.json",
+            "Every finding is repaired.",
+            "blanket closure admission:",
+        ),
+        "identity-alias": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-dwo-test-audit/case.json",
+            "Use test-audit/v2 for compatibility.",
+            "identity or schema alias:",
+        ),
+        "changed-tests-only": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-dwo-test-audit/case.json",
+            "Changed-tests-only audit intake is eligible.",
+            "changed-tests-only audit intake",
+        ),
+        "source-branding": (
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-dwo-test-audit/case.json",
+            "Portable prompt imports DietrichGebert/ponytail.",
+            "source branding in executable prompt:",
+        ),
+        "host-binding": (
+            ".config/agents/skills/dev-ask/evals/fixtures/b-review/case.json",
+            "Resolve openai-codex/example.",
+            "host binding outside allowlist:",
+        ),
+    }
+    for name, (path, mutation, needle_prefix) in dta_prompt_mutations.items():
+        prompt_copy = json.loads((root / path).read_text(encoding="utf-8"))
+        prompt_copy["inputs"]["request"] += f" {mutation}"
+        found = dta_active_contract_hits(
+            path, json.dumps(prompt_copy, ensure_ascii=False)
+        )
+        if not any(hit["needle"].startswith(needle_prefix) for hit in found):
+            raise ScanError(
+                f"DTA current-prompt mutation self-test failed: {name}"
+            )
+        checks.append(f"dta-prompt-mutation:{name}")
+
+    dta_allowed_controls = {
+        "negated-completion": (
+            ".config/agents/skills/dev-ask/WORKFLOW.md",
+            "Post-completion portfolio audit is absent.",
+        ),
+        "blocked-changed-only": (
+            DTA_AUDIT_REGISTRY_PATH,
+            "Changed-tests-only audit intake is blocked before opinions.",
+        ),
+        "adr-evidence-source": (
+            "docs/adr/0003-bounded-assurance-and-repair.md",
+            "## Evidence / source revisions\n"
+            "Pinned DietrichGebert/ponytail and cursor/plugins locators.",
+        ),
+        "rejected-source": (
+            ".config/agents/skills/dev-test-audit/references/opinion-agent.md",
+            "## Rejected alternatives / why not\n"
+            "Portable prompt imports DietrichGebert/ponytail.",
+        ),
+        "audit-skill-binding": (
+            ".config/agents/skills/dev-test-audit/SKILL.md",
+            "The exact table row resolves openai-codex/example.",
+        ),
+        "changed-not-eligible": (
+            DTA_AUDIT_REGISTRY_PATH,
+            "Changed-tests-only is not an eligible complete suite boundary.",
+        ),
+        "opinion-agent-heading": (
+            ".config/agents/skills/dev-test-audit/references/opinion-agent.md",
+            "# Test audit opinion agent",
+        ),
+        "json-forbidden-event-metadata": (
+            ".config/agents/skills/dev-ask/evals/evals.json",
+            json.dumps(
+                {
+                    "id": "CONTROL",
+                    "forbidden_events": [
+                        "completion-gated-audit",
+                        "changed-tests-only-dispatch",
+                    ],
+                }
+            ),
+        ),
+    }
+    for name, (path, source) in dta_allowed_controls.items():
+        if dta_active_contract_hits(path, source):
+            raise ScanError(f"DTA active-contract false-positive self-test failed: {name}")
+        checks.append(f"dta-allowed:{name}")
+
+    baseline_audit_hits = dta_audit_registry_hits(root)
+    if baseline_audit_hits:
+        raise ScanError(
+            f"DTA audit registry baseline self-test failed: {baseline_audit_hits}"
+        )
+    checks.append("dta-audit-registry:exact-ten-case-baseline")
+
+    for (raw, title), expected in DTA_PROTECTED_SECTIONS.items():
+        text = (root / raw).read_text(encoding="utf-8")
+        actual = hashlib.sha256(protected_section_bytes(text, title)).hexdigest()
+        if actual != expected:
+            raise ScanError(f"DTA protected-section self-test failed: {raw}#{title}")
+        checks.append(f"dta-protected:{raw}#{title}")
+
+
     cases = load_registry(root)
     baseline_dwo_hits = dwo_registry_contract_hits(root, cases)
     if baseline_dwo_hits:
@@ -1401,6 +2091,15 @@ def run_selftest(root: Path) -> dict[str, Any]:
     checks.append("dwo-registry:baseline")
 
     expected_semantic_pairs = (
+        (
+            "B-DWO-WORKER-CLOSURE",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-dwo-worker-closure/case.json",
+        ),
+        (
+            "R-DWO-TEST-AUDIT",
+            ".config/agents/skills/dev-ask/evals/fixtures/r-dwo-test-audit/case.json",
+        ),
         (
             "B-FULL",
             ".config/agents/skills/dev-ask/evals/fixtures/b-full/case.json",
@@ -1432,7 +2131,9 @@ def run_selftest(root: Path) -> dict[str, Any]:
     checks.append("dwo-semantic:exact-map-and-near-miss-exclusion")
 
     registry_only_mutation = copy.deepcopy(cases)
-    registry_only_mutation["B-FULL"]["inputs"]["request"] += " Registry mutation."
+    registry_only_mutation["B-DWO-WORKER-CLOSURE"]["inputs"]["request"] += (
+        " Registry mutation."
+    )
     if not any(
         hit["needle"] == "semantic case parity: field inputs mismatch"
         for hit in dwo_registry_contract_hits(root, registry_only_mutation)
@@ -1440,13 +2141,13 @@ def run_selftest(root: Path) -> dict[str, Any]:
         raise ScanError("DWO semantic registry-only mutation self-test failed")
     checks.append("dwo-semantic:registry-only-mutation")
 
-    fixture_relative = DWO_SEMANTIC_CASE_FIXTURES["B-FULL"]
+    fixture_relative = DWO_SEMANTIC_CASE_FIXTURES["R-DWO-TEST-AUDIT"]
     fixture_only_mutation = json.loads(
         (root / fixture_relative).read_text(encoding="utf-8")
     )
     fixture_only_mutation["scripted_replies"].append("Fixture mutation.")
     fixture_comparison = compare_semantic_case(
-        cases, "B-FULL", fixture_only_mutation
+        cases, "R-DWO-TEST-AUDIT", fixture_only_mutation
     )
     if fixture_comparison["mismatches"] != ["field scripted_replies mismatch"]:
         raise ScanError("DWO semantic fixture-only mutation self-test failed")

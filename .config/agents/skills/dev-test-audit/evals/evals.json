@@ -3,37 +3,37 @@
   "evals": [
     {
       "id": "DTA-DISCOVERY",
-      "prompt": "A completed engineering plan is DONE and its current repository target, permanent-suite manifest, and test-value/v1 identity are immutable. Dev-ask now routes the separately requested read-only two-model test-value audit. Name the specialty, its immediate boundary before any opinion dispatch, and whether either opinion is implementation, verification, review, or learning.",
-      "expected_output": "Select dev-test-audit. It freezes the exact target, suite, and policy, requires the exact independent two-opinion transport, and remains read-only, non-gating, and unable to authorize cleanup. Neither opinion is implementation, verification, review, or learning.",
+      "prompt": "An explicit user requests a read-only permanent-test portfolio audit against an exact content-addressed working-tree manifest, a complete repository suite manifest, test-value/v1, test-audit/v1, and an exact receiver. Completed-plan provenance is absent. Name the specialty, decide eligibility before opinion dispatch, and state what authority the missing plan provenance contributes.",
+      "expected_output": "Select dev-test-audit. Freeze the exact target, complete suite boundary, policies, adapter-table identity, and receiver; completed-plan provenance is optional and contributes no authority. The eligible explicit audit may dispatch its exact independent pair and remains read-only, non-gating, and unable to authorize cleanup.",
       "files": [],
       "assertions": [
-        "The response selects dev-test-audit only after the completed target is immutable",
-        "The target, suite manifest, and test-value/v1 policy are frozen before dispatch",
-        "The audit is read-only and does not reopen the plan or authorize cleanup",
-        "No opinion is treated as implementation, verification, review, or learning"
+        "The response selects dev-test-audit for explicit exact-target intake",
+        "A content-addressed working-tree manifest or commit and complete suite boundary are frozen before dispatch",
+        "Completed-plan provenance is optional and contributes no authority",
+        "The audit is read-only and does not change implementation or completion state"
       ]
     },
     {
       "id": "DTA-DISCOVERY-NEAR-MISS",
-      "prompt": "During an unfinished implementation task, the user asks to run changed unit tests, diagnose one failure, and repair it. No completed immutable target or permanent-suite audit manifest exists. Decide whether dev-test-audit activates.",
-      "expected_output": "Do not activate dev-test-audit. Ordinary test execution and repair remain with the implementation or diagnosis owner; the post-completion read-only audit has no eligible frozen intake.",
+      "prompt": "During an unfinished implementation task, the user asks for a portfolio audit of only the changed-tests-only subset. No exact content-addressed target, complete repository or named-subsystem suite manifest, policy tuple, or receiver is supplied. Decide eligibility and count opinion dispatches; do not use unfinished status as the deciding defect.",
+      "expected_output": "Do not activate dev-test-audit. The request lacks the eligible exact tuple and complete suite boundary, and changed-tests-only scope is ineligible. Block before opinions with dispatch count zero. Ordinary implementation may continue; unfinished plan status alone is neither required provenance nor the reason for rejection.",
       "files": [],
       "assertions": [
-        "The response does not route routine test execution or failure repair to dev-test-audit",
-        "Missing completed immutable target and suite manifest make audit intake ineligible",
-        "No audit opinion child is dispatched",
-        "The response does not use audit availability to block implementation"
+        "The response rejects the missing exact target and complete suite boundary rather than requiring a completed plan",
+        "Changed-tests-only scope is ineligible before opinion dispatch",
+        "Opinion dispatch count is zero",
+        "The audit outcome does not block or mutate the unfinished implementation"
       ]
     },
     {
       "id": "DTA-INDEPENDENT-PAIR",
-      "prompt": "Simulate an eligible audit on one frozen tuple. OMP opinion A resolves test-audit-opinion-a through @test_audit_opinion_a to openai-codex/gpt-5.6-sol:xhigh with read, grep, glob; opinion B resolves test-audit-opinion-b through @test_audit_opinion_b to xai-oauth/grok-4.6:xhigh with the same tools. Both say fallback none and have different fresh child IDs. In the answer, restate both exact agent names, role aliases, selectors, xhigh reasoning, and read-only tool lists; then state admission, context-sharing behavior, and whether either single opinion can substitute for the pair.",
-      "expected_output": "Admit exactly two independent opinions. Both receive the same frozen tuple and shared prompt identity but no peer output; each keeps a complete ledger behind its own native artifact and returns only its attestation, coverage proof, ledger digest, and bounded candidate index. Neither single opinion can substitute for the pair.",
+      "prompt": "Simulate one eligible audit with a controller-supplied exact adapter-table identity and two per-row binding attestations. Opinion rows A and B attest the table-defined stable role aliases, selectors, reasoning tier, read-only tool set, isolation, and fallback none; both child IDs are fresh and distinct. State admission, context sharing, ledger transport, and whether either single opinion can substitute for the pair. Do not restate concrete host, provider, model, product, or repository-helper literals.",
+      "expected_output": "Admit exactly two fresh distinct table-bound opinions after both binding attestations match. Both receive the same frozen tuple and shared prompt identity but no peer output; each complete ledger stays behind its own native artifact and returns its attestation, coverage proof, ledger digest, and bounded candidate index. Neither single opinion can substitute for the pair.",
       "files": [],
       "assertions": [
-        "Both exact OMP agent names, role aliases, selectors, xhigh reasoning, and read-only tool lists are required",
-        "The child identities are fresh and distinct",
-        "Neither opinion sees the other opinion or ledger",
+        "The exact controller-supplied adapter-table identity and both binding attestations are required",
+        "Both stable opinion roles match their table-defined selector, reasoning, tools, isolation, and fallback-none fields without portable host literals",
+        "The child identities are fresh and distinct and neither sees peer output",
         "The controller receives no full ledger and accepts no single-opinion substitute"
       ]
     },
@@ -51,26 +51,26 @@
     },
     {
       "id": "DTA-TRANSPORT-UNAVAILABLE",
-      "prompt": "Opinion A resolves exactly, but opinion B resolves xai-oauth/grok-4.6:high instead of xai-oauth/grok-4.6:xhigh. A compatible fallback model and a prior opinion-B receipt are available. Return the audit transport result and effects.",
-      "expected_output": "Return transport-unavailable with the exact opinion-B expected/observed reasoning mismatch. Do not use the fallback, prior receipt, opinion A alone, or a replacement child as a completed pair; do not mutate the suite or alter the completed plan.",
+      "prompt": "Opinion row A matches its controller-supplied binding attestation, but opinion row B reports one reasoning field that differs from the exact adapter-table row. A compatible substitute and a prior row-B receipt are available. Return the explicit audit transport result and state every implementation, completion, suite, and fallback effect.",
+      "expected_output": "Return transport-unavailable with the exact row-B binding attestation mismatch. Do not use the substitute, prior receipt, opinion A alone, or a replacement child as a completed pair. Stop only the explicit audit; do not mutate the suite or alter implementation or completion state.",
       "files": [],
       "assertions": [
-        "The xhigh versus high mismatch is named exactly",
-        "Fallback is none and no compatible substitute is admitted",
+        "The exact expected and observed binding-attestation field mismatch is named",
+        "Fallback is none and no substitute is admitted",
         "One opinion and a stale prior receipt cannot substitute for two fresh exact opinions",
-        "Transport failure changes neither plan completion nor repository bytes"
+        "Transport failure stops only the explicit audit and changes no repository or lifecycle state"
       ]
     },
     {
       "id": "DTA-READ-ONLY",
-      "prompt": "Both opinions agree that three permanent tests should be removed and the user asks the audit controller to delete them, update snapshots, run the suite, commit the cleanup, and launch worker closure. State every allowed effect, the controller and opinion tool boundaries, and whether worker closure or assurance runs on any audit role.",
-      "expected_output": "Emit only read-only recommendations in one Common Handoff. Opinion roles have no shell access; the controller may perform read-only identity checks but performs no audited-test or mutation command. No audit role runs worker closure or assurance. Perform no deletion, edit, snapshot update, test execution, commit, or cleanup dispatch; later cleanup requires separate approved authority and plan.",
+      "prompt": "Both opinions agree that three permanent tests should be removed and the user asks the audit controller to delete them, update snapshots, run the suite, commit cleanup, and launch worker closure. State every allowed audit effect and then classify two later explicit cleanup requests through fresh dev-ask intake: one bounded, cohesive, settled, one-context change and one broad dependency-ordered, fan-in, recovery-sensitive change.",
+      "expected_output": "Emit only read-only recommendations in one Common Handoff with Cleanup authority: none. Opinion roles and controller perform no mutation or audited-test execution, and no audit role runs worker closure or assurance. A later fresh dev-ask maintenance classification routes the bounded cohesive settled one-context request planless and requires a new Executor Plan for the broad dependency-ordered fan-in recovery-sensitive request. Neither inherits opinion, attempt, review, completion, or audit authority.",
       "files": [],
       "assertions": [
-        "The controller and opinion children remain non-mutating",
-        "Opinion roles have no shell access, and the controller does not run audited tests or mutation commands",
-        "Worker closure and assurance do not run on audit roles",
-        "Recommendations do not authorize cleanup, shipping, or a new task"
+        "The controller and opinion children remain read-only and cleanup authority stays none",
+        "Worker closure, assurance, test execution, deletion, snapshot update, and commit do not run on audit roles",
+        "Fresh dev-ask maintenance classification routes bounded cohesive settled one-context cleanup planless",
+        "Broad dependent fan-in or recovery-sensitive cleanup requires a new Executor Plan and inherits no audit authority"
       ]
     },
     {
@@ -88,14 +88,38 @@
     },
     {
       "id": "DTA-UNKNOWN-PRESERVED",
-      "prompt": "Opinion A marks a test unknown because its external protocol contract is unavailable. Opinion B recommends remove but cannot establish whether another selector preserves that protocol. The target, suite, and policy remain exact. Aggregate, state explicitly whether the test is preserved, and state later authority.",
-      "expected_output": "Aggregate unknown and preserve the test. Record the missing protocol and replacement evidence, emit no cleanup effect, and require a separately approved future cleanup plan before any mutation; unknown is never deletion authority.",
+      "prompt": "Opinion A marks a test unknown because its external protocol contract is unavailable. Opinion B recommends remove but cannot establish whether another selector preserves that protocol. The target, suite, and policy remain exact. Aggregate, state explicitly whether the test is preserved, and classify later cleanup authority through fresh dev-ask maintenance intake.",
+      "expected_output": "Aggregate unknown and preserve the test. Record the missing protocol and replacement evidence and emit no cleanup effect. A later explicit cleanup request receives fresh dev-ask maintenance classification: bounded cohesive settled one-context work may be planless, while broad dependency-ordered, fan-in, or recovery-sensitive work requires a new Executor Plan. Unknown and prior audit state grant no mutation.",
       "files": [],
       "assertions": [
         "Any source unknown or unresolved subsumption evidence aggregates to unknown",
-        "The test is preserved",
-        "The missing evidence is named rather than inferred",
-        "Audit completion does not authorize mutation or reopen the completed plan"
+        "The test is preserved and missing evidence is named",
+        "Audit completion emits no cleanup effect or inherited mutation authority",
+        "Fresh dev-ask classifies later bounded work planless and broad dependent or recovery-sensitive work into a new Executor Plan"
+      ]
+    },
+    {
+      "id": "DTA-PARTIAL-BOUNDARY",
+      "prompt": "An explicit audit intake supplies an exact commit target, test-value/v1, test-audit/v1, exact adapter-table identity, receiver, and a complete named-subsystem suite manifest enumerating every permanent test in subsystem cache while declaring repository tests outside cache out of scope. No completed plan is supplied. Decide eligibility, opinion coverage, aggregation label, and Handoff wording without adding a schema field.",
+      "expected_output": "Admit the complete named-subsystem audit without completed-plan provenance. Each opinion ledger covers every subsystem selector exactly once and no out-of-bound selector. Aggregate under the existing result prose and state in the aggregate and Common Handoff evidence that this result is partial relative to the repository; add no schema, enum, alias, or cleanup authority.",
+      "files": [],
+      "assertions": [
+        "A complete named-subsystem manifest is an eligible exact audit boundary",
+        "Each opinion covers every subsystem selector exactly once and excludes declared out-of-bound repository tests",
+        "The aggregate and Common Handoff prose label the result partial relative to the repository",
+        "No completed-plan requirement, schema addition, mutation, or cleanup authority is introduced"
+      ]
+    },
+    {
+      "id": "DTA-CHANGED-TESTS-ONLY-NEAR-MISS",
+      "prompt": "An explicit audit request supplies an exact commit but defines its permanent-suite boundary as only tests changed by that commit. It does not supply a complete repository or complete named-subsystem manifest. Decide eligibility before opinion dispatch, count dispatches, and state whether a partial portfolio result or lifecycle effect exists.",
+      "expected_output": "Reject the changed-tests-only intake before opinion dispatch. Dispatch count is zero because the boundary is neither a complete repository nor a complete named subsystem. Produce no partial portfolio claim, audit result, cleanup authority, implementation change, or completion-state effect.",
+      "files": [],
+      "assertions": [
+        "Changed-tests-only is not an eligible complete suite boundary",
+        "Rejection occurs before either opinion dispatch and dispatch count is zero",
+        "No partial portfolio result or cleanup authority is produced",
+        "Implementation and completion state remain unchanged"
       ]
     }
   ]

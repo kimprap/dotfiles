@@ -87,21 +87,21 @@ Exclude transcripts, broad repository summaries, unrelated files, a copied plan 
 
 ## Worker procedure
 
-Each work attempt uses one fresh child. The child:
+A planless same-context attempt stays with its semantic owner. Each dispatched plan-backed attempt, eligible attempt two, and admitted Build repair uses its bound fresh child. In every shape, that same semantic owner:
 
 1. Rechecks the Task Contract, dependencies, targets, and current manifests.
 2. Reads the real changed flow, callers, and current local patterns.
 3. Selects the first sufficient solution rung without reducing approved behavior, compatibility, safety, accessibility, or proof.
 4. Implements only the declared contract and produces a nonterminal candidate.
-5. Reports candidate readiness to the root without sealing a Handoff.
+5. Reports candidate readiness to the controlling implementation owner without settling tests, running final smoke, or sealing a Handoff.
 
 ## Same-child worker closure
 
-Work attempt one, eligible fresh-child attempt two, and each admitted Build repair use [`references/worker-closure.md`](references/worker-closure.md), identified as `worker-closure/v1` by its exact digest. The reference alone owns the exact challenge prompts.
+The planless same-context semantic owner, each plan-backed task child, an eligible fresh-child attempt-two owner, and each admitted Build-repair worker use [`references/worker-closure.md`](references/worker-closure.md), identified as `worker-closure/v1` by its exact digest. The reference alone owns the exact challenge prompts.
 
-Round one is mandatory through native same-child control. If round one causes a contract-relevant correction, the same child receives round two, limited to corrected findings and repair-caused regressions. There is no third round. The same child repairs every concrete finding within the unchanged Task Contract and target/effect boundary.
+Round one is mandatory through native same-child control and covers the four contract axes, first-sufficient ladder, candidate-local structural regression, and task-local permanent-test decision. Directly evidenced contract violations are admitted regardless of added complexity; quality correction requires the exact safe replacement or test disposition and preservation proof. Any actual admitted correction triggers round two, limited to corrected findings and plausible correction-caused regressions. There is no third round.
 
-After permitted closure, the same child runs task-local smoke for every owned criterion, corrected finding, and correction-caused surface, then emits exactly one Common Handoff. Verification, neutral integration, review, learning, audit controllers, and audit opinions never run worker closure.
+After permitted closure, the same semantic owner settles every changed permanent test under `test-value/v1`, or records the concrete existing-coverage/no-new-contract basis, then runs task-local smoke for every owned criterion, corrected finding, and correction-caused surface and emits exactly one Common Handoff. Verification, neutral integration, review, learning, audit controllers, and audit opinions never run worker closure.
 
 Workers smoke the frozen acceptance cases, fixtures, oracles, and finite current consumers. Smoke results and worker conclusions are never independent verifier evidence.
 
@@ -116,7 +116,7 @@ Apply [`references/test-value.md`](references/test-value.md) as `test-value/v1` 
 5. Reject or consolidate implementation-detail, tautological, duplicate, subsumed, incidental-snapshot, coverage-only, and production-logic-oracle cases.
 6. Keep the smallest permanent set preserving every unique contract.
 
-The work Handoff records one disposition row per changed permanent test, or the concrete existing-coverage/no-new-contract basis when tests do not change. Explicit TDD keeps red/green evidence but consolidates redundant tracer tests before Handoff.
+The work Handoff records one disposition row per changed permanent test, or the concrete existing-coverage/no-new-contract basis when tests do not change. Settle every row before final smoke. Explicit TDD keeps red/green evidence but consolidates redundant tracer tests before Handoff; closure never inspects untouched portfolio tests.
 
 Before every assurance or completion boundary, recanonicalize each once-bound recipe and rehash each bound adapter. The final evidence binds the final adapter digest and final canonical recipe; drift blocks without consuming the boundary.
 
@@ -162,13 +162,13 @@ The run owns one post-assurance repair token. One blocking verifier or reviewer 
 
 The current repair boundary remains exact: impacted proof runs fresh and exact unaffected evidence may be proposed for reuse. For every dispatched typed or repair action, the verifier independently repeats current resolution, current and frozen-prior generation validation, and action-map consistency; invalid current or dispatched reuse intake returns `INCONCLUSIVE` before proof without repair or silent downgrade. It independently accepts or rejects every action, runs every rebound or rejected-reuse current recipe fresh, and issues one fresh complete aggregate over every current criterion from fresh proof plus independently accepted exact-identity unaffected evidence.
 
-After the last accepted work Handoff, obtain fresh current-target `dev-verification`, then one current-target `dev-code-review`, then terminal `dev-continual-learning`, unless an authored tail already consumes them. A repaired target receives fresh impacted proof and one review on its new identity. Audit availability and audit results never delay this chain or plan completion.
+After the last accepted work Handoff, obtain fresh current-target `dev-verification`, then one current-target `dev-code-review`, then terminal `dev-continual-learning`, unless an authored tail already consumes them. A repaired target receives fresh impacted proof and one review on its new identity.
 
-The read-only `dev-test-audit` specialty is separately routed by `dev-ask` only after a plan is `DONE`. It is not an implementation task, assurance gate, worker-closure consumer, or test-mutation authority. A precise audit `transport-unavailable` result leaves the completed plan unchanged.
+Normal engineering completion is terminal and schedules no audit. `dev-test-audit` is a separate explicit `dev-ask` intake against its own exact frozen target and complete suite boundary; completed-plan provenance is optional. It is not an implementation task, assurance gate, worker-closure consumer, test-mutation authority, or completion transition. Its outcome changes no implementation lifecycle state.
 
 ## Completion
 
-Complete only when all authored tasks, criteria, Handoffs, post-Handoff papercut accounting, required assurance, stable target identities, preservation controls, and terminal learning are settled with no implementation blocker. The root performs accounting and presentation preparation only.
+Complete only when all authored tasks, criteria, Handoffs, post-Handoff papercut accounting, required assurance, stable target identities, preservation controls, and terminal learning are settled with no implementation blocker. The root performs accounting and presentation preparation only. The successful profile-specific presentation is terminal and dispatches no portfolio audit.
 
 Engineering completion normalization constructs exactly one current unversioned `completion-presentation-input` fence with the twelve ordered keys `status`, `outcome`, `change_scope`, `key_artifacts`, `verification`, `papercuts`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, `next`. `change_scope` and `key_artifacts` are ordered one-to-three-item arrays; `papercuts` is the ordered array of material existing results, with `[]` projecting to the presenter-owned hanging scalar `none` and nonempty items projecting to hanging child bullets. The legacy `changed` key, scalar list values, and legacy singular papercut key are invalid. The same calling agent applies `completion-presentation`; the presenter is not dispatched.
 
