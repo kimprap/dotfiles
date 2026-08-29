@@ -50,6 +50,15 @@ Place one contiguous block immediately after the H1 and before the first H2, in 
 
 - Append later user overrides to the Completion Summary without changing plan identity or rewriting historical outcomes.
 
+## Terminal archive boundary
+
+- A caller supplies the terminal archive trigger only when its initial exact validation observed the active plan as `PENDING` or `IN_PROGRESS` and the same run changes that plan to parser-valid `DONE` or, with explicit human cancellation authority, `CLOSED`. Do not persist a marker, infer the transition, scan terminal files, reconcile identity paths, or perform a historical sweep.
+- For `DONE`, settle all semantic work, smoke, Handoffs, papercut accounting, all applicable required assurance, review, and learning, task and criterion records, Completion Summary, `Completed At`, and the exact parser-valid terminal bytes before invoking the existing archive operation. Validate the archive postcondition before completion normalization or presentation.
+- For current-session `CLOSED`, write and validate the authorized terminal bytes without `Completed At` or a Completion Summary, reach the same archive postcondition, and only then emit one cancellation-close report. Do not emit completed presentation.
+- Archive success requires the active identity path to be absent and the archive identity path to be a regular non-symlink file byte-identical to the exact terminal snapshot. A current successful adapter archive result may satisfy this postcondition without a second action. Storage remains non-authorizing and is not semantic completion evidence, but the postcondition is required for terminal caller output.
+- Planned `resume_from` uses only the identity-derived archive path followed by `@sha256:`, the lowercase SHA-256 of the exact archived terminal bytes, and `#completion-summary`. The active terminal path is never a planned completion locator. Intake already at `DONE` or `CLOSED` performs no archive lookup, action, reconciliation, or mutation; planless compact performs no repository-plan lookup, archive action or receipt request, or synthetic-plan creation.
+- Both identity paths present, a divergent archive, parser-invalid terminal bytes, unsafe file kind, source or target drift, and an uncertain postcondition remain visible storage blockers. Preserve exact paths, kinds, and bytes; do not overwrite, blindly retry, continue semantic work, emit a second Handoff, normalize or present completion, issue cancellation close, or speculatively revert terminal status.
+
 ## Plan quality
 
 Plans are execution contracts, not transcripts. Include only the context, anchors, sequence, decisions, and proof a fresh executor needs. Scale detail with risk, reference canonical authority instead of copying it, and leave no material implementation choice unresolved. Apply the implementation-plan companion only when a later executor needs implementation-grade detail.

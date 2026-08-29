@@ -4,7 +4,7 @@
 
 This workflow carries a current engineering request or approved product authority through the smallest safe route to a locally complete terminal result. It keeps one thin stateless router, stable human authority, immutable assurance, one semantic owner per responsibility, bounded attempts, criterion-complete worker smoke, exact profile-required proof and review, one terminal noncompact learning assessment, explicit read-only portfolio-audit intake, and separately authorized shipping.
 
-Engineering composes inside exactly `intake → classify → work-specialty → Handoff → papercut look/skip → assess/skip → present`. Specialty internals remain opaque. The same work child performs one soft papercut look after each work Handoff; the root falls back only when that child is unavailable. The specialty retains accounting in work-Handoff order and sends only ordered material results to the unversioned completion fence.
+Engineering composes inside exactly `intake → classify → work-specialty → Handoff → papercut look/skip → assess/skip → present`. Specialty internals remain opaque. The same work child performs one soft papercut look after each work Handoff; the root falls back only when that child is unavailable. The specialty retains accounting in work-Handoff order and sends only ordered material results to the unversioned completion fence. For repository-plan work that becomes terminal in the current run, complete terminal bytes and the existing exact-byte archive postcondition sit after all applicable settlement and before terminal caller output; archival adds no route owner or presenter effect.
 
 Planless direct work keeps the lean one-owner same-context path. Every approved parser-valid implementation Executor Plan enters full orchestration with `downgrade: none`, including compact work-only plans. The plan root is a mechanical control plane; fresh children own semantic tasks, same-child worker closure, task-local smoke, and one Common Handoff. `PROMOTE-SERIAL-DEFAULT` selects runtime concurrency one by default under full orchestration, not a separate profile or downgrade, and supports no general efficiency claim.
 
@@ -31,7 +31,7 @@ Durable workflow decisions and supersession links are indexed in [`docs/adr/INDE
 | Concern | Authority |
 |---|---|
 | Routing, approval, ownership, cutover, presentation, and lean direct work | ADR-0001: D01, D02, D05, D10–D20, D26 |
-| Plan-backed activation, full orchestration, shared-tree admission, todo projection, and worker discipline | ADR-0002: D06, D08, D09, D21 |
+| Plan-backed activation, full orchestration, shared-tree admission, todo projection, worker discipline, and terminal archive boundary | ADR-0002: D06, D08, D09, D21, D29 |
 | Attempts, continuation, assurance, review, repair, and permanent-test value | ADR-0003: D03, D04, D22, D28 |
 | Continual-learning qualification and projection | ADR-0004: D07, D23 |
 | Per-work-Handoff papercut lifecycle | ADR-0007: D24 |
@@ -41,8 +41,8 @@ Durable workflow decisions and supersession links are indexed in [`docs/adr/INDE
 
 | Stage or surface | Decision units |
 |---|---|
-| `dev-ask` | D02, D10–D15, D18–D20, D26, D27 |
-| `dev-implementation` | D03, D04, D06, D08, D09, D21, D26, D28 |
+| `dev-ask` | D02, D10–D15, D18–D20, D26, D27, D29 |
+| `dev-implementation` | D03, D04, D06, D08, D09, D21, D26, D28, D29 |
 | `dev-verification`, `dev-integration` | D03, D04 |
 | `dev-code-review` | D03, D04, D22, D28 |
 | `dev-handoff` | D03, D08, D15, D22, D28 |
@@ -72,7 +72,7 @@ Classification stops at the first matching current predicate:
 | Exact approved implementation plan exists | `dev-implementation` plan root | Full/no-downgrade child orchestration |
 | Destination or decision route cannot fit one context | `wayfinder` | Resolved decision map |
 | An explicit user or external scheduler requests an exact complete portfolio audit | `dev-test-audit` | Read-only Common Handoff or `transport-unavailable`, then stop |
-| Current terminal evidence is complete | `dev-ask` plus same-agent presenter | Fixed completed report, then terminal state |
+| Current terminal evidence is complete and any current-session planned archive postcondition is valid | `dev-ask` plus same-agent presenter | Fixed completed report, then terminal state |
 | Human separately authorizes delivery | `dev-shipping` | Delivery and rollback evidence |
 
 Every criterion binds one complete canonical `surface-proof-recipe/v1` identity before readiness. Surface adapters are optional proof machinery, not route, assurance, topology, or Orchestrator Role Profile inputs.
@@ -81,11 +81,15 @@ Every criterion binds one complete canonical `surface-proof-recipe/v1` identity 
 
 Validate the exact active repository plan as `executor-plan-validation/v1`, bind the current Orchestrator Role Profile and fresh attestation, and use `assess-plan-backed`. Continue only on `full-orchestration` with profile `downgrade` exactly `none`.
 
-The root may validate, bind, schedule, dispatch, observe, control, recover, check Handoff structure, perform lifecycle/papercut bookkeeping, schedule the backend, and prepare settled presenter input. It performs no semantic work, repair, task smoke, worker closure, audit opinion, or semantic review.
+The root may validate, bind, schedule, dispatch, observe, control, recover, check Handoff structure, perform lifecycle/papercut bookkeeping, schedule the backend, invoke and validate the existing terminal archive operation as mechanical lifecycle bookkeeping, and prepare settled presenter input. It performs no semantic work, repair, task smoke, worker closure, audit opinion, or semantic review.
 
 In the shared tree, exact target/effect ownership controls admission. Mechanically disjoint ready tasks may overlap; declared overlap, unknown overlap, or exclusive resources serialize. Undeclared mutation stops the child. If declared isolation or neutral fan-in cannot be preserved, stop `transport-unavailable`; never weaken the portable graph. Direct `dev-integration` remains unchanged.
 
-Compact plans dispatch their authored work owners as children and remain tail-free. Planless compact remains same-context and does not use the plan gate. Standard/high-consequence plans may retain the optional numbered `dev-verification → dev-code-review → dev-continual-learning` suffix or omit it and let the backend schedule the same boundaries once.
+Compact plans dispatch their authored work owners as children and remain tail-free; after their work-only boundary, planned terminal bytes and archival remain mechanical bookkeeping rather than an assurance tail. Planless compact remains same-context, does not use the plan gate, and performs zero repository-plan lookups, archive actions or receipt requests, and synthetic-plan creations. Standard/high-consequence plans may retain the optional numbered `dev-verification → dev-code-review → dev-continual-learning` suffix or omit it and let the backend schedule the same boundaries once.
+
+The root retains its initial exact plan-validation status. Only initial `PENDING` or `IN_PROGRESS` followed by a terminal transition owned by the same run supplies the archive trigger. For `DONE`, all applicable semantic work, smoke, Handoffs, papercut accounting, assurance/review/learning, terminal records, Completion Summary, `Completed At`, and parser-valid terminal bytes precede the existing archive operation; active path absent plus regular non-symlink archive byte-identical to that terminal snapshot precedes normalization and presentation. Planned `resume_from` uses only the identity-derived archive path, `@sha256:` plus the lowercase archived-byte digest, and `#completion-summary`. For current-session human-authorized `CLOSED`, parser-valid terminal bytes without `Completed At` or a Completion Summary precede the same archive postcondition, then one cancellation-close report and zero completed presentations. Already-`DONE` or already-`CLOSED` intake performs no archive lookup, action, reconciliation, sweep, or mutation.
+
+A current successful adapter archive result may satisfy the postcondition without a second action. Both identity paths present, divergent archive, parser-invalid terminal bytes, unsafe file kind, source or target drift, or uncertain postcondition remains the visible storage blocker: preserve paths, kinds, and bytes and stop without overwrite, blind retry, semantic continuation, second Handoff, normalization, presentation, cancellation close, or speculative terminal-status reversion. The archive operation is not a task, hidden tail, new stage, completion evidence, receipt schema, or presenter effect.
 
 ### Worker attempts, closure, and test value
 
@@ -109,9 +113,9 @@ Every attempt returns one Common Handoff with exact child/task/attempt, target, 
 
 After each work Handoff, the same child performs one soft papercut look; root fallback is permitted only on child unavailability. Retain every result or none-only accounting item in deterministic work-Handoff order. Terminal normalization projects only material results into ordered `papercuts`; none-only accounting yields `[]`.
 
-After terminal evidence and settlement, `dev-ask` validates exactly `status`, `outcome`, `change_scope`, `key_artifacts`, `verification`, `papercuts`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, and `next` in one current `completion-presentation-input` fence. `change_scope` and `key_artifacts` are ordered one-to-three-item arrays; the legacy `changed` key, scalar list values, and legacy singular papercut key are invalid. The same agent applies `completion-presentation`; all fields use its uniform hanging projection, with `[]` papercuts rendered as the presenter-owned hanging scalar `none` and each nonempty array item rendered as one hanging child bullet.
+After terminal evidence and settlement—and, for planned work that became `DONE` in this run, only after the current exact archive postcondition validates—`dev-ask` validates exactly `status`, `outcome`, `change_scope`, `key_artifacts`, `verification`, `papercuts`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, and `next` in one current `completion-presentation-input` fence. `change_scope` and `key_artifacts` are ordered one-to-three-item arrays; the legacy `changed` key, scalar list values, and legacy singular papercut key are invalid. The same agent applies `completion-presentation`; all fields use its uniform hanging projection, with `[]` papercuts rendered as the presenter-owned hanging scalar `none` and each nonempty array item rendered as one hanging child bullet.
 
-Completion requires current authority and approvals; all task/criterion/smoke and Handoff accounting; required verification, fan-in, review, and noncompact learning; stable target and manifest identities; no blocker, stale result, failed dependency, or required check; residual advisories recorded; a durable `#completion-summary` Resume from whose summary contains outcome, decisions, evidence identities, residual risk, and the exact target manifest reference; the existing immutable Handoff; `shipping not authorized`; and exact authorized Next. Its profile-specific presentation is terminal and dispatches no portfolio audit.
+Completion requires current authority and approvals; all task/criterion/smoke and Handoff accounting; required verification, fan-in, review, and noncompact learning; stable target and manifest identities; no blocker, stale result, failed dependency, required check, or failed/uncertain planned archive postcondition; residual advisories recorded; for planned work, an archive-only durable locator formed as the identity-derived archive path plus `@sha256:`, the lowercase exact archived-byte digest, and `#completion-summary`, whose summary contains outcome, decisions, evidence identities, residual risk, and the exact target manifest reference; for planless compact, its existing qualifying durable summary with no repository-plan activity; the existing immutable Handoff; `shipping not authorized`; and exact authorized Next. Its profile-specific presentation is terminal and dispatches no portfolio audit.
 
 ## Skill catalog
 

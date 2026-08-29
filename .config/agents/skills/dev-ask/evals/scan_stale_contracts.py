@@ -322,6 +322,7 @@ ADDED_IDS = {
     "B-T4-COMPACT-WORTH-NOT-TRIGGERED",
     "B-T4-REVISION-WORTH-OPINION",
     "B-TASK-METHOD-TDD",
+    "B-TERMINAL-PLAN-ARCHIVE-MATRIX",
     "R-COMPACT-PLAN-WITH-TAIL",
     "B-DWO-PAPERCUT-RECEIPTS",
     "B-DWO-TEST-VALUE",
@@ -444,6 +445,220 @@ DWO_COMPLETION_CASE_IDS = (
     "B-T4-PAPERCUT-NARROW-AUTHORITY",
     "B-ASSURANCE-RECEIPT-COMPLETION",
 )
+TERMINAL_ARCHIVE_CALLER_PATHS = {
+    ".config/agents/rules/plan.md",
+    ".config/agents/rules/plan-omp-transport.md",
+    ".config/agents/skills/dev-ask/SKILL.md",
+    ".config/agents/skills/dev-ask/WORKFLOW.md",
+    ".config/agents/skills/dev-implementation/SKILL.md",
+    ".config/agents/skills/dev-implementation/references/compact-checklist.md",
+    ".config/agents/skills/dev-implementation/references/plan-orchestration.md",
+}
+TERMINAL_ARCHIVE_STALE_FRAGMENTS = (
+    "active or archive locator",
+    "may proceed before archive",
+    "resume from binds that active file",
+    "active plan durability",
+)
+TERMINAL_ARCHIVE_SEMANTIC_CASE_FIXTURES = {
+    "B-COMPACT-PLAN-NO-TAIL": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-compact-plan-no-tail/case.json"
+    ),
+    "B-PLAN-TAIL-OMITTED": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-plan-tail-omitted/case.json"
+    ),
+    "B-PLAN-TAIL-PROFILE": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-plan-tail-profile/case.json"
+    ),
+    "R-COMPLETE": ".config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json",
+    "R-COMPLETE-COMPACT-NO-LEARNING": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "r-complete-compact-no-learning/case.json"
+    ),
+    "B-TERMINAL-PLAN-ARCHIVE-MATRIX": (
+        ".config/agents/skills/dev-ask/evals/fixtures/"
+        "b-terminal-plan-archive-matrix/case.json"
+    ),
+}
+TERMINAL_ARCHIVE_REQUIRED_EVENTS = {
+    "B-COMPACT-PLAN-NO-TAIL": (
+        "state:complete|owner:backend|output:mechanical admission passed for "
+        "distinct child, target ownership, closure, smoke coverage, Handoff, and "
+        "papercut accounting; compact tail absent",
+        "state:plan-terminal|owner:backend|output:PLAN-C changed from IN_PROGRESS "
+        "to parser-valid DONE; exact terminal bytes sha256:"
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-C archive action 1; "
+        "active absent; archive byte-identical sha256:"
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "snapshot:completion-terminal|owner:backend|output:successful normal "
+        "completion terminal; presentation count 1; resume from "
+        ".agents/plans/archive/2030-01-02-0304_plan-c.md@sha256:"
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        "#completion-summary; automatic portfolio-audit dispatches 0; audit "
+        "epilogue absent",
+    ),
+    "B-PLAN-TAIL-OMITTED": (
+        "state:complete|owner:backend|output:terminal dev-continual-learning "
+        "accounted once; omitted tail consumed by backend scheduling; no audit coupling",
+        "state:plan-terminal|owner:backend|output:PLAN-O changed from IN_PROGRESS "
+        "to parser-valid DONE; exact terminal bytes sha256:"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-O archive action 1; "
+        "active absent; archive byte-identical sha256:"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "snapshot:completion-terminal|owner:backend|output:successful normal "
+        "completion terminal; presentation count 1; resume from "
+        ".agents/plans/archive/2030-01-02-0305_plan-o.md@sha256:"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "#completion-summary; automatic portfolio-audit dispatches 0; audit "
+        "epilogue absent",
+    ),
+    "B-PLAN-TAIL-PROFILE": (
+        "state:complete|owner:backend|output:numbered dev-continual-learning "
+        "consumed once; no duplicate backend tail",
+        "state:plan-terminal|owner:backend|output:PLAN-P changed from IN_PROGRESS "
+        "to parser-valid DONE; exact terminal bytes sha256:"
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-P archive action 1; "
+        "active absent; archive byte-identical sha256:"
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot:completion-terminal|owner:backend|output:successful normal "
+        "completion terminal; presentation count 1; resume from "
+        ".agents/plans/archive/2030-01-02-0306_plan-p.md@sha256:"
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "#completion-summary; automatic portfolio-audit dispatches 0; audit "
+        "epilogue absent",
+    ),
+    "R-COMPLETE": (
+        "terminal-evidence-check",
+        "plan-archive:validated|owner:dev-ask|output:PLAN-R active absent; archive "
+        "byte-identical sha256:"
+        "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd; "
+        "archive actions 0",
+        "completion-normalization",
+        "completion-input:resume-archive|owner:dev-ask|output:"
+        ".agents/plans/archive/2030-01-02-0307_plan-r.md@sha256:"
+        "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        "#completion-summary",
+        "completion-input:fenced-same-turn",
+        "completion-presented:Completed,Evidence,Continuation; Change scope list; "
+        "Key artifacts list; Change scope list; Key artifacts list; Papercuts none; "
+        "Learning NO DURABLE LEARNING; immutable Common Handoff; no Route",
+    ),
+    "R-COMPLETE-COMPACT-NO-LEARNING": (
+        "terminal-evidence-check",
+        "planless-archive-control|owner:dev-ask|output:repository plan lookups 0; "
+        "archive actions 0; archive receipts 0; synthetic plans 0",
+        "completion-normalization",
+    ),
+    "B-TERMINAL-PLAN-ARCHIVE-MATRIX": (
+        "state:plan-terminal|owner:backend|output:PLAN-DONE changed from IN_PROGRESS "
+        "to parser-valid DONE; exact terminal bytes sha256:"
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-DONE archive action 1; "
+        "active absent; archive byte-identical sha256:"
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "snapshot:completion-terminal|owner:backend|output:PLAN-DONE successful "
+        "normal completion terminal; presentation count 1; resume from "
+        ".agents/plans/archive/2030-01-02-0308_plan-done.md@sha256:"
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        "#completion-summary",
+        "state:plan-terminal|owner:backend|output:PLAN-CLOSED changed from "
+        "IN_PROGRESS to parser-valid CLOSED; exact terminal bytes sha256:"
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-CLOSED archive action 1; "
+        "active absent; archive byte-identical sha256:"
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "snapshot:cancellation-close|owner:backend|output:PLAN-CLOSED cancellation "
+        "close count 1 after archive; completed presentations 0",
+        "state:already-terminal|owner:backend|output:PLAN-ALREADY-CLOSED intake "
+        "parser-valid CLOSED; transitions 0; repository plan lookups 0; archive "
+        "actions 0; reconciliations 0; historical sweeps 0; storage mutations 0; "
+        "completed presentations 0; path identity unchanged; content identity unchanged",
+        "plan-archive:blocker|owner:backend|output:both identity paths present; "
+        "storage retries 0; second Handoffs 0; visible storage blocker; existing "
+        "bytes preserved; overwrites 0; completed presentations 0; cancellation "
+        "closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:divergent archive; storage "
+        "retries 0; second Handoffs 0; visible storage blocker; existing bytes "
+        "preserved; overwrites 0; completed presentations 0; cancellation closes 0; "
+        "semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:parser-invalid terminal bytes; "
+        "storage retries 0; second Handoffs 0; visible storage blocker; existing "
+        "bytes preserved; overwrites 0; completed presentations 0; cancellation "
+        "closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:unsafe file kind; storage retries "
+        "0; second Handoffs 0; visible storage blocker; existing bytes preserved; "
+        "overwrites 0; completed presentations 0; cancellation closes 0; semantic "
+        "continuations 0",
+        "plan-archive:blocker|owner:backend|output:source drift; storage retries 0; "
+        "second Handoffs 0; visible storage blocker; existing bytes preserved; "
+        "overwrites 0; completed presentations 0; cancellation closes 0; semantic "
+        "continuations 0",
+        "plan-archive:blocker|owner:backend|output:target drift; storage retries 0; "
+        "second Handoffs 0; visible storage blocker; existing bytes preserved; "
+        "overwrites 0; completed presentations 0; cancellation closes 0; semantic "
+        "continuations 0",
+        "plan-archive:blocker|owner:backend|output:uncertain postcondition; storage "
+        "retries 0; second Handoffs 0; visible storage blocker; existing bytes "
+        "preserved; overwrites 0; completed presentations 0; cancellation closes 0; "
+        "semantic continuations 0",
+        "planless-archive-control|owner:backend|output:repository plan lookups 0; "
+        "archive actions 0; archive receipts 0; synthetic plans 0",
+    ),
+}
+TERMINAL_ARCHIVE_REQUIRED_FORBIDDEN = {
+    "B-COMPACT-PLAN-NO-TAIL": (
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action",
+    ),
+    "B-PLAN-TAIL-OMITTED": (
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action",
+    ),
+    "B-PLAN-TAIL-PROFILE": (
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action",
+    ),
+    "R-COMPLETE": (
+        "normalization-before-archive-validation",
+        "active-plan-resume",
+        "presenter-owned-archival",
+        "archive-retry",
+    ),
+    "R-COMPLETE-COMPACT-NO-LEARNING": (
+        "plan-archive:",
+        "repository-plan-resume",
+        "synthetic-plan-created",
+    ),
+    "B-TERMINAL-PLAN-ARCHIVE-MATRIX": (
+        "completion-before-archive",
+        "cancellation-close-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "archive-overwrite",
+        "storage-retry",
+        "semantic-continuation-after-blocker",
+        "presenter-owned-archival",
+        "second-archive-action",
+        "second-Handoff",
+        "new-archive-receipt-schema",
+    ),
+}
+
 DTA_AUDIT_REGISTRY_PATH = ".config/agents/skills/dev-test-audit/evals/evals.json"
 DTA_AUDIT_CASE_IDS = (
     "DTA-DISCOVERY",
@@ -781,8 +996,176 @@ def dwo_projection_hits(path: str, text: str) -> list[dict[str, Any]]:
     return hits
 
 
+def terminal_archive_projection_hits(path: str, text: str) -> list[dict[str, Any]]:
+    if path not in TERMINAL_ARCHIVE_CALLER_PATHS:
+        return []
+    hits: list[dict[str, Any]] = []
+    for line_number, folded, source in active_normalized_lines(text.splitlines()):
+        for fragment in TERMINAL_ARCHIVE_STALE_FRAGMENTS:
+            if normalize(fragment) in folded:
+                hits.append(
+                    {
+                        "path": path,
+                        "line": line_number,
+                        "needle": f"stale terminal archive fallback: {fragment}",
+                        "text": source,
+                    }
+                )
+    return hits
+
+
 def dwo_contract_hit(path: str, needle: str, text: str) -> dict[str, Any]:
     return {"path": path, "line": 0, "needle": needle, "text": text}
+
+
+def terminal_archive_registry_contract_hits(
+    root: Path, cases: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    hits: list[dict[str, Any]] = []
+    for case_id, fixture_relative in TERMINAL_ARCHIVE_SEMANTIC_CASE_FIXTURES.items():
+        fixture_path = root / fixture_relative
+        try:
+            fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ScanError(
+                f"cannot parse terminal archive fixture {fixture_relative}: {error}"
+            ) from error
+        comparison = compare_semantic_case(cases, case_id, fixture)
+        for mismatch in comparison["mismatches"]:
+            hits.append(
+                dwo_contract_hit(
+                    fixture_relative,
+                    f"terminal archive semantic case parity: {mismatch}",
+                    case_id,
+                )
+            )
+
+    for case_id, expected_events in TERMINAL_ARCHIVE_REQUIRED_EVENTS.items():
+        case = cases.get(case_id)
+        if case is None:
+            hits.append(
+                dwo_contract_hit(case_id, "required terminal archive case", "<missing>")
+            )
+            continue
+        events = case.get("required_events")
+        if not isinstance(events, list) or any(
+            not isinstance(event, str) for event in events
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "terminal archive required_events must be a string list",
+                    repr(events),
+                )
+            )
+            continue
+        positions: list[int] = []
+        complete = True
+        for event in expected_events:
+            count = events.count(event)
+            if count != 1:
+                complete = False
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        f"terminal archive required event count 1: {event}",
+                        f"count={count}",
+                    )
+                )
+            else:
+                positions.append(events.index(event))
+        if complete and positions != sorted(positions):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "terminal archive event order",
+                    repr(positions),
+                )
+            )
+
+        forbidden = case.get("forbidden_events")
+        if not isinstance(forbidden, list) or any(
+            not isinstance(event, str) for event in forbidden
+        ):
+            hits.append(
+                dwo_contract_hit(
+                    case_id,
+                    "terminal archive forbidden_events must be a string list",
+                    repr(forbidden),
+                )
+            )
+        else:
+            for event in TERMINAL_ARCHIVE_REQUIRED_FORBIDDEN[case_id]:
+                if forbidden.count(event) != 1:
+                    hits.append(
+                        dwo_contract_hit(
+                            case_id,
+                            f"terminal archive forbidden event count 1: {event}",
+                            f"count={forbidden.count(event)}",
+                        )
+                    )
+
+        for event in events:
+            lowered = event.casefold()
+            if (
+                "resume" in lowered
+                and ".agents/plans/" in event
+                and ".agents/plans/archive/" not in event
+            ):
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        "active-plan terminal Resume from",
+                        event,
+                    )
+                )
+
+        if case_id == "R-COMPLETE-COMPACT-NO-LEARNING":
+            exact_control = expected_events[1]
+            for event in events:
+                if (
+                    event.startswith("planless-archive-control|")
+                    and event != exact_control
+                ) or event.startswith("plan-archive:"):
+                    hits.append(
+                        dwo_contract_hit(
+                            case_id,
+                            "planless archive behavior must remain zero",
+                            event,
+                        )
+                    )
+        if case_id == "B-TERMINAL-PLAN-ARCHIVE-MATRIX":
+            exact_control = expected_events[-1]
+            controls = [
+                event
+                for event in events
+                if event.startswith("planless-archive-control|")
+            ]
+            if controls != [exact_control]:
+                hits.append(
+                    dwo_contract_hit(
+                        case_id,
+                        "matrix planless archive behavior must remain zero",
+                        repr(controls),
+                    )
+                )
+
+    matrix = cases.get("B-TERMINAL-PLAN-ARCHIVE-MATRIX", {})
+    expected = matrix.get("expected") if isinstance(matrix, dict) else None
+    if not isinstance(expected, dict) or (
+        expected.get("mode") != "read-only terminal lifecycle matrix"
+        or expected.get("first_owner") != "backend"
+        or expected.get("owners") != ["backend"]
+        or expected.get("route") != "dev-implementation backend"
+    ):
+        hits.append(
+            dwo_contract_hit(
+                "B-TERMINAL-PLAN-ARCHIVE-MATRIX",
+                "matrix mode and backend ownership",
+                repr(expected),
+            )
+        )
+    return hits
 
 
 def dwo_resume_projection_hits(path: str, text: str) -> list[dict[str, Any]]:
@@ -1643,6 +2026,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
         hits.extend(path_hits)
         required_seen.update(path_required)
         hits.extend(dwo_projection_hits(relative, text))
+        hits.extend(terminal_archive_projection_hits(relative, text))
         hits.extend(dta_active_contract_hits(relative, text))
         if (
             relative in EXECUTOR_PLAN_SCOPED_PATHS
@@ -1665,6 +2049,7 @@ def scan_repository(root: Path) -> dict[str, Any]:
                 )
     hits.extend(executor_plan_case_hits(cases))
     hits.extend(dwo_registry_contract_hits(root, cases))
+    hits.extend(terminal_archive_registry_contract_hits(root, cases))
     hits.extend(dta_audit_registry_hits(root))
     missing_required = sorted(set(REQUIRED_NEEDLES) - required_seen)
     return {
@@ -1926,6 +2311,24 @@ def run_selftest(root: Path) -> dict[str, Any]:
             raise ScanError(f"DWO false-positive self-test failed: {name}")
         checks.append(f"dwo-allowed:{name}")
 
+    for fragment in TERMINAL_ARCHIVE_STALE_FRAGMENTS:
+        source = f"Active caller says {fragment}."
+        found = terminal_archive_projection_hits(
+            ".config/agents/skills/dev-implementation/SKILL.md", source
+        )
+        if not any(fragment in hit["needle"] for hit in found):
+            raise ScanError(
+                f"terminal archive caller-path stale self-test failed: {fragment}"
+            )
+        if terminal_archive_projection_hits(
+            ".config/agents/skills/completion-presentation/SKILL.md", source
+        ):
+            raise ScanError(
+                f"terminal archive renderer false-positive self-test failed: {fragment}"
+            )
+        checks.append(f"terminal-archive-stale:{fragment}")
+        checks.append(f"terminal-archive-renderer-allowed:{fragment}")
+
     dta_stale_controls = {
         "former-after-plan-completion": (
             ".config/agents/skills/dev-ask/WORKFLOW.md",
@@ -2152,6 +2555,157 @@ def run_selftest(root: Path) -> dict[str, Any]:
     if fixture_comparison["mismatches"] != ["field scripted_replies mismatch"]:
         raise ScanError("DWO semantic fixture-only mutation self-test failed")
     checks.append("dwo-semantic:fixture-only-mutation")
+
+    baseline_terminal_archive_hits = terminal_archive_registry_contract_hits(
+        root, cases
+    )
+    if baseline_terminal_archive_hits:
+        raise ScanError(
+            "terminal archive registry baseline self-test failed: "
+            f"{baseline_terminal_archive_hits}"
+        )
+    checks.append("terminal-archive-registry:baseline")
+
+    expected_terminal_archive_pairs = (
+        (
+            "B-COMPACT-PLAN-NO-TAIL",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-compact-plan-no-tail/case.json",
+        ),
+        (
+            "B-PLAN-TAIL-OMITTED",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-plan-tail-omitted/case.json",
+        ),
+        (
+            "B-PLAN-TAIL-PROFILE",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-plan-tail-profile/case.json",
+        ),
+        (
+            "R-COMPLETE",
+            ".config/agents/skills/dev-ask/evals/fixtures/r-complete/case.json",
+        ),
+        (
+            "R-COMPLETE-COMPACT-NO-LEARNING",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "r-complete-compact-no-learning/case.json",
+        ),
+        (
+            "B-TERMINAL-PLAN-ARCHIVE-MATRIX",
+            ".config/agents/skills/dev-ask/evals/fixtures/"
+            "b-terminal-plan-archive-matrix/case.json",
+        ),
+    )
+    if (
+        tuple(TERMINAL_ARCHIVE_SEMANTIC_CASE_FIXTURES.items())
+        != expected_terminal_archive_pairs
+    ):
+        raise ScanError("terminal archive semantic parity map self-test failed")
+    checks.append("terminal-archive-semantic:exact-six-case-map")
+
+    terminal_registry_mutation = copy.deepcopy(cases)
+    terminal_registry_mutation["B-COMPACT-PLAN-NO-TAIL"]["inputs"]["request"] += (
+        " Registry-only drift."
+    )
+    if not any(
+        hit["needle"]
+        == "terminal archive semantic case parity: field inputs mismatch"
+        for hit in terminal_archive_registry_contract_hits(
+            root, terminal_registry_mutation
+        )
+    ):
+        raise ScanError("terminal archive registry-only drift self-test failed")
+    checks.append("terminal-archive-semantic:registry-only-drift")
+
+    terminal_fixture_relative = TERMINAL_ARCHIVE_SEMANTIC_CASE_FIXTURES[
+        "B-PLAN-TAIL-PROFILE"
+    ]
+    terminal_fixture_mutation = json.loads(
+        (root / terminal_fixture_relative).read_text(encoding="utf-8")
+    )
+    terminal_fixture_mutation["scripted_replies"].append("Fixture-only drift.")
+    terminal_fixture_comparison = compare_semantic_case(
+        cases,
+        "B-PLAN-TAIL-PROFILE",
+        terminal_fixture_mutation,
+    )
+    if terminal_fixture_comparison["mismatches"] != [
+        "field scripted_replies mismatch"
+    ]:
+        raise ScanError("terminal archive fixture-only drift self-test failed")
+    checks.append("terminal-archive-semantic:fixture-only-drift")
+
+    missing_failure_branch = copy.deepcopy(cases)
+    missing_failure_branch["B-TERMINAL-PLAN-ARCHIVE-MATRIX"][
+        "required_events"
+    ].remove(
+        TERMINAL_ARCHIVE_REQUIRED_EVENTS[
+            "B-TERMINAL-PLAN-ARCHIVE-MATRIX"
+        ][7]
+    )
+    if not any(
+        hit["needle"].startswith("terminal archive required event count 1:")
+        for hit in terminal_archive_registry_contract_hits(
+            root, missing_failure_branch
+        )
+    ):
+        raise ScanError("terminal archive missing failure branch self-test failed")
+    checks.append("terminal-archive-semantic:missing-failure-branch")
+
+    wrong_archive_output_order = copy.deepcopy(cases)
+    wrong_events = wrong_archive_output_order[
+        "B-TERMINAL-PLAN-ARCHIVE-MATRIX"
+    ]["required_events"]
+    archive_event = TERMINAL_ARCHIVE_REQUIRED_EVENTS[
+        "B-TERMINAL-PLAN-ARCHIVE-MATRIX"
+    ][1]
+    output_event = TERMINAL_ARCHIVE_REQUIRED_EVENTS[
+        "B-TERMINAL-PLAN-ARCHIVE-MATRIX"
+    ][2]
+    archive_index = wrong_events.index(archive_event)
+    output_index = wrong_events.index(output_event)
+    wrong_events[archive_index], wrong_events[output_index] = (
+        wrong_events[output_index],
+        wrong_events[archive_index],
+    )
+    if not any(
+        hit["needle"] == "terminal archive event order"
+        for hit in terminal_archive_registry_contract_hits(
+            root, wrong_archive_output_order
+        )
+    ):
+        raise ScanError("terminal archive output-order self-test failed")
+    checks.append("terminal-archive-semantic:archive-before-output")
+
+    active_plan_resume = copy.deepcopy(cases)
+    active_plan_resume["R-COMPLETE"]["required_events"].append(
+        "completion-input:resume-active|owner:dev-ask|output:"
+        ".agents/plans/2030-01-02-0307_plan-r.md#completion-summary"
+    )
+    if not any(
+        hit["needle"] == "active-plan terminal Resume from"
+        for hit in terminal_archive_registry_contract_hits(root, active_plan_resume)
+    ):
+        raise ScanError("terminal archive active-plan Resume self-test failed")
+    checks.append("terminal-archive-semantic:active-plan-resume")
+
+    nonzero_planless = copy.deepcopy(cases)
+    nonzero_events = nonzero_planless[
+        "R-COMPLETE-COMPACT-NO-LEARNING"
+    ]["required_events"]
+    exact_planless = TERMINAL_ARCHIVE_REQUIRED_EVENTS[
+        "R-COMPLETE-COMPACT-NO-LEARNING"
+    ][1]
+    nonzero_events[nonzero_events.index(exact_planless)] = exact_planless.replace(
+        "archive actions 0", "archive actions 1"
+    )
+    if not any(
+        hit["needle"] == "planless archive behavior must remain zero"
+        for hit in terminal_archive_registry_contract_hits(root, nonzero_planless)
+    ):
+        raise ScanError("terminal archive nonzero planless self-test failed")
+    checks.append("terminal-archive-semantic:nonzero-planless-archive")
 
     stale_resume_grant = copy.deepcopy(cases)
     stale_resume_grant["B-FULL"]["required_events"].append(

@@ -1477,7 +1477,7 @@
     {
       "absent_capabilities": [],
       "approval_state": "current-continuation",
-      "criterion": "A valid standard completion normalizes settled engineering evidence to the fixed generic completed report without a completed Route, new dispatch, approval, evidence replay, or second Handoff. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
+      "criterion": "A valid standard completion normalizes settled engineering evidence to the fixed generic completed report without a completed Route, new dispatch, approval, evidence replay, or second Handoff. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue. This is planned completion: dev-ask validates the current exact-byte archive postcondition before normalization and planned Resume from binds only the identity-derived archived Completion Summary.",
       "expected": {
         "artifacts": [
           "normalized terminal input",
@@ -1485,14 +1485,17 @@
           "immutable Common Handoff reference",
           "fixed completed report",
           "current completion-presentation-input fence",
-          "durable Completion Summary Resume from and existing Handoff references"
+          "durable Completion Summary Resume from and existing Handoff references",
+          "validated exact-byte terminal plan archive",
+          "archive-bound Completion Summary locator"
         ],
         "first_owner": null,
         "gates": [
+          "current exact-byte archive postcondition before normalization",
           "zero automatic portfolio-audit events"
         ],
         "mode": "none",
-        "outcome": "fixed terminal report presented automatically; terminal without audit epilogue",
+        "outcome": "fixed terminal report presented automatically; terminal without audit epilogue; planned archive validated before normalization",
         "owners": [],
         "route": "completion-presentation"
       },
@@ -1513,11 +1516,15 @@
         "presenter-Handoff",
         "shipping-in-next",
         "automatic-portfolio-audit",
-        "audit-epilogue"
+        "audit-epilogue",
+        "normalization-before-archive-validation",
+        "active-plan-resume",
+        "presenter-owned-archival",
+        "archive-retry"
       ],
       "id": "R-COMPLETE",
       "inputs": {
-        "request": "The initially approved standard prospective route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and completion-presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, NO DURABLE LEARNING result, papercut soft look, residual risk, and one immutable Common Handoff are accounted with no remaining work. Normalize one specialty-validated status completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Outcome, Change scope, and Key artifacts; final VERIFIED and APPROVED evidence; Papercuts: none; Learning: NO DURABLE LEARNING — no guidance change; Residual risk: none; the immutable Common Handoff reference; and Next: none. Emit no Route, route history, internal manifest, counter, raw receipt, second Handoff, or shipping claim. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
+        "request": "The initially approved standard prospective route named dev-implementation, dev-verification, dev-code-review, dev-continual-learning, and completion-presentation in that order. Current authority and all terminal evidence are exact: every task and criterion, verification, integration if applicable, final review, NO DURABLE LEARNING result, papercut soft look, residual risk, and one immutable Common Handoff are accounted with no remaining work. Normalize one specialty-validated status completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Outcome, Change scope, and Key artifacts; final VERIFIED and APPROVED evidence; Papercuts: none; Learning: NO DURABLE LEARNING — no guidance change; Residual risk: none; the immutable Common Handoff reference; and Next: none. Emit no Route, route history, internal manifest, counter, raw receipt, second Handoff, or shipping claim. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. This completion is explicitly planned for PLAN-R. Its parser-valid terminal bytes have digest sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd; the existing backend archive action already succeeded, the active identity path is absent, and the archive identity path is byte-identical, so dev-ask validates the current postcondition with archive actions 0 before normalization. Planned Resume from is exactly .agents/plans/archive/2030-01-02-0307_plan-r.md@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#completion-summary; no active-plan locator, presenter archival, or retry is permitted.\n\nReturn only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\nplan-archive:validated|owner:dev-ask|output:PLAN-R active absent; archive byte-identical sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd; archive actions 0\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:resume-archive|owner:dev-ask|output:.agents/plans/archive/2030-01-02-0307_plan-r.md@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#completion-summary\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1525,10 +1532,12 @@
       "required_capabilities": [],
       "required_events": [
         "terminal-evidence-check",
+        "plan-archive:validated|owner:dev-ask|output:PLAN-R active absent; archive byte-identical sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd; archive actions 0",
         "completion-normalization",
         "completion-input:papercuts-ordered-array",
         "completion-input:scope-key-artifacts",
         "completion-input:resume-summary-index",
+        "completion-input:resume-archive|owner:dev-ask|output:.agents/plans/archive/2030-01-02-0307_plan-r.md@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#completion-summary",
         "completion-input:fenced-same-turn",
         "completion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning NO DURABLE LEARNING; immutable Common Handoff; no Route",
         "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
@@ -1538,14 +1547,17 @@
         "Require exactly Completed, Evidence, and Continuation with Outcome, Change scope, Key artifacts, Verification, Papercuts, Learning, Residual risk, State, Handoff, and Next.",
         "Forbid a completed Route or route history, new dispatch or approval, assurance replay, raw internal mechanics, a second Handoff, and shipping.",
         "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none.",
-        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue.",
+        "Require PLAN-R active absence and byte-identical archived terminal bytes with archive actions 0 before completion normalization.",
+        "Require planned Resume from exactly .agents/plans/archive/2030-01-02-0307_plan-r.md@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd#completion-summary; reject every active-plan terminal locator.",
+        "Forbid normalization before archive validation, presenter-owned archival, archive retry, and any active-plan Resume from."
       ],
       "scripted_replies": []
     },
     {
       "absent_capabilities": [],
       "approval_state": "current-continuation",
-      "criterion": "A valid compact completion with bound Intent/Methods, criterion-complete exact-target smoke, one Common Handoff, and a silent papercut look normalizes to the fixed generic completed report without assurance or learning dispatch. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
+      "criterion": "A valid compact completion with bound Intent/Methods, criterion-complete exact-target smoke, one Common Handoff, and a silent papercut look normalizes to the fixed generic completed report without assurance or learning dispatch. Valid completion constructs one current filled and durable fence immediately before same-agent presentation. The completion projection uses ordered papercuts. Successful normal completion is terminal and has no automatic portfolio-audit epilogue. This route is explicitly planless and performs zero repository-plan lookup, archive action or receipt request, and synthetic-plan creation while preserving its durable summary and Handoff.",
       "expected": {
         "artifacts": [
           "normalized terminal input",
@@ -1554,15 +1566,17 @@
           "immutable Common Handoff reference",
           "fixed completed report",
           "current completion-presentation-input fence",
-          "durable Completion Summary Resume from and existing Handoff references"
+          "durable Completion Summary Resume from and existing Handoff references",
+          "existing planless durable summary"
         ],
         "assurance_profile": "compact",
         "first_owner": null,
         "gates": [
+          "zero repository-plan and archive behavior",
           "zero automatic portfolio-audit events"
         ],
         "mode": "none",
-        "outcome": "fixed compact terminal report presented automatically; terminal without audit epilogue",
+        "outcome": "fixed compact terminal report presented automatically; terminal without audit epilogue; planless archive controls remain zero",
         "owners": [],
         "route": "completion-presentation"
       },
@@ -1589,11 +1603,14 @@
         "presenter-Handoff",
         "shipping-in-next",
         "automatic-portfolio-audit",
-        "audit-epilogue"
+        "audit-epilogue",
+        "plan-archive:",
+        "repository-plan-resume",
+        "synthetic-plan-created"
       ],
       "id": "R-COMPLETE-COMPACT-NO-LEARNING",
       "inputs": {
-        "request": "The approved compact task is complete: its human Intent and Methods evidence are preserved, every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, the Common Handoff is complete, its soft papercut look produced no candidate or output, no blocker remains, and no context crossed. Normalize one specialty-validated completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance; emit no Route and do not claim verification, review, continual learning, or a papercut lifecycle ran. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
+        "request": "The approved compact task is complete: its human Intent and Methods evidence are preserved, every owned acceptance criterion has deterministic exact-target worker smoke with recorded expected and observed results, the Common Handoff is complete, its soft papercut look produced no candidate or output, no blocker remains, and no context crossed. Normalize one specialty-validated completed input and invoke completion-presentation without a new dispatch or approval. Render exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance; emit no Route and do not claim verification, review, continual learning, or a papercut lifecycle ran. After the existing engineering completion and settlement boundaries validate, dev-ask must construct exactly one current fenced completion-presentation-input in the same turn and record `completion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn` immediately before `completion-presented`. The fence must preserve a concrete outcome; one to three concise aggregate Change scope items; one to three durable openable Key artifacts; a named verification check, terminal verdict, and fetchable immutable evidence identity; the current papercut machine fields plus concise gloss; the exact current learning token; current residual risk or none; durable Resume from pointing to a caller-validated Completion Summary that records outcome, material decisions, immutable evidence identities, current residual risk, and the exact target manifest reference; the existing portable immutable Common Handoff or approved in-conversation fallback tied to Resume from; Constraints containing exact `shipping not authorized` once; and local engineering Next exactly `none`. The same dev-ask agent applies the presenter and emits only the report. Do not dispatch the presenter, expose the fence, create a second Handoff, or infer shipping.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. This compact completion is explicitly planless. Perform no repository-plan lookup, archive action or receipt request, or synthetic-plan creation; preserve the existing qualifying durable summary and Common Handoff.\n\nReturn only these event tokens, one per line, byte-for-byte and in this order:\nterminal-evidence-check\nplanless-archive-control|owner:dev-ask|output:repository plan lookups 0; archive actions 0; archive receipts 0; synthetic plans 0\ncompletion-normalization\ncompletion-input:papercuts-ordered-array\ncompletion-input:scope-key-artifacts\ncompletion-input:resume-summary-index\ncompletion-input:fenced-same-turn\ncompletion-presented:Completed,Evidence,Continuation; Change scope list; Key artifacts list; Change scope list; Key artifacts list; Papercuts none; Learning skipped — compact assurance; immutable Common Handoff; no Route The normalized completion input uses one ordered papercuts array; none-only accounting is empty and a scalar field is invalid. It uses ordered change_scope and key_artifacts arrays, rejects the legacy changed key, and indexes the durable Completion Summary. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the compact conditional route and terminal evidence.",
@@ -1601,6 +1618,7 @@
       "required_capabilities": [],
       "required_events": [
         "terminal-evidence-check",
+        "planless-archive-control|owner:dev-ask|output:repository plan lookups 0; archive actions 0; archive receipts 0; synthetic plans 0",
         "completion-normalization",
         "completion-input:papercuts-ordered-array",
         "completion-input:scope-key-artifacts",
@@ -1614,7 +1632,9 @@
         "Require exactly Completed, Evidence, and Continuation with Papercuts: none and Learning: skipped — compact assurance.",
         "Forbid completed Route or route history, independent verification, review, continual-learning or papercut invocation, new dispatch or approval, a second Handoff, and shipping.",
         "Require completion-input:fenced-same-turn immediately before completion-presented, with one to three concise aggregate Change scope items and one to three durable openable Key artifacts, named verdict-bound immutable verification, normalized ordered papercuts and learning values, durable Resume from, the existing Handoff, exact shipping not authorized Constraints, and local Next none.",
-        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue.",
+        "Require the planless archive-control event immediately after terminal evidence with repository-plan lookups, archive actions, archive receipts, and synthetic plans all zero.",
+        "Preserve the existing planless durable summary and Common Handoff; forbid every plan-archive event, repository-plan Resume from, and synthetic-plan creation."
       ],
       "scripted_replies": []
     },
@@ -8700,13 +8720,15 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid standard plan with the existing optional numbered profile tail dispatches work to a distinct child, preserves the authored tail, and consumes each assurance owner exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
+      "criterion": "A parser-valid standard plan with the existing optional numbered profile tail dispatches work to a distinct child, preserves the authored tail, and consumes each assurance owner exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue. The current-session DONE transition binds parser-valid terminal bytes, reaches the existing exact-byte archive postcondition once after the existing terminal semantic boundary, and only then permits one archive-bound presentation.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
           "plan-backed profile assessment",
           "work Common Handoff",
-          "numbered profile-tail evidence"
+          "numbered profile-tail evidence",
+          "parser-valid terminal plan snapshot",
+          "exact-byte terminal plan archive"
         ],
         "assurance_profile": "standard",
         "first_owner": "backend",
@@ -8716,10 +8738,13 @@
           "distinct root and work child",
           "same-child work closure",
           "single numbered assurance sequence",
-          "zero automatic portfolio-audit events"
+          "zero automatic portfolio-audit events",
+          "terminal bytes before archive",
+          "archive postcondition before presentation",
+          "archive-only planned Resume from"
         ],
         "mode": "full orchestration",
-        "outcome": "preserved optional numbered tail consumed once after child work; terminal without audit epilogue",
+        "outcome": "preserved optional numbered tail consumed once after child work; terminal without audit epilogue; current-session plan archived exactly once before presentation",
         "owners": [
           "backend",
           "worker",
@@ -8740,11 +8765,16 @@
         "second-learning",
         "assurance-closure",
         "automatic-portfolio-audit",
-        "audit-epilogue"
+        "audit-epilogue",
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action"
       ],
       "id": "B-PLAN-TAIL-PROFILE",
       "inputs": {
-        "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
+        "request": "Read-only standard plan trace. PLAN-P is valid Executor Plan v1 with one work task followed by the existing optional dev-verification, dev-code-review, and dev-continual-learning suffix, all Methods none. ROOT-P obtains full-orchestration with downgrade none and dispatches distinct CHILD-P. CHILD-P applies worker-closure/v1 round one, makes no correction, skips round two, smokes TARGET-P, emits one Common Handoff, and performs one no-candidate papercut look. The backend then dispatches the authored tail owners once each; assurance and learning never run worker closure. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent. After its existing terminal dev-continual-learning event, the backend changes PLAN-P from IN_PROGRESS to parser-valid DONE, binds the exact terminal snapshot, invokes the existing archive action exactly once, validates active absence and byte-identical archive content, and only then presents once from the identity-derived archived Completion Summary. Record these exact ordered terminal events after that existing boundary:\nstate:plan-terminal|owner:backend|output:PLAN-P changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb bound\nplan-archive:postcondition|owner:backend|output:PLAN-P archive action 1; active absent; archive byte-identical sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nsnapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0306_plan-p.md@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent\nForbid archive-before-assurance, completion-before-archive, active-plan resume, historical sweep, and a second archive action."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for preserved optional-tail grammar and runtime execution.",
@@ -8759,27 +8789,34 @@
         "state:verifying|owner:dev-verification|output:numbered verification consumed once on TARGET-P; no worker closure",
         "state:reviewing|owner:dev-code-review|output:numbered review consumed once on TARGET-P; no worker closure",
         "state:complete|owner:backend|output:numbered dev-continual-learning consumed once; no duplicate backend tail",
-        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
+        "state:plan-terminal|owner:backend|output:PLAN-P changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-P archive action 1; active absent; archive byte-identical sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0306_plan-p.md@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Preserve the optional numbered tail as valid Executor Plan v1 grammar.",
         "Require full orchestration, downgrade none, and distinct root/work child.",
         "Consume the authored tail exactly once and keep worker closure off assurance roles.",
-        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue.",
+        "Require PLAN-P parser-valid DONE terminal bytes and one existing archive action only after its existing terminal dev-continual-learning event.",
+        "Require active absence, byte-identical archive content, one presentation after archival, and planned Resume from the matching identity-derived archive path, exact digest, and #completion-summary.",
+        "Forbid archive before the applicable assurance boundary, completion before archive, active-plan Resume from, historical sweep, and a second archive action."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid standard work-only plan uses a distinct work child and same-child closure, then the backend schedules the existing verification, review, and learning tail exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
+      "criterion": "A parser-valid standard work-only plan uses a distinct work child and same-child closure, then the backend schedules the existing verification, review, and learning tail exactly once. Successful normal completion is terminal and has no automatic portfolio-audit epilogue. The current-session DONE transition binds parser-valid terminal bytes, reaches the existing exact-byte archive postcondition once after the existing terminal semantic boundary, and only then permits one archive-bound presentation.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
           "plan-backed profile assessment",
           "work Common Handoff",
           "worker-closure/v1 receipt",
-          "backend-scheduled assurance evidence"
+          "backend-scheduled assurance evidence",
+          "parser-valid terminal plan snapshot",
+          "exact-byte terminal plan archive"
         ],
         "assurance_profile": "standard",
         "first_owner": "backend",
@@ -8789,10 +8826,13 @@
           "distinct root and work child",
           "same-child closure and smoke",
           "one backend assurance sequence",
-          "zero automatic portfolio-audit events"
+          "zero automatic portfolio-audit events",
+          "terminal bytes before archive",
+          "archive postcondition before presentation",
+          "archive-only planned Resume from"
         ],
         "mode": "full orchestration",
-        "outcome": "omitted optional tail stays valid and backend schedules assurance once; terminal without audit epilogue",
+        "outcome": "omitted optional tail stays valid and backend schedules assurance once; terminal without audit epilogue; current-session plan archived exactly once before presentation",
         "owners": [
           "backend",
           "worker",
@@ -8814,11 +8854,16 @@
         "audit-gate",
         "assurance-closure",
         "automatic-portfolio-audit",
-        "audit-epilogue"
+        "audit-epilogue",
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action"
       ],
       "id": "B-PLAN-TAIL-OMITTED",
       "inputs": {
-        "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
+        "request": "Read-only standard plan trace. PLAN-O is valid Executor Plan v1 with one work task, final Receiver dev-implementation backend, and no numbered profile tail. ROOT-O obtains full-orchestration with downgrade none and dispatches distinct CHILD-O. The child applies worker-closure/v1 round one, needs no correction, skips round two, smokes TARGET-O, emits one Common Handoff, and performs one no-candidate papercut look. Mechanical admission then schedules fresh dev-verification, one current-target dev-code-review, and terminal dev-continual-learning exactly once. The omitted optional tail remains parser-valid and creates no hidden numbered task. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent. After its existing terminal dev-continual-learning event, the backend changes PLAN-O from IN_PROGRESS to parser-valid DONE, binds the exact terminal snapshot, invokes the existing archive action exactly once, validates active absence and byte-identical archive content, and only then presents once from the identity-derived archived Completion Summary. Record these exact ordered terminal events after that existing boundary:\nstate:plan-terminal|owner:backend|output:PLAN-O changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bound\nplan-archive:postcondition|owner:backend|output:PLAN-O archive action 1; active absent; archive byte-identical sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nsnapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0305_plan-o.md@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent\nForbid archive-before-assurance, completion-before-archive, active-plan resume, historical sweep, and a second archive action."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for the valid omitted-tail runtime shape.",
@@ -8833,20 +8878,25 @@
         "state:verifying|owner:dev-verification|output:backend-scheduled fresh proof on TARGET-O; no worker closure",
         "state:reviewing|owner:dev-code-review|output:one current-target review on TARGET-O; no worker closure",
         "state:complete|owner:backend|output:terminal dev-continual-learning accounted once; omitted tail consumed by backend scheduling; no audit coupling",
-        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
+        "state:plan-terminal|owner:backend|output:PLAN-O changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-O archive action 1; active absent; archive byte-identical sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0305_plan-o.md@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require omitted optional-tail grammar to remain valid.",
         "Require the work owner to be a distinct child under full orchestration with downgrade none.",
         "Require same-child closure only for work, then one backend assurance sequence without audit coupling.",
-        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue.",
+        "Require PLAN-O parser-valid DONE terminal bytes and one existing archive action only after its existing terminal dev-continual-learning event.",
+        "Require active absence, byte-identical archive content, one presentation after archival, and planned Resume from the matching identity-derived archive path, exact digest, and #completion-summary.",
+        "Forbid archive before the applicable assurance boundary, completion before archive, active-plan Resume from, historical sweep, and a second archive action."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
     },
     {
       "absent_capabilities": [],
-      "criterion": "A parser-valid compact work-only plan enters full plan orchestration, dispatches its authored work owner as a distinct child, runs same-child closure and smoke, and remains tail-free. Successful normal completion is terminal and has no automatic portfolio-audit epilogue.",
+      "criterion": "A parser-valid compact work-only plan enters full plan orchestration, dispatches its authored work owner as a distinct child, runs same-child closure and smoke, and remains tail-free. Successful normal completion is terminal and has no automatic portfolio-audit epilogue. The current-session DONE transition binds parser-valid terminal bytes, reaches the existing exact-byte archive postcondition once after the existing terminal semantic boundary, and only then permits one archive-bound presentation.",
       "expected": {
         "artifacts": [
           "executor-plan-validation/v1 result",
@@ -8854,7 +8904,9 @@
           "bounded Context Pack",
           "worker-closure/v1 receipt",
           "one Common Handoff",
-          "post-Handoff papercut receipt"
+          "post-Handoff papercut receipt",
+          "parser-valid terminal plan snapshot",
+          "exact-byte terminal plan archive"
         ],
         "assurance_profile": "compact",
         "first_owner": "backend",
@@ -8865,10 +8917,13 @@
           "mandatory same-child closure",
           "criterion-complete smoke",
           "no assurance tail",
-          "zero automatic portfolio-audit events"
+          "zero automatic portfolio-audit events",
+          "terminal bytes before archive",
+          "archive postcondition before presentation",
+          "archive-only planned Resume from"
         ],
         "mode": "full orchestration",
-        "outcome": "planned compact child completes after closure and smoke with no profile tail; terminal without audit epilogue",
+        "outcome": "planned compact child completes after closure and smoke with no profile tail; terminal without audit epilogue; current-session plan archived exactly once before presentation",
         "owners": [
           "backend",
           "worker"
@@ -8887,11 +8942,16 @@
         "dev-continual-learning",
         "profile-tail",
         "automatic-portfolio-audit",
-        "audit-epilogue"
+        "audit-epilogue",
+        "archive-before-assurance",
+        "completion-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "second-archive-action"
       ],
       "id": "B-COMPACT-PLAN-NO-TAIL",
       "inputs": {
-        "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent."
+        "request": "Read-only plan-backed compact trace. PLAN-C is parser-valid Executor Plan v1 with one work task, Methods none, exact target TARGET-C, and no profile tail. The implementation root ROOT-C must use assess-plan-backed, obtain full-orchestration with downgrade none, and dispatch distinct child CHILD-C. CHILD-C receives only the bounded task Context Pack, produces a candidate, runs worker-closure/v1 round one in the same child, makes no correction so round two is skipped, runs smoke SMOKE-C, emits one Common Handoff, then performs the no-candidate papercut soft look. ROOT-C mechanically admits identity, ownership, closure, smoke coverage, Handoff completeness, and papercut accounting and completes compact without verification, review, or learning. Treat the successful normal completion and presentation as terminal: automatic portfolio-audit dispatches 0 and the audit epilogue is absent. After its existing compact mechanical-admission boundary, the backend changes PLAN-C from IN_PROGRESS to parser-valid DONE, binds the exact terminal snapshot, invokes the existing archive action exactly once, validates active absence and byte-identical archive content, and only then presents once from the identity-derived archived Completion Summary. Record these exact ordered terminal events after that existing boundary:\nstate:plan-terminal|owner:backend|output:PLAN-C changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc bound\nplan-archive:postcondition|owner:backend|output:PLAN-C archive action 1; active absent; archive byte-identical sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\nsnapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0304_plan-c.md@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent\nForbid archive-before-assurance, completion-before-archive, active-plan resume, historical sweep, and a second archive action."
       },
       "layer": "backend",
       "proof": "Fresh semantic trace for planned compact activation and tail-free child execution.",
@@ -8905,13 +8965,93 @@
         "closure:round-1|owner:worker|output:CHILD-C applied worker-closure/v1; findings none; round two skipped",
         "state:handed-off|owner:worker|output:CHILD-C smoke SMOKE-C passed; one Common Handoff sealed; papercut soft look after Handoff returned none",
         "state:complete|owner:backend|output:mechanical admission passed for distinct child, target ownership, closure, smoke coverage, Handoff, and papercut accounting; compact tail absent",
-        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; automatic portfolio-audit dispatches 0; audit epilogue absent"
+        "state:plan-terminal|owner:backend|output:PLAN-C changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-C archive action 1; active absent; archive byte-identical sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "snapshot:completion-terminal|owner:backend|output:successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0304_plan-c.md@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc#completion-summary; automatic portfolio-audit dispatches 0; audit epilogue absent"
       ],
       "rubric": [
         "Require Executor Plan v1 validity and plan-backed full orchestration with downgrade none.",
         "Require distinct root/work-child identities, same-child closure, task-local smoke, one Handoff, and one post-Handoff papercut look.",
         "Preserve compact no-tail assurance; reject root work and every independent assurance owner.",
-        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue."
+        "Require successful normal completion to terminate after the existing presentation with automatic portfolio-audit dispatches 0 and no audit epilogue.",
+        "Require PLAN-C parser-valid DONE terminal bytes and one existing archive action only after its existing compact mechanical-admission boundary.",
+        "Require active absence, byte-identical archive content, one presentation after archival, and planned Resume from the matching identity-derived archive path, exact digest, and #completion-summary.",
+        "Forbid archive before the applicable assurance boundary, completion before archive, active-plan Resume from, historical sweep, and a second archive action."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "The terminal lifecycle matrix proves current-session DONE and human-authorized CLOSED archive ordering, already-CLOSED and planless exclusions, and all seven visible storage blockers without adding storage mechanics, receipts, presenter effects, historical sweep, retry, overwrite, or semantic continuation.",
+      "expected": {
+        "artifacts": [
+          "terminal lifecycle matrix trace",
+          "exact-byte archive postconditions",
+          "seven visible storage blockers",
+          "already-terminal and planless controls"
+        ],
+        "first_owner": "backend",
+        "gates": [
+          "DONE archive before one presentation",
+          "CLOSED archive before one cancellation close",
+          "already-CLOSED mutation-free intake",
+          "seven preserving storage blockers",
+          "planless zero repository-plan behavior"
+        ],
+        "mode": "read-only terminal lifecycle matrix",
+        "outcome": "all terminal archive success, exclusion, and failure branches observed without mutation",
+        "owners": [
+          "backend"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-terminal-plan-archive-matrix",
+      "forbidden_events": [
+        "completion-before-archive",
+        "cancellation-close-before-archive",
+        "active-plan-resume",
+        "historical-sweep",
+        "archive-overwrite",
+        "storage-retry",
+        "semantic-continuation-after-blocker",
+        "presenter-owned-archival",
+        "second-archive-action",
+        "second-Handoff",
+        "new-archive-receipt-schema"
+      ],
+      "id": "B-TERMINAL-PLAN-ARCHIVE-MATRIX",
+      "inputs": {
+        "request": "Read-only terminal lifecycle matrix. Exercise exactly four controls: a current-session IN_PROGRESS to parser-valid DONE success; an explicitly human-authorized current-session IN_PROGRESS to parser-valid CLOSED success; already-CLOSED intake; and planless compact. Exercise the seven storage blockers in the specified order. DONE and CLOSED each invoke only the existing archive action once and reach active-absent, byte-identical archive postconditions before their permitted output. Already-CLOSED intake preserves exact path and content identities with zero transition, lookup, action, reconciliation, sweep, mutation, or presentation. Every blocker is visible, preserves existing bytes, and permits no overwrite, output, close, semantic continuation, retry, or second Handoff. Planless compact performs zero repository-plan or archive behavior and creates no synthetic plan. Forbid completion-before-archive, cancellation-close-before-archive, active-plan resume, historical sweep, archive overwrite, storage retry, semantic continuation after a blocker, presenter-owned archival, a second archive action, a second Handoff, and a new archive receipt schema.\n\nThis backend no-tool semantic matrix is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, create a file, render a human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nstate:plan-terminal|owner:backend|output:PLAN-DONE changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bound\nplan-archive:postcondition|owner:backend|output:PLAN-DONE archive action 1; active absent; archive byte-identical sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\nsnapshot:completion-terminal|owner:backend|output:PLAN-DONE successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0308_plan-done.md@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#completion-summary\nstate:plan-terminal|owner:backend|output:PLAN-CLOSED changed from IN_PROGRESS to parser-valid CLOSED; exact terminal bytes sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff bound\nplan-archive:postcondition|owner:backend|output:PLAN-CLOSED archive action 1; active absent; archive byte-identical sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\nsnapshot:cancellation-close|owner:backend|output:PLAN-CLOSED cancellation close count 1 after archive; completed presentations 0\nstate:already-terminal|owner:backend|output:PLAN-ALREADY-CLOSED intake parser-valid CLOSED; transitions 0; repository plan lookups 0; archive actions 0; reconciliations 0; historical sweeps 0; storage mutations 0; completed presentations 0; path identity unchanged; content identity unchanged\nplan-archive:blocker|owner:backend|output:both identity paths present; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:divergent archive; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:parser-invalid terminal bytes; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:unsafe file kind; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:source drift; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:target drift; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplan-archive:blocker|owner:backend|output:uncertain postcondition; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0\nplanless-archive-control|owner:backend|output:repository plan lookups 0; archive actions 0; archive receipts 0; synthetic plans 0"
+      },
+      "layer": "backend",
+      "proof": "Fresh backend no-tool semantic matrix trace for terminal plan archival.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:plan-terminal|owner:backend|output:PLAN-DONE changed from IN_PROGRESS to parser-valid DONE; exact terminal bytes sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-DONE archive action 1; active absent; archive byte-identical sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "snapshot:completion-terminal|owner:backend|output:PLAN-DONE successful normal completion terminal; presentation count 1; resume from .agents/plans/archive/2030-01-02-0308_plan-done.md@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#completion-summary",
+        "state:plan-terminal|owner:backend|output:PLAN-CLOSED changed from IN_PROGRESS to parser-valid CLOSED; exact terminal bytes sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff bound",
+        "plan-archive:postcondition|owner:backend|output:PLAN-CLOSED archive action 1; active absent; archive byte-identical sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "snapshot:cancellation-close|owner:backend|output:PLAN-CLOSED cancellation close count 1 after archive; completed presentations 0",
+        "state:already-terminal|owner:backend|output:PLAN-ALREADY-CLOSED intake parser-valid CLOSED; transitions 0; repository plan lookups 0; archive actions 0; reconciliations 0; historical sweeps 0; storage mutations 0; completed presentations 0; path identity unchanged; content identity unchanged",
+        "plan-archive:blocker|owner:backend|output:both identity paths present; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:divergent archive; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:parser-invalid terminal bytes; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:unsafe file kind; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:source drift; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:target drift; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "plan-archive:blocker|owner:backend|output:uncertain postcondition; storage retries 0; second Handoffs 0; visible storage blocker; existing bytes preserved; overwrites 0; completed presentations 0; cancellation closes 0; semantic continuations 0",
+        "planless-archive-control|owner:backend|output:repository plan lookups 0; archive actions 0; archive receipts 0; synthetic plans 0"
+      ],
+      "rubric": [
+        "Require current-session IN_PROGRESS to parser-valid DONE terminal bytes, one existing archive action, active absence, byte-identical archive content, and one archive-bound presentation in that order.",
+        "Require explicitly human-authorized current-session IN_PROGRESS to parser-valid CLOSED terminal bytes, one existing archive action, the same archive postcondition, then one cancellation close and completed presentations 0.",
+        "Require already-CLOSED intake to leave transitions, repository-plan lookups, archive actions, reconciliations, historical sweeps, storage mutations, and completed presentations at 0 with exact path and content identities unchanged.",
+        "Require all seven distinct blocker causes in order; each emits the exact visible-blocker preservation suffix and permits zero overwrite, completed presentation, cancellation close, semantic continuation, retry, or second Handoff.",
+        "Require planless compact repository-plan lookups, archive actions, archive receipts, and synthetic plans all 0.",
+        "Forbid output before archive, active-plan Resume from, historical sweep, overwrite, storage retry, semantic continuation after a blocker, presenter-owned archival, a second archive action or Handoff, and any new archive receipt schema."
       ],
       "scripted_replies": [],
       "trace_scope": "full"
