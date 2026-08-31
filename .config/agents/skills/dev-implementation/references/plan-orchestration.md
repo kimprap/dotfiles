@@ -17,6 +17,8 @@ Retain the status from the root's initial exact validation as bounded current-ru
 
 The plan-backed root may validate and bind exact identities, project task state, calculate the ready frontier, admit shared-tree ownership, dispatch fresh children, record child identity and monotonic timing, observe and control the same child, validate bounded Handoff fields and artifact locators, enforce target/effect boundaries, quarantine invalid descendants, perform lifecycle and papercut bookkeeping, schedule the declared backend, invoke and validate the existing terminal archive operation as mechanical lifecycle bookkeeping, and prepare already-settled presenter input.
 
+When the root has no other admissible action and is waiting on a bound child, use automatic delivery or exactly one indefinite `hub wait`. Repeated finite waits against the same still-running child are forbidden.
+
 The root must not edit a task target, run task smoke, inspect a child transcript, make a semantic correction, decide whether implementation is sufficient, repair a finding, conduct worker closure, perform an audit opinion or semantic review, substitute itself for a child, weaken isolation, or invent a fallback topology. `Max concurrency` is only a ceiling; using one slot for one safe ready task is scheduling, not downgrade.
 
 ## Admit the shared-tree frontier

@@ -4468,6 +4468,88 @@
     },
     {
       "absent_capabilities": [],
+      "criterion": "Only after attempts exhaust 2/2, the same parent session and turn that would present a continuation Ask explicitly loads manual-only rethink on its own draft Ask mechanism; an absent or incomplete result blocks presentation, one complete result is presentable, no child is dispatched, and lifecycle state is unchanged.",
+      "expected": {
+        "artifacts": [
+          "blocked frontier snapshot",
+          "draft continuation-Ask candidate",
+          "corrected rethink proposal"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "attempts exhausted 2/2",
+          "same parent session and turn",
+          "complete draft-Ask candidate",
+          "explicit skill://rethink load",
+          "complete corrected proposal",
+          "existing explicit human continuation authority remains separate"
+        ],
+        "mode": "one owner",
+        "outcome": "same-session result from the explicitly loaded skill remains opaque and is presentable only when complete; an absent or incomplete result withholds the Ask; lifecycle state is unchanged",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-continuation-rethink",
+      "forbidden_events": [
+        "rethink-on-attempt-two",
+        "rethink-on-Build-repair",
+        "rethink-on-non-post-exhaustion-Ask",
+        "fresh-advisory-child",
+        "exhausted-worker-rethink",
+        "transcript-candidate",
+        "Handoff-as-candidate",
+        "continuation-Ask-without-complete-result",
+        "rethink-result-grammar-copied",
+        "rethink-result-body-copied",
+        "root-target-diagnosis",
+        "root-child-review",
+        "root-independent-grading",
+        "rethink-implementation",
+        "new-lifecycle-state",
+        "new-Route-owner",
+        "new-Handoff-schema",
+        "continuation-receipt-created",
+        "fresh-cycle-created",
+        "attempt-3",
+        "repair-token-reset",
+        "implicit shipping"
+      ],
+      "id": "B-CONTINUATION-RETHINK",
+      "inputs": {
+        "request": "Read-only backend state-trace matrix over independent branches around one exhausted plan. TASK-R attempt 1/2 and eligible fresh-child attempt 2/2 are complete with FIND-R2 still blocking AC-R2; attempt two loads rethink zero times and the plan remains IN_PROGRESS with its blocker Common Handoff. In the same parent session and turn that would otherwise emit the post-2/2 continuation Ask, PARENT-R drafts mechanism CAND-R with materially changed falsifiable hypothesis caller-B bypasses the intended public seam, predicted discriminating observation a bounded public-seam probe emits TRACE-B while the bypass path does not, remaining blocker FIND-R2 for AC-R2, and proposed cycle 1 authorizing only one fresh attempt-one/two cycle under the unchanged Task Contract and target. First show that an absent or incomplete result from the loaded skill withholds the continuation Ask. Then PARENT-R explicitly loads skill://rethink on its own draft mechanism in the same session and turn, with disable-model-invocation true unchanged and no child dispatch, and receives one complete corrected proposal under that skill's current contract; only that complete result is eligible for presentation, but do not issue an interactive Ask or create authority or state. Treat the result as opaque: do not encode or assert its lead line, token vocabulary, or body fields. Treat attempt two, Build repair, and a non-post-exhaustion Ask as zero-load controls. Do not use a transcript, Handoff restatement, fresh advisory child, exhausted worker, new schema, or new Route owner, and do not implement or start a cycle."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only backend state trace of same-session post-exhaustion continuation-Ask refinement.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "state:running|owner:worker|output:CHILD-R2 executes eligible attempt 2/2 under the unchanged Task Contract; rethink loads 0",
+        "state:blocked|owner:backend|output:attempts exhausted 2/2; FIND-R2 still blocks AC-R2; blocker Common Handoff sealed; plan remains IN_PROGRESS",
+        "continuation:candidate|owner:backend|output:CAND-R is PARENT-R's draft Ask mechanism binding changed hypothesis caller-B bypasses the intended public seam, predicted TRACE-B discrimination, remaining FIND-R2 for AC-R2, and proposed cycle 1 with exact authorization boundary",
+        "continuation:ask-withheld|owner:backend|output:branch with an absent or incomplete skill result has presentation count 0",
+        "continuation:rethink-loaded|owner:backend|output:PARENT-R explicitly loads skill://rethink in the same session and turn on its own draft Ask mechanism; disable-model-invocation true unchanged; child dispatches 0",
+        "continuation:result-complete|owner:backend|output:skill://rethink returns one complete corrected proposal under its bound current contract; result grammar and body remain outside this case contract",
+        "continuation:proposal-presentable|owner:backend|output:only the complete corrected proposal is eligible for the continuation Ask; interactive replies 0; authority changes 0; lifecycle transitions 0",
+        "continuation:scope-controls|owner:backend|output:attempt-two loads 0; Build-repair loads 0; non-post-exhaustion-Ask loads 0; fresh advisory children 0; exhausted-worker reuse 0",
+        "state:blocked|owner:backend|output:original plan, target, Task Contract, blocker frontier, attempt budget, repair-token state, and continuation-receipt count remain unchanged"
+      ],
+      "rubric": [
+        "Require zero rethink loads during attempt two, then an exact blocked 2/2 frontier before the quality gate.",
+        "Require the same parent session and turn to challenge its own bound draft Ask mechanism; reject a child, exhausted worker, transcript, Handoff, or packet substitute.",
+        "Require one explicit skill://rethink load with disable-model-invocation true unchanged, no implementation, and one complete corrected proposal under the bound current skill contract; do not inspect or restate its lead grammar or body.",
+        "Block presentation when the skill result is absent or incomplete; only one complete corrected proposal is presentable.",
+        "Preserve the existing human-only continuation receipt, attempt budget, repair token, Task Contract, target, blocker frontier, and Route ownership with no full cycle in this trace.",
+        "Classify rethink as a same-session quality gate on the parent's human-facing Ask, never diagnosis or review of the child target."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
       "criterion": "Standard learning is one narrow terminal assessment with the exact seven-field payload and source plus adjacent-near-miss validation. Portable `continual-learning assess` owns the result semantics; the backend owns only adapter validation and terminal accounting.",
       "expected": {
         "artifacts": [
@@ -8890,6 +8972,75 @@
         "Require PLAN-O parser-valid DONE terminal bytes and one existing archive action only after its existing terminal dev-continual-learning event.",
         "Require active absence, byte-identical archive content, one presentation after archival, and planned Resume from the matching identity-derived archive path, exact digest, and #completion-summary.",
         "Forbid archive before the applicable assurance boundary, completion before archive, active-plan Resume from, historical sweep, and a second archive action."
+      ],
+      "scripted_replies": [],
+      "trace_scope": "full"
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "When the plan root has no other admissible action and waits on one bound still-running child, automatic delivery or exactly one indefinite hub wait precedes mechanical Handoff admission, and a second finite wait against unchanged from/running state is forbidden.",
+      "expected": {
+        "artifacts": [
+          "plan-root wait state trace",
+          "current Common Handoff"
+        ],
+        "assurance_profile": "standard",
+        "first_owner": "backend",
+        "gates": [
+          "bound plan, root, child, and Task Contract",
+          "full-orchestration with downgrade none",
+          "root has no other admissible action",
+          "automatic delivery or one indefinite wait",
+          "current Common Handoff before admission"
+        ],
+        "mode": "full orchestration",
+        "outcome": "automatic delivery or one indefinite wait precedes mechanical Handoff admission; unchanged-state finite repeat refused",
+        "owners": [
+          "backend",
+          "worker"
+        ],
+        "route": "dev-implementation backend"
+      },
+      "fixture_dir": "fixtures/b-plan-wait-no-poll",
+      "forbidden_events": [
+        "finite-wait-invoked",
+        "second-finite-wait-invoked",
+        "status-poll",
+        "sleep-loop",
+        "duplicate-dispatch",
+        "live-child-dispatch",
+        "transcript-read",
+        "root-semantic-work",
+        "root-target-mutation",
+        "handoff-admission-before-result",
+        "elapsed-duration",
+        "token-count",
+        "new-wait-state",
+        "implicit shipping"
+      ],
+      "id": "B-PLAN-WAIT-NO-POLL",
+      "inputs": {
+        "request": "Read-only backend state-trace matrix over two independent branches from the same bound plan-root snapshot. PLAN-WAIT is parser-valid and ROOT-WAIT has full-orchestration with downgrade none, one exact Task Contract, and distinct still-running CHILD-WAIT after one synthetic dispatch. The root has no other admissible action. In branch A, automatic delivery supplies CHILD-WAIT's current Common Handoff and the root mechanically admits it. In branch B, automatic delivery is unavailable, so the root uses exactly one indefinite hub wait bound to CHILD-WAIT; CHILD-WAIT then supplies its current Common Handoff and the root mechanically admits it. Separately classify a counterfactual state with one prior finite wait and unchanged from CHILD-WAIT/still-running state as invalid, and reject the proposed second finite wait without invoking it. Emit only the finite synthetic state trace. Do not launch or wait on a live child, inspect a transcript, perform root semantic work, or report elapsed-duration or token metrics."
+      },
+      "layer": "backend",
+      "proof": "Fresh read-only backend state trace of plan-root wait discipline and Handoff admission.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "snapshot:plan-root|owner:backend|output:ROOT-WAIT bound to PLAN-WAIT, CHILD-WAIT, one exact Task Contract, and full-orchestration downgrade none",
+        "state:running|owner:worker|output:CHILD-WAIT still running after one synthetic dispatch; root has no other admissible action",
+        "snapshot:auto-delivery|owner:backend|output:branch A receives CHILD-WAIT current Common Handoff through automatic delivery; status queries 0",
+        "handoff:admitted|owner:backend|output:branch A mechanically admits CHILD-WAIT identity, task, attempt, dependency, target/effect, smoke, closure, test, receiver, and papercut fields",
+        "snapshot:indefinite-wait|owner:backend|output:branch B uses exactly one indefinite hub wait bound to CHILD-WAIT; finite waits 0",
+        "state:handed-off|owner:worker|output:branch B returns CHILD-WAIT current Common Handoff after the one blocking wait",
+        "handoff:admitted|owner:backend|output:branch B mechanically admits the same bounded Handoff fields",
+        "snapshot:finite-repeat-rejected|owner:backend|output:counterfactual prior finite wait plus unchanged from CHILD-WAIT and still-running state makes the proposed second finite wait forbidden"
+      ],
+      "rubric": [
+        "Require independent automatic-delivery and one-indefinite-wait branches from the same bound still-running child state with no other admissible root action.",
+        "Require the current Common Handoff result before mechanical admission in both branches.",
+        "Reject every invoked finite or repeated unchanged-state wait, status polling, live-child or duration/token claim, transcript inspection, duplicate dispatch, and root semantic work.",
+        "Keep runtime wait discipline separate from executor-plan parser, transport, compact-tail, and lifecycle semantics."
       ],
       "scripted_replies": [],
       "trace_scope": "full"

@@ -1,0 +1,7 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Read-only backend state-trace matrix over two independent branches from the same bound plan-root snapshot. PLAN-WAIT is parser-valid and ROOT-WAIT has full-orchestration with downgrade none, one exact Task Contract, and distinct still-running CHILD-WAIT after one synthetic dispatch. The root has no other admissible action. In branch A, automatic delivery supplies CHILD-WAIT's current Common Handoff and the root mechanically admits it. In branch B, automatic delivery is unavailable, so the root uses exactly one indefinite hub wait bound to CHILD-WAIT; CHILD-WAIT then supplies its current Common Handoff and the root mechanically admits it. Separately classify a counterfactual state with one prior finite wait and unchanged from CHILD-WAIT/still-running state as invalid, and reject the proposed second finite wait without invoking it. Emit only the finite synthetic state trace. Do not launch or wait on a live child, inspect a transcript, perform root semantic work, or report elapsed-duration or token metrics."
+  },
+  "scripted_replies": []
+}
