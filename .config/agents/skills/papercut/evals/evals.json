@@ -25,14 +25,14 @@
     {
       "assertions": [
         "Task and plan state stays with the current task or plan owner",
-        "The tracked bug, security incident, outage, and harness inconsistency route to existing owners",
+        "The tracked bug, security incident, outage, and external harness inconsistency without a repository-owned prevention seam route to existing owners",
         "The secret is redacted and never proposed for storage, and the operator typo is not captured",
         "Only the reproducible repository-owned workaround qualifies after redaction",
         "No excluded case reads or mutates a papercut ledger"
       ],
       "expected_output": "Seven observations are excluded and remain with their existing owners; only the reusable repository-owned workaround becomes a redacted capture candidate.",
       "id": "P-NOISE-EXCLUSIONS",
-      "prompt": "Classify eight current observations for papercut capture without touching storage: task or plan progress, a tracked blocking bug, an exposed secret, a security incident, an external outage, a harness tool-contract inconsistency, a one-time operator typo, and a reproducible redacted workaround in repository-owned agent configuration that applies across tasks. State the owner or next seam for each."
+      "prompt": "Classify eight current observations for papercut capture without touching storage: task or plan progress, a tracked blocking bug, an exposed secret, a security incident, an external outage, an external harness tool-contract inconsistency with no repository-owned prevention seam, a one-time operator typo, and a reproducible redacted workaround in repository-owned workflow configuration that applies across tasks. State the owner or next seam for each."
     },
     {
       "assertions": [
@@ -94,14 +94,14 @@
     },
     {
       "assertions": [
-        "The Common Handoff precedes one silent soft look and the papercut skill is not loaded",
+        "The Common Handoff exposes no current candidate or lineage-escalation marker, so the soft look stays local and the papercut skill is not loaded",
         "The existing ledger is not read, validated, or mutated",
         "No papercut output, task, Methods token, stage, todo phase, assurance event, or learning dispatch appears",
         "No count, date, timer, background mechanism, task-state change, or live-ledger mutation occurs"
       ],
       "expected_output": "The post-Handoff soft look stays silent: the skill is not loaded, storage is not read, no output appears, task state is unchanged, and no lifecycle or learning behavior is created.",
       "id": "P-NO-CANDIDATE",
-      "prompt": "Read-only post-work activation state-trace simulation. Ordinary work has emitted its Common Handoff without exposing plausible repository-owned reusable friction, while a repository-local papercut ledger happens to exist. Apply the one soft look without loading a skill or inspecting storage. Emit exactly `papercut:inactive|after_handoff:true|skill_loaded:false|ledger_access:false|output:false|task:false|methods:false|stage:false|todo:false|assurance:false|learning:false` and no prose."
+      "prompt": "Read-only post-work activation state-trace simulation. Ordinary work has emitted its Common Handoff without exposing plausible repository-owned reusable friction or a structured lineage-escalation marker, while a repository-local papercut ledger happens to exist. Apply the one soft look without loading a skill, inspecting earlier lineage artifacts, or inspecting storage. Emit exactly `papercut:inactive|after_handoff:true|skill_loaded:false|lineage_access:false|ledger_access:false|output:false|task:false|methods:false|stage:false|todo:false|assurance:false|learning:false` and no prose."
     },
     {
       "assertions": [
@@ -111,9 +111,34 @@
         "OMP and Grok retain the same report-only boundary under narrow authority",
         "Papercut evidence remains separate from Mnemopi retention"
       ],
-      "expected_output": "Reject before any transcript, memory, or ledger access. Papercut remains current-work, candidate-triggered, repository-opt-in, and foreground-only; Mnemopi remains separate.",
+      "expected_output": "Reject before any transcript, memory, or ledger access. Papercut remains candidate-triggered, bounded to current work and its directly referenced structured execution lineage, repository-opt-in, and foreground-only; Mnemopi remains separate.",
       "id": "P-TRANSCRIPT-MEMORY-NEAR-MISS",
-      "prompt": "Read-only activation state-trace simulation. Do not load a skill, transcript, memory, storage, or background facility. Scenario: a user proposes scanning transcripts and long-term memory every evening, counting repeated frustrations, creating `.agents/papercuts.json` when absent, and launching a reviewer after three matches. Emit exactly `papercut:rejected|transcript_access:false|memory_access:false|ledger_access:false|background:false|reason:current-work-candidate-only` and no prose."
+      "prompt": "Read-only activation state-trace simulation. Do not load a skill, transcript, memory, storage, or background facility. Scenario: a user proposes scanning transcripts and long-term memory every evening, counting repeated frustrations, creating `.agents/papercuts.json` when absent, and launching a reviewer after three matches. Emit exactly `papercut:rejected|transcript_access:false|memory_access:false|ledger_access:false|background:false|reason:bounded-structured-lineage-only` and no prose."
+    },
+    {
+      "assertions": [
+        "The clean final attempt cannot suppress severe structured friction from earlier attempts in the same directly referenced work lineage",
+        "Terminal-only papercut qualification is identified as one stable repository-owned run-lineage-blindness candidate rather than one record per retry",
+        "Proof-capture fragility is a distinct repository-owned candidate because an otherwise completed result reached the repository-owned proof caller, was lost before persistence, and capture-before-analysis is demonstrated prevention",
+        "At most one candidate is selected for automatic capture; every other stable root-cause candidate receives an explicit report-only qualification or repository-ownership rejection in the same compact result without a second ledger call",
+        "Intentional adapter non-installation, concurrent external cache activity, and harmless acknowledgements remain excluded",
+        "Attempt labels, hashes, timestamps, provider or model names, and paths remain observation evidence only, so equivalent evidence produces the same generalized surfaces and summaries"
+      ],
+      "expected_output": "The clean final does not erase the bounded lineage. The look identifies stable run-lineage-blindness and repository-owned proof-persistence candidates, selects at most one for automatic capture, reports the other without a second record call, and excludes the intentional boundary, concurrent external activity, and harmless acknowledgement. Equivalent volatile receipt metadata leaves both generalized identities unchanged.",
+      "id": "P-LINEAGE-ESCALATION",
+      "prompt": "Read-only post-Handoff qualification simulation. Use only a current plan blocker table, same-lineage Common Handoffs, and immutable attempt receipts directly referenced by them. The final attempt is clean. Its repository-owned papercut accounting considered only three terminal-state observations, returned no candidate, and did not inspect the referenced earlier lineage. Earlier structured evidence shows exhausted attempt cycles, recurrence of the same effect-attribution blocker class, and several human authority revisions needed only to permit proof mechanics. One immutable receipt shows that an otherwise completed semantic result reached a repository-owned proof caller and was lost before persistence; a later capture-before-analysis recipe prevents the loss. Final accounting also lists intentional adapter non-installation, concurrent external cache activity, and a harmless acknowledgement. An equivalent evidence copy changes attempt labels, hashes, timestamps, provider and model names, and absolute paths without changing those facts. Re-evaluate the lineage without transcripts or storage. Return escalation triggers, whether terminal-only accounting is itself a root cause, generalized candidate surfaces and summaries, the one automatic-capture selection, report-only or rejection treatment for every other stable root cause with repository-ownership rationale, exclusions, and the volatile-evidence boundary."
+    },
+    {
+      "assertions": [
+        "An exhausted budget may open bounded structured-lineage inspection but does not establish reuse or repository ownership by itself",
+        "An ordinary assertion failure, external provider timeout, intentional installation boundary, and one-off operator typo remain excluded",
+        "External runtime behavior with no repository-owned prevention seam is routed to its external owner rather than normalized into a papercut",
+        "Changing attempt labels, models, providers, paths, timestamps, or evidence hashes neither creates recurrence nor changes any stable candidate identity",
+        "The near miss reads no transcripts, history, memory, provider logs, repository-wide state, ledger, or retry lifecycle and emits no papercut candidate"
+      ],
+      "expected_output": "The exhausted budget permits only a bounded structured check. No reusable repository-owned root cause is established; every observation is excluded, volatile metadata changes nothing, and no skill, transcript, history, memory, provider-log, repository-wide, ledger, or retry-lifecycle access occurs.",
+      "id": "P-LINEAGE-NEAR-MISS",
+      "prompt": "Read-only post-Handoff near-miss simulation. A directly referenced immutable receipt says an attempt budget was exhausted after one ordinary assertion failure and one external provider timeout. The final Handoff also preserves an intentional installation boundary and a one-time operator typo. No blocker class recurred, no completed result reached a repository-owned caller, and no repository-owned policy, default, tool, proof recipe, or caller can prevent the external timeout. A duplicate receipt changes only attempt label, provider, model, absolute path, timestamp, and evidence hash. Apply the bounded lineage rule and state qualification, ownership, identity, and lifecycle effects. Explicitly state whether the look accesses transcripts, history, memory, provider logs, repository-wide state, the papercut ledger, or a retry lifecycle."
     },
     {
       "assertions": [

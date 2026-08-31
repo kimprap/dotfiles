@@ -1657,6 +1657,8 @@ def dwo_registry_contract_hits(
     papercut_ids = {case.get("id") for case in papercut.get("evals", [])}
     required_papercut_ids = {
         "P-POST-WORK-HANDOFF",
+        "P-LINEAGE-ESCALATION",
+        "P-LINEAGE-NEAR-MISS",
         "P-ROOT-FALLBACK",
         "P-RECEIPT-ORDER",
     }
@@ -1664,7 +1666,7 @@ def dwo_registry_contract_hits(
         hits.append(
             dwo_contract_hit(
                 str(papercut_path.relative_to(root)),
-                "per-child fallback and receipt-order papercut cases",
+                "per-child fallback, receipt-order, and bounded-lineage papercut cases",
                 repr(sorted(papercut_ids)),
             )
         )
