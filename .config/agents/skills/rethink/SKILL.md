@@ -30,7 +30,8 @@ weaker proposal merely to justify prior work.
 Challenge the user's premise and your own equally. Ask only about a remaining
 human-owned trade-off.
 
-Lead with exactly one corrected verdict: `reject`, `reuse`, `extend`, `test`,
-or `proceed`. State existing coverage, the residual gap, total-cost reason,
-smallest sufficient path, and the evidence that would change the verdict. Do
-not implement the candidate.
+Lead with exactly one corrected verdict in the form
+`rethink: **<verdict>**`, where `<verdict>` is `reject`, `reuse`, `extend`,
+`test`, or `proceed`. State existing coverage, the residual gap, total-cost
+reason, smallest sufficient path, and the evidence that would change the
+verdict. Do not implement the candidate.
