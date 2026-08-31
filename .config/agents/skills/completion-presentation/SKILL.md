@@ -70,7 +70,7 @@ If no already-produced qualifying durable Completion Summary exists, preserve th
 
 ## Mechanical rendering
 
-For valid input, emit the uniform hanging field list below. Do not render `status`; it selects the presenter-owned State value. The only H2 headings are `## Completed`, `## Evidence`, and `## Continuation`, in that order. The labels and their order are:
+For valid input, emit the packed bold-label field list below. Do not render `status`; it selects the presenter-owned State value. The only H2 headings are `## Completed`, `## Evidence`, and `## Continuation`, in that order. The labels and their order are:
 
 - Completed: `Outcome`, `Change scope`, `Key artifacts`
 - Evidence: `Verification`, `Papercuts`, `Learning`, `Residual risk`
@@ -78,75 +78,50 @@ For valid input, emit the uniform hanging field list below. Do not render `statu
 
 Apply this exact grammar:
 
-1. Follow every H2 with exactly one blank line.
-2. Render every label as exactly `- **Label**`: one hyphen, one space, the bold label, no colon, and no trailing space. Follow it with exactly one blank line.
-3. Render a scalar caller value as exactly two leading spaces followed by the value bytes on one line.
-4. Render every item of `change_scope`, `key_artifacts`, or a nonempty `papercuts` array as exactly two leading spaces, `- `, and the item bytes. Keep input order and use the same form for one or multiple items, with no blank lines between item lines.
-5. Render empty `papercuts` as the presenter-owned scalar line `  none`.
-6. Render State as the presenter-owned scalar line `  complete; no open frontier.`.
-7. Follow every value block with exactly one blank line before the next field or H2. After the final `Next` value byte, end immediately at EOF with no trailing newline or blank line.
+1. Follow every H2 immediately with its first label; add no blank line.
+2. Render every label as exactly `**Label**`: the bold label with no leading hyphen, colon, or trailing space. Follow it immediately with the field's first child.
+3. Render a scalar caller value as exactly `- ` followed by the value bytes on one line. Render every item of `change_scope`, `key_artifacts`, or a nonempty `papercuts` array with that same exact `- ` prefix, in input order and on consecutive lines.
+4. Render empty `papercuts` as the presenter-owned child `- none`.
+5. Render State as the presenter-owned child `- complete; no open frontier.`.
+6. Add no blank line between a label and its first child or between fields. Join fields inside a section with one newline byte and sections with exactly two newline bytes, producing exactly one blank line before `## Evidence` and `## Continuation`. After the final `Next` child value byte, end immediately at EOF with no trailing newline or blank line.
 
-Byte preservation is type-specific. Removing exactly the two leading spaces from a rendered caller scalar recovers the original scalar bytes. Removing exactly `  - ` from a rendered array item recovers the original item bytes. Do not apply a universal strip rule. Headings, labels, spacing, indentation, list markers, empty-papercut `none`, and State are presenter-owned.
+Removing exactly the first two bytes `- ` from every rendered caller-owned child recovers the original scalar or array-item bytes. Headings, labels, spacing, child markers, empty-papercut `none`, and State are presenter-owned.
 
 ```markdown
 ## Completed
-
-- **Outcome**
-
-  the outcome value
-
-- **Change scope**
-
-  - the first change_scope value
-  - the next change_scope value, when present
-
-- **Key artifacts**
-
-  - the first key_artifacts value
-  - the next key_artifacts value, when present
+**Outcome**
+- the outcome value
+**Change scope**
+- the first change_scope value
+- the next change_scope value, when present
+**Key artifacts**
+- the first key_artifacts value
+- the next key_artifacts value, when present
 
 ## Evidence
-
-- **Verification**
-
-  the verification value
-
-- **Papercuts**
-
-  none
-
-- **Learning**
-
-  the learning value
-
-- **Residual risk**
-
-  the residual_risk value
+**Verification**
+- the verification value
+**Papercuts**
+- none
+**Learning**
+- the learning value
+**Residual risk**
+- the residual_risk value
 
 ## Continuation
-
-- **State**
-
-  complete; no open frontier.
-
-- **Resume from**
-
-  the resume_from value
-
-- **Handoff**
-
-  the handoff value
-
-- **Constraints**
-
-  the constraints value
-
-- **Next**
-
-  the next value
+**State**
+- complete; no open frontier.
+**Resume from**
+- the resume_from value
+**Handoff**
+- the handoff value
+**Constraints**
+- the constraints value
+**Next**
+- the next value
 ```
 
-The words `the outcome value` and similar phrases identify bindings, not literal output. For nonempty `papercuts`, replace the shown `none` line with one array-item line per item. Emit no preface, epilogue, code fence, Route, approval request, fourth heading, task totals, counters, manifests, gates, raw curation payload, internal lifecycle mechanics, compatibility output, or `Changed` label.
+The words `the outcome value` and similar phrases identify bindings, not literal output. For nonempty `papercuts`, replace the shown `- none` child with one consecutive `- ` child per item. Emit no preface, epilogue, code fence, Route, approval request, fourth heading, task totals, counters, manifests, gates, raw curation payload, internal lifecycle mechanics, compatibility output, or `Changed` label.
 
 ## Bound examples
 
@@ -154,125 +129,77 @@ Compact:
 
 ```markdown
 ## Completed
-
-- **Outcome**
-
-  Ghostty's Cmd-K binding clears the terminal as intended.
-
-- **Change scope**
-
-  - 1 Ghostty configuration file covering the Cmd-K binding.
-
-- **Key artifacts**
-
-  - `.config/ghostty/config`
+**Outcome**
+- Ghostty's Cmd-K binding clears the terminal as intended.
+**Change scope**
+- 1 Ghostty configuration file covering the Cmd-K binding.
+**Key artifacts**
+- `.config/ghostty/config`
 
 ## Evidence
-
-- **Verification**
-
-  Ghostty config load and Cmd-K smoke — PASS (`.config/ghostty/config@sha256:6ef1f5a019a2021af780e7bbc77d180b841ae2dbacf23808002ad0eceb98f1b4`)
-
-- **Papercuts**
-
-  none
-
-- **Learning**
-
-  skipped — compact assurance
-
-- **Residual risk**
-
-  none
+**Verification**
+- Ghostty config load and Cmd-K smoke — PASS (`.config/ghostty/config@sha256:6ef1f5a019a2021af780e7bbc77d180b841ae2dbacf23808002ad0eceb98f1b4`)
+**Papercuts**
+- none
+**Learning**
+- skipped — compact assurance
+**Residual risk**
+- none
 
 ## Continuation
-
-- **State**
-
-  complete; no open frontier.
-
-- **Resume from**
-
-  `local://ghostty-cmd-k-completion-summary.md@sha256:7777777777777777777777777777777777777777777777777777777777777777#completion-summary`
-
-- **Handoff**
-
-  in-conversation (see Resume from)
-
-- **Constraints**
-
-  shipping not authorized; preserve unrelated user-owned work.
-
-- **Next**
-
-  none
+**State**
+- complete; no open frontier.
+**Resume from**
+- `local://ghostty-cmd-k-completion-summary.md@sha256:7777777777777777777777777777777777777777777777777777777777777777#completion-summary`
+**Handoff**
+- in-conversation (see Resume from)
+**Constraints**
+- shipping not authorized; preserve unrelated user-owned work.
+**Next**
+- none
 ```
 
 Standard or high-consequence:
 
 ```markdown
 ## Completed
-
-- **Outcome**
-
-  Portable session envelope, continual-learning, and generic completion presentation are live; the archived plan is DONE.
-
-- **Change scope**
-
-  - 24 files across workflow contracts, orchestration, verification, review, learning, completion, and eval fixtures.
-
-- **Key artifacts**
-
-  - `docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md#d27--session-lifecycle-envelope-and-portable-workflow-owners`
-  - `.config/agents/skills/completion-presentation/SKILL.md`
-  - `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md#completion-summary`
+**Outcome**
+- Portable session envelope, continual-learning, and generic completion presentation are live; the archived plan is DONE.
+**Change scope**
+- 24 files across workflow contracts, orchestration, verification, review, learning, completion, and eval fixtures.
+**Key artifacts**
+- `docs/adr/0009-session-lifecycle-envelope-and-portable-learning.md#d27--session-lifecycle-envelope-and-portable-workflow-owners`
+- `.config/agents/skills/completion-presentation/SKILL.md`
+- `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md#completion-summary`
 
 ## Evidence
-
-- **Verification**
-
-  all three T3 criteria — VERIFIED; final Standards and Specification review — APPROVED (`.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md@sha256:a06c625ece27cb6b725620a62049d46668ad2f11e7344f27e1746798df448dee#completion-summary`)
-
-- **Papercuts**
-
-  none
-
-- **Learning**
-
-  NO DURABLE LEARNING — no impacted durable rule or guidance needed an update
-
-- **Residual risk**
-
-  possible same-model or model-family assurance dependence; unrelated dirty hunks remain user-owned
+**Verification**
+- all three T3 criteria — VERIFIED; final Standards and Specification review — APPROVED (`.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md@sha256:a06c625ece27cb6b725620a62049d46668ad2f11e7344f27e1746798df448dee#completion-summary`)
+**Papercuts**
+- none
+**Learning**
+- NO DURABLE LEARNING — no impacted durable rule or guidance needed an update
+**Residual risk**
+- possible same-model or model-family assurance dependence; unrelated dirty hunks remain user-owned
 
 ## Continuation
-
-- **State**
-
-  complete; no open frontier.
-
-- **Resume from**
-
-  `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md@sha256:a06c625ece27cb6b725620a62049d46668ad2f11e7344f27e1746798df448dee#completion-summary`
-
-- **Handoff**
-
-  in-conversation sha256:165de40892bdec9d5d330e913e7ec61bcbe977d3eac43a0b706e957b194cd049 (see Resume from)
-
-- **Constraints**
-
-  do not reopen completed stages; shipping not authorized; preserve unrelated user-owned work.
-
-- **Next**
-
-  none
+**State**
+- complete; no open frontier.
+**Resume from**
+- `.agents/plans/archive/2026-08-20-2012_session-lifecycle-envelope.md@sha256:a06c625ece27cb6b725620a62049d46668ad2f11e7344f27e1746798df448dee#completion-summary`
+**Handoff**
+- in-conversation sha256:165de40892bdec9d5d330e913e7ec61bcbe977d3eac43a0b706e957b194cd049 (see Resume from)
+**Constraints**
+- do not reopen completed stages; shipping not authorized; preserve unrelated user-owned work.
+**Next**
+- none
 ```
 
 ## Stops and lifecycle boundaries
 
 Emit no generic completed report when the current fence is absent, stale or prior-turn, duplicated, malformed, reordered, nested, or contains an unknown, duplicate, missing, empty, placeholder, line-breaking, or C0/C1-control-bearing value; when `change_scope` or `key_artifacts` is scalar, has zero items, or has more than three items; when the legacy `changed` key is present; when `papercuts` is not an array or contains an empty or control-bearing item; when the legacy singular papercut key is present; when `resume_from` is missing, mutable, non-durable, not openable, lacks `#completion-summary`, or points to a summary without the required outcome, decisions, evidence identities, residual risk, and exact manifest reference; when `handoff` is a bare SHA, an unresolved `local://` candidate, an absolute host-session path, missing its immutable identity, or otherwise unsupported; when `constraints` is `none`, omits `shipping not authorized`, or contains that clause more than once; when `next` is unauthorized or shipping-bearing; when status is not `completed`; or when learning is `BLOCKED`.
 
-If rendering would require rewriting a caller value, inserting a line break, generating a labeled link, accepting a compatibility input, or emitting any shape other than the exact hanging field list, emit no generic completed report.
+If rendering would require rewriting a caller value, inserting a line break, generating a labeled link, accepting a compatibility input, or emitting any shape other than the exact packed bold-label and child-bullet field list, emit no generic completed report.
 
 The presenter never decides or reopens completion; validates or reruns evidence; settles papercuts; invokes learning; inspects manifests, counters, receipts, Context Packs, or backend attempts; infers approval or shipping; creates a task, dispatch, child, state, transition, approval, route completion, adapter, workflow, plan, persistence layer, or Handoff; or receives a Task Contract, Context Pack, backend attempt, or Handoff.
 

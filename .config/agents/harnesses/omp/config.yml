@@ -1,38 +1,39 @@
-theme: 
+theme:
   dark: dark-swamp
   light: light
-statusLine: 
+statusLine:
   preset: custom
   separator: none
-  sessionAccent: true
+  sessionAccent: false
   transparent: true
-  leftSegments: 
+  leftSegments:
     - path
     - model
     - mode
     - token_total
     - context_pct
-  rightSegments: 
+  rightSegments:
     - session_name
-  segmentOptions: 
-    model: 
+  segmentOptions:
+    model:
       showThinkingLevel: true
-      path: 
+      path:
         abbreviate: true
         maxLength: 40
         stripWorkPrefix: true
-      git: 
+      git:
         showBranch: true
         showStaged: true
         showUnstaged: true
         showUntracked: true
+  compactThinkingLevel: false
 symbolPreset: nerd
 defaultThinkingLevel: medium
 tier:
   subagent: inherit
-memory: 
+memory:
   backend: mnemopi
-mnemopi: 
+mnemopi:
   scoping: per-project-tagged
   dbPath: ""
   bank: ""
@@ -43,17 +44,17 @@ mnemopi:
   embeddingApiUrl: https://openrouter.ai/api/v1
   llmMode: smol
   autoRetain: true
-extensions: 
+extensions:
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/plan-artifact-sync.js
-lsp: 
+lsp:
   formatOnWrite: true
 setupVersion: 2
-display: 
+display:
   showTokenUsage: true
-task: 
+task:
   showResolvedModelBadge: true
-  agentModelOverrides: 
+  agentModelOverrides:
     verification-worker: openai-codex/gpt-5.6-sol:xhigh
     reviewer: openai-codex/gpt-5.6-sol:xhigh
     security-reviewer: openai-codex/gpt-5.6-sol:xhigh
@@ -63,46 +64,48 @@ task:
     designer: openai-codex/gpt-5.6-sol:xhigh
     librarian: openai-codex/gpt-5.6-sol:xhigh
 hideThinkingBlock: true
-providers: 
-  webSearchExclude: 
+providers:
+  webSearchExclude:
     - perplexity
   memoryModel: online
-  webSearchOrder: 
+  webSearchOrder:
     - brave
     - xai
     - codex
-github: 
+github:
   enabled: true
-modelRoles: 
+modelRoles:
   default: openai-codex/gpt-5.6-sol:xhigh
   slow: openai-codex/gpt-5.6-sol:max
   plan: openai-codex/gpt-5.6-sol:max
   advisor: openai-codex/gpt-5.6-sol:xhigh
-  smol: openai-codex/gpt-5.6-sol:xhigh
+  smol: xai-oauth/grok-4.6:xhigh
   task: openai-codex/gpt-5.6-sol:xhigh
   tiny: openai-codex/gpt-5.6-sol:xhigh
   designer: openai-codex/gpt-5.6-sol:xhigh
   test_audit_opinion_a: openai-codex/gpt-5.6-sol:xhigh
   test_audit_opinion_b: xai-oauth/grok-4.6:xhigh
-vault: 
+  second_opinion_a: openai-codex/gpt-5.6-sol:xhigh
+  second_opinion_b: xai-oauth/grok-4.6:xhigh
+vault:
   enabled: true
-browser: 
+browser:
   enabled: true
-web_search: 
+web_search:
   enabled: true
-disabledProviders: 
+disabledProviders:
   - codex
-dev: 
+dev:
   autoqaConsent: granted
-codexResets: 
+codexResets:
   autoRedeem: "no"
-compaction: 
+compaction:
   thresholdTokens: 200000
   idleEnabled: true
-composer: 
+composer:
   shape: claude
 extendedContext: false
-terminal: 
+terminal:
   showProgress: true
-astGrep: 
+astGrep:
   enabled: false

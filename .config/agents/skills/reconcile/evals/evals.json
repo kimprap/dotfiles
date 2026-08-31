@@ -1,0 +1,46 @@
+{
+  "skill_name": "reconcile",
+  "evals": [
+    {
+      "id": "REC-ORDER-AUTHORITY",
+      "prompt": "Simulate a conversation-mode Reconcile run beginning before capability/readable-context/response-channel preflight and the one approved Reconcile brief, then continuing on candidate C1. The packet binds the invoking Main identity and a host-provided finalized-response channel. Reviewer A initial says VALID; same A post-rethink returns an actionable complete REVISE to C2. Reviewer B initial says VALID; same B post-rethink says VALID on C2. Describe the exact gate, persistent identities, dispatch, response transport and authority, mutation, identity, and rounds trace. Plausible unique bug: the controller terminates on A's provisional VALID before same-A post-rethink and B review.",
+      "expected_output": "Preflight and approval precede dispatch. One persistent A performs initial through the ordinary task result, then same-child post-rethink through the supplied channel to Main; Main alone applies only A's finalized REVISE and re-identifies C2. One distinct persistent B receives C2 plus A's finalized response, returns its initial through the ordinary task result, and returns same-child post-rethink through the supplied channel to Main. Each requested finalized response is one complete outer response, initial rows are superseded, both rethink loads are explicit, no reviewer messages the other or uses the channel otherwise, and B post-rethink is the first eligible terminal VALID.",
+      "files": [],
+      "assertions": [
+        "Capability and readable-context preflight plus the approved Reconcile brief occur before reviewer dispatch or candidate mutation",
+        "The order is exactly A initial, same-A post-rethink, B initial, same-B post-rethink, with two distinct persistent child identities and exactly those two same-child rethink loads",
+        "Both initial responses are provisional and recorded as superseded; neither A initial VALID nor A post-rethink VALID can terminate before B post-rethink",
+        "Main alone applies the complete finalized A REVISE, re-identifies C2, and gives B the current candidate plus A's finalized response",
+        "Initial provisional responses use ordinary task results; each post-rethink returns exactly one complete outer response through only the controller-supplied channel to the bound invoking Main identity",
+        "Reviewers remain read-only and neither spawns, controls the loop, reads or messages the counterpart, sends an unsolicited message, uses the response channel otherwise, or presents final output"
+      ]
+    },
+    {
+      "id": "REC-SEMANTIC-REVALIDATION",
+      "prompt": "For this eval only, answer as a semantic simulator of an already-approved stateless fixture, not as the Reconcile controller performing a live invocation. Do not run or report production capability, context, reviewer-transport, or candidate preflight; do not infer repository state, show a Reconcile brief, or request approval. Treat the fixture's identities, reviewer availability, response channel, and events as supplied facts and execute both branches completely. Simulate freshness in two branches with a packet-bound invoking Main identity and finalized-response channel. In branch one, A post-rethink is VALID on R1, B initial is provisionally REVISE, B post-rethink is finalized REVISE, Main applies the complete semantic revision as R2, and existing A later returns VALID on R2. In branch two, current-identity VALID contains one compatible editorial recommendation. State identity, response transport, and terminal authority after every event. Plausible unique bug: stale VALID on R1 is reused after a semantic edit, so an unreviewed R2 is presented.",
+      "expected_output": "A's R1 VALID cannot skip B and becomes stale when Main applies B's finalized semantic revision. B's provisional revision uses the ordinary task result and never mutates; B's post-rethink complete response uses the supplied channel to Main. R2 returns to the existing A with B's finalized response, and A's later complete response uses the supplied channel and terminates only when its VALID binds exactly R2. A compatible editorial-only recommendation may be applied directly, re-identified, and recorded as the terminal identity without counterpart review; a semantic recommendation would require counterpart VALID.",
+      "files": [],
+      "assertions": [
+        "A post-rethink VALID on R1 does not terminate the mandatory first iteration and B initial REVISE remains provisional",
+        "Main alone applies B's finalized complete semantic revision, produces a new exact R2 identity, and invalidates every VALID bound to R1",
+        "The existing counterpart A receives R2 plus B's finalized response, no later pass loads rethink, A's later complete response uses the supplied channel to Main, and terminal VALID binds exactly R2",
+        "Every applied semantic recommendation changes identity and requires counterpart VALID on that same new identity",
+        "A compatible editorial-only recommendation is applied directly, re-identified, and recorded terminally without semantic revalidation"
+      ]
+    },
+    {
+      "id": "REC-VERDICT-PROGRESS-STOPS",
+      "prompt": "Build a semantic admission-and-progress matrix for Reconcile. Include the three complete line-1 VALID, REVISE, and BLOCKED templates; duplicate verdict; raw rethink extend; lowercase valid; synonym approved; qualified VALID after fixes; multiple verdicts; missing field; wrong reviewer; wrong pass; stale identity; actionable changing REVISE; unchanged REVISE; persistent BLOCKED; repeated identity/reviewer pair; repeated unresolved frontier; unreadable locator; lost same-child transport; authority conflict; and six genuinely progressive later passes. For malformed-response correction, show the same child returning exactly one corrected complete response through the controller-supplied channel to Main. Show the terminal output shape for success and every stop. Plausible unique bug: raw rethink extend is admitted as terminal validity.",
+      "expected_output": "Only one exact bare uppercase line-1 verdict with its complete matching reviewer, pass, identity, and body is admitted. Every near miss returns to the same child without mutation, and each requested correction returns one corrected complete response through the supplied channel to Main. Main applies only finalized actionable REVISE; unchanged or repeated state stops. BLOCKED receives only approved context or contract correction and then stops if unresolved. Six progressive passes continue with the same two children, each complete later response using the supplied channel, and no fixed cap. Rounds render first; stops name last identity, blocker, and resume frontier without Final proposal or validity.",
+      "files": [],
+      "assertions": [
+        "Only each exact complete VALID, REVISE, or BLOCKED template with one matching bare line-1 verdict, reviewer, pass, and current identity is accepted",
+        "Duplicate, raw extend, lowercase, synonym, qualified, multiple, missing-field, wrong-reviewer, wrong-pass, stale-identity, and non-applicable replies return to the same child without candidate mutation or Main-invented correction; each requested correction returns exactly one corrected complete response through the supplied channel to Main",
+        "Only a finalized actionable REVISE may mutate; an unchanged REVISE, repeated identity/reviewer pair, or repeated unresolved frontier stops before another review",
+        "Persistent BLOCKED, unreadable required context, lost persistent same-child transport, and authority conflict stop without a validity claim",
+        "Six genuinely progressive later passes alternate the same two children, each complete response using the supplied channel, without later rethink and without a fixed round cap",
+        "Every terminal surface renders the five-column Review rounds table first; a stop then renders Reconcile stopped with last identity, blocker, and resumable frontier and never Final proposal"
+      ]
+    }
+  ]
+}

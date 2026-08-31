@@ -45,6 +45,21 @@
       "summary": "Keep embedded prompt goldens and expected outputs synchronized.",
       "surface": ".config/agents/skills/completion-presentation/evals/evals.json"
     },
+    "pc-7360992214c3cd7d": {
+      "first_seen": "2026-08-30",
+      "last_seen": "2026-08-30",
+      "observations": [
+        {
+          "date": "2026-08-30",
+          "friction": "A final confirmation interaction exposed confirmation choices without the proposal body they were meant to bind, forcing a repeated proposal and risking approval of unseen content.",
+          "workaround": "Repeat the complete final proposal immediately with the confirmation control and include a compact bound preview."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Bind the complete final proposal body to the confirmation interaction.",
+      "surface": ".config/agents/skills/dev-grilling confirmation presentation"
+    },
     "pc-a556fa1f9529ba9a": {
       "first_seen": "2026-08-26",
       "last_seen": "2026-08-26",

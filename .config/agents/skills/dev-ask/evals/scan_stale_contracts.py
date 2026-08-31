@@ -1589,8 +1589,10 @@ def dwo_registry_contract_hits(
             or "- Changed:" in raw_text
             or '"change_scope":' not in raw_text
             or '"key_artifacts":' not in raw_text
-            or "- **Change scope**" not in raw_text
-            or "- **Key artifacts**" not in raw_text
+            or "\n**Change scope**\n- " not in raw_text
+            or "\n**Key artifacts**\n- " not in raw_text
+            or "\n- **Change scope**" in raw_text
+            or "\n- **Key artifacts**" in raw_text
         ):
             hits.append(
                 dwo_contract_hit(
