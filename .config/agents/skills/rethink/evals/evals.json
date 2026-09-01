@@ -4,23 +4,25 @@
     {
       "id": 1,
       "prompt": "Rethink this candidate from first principles: create a second deployment-state service solely to record rollback reasons. The existing deployment record already owns rollout identity, status, timestamps, and rollback outcome, but it lacks the reason field. The missing reason is an observed operational requirement. Revise the proposal if appropriate.",
-      "expected_output": "A standalone extend verdict with concise findings and a complete final proposal that adds the smallest rollback-reason extension to the existing deployment record instead of creating a second service.",
+      "expected_output": "A standalone extend verdict followed by the exact packed-label Findings and Final proposal fields, with a complete proposal that adds the smallest rollback-reason extension to the existing deployment record instead of creating a second service.",
       "files": [],
       "assertions": [
         "The response starts with exactly one `rethink: **extend**` verdict",
         "The response contains `## Findings` and covers existing coverage, the residual gap, total cost, the smallest sufficient path, and evidence that would change the verdict",
         "The response contains `## Final proposal` with the complete corrected proposal rather than only a delta",
+        "Every Findings field, plus Status and Proposal, uses a colonless unbulleted bold label followed by list children with packed-label spacing and exact field order",
         "The final proposal preserves the existing deployment record as owner and does not implement the change"
       ]
     },
     {
       "id": 2,
       "prompt": "Rethink this candidate: introduce one isolated credential-broker process because the existing application has no credential boundary, three observed call sites currently expose raw secrets, and bounded prototypes show an in-process adapter cannot isolate memory or permissions. The proposal names ownership, migration, rollback, and operating checks. If it is already good enough, keep it unchanged.",
-      "expected_output": "A standalone proceed verdict whose findings explain why cheaper options are insufficient, followed by an Unchanged status and a complete semantic restatement of the approved credential-broker proposal.",
+      "expected_output": "A standalone proceed verdict followed by the exact packed-label Findings and Final proposal fields, with Status `Unchanged` and a complete semantic restatement of the approved credential-broker proposal.",
       "files": [],
       "assertions": [
         "The response starts with exactly one `rethink: **proceed**` verdict",
         "The final proposal marks the candidate `Unchanged`",
+        "Status is rendered as a colonless unbulleted bold label with the separate child `- Unchanged`, and every other field follows the same packed-label grammar",
         "The complete candidate is restated instead of being replaced by only `no changes` or a rationale",
         "The response does not implement the candidate"
       ]
@@ -28,11 +30,12 @@
     {
       "id": 3,
       "prompt": "Rethink this candidate: add a new JSON parser to support comments, although the installed parser already exposes and tests a comment-enabled mode used elsewhere in the repository. Preserve the requested behavior but minimize machinery.",
-      "expected_output": "A standalone reuse verdict with findings and a complete final proposal that uses the installed parser's existing comment-enabled mode.",
+      "expected_output": "A standalone reuse verdict followed by the exact packed-label Findings and Final proposal fields, with a complete final proposal that uses the installed parser's existing comment-enabled mode.",
       "files": [],
       "assertions": [
         "The response starts with exactly one `rethink: **reuse**` verdict",
         "The final proposal completely restates how the existing parser satisfies the requirement",
+        "Status is rendered as a colonless unbulleted bold label with the separate child `- Replacement`, and Findings and Proposal use ordered packed labels with list children",
         "The proposed new parser is not retained merely because it was the candidate",
         "The result contains no implementation"
       ]

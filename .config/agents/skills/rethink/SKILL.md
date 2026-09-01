@@ -45,27 +45,29 @@ Perform the reassessment once, then obey exactly one output owner.
 
 ## Standalone response
 
+Before rendering, read and follow
+[packed-label](../../references/packed-label.md). The mandatory verdict line is
+the sole preface outside the packed-label surface.
+
 Lead with exactly one corrected verdict in the form
 `rethink: **<verdict>**`, where `<verdict>` is `reject`, `reuse`, `extend`,
 `test`, or `proceed`.
 
-Then render `## Findings` with these concise entries:
+Then render exactly these packed-label sections and fields:
 
-- **Existing coverage:** current owners and capabilities;
-- **Residual gap:** the observed requirement still unmet;
-- **Total-cost reason:** ownership, state, integration, migration, conflict,
-  review, and operating cost;
-- **Smallest sufficient path:** the selected no-change, reuse, extension, test,
-  or new mechanism; and
-- **Evidence that would change the verdict:** the concrete contrary evidence.
+- `## Findings`, with required `list` fields in this order: `Existing
+  coverage`, `Residual gap`, `Total-cost reason`, `Smallest sufficient path`,
+  and `Evidence that would change the verdict`. Each field has exactly one
+  concise child.
+- `## Final proposal`, with required `list` fields in this order: `Status` and
+  `Proposal`. `Status` has exactly one child selected from `Unchanged`,
+  `Revised`, `Replacement`, `Bounded test`, or `No-change decision`. `Proposal`
+  has one or more consecutive children, one per operative proposal item.
 
-Follow with `## Final proposal`, a `**Status**` value, and `**Proposal**` in
-the structure appropriate to the content. Restate the complete current proposal
-or decision set semantically, not merely its delta: preserve every operative
-decision, constraint, exclusion, and required action; incorporate accepted
-corrections; and omit superseded alternatives and process narration. Choose
-the accurate status from `Unchanged`, `Revised`, `Replacement`, `Bounded test`,
-or `No-change decision`. When the candidate survives unchanged, use
+Restate the complete current proposal or decision set semantically, not merely
+its delta: preserve every operative decision, constraint, exclusion, and
+required action; incorporate accepted corrections; and omit superseded
+alternatives and process narration. When the candidate survives unchanged, use
 `Unchanged` and still restate it in full. Use these verdict-specific final
 positions:
 
