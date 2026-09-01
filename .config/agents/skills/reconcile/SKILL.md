@@ -34,26 +34,45 @@ contract is mandatory.
 3. Verify every decision-bearing locator before showing the gate. A missing
    capability or unreadable required locator stops before the brief, with no
    reviewer dispatch or candidate mutation.
-4. Render exactly one binding gate:
+4. Render exactly one binding gate. Use packed labels: H2, then `**Label**`
+   with no colon, then `- ` children. Put a blank line after the H2, after
+   each label, and between fields. Do not bullet the labels.
 
 ```markdown
 ## Reconcile brief
 
-- **Goal:** {approved goal text}
-- **Candidate:** {latest proposal summary, or exact artifact locator and identity}
-- **Context:** {approved user intent, constraints, and decision-bearing references}
-- **Mode:** {conversation replacement, or edits limited to the named artifact}
+**Goal**
+
+- {one-sentence review job}
+
+**Candidate**
+
+- {exact identity}
+
+**Context**
+
+- {approved intent, constraints, exclusions, and decision-bearing references}
+
+**Mode**
+
+- {Conversation replacement | Artifact edits only}
 
 Reply **approve** to start, or **approve — {adjustments}**.
 ```
 
-For an unresolved candidate, render `Candidate: unresolved — name one proposal
-or artifact` and wait; approval alone cannot dispatch it. Plain `approve`
-starts the displayed binding. An unambiguous `approve — {adjustments}` updates
-that binding and starts without another gate. A correction without approval or
-a conflicting or ambiguous adjustment renders one revised brief and waits.
-This is only local approval of the displayed review binding; it grants no other
-authority or effect.
+Goal is the review job only and must not restate Context. Candidate is the
+exact identity; an optional short name may be a second child. Context holds
+intent, constraints, exclusions, and decision-bearing references as separate
+children and must not restate Goal. Mode is exactly `Conversation replacement`
+or `Artifact edits only` and must not repeat Candidate.
+
+For an unresolved candidate, render the Candidate child as
+`unresolved — name one proposal or artifact` and wait; approval alone cannot
+dispatch it. Plain `approve` starts the displayed binding. An unambiguous
+`approve — {adjustments}` updates that binding and starts without another
+gate. A correction without approval or a conflicting or ambiguous adjustment
+renders one revised brief and waits. This is only local approval of the
+displayed review binding; it grants no other authority or effect.
 
 ## Ephemeral controller state
 
@@ -174,6 +193,9 @@ Stop before another review, without claiming validity, when:
 
 ## Presentation
 
+Render every user-facing section with the same packed-label grammar as the
+Reconcile brief, except `## Review rounds`, whose body is the table.
+
 Always render the rounds section first, including every provisional, finalized,
 and later pass in order. Mark each provisional initial response as superseded
 rather than hiding it.
@@ -185,11 +207,54 @@ rather than hiding it.
 |---|---|---|---|---|
 ```
 
-On success, follow it with `## Final proposal`. Conversation mode includes the
-complete final proposal. Artifact mode includes only a concise change summary,
-the exact artifact locator, and the current identity; do not duplicate the full
-artifact.
+On success, follow it with `## Final proposal`. Do not add other labels.
 
-On any stop, follow the rounds section with `## Reconcile stopped`, the last
-exact candidate identity, the exact blocker, and the resumable frontier. Do not
+Conversation mode:
+
+```markdown
+## Final proposal
+
+**Proposal**
+
+- {complete final proposal}
+```
+
+Artifact mode. Do not duplicate the full artifact. Change summary is the
+candidate delta plus leftover nonblocking recommendations; omit those extra
+children when none remain. It must not recap round verdicts.
+
+```markdown
+## Final proposal
+
+**Change summary**
+
+- {candidate delta}
+- {leftover nonblocking recommendation, when present}
+
+**Artifact**
+
+- {exact readable locator}
+
+**Current identity**
+
+- {exact identity}
+```
+
+On any stop, follow the rounds section with `## Reconcile stopped`. Do not
 render `## Final proposal` or make a validity claim.
+
+```markdown
+## Reconcile stopped
+
+**Candidate**
+
+- {last exact identity}
+
+**Blocker**
+
+- {exact blocker}
+
+**Resume from**
+
+- {resumable frontier}
+```
