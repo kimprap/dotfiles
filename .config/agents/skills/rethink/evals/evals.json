@@ -1,0 +1,77 @@
+{
+  "skill_name": "rethink",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Rethink this candidate from first principles: create a second deployment-state service solely to record rollback reasons. The existing deployment record already owns rollout identity, status, timestamps, and rollback outcome, but it lacks the reason field. The missing reason is an observed operational requirement. Revise the proposal if appropriate.",
+      "expected_output": "A standalone extend verdict with concise findings and a complete final proposal that adds the smallest rollback-reason extension to the existing deployment record instead of creating a second service.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **extend**` verdict",
+        "The response contains `## Findings` and covers existing coverage, the residual gap, total cost, the smallest sufficient path, and evidence that would change the verdict",
+        "The response contains `## Final proposal` with the complete corrected proposal rather than only a delta",
+        "The final proposal preserves the existing deployment record as owner and does not implement the change"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Rethink this candidate: introduce one isolated credential-broker process because the existing application has no credential boundary, three observed call sites currently expose raw secrets, and bounded prototypes show an in-process adapter cannot isolate memory or permissions. The proposal names ownership, migration, rollback, and operating checks. If it is already good enough, keep it unchanged.",
+      "expected_output": "A standalone proceed verdict whose findings explain why cheaper options are insufficient, followed by an Unchanged status and a complete semantic restatement of the approved credential-broker proposal.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **proceed**` verdict",
+        "The final proposal marks the candidate `Unchanged`",
+        "The complete candidate is restated instead of being replaced by only `no changes` or a rationale",
+        "The response does not implement the candidate"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Rethink this candidate: add a new JSON parser to support comments, although the installed parser already exposes and tests a comment-enabled mode used elsewhere in the repository. Preserve the requested behavior but minimize machinery.",
+      "expected_output": "A standalone reuse verdict with findings and a complete final proposal that uses the installed parser's existing comment-enabled mode.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **reuse**` verdict",
+        "The final proposal completely restates how the existing parser satisfies the requirement",
+        "The proposed new parser is not retained merely because it was the candidate",
+        "The result contains no implementation"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Rethink this candidate: add a distributed cache-invalidation bus because two observed processes currently serve stale records after cross-process writes and the existing in-process cache API has no invalidation transport. Presentation instruction: verdict only.",
+      "expected_output": "Only one valid rethink verdict line, with no Findings or Final proposal sections.",
+      "files": [],
+      "assertions": [
+        "The response contains exactly one `rethink: **<valid verdict>**` line",
+        "The explicit presentation override suppresses `## Findings`",
+        "The explicit presentation override suppresses `## Final proposal`",
+        "No implementation is performed"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "An already-loaded Reconcile reviewer protocol owns the outer response. Reassess the reviewer's immediately preceding provisional response with rethink. The conclusion remains valid. Return exactly this caller-owned contract and nothing else:\nVALID\nReviewer: A\nPass: post-rethink\nCandidate: conversation@sha256:abc\n\nBlocking issues: none\nRevision: none\nRecommendations:\n- none",
+      "expected_output": "Exactly the caller-owned Reconcile VALID response, with no standalone rethink verdict or presentation sections.",
+      "files": [],
+      "assertions": [
+        "The first line is exactly `VALID` rather than a raw rethink verdict",
+        "The response contains the complete caller-owned Reviewer A post-rethink contract",
+        "The response contains neither `## Findings` nor `## Final proposal`",
+        "The response contains no extra prose outside the Reconcile contract"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "An already-loaded dev-implementation continuation gate owns presentation and requires only a complete corrected proposal. Two attempts are exhausted. The draft continuation proposes retrying unchanged; current evidence instead supports one materially changed hypothesis: the alternate decoder rejects only records with legacy headers. Return the complete corrected continuation proposal binding that hypothesis, its discriminating observation, remaining blocker, exact authorized cycle, and no other output.",
+      "expected_output": "Only the complete corrected continuation proposal required by dev-implementation, without standalone rethink findings or verdict wrappers.",
+      "files": [],
+      "assertions": [
+        "The response contains a complete materially changed continuation proposal",
+        "The proposal binds the legacy-header hypothesis, discriminating observation, remaining blocker, and exact authorized cycle",
+        "The response contains no standalone `rethink:` verdict, `## Findings`, or `## Final proposal` wrapper",
+        "The response does not authorize or perform the continuation"
+      ]
+    }
+  ]
+}
