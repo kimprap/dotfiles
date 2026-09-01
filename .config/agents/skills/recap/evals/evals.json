@@ -1,0 +1,55 @@
+{
+  "skill_name": "recap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "The current conversation confirmed a progressive-local-checkpoint design: it is validated but not implemented; checkpoints are enabled by default during mutating implementation work; the mechanical root commits verified slices; failed commits are recorded but do not block semantic completion; user-owned dirty work is preserved; and plan-backed work attempts a final post-archive bookkeeping commit while remote shipping remains separately authorized. The immediately preceding assistant response only says both reviewers accepted the design. Invoke recap with: how progressive commits is getting implemented.",
+      "expected_output": "A concise recap of the named progressive-commit topic across the conversation, grouped into a content-derived packed-label surface because it contains distinct status, behavior, failure, preservation, and boundary roles.",
+      "files": [],
+      "assertions": [
+        "The recap covers the confirmed implementation design rather than merely restating the immediately preceding reviewer result",
+        "The response uses content-derived H2 titles and at least two colonless unbulleted bold field labels followed by separate list children",
+        "Packed-label spacing and field grouping are used without imposing a fixed recap-specific schema",
+        "The response contains no inline pseudo-label such as `- **Status:**` or `**Status:**`",
+        "The recap adds no new decision or implementation claim"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The immediately preceding assistant response says: The migration is complete and the old configuration path has been removed. Existing clients continue through the new path. Invoke recap with no attached text.",
+      "expected_output": "A very short plain-language paragraph or plain bullet list summarizing only the homogeneous preceding response, without unnecessary headings or labels.",
+      "files": [],
+      "assertions": [
+        "The recap uses only the immediately preceding assistant response",
+        "The output remains a short paragraph or plain list because the source has one homogeneous role",
+        "The response does not add an H2 section or bold field label that provides no grouping value",
+        "The migration outcome and client preservation remain accurate"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The conversation established that a checkpoint design is validated but not implemented, checkpoints are enabled by default during mutating work, failed commit attempts are reported without blocking semantic completion, user-owned dirty paths remain untouched, and plan-backed work attempts a final post-archive commit. Invoke recap with: summarize the design in one paragraph.",
+      "expected_output": "One concise paragraph honoring the explicit presentation request instead of forcing the default packed-label structure.",
+      "files": [],
+      "assertions": [
+        "The response is one paragraph",
+        "The response contains no H2 heading, bold field label, or bullet list",
+        "The explicit format request overrides default structure selection",
+        "The recap remains a summary rather than new analysis"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The immediately preceding assistant response contains four distinct roles: current state is ready for rollout; behavior sends writes through the new adapter; the main caveat is that rollback remains manual; and the required next action is approval from the release owner. Invoke recap with no attached text.",
+      "expected_output": "A concise recap of the immediately preceding response using content-derived packed labels to separate its distinct state, behavior, caveat, and action roles.",
+      "files": [],
+      "assertions": [
+        "The recap is scoped to the immediately preceding response",
+        "The response uses a packed-label surface because the source has multiple distinct content roles",
+        "H2 titles and labels are derived from the content rather than a mandatory recap template",
+        "Every field label is colonless and unbulleted with separate list children and no inline pseudo-label",
+        "All four source roles remain represented without added claims"
+      ]
+    }
+  ]
+}
