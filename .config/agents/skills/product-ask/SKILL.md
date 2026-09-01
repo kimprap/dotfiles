@@ -50,23 +50,31 @@ Choose only from:
 
 ## Compact route approval
 
-Before an interview or artifact mutation, present exactly:
+Before an interview or artifact mutation, read and follow
+[packed-label](../../references/packed-label.md) and present exactly:
 
 ```markdown
-## Goal
-  <one product outcome>
+## Route overview
 
-## Route
-  <exact ordered product skill route and `dev-ask` only when handoff is requested>
+**Goal**
 
-## Plan
-  <one or two sentences covering the decision frontier, durable artifacts, and approval point>
+- <one product outcome>
 
-## Safety
-  <product authority, preservation, external research/effect, and engineering/shipping limits>
+**Route**
 
-## Approval
-  Reply **approve** to start.
+- <exact ordered product skill route and `dev-ask` only when handoff is requested>
+
+**Plan**
+
+- <one or two sentences covering the decision frontier, durable artifacts, and approval point>
+
+**Safety**
+
+- <product authority, preservation, external research/effect, and engineering/shipping limits>
+
+**Approval**
+
+- Reply **approve** to start.
 ```
 
 The route approval authorizes the named process and artifact locations. It does not approve product decisions, a candidate PRD, engineering work, external research, experiments, publication, or shipping.

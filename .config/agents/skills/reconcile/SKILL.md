@@ -34,9 +34,9 @@ contract is mandatory.
 3. Verify every decision-bearing locator before showing the gate. A missing
    capability or unreadable required locator stops before the brief, with no
    reviewer dispatch or candidate mutation.
-4. Render exactly one binding gate. Use packed labels: H2, then `**Label**`
-   with no colon, then `- ` children. Put a blank line after the H2, after
-   each label, and between fields. Do not bullet the labels.
+4. Render exactly one binding gate. Read and follow
+   [packed-label](../../references/packed-label.md). This skill owns only the
+   field map below.
 
 ```markdown
 ## Reconcile brief
@@ -193,8 +193,8 @@ Stop before another review, without claiming validity, when:
 
 ## Presentation
 
-Render every user-facing section with the same packed-label grammar as the
-Reconcile brief, except `## Review rounds`, whose body is the table.
+Read and follow [packed-label](../../references/packed-label.md) for every
+user-facing section. `## Review rounds` uses child kind `table`.
 
 Always render the rounds section first, including every provisional, finalized,
 and later pass in order. Mark each provisional initial response as superseded

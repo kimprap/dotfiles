@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-28
+**Updated:** 2026-09-01
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -123,7 +123,7 @@ The workflow needs one current route and one durable explanation of why its boun
 ### D18 — Compact approval and completion presentation
 
 - **Scope:** Human-facing initial route approval and terminal completion output.
-- **Decision:** Keep approval and completion presentations compact. Initial approval contains only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Terminal completed presentation projects D27's exact `Completed`, `Evidence`, and `Continuation` report from one current validated `completion-presentation-input` fence. It carries ordered aggregate Change scope, one to three durable Key artifacts, filled verification evidence, and a durable Completion Summary Resume from, plus the existing Handoff, Constraints containing `shipping not authorized`, and specialty-authorized Next; it contains no `Changed` label, exhaustive implementation inventory, completed `Route`, exposed fence, or presenter lifecycle mechanics.
+- **Decision:** Keep approval and completion presentations compact. Initial approval is one `## Route overview` with packed bold-label fields only `Goal`, `Route`, `Plan`, `Safety`, and `Approval`. Visual grammar is `.config/agents/references/packed-label.md`; do not copy its spacing into this decision or into consumer skills. `Route` remains D19's ordered list. Informational routes omit `Approval`. Terminal completed presentation projects D27's exact `Completed`, `Evidence`, and `Continuation` report from one current validated `completion-presentation-input` fence. It carries ordered aggregate Change scope, one to three durable Key artifacts, filled verification evidence, and a durable Completion Summary Resume from, plus the existing Handoff, Constraints containing `shipping not authorized`, and specialty-authorized Next; it contains no `Changed` label, exhaustive implementation inventory, completed `Route`, exposed fence, or presenter lifecycle mechanics.
 
 - **Why:** Compact output keeps the human's decision or result visible, while D27's filled evidence and durable continuation let the report support later resumption without copying internal manifests or gate machinery.
 - **Rejected alternatives / why not:** Verbose templates, implementation inventories, mutable resume pointers, gate machinery, and execution metadata obscure the one decision or result the user needs or fail to support reliable continuation.
@@ -159,7 +159,7 @@ The workflow needs one current route and one durable explanation of why its boun
 - **Reopen when:** Compact disqualifiers, terminal proof, same-context ownership, compact-plan activation, or the size/duration independence boundary changes.
 ## Affected contracts
 
-- `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior.
+- `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior. `.config/agents/references/packed-label.md` owns packed bold-label visual grammar; `dev-ask` loads it by pointer.
 - `.config/agents/skills/dev-requirements/SKILL.md`, `dev-research/SKILL.md`, `dev-triage/SKILL.md`, `dev-grilling/SKILL.md`, `grill-me/SKILL.md`, `grill-with-docs/SKILL.md`, `dev-prototype/SKILL.md`, `dev-specification/SKILL.md`, `dev-ticketing/SKILL.md`, `dev-implementation/SKILL.md`, `dev-improve-codebase-architecture/SKILL.md`, and `wayfinder/SKILL.md` for targeted confirmation, iterative decision frontiers, optional intake, semantic revision rebinding, adapters, route impact, stops, and exactly one receiver.
 - `.config/agents/skills/dev-ask/evals/evals.json` and its route, reapproval, continuation, presentation, discovery, triage, and ordinary-context fixture directories.
 - `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the five ACTIVE generic-workflow ADRs.
@@ -181,6 +181,8 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 ## Human authority
 
 The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, the user's 2026-08-10 explicit D16-D18 workflow refinements, and the exact confirmed D19-D20 evidence artifact above are the authority for this record. The parent execution dispatch authorizes their materialization; it does not authorize product decisions, executable workflow changes, shipping, or mutation of `/Users/kim/.agents/AGENTS.md`. Human approval remains required at the material boundaries named above.
+
+On 2026-09-01, the human owner aligned compact route approval with packed bold-label spacing: one `## Route overview`, the same five fields, D19 ordered `Route`, and visual grammar in `.config/agents/references/packed-label.md`. Field set, completion projection, and shipping boundary are unchanged.
 
 ## Supersession
 

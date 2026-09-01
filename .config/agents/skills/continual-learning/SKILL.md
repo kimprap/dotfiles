@@ -81,23 +81,40 @@ For a complete papercut-originated candidate, the caller freezes the same origin
 
 ## Terminal result
 
-Return exactly one outcome: `CURATED`, `NO DURABLE LEARNING`, or `BLOCKED`. The result payload contains exactly these fields:
+Return exactly one outcome: `CURATED`, `NO DURABLE LEARNING`, or `BLOCKED`. The
+result payload contains exactly these fields. Read and follow
+[packed-label](../../references/packed-label.md).
 
 ```markdown
-## Updated
-<existing logical statements changed, with destination and before/after identity, or none>
-## Added
-<new logical statements added within an existing authorized destination, or none>
-## Removed
-<stale or conflicting logical statements removed, or none>
-## Skipped
-<candidate → rejected or deferred reason and exact source identities; for NO DURABLE LEARNING, every source assessed>
-## Validation
-<source case, independent adjacent or near-miss checks, destination checks, evaluator result when required, and restoration evidence when performed>
-## Deep candidate
-<none | exact qualifying trigger, evidence, proposed separate route, and whether a current conflict blocks correctness>
-## Papercut outcome
-<none | record_id: exact originating PC-ID; kind: fixed | rejected | superseded | open; resolved_on, durable reference, and summary when terminal; exact open reason otherwise>
+## Learning result
+
+**Updated**
+
+- <existing logical statements changed, with destination and before/after identity, or none>
+
+**Added**
+
+- <new logical statements added within an existing authorized destination, or none>
+
+**Removed**
+
+- <stale or conflicting logical statements removed, or none>
+
+**Skipped**
+
+- <candidate → rejected or deferred reason and exact source identities; for NO DURABLE LEARNING, every source assessed>
+
+**Validation**
+
+- <source case, independent adjacent or near-miss checks, destination checks, evaluator result when required, and restoration evidence when performed>
+
+**Deep candidate**
+
+- <none | exact qualifying trigger, evidence, proposed separate route, and whether a current conflict blocks correctness>
+
+**Papercut outcome**
+
+- <none | record_id: exact originating PC-ID; kind: fixed | rejected | superseded | open; resolved_on, durable reference, and summary when terminal; exact open reason otherwise>
 ```
 
 `CURATED` requires an authorized guidance delta plus complete proof against the frozen tuple. `NO DURABLE LEARNING` uses `none` for change fields, names every assessed source under `Skipped`, and may follow byte-exact safe restoration after a stable deterministic failure or bound semantic `FAIL`. `BLOCKED` names the exact invalid binding, current-contract conflict, missing verdict, flaky or inconclusive proof, unsafe restoration, or missing authority and its resume condition. It cannot start an audit loop.

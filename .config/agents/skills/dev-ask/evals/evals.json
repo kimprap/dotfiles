@@ -1314,7 +1314,7 @@
       ],
       "id": "R-APPROVAL",
       "inputs": {
-        "request": "The current route sends a bounded factual gap to dev-research and returns to dev-ask, with all authority and target identities current. Present the approval request using exactly the standalone Goal, Route, Plan, Safety, and Approval H2 sections. Under Route, render a numbered ordered list with dev-research first and dev-ask second, one owner per line; never use an inline arrow chain, route table, or unordered list. Keep other content concise and indented, omit Plan Summary, Why, Artifacts, Gates, Execution, and First action sections, then after the user replies approve record the immediately-pre-dispatch identity recheck as an explicit event."
+        "request": "The current route sends a bounded factual gap to dev-research and returns to dev-ask, with all authority and target identities current. Present the approval request as one ## Route overview with packed bold-label fields Goal, Route, Plan, Safety, and Approval in that order. Under Route, render a numbered ordered list with dev-research first and dev-ask second, one owner per line; never use an inline arrow chain, route table, or unordered list. Keep other content as `- ` children, omit Plan Summary, Why, Artifacts, Gates, Execution, and First action fields, then after the user replies approve record the immediately-pre-dispatch identity recheck as an explicit event."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1332,7 +1332,7 @@
         "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
         "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
         "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario.",
-        "Before dispatch, emit exactly the standalone H2 sections Goal, Route, Plan, Safety, and Approval in that order.",
+        "Before dispatch, emit exactly one ## Route overview with packed bold-label fields Goal, Route, Plan, Safety, and Approval in that order.",
         "Keep Plan to one or two concise sentences and make Approval ask for approve; omit Plan Summary, Why, Artifacts, Gates, Execution, First action, target hashes, and gate mechanics.",
         "Require Route to contain exactly two numbered items in order, dev-research then dev-ask, one owner per line; reject an inline arrow chain, route table, or unordered Route while preserving expected.route as internal machine identity."
       ],

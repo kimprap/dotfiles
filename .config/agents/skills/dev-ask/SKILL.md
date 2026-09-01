@@ -119,30 +119,55 @@ Do not interview around the stop, infer product strategy, or create a substitute
 
 ## Compact approval presentation
 
-For dispatchable or executable work, present exactly these standalone H2 sections before any effect. Render every human-facing prospective `Route` as an ordered list with one exact owner per line and the exact final terminal marker `completion-presentation`; never use an inline arrow chain, route table, or unordered list. The marker is never dispatched and receives no task, Task Contract, Context Pack, backend attempt, Handoff, state, transition, or approval:
+For dispatchable or executable work, present exactly one `## Route overview`
+before any effect. Read and follow
+[packed-label](../../references/packed-label.md). This skill owns only the
+field map below. Render every
+human-facing prospective `Route` as an ordered list with one exact owner per
+line and the exact final terminal marker `completion-presentation`; never use
+an inline arrow chain, route table, or unordered list. The marker is never
+dispatched and receives no task, Task Contract, Context Pack, backend attempt,
+Handoff, state, transition, or approval:
 
 ```markdown
-## Goal
-  <one concise sentence>
+## Route overview
 
-## Route
+**Goal**
+
+- <one concise sentence>
+
+**Route**
+
 1. `<first owner>`
 2. `<next owner or completion-presentation>`
 
-## Plan
-  <one or two concise sentences covering the observable work and assurance>
+**Plan**
 
-## Safety
-  <only material preservation, destructive, external, credential, or shipping boundaries; otherwise `No destructive, external, or shipping effects.`>
+- <one or two concise sentences covering the observable work and assurance>
 
-## Approval
-  Reply **approve** to start.
+**Safety**
+
+- <only material preservation, destructive, external, credential, or shipping boundaries; otherwise `No destructive, external, or shipping effects.`>
+
+**Approval**
+
+- Reply **approve** to start.
 ```
-Repeat the second route row for each actually prospective owner; the final row is always the non-dispatchable `completion-presentation` marker. Compact therefore has exactly two route rows.
 
-Do not add a `Plan Summary`, `Why`, `Artifacts`, `Gates`, `Execution`, or `First action` section. Omit diagnosis IDs, artifact inventories, target hashes, gate machinery, and execution metadata unless one changes the user's decision. For a material reapproval, keep the same five sections, state only the changed decision-bearing facts, and use `Reply **approve** to continue.`
+Repeat the second route row for each actually prospective owner; the final row
+is always the non-dispatchable `completion-presentation` marker. Compact
+therefore has exactly two route rows.
 
-Direct read-only answers need no approval template. Answer from current evidence in the same response; when the user explicitly requests an informational route, use only `Goal`, `Route`, `Plan`, and `Safety` and omit `Approval`.
+Do not add a `Plan Summary`, `Why`, `Artifacts`, `Gates`, `Execution`, or
+`First action` field. Omit diagnosis IDs, artifact inventories, target hashes,
+gate machinery, and execution metadata unless one changes the user's decision.
+For a material reapproval, keep the same five fields, state only the changed
+decision-bearing facts, and use `Reply **approve** to continue.`
+
+Direct read-only answers need no approval template. Answer from current
+evidence in the same response; when the user explicitly requests an
+informational route, use only `Goal`, `Route`, `Plan`, and `Safety` and omit
+`Approval`.
 
 ## Dispatch and Handoff
 

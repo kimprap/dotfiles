@@ -52,23 +52,30 @@ The Repository rules and skills row remains one catalog row. It may identify an 
 
 ## Phase 1 output
 
-Return exactly these sections:
+Return exactly these fields under one H2. Read and follow
+[packed-label](../../references/packed-label.md).
+`Repository integration inventory` uses child kind `table`.
 
 ```markdown
-## Repository integration inventory
+## Setup proposal
+
+**Repository integration inventory**
+
 | Integration | Status | Evidence | Owner / resume condition |
 |---|---|---|---|
 | ...all nine fixed rows... |
 
-## Proposed effects
+**Proposed effects**
+
 - E1 — <owner>
   - Path: <exact repository-relative path>
   - Baseline: absent | SHA-256 <64 lowercase hex>
   - Effect: <exact bytes or exact owner operation and resulting format>
   - Preserves: <named existing bytes and authority boundaries>
 
-## Approval
-Reply exactly `approve` to apply only E1, ... after an affected-path recheck.
+**Approval**
+
+- Reply exactly `approve` to apply only E1, ... after an affected-path recheck.
 ```
 
 When there is no safe missing opt-in, write `None — repository setup is unchanged.` under `Proposed effects` and omit the approval request. Never hide a proposed write behind `on-demand` or propose an effect without its exact path, baseline, resulting behavior, and owner.
