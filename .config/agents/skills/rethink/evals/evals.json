@@ -75,6 +75,45 @@
         "The response contains no standalone `rethink:` verdict, `## Findings`, or `## Final proposal` wrapper",
         "The response does not authorize or perform the continuation"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "Rethink this candidate: create an invocable logging-policy service to own one correlation-ID header rule currently copied across three emitters. The copies are identical and must not diverge; each emitter already owns its request construction, and all three can load one read-only policy artifact. No runtime drift has occurred, but the duplicate authority is directly inspectable. Preserve the existing action owners and minimize lifecycle cost.",
+      "expected_output": "An extend verdict with a complete proposal that places the invariant in one read-only source loaded by the three existing emitters, without creating a new active service or moving request ownership.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **extend**` verdict",
+        "The response treats the invocable service as new active machinery rather than equating it with a read-only source",
+        "The final proposal keeps all three emitters as action owners and uses one read-only source for the must-not-diverge invariant",
+        "The comparison counts loading, integration, indirection, and editable-copy cost without requiring observed runtime drift",
+        "The response does not implement the proposal"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Rethink this candidate: centralize the help guidance for two commands solely because both use a friendly tone. One command is an interactive local configuration editor; the other is a noninteractive remote command that emits machine-readable output. Their contracts and transports intentionally differ, and no wording invariant requires them to stay identical.",
+      "expected_output": "A reject verdict with a complete no-change decision that leaves each command's guidance with its existing local owner and creates no shared source.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **reject**` verdict",
+        "The final proposal uses the `No-change decision` status",
+        "The response distinguishes superficial similarity from a must-not-diverge invariant",
+        "The final proposal preserves local ownership and creates no shared artifact or active mechanism",
+        "The response does not implement the proposal"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Rethink this candidate: replace an import pipeline with a remote-only validator because that has fewer paths. The existing pipeline accepts signed remote bundles and a required offline local-bundle fallback. An observed checksum-validation gap applies to both sources. Preserve every confirmed behavior while correcting the gap.",
+      "expected_output": "An extend verdict with a complete proposal that adds checksum validation through the existing pipeline for both remote and offline bundles instead of adopting the remote-only replacement.",
+      "files": [],
+      "assertions": [
+        "The response starts with exactly one `rethink: **extend**` verdict",
+        "The response treats the remote-only path as ineligible because it weakens the required offline fallback",
+        "The desired checksum-validation outcome survives rejection of the candidate mechanism",
+        "The final proposal extends the existing pipeline and preserves both accepted sources",
+        "The response does not implement the proposal"
+      ]
     }
   ]
 }

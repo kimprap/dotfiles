@@ -18,14 +18,29 @@ Inspect only decision-bearing context. Find relevant existing capabilities,
 owners, contracts, prior decisions, and observed failures yourself; do not ask
 the user for discoverable facts.
 
-Map every proposed responsibility to current coverage. Compare, in order: no
-change, reuse, the smallest extension, a bounded test, then a new mechanism.
-New machinery earns `proceed` only when an observed required gap survives the
-first three options. If value is plausible but unobserved, lead with `test`,
-not `reject`; commit to no mechanism and state the bounded measurement that
-would decide it. Count ongoing ownership, state, integration, migration,
-conflict, review, and operating cost. Ignore sunk cost; do not preserve a
-weaker proposal merely to justify prior work.
+Bind the candidate's desired outcome and every confirmed constraint before
+comparing mechanisms. An option is ineligible if it weakens a required
+outcome or constraint. When a mechanism is rejected, preserve that outcome
+and choose among remaining eligible paths.
+
+Compare only viable, evidence-backed paths across no change, reuse,
+extension, bounded test, and new mechanism; do not invent a rung. Treat the
+order as a presumption: a later path displaces an earlier eligible path only
+when its total lifecycle cost is strictly lower. Choose the eligible path
+that covers the residual gap at lowest total lifecycle cost, not fewest
+files. For both chosen and displaced paths, count ownership, state,
+integration, migration, conflict, review, operating cost, indirection, and
+independently editable copies of the same invariant.
+
+New active machinery is a new responsibility, owner, runtime, state, or
+invocation surface; it earns `proceed` only when an established required gap
+survives every cheaper eligible path. A read-only artifact loaded by existing
+owners is an extension when it creates none of those boundaries, but its
+loading, integration, and indirection costs still count. Identical
+copies that must not diverge may justify one read-only source of truth; do
+not centralize merely similar guidance. If value is plausible but unobserved,
+use `test`. Do not require a runtime failure for an inspectable constraint
+violation. Ignore sunk cost.
 
 Challenge the user's premise and your own equally. Ask only about a remaining
 human-owned trade-off.
@@ -59,6 +74,11 @@ Then render exactly these packed-label sections and fields:
   coverage`, `Residual gap`, `Total-cost reason`, `Smallest sufficient path`,
   and `Evidence that would change the verdict`. Each field has exactly one
   concise child.
+
+`Total-cost reason` compares the applicable listed costs on both the chosen
+path and displaced alternatives. `Smallest sufficient path` means the
+eligible path that covers the residual gap at lowest total lifecycle cost.
+
 - `## Final proposal`, with required `list` fields in this order: `Status` and
   `Proposal`. `Status` has exactly one child selected from `Unchanged`,
   `Revised`, `Replacement`, `Bounded test`, or `No-change decision`. `Proposal`
