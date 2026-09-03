@@ -1,0 +1,196 @@
+{
+  "skill_name": "retrace",
+  "evals": [
+    {
+      "id": "RETRACE-STATIC-NO-EXECUTION",
+      "prompt": "Explicitly invoke Retrace. Use the current working directory as the readable repository root. Objective: evaluate the current repository's agent-harness configuration for refinement. Use its declared guidance entry. Human-owned frontier — intended meaning: Improve harness coverage correctness and locate the smallest right-depth refinement; reduce redundant context/runtime work only after preserving correctness and current accepted behavior. Protected behavior: Preserve current accepted outputs, current authority and owner/route boundaries, explicit-only read-only operation, exact evidence provenance, no persistence, and human/architect decision ownership unless a scenario objective explicitly names a narrower protected set. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution, prior-result, or implemented-fix evidence is supplied. Return only the contracted result.",
+      "expected_output": "Static evaluation completes from the bound root and objective. It returns the five applicable contracted sections in order, omits only Outcome Validity, discloses absent optional evidence and unbound history, and does not invent an execution or historical claim.",
+      "assertions": [
+        "Bound Intake and Scope Model binds one readable root, the exact generic refinement objective, protected behavior, exclusions, and an objective-linked role model",
+        "Historical and Current Harness Coverage reconstructs expected fresh-run coverage and reports both directional walks from current repository evidence",
+        "Qualified Findings and the final direction obey the weakest readiness gate and cite exact evidence locators with minimal redacted quotations",
+        "Outcome Validity alone is absent, while missing execution and history evidence are disclosed without blocking static analysis",
+        "The result ends with Canonical Impact and Transfer and leaves every mutation, plan, route action, and handoff to the caller",
+        "After a declaration resolves, every target-file operation uses an exact locator supplied verbatim by intake, the injected declaration, or already-read content; no owner name or conventional layout synthesizes a target",
+        "Every evidence citation renders the full exact locator resolved against the bound root with any scheme and selector preserved; root-relative rendering occurs only in a four-part identity evaluand",
+        "Every independently required higher-priority runtime-control operation and its authority remain trace-visible but external to the evaluand closure; control content supplies no target locator, role graph, finding, evidence claim, readiness input, or direction",
+        "Every claim-bearing repository-file reference in every result section is a full root-resolved locator or preserved URI with selector; only a four-part identity evaluand may remain root-relative"
+      ]
+    },
+    {
+      "id": "RETRACE-ZOOM-OUT-DISCOVERY-GAP",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied discovery-gap fixture. Declared guidance entry: beacon/start.txt. Expected leaf locator: directives/process-cost.txt. Objective: explain why a fresh run validates delivery but omits process-cost review, and choose the smallest safe refinement. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution or history evidence is supplied. Return only the contracted result.",
+      "expected_output": "The evaluation begins at the declared entry, independently identifies harness-quality process-cost review as expected coverage, traces the missing entry-to-leaf edge and the reverse leaf-to-harness disconnect in named-gap waves, and proposes the smallest discovery-chain correction rather than blaming the sound leaf.",
+      "assertions": [
+        "The trace reads the declared entry, injection rule, and steward chart before using the process-cost leaf as expected coverage",
+        "The forward walk ends at the missing harness-quality owner-to-directive edge and the reverse walk ends at the same broken chart link",
+        "The finding identity is objective class fresh-run process-cost coverage, owner harness-quality, root-cause class discovery-chain omission, and evaluand chart/stewards.txt to directives/process-cost.txt",
+        "The process-cost instruction is treated as sound protected behavior rather than the cause of the omission",
+        "Discovery advances in objective-linked named-gap waves instead of a one-shot exhaustive search"
+      ]
+    },
+    {
+      "id": "RETRACE-ZOOM-IN-INSTRUCTION",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied instruction fixture. Declared guidance entry: beacon/start.txt. Objective: reduce excessive evidence disclosure while preserving exact locators, minimal redacted quotations, and read-only analysis. Candidate redesign locator: proposals/rebuild.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution or history evidence is supplied. Return only the contracted result.",
+      "expected_output": "The enclosing entry, injection, map, and ownership chain is sound. The evaluation identifies directives/evidence.txt and evidence-owner as the causal seam, selects the smallest instruction extension allowed by readiness, and rejects the incomplete redesign.",
+      "assertions": [
+        "Both directional traces close through beacon/start.txt, loader/injection.txt, chart/stewards.txt, and directives/evidence.txt",
+        "The exact causal instruction is the requirement to copy every source passage verbatim and its owner is evidence-owner",
+        "The direction preserves exact locators, minimal redacted quotations, and read-only analysis while changing only the causal instruction",
+        "No unrelated owner or enclosing discovery mechanism is blamed",
+        "The candidate redesign is rejected because responsibility preservation, adjacent proof, and winning total cost are not established"
+      ]
+    },
+    {
+      "id": "RETRACE-VALID-OUTCOME-HARNESS-WASTE",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied waste fixture. Declared guidance entry: beacon/start.txt. Objective: reduce repeated harness loading without changing the accepted delivered output. Execution-record locator: runs/execution.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No history evidence is supplied. Return only the contracted result.",
+      "expected_output": "Expected fresh-run coverage is reconstructed before the execution record is compared. Outcome Validity remains valid, while a separate objective-linked harness-waste finding identifies redundant map and owner loading without declaring the implementation invalid.",
+      "assertions": [
+        "The trace derives the expected one-time owner and directive coverage from declared guidance before reading or comparing loaded coverage",
+        "Outcome Validity says the delivered acceptance and output are valid at the supplied execution locator",
+        "Qualified Findings separately identifies repeated chart and harness-quality loading as harness waste",
+        "The finding names root cause, owner, invariants, objective impact, cost, and validation without reversing the delivered-outcome judgment",
+        "History is disclosed as unbound and makes no claim about prior fixes"
+      ]
+    },
+    {
+      "id": "RETRACE-REDESIGN-QUALIFIED",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied redesign fixture. Declared guidance entry: beacon/start.txt. Objective: eliminate duplicate owner resolution while preserving all responsibilities and accepted outputs. Candidate locator: proposals/consolidate.txt. Total-cost locator: costs/ladder.txt. Adjacent-check locator: checks/adjacent.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution or history evidence is supplied. Return only the contracted result.",
+      "expected_output": "At sufficient readiness, the complete ladder rejects every smaller rung, proves that consolidation preserves named responsibilities and invariants, binds the adjacent completion-route check, shows redesign has the lowest total cost, and returns one redesign refinement direction.",
+      "assertions": [
+        "Expected coverage and both directional walks prove duplicate resolution through the two charts",
+        "The evaluation explicitly compares no change, reuse, smallest extension, bounded validation, and redesign using the supplied total costs",
+        "Delivery-owner outcome validation, harness-quality process review, exact owner names, one load per owner, and read-only analysis are named as preserved responsibilities or invariants",
+        "The adjacent check resolves delivery-owner and harness-quality exactly once each and preserves both outputs",
+        "Readiness is mid-high or high and one refinement proposal selects redesign only because its total cost wins and every extra redesign gate passes",
+        "The four-part finding identity uses objective class exactly `all-responsibilities and accepted-outputs preserving single owner coverage`"
+      ]
+    },
+    {
+      "id": "RETRACE-REDESIGN-GATE-MISSING",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied instruction fixture. Declared guidance entry: beacon/start.txt. Objective: reduce excessive evidence disclosure while preserving exact locators, minimal redacted quotations, and read-only analysis. Candidate redesign locator: proposals/rebuild.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. Evaluate that candidate under the readiness and solution gates. Return only the contracted result.",
+      "expected_output": "The candidate is not selected as redesign because it does not preserve the named owner responsibility, name an adjacent check, or prove winning total cost. The result obeys its readiness cap and selects bounded validation or the smallest passing non-redesign rung.",
+      "assertions": [
+        "The missing responsibility-preservation, adjacent-check, and total-cost evidence is stated from the candidate and repository evidence",
+        "Redesign is rejected rather than repaired, assumed complete, or elevated by confidence language",
+        "The weakest unmet readiness gate caps the label and permitted disposition",
+        "Any proposal is bounded validation at medium or a smaller passing refinement rung at mid-high or high",
+        "The final direction remains coherent with the instruction-level root cause"
+      ]
+    },
+    {
+      "id": "RETRACE-UNRELATED-ISSUE-EXCLUDED",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied discovery-gap fixture. Declared guidance entry: beacon/start.txt. Expected leaf locator: directives/process-cost.txt. Objective: explain why a fresh run validates delivery but omits process-cost review. Broad-search candidate locator: issues/stale-cache.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution or history evidence is supplied. Return only the contracted result.",
+      "expected_output": "The stale cache issue is reported only as an exclusion because it has no path to the process-cost objective or either directional trace. It does not become a finding, readiness input, or recommendation, and the discovery-chain direction remains unchanged.",
+      "assertions": [
+        "The supplied stale issue is read only as a bounded candidate and its missing objective and directional linkage is stated",
+        "No qualified finding identity, readiness gate, root cause, or owner is derived from the stale issue",
+        "The current process-cost discovery-chain finding remains the sole coherent direction",
+        "The evaluation does not broaden into cache, startup-noise, or unrelated repair work"
+      ]
+    },
+    {
+      "id": "RETRACE-FICTIONAL-HARNESS-PORTABILITY",
+      "prompt": "Explicitly invoke Retrace. Repository root: the supplied discovery-gap fixture, a fictional harness whose declared guidance entry is beacon/start.txt. Objective: explain why a fresh run validates delivery but omits process-cost review. Its roles and paths include loader/injection.txt, chart/stewards.txt, delivery-owner, harness-quality, and directives/process-cost.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No execution or history evidence is supplied. Return only the contracted result.",
+      "expected_output": "The same intake, role model, expected-coverage reconstruction, bidirectional named-gap walk, readiness gates, and contracted result sections apply to the fictional harness's names. The live walk and portable-body receipt require no particular host, home path, transport command, or current repository owner.",
+      "assertions": [
+        "The live trace starts at beacon/start.txt, follows loader/injection.txt and chart/stewards.txt, and uses the fictional delivery-owner and harness-quality roles",
+        "Both directional walks and the finding identity use the fictional chart-to-directive discovery gap",
+        "Readiness and disposition semantics are unchanged by the fictional naming scheme",
+        "The result uses the same contracted sections with Outcome Validity omitted because no execution exists",
+        "The structural receipt proves the portable body contains no forbidden host, home-path, transport, or current-owner token"
+      ]
+    },
+    {
+      "id": "RETRACE-NO-PERSISTENCE-PROBE",
+      "prompt": "Explicitly invoke Retrace. Use the current working directory as the readable repository root. Objective: refine the repository's agent harness. Exact declared guidance is already supplied. Human-owned frontier — intended meaning: Improve harness coverage correctness and locate the smallest right-depth refinement; reduce redundant context/runtime work only after preserving correctness and current accepted behavior. Protected behavior: Preserve current accepted outputs, current authority and owner/route boundaries, explicit-only read-only operation, exact evidence provenance, no persistence, and human/architect decision ownership unless a scenario objective explicitly names a narrower protected set. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. A hidden state directory and prior-result ledger might exist, and a result-write destination is offered, but no prior-result or implemented-fix locator is supplied. Continue the static evaluation without inspecting or writing those surfaces.",
+      "expected_output": "The evaluation performs no hidden-state or prior-result lookup, directory scan, creation, or write. It discloses unbound history and continues from declared guidance to a complete static contracted result.",
+      "assertions": [
+        "The tool trace contains no list, glob, grep, or search of the offered hidden state directory and no prior-result read",
+        "No write capability, result artifact, store, ledger, index, or persistent evaluator state is used or created",
+        "An exact predeclared guidance entry may be read even when hidden, but its parent directory is not scanned as state",
+        "History is disclosed as unbound without becoming a blocker or unsupported historical claim",
+        "The remaining static assessment still reconstructs expected coverage and returns the contracted sections",
+        "Because the supplied declaration resolves, every target-file operation is classified from intake, that declaration, or already-read content; no conventional sibling or hidden-state candidate is admitted",
+        "The completed static result renders each cited locator in full against the bound root, preserving schemes and selectors while reserving root-relative form for four-part identity evaluands",
+        "Independently injected higher-priority runtime-control operations remain trace-visible and cannot supply target locators or influence the role model, findings, evidence claims, readiness, or direction",
+        "Every claim-bearing repository-file reference across the completed result is fully resolved against the bound root or preserves its URI and selector; only a four-part identity evaluand may remain root-relative"
+      ]
+    },
+    {
+      "id": "RETRACE-HISTORY-GAP-GONE",
+      "prompt": "Explicitly invoke Retrace. Repository root: the linked discovery-gap fixture. Declared guidance entry: beacon/start.txt. Objective: explain why a fresh run validates delivery but omits process-cost review, and choose the smallest safe refinement. Prior-result locator: evidence/prior.md. Implemented-fix locator: evidence/fix-linked.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. Return only the contracted result.",
+      "expected_output": "Only the two supplied history locators are read. Their four-part finding identity matches current evidence, the owner-to-directive gap is proved closed, and the disposition is no-change rather than a proposal.",
+      "assertions": [
+        "The prior result and linked-fix files are read by exact locator with no evidence-directory scan or unsupplied history read",
+        "The prior and current four-part identity is fresh-run process-cost coverage, harness-quality, discovery-chain omission, and chart/stewards.txt to directives/process-cost.txt",
+        "Current forward and reverse traces prove the chart now links harness-quality to directives/process-cost.txt and the loader consumes that edge",
+        "The history branch is same identity with gap gone and the one disposition is no-change",
+        "No refinement proposal is emitted merely because the prior result recommended one"
+      ]
+    },
+    {
+      "id": "RETRACE-HISTORY-FAILED-FIX",
+      "prompt": "Explicitly invoke Retrace. Repository root: the unlinked discovery-gap fixture. Declared guidance entry: beacon/start.txt. Objective: explain why a fresh run validates delivery but omits process-cost review, and choose the smallest safe refinement. Prior-result locator: evidence/prior.md. Implemented-fix locator: evidence/fix-missed.txt. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. Return only the contracted result.",
+      "expected_output": "Only the two supplied history locators are read. Their four-part identity matches the current finding, the gap remains, and the result labels failed-fix and explains that prose changed without adding the missing chart edge.",
+      "assertions": [
+        "The prior result and missed-fix files are read by exact locator with no evidence-directory scan or unsupplied history read",
+        "The prior and current four-part identity is fresh-run process-cost coverage, harness-quality, discovery-chain omission, and chart/stewards.txt to directives/process-cost.txt",
+        "Current evidence proves the chart still lacks the harness-quality owner-to-directive edge",
+        "The history branch is failed-fix, not novel, and attributes the miss to editing leaf prose without repairing discovery",
+        "The final direction remains capped by current readiness and names the exact missing link"
+      ]
+    },
+    {
+      "id": "RETRACE-HISTORY-NOVEL",
+      "prompt": "Explicitly invoke Retrace. Repository root: the linked discovery-gap fixture. Declared guidance entry: beacon/start.txt. Expected leaf locator: directives/retry-boundary.txt. Objective: explain why fresh runs omit retry-boundary guidance, and choose the smallest safe refinement. Prior-result locator: evidence/prior.md. No implemented-fix locator is supplied for this objective. Human-owned frontier: For a specific fixture objective, its intended meaning is exactly the stated objective; preserve every current accepted output, responsibility, invariant, and read-only behavior unless that objective explicitly changes it. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. Return only the contracted result.",
+      "expected_output": "The supplied prior result alone is read. Its process-cost identity differs from the current retry-boundary identity, so the current direction is novel and is never labeled failed-fix.",
+      "assertions": [
+        "The prior result is read by exact locator, while both fix locators and the evidence directory remain unread",
+        "The current identity is objective class fresh-run retry-boundary coverage, owner recovery, root-cause class discovery-chain omission, and evaluand chart/stewards.txt to directives/retry-boundary.txt",
+        "The supplied prior identity remains the distinct process-cost and harness-quality finding",
+        "The history branch is novel and makes no implemented-fix attribution",
+        "The current retry-boundary direction is selected from current expected coverage and both directional traces"
+      ]
+    },
+    {
+      "id": "RETRACE-HISTORY-UNBOUND",
+      "prompt": "Explicitly invoke Retrace. Use the current working directory as the readable repository root. Objective: evaluate its agent harness for refinement. Human-owned frontier — intended meaning: Improve harness coverage correctness and locate the smallest right-depth refinement; reduce redundant context/runtime work only after preserving correctness and current accepted behavior. Protected behavior: Preserve current accepted outputs, current authority and owner/route boundaries, explicit-only read-only operation, exact evidence provenance, no persistence, and human/architect decision ownership unless a scenario objective explicitly names a narrower protected set. Exclusions: Exclude mutation, persistent state, ambient history or memory, active or archived implementation plans, work outside the bound repository harness/root, and any unsupplied locator. Trade-off priority: Correctness and protected behavior, then maintainability and the smallest sufficient change, then context/runtime cost, then migration cost. No other human-owned trade-off remains. No prior-result or implemented-fix locator is supplied. Complete the static evaluation from declared repository evidence.",
+      "expected_output": "History is explicitly unbound, static evaluation continues, and no no-change, failed-fix, novel, or other historical claim is invented from ambient state.",
+      "assertions": [
+        "The result states history unbound because neither locator was supplied",
+        "No ambient prior-result, transcript, memory, hidden-state, or ledger search occurs",
+        "Unbound history does not prevent expected-coverage reconstruction, directional walks, finding qualification, or a readiness-capped direction",
+        "The result does not label the current finding no-change, failed-fix, or novel without supplied comparison evidence"
+      ]
+    },
+    {
+      "id": "RETRACE-EXPLICIT-ONLY",
+      "prompt": "At one readable repository root with objective evaluate its agent harness for refinement, compare fictional Transport A and Transport B explicit invocation seams with a fresh explicit process and ordinary review, completion, failure, debugging, improvement, and architecture requests that do not invoke any named manual skill. Grade from the one-body structural receipt and the fresh explicit and ordinary traces.",
+      "expected_output": "The package exposes one portable manual body for both explicit transport seams. The fresh explicit process injects, reads, and applies that body, while every ordinary near miss performs its own requested work with zero Retrace injection, target read, or contracted result.",
+      "assertions": [
+        "The structural receipt proves one portable body, exact manual activation metadata, and zero forbidden host or transport tokens",
+        "The fresh explicit trace injects the complete Retrace body and reads and applies the exact target to the bound root and objective",
+        "Ordinary review, completion, failure, debugging, improvement, and architecture branches receive no Retrace custom message",
+        "The ordinary branches perform zero Retrace target reads and return zero contracted Retrace results",
+        "Both observations are fresh, no-session, and limited to read-only evaluator capabilities",
+        "The explicit trace proves each post-declaration target operation's exact locator has verbatim intake, injected-declaration, or already-read-content provenance; it does not derive a skill path from an owner name or conventional layout",
+        "The explicit result keeps all evidence locators full and root-resolved with schemes and selectors preserved and uses root-relative paths only for four-part identity evaluands",
+        "The explicit trace distinguishes evaluand and supplied-evidence operations from independently required higher-priority runtime-control operations and proves that control content supplies no target locator or influences any role graph, finding, evidence claim, readiness input, or direction",
+        "Every claim-bearing repository-file reference across the explicit result is fully resolved against the bound root or preserves its URI and selector; only a four-part identity evaluand may remain root-relative"
+      ]
+    },
+    {
+      "id": "RETRACE-BASELINE-NO-SKILL",
+      "prompt": "Use the current working directory as the readable repository root. Objective: evaluate the current repository's agent-harness configuration for refinement. Compare a fresh run made before Retrace exists, with all neighboring owners available, to a fresh explicit Retrace run on the byte-identical objective. Do not use a prior timed-out or partial trace.",
+      "expected_output": "The accepted pre-write baseline does not spontaneously produce the complete integrated Retrace operation, while the explicit run supplies the bound intake, independent expected coverage, bidirectional walk, history handling, readiness caps, safety boundary, and contracted sections. If the baseline already supplies all of them coherently, no skill is added.",
+      "assertions": [
+        "The baseline and explicit traces bind the same objective, selected model, provider, thinking level, profile, root, and read-only tool boundary",
+        "The baseline skill inventory contains every current neighboring owner and no Retrace target",
+        "The baseline lacks at least one load-bearing integrated capability among the bidirectional walk, independent expected coverage, four-part history comparison, readiness caps, or six-section result",
+        "The explicit result supplies every missing load-bearing capability as one coherent operation",
+        "Neither comparison run mutates the repository or saves a host session"
+      ]
+    }
+  ]
+}
