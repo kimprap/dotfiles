@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-01
+**Updated:** 2026-09-03
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -95,12 +95,12 @@ The workflow needs one current route and one durable explanation of why its boun
 
 ### D15 — Semantic ownership and source roles
 
-- **Scope:** Requirements, specifications, direct authority, plans, tasks, todos, Context Packs, Handoffs, `WORKFLOW.md`, ADRs, and research.
-- **Decision:** Give each artifact one semantic owner. Approved requirements, specifications, and direct authority govern their concerns; plans, tickets, tasks, todos, Context Packs, and Handoffs only project that authority. `WORKFLOW.md` describes concise current behavior, ADRs carry durable rationale and rejected alternatives, and Atlas and external sources carry advisory research only.
-- **Why:** Explicit source roles prevent proposals, projections, stale evidence, or research from masquerading as approved behavior.
-- **Rejected alternatives / why not:** Turning plans, tickets, todos, Context Packs, Handoffs, memories, transcripts, or Atlas into normative or runtime ledgers creates competing copies and instance-specific authority. Copying ADR rationale into `WORKFLOW.md` duplicates the durable source and bloats current guidance.
-- **Consequences:** Current executable behavior and active ADR rationale remain distinct but synchronized. A source-role conflict fails closed instead of being resolved by convenience.
-- **Reopen when:** Any artifact's semantic ownership, source precedence, or executable-versus-advisory boundary changes.
+- **Scope:** Requirements, specifications, direct authority, plans, tasks, todos, Context Packs, Handoffs, executable skill prose, skill-local `references/execution-flow.md`, root `WORKFLOW.md`, ADRs, and research.
+- **Decision:** Give each concern one semantic owner. Approved requirements, specifications, and direct authority govern their concerns; plans, tickets, tasks, todos, Context Packs, and Handoffs only project that authority. Executable skill prose owns live behavior. A qualifying custom skill with a genuine controller loop may use skill-local `references/execution-flow.md` as a non-runtime, non-authoritative human diagnostic chart-and-table projection that is synchronized at edit time and loses to executable prose on mismatch. This role is distinct from the non-runtime root `WORKFLOW.md` used by generic catalog skills to describe concise current behavior. ADRs carry durable rationale and rejected alternatives, and Atlas and external sources carry advisory research only.
+- **Why:** Explicit source roles prevent projections, stale evidence, or research from masquerading as approved behavior while letting maintainers navigate a real custom controller without duplicating its executable contract.
+- **Rejected alternatives / why not:** Turning plans, tickets, todos, Context Packs, Handoffs, memories, transcripts, Atlas, a flow map, or `WORKFLOW.md` into a normative or runtime ledger creates competing copies and instance-specific authority. Runtime-loading a diagnostic map, making it co-authoritative, reusing generic catalog `WORKFLOW.md` as a controller chart, or requiring maps for tiny linear skills duplicates ownership without adding a real navigation seam. Copying ADR rationale into current guidance also bloats the projection.
+- **Consequences:** Current executable behavior, non-runtime maintenance projections, and active ADR rationale remain distinct but synchronized. Qualifying controller changes update owning prose, affected map elements, and semantic coverage together; a source-role conflict fails closed at edit time instead of becoming a live controller stop.
+- **Reopen when:** Any artifact's semantic ownership, source precedence, executable-versus-projection boundary, or qualification for a custom controller map changes.
 
 ### D16 — Iterative grilling completion
 
@@ -162,6 +162,7 @@ The workflow needs one current route and one durable explanation of why its boun
 - `.config/agents/skills/dev-ask/SKILL.md` and `.config/agents/skills/dev-ask/WORKFLOW.md` for router, approval, composition, todo projection, route selection and presentation, completion, and current behavior. `.config/agents/references/packed-label.md` owns packed bold-label visual grammar; `dev-ask` loads it by pointer.
 - `.config/agents/skills/dev-requirements/SKILL.md`, `dev-research/SKILL.md`, `dev-triage/SKILL.md`, `dev-grilling/SKILL.md`, `grill-me/SKILL.md`, `grill-with-docs/SKILL.md`, `dev-prototype/SKILL.md`, `dev-specification/SKILL.md`, `dev-ticketing/SKILL.md`, `dev-implementation/SKILL.md`, `dev-improve-codebase-architecture/SKILL.md`, and `wayfinder/SKILL.md` for targeted confirmation, iterative decision frontiers, optional intake, semantic revision rebinding, adapters, route impact, stops, and exactly one receiver.
 - `.config/agents/skills/dev-ask/evals/evals.json` and its route, reapproval, continuation, presentation, discovery, triage, and ordinary-context fixture directories.
+- `.config/agents/skills/reconcile/SKILL.md` and `references/reviewer-protocol.md` as executable controller owners, with skill-local `references/execution-flow.md` as their non-runtime human projection and `evals/evals.json` as semantic coverage.
 - `.agents/AGENTS.md`, `manifest`, `docs/adr/INDEX.md`, and the five ACTIVE generic-workflow ADRs.
 - Human approval boundaries for product, architecture, material scope, acceptance, topology/independence, destructive/external effects, and shipping.
 
@@ -170,6 +171,7 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 ## Evidence / source revisions
 
 - Governing authority: `local://dev-workflow-convergence-refinement-plan.md`, Datetime `2026-08-09-1616`, especially **Human-confirmed governing decisions**, **Fixed shared contracts**, **Deterministic routing model**, **Canonical discovery and continual learning**, **Material approval boundary**, and T1's task contract. The plan authority declares `revision: null`; no unobserved commit revision is asserted here.
+- Reconcile source-role authority: native-approved repository plan `.agents/plans/2026-09-03-0550_reconcile-redesign.md`, approved semantic SHA-256 `2676a4fea6209dee06585b54148ee6a02a0374e3d8d2e781fd1af4293a97d5bb`, and confirmed authority `agent://ReconcileDesignGrill` at `conversation@sha256:ea069ab70366f5d79f44155014a4a8201e5fe7fbb2042d5ee09f5a88b08ad3d5`.
 - D19-D20 durable-write authority: `local://dev-workflow-routing-simplicity-decisions.md`, SHA-256 `ef2ac3ddd04239e1c055f25439d81f58f8ec503777c4fa691a3443abe83823be`, explicitly confirmed by the user.
 - Repository conventions: `.config/agents/skills/dev-domain-modeling/ADR-FORMAT.md` (ADR destination and numbering), current `.agents/AGENTS.md`, and current `manifest` as read before this record was created.
 - Executable lineage revisions: completed T2 Common Handoff `agent://WorkflowRouting`; T5 synchronization of the current paths above under `AUTH-PLAN`, with its exact final target identity returned to T6.
@@ -183,6 +185,8 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, the user's 2026-08-10 explicit D16-D18 workflow refinements, and the exact confirmed D19-D20 evidence artifact above are the authority for this record. The parent execution dispatch authorizes their materialization; it does not authorize product decisions, executable workflow changes, shipping, or mutation of `/Users/kim/.agents/AGENTS.md`. Human approval remains required at the material boundaries named above.
 
 On 2026-09-01, the human owner aligned compact route approval with packed bold-label spacing: one `## Route overview`, the same five fields, D19 ordered `Route`, and visual grammar in `.config/agents/references/packed-label.md`. Field set, completion projection, and shipping boundary are unchanged.
+
+On 2026-09-03, the human owner approved the exact Reconcile redesign plan and confirmed conversation identity above, authorizing D15's skill-local diagnostic-map source role and the matching D23/index projection without creating a new decision ID or changing generic workflow runtime behavior.
 
 ## Supersession
 

@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-26
+**Updated:** 2026-09-03
 **Decision IDs:** D07, D23  
 **Related authority:** ADR-0001 D01, D15
 
@@ -30,12 +30,12 @@ Repository-local guidance can be injected automatically, but workflow references
 - **Reopen when:** Portable assess/review/deep eligibility, backend ordering, closure role scope, papercut accounting/settlement, proof ownership, restoration, or separate-maintenance authority changes.
 ### D23 — Focused decision provenance
 
-- **Scope:** generic and stage-specific dev-workflow decision maintenance
-- **Decision:** Keep `WORKFLOW.md` concise and current. Add a generic and stage-specific decision-authority map there. Store each durable choice once in the narrowest ACTIVE ADR, using stable ID, Scope, Decision, Why, Rejected alternatives, Consequences, and Reopen trigger. Add ID and scope discovery to `docs/adr/INDEX.md`; D24 follows this rule in focused ADR-0007, D27 in focused ADR-0009, and D28 in focused ADR-0003. Keep superseded or rejected history in ADR status and supersession, not skills, memory, plans, transcripts, or one global decision ledger. A non-authoritative repository evidence ledger cannot own rationale or supersede an ADR. Preserve product-workflow ADR-0005 as separate concurrent authority.
-- **Why:** Future iterations get both rationale and rejected paths without duplicating executable contracts.
-- **Rejected alternatives / why not:** Per-skill logs repeat generic choices; WORKFLOW history bloats current guidance; one ever-growing decision ledger blurs ownership; treating papercut evidence as authority or provenance would let observations bypass human decisions and focused ADR ownership.
-- **Consequences:** Current behavior stays in skills and WORKFLOW; focused ADR decision units explain why and why not; the index and WORKFLOW map make the narrow owner discoverable. ADR-0007 D24 alone owns current cross-workflow papercut rationale, while its ledger remains evidence only; superseded ADR-0006 remains historical authority.
-- **Reopen when:** Canonical workflow authority or ADR storage and supersession changes.
+- **Scope:** Generic and stage-specific dev-workflow decision maintenance, plus non-runtime flow-map provenance for qualifying custom skills with genuine controller loops.
+- **Decision:** Keep root `WORKFLOW.md` concise and current, with its generic and stage-specific decision-authority map. Store each durable choice once in the narrowest ACTIVE ADR, using stable ID, Scope, Decision, Why, Rejected alternatives, Consequences, and Reopen trigger, and keep ID/scope discovery in `docs/adr/INDEX.md`. A qualifying custom skill with a genuine controller loop may add exactly skill-local `references/execution-flow.md` as a diagnostic-only human map containing one compact state chart and one minimal guard/action/mutation table. Invocation and live execution never load or interpret that file. Its executable skill prose wins on mismatch, which is an edit-time documentation defect; a behavior change updates the owning prose, affected map edge or row, and at least one semantic eval together. Tiny linear skills do not qualify, and generic catalog skills continue to use their existing non-runtime root `WORKFLOW.md` rather than reusing this filename. D24 follows focused ADR-0007, D27 focused ADR-0009, and D28 focused ADR-0003. Keep superseded or rejected history in ADR status and supersession, not skills, memory, plans, transcripts, or one global decision ledger. A non-authoritative repository evidence ledger cannot own rationale or supersede an ADR. Preserve product-workflow ADR-0005 as separate concurrent authority.
+- **Why:** Future iterations get rationale and rejected paths without duplicating executable contracts, while maintainers of a direction-changing custom controller get one bounded visual navigation aid.
+- **Rejected alternatives / why not:** Per-skill decision logs repeat generic choices; `WORKFLOW.md` history bloats current guidance; one ever-growing decision ledger blurs ownership; treating papercut evidence as authority bypasses human decisions. Runtime-loading `references/execution-flow.md`, making it co-authoritative, reusing it across generic catalog skills, converting existing root `WORKFLOW.md`, or requiring it for tiny linear skills creates duplicate semantics or needless structure.
+- **Consequences:** Current behavior stays in executable skills and root `WORKFLOW.md` where already established; focused ADR units explain why and why not; the index makes the narrow owner and eligible diagnostic projection discoverable. A qualifying flow map remains chart-plus-table navigation only, is synchronized at edit time, and never becomes runtime input. ADR-0007 D24 alone owns current cross-workflow papercut rationale, while its ledger remains evidence only; superseded ADR-0006 remains historical authority.
+- **Reopen when:** Canonical workflow authority, ADR storage/supersession, the custom-controller qualification, diagnostic filename/form, loading boundary, or edit-time integrity rule changes.
 
 ## Affected contracts
 
@@ -45,12 +45,14 @@ Repository-local guidance can be injected automatically, but workflow references
 - `.config/agents/skills/continual-learning/SKILL.md` and its skill-local eval registry for portable assess/review/deep eligibility, qualification, proof, payload, result, and stop semantics; `.config/agents/skills/dev-continual-learning/SKILL.md` and the `dev-implementation` backend seam for the thin engineering Task Contract, Context Pack, Common Handoff, current-manifest, selected-slot, accounting, settlement, and receiver mappings.
 - `.config/agents/skills/dev-domain-modeling/SKILL.md`, `.config/agents/skills/dev-codebase-design/SKILL.md`, `.config/agents/skills/dev-tdd/SKILL.md`, and `.config/agents/skills/dev-shipping/SKILL.md` for bounded support, durable-write, method, and delivery seams aligned by the current synchronization.
 - `.config/agents/skills/continual-learning/evals/evals.json` for portable mode, mutation, portability, recovery-input, and duplicate-adapter behavior; `.config/agents/skills/dev-ask/evals/evals.json` for engineering adapter, dispatch, recovery, accounting, completion, compact-exclusion, settlement, and terminal-near-miss integration.
+- `.config/agents/skills/reconcile/SKILL.md`, `references/reviewer-protocol.md`, skill-local `references/execution-flow.md`, and `evals/evals.json` for the qualifying custom-controller owner/projection/semantic-coverage boundary.
 
 These current executable/documentation contracts and this ACTIVE ADR are synchronized under the approved plan authority. The ADR and index remain non-runtime discovery and decision authority.
 
 ## Evidence / source revisions
 
 - Governing authority: `local://dev-workflow-convergence-refinement-plan.md`, Datetime `2026-08-09-1616`, especially **Human-confirmed governing decisions** D07 and related D01/D15; **Canonical discovery and continual learning**; **Fixed shared contracts**; **Target map and critical anchors**; **Material approval boundary**; and T1/T4/T5 task contracts. The plan authority declares `revision: null`; no unobserved commit revision is asserted here.
+- Reconcile flow-map authority: native-approved repository plan `.agents/plans/2026-09-03-0550_reconcile-redesign.md`, approved semantic SHA-256 `2676a4fea6209dee06585b54148ee6a02a0374e3d8d2e781fd1af4293a97d5bb`, and confirmed authority `agent://ReconcileDesignGrill` at `conversation@sha256:ea069ab70366f5d79f44155014a4a8201e5fe7fbb2042d5ee09f5a88b08ad3d5`.
 - D23 durable-write authority: `local://dev-workflow-routing-simplicity-decisions.md`, SHA-256 `ef2ac3ddd04239e1c055f25439d81f58f8ec503777c4fa691a3443abe83823be`, explicitly confirmed by the user.
 - Current D07 validation authority: `local://self-improving-evaluation-papercuts-plan.md`, Datetime `2026-08-12-0107`, approved revision `b919e29f11e991a1a3594b13c9bcca83c6dc0159494ae4a2985029fb71b9c84f`, especially `SELF-IMPROVEMENT-DESIGN-20260812-r1`, the fixed curation binding/evaluation contracts, and T1/T3.
 - Cursor, [Agent swarms and the new model economics](https://cursor.com/blog/agent-swarm-model-economics), accessed 2026-08-09: shared decision context and outcome grading inform discovery; agent-owned always-injected Field Guides and activity-scale proxies do not.
@@ -65,6 +67,8 @@ These current executable/documentation contracts and this ACTIVE ADR are synchro
 ## Human authority
 
 The human-confirmed D01-D09 choices and derived D10-D15 invariants in the earlier T1-authorized plan, the exact confirmed D23 evidence artifact, and `SELF-IMPROVEMENT-DESIGN-20260812-r1` plus the approved current executor-plan revision are the authority for this record. Current authority permits only the named D07 validation changes, their exact executable/eval projections, D23's D24 discovery clarification, and focused ADR/index synchronization. It does not authorize broad maintenance, a user-level edit, background mutation, a memory service, product-workflow changes, automatic optimization, mutation outside the exact target map, or shipping.
+
+On 2026-09-03, the human owner approved that exact Reconcile authority for D23's qualifying custom-controller map, diagnostic-only loading boundary, chart-plus-table form, edit-time integrity rule, exclusions, and existing-index projection. It creates no new decision ID and grants no generic workflow runtime change.
 
 ## Supersession
 
