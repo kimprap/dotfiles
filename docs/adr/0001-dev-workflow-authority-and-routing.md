@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-05  
+**Updated:** 2026-09-06  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -53,12 +53,13 @@ The workflow needs one current route and one durable explanation of its boundari
 ### D11 — Independent workflow dimensions
 
 - **Decision:** Keep lifecycle depth, assurance, and execution topology independent. Compact is the default when no compact disqualifier applies; otherwise use standard or high assurance from consequence evidence. Size or duration alone changes none of these dimensions.
-- **Decision:** A cohesive one-owner result uses a planless direct contract. Multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery require a lean repository plan.
+- **Decision:** New implementation boundaries consult the shared read-only policy at `.config/agents/skills/dev-ticketing/references/task-sizing.md`, which alone owns the sizing heuristic. Record a material boundary rationale in existing Route Overview, specification, direct-contract, or plan prose; reading the policy invokes no stage.
+- **Decision:** A cohesive one-owner result that fits one reliable fresh context uses a planless direct contract. Necessary multiple owners or dependencies, fan-in, ordered effects or migration, or cross-context recovery at known safe seams require a lean repository plan. Specification remains conditional on missing technical authority; ticketing remains conditional on missing task or dependency ownership; complete specifications and graphs are reused.
 - **Decision:** Ordinary planned fan-in is an authored child-owned implementation task. It assembles all task inputs before the complete target's single final review and verification; it does not route through pre-fan-in lineage verification or standalone `dev-integration`.
-- **Why:** Consequence, design depth, and graph execution are different facts.
-- **Rejected alternatives:** Letting file count choose assurance, letting task count grant parent semantic work, or imposing standalone verified-lineage integration on ordinary planned assembly couples unrelated decisions.
-- **Consequences:** Every code-changing task remains child-owned, planned or direct.
-- **Reopen when:** Assurance selection, plan threshold, or child-ownership topology changes.
+- **Why:** Consequence, design depth, context fit, and graph execution are different facts.
+- **Rejected alternatives:** Letting file count or a rough estimate choose assurance, requiring sizing metadata or runtime quotas, letting task count grant parent semantic work, or imposing standalone verified-lineage integration on ordinary planned assembly couples unrelated decisions.
+- **Consequences:** Every code-changing task remains child-owned, planned or direct. A later estimate alone does not authorize an implementation parent to repartition an approved graph.
+- **Reopen when:** Assurance selection, task-sizing ownership, plan threshold, or child-ownership topology changes.
 
 ### D12 — Human authority at consequential boundaries
 
@@ -148,12 +149,12 @@ The workflow needs one current route and one durable explanation of its boundari
 ## Affected contracts
 
 - `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, and `references/execution-flow.md`.
-- `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-continual-learning`, `dev-test-audit`, `dev-handoff`, `papercut`, and `completion-presentation` at their owned seams.
-- Generic completion callers, focused evals, `.agents/AGENTS.md`, and `docs/adr/INDEX.md`.
+- `dev-specification`, `dev-ticketing` and its `references/task-sizing.md`, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-continual-learning`, `dev-test-audit`, `dev-handoff`, `papercut`, and `completion-presentation` at their owned seams.
+- The base plan rule, generic completion callers, focused evals, `.agents/AGENTS.md`, and `docs/adr/INDEX.md`.
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, confirmed 2026-09-04; and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, confirmed 2026-09-04; `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`; and the human-approved `local://task-sizing-direct-contract.md`, confirmed 2026-09-06.
 - Earlier approved routing and grilling evidence remains historical support where it does not conflict with the current governing revision.
 - External sources are advisory and cannot supersede current human authority or executable contracts.
 
@@ -168,6 +169,7 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes it an
 ## Verification expectations
 
 - Router cases distinguish direct answers, research, triage, requirements, grilling, diagnosis, implementation, plans, explicit audit, and shipping.
+- Sizing cases distinguish a small cohesive direct task, a coupled above-target direct task, context-fit recovery through ticketing, and unchanged projection of an approved graph.
 - One approval covers unchanged derivation; only D02 material facts reopen it.
 - Compact uses one child rethink, direct checks, one lean Handoff, papercut, and five-field completion.
 - Standard and high use one review before one verifier, one learning assessment, and five-field completion.

@@ -59,10 +59,16 @@ flowchart TD
 
 ## Entry and implementation
 
+For a new boundary, apply the shared
+[task-sizing guidance](../../dev-ticketing/references/task-sizing.md) before
+choosing direct or planned entry. Record only a brief rationale in existing
+prose. The sizing heuristic neither adds a stage nor changes assurance, and an
+approved graph is projected without automatic repartitioning.
+
 | From | Condition | Next |
 |---|---|---|
-| Approved direct work | One child can own the cohesive result | Implementation child without a repository plan |
-| Approved lean plan | Multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery | Implementation controller schedules dependency-ready child tasks; any ordinary fan-in is an authored child-owned task completed before final review and verification |
+| Approved direct work | One child can own and check the cohesive result in one reliable fresh context | Implementation child without a repository plan |
+| Approved lean plan | Necessary multiple-owner or dependency ownership, fan-in, ordered effects or migration, or recovery uses known safe task seams | Implementation controller schedules dependency-ready child tasks; any ordinary fan-in is an authored child-owned task completed before final review and verification |
 | Candidate | Child has finished its first implementation pass | Same child receives the single code-then-test rethink |
 | Rethink | Direct checks pass | Child emits one lean Handoff, then loads papercut once |
 | Rethink | A required direct check still fails | Child emits a blocked lean Handoff, loads papercut once, then stops with the failed check and preserved work |

@@ -11,6 +11,13 @@ Control one approved engineering outcome. Every code-changing task belongs to a 
 
 Require settled human intent, observable acceptance, exact writable targets and allowed effects, applicable project instructions, one receiver, and an approved assurance level: `compact`, `standard`, or `high`. Keep shipping, credentials, destructive/external effects, and unrelated work outside the contract unless separately authorized.
 
+At intake, read
+`skill://dev-ticketing/references/task-sizing.md`. Apply it to a planless direct
+contract without treating sizing as assurance. Project an already-approved
+task graph exactly: a later estimate alone never authorizes the parent to
+split, merge, or otherwise repartition it; material changes follow the existing
+authority and reapproval rules.
+
 Use a planless direct contract when one child can own the cohesive result. Require a repository plan only for multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery. A plan must validate with:
 
 ```text

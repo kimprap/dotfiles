@@ -18,7 +18,7 @@ Use `canonical-project-contracts` when a durable repository contract governs the
 1. Inspect the current owners, interfaces, callers, state, persistence, tests, and migration constraints relevant to the approved outcome.
 2. Define the smallest architecture that fits existing module ownership and local conventions. State component responsibilities, dependency direction, data flow, error behavior, security/privacy boundaries, and observability only where the outcome needs them.
 3. Specify public interfaces, data shapes, invariants, state transitions, compatibility, migration/cutover, rollback, and permitted non-repository effects. Prefer a clean cutover; do not preserve aliases or obsolete paths unless authority requires compatibility.
-4. Identify implementation ownership. One cohesive child stays a direct contract; multiple owners/dependencies, fan-in, ordered effects/migration, or likely cross-context recovery require a lean plan.
+4. Before identifying implementation ownership, read `skill://dev-ticketing/references/task-sizing.md` and apply it to each new boundary. One cohesive child stays a direct contract; multiple owners/dependencies, fan-in, ordered effects/migration, or likely cross-context recovery require a lean plan. Record the material sizing choice in the specification's existing ownership discussion rather than adding metadata.
 5. Assign stable `AC-*` labels. Every criterion must be observable and use exactly:
 
    ```text

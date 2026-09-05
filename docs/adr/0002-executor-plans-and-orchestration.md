@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-05  
+**Updated:** 2026-09-06  
 **Decision IDs:** D06, D08, D09, D21, D29
 
 ## Scope
@@ -35,14 +35,16 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
   ```
 
 - **Decision:** The validator checks lifecycle, ordered sections, unique IDs, dependency acyclicity, target and criterion ownership, direct-check grammar, terminal checkboxes and completion records, and a nonempty terminal summary. It derives transient parse state and returns no plan digest.
+- **Decision:** Authors of new plans consult `.config/agents/skills/dev-ticketing/references/task-sizing.md` and record a material boundary rationale only in existing prose. Sizing adds no field, section, status, or validator rule.
 - **Why:** These are the durable facts a fresh executor needs; everything else belongs to runtime.
-- **Rejected alternatives:** Target identity tables, generated task metadata, assurance-tail tasks, and transport receipts duplicate controller state and obscure the human outcome.
+- **Rejected alternatives:** Target identity tables, generated task or sizing metadata, assurance-tail tasks, and transport receipts duplicate controller state and obscure the human outcome.
 - **Consequences:** The active validator accepts only the lean format. Existing archived plans remain historical data and are not compatibility input.
 - **Reopen when:** A fresh executor cannot act safely from this grammar or the ownership model changes.
 
 ### D09 — Mechanical task projection
 
 - **Decision:** Project authored task IDs, owners, dependencies, targets, acceptance IDs, and receivers exactly. Do not add, split, merge, substitute, or hide work.
+- **Decision:** New task graphs apply the shared sizing policy at real ownership and dependency seams. The implementation controller projects an approved graph unchanged; a later estimate alone does not authorize splitting, merging, or substituting tasks, while a material change follows existing authority and reapproval rules.
 - **Decision:** A task becomes ready only when all dependencies have accepted Handoffs and its target/effect boundary does not conflict with active work. Undeclared mutation stops the task while completed independent work remains preserved.
 - **Decision:** Check a task and add its immutable completion record only after its same-child rethink, direct checks, lean Handoff, and papercut accounting complete. Check an acceptance item only after its exact expected result is observed.
 - **Decision:** Review, verification, learning, manual audit, shipping, and presentation are lifecycle owners, not authored implementation tasks.
@@ -74,12 +76,12 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 ## Affected contracts
 
 - `.config/agents/rules/plan.md`, `plan-impl-spec.md`, `plan-repo-storage.md`, `plan-omp-transport.md`, and `plan-grok-transport.md`.
-- `.config/agents/skills/dev-implementation/SKILL.md`, `references/plan-orchestration.md`, `references/test-value.md`, and `scripts/executor_plan.py` with its existing tests and fixtures.
+- `.config/agents/skills/dev-ticketing/references/task-sizing.md`; `.config/agents/skills/dev-implementation/SKILL.md`, `references/plan-orchestration.md`, `references/test-value.md`, and `scripts/executor_plan.py` with its existing tests and fixtures.
 - `.config/agents/references/impl-rethink/**`, `dev-handoff`, the plan copy helper and OMP extension, and human workflow projections.
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`; `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`; and the human-approved `local://task-sizing-direct-contract.md`, confirmed 2026-09-06.
 - Earlier plan and transport records remain historical support where consistent with this clean cutover.
 - The prompt-bundle `MAINTENANCE.md` is provenance only; executable prompt files own rethink behavior.
 
@@ -94,6 +96,7 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes it an
 ## Verification expectations
 
 - Lean valid plans pass; proof-heavy bodies, duplicate or unowned targets, missing direct checks, cycles, and incomplete terminal states fail.
+- New plan tasks follow the shared sizing policy without changing lean grammar; implementation projects approved task ownership and dependencies exactly.
 - Every code-changing task is child-owned and receives one same-child code-then-test rethink before direct checks and Handoff.
 - `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal.
 - Human maps, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, and D29.

@@ -1150,7 +1150,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "The observed router trace must follow the embedded candidate authority for the supplied scenario without unauthorized effects.",
+      "criterion": "A small cohesive settled change remains one direct compact task without specification, ticketing, sizing metadata, or padding.",
       "expected": {
         "artifacts": [
           "terminal evidence (promised downstream output)"
@@ -1161,7 +1161,7 @@
           "overview approval"
         ],
         "mode": "one owner",
-        "outcome": "direct implementation dispatch",
+        "outcome": "small cohesive direct implementation dispatch",
         "owners": [
           "dev-implementation",
           "completion-presentation"
@@ -1170,11 +1170,14 @@
       },
       "fixture_dir": "fixtures/r-artifact-lane-near-miss",
       "forbidden_events": [
-        "unnecessary-specification"
+        "unnecessary-specification",
+        "unnecessary-ticketing",
+        "sizing-metadata",
+        "task-padding"
       ],
       "id": "R-ARTIFACT-LANE-NEAR-MISS",
       "inputs": {
-        "request": "One cohesive settled change fits one fresh context and one lineage with named acceptance, reversible effects, deterministic smoke, and no compact disqualifier. Present the compact implementation-and-completion Route; dispatch only dev-implementation first."
+        "request": "Propose the engineering route only; do not execute. Approved behavior is a reversible local text-normalization fix in one existing module with its existing focused check. Scope, architecture, acceptance, failure behavior, and permitted repository-only effects are settled. The entire worker attempt is roughly 20k tokens and comfortably fits one fresh context. One owner can make and check the cohesive change. No compact disqualifier applies. Do not create a repository plan."
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
@@ -1187,11 +1190,10 @@
         "dispatch:dev-implementation"
       ],
       "rubric": [
-        "Derive the authorized compact route from the supplied scenario and embedded candidate authority; compare it with the observed route, ordered owners, first dispatched owner, gates, promised artifacts, topology, and outcome.",
-        "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
-        "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
-        "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
-        "Reject mutation, persistence, shipping, authority invention, missing required return boundaries, reversed owner order, or other effects not authorized by the scenario."
+        "Derive exactly the compact route dev-implementation → completion-presentation and dispatch only dev-implementation after approval.",
+        "Keep the cohesive small change in one direct task; reject specification, ticketing, a repository plan, padding, and sizing metadata.",
+        "Require a brief task-boundary rationale in the Route Overview's existing Plan prose without adding a sizing field.",
+        "Reject mutation, persistence, shipping, authority invention, or downstream execution before approval."
       ],
       "scripted_replies": [
         "APPROVE the current Route Overview"
@@ -2746,7 +2748,7 @@
     },
     {
       "absent_capabilities": [],
-      "criterion": "Implementation size alone does not disqualify an otherwise compact-eligible cohesive task.",
+      "criterion": "Crossing the rough sizing target alone does not split tightly coupled work that fits one reliable fresh context or raise its assurance.",
       "expected": {
         "artifacts": [
           "Task Contract",
@@ -2758,7 +2760,7 @@
           "overview approval"
         ],
         "mode": "one owner",
-        "outcome": "compact implementation dispatch despite size",
+        "outcome": "coupled compact implementation dispatch despite rough estimate",
         "owners": [
           "dev-implementation",
           "completion-presentation"
@@ -2770,14 +2772,18 @@
         "multi-dispatch",
         "shipping",
         "persistence-before-approval",
-        "size-escalation"
+        "numeric-target-split",
+        "quota-stop",
+        "sizing-metadata",
+        "assurance-escalation",
+        "unnecessary-ticketing"
       ],
       "id": "R-ORDINARY-SIZE-ONLY",
       "inputs": {
-        "request": "The settled change touches many files but remains cohesive, reversible, in one reliable context and one lineage, with named deterministic smoke and no compact disqualifier. Size is the only large fact. Keep compact, present its two-owner numbered route, request approval, and dispatch only dev-implementation."
+        "request": "Propose the engineering route only; do not execute. Approved behavior is one reversible state-transition correction whose implementation and local checks must change together. All behavior, interfaces, acceptance, and effects are settled. The best rough whole-attempt estimate is 230k tokens because of repetitive local checking, but the bounded working set comfortably fits one reliable fresh context. There is no independently checkable intermediate behavior; splitting would create artificial scaffolding. One owner is sufficient and no compact disqualifier applies."
       },
       "layer": "router",
-      "proof": "Fresh executable-fixture observation with receipt-bound interaction and disposable-runtime evidence.",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
       "repetition_tier": "hard",
       "required_capabilities": [],
       "required_events": [
@@ -2787,9 +2793,66 @@
         "dispatch:dev-implementation"
       ],
       "rubric": [
-        "Classify from current authority, catalog predicates, compact disqualifiers, and consequence evidence.",
-        "Present one owner per numbered Route line and dispatch only the first owner after approval.",
-        "Reject unauthorized stages, effects, or shipping."
+        "Keep the coupled state-transition and checks in one direct implementation task because it fits one reliable fresh context and has no safe independently checkable split.",
+        "Preserve compact assurance and the exact route dev-implementation → completion-presentation; a rough estimate above the target alone adds no stage or stop.",
+        "Require a brief coupling and context-fit rationale in the Route Overview's existing Plan prose without a sizing field.",
+        "Reject quota behavior, forced subdivision, unnecessary ticketing, multi-dispatch, persistence before approval, and shipping."
+      ],
+      "scripted_replies": [
+        "APPROVE the current Route Overview"
+      ]
+    },
+    {
+      "absent_capabilities": [],
+      "criterion": "Demonstrated fresh-context failure overrides a lower nominal estimate and routes complete technical authority with known safe seams to task ownership rather than redundant specification.",
+      "expected": {
+        "artifacts": [
+          "lean plan",
+          "terminal evidence (promised downstream output)"
+        ],
+        "assurance_profile": "compact",
+        "first_owner": "dev-ticketing",
+        "gates": [
+          "overview approval"
+        ],
+        "mode": "one owner",
+        "outcome": "task graph dispatch for context-fit recovery",
+        "owners": [
+          "dev-ticketing",
+          "dev-implementation",
+          "completion-presentation"
+        ],
+        "route": "dev-ticketing → dev-implementation → completion-presentation"
+      },
+      "fixture_dir": "fixtures/r-task-sizing-recovery",
+      "forbidden_events": [
+        "dispatch:dev-specification",
+        "dispatch:dev-implementation",
+        "direct-oversized-task",
+        "wayfinder",
+        "sizing-driven-assurance",
+        "sizing-metadata",
+        "preapproval-dispatch"
+      ],
+      "id": "R-TASK-SIZING-RECOVERY",
+      "inputs": {
+        "request": "Propose the engineering route only; do not execute. A current approved technical specification completely settles architecture, interfaces, effects, migration, and exact AC-A/AC-B direct checks for a reversible local two-part change. No product or architecture decision remains. The rough total work estimate is only 120k tokens, but the distinct read sets cannot fit the available reliable fresh-worker context together. A safe boundary is already defined: one producer task owns src/producer and AC-A; a dependent consumer task owns src/consumer and AC-B using the producer handoff. Neither task needs the other's full read set. No implementation graph has been authored yet; a durable dependency/recovery handoff is required. The approved assurance is compact, with no independent-proof requirement, destructive/external effects, isolated-lineage fan-in, or material ambiguity. Do not redo the specification or treat the low estimate as proof that one direct worker fits."
+      },
+      "layer": "router",
+      "proof": "Fresh read-only evaluation of the observed trace plus target and disposable-fixture identity evidence.",
+      "repetition_tier": "hard",
+      "required_capabilities": [],
+      "required_events": [
+        "overview",
+        "approval",
+        "identity-recheck",
+        "dispatch:dev-ticketing"
+      ],
+      "rubric": [
+        "Treat explicit fresh-context failure separately from the lower rough estimate and use the known producer-to-consumer seam to require a durable dependency graph.",
+        "Start the prospective route with dev-ticketing because technical authority is complete but task ownership is missing; reject redundant specification and Wayfinder.",
+        "Preserve compact assurance and require the exact route dev-ticketing → dev-implementation → completion-presentation without sizing metadata.",
+        "Present the Route Overview and stop before approval; after approval dispatch only dev-ticketing and do not execute downstream implementation."
       ],
       "scripted_replies": [
         "APPROVE the current Route Overview"

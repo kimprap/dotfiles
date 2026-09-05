@@ -7,6 +7,11 @@ paths: ["**"]
 
 Use this rule only for a durable future-execution engineering plan. A cohesive result owned by one implementation child remains a planless direct contract unless the user explicitly asks for a plan. A repository plan is required for multiple owners/dependencies, fan-in, ordered effects or migration, or likely cross-context recovery.
 
+When authoring new task boundaries, read
+`skill://dev-ticketing/references/task-sizing.md` and record any material
+boundary rationale in existing plan prose. Add no sizing field or validator
+rule. Once a graph is approved, later estimates alone do not repartition it.
+
 This base owns identity and lifecycle. Implementation body grammar belongs to `plan-impl-spec`; repository location and harness transport belong to their companion rules.
 
 ## Identity and header

@@ -75,6 +75,21 @@
       "summary": "Bind the complete final proposal body to the confirmation interaction.",
       "surface": ".config/agents/skills/dev-grilling confirmation presentation"
     },
+    "pc-a2525abd541246f2": {
+      "first_seen": "2026-09-05",
+      "last_seen": "2026-09-05",
+      "observations": [
+        {
+          "date": "2026-09-05",
+          "friction": "Two independent fresh sizing route completions selected the correct owner, topology, and assurance but omitted Approval because proposal-only route presentation was not explicitly distinguished from dispatch.",
+          "workaround": "Add one explicit connection in the existing dev-ask routing owner, then repeat the unchanged coupled and recovery completions."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Classify proposal-only sizing routes as dispatchable presentation so the five-field approval gate is retained.",
+      "surface": ".config/agents/skills/dev-ask sizing route approval presentation"
+    },
     "pc-a556fa1f9529ba9a": {
       "first_seen": "2026-08-26",
       "last_seen": "2026-08-26",

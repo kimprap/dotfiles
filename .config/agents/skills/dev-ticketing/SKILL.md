@@ -13,6 +13,12 @@ Require the current specification revision, stable `AC-*` items with exact direc
 
 Use this skill only when work genuinely needs multiple owners, dependencies, fan-in, ordered effects/migration, or durable cross-context recovery. If one child can own the cohesive result, return that direct-contract recommendation instead of manufacturing tickets.
 
+Before deriving a new graph, read
+`skill://dev-ticketing/references/task-sizing.md`. This reference is the single
+owner of the sizing heuristic. Apply it to each proposed task and explain any
+material boundary choice in existing surrounding plan prose; never add sizing
+fields or manufacture a graph for one cohesive direct task.
+
 ## Derive the graph
 
 1. Slice vertically by observable behavior. Each ticket should deliver a usable contract slice rather than a horizontal layer or scaffold.

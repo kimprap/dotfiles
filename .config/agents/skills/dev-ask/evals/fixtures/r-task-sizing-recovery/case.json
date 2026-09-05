@@ -1,0 +1,9 @@
+{
+  "additional_files": [],
+  "inputs": {
+    "request": "Propose the engineering route only; do not execute. A current approved technical specification completely settles architecture, interfaces, effects, migration, and exact AC-A/AC-B direct checks for a reversible local two-part change. No product or architecture decision remains. The rough total work estimate is only 120k tokens, but the distinct read sets cannot fit the available reliable fresh-worker context together. A safe boundary is already defined: one producer task owns src/producer and AC-A; a dependent consumer task owns src/consumer and AC-B using the producer handoff. Neither task needs the other's full read set. No implementation graph has been authored yet; a durable dependency/recovery handoff is required. The approved assurance is compact, with no independent-proof requirement, destructive/external effects, isolated-lineage fan-in, or material ambiguity. Do not redo the specification or treat the low estimate as proof that one direct worker fits."
+  },
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
+}

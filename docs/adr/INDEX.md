@@ -6,8 +6,8 @@ This index is the canonical discovery surface for durable repository decisions. 
 
 | ADR | Status | Current scope | Decision IDs |
 |---|---|---|---|
-| [ADR-0001 — Development workflow authority and routing](0001-dev-workflow-authority-and-routing.md) | ACTIVE | Thin generic engineering router; child implementation authority; direct/planned classification; clean cutover; five-field completion; separation from product, custom workflows, and shipping | D01, D02, D05, D10–D20, D26 |
-| [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | Child-owned controller execution; lean plan grammar; mechanical scheduling; same-child code-then-test rethink; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29 |
+| [ADR-0001 — Development workflow authority and routing](0001-dev-workflow-authority-and-routing.md) | ACTIVE | Thin generic engineering router; child implementation authority; sized direct/planned classification; clean cutover; five-field completion; separation from product, custom workflows, and shipping | D01, D02, D05, D10–D20, D26 |
+| [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | Child-owned controller execution; shared task-sizing projection; lean plan grammar; mechanical scheduling; same-child code-then-test rethink; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29 |
 | [ADR-0003 — Bounded assurance and repair](0003-bounded-assurance-and-repair.md) | ACTIVE | Two semantic attempts; compact versus standard/high assurance; one tests-first review; verifier-owned closure; permanent-test value and A-first manual audit | D03, D04, D22, D28 |
 | [ADR-0004 — Canonical discovery and continual learning](0004-canonical-discovery-and-continual-learning.md) | ACTIVE | Conditional discovery; one terminal engineering learning assessment; human execution map; optional noncanonical maintenance-journal relationship | D07, D23 |
 | [ADR-0005 — Product development workflow and PRD authority](0005-product-development-workflow-and-prd-authority.md) | ACTIVE | Product routing, human product authority, product grilling, PRD identity and approval, iteration artifacts, engineering handoff | P01–P09 |
@@ -23,6 +23,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | Is this generic engineering work, product work, a custom controller, direct work, or shipping? | ADR-0001 D01, D02, D10, D11, D12, D18 | ADR-0005 for product authority; custom controller contracts for custom work |
 | Who may change code and how many semantic attempts exist? | ADR-0001 D02; ADR-0003 D03 | ADR-0002 D06, D21 for controller and rethink details |
 | Does this require a plan and what does the plan contain? | ADR-0001 D11; ADR-0002 D08, D09 | ADR-0002 D29 for lifecycle and storage |
+| How are new implementation tasks sized without changing assurance or plan grammar? | ADR-0001 D11; ADR-0002 D08, D09 | `dev-ticketing/references/task-sizing.md` for the executable shared heuristic |
 | Where does a plan remain after completion or stop? | ADR-0002 D29 | Plan storage and host transport rules for mechanics |
 | What assurance profile and ordering apply? | ADR-0001 D16, D20; ADR-0003 D04 | ADR-0003 D22 for review and D28 for test portfolio audit |
 | Who owns review closure after repair? | ADR-0003 D04, D22 | `dev-verification` for executable check handling |
@@ -52,6 +53,9 @@ If two current surfaces disagree, stop at the conflict, preserve the narrower/hi
 
 The generic engineering path is:
 
+New direct-contract and plan task boundaries consult the shared task-sizing
+guidance before this path; approved graphs are then projected unchanged.
+
 ```text
 intake and classify
   → direct child work or active lean plan
@@ -78,11 +82,12 @@ Manual permanent-test audit is an explicit separate read-only workflow. Shipping
 
 ## Current evidence baseline
 
-The 2026-09-05 lean projection is authorized by:
+The 2026-09-06 lean projection is authorized by:
 
 - `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`;
 - `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`;
-- the approved ticket graph for the same specification; and
+- the approved ticket graph for the same specification;
+- the human-approved `local://task-sizing-direct-contract.md`; and
 - the installed executable runtime contracts projected by ADRs 0001–0004, 0007, and 0009.
 
 The source inventory in `.config/agents/references/impl-rethink/MAINTENANCE.md` remains append-only non-runtime provenance and does not expand this authority.

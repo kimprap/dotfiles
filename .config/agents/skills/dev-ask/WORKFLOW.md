@@ -15,7 +15,7 @@ Common routes are:
 - explicit candidate plan, hypothesis, or design refinement → `grill-with-docs` when repository evidence matters, otherwise `grill-me`;
 - a hard unexplained reproducible defect or performance regression → `dev-diagnosing-bugs`;
 - settled authority, a known fix, or an approved implementation graph → `dev-implementation`;
-- durable cross-context technical design → `dev-specification`, then `dev-ticketing` when dependency ownership or recovery needs a graph;
+- missing durable technical authority → `dev-specification`; when technical authority is complete but dependency ownership or recovery still needs a graph → `dev-ticketing`;
 - genuine multi-session decision fog → `wayfinder`;
 - an explicit permanent-test value audit → the separate read-only `dev-test-audit` route; and
 - separately authorized delivery → `dev-shipping`.
@@ -24,12 +24,20 @@ Initial Route Overview approval authorizes the named prospective route, includin
 
 Durable workflow rationale and supersession links live in [`docs/adr/INDEX.md`](../../../../docs/adr/INDEX.md). The human execution diagram is [`references/execution-flow.md`](references/execution-flow.md). Neither file runs the workflow.
 
+New implementation boundaries consult the shared
+[task-sizing guidance](../dev-ticketing/references/task-sizing.md). It considers
+complete worker-attempt effort separately from reliable fresh-context fit,
+prefers cohesive independently checkable slices at real seams, and preserves
+justified coupling. The guidance is read-only: it adds no stage or sizing
+metadata and does not determine assurance.
+
 ## Decision authority
 
 | Concern | Canonical decision |
 |---|---|
 | Routing, approval, semantic ownership, clean cutover, planless direct work, presentation, and shipping separation | ADR-0001: D01, D02, D05, D10–D20, D26 |
 | Lean plans, child scheduling, lifecycle, active-path persistence, and same-child rethink | ADR-0002: D06, D08, D09, D21, D29 |
+| New task sizing and approved-graph projection | ADR-0001: D11; ADR-0002: D08, D09 |
 | Two attempts, one-shot review, verifier closure, and permanent-test value | ADR-0003: D03, D04, D22, D28 |
 | Learning and the human-map/journal authority relationship | ADR-0004: D07, D23 |
 | Every-boundary papercut accounting | ADR-0007: D24 |
@@ -41,7 +49,7 @@ Durable workflow rationale and supersession links live in [`docs/adr/INDEX.md`](
 
 `dev-implementation` receives settled human intent, observable acceptance, exact writable paths and effects, applicable instructions, one receiver, and the selected assurance.
 
-Use a planless direct contract when one child can own the cohesive result. Use a lean plan only when dependency ownership, fan-in, ordered effects or migration, or recovery requires it. A lean plan contains only:
+Use a planless direct contract when one child can own and check the cohesive result in one reliable fresh context. Use a lean plan only when dependency ownership, fan-in, ordered effects or migration, or recovery requires it; known safe seams can divide an overall atomic cutover into dependency-ordered tasks. A lean plan contains only:
 
 1. Outcome and authority;
 2. Scope and effects;
