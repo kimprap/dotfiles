@@ -1,0 +1,93 @@
+{
+  "skill_name": "dev-verification",
+  "evals": [
+    {
+      "id": "DV-COMPLETE-FIXED-SET",
+      "prompt": "After one APPROVED review, verification receives original checks AC-1 and AC-2 and no required review findings. AC-1 passes, but AC-2 has not been run. Produce the aggregate and explain whether implementation smoke may fill the gap.",
+      "expected_output": "Return INCONCLUSIVE. The verifier must independently execute and account for every original acceptance check; an implementation smoke or passing subset cannot substitute for the missing AC-2 observation.",
+      "files": [],
+      "assertions": [
+        "Every original acceptance check belongs to the fixed set",
+        "The missing check prevents VERIFIED",
+        "Worker conclusions are not verifier evidence",
+        "The verifier does not invent or drop criteria"
+      ]
+    },
+    {
+      "id": "DV-REVIEW-CLOSURE-CHECKS",
+      "prompt": "The one review required CR-1 and CR-2, each with Behavior and Check lines in exact grammar. Attempt 2 repaired both. Verification receives three original acceptance checks and only CR-1's closure check. Decide intake and execution.",
+      "expected_output": "Return INCONCLUSIVE before claiming closure because CR-2 is missing. The complete fixed set is every original acceptance check in governing order followed by every required review closure check in finding order, each executed by the verifier against the repaired target.",
+      "files": [],
+      "assertions": [
+        "All original acceptance and required review closure checks are mandatory",
+        "Closure checks retain Behavior: and Check: ...; expect ... grammar",
+        "A missing CR-2 check is not success",
+        "The reviewer is not rerun"
+      ]
+    },
+    {
+      "id": "DV-REVIEW-REPAIR-FINAL",
+      "prompt": "Review returned REPAIR REQUIRED and the responsible owner used attempt 2. The verifier now observes one original acceptance failure after executing the complete fixed check set. State the verdict and next action.",
+      "expected_output": "Return NOT VERIFIED with the exact failing check and observation, then stop. Review repair already consumed attempt 2, so verification is final: no implementation repair, review rerun, second verifier, or extra attempt is allowed.",
+      "files": [],
+      "assertions": [
+        "The aggregate is NOT VERIFIED from direct contradictory evidence",
+        "Attempt 2 cannot be reused",
+        "No reviewer rerun or substitute verifier is dispatched",
+        "The verifier never repairs"
+      ]
+    },
+    {
+      "id": "DV-VERIFIER-OWNED-CLOSURE",
+      "prompt": "Review was APPROVED, so attempt 2 remains. The verifier independently runs every original check and review closure check and finds a reproducible code defect in AC-3. The responsible owner repairs it and completes same-worker rethink. Describe closure and the final aggregate requirement.",
+      "expected_output": "Return the exact AC-3 reproduction to the responsible owner for the single attempt-2 code repair. Keep the original verifier persistent. After repair, that same verifier reruns the complete unchanged fixed check set on the repaired target and issues a fresh final aggregate. No review rerun or second verifier is used.",
+      "files": [],
+      "assertions": [
+        "Only a directly evidenced code defect can use remaining attempt 2",
+        "The responsible implementation owner performs repair and rethink",
+        "The same verifier executes the complete fixed set again",
+        "The fresh verifier aggregate alone closes the repaired delta",
+        "Review never reopens"
+      ]
+    },
+    {
+      "id": "DV-NONCODE-PROOF-RECOVERY",
+      "prompt": "Attempt 2 remains. During AC-4, the runner writes the capture to the wrong temporary directory, so the check is inconclusive. The runner configuration is corrected without changing the target, AC-4 behavior, check, or expected result, and AC-4 then passes. State the allowed recovery and attempt effect.",
+      "expected_output": "After the concrete runner/capture defect is corrected without changing the target, the same verifier may retry only AC-4. Record both observations and the correction. Because target and acceptance meaning are unchanged and no product or code bytes change, this proof recovery consumes no semantic attempt; the verifier continues its fresh aggregate from the recovered AC-4 result.",
+      "files": [],
+      "assertions": [
+        "A concrete non-code defect may be corrected",
+        "Only the affected check is retried by the same verifier",
+        "Target, behavior, check, and expected result remain unchanged",
+        "Proof recovery consumes no semantic attempt",
+        "Verification remains read-only"
+      ]
+    },
+    {
+      "id": "DV-NONCODE-UNCHANGED-REPEAT-STOPS",
+      "prompt": "The same verifier retries AC-4 after the identified capture defect is corrected, but the unchanged check again produces the same inconclusive result. No target or acceptance bytes changed. Decide whether another retry, verifier, or implementation repair is allowed.",
+      "expected_output": "Stop with AC-4 and the aggregate INCONCLUSIVE. An unchanged repeated failure ends proof recovery; do not retry again, substitute a verifier or check, rerun review, mutate the target, or consume attempt 2.",
+      "files": [],
+      "assertions": [
+        "An unchanged repeated failure stops",
+        "No additional retry or substitute verifier is allowed",
+        "No check substitution or review rerun is allowed",
+        "A non-code failure does not authorize implementation repair",
+        "Attempt 2 remains unconsumed"
+      ]
+    },
+    {
+      "id": "DV-NONCODE-AUTHORITY-CHANGE-STOPS",
+      "prompt": "AC-4 cannot run as written. A proposed recovery would change its required behavior and expected result to accept a different service response while leaving the implementation target untouched. Decide whether the verifier may adopt it.",
+      "expected_output": "Stop and return the proposed acceptance-meaning change to the owning authority. Proof recovery is allowed only while the exact target, required behavior, check meaning, and expected result remain unchanged; the verifier may not redefine AC-4, mutate, substitute proof, or consume a semantic attempt.",
+      "files": [],
+      "assertions": [
+        "Changed acceptance meaning returns to authority",
+        "The verifier cannot redefine required behavior or expected result",
+        "No substitute proof or target mutation is allowed",
+        "No semantic attempt is consumed",
+        "Verification remains read-only"
+      ]
+    }
+  ]
+}

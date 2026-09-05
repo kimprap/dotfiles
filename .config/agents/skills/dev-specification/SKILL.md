@@ -1,69 +1,52 @@
 ---
 name: dev-specification
-description: >
-  Turn approved engineering requirements into a revision-bound technical
-  specification covering architecture, interfaces, data, migrations, and test
-  seams. Use for durable multi-context or cross-cutting work; skip for a settled
-  one-context direct implementation and return product questions to their owner.
+description: Turn approved engineering requirements into a revision-bound technical specification with architecture, interfaces, effects, migration, and directly checkable acceptance.
 ---
 
-# Engineering Specification
+# Dev Specification
 
-Own technical decisions and the durable implementation authority for work that cannot safely use the direct lane.
+Produce technical implementation authority from settled product/engineering requirements. Do not implement, reopen product strategy, invent shipping authority, or encode orchestration machinery.
 
 ## Intake
 
-Require current approved engineering requirements or equivalent settled authority, exact governing product/request revisions when present, explicit non-goals and constraints, and owners for unresolved product or architecture decisions.
+Require approved outcome, observable acceptance, scope and non-goals, constraints, allowed effects, current repository facts, and any human-owned architecture or destructive decision. Return unresolved product or material architecture choices to their owner rather than guessing.
 
-Reject stale, conflicting, or unapproved requirements. Return material product questions to external product authority. Do not answer them with technical assumptions.
+Use `canonical-project-contracts` when a durable repository contract governs the design. Research only facts that current evidence cannot establish.
 
 ## Procedure
 
-1. Bind the specification to exact governing revisions and approvals. Record superseded revisions without treating them as current.
-2. Inspect the current system and reuse its terminology, modules, interfaces, state ownership, and test conventions. Preserve unexpected work.
-3. Define the smallest coherent architecture: capability boundaries, interfaces, data/state ownership, error behavior, compatibility, migration and rollback, security/privacy, reliability/performance, operational effects, and degraded-operation design that implement the approved requirements. Do not choose new observable fallback, default, retry, alternate-path, or hard-failure behavior. Missing observable policy returns to `dev-requirements`; settled policy with unsafe or ambiguous technical design stops in `dev-specification`.
-4. Identify the highest viable observable test seams before implementation. For every acceptance criterion, state the falsifiable claim, conditions/input, expected behavior or threshold, minimum proof class, target surface/environment, and whether baseline/treatment comparison is required.
+1. Inspect the current owners, interfaces, callers, state, persistence, tests, and migration constraints relevant to the approved outcome.
+2. Define the smallest architecture that fits existing module ownership and local conventions. State component responsibilities, dependency direction, data flow, error behavior, security/privacy boundaries, and observability only where the outcome needs them.
+3. Specify public interfaces, data shapes, invariants, state transitions, compatibility, migration/cutover, rollback, and permitted non-repository effects. Prefer a clean cutover; do not preserve aliases or obsolete paths unless authority requires compatibility.
+4. Identify implementation ownership. One cohesive child stays a direct contract; multiple owners/dependencies, fan-in, ordered effects/migration, or likely cross-context recovery require a lean plan.
+5. Assign stable `AC-*` labels. Every criterion must be observable and use exactly:
 
-For every acceptance criterion, author one complete `surface-proof-recipe/v1` object with exactly `schema`, `acceptance` (`id`, `claim`, `expected`), `proof_class`, `target` (`surface`, `environment`), `scenario`, `inputs`, `evidence_form`, `adapter`, `fixtures`, `dependencies`, `isolation`, `cleanup`, and `comparison`. Use `adapter: none` when repository-native or platform-native proof is sufficient. Bind an adapter only by an already-authorized canonical `file://.../SKILL.md` URI and exact `surface-verification-adapter-tree/v1` digest; never discover, create, or maintain one from specification work. A universal claim puts its finite current consumer/callsite map in `inputs`, and paired proof uses the exact baseline/treatment object in `comparison`.
+   ```text
+   Behavior: <observable>
+   Check: <command or direct static proof>; expect <exact result>
+   ```
 
-Canonicalize each complete object with `.config/agents/skills/surface-verification-adapter/scripts/adapter_contract.py recipe --input JSON`. The returned `VR-<AC suffix>@sha256:<digest>` is the immutable proof-recipe identity. Missing fields, unresolved target/environment facts, or an unapproved adapter choice remain specification blockers rather than placeholders. Proof-recipe binding does not select or change the assurance profile.
-5. Resolve engineering decisions inside the approved scope. Stop for product, destructive, scope, or materially different architecture choices that require human authority.
-6. Draft one revision-bound Engineering Specification. Link authority instead of copying it and mark all material assumptions.
-7. Continue automatically when the specification only derives technical detail inside current approved requirements and architecture. If it exposes a new human-owned product, architecture, destructive/external-effect, or shipping choice, request confirmation of that one decision; a caveat or changed decision creates a new revision and invalidates dependent tickets.
-8. Hand the current revision to the one next owner in the approved route: `dev-ticketing` when a durable graph is required, otherwise `dev-implementation`. Return to `dev-ask` only when route impact changed.
+   Commands name the real surface and exact expected result. Static proof is allowed only when behavior is inherently structural; this direct check is the sole acceptance-check shape.
+6. Define test seams that let implementation exercise each behavior without exposing private production machinery. Permanent-test value remains owned solely by `skill://dev-implementation/references/test-value.md`; the specification does not copy that policy.
+7. Record material assumptions, known risks, explicit stops, and recovery boundaries. Continue through engineering details inside authority; request human confirmation for changed product behavior, destructive/external effects, materially different architecture, or shipping.
 
-## Engineering Specification
+## Specification shape
 
-```markdown
-# Engineering Specification: <objective>
-## Authority
-- Governing artifacts, exact revisions, and approvals
-## Current system
-- Relevant modules, interfaces, state, constraints, observed baseline, and preservation boundary
-## Architecture
-- Chosen design, alternatives rejected, and decision owners
-## Interfaces and data
-- Public/internal contracts, ownership, errors, compatibility, migrations, and approved cutover or removal
-## Security and operations
-- Security, privacy, reliability, performance, rollout, rollback, external effects, and required degraded trigger → response → recovery design
-## Test seams
-- Acceptance criterion → proof class → scenario/environment → expected evidence
-## Implementation boundaries
-- Cohesive ownership, fixed shared contracts, allowed decomposition, and non-goals
-## Open decisions
-- Question → authority owner → blocking status
-## Revision and governing authority
-- Current revision, governing approval, and supersession rule
-## Next owner
-- One exact approved continuation owner: `dev-ticketing` or `dev-implementation`
-```
+Keep the artifact concise and revision-bound:
 
-Do not derive runtime state, execute code, verify implementation, or create tickets inside this skill. Do not create a domain artifact unless a qualifying real term or decision receives human confirmation through `dev-domain-modeling`.
+- Authority and approved outcome
+- Current system and constraints
+- Architecture and ownership
+- Interfaces, data, invariants, and errors
+- Effects, migration, rollback, and compatibility
+- Acceptance with stable IDs and direct checks
+- Test seams
+- Implementation boundaries and dependencies
+- Risks, assumptions, stops, and open decisions
+- Revision and next owner
 
-## Handoff and continuation
+Link governing authority rather than duplicating it. Name exact paths/surfaces where known, but leave scheduling and lifecycle to `dev-ticketing` and `dev-implementation`.
 
-Every exit emits one common Handoff with the exact specification/authority identity, `route-impact: unchanged|changed`, unresolved blocker if any, and exactly one receiver. `unchanged` continues automatically to the next owner already named by the approved route when the specification is a faithful derivation and any newly exposed human-owned decision is confirmed; it does not add a specification-completion or router approval. `changed` returns to `dev-ask` with the changed facts for recomputation. A stop names the exact requirements, product, architecture, or destructive-effect authority owner. This stage never authorizes ticketing or implementation by itself.
+## Completion
 
-## Stop conditions
-
-Stop for stale authority, unresolved product scope, missing architecture/destructive approval, an untestable acceptance contract, unsafe migration/rollback ambiguity, or conflicting ownership. Resume only from a current approved revision.
+A complete specification accounts for every requirement and effect, leaves no unresolved implementation placeholder, and gives each acceptance item one executable or direct static check with an exact expected result. Return one lean `dev-handoff` to `dev-ticketing` or the approved direct implementation owner. Add `Route impact` only because this role owns that lifecycle decision.

@@ -1,6 +1,0 @@
-{
-  "inputs": {
-    "request": "Read-only continuation transition matrix after T-REPAIR attempts 1/2 and 2/2 exhaust with FIND-2 still blocking AC-TRACE-02 and repair token consumed 1/1. First input is bare continue. Second input repeats the same hypothesis. Third input is explicit human authorization naming PLAN-TRACE, target TARGET-2, blocked T-REPAIR, remaining AC-TRACE-02, and changed falsifiable hypothesis “exercise caller-B through its public seam.” The first two inputs must preserve all state. Only the third creates CONT-TRACE-1 binding plan, target, task, remaining criterion, authorizer/time, cycle 1, inherited consumed token, and the changed hypothesis, then admits fresh child CHILD-TRACE-2 attempt 1/2. No old checkpoint, choice menu, or persisted exhaustion record exists."
-  },
-  "scripted_replies": []
-}

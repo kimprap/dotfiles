@@ -2,8 +2,7 @@
 //
 // A session-local local://<slug>-plan.md artifact is an adapter-owned draft.
 // After every successful write or edit, this extension asks the repository
-// helper to copy that exact draft into the active repository plan or archive
-// valid terminal bytes.
+// helper to copy that exact draft into the active repository plan.
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
@@ -229,9 +228,6 @@ async function discoverCandidate(candidate, ctx) {
             },
         };
     } catch (error) {
-        // A plan-looking event leaf that is already absent is the existing benign
-        // no-candidate case for both logical and physical event forms.
-        if (errorCode(error) === "ENOENT") return {};
         return { warning: discoveryWarning(error, "identity", candidate.slug) };
     }
 }
@@ -349,13 +345,11 @@ async function helperPath() {
     return candidate;
 }
 
-function hasExactAcknowledgement(stdout, slug) {
+function hasCopiedAcknowledgement(stdout, slug) {
     if (typeof stdout !== "string") return false;
     const escapedSlug = slug.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const identity = `\\d{4}-\\d{2}-\\d{2}-\\d{4}_${escapedSlug}\\.md`;
-    return new RegExp(
-        `^(?:plan-artifact-copied: \\.agents/plans/${identity}|plan-artifact-archived: \\.agents/plans/archive/${identity})\\n?$`
-    ).test(stdout);
+    return new RegExp(`^plan-artifact-copied: \\.agents/plans/${identity}\\n?$`).test(stdout);
 }
 
 function helperProtocolWarning(stderr, slug) {
@@ -419,7 +413,7 @@ async function synchronize(pi, binding, ctx) {
     if (
         typeof result.stderr !== "string" ||
         result.stderr.trim() !== "" ||
-        !hasExactAcknowledgement(result.stdout, slug)
+        !hasCopiedAcknowledgement(result.stdout, slug)
     ) {
         return warningRecord("sync", "identity", "PLAN_SYNC_ACK_INVALID", slug, "possible-complete");
     }
@@ -440,7 +434,8 @@ export default function planArtifactSync(pi) {
         } catch {
             warnings.push(warningRecord("discovery", "identity", "PLAN_SYNC_UNAVAILABLE"));
         }
-        const message = emitWarnings(ctx, warnings);
-        return warningResultPatch(event, warnings, message);
+        const uniqueWarnings = [...new Map(warnings.map((warning) => [serializeWarning(warning), warning])).values()];
+        const message = emitWarnings(ctx, uniqueWarnings);
+        return warningResultPatch(event, uniqueWarnings, message);
     });
 }

@@ -1,34 +1,16 @@
-# Test value v1
+# Permanent test value
 
-`test-value/v1` is identified by the SHA-256 digest of this file. It is the shared permanent-test decision policy for implementation, explicit TDD, final review, and read-only test audit. It adds no lifecycle stage, test schema, coverage target, or authority to mutate tests outside the current Task Contract.
+This file is the sole permanent-test policy for implementation, rethink, TDD, review, verification, and audit callers. Other contracts may point here; they must not copy or fork its criteria.
 
-## Decision order
+Apply it only to permanent tests changed or proposed for the current task unless an explicit test audit owns a frozen wider portfolio.
 
-Apply these steps in order to every proposed or changed permanent test:
+A permanent test earns its place only when all of these are true:
 
-1. Name the new observable contract, regression, or invariant. If none exists, do not add a permanent test.
-2. Find the closest existing test and prove the new contract is not already covered. Extend or merge before adding another test.
-3. Use the narrowest stable public seam and an oracle independent from the implementation under test.
-4. Name one plausible bug that the test fails on while correct behavior passes.
-5. Reject or consolidate implementation-detail assertions, tautologies, duplicate or subsumed cases, incidental snapshots, coverage-only cases, and tests whose oracle repeats production logic.
-6. Keep the smallest permanent set preserving each unique contract. Comparison artifacts and audit investigation data are not permanent tests.
+1. **Observable value.** Name the externally observable contract, regression, or invariant and one plausible bug the test would catch. If none exists, add no test.
+2. **Uncovered behavior.** Find the closest existing test and determine whether it already defends the behavior. Extend or merge that file before creating another test file; do not duplicate or subdivide equivalent coverage.
+3. **Lowest effective level.** Use the lowest-cost test level that can reliably prove the behavior through a stable public seam and an oracle independent of production logic. Escalate to broader integration or end-to-end coverage only when a lower level cannot observe the contract.
+4. **Determinism and isolation.** Control time, randomness, ordering, environment, and external state. A test must run independently, leave no residue, and remain full-suite-safe without depending on another test's order or output.
+5. **Behavioral evidence.** Reject implementation-detail assertions, source-restating or tautological expectations, private-call choreography, duplicate/subsumed cases, incidental snapshots, coverage-only tests, and expected values computed by the production algorithm under test.
+6. **Smallest durable set.** Keep only the minimum cases needed to defend distinct behavior and meaningful boundaries. Reuse nearby fixtures and utilities; do not perform unrelated cleanup.
 
-A unique path, branch, line, implementation helper, mock interaction, snapshot difference, or increase in coverage is not by itself an observable contract. “The implementation returns what the implementation returns” is not an independent oracle. Preserve boundary, invariant, transition, precedence, and real-error cases when each defends a distinct observable contract.
-
-## Worker accounting
-
-Reuse current tests first. For each changed permanent test, the work Common Handoff records:
-
-- path and selector;
-- the unique observable contract, regression, or invariant;
-- one plausible bug uniquely caught;
-- the stable public seam;
-- the independent oracle;
-- `keep`, `merge`, or `remove` disposition; and
-- exact evidence supporting that disposition.
-
-When permanent tests do not change, record the closest existing coverage and why the implementation adds no uncovered observable contract, or record the concrete no-new-contract basis. Do not add a test solely to create evidence for worker closure, a scanner, a comparison, or a coverage number.
-
-Explicit TDD retains its required red and green evidence while developing the behavior, then merges or removes redundant tracer tests before Handoff. The final permanent set still follows the six-step order; test-first authority does not make every intermediate test permanent.
-
-Final review applies the same value questions to tests changed by the outcome. A read-only audit may recommend `keep`, `merge`, `remove`, or `unknown` under its own bounded protocol, but it does not mutate the suite and never treats `unknown` as deletion authority.
+Settle each changed permanent test as `keep`, `merge`, or `remove`, with the defended behavior and plausible bug. When no permanent test is warranted, record the closest existing coverage or the concrete no-new-contract basis. This policy does not require reading untouched portfolio tests.

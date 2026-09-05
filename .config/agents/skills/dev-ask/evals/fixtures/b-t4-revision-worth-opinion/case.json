@@ -1,6 +1,0 @@
-{
-  "inputs": {
-    "request": "Read-only high-consequence continuation control. REV-WORTH-2 has exhausted attempts 2/2 with PROOF-RECIPE-WF-2 unresolved. Input one says only “Second opinion.” Input two supplies another reviewer opinion but no explicit changed-hypothesis authorization. Both preserve state and dispatch nobody. Input three explicitly authorizes the same plan and target with changed hypothesis “exercise PROOF-RECIPE-WF-2 through a fresh independent oracle,” naming blocked task, remaining criterion, authorizer/time, cycle, and inherited repair state. Create CONT-WORTH-1."
-  },
-  "scripted_replies": []
-}

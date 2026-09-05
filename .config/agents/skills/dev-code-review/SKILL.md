@@ -1,69 +1,95 @@
 ---
 name: dev-code-review
 description: >
-  Run one final read-only Standards and Specification pass on an exact
-  independently verified single-lineage or post-integration target. Skip
-  unverified or moving targets, aggregate blockers without repair, and never let
-  advisories reopen work or combine review with shipping.
+  Run one independent tests-first review of an exact standard- or high-assurance
+  candidate before verification. Account for every changed file, require direct
+  material evidence and executable closure checks, and never rerun after repair.
 ---
 
 # Engineering Code Review
 
-Own one final read-only Standards and Specification verdict for one immutable verified target when the assurance profile requires review. Compact is ineligible. Review never repairs, runs `worker-closure/v1`, performs audit work, dispatches learning, or ships.
+Own one read-only review of one exact candidate before its independent verifier. Review runs once for standard or high assurance; compact work is ineligible. It never repairs, mutates, executes acceptance checks, ships, or reruns after a repair.
 
 ## Intake
 
-Require the exact target identity; current `VERIFIED` Handoff and criterion evidence; target kind `final single-lineage | integrated with post-integration VERIFIED`; parent `OUT-...` and exact `AC-...` identities; inherited two-attempt and run-wide post-assurance repair state; current review identity and any prior review receipt for a repaired target; immutable standard or high-consequence profile and arrangement; verifier identity; governing requirements, specification, ticket, Task Contract, and Common Handoff revisions; backend-validated once-bound applicable-project-rule and target manifests; and every finite current consumer/callsite map.
+Require:
 
-Require the verifier's exact canonical `surface-proof-recipe/v1` identities, each recipe's target and adapter binding, current adapter-tree identities when present, and doctor receipts as readiness provenance only. Require [`../dev-implementation/references/test-value.md`](../dev-implementation/references/test-value.md) and its exact `test-value/v1` digest for every permanent test changed by the outcome.
+- the exact candidate revision or working-tree snapshot and environment;
+- the governing requirements, acceptance, constraints, non-goals, and applicable project rules;
+- the complete changed-file list for that candidate, including changed tests, generated files, and deletions;
+- the semantic attempt number and whether attempt 2 remains available;
+- the responsible implementation owner; and
+- the intended independent verifier.
 
-Return `INCONCLUSIVE` for compact; a stale, partial, unverified, moving, or unnamed target; omitted, rebuilt, extended, stale, mismatched, contradictory, or unvalidated manifests; incomplete finite-consumer proof; missing prior review or repair-impact evidence for a repaired target; duplicate review on the same immutable target; or any other ineligible input. Contradictory governing authority that makes expected behavior indeterminate returns `INCONCLUSIVE` to the authority owner without blocker/advisory classification, repair authority, or completion.
+The review must precede verification. Missing or contradictory authority, an unstable target, an incomplete changed-file boundary, or unavailable evidence needed to decide correctness produces `INCONCLUSIVE`; it does not authorize inference or repair.
 
-Review consumes verified evidence and executes zero criterion proof recipes. It never turns a doctor receipt, worker smoke, or verifier conclusion into either review axis.
+At the start, read and follow [`references/review-rethink.md`](references/review-rethink.md). It is the read-only wrapper for the installed code and test rethink cores. Do not copy their policy into this skill.
 
-## Procedure
+## One review pass
 
-1. Recheck every authority, target, verification, integration, assurance, identity, repair, prior-review, finite-consumer, recipe, adapter, and once-bound manifest entry against current bytes. A changed load-bearing input outside an accepted repair impact map returns `INCONCLUSIVE`. Never rebuild a manifest or infer authority, lineage, or evidence reuse from filesystem discovery.
-2. Confirm that the immutable assurance arrangement requires review. Standard uses a reviewer identity distinct from the verifier. High-consequence uses decorrelated non-implementer identities, fresh contexts, and role-specific Context Packs; use different equivalent Role Profiles or model families when available and disclose any same-model residual.
-3. Review **Standards** independently: correctness, security, privacy, data-loss/regression risk, project rules, maintainability required by those rules, evidence completeness, and this in-pass complexity lens:
+Inspect the entire changed-file boundary once, in this fixed order:
 
-   | Primary tag | Evidence-backed replacement |
-   |---|---|
-   | `delete` | remove unnecessary code or artifact while preserving the full contract |
-   | `reuse` | use an existing local helper or pattern |
-   | `stdlib` | use an applicable standard-library facility |
-   | `native` | use a native platform facility |
-   | `yagni` | remove speculative behavior or generality absent from authority |
-   | `shrink` | use a smaller direct implementation when no more specific tag applies |
+1. **Tests.** Read changed tests first. Identify the observable behavior they claim to protect, gaps that can hide a changed behavior, and assertions that could pass while the product is wrong.
+2. **Contract and correctness.** Trace the approved success, boundary, error, and state-transition behavior through changed code and callers. Check every requirement, invariant, constraint, scope boundary, and preserved behavior affected by the change.
+3. **Changed-test value.** Apply the sole permanent-test policy referenced by the test rethink core to every changed permanent test. Record `keep | merge | remove` and its required policy basis. A changed test requires repair only when direct evidence shows that it creates material false confidence in the permanent suite.
+4. **Readability, ownership, reuse, and architecture.** Apply the code rethink core. Prefer the existing owner and local pattern, and flag structure only when evidence ties it to a governing rule, invariant, or observable failure. Otherwise omit it or make it advisory.
+5. **Security and performance, when relevant.** Inspect these only where the changed behavior, data, trust boundary, resource use, governing authority, or direct evidence makes them relevant. Security, privacy, data-loss, or contract-bound performance risk may require repair; speculation does not.
 
-4. Review **Specification** independently: every governing requirement, acceptance criterion, interface, migration, constraint, non-goal, approved scope boundary, and compatibility/degraded-behavior contract.
-5. The original-initial is the one whole-scope discovery pass. Seal every finding lineage by violated contract or invariant; trigger and expected/observed predicate; observable consumer or affected parent `AC-...`; causal boundary; finite current consumers when applicable; and originating target/evidence identity. Paths are evidence, not identity.
-6. On a repaired immutable target, review closure of every remaining sealed lineage and every surface reached by the accepted repair impact map. Reuse prior review evidence only for byte-, authority-, contract-, and dependency-identical unaffected surfaces. A repair-caused regression requires the exact repaired revision, changed bytes or contract delta, accepted impact-map edge, observable failure path, and fresh affected proof.
-7. Apply `test-value/v1` to every changed permanent test. Require a unique observable contract, regression, or invariant; closest-existing-test comparison; stable public seam; independent oracle; one plausible unique bug; and `keep | merge | remove` disposition. Reject duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, and production-logic-oracle tests. Classify a directly evidenced defect as blocking only when it materially degrades the permanent suite; otherwise retain it as an advisory.
-8. Deduplicate every stable lineage and finding ID. Aggregate `APPROVED` requires both axes `PASS`, every prior lineage closed, no repair-caused blocker, no direct fixed-contract or changed-consumer blocker, no materially degrading changed-test blocker, no disjoint outcome-relevant blocker, and valid unchanged-surface reuse.
+Account for every changed file exactly once in a table with:
+
+```text
+path | role in the change | axes inspected or not applicable | required finding IDs, advisory IDs, or clear
+```
+
+A deleted file is still a row. `Not applicable` must name why the axis cannot affect that file. An omitted, duplicate, or unexplained file makes the review `INCONCLUSIVE`.
+
+## Finding bar
+
+A finding is **required** only for direct evidence of at least one of:
+
+- an observable behavior or invariant failure;
+- a security, privacy, or data-loss risk;
+- a violation of governing scope, requirements, or project rules; or
+- a changed permanent test that creates material false confidence.
+
+Taste, nits, optional architecture, file or line counts, mandatory praise, and unrelated cleanup are advisory or omitted. Performance is required only when direct evidence establishes a violated requirement or observable invariant. Do not turn a preference, unsupported suspicion, or possible future issue into repair work.
+
+Every required finding uses a stable ID and all of these fields:
+
+```text
+ID: CR-<number>
+Location: <exact path and line, symbol, or deleted surface>
+Violated requirement/rule/invariant: <exact authority>
+Direct evidence: <observed or static causal evidence>
+Smallest safe correction: <bounded change that closes only this finding>
+Behavior: <observable closure condition>
+Check: <command or direct static proof>; expect <exact result>
+```
+
+The final two lines are the direct closure check and must use that grammar exactly. The reviewer does not run it. Advisories are labeled `Advisory`, cite evidence, and carry no repair or closure obligation.
 
 ## Verdict
 
-```text
-Standards: PASS | FAIL | INCONCLUSIVE
-Specification: PASS | FAIL | INCONCLUSIVE
-Overall: APPROVED | CHANGES REQUIRED | INCONCLUSIVE
-```
+Emit exactly one overall verdict:
 
-`APPROVED` requires both axes `PASS`. Any axis `FAIL` yields `CHANGES REQUIRED`; any axis `INCONCLUSIVE` yields overall `INCONCLUSIVE` unless another axis already establishes a blocking failure. Verifier receipts are inputs, never the review verdict, and cannot substitute for either axis.
+- `APPROVED` — the target and authority are sufficient, every changed file is accounted for, and there are no required findings;
+- `REPAIR REQUIRED` — at least one complete required finding meets the materiality bar; or
+- `INCONCLUSIVE` — the review cannot reach a reliable material verdict from the fixed boundary and available evidence.
 
-## Finding policy
+Do not emit another verdict vocabulary or combine `INCONCLUSIVE` with approval. Advisories never change `APPROVED` to `REPAIR REQUIRED`.
 
-A same-outcome blocker requires direct behavioral or direct static evidence that an existing parent `AC-...`, exact fixed contract, or observable changed-contract consumer is broken. Map it to affected parent criteria, or to `affected AC: none` plus its exact fixed contract and consumer. A changed permanent-test finding may block only with direct evidence that it materially degrades the permanent suite. Incomplete closure of a sealed lineage and directly proved repair-caused regressions may enter the single eligible consolidated repair. A changed hypothesis alone is not causal evidence.
+## One clarification, never a rerun
 
-Structural preference without direct parent/fixed-contract/consumer harm and non-material changed-test concerns are terminal advisories. Disjoint non-outcome observations are terminal advisories. Independently serious safety returns separate-authority intake. A disjoint outcome-relevant non-safety defect stays blocking and returns `authority-change-required` to the outcome authority; it never silently expands the parent repair. Path presence, prose or metadata form, frontmatter form, scanner-string equality, stale adjacent explanation, self-referential consistency assertions, mutable sidecar drift, and unsupported suspicion alone are advisory; direct evidence that an exact fixed contract or consumer is broken is not reduced to form.
+The controller may ask the same reviewer once to complete missing fields or direct evidence from the reviewer's existing discovery. The clarification may complete an already named finding, advisory, or changed-file row and may resolve an output-format omission. It cannot inspect a new target, add a finding, change the scope, restart discovery, or perform a second review.
 
-## Review Handoff
+A second incomplete response, a lost reviewer, or an unchanged `INCONCLUSIVE` stops the route. A repaired target goes directly to the verifier; the reviewer never sees it. A false-positive required finding may therefore consume attempt 2 and is prevented by the materiality and evidence bar, not by another review loop.
 
-Use the Common Handoff and add the parent outcome and exact criteria; immutable target and target kind; authority and evidence identities; assurance profile; repair state; current and prior review identities; validated manifests and recipe/adapters; finite-consumer proof; verifier/reviewer identities and separation; both axis verdicts and aggregate verdict; every stable lineage and finding with classification, causal evidence, affected criteria or fixed consumer, and current disposition; `test-value/v1` identity and each changed-test disposition; terminal advisories and residual risk; exact next receiver.
+## Handoff and next owner
 
-`CHANGES REQUIRED` for incomplete existing or directly evidenced repair-caused lineages returns to `dev-implementation` only while the run-wide repair token remains eligible. A disjoint outcome-relevant finding returns `authority-change-required`; serious safety returns separate-authority intake; authority conflict returns to its owner. `APPROVED` returns to the backend's existing learning boundary. Emit exactly one Handoff.
+Return one lean `dev-handoff` envelope. In `Outcome`, include the verdict, complete changed-file accounting, required findings, and advisories. `Changed targets/effects` is `none; read-only review`. In `Checks`, reproduce every required finding's closure check and record `Observed: not run by reviewer; assigned to verifier`. Name uncertainty or the exact stop in `Blocker/risk`.
 
-## Stop and next owner
+- `APPROVED` goes to the independent verifier with every original acceptance check.
+- `REPAIR REQUIRED` goes to the responsible implementation owner only when attempt 2 remains. After that owner's same-worker rethink and repair, the target goes directly to the same intended verifier with the original acceptance checks and every review closure check.
+- `REPAIR REQUIRED` without attempt 2, or a terminal `INCONCLUSIVE`, stops with completed work preserved.
 
-Stop for compact intake, stale or insufficient proof, unavailable governing authority, changed target, invalid manifest or adapter identity, incomplete finite-consumer proof, missing repaired-target lineage/impact/reuse evidence, duplicate same-target review, or any attempt to repair, run worker closure, or mutate tests. Review one current immutable target exactly once. A repaired identity receives fresh impacted proof and one fresh review; it is not another review of the old target.
+Never route a repaired target back to review.

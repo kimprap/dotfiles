@@ -1,116 +1,99 @@
-# Executor plans and orchestration
+# Lean plans and orchestration
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-08-29
+**Updated:** 2026-09-05  
 **Decision IDs:** D06, D08, D09, D21, D29
 
 ## Scope
 
-This decision governs the portable semantic shape of executor plans, parent-orchestrator capability binding, task/context projection, route-to-todo presentation, terminal plan archive ordering, and implementation-worker solution discipline for the generic engineering workflow. It applies to the plan rules and transports, `dev-implementation`, `dev-handoff`, and the current workflow reference. It does not authorize a new lifecycle skill, provider purchase or fallback, execution mutation, approved-scope reduction, or a second runtime state machine.
+This record governs the generic engineering workflow's implementation controller, lean repository-plan grammar, child task scheduling, direct checks, same-child rethink, plan lifecycle, and active-path persistence. It applies to the plan rules and validator, repository and harness transports, `dev-implementation`, `dev-handoff`, and the human workflow projections. It creates no product, mutation, delivery, or shipping authority.
 
 ## Context / problem
 
-Large, approved work needs enough structure that a fresh or less-capable executor can act without rediscovering intent, acceptance, ownership, sequencing, or recovery. At the same time, a plan must remain a projection of approved authority rather than become another control plane. Full orchestration needs truthful launch-time evidence that the current parent can preserve global intent, decompose work, bind exact contracts, supervise bounded concurrency, and account completion. Skill prose cannot upgrade a model or manufacture missing provider capabilities. The human-facing todo view must expose required assurance without mirroring every route owner or pretending that implementation alone is completion. A plan that becomes terminal in the current run also needs its existing exact-byte archive postcondition settled before caller output, without making storage an approval, semantic-completion, or presentation owner. Once approved behavior is fixed, the worker also needs an explicit existing seam for choosing the simplest sufficient implementation without using simplicity to weaken the contract.
+Cross-owner work needs enough durable structure for dependency scheduling, exact ownership, recovery, and objective completion without turning a plan into a second runtime. A controller must preserve global intent while every code-changing task remains child-owned. Plans also need one unambiguous active location across their whole lifecycle; lifecycle state should not trigger a storage move or become a presentation gate.
 
 ## Decisions
 
-### D06 — Orchestrator binding
+### D06 — Implementation controller binding
 
-- **Scope:** Approved parser-valid implementation Executor Plans under a capable native shared-tree transport.
-- **Decision:** Every approved parser-valid implementation plan launches through `assess-plan-backed` and requires `full-orchestration` with profile `downgrade` exactly `none`. The root validates, binds, schedules, dispatches, observes, controls, recovers, mechanically accepts bounded Handoffs, performs lifecycle/papercut bookkeeping, schedules the backend, invokes and validates the existing terminal archive operation as mechanical lifecycle bookkeeping when the current run owns the terminal transition, and prepares settled presenter input. It performs no semantic task, repair, task smoke, worker closure, audit opinion, or semantic review.
-- **Decision:** Fresh children own authored semantic work. `Max concurrency` is a ceiling. `PROMOTE-SERIAL-DEFAULT` sets runtime concurrency one by default within full orchestration and makes no general efficiency claim. It is not a sequential-child profile or fallback.
-- **Decision:** Planless/direct assessment retains the existing generic `one-owner-sequential` compatibility behavior. A plan transport mismatch returns `transport-unavailable`; it never authorizes root work.
-- **Why:** Exact root/child separation preserves bounded context, fresh ownership, independent assurance, and mechanical recovery without adding another orchestrator.
-- **Rejected alternatives / why not:** Plan-root semantic execution, a sequential-child plan mode, or root rescue after transport failure makes topology depend on task count or capability and lets the coordinator judge its own work.
-- **Consequences:** Planned compact work also dispatches child work while remaining tail-free. Native dispatch, hub control, existing Context Packs, Common Handoffs, and artifact locators remain the only orchestration substrate.
-- **Reopen when:** Native transport can no longer preserve fresh child ownership, shared-tree operation, same-child control, or exact artifact identity.
-### D08 — Executor plan shape
+- **Decision:** One `dev-implementation` parent controls an approved outcome. It validates intake, schedules dependency-ready work, enforces exact path and effect ownership, sends the single rethink wrapper to the same child, mechanically accepts lean Handoffs, dispatches assurance and learning, and updates plan lifecycle.
+- **Decision:** Every code-changing task, repair, and authored fan-in belongs to a child. The parent never implements, semantically repairs, or chooses a winner during integration. If native child transport cannot preserve owner, dependencies, effects, attempt, and receiver, stop `transport-unavailable`.
+- **Why:** Separating control from semantic work preserves ownership and makes failure recovery explicit.
+- **Rejected alternatives:** Parent implementation, hidden rescue work, and weakened sequential substitutions collapse the controller and worker roles.
+- **Consequences:** Mechanically disjoint ready tasks may run concurrently; overlap, ordered effects, exclusive resources, and fan-in serialize.
+- **Reopen when:** Native child transport or controller ownership changes.
 
-- **Scope:** Durable repository Executor Plans plus runtime scheduling and transfer in the live shared tree.
-- **Decision:** Preserve Executor Plan v1 and its parser-valid task graph, compact work-only plans, optional profile tail, isolated lineages, generic fan-in, `complete.md`, and `fan_in.md`. `plan.md` remains workflow-agnostic; implementation-specific admission belongs to `plan-impl-spec.md`.
-- **Decision:** Any approved parser-valid implementation plan enters plan orchestration regardless of assurance profile or task count. `Topology`, `Lineages`, `Isolation`, and `Fan-in` describe authored proof boundaries and never grant the root semantic task ownership.
-- **Decision:** Runtime admission uses exact declared target/effect ownership. Mechanically disjoint ready tasks may overlap; declared overlap, unknown overlap, or exclusive resources serialize. Undeclared mutation stops the child. A portable fan-in plan remains structurally valid; if live transport cannot preserve declared isolation or neutral integration, stop `transport-unavailable` instead of weakening the graph. Direct `dev-integration` remains unchanged.
-- **Decision:** Project the unchanged Task Contract, owned criteria/proof recipes, exact authority/private-reference identities, dependency Handoffs, target/effect boundary, attempt/repair state, applicable continuation receipt, bounded environment facts, and native locators through the existing Context Pack. Do not create another context/result envelope or transcript projection.
-- **Why:** Portable semantics and runtime admission solve different problems. Keeping them separate preserves reusable plans while safely operating in one shared tree.
-- **Rejected alternatives / why not:** Banning fan-in or isolation from the grammar weakens portability. Treating grammar validity as permission to overlap unknown writes weakens safety. A second context schema duplicates the existing transfer contract.
-- **Consequences:** Plan validation stays stable. Scheduler timing changes cannot change task contracts or proof boundaries.
-- **Reopen when:** Executor Plan grammar versioning, runtime isolation, target/effect ownership, or the existing transfer surface changes.
-### D09 — Todo projection
+### D08 — Lean plan shape
 
-- **Scope:** Projection of an approved Executor Plan into scheduler state, attempts, proof accounting, assurance, and completion.
-- **Decision:** The root projects only authored task IDs and declared backend boundaries. It computes dependency readiness, shared-tree admission, attempts, blockers, and receiver transitions mechanically; it never invents, splits, merges, substitutes, or semantically repairs a task.
-- **Decision:** Todo state is subordinate runtime bookkeeping, not a second plan. A task completes only after its owned criteria and smoke pass, target identity is stable, one Common Handoff is mechanically accepted, and its post-Handoff papercut look is accounted. Non-success preserves completed Handoffs and the exact remaining frontier.
-- **Decision:** When the numbered graph omits an optional assurance tail, the backend schedules fresh current-target `dev-verification`, then one current-target `dev-code-review`, then terminal `dev-continual-learning`. If the plan authors the optional tail, those same semantic boundaries run exactly once through the task graph.
-- **Decision:** Successful normal engineering completion is terminal. A later explicit portfolio audit is a new router intake; it is never a projected task, hidden tail, completion transition, or source of task, assurance, repair, or `DONE` state.
-- **Decision:** When the root initially validates `PENDING` or `IN_PROGRESS` and the same run produces parser-valid `DONE` or human-authorized `CLOSED`, it completes the applicable terminal bytes, reaches the existing exact-byte archive postcondition, and only then permits the corresponding caller output. Archival is mechanical bookkeeping, not a projected task or hidden tail.
-- **Why:** One authoritative plan plus derived mechanical state is enough for scheduling and recovery.
-- **Rejected alternatives / why not:** A generated hidden tail, invented repair task, second runtime plan, or automatic audit transition changes authored authority. Letting the root judge semantic sufficiency collapses ownership and assurance.
-- **Consequences:** Completion and recovery can be audited against plan IDs, Handoffs, target identities, and proof receipts without inspecting child transcripts. Explicit later audits remain outside plan state.
-- **Reopen when:** Runtime projection, optional-tail semantics, backend scheduling, or terminal completion semantics change.
-### D21 — Worker solution discipline
+- **Decision:** A repository plan contains the fixed header and only `Outcome and authority`, `Scope and effects`, `Tasks`, `Acceptance`, `Recovery and stops`, plus `Completion Summary` only when `DONE`.
+- **Decision:** Each task has one stable monotonic `T*` ID, one child owner, dependencies, unique exact targets, acceptance IDs, and one receiver. Each acceptance item has one stable `AC-*` ID and exactly:
 
-- **Scope:** Planless same-context work, plan-backed task children, eligible attempt-two children, admitted Build-repair workers, and permanent-test decisions.
-- **Decision:** Resolve the task against its unchanged Task Contract using the first sufficient rung: reuse current code, then the standard library, then the native platform, then an installed dependency, then minimum new code. Delete obsolete paths in the same cutover without reducing approved behavior, preservation, safety, accessibility, or proof.
-- **Decision:** Each of the four semantic work shapes uses `worker-closure/v1` in the same semantic owner after a candidate and before task-local smoke and one Common Handoff. The sole exact prompt in `worker-closure.md` makes round one cover correctness, preservation, declared effects, owned acceptance, the first-sufficient ladder, candidate-local structural regression, and every changed permanent test or a concrete no-new-contract decision.
-- **Decision:** Admit and repair every directly evidenced correctness, preservation, effect, or owned-acceptance violation even when the smallest correct repair adds code or complexity. Admit a simplification, structural, or permanent-test quality correction only when it names the exact surface and defect, an exact earlier-rung or smaller replacement or test disposition, and preservation proof; otherwise record no quality correction and do not turn the proposal into a correctness blocker.
-- **Decision:** Any actual admitted correction triggers exactly one round two limited to corrected findings and plausible correction-caused regressions. No correction skips round two; no branch runs a third round or reopens unaffected candidate work. Settle changed permanent tests under unchanged `test-value/v1`, or record the concrete no-new-contract basis, before final smoke and the sole Handoff. Untouched portfolio tests are outside closure.
-- **Why:** Mandatory bounded challenge at the semantic worker catches contract omissions without turning the mechanical root or independent assurance roles into repair owners. Exact quality admission and task-local test settlement prevent speculative rewrites and unbounded portfolio review.
-- **Rejected alternatives / why not:** Root-conducted challenge violates the control-plane boundary. A complexity gate on correctness can suppress required repair; blanket quality admission, copied prompts, untouched-suite scanning, or unbounded review rounds prevent safe terminality.
-- **Consequences:** Each work Handoff identifies the exact closure digest, rounds, findings, corrections, dispositions, final smoke, and changed-test rows or concrete no-new-contract decision.
-- **Reopen when:** Closure ownership, applicability, admission, round bound, solution discipline, smoke/Handoff order, or shared permanent-test policy changes.
+  ```text
+  Behavior: <observable>
+  Check: <command or direct static proof>; expect <exact result>
+  ```
 
-### D29 — Terminal plan archive boundary
+- **Decision:** The validator checks lifecycle, ordered sections, unique IDs, dependency acyclicity, target and criterion ownership, direct-check grammar, terminal checkboxes and completion records, and a nonempty terminal summary. It derives transient parse state and returns no plan digest.
+- **Why:** These are the durable facts a fresh executor needs; everything else belongs to runtime.
+- **Rejected alternatives:** Target identity tables, generated task metadata, assurance-tail tasks, and transport receipts duplicate controller state and obscure the human outcome.
+- **Consequences:** The active validator accepts only the lean format. Existing archived plans remain historical data and are not compatibility input.
+- **Reopen when:** A fresh executor cannot act safely from this grammar or the ownership model changes.
 
-- **Scope:** Repository Executor Plans that the current implementation root first validates as `PENDING` or `IN_PROGRESS` and that the same run changes to parser-valid `DONE` or, with explicit human cancellation authority, `CLOSED`; planned completion normalization and cancellation-close output; already-terminal intake and planless compact exclusions.
-- **Decision:** The current-session trigger is established only by the root's initial exact validation and the terminal transition owned by that same run. Do not persist a marker, scan or reconcile terminal files, infer ownership from time or repository state, or run a historical sweep. Intake already at `DONE` or `CLOSED` performs no archive lookup or action, and planless compact performs no repository-plan lookup, archive action or receipt request, or synthetic-plan creation.
-- **Decision:** For `DONE`, all semantic work, worker smoke, Handoffs, papercut accounting, all applicable required assurance, review, and learning, task and criterion records, Completion Summary, `Completed At`, and parser-valid terminal bytes settle before the existing archive operation. Only a validated archive postcondition then permits completion normalization and the unchanged presentation. For current-session `CLOSED`, explicit human cancellation authority produces parser-valid terminal bytes without `Completed At` or a Completion Summary; the same archive postcondition precedes one cancellation-close report, and completed presentation remains forbidden.
-- **Decision:** Storage success requires the active identity path to be absent and the archive identity path to be a regular non-symlink file byte-identical to the exact parser-valid terminal snapshot. A current successful adapter archive result may satisfy that postcondition without a second action. Storage remains non-authorizing and insufficient as semantic completion evidence, but it is necessary before terminal caller output.
-- **Decision:** Planned `resume_from` uses only the identity-derived archive path, literal `@sha256:`, the lowercase SHA-256 of the exact archived terminal bytes, and `#completion-summary`. Both paths present, a divergent archive, parser-invalid terminal bytes, unsafe file kind, source or target drift, and an uncertain postcondition remain visible storage blockers: preserve exact paths, kinds, and bytes; do not overwrite, blindly retry, continue semantic work, emit a second Handoff, present completion, or issue cancellation close.
-- **Why:** Reusing the existing archive operation closes the durability gap between terminal lifecycle state and caller output while preserving separate authority for semantic settlement, presentation, storage mechanics, and shipping.
-- **Rejected alternatives / why not:** Presenter-owned archival gives an effect to the renderer; a new helper, protocol, receipt, stage, task, or runtime ledger duplicates existing storage and lifecycle seams; active-terminal presentation leaves the durable recovery locator unsettled; terminal-file scans or historical reconciliation infer current-run ownership; overwrite or retry policies weaken conflict preservation.
-- **Consequences:** The root may perform one bounded non-task archive action after terminal bytes settle, planned recovery is archive-only, cancellation closes only after archival, and already-terminal or planless intake stays mutation-free. Archive failure stops terminal output without reverting terminal bytes speculatively or reopening semantic work.
-- **Reopen when:** Repository-plan identity or exact-byte archive mechanics change, callers can no longer establish the current-session transition from their bound validation state, terminal caller ownership changes, or a different durable postcondition is explicitly authorized.
+### D09 — Mechanical task projection
+
+- **Decision:** Project authored task IDs, owners, dependencies, targets, acceptance IDs, and receivers exactly. Do not add, split, merge, substitute, or hide work.
+- **Decision:** A task becomes ready only when all dependencies have accepted Handoffs and its target/effect boundary does not conflict with active work. Undeclared mutation stops the task while completed independent work remains preserved.
+- **Decision:** Check a task and add its immutable completion record only after its same-child rethink, direct checks, lean Handoff, and papercut accounting complete. Check an acceptance item only after its exact expected result is observed.
+- **Decision:** Review, verification, learning, manual audit, shipping, and presentation are lifecycle owners, not authored implementation tasks.
+- **Why:** One authoritative task graph plus derived scheduler state is enough.
+- **Rejected alternatives:** Hidden tails, invented repair tasks, and controller-authored semantic changes expand authority during execution.
+- **Consequences:** Recovery can resume from the active plan and accepted Handoffs without a second plan or state ledger.
+- **Reopen when:** Readiness, completion accounting, or task projection changes.
+
+### D21 — Same-child rethink and test value
+
+- **Decision:** After an implementation candidate, the parent explicitly sends `.config/agents/references/impl-rethink/impl-rethink.md` to the same child. The wrapper applies code rethink, then test rethink. The child may make one correction, runs all owned direct checks and the changed path, and emits one lean Handoff. There is no second self-rethink.
+- **Decision:** The code rethink preserves approved behavior and safety, traces edge, error, and state paths, reuses existing owners and local patterns, and chooses the lowest total lifecycle cost among eligible solutions. It never treats fewer files or lines as improvement when decisions or indirection increase.
+- **Decision:** `dev-implementation/references/test-value.md` remains the sole permanent-test policy. Reuse the closest existing test file, test at the lowest effective level, and keep tests deterministic and isolated. If a production seam existed only for tests that the policy now rejects, remove it unless runtime behavior or architecture still justifies it.
+- **Why:** One bounded same-owner challenge catches omissions without adding another repair role or duplicating test policy.
+- **Rejected alternatives:** Repeated self-review, separate closure rounds, copied test policy, source-restating tests, and an ablation ceremony create more process without stronger behavioral evidence.
+- **Consequences:** Attempt 1 includes candidate, rethink, optional correction, direct checks, and Handoff. Assurance and audit roles never perform this rethink.
+- **Reopen when:** Rethink ownership, order, correction bound, or permanent-test policy ownership changes.
+
+### D29 — Active plan lifecycle and persistence
+
+- **Decision:** Use exactly `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED`. Set `IN_PROGRESS` before the first implementation dispatch. `DONE` requires every task and acceptance item checked, every task completion record present, assurance settled, `Completed At`, and a nonempty final Completion Summary. `CLOSED` requires explicit stop authority and has neither `Completed At` nor Completion Summary.
+- **Decision:** `.agents/plans/<Datetime>_<slug>.md` is the sole execution, update, continuation, and completion source for every lifecycle state. OMP and other local-draft adapters validate and copy exact bytes atomically to that active path for all four states.
+- **Decision:** Completion leaves the plan `DONE` at the active path. Automatic archive creation, active-path removal, archive receipts, and archive postconditions are absent. Existing identity-matching archives are read-only conflict surfaces; storage preserves them and stops rather than overwriting.
+- **Why:** One stable locator simplifies execution and recovery while keeping storage separate from semantic completion.
+- **Rejected alternatives:** Lifecycle-triggered moves and archive-only recovery split the authoritative path and make storage a completion gate.
+- **Consequences:** Presentation cites the current active `DONE` plan. Historical archives remain untouched and readable but never become current execution input.
+- **Reopen when:** Repository-plan identity, lifecycle, exact-byte storage, or active-path ownership changes.
 
 ## Affected contracts
 
-- `.config/agents/rules/plan.md`, `.config/agents/rules/plan-impl-spec.md`, `.config/agents/rules/plan-repo-storage.md`, `.config/agents/rules/plan-omp-transport.md`, and `.config/agents/rules/plan-grok-transport.md` for portable grammar, repository storage, and thin authoring adapters.
-- `.config/agents/skills/dev-implementation/SKILL.md`; `.config/agents/skills/dev-implementation/scripts/executor_plan.py` as the one context-free repository-plan parser; its fixtures/tests; and unchanged `.config/agents/skills/dev-implementation/references/orchestrator-role-profile.md` plus its assessor/tests.
-- `.config/agents/skills/dev-handoff/SKILL.md` for Task Contract, Context Pack, progress, recovery, and one-receiver fields.
-- `.config/agents/rules/plan-omp-transport.md` for OMP native approval and per-mutation local-draft copying; `.config/agents/rules/plan-grok-transport.md` for Grok discovery and direct repository authoring; and `.config/agents/rules/plan-repo-storage.md` for exact-byte, conflict-preserving terminal storage that remains non-authorizing but is required before terminal caller output.
-- `.config/agents/skills/dev-ask/WORKFLOW.md`, `.config/agents/skills/dev-ask/evals/evals.json`, and targeted todo, validator, transport, worker-discipline, and parent-profile fixture directories.
-
-These current executable/documentation contracts and this ACTIVE ADR are synchronized under the approved plan authority. The ADR remains semantic decision authority rather than a planner, transport, or runtime ledger.
+- `.config/agents/rules/plan.md`, `plan-impl-spec.md`, `plan-repo-storage.md`, `plan-omp-transport.md`, and `plan-grok-transport.md`.
+- `.config/agents/skills/dev-implementation/SKILL.md`, `references/plan-orchestration.md`, `references/test-value.md`, and `scripts/executor_plan.py` with its existing tests and fixtures.
+- `.config/agents/references/impl-rethink/**`, `dev-handoff`, the plan copy helper and OMP extension, and human workflow projections.
 
 ## Evidence / source revisions
 
-- Governing authority: `local://dev-workflow-convergence-refinement-plan.md`, Datetime `2026-08-09-1616`, especially **Human-confirmed governing decisions** D06, D08, and D09; **Fixed shared contracts**; **Target map and critical anchors**; **Canonical discovery and continual learning**; **Material approval boundary**; and T3's task contract. The plan authority declares `revision: null`; no unobserved commit revision is asserted here.
-- D21 durable-write authority: `local://dev-workflow-routing-simplicity-decisions.md`, SHA-256 `ef2ac3ddd04239e1c055f25439d81f58f8ec503777c4fa691a3443abe83823be`, explicitly confirmed by the user.
-- D21 research evidence: official [`DietrichGebert/ponytail` commit `2ed6c52c9d7e5e56942508591085fd45dea277d3`](https://github.com/DietrichGebert/ponytail/commit/2ed6c52c9d7e5e56942508591085fd45dea277d3), especially pinned [`skills/ponytail/SKILL.md`](https://github.com/DietrichGebert/ponytail/blob/2ed6c52c9d7e5e56942508591085fd45dea277d3/skills/ponytail/SKILL.md); the reuse/stdlib/native/already-installed-dependency ladder is consumed only at the existing worker seam, while upstream scope-reduction and proof-ceiling semantics are rejected.
-- Superseded transport-correction evidence, retained as historical evidence and not current authority: user-approved Route Overview on 2026-08-10 for defect `DEF-3d1e57d746cea524b96d0e8f9cfd7216fac44c5b34528292aaf3edd0d0bbde27`, which required native OMP approval, byte-exact local lifecycle mirroring, and automatic projection-only archival without separate approval. Current repository-execution correction authority is `AUTH-RCP-REVISION-20260824` in `.agents/plans/2026-08-22-1603_repository-canonical-plans.md`, approved at SHA-256 `8f10f0797f45a4dd5493cb062ea2dd2db2cce5ad8fcba3cf2271b5b5cb00354e`.
-- D08 live-runtime hardening authority: the user's explicit 2026-08-25 approval of a strict current-only versioned helper protocol, persistent synchronization-failure evidence, a live-version-skew regression, and distinct-slug concurrency with one writer per slug.
-- D29 durable-write authority: `local://portable-terminal-archive-plan-creation-handoff.md`, SHA-256 `9a00d9a3c8dfb12fabb08046472330c5fbe8681329d75cce495f28737456ee1f`, revision `AUTH-ARCH-PLAN-20260829-R1`, as projected by the approved terminal archive plan.
-- Cursor, [Agent swarms and the new model economics](https://cursor.com/blog/agent-swarm-model-economics), accessed 2026-08-09: capable-parent intent retention, narrow worker context, explicit ownership, and outcome grading inform the plan; hundreds-agent defaults, recursive trees, custom VCS, an agent-owned always-injected Field Guide, unlimited stacked reviews, and model-specific policy are rejected.
-- Cursor, [official plugins and curated skills](https://github.com/cursor/plugins), including `orchestrate`, accessed 2026-08-09: explicit roles and structured returns inform orchestration; recursive subplanners, ordinary isolated cloud trees, and planner-publication-owned completion do not.
-- Anthropic, [How Anthropic runs large-scale code migrations with Claude Code](https://claude.com/blog/ai-code-migration) and [code-migration kit](https://github.com/anthropics/code-migration-kit-with-claude-code), accessed 2026-08-09: deterministic dependency maps and cheap early feedback inform executor structure; provider settings are not portable semantic policy.
-- PostHog, [Writing skills](https://posthog.com/handbook/engineering/ai/writing-skills) and [What nobody tells you about writing agent skills](https://newsletter.posthog.com/p/what-nobody-tells-you-about-writing), accessed 2026-08-09: progressive disclosure and one source of truth support layered plans; skill proliferation and duplicated volatile facts are rejected.
-- Atlas references named by the governing plan are advisory evidence only and are not copied into the portable contract.
-- Executable lineage revisions: completed T3 final Handoff `agent://ExecutorOrchestration`; T5 adapter, fixture, workflow, and affected-contract synchronization under `AUTH-PLAN`, with exact final identity returned to T6.
+- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Earlier plan and transport records remain historical support where consistent with this clean cutover.
+- The prompt-bundle `MAINTENANCE.md` is provenance only; executable prompt files own rethink behavior.
 
 ## Human authority
 
-The human-confirmed D01-D09 choices and derived D10-D15 invariants in the T1-authorized plan, the exact confirmed D21 evidence artifact above, and `AUTH-ARCH-HUMAN` revision `AUTH-ARCH-PLAN-20260829-R1` for D29 are the authority for this record. The parent execution dispatch authorizes only the D06/D09/D29 terminal archive cutover and the previously authorized D06/D08/D09/D21 materialization. It does not authorize storage-mechanics, parser, presenter, Handoff-schema, adapter/helper/protocol, model or credential effects, new lifecycle skills, topology escalation, approved-scope reduction, weakened assurance, or shipping.
+The human-approved lean workflow and ticket graph authorize this projection. They do not authorize shipping, destructive or external effects, a compatibility reader, or changes to historical archive bytes.
 
 ## Supersession
 
-This record remains ACTIVE until a newer focused ADR explicitly supersedes it and the index links that relationship. Adapter-specific mechanical storage, formatting, generated projection, and a contract-preserving sequential downgrade do not supersede any decision.
+This record remains ACTIVE until a newer focused ADR explicitly supersedes it and updates the index. D29's current active-path decision replaces its former terminal archival behavior without creating a new decision ID.
 
 ## Verification expectations
 
-- **AC05:** Equivalent route facts produce identical applicable phase/task projections, criterion bindings, and explicit Assurance; Completion never substitutes for required proof.
-- **AC06:** One complete semantic fixture validates in OMP and Grok contexts, while missing authority, target, shared contract, dependency, criterion/proof, effect, output/receiver, recovery, duplicate/dangling reference, cycle, or placeholder fails before mutation.
-- **AC07:** Full orchestration starts only under a live matching Orchestrator Role Profile; mismatch either uses the approved contract-preserving one-owner projection or stops `transport-unavailable`.
-- **AC08:** Task Contracts and Handoffs expose stable outcome/criterion IDs, expected and observed progress, exact target, inherited attempt/repair state, route impact, next frontier, and one receiver.
-- **AC14:** Plan transports, validator, and parent-profile bindings pass their targeted checks without provider-specific semantics leaking into the portable contract. A dedicated planner user-agent, persona, or role-profile attestation is not required for publication.
-- A future executable revision must prove D21 is bound at the worker Task Contract/Context Pack seam without reducing approved behavior, compatibility, safety, accessibility, or required proof, and must prove active skills/rules/`WORKFLOW.md` and active ADRs agree; conflicts fail closed.
-- **AC-ARCH-08 / AC-ARCH-11:** Active ADR, rule, workflow, and caller projections must agree on D29's current-session trigger, terminal-bytes → existing archive postcondition → caller-output order, archive-only planned `resume_from`, already-terminal and planless exclusions, and visible storage-blocker stop, while D08/D21 and valid nonterminal active-plan execution remain unchanged.
+- Lean valid plans pass; proof-heavy bodies, duplicate or unowned targets, missing direct checks, cycles, and incomplete terminal states fail.
+- Every code-changing task is child-owned and receives one same-child code-then-test rethink before direct checks and Handoff.
+- `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal.
+- Human maps, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, and D29.

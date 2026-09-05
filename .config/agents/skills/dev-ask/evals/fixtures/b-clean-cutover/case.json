@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "request": "Observe a complete standard planned path and report only currently executable stages, transport, checks, and terminal artifacts."
+  },
+  "scripted_replies": [],
+  "additional_files": []
+}

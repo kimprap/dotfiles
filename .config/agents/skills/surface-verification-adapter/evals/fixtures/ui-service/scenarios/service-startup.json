@@ -1,7 +1,0 @@
-{
-  "id": "service-startup",
-  "assigned_port": true,
-  "readiness_path": "/health",
-  "expected": {"status": "ready"},
-  "isolation": "dedicated port and data root"
-}

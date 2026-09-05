@@ -59,37 +59,36 @@ async function exists(filePath) {
     }
 }
 
-function planBytes({ status = "PENDING", record = "bare", marker = "base", malformed = false } = {}) {
+function planBytes({ status = "PENDING", marker = "base" } = {}) {
+    if (!["PENDING", "IN_PROGRESS", "DONE", "CLOSED"].includes(status)) {
+        throw new Error(`unsupported fixture status: ${status}`);
+    }
+
     let source = BASE_PLAN.replace(
-        "without provider-specific semantics.",
-        `without provider-specific semantics; marker ${marker}.`
+        "- Non-goals: Runtime implementation or external effects.",
+        `- Non-goals: Runtime implementation or external effects; marker ${marker}.`
     );
-    if (status === "PENDING") return Buffer.from(source);
-    if (status === "IN_PROGRESS" || status === "CLOSED") {
-        return Buffer.from(source.replace("**Status**: PENDING", `**Status**: ${status}`));
-    }
-    if (status !== "DONE") throw new Error(`unsupported fixture status: ${status}`);
+    if (status === "DONE") return Buffer.from(source);
 
-    source = source.replace("**Status**: PENDING", "**Status**: DONE\n**Completed At**: 2026-08-24-2355");
-    if (malformed) return Buffer.from(source);
-
-    const completionPrefix = record === "bulleted" ? "  - completed" : "  completed";
-    const lines = [];
-    for (const line of source.split("\n")) {
-        if (line.startsWith("- [ ] T")) {
-            lines.push(line.replace("- [ ]", "- [x]"));
-            lines.push(`${completionPrefix} 2026-08-24-2355`);
-        } else if (line.startsWith("- [ ] VR-")) {
-            lines.push(line.replace("- [ ]", "- [x]"));
-        } else {
-            lines.push(line);
-        }
+    source = source.replace(
+        "**Status**: DONE\n**Completed At**: 2026-09-04-1230\n",
+        `**Status**: ${status}\n`
+    );
+    source = source.slice(0, source.indexOf("\n## Completion Summary"));
+    if (status === "PENDING" || status === "IN_PROGRESS") {
+        source = source
+            .replace("- [x] T1.", "- [ ] T1.")
+            .replace("  completed 2026-09-04-1225\n", "")
+            .replaceAll("- [x] AC-", "- [ ] AC-");
     }
-    return Buffer.from(`${lines.join("\n")}\n## Completion Summary\n\nComplete marker ${marker}.\n`);
+    if (status === "IN_PROGRESS") {
+        source = source.replace("- [ ] AC-1.", "- [x] AC-1.");
+    }
+    return Buffer.from(`${source.trimEnd()}\n`);
 }
 
 function planPaths(root, slug = "demo") {
-    const identity = `2026-08-09-1700_${slug}.md`;
+    const identity = `2026-09-04-1200_${slug}.md`;
     return {
         active: join(root, ".agents", "plans", identity),
         archive: join(root, ".agents", "plans", "archive", identity),
@@ -267,14 +266,13 @@ describe("plan-artifact-sync registration and mutation boundary", () => {
 });
 
 describe("plan draft discovery and safe paths", () => {
-    test("rejects out-of-root and symlink candidates while absent candidates remain silent", async () => {
+    test("rejects out-of-root and symlink candidates", async () => {
         const root = await temporaryDirectory("omp-plan-safe-repo-");
         const localRoot = await temporaryDirectory("omp-plan-safe-local-");
         const outsideRoot = await temporaryDirectory("omp-plan-safe-outside-");
         const outside = join(outsideRoot, "outside-plan.md");
         const target = join(outsideRoot, "target.md");
         const linked = join(localRoot, "linked-plan.md");
-        const missing = join(localRoot, "missing-plan.md");
         await writeFile(outside, planBytes());
         await writeFile(target, planBytes());
         await symlink(target, linked);
@@ -288,7 +286,7 @@ describe("plan draft discovery and safe paths", () => {
             {
                 toolName: "edit",
                 isError: false,
-                input: { input: `[${outside}#AAAA]\n[${linked}#BBBB]\n[${missing}#CCCC]\n` },
+                input: { input: `[${outside}#AAAA]\n[${linked}#BBBB]\n` },
             },
             ctx
         );
@@ -302,6 +300,74 @@ describe("plan draft discovery and safe paths", () => {
                 severity: "warning",
             },
         ]);
+    });
+
+    test("warns once without a helper retry when a successful plan mutation source disappears", async () => {
+        const files = await fixture();
+        await rm(files.localPath);
+        const pi = createFakePi();
+        planArtifactSync(pi);
+        const notifications = [];
+        const event = {
+            toolName: "write",
+            isError: false,
+            input: { path: "local://demo-plan.md" },
+            content: [{ type: "text", text: "write succeeded" }],
+            details: { changed: true, resolvedPath: files.localPath },
+        };
+
+        const result = await emit(pi, event, context(files.root, files.localRoot, notifications));
+        const message = 'plan-artifact-sync: demo: ERROR: PLAN_SYNC_DISCOVERY_MISSING scope="identity"';
+        expect(pi.calls).toEqual([]);
+        expect(notifications).toEqual([{ message, severity: "warning" }]);
+        expect(result).toEqual({
+            content: [
+                { type: "text", text: "write succeeded" },
+                { type: "text", text: message },
+            ],
+            details: {
+                changed: true,
+                resolvedPath: files.localPath,
+                planArtifactSync: {
+                    schema: WARNING_RESULT_SCHEMA,
+                    status: "failed",
+                    warnings: [
+                        {
+                            kind: "discovery",
+                            scope: "identity",
+                            code: "PLAN_SYNC_DISCOVERY_MISSING",
+                            identity: "demo",
+                        },
+                    ],
+                },
+            },
+        });
+    });
+
+    test("keeps an incidental missing plan-looking reference silent", async () => {
+        const root = await temporaryDirectory("omp-plan-incidental-repo-");
+        const localRoot = await temporaryDirectory("omp-plan-incidental-local-");
+        const note = join(localRoot, "notes.md");
+        await writeFile(note, "See local://missing-plan.md\n");
+        const pi = createFakePi();
+        planArtifactSync(pi);
+        const notifications = [];
+
+        const result = await emit(
+            pi,
+            {
+                toolName: "write",
+                isError: false,
+                input: { path: note, content: "See local://missing-plan.md\n" },
+                content: [{ type: "text", text: "wrote notes mentioning local://missing-plan.md" }],
+                details: { changed: true },
+            },
+            context(root, localRoot, notifications)
+        );
+
+        expect(result).toBeUndefined();
+        expect(pi.calls).toEqual([]);
+        expect(notifications).toEqual([]);
     });
 
     test("closes missing and unsafe local roots but never discovers a root for unrelated input", async () => {
@@ -413,7 +479,7 @@ describe("helper protocol and nonblocking continuation", () => {
             }
             return {
                 code: 0,
-                stdout: "plan-artifact-copied: .agents/plans/2026-08-09-1700_later.md\n",
+                stdout: "plan-artifact-copied: .agents/plans/2026-09-04-1200_later.md\n",
                 stderr: "",
             };
         });
@@ -477,13 +543,13 @@ describe("helper protocol and nonblocking continuation", () => {
         expect(JSON.stringify({ notifications, result })).not.toContain(secret);
     });
 
-    test("accepts only copied or archived acknowledgements and the narrowed helper errors", async () => {
+    test("accepts only copied acknowledgements and the narrowed helper errors", async () => {
         const files = await fixture();
         const cases = [
             {
                 response: {
                     code: 0,
-                    stdout: "plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md\n",
+                    stdout: "plan-artifact-copied: .agents/plans/2026-09-04-1200_demo.md\n",
                     stderr: "",
                 },
                 message: null,
@@ -491,16 +557,16 @@ describe("helper protocol and nonblocking continuation", () => {
             {
                 response: {
                     code: 0,
-                    stdout: "plan-artifact-archived: .agents/plans/archive/2026-08-09-1700_demo.md\n",
+                    stdout: "plan-artifact-archived: .agents/plans/archive/2026-09-04-1200_demo.md\n",
                     stderr: "",
                 },
-                message: null,
+                message: 'plan-artifact-sync: demo: ERROR: PLAN_SYNC_ACK_INVALID scope="identity" effect=possible-complete',
             },
             {
                 response: {
                     code: 1,
                     stdout: "",
-                    stderr: "ERROR: PLAN_ARCHIVE_CONFLICT: plan=2026-08-09-1700_demo state=archive-divergent path=.agents/plans/archive/2026-08-09-1700_demo.md effect=none: conflict\n",
+                    stderr: "ERROR: PLAN_ARCHIVE_CONFLICT: plan=2026-09-04-1200_demo state=archive-exists path=.agents/plans/archive/2026-09-04-1200_demo.md effect=none: conflict\n",
                 },
                 message: 'plan-artifact-sync: demo: ERROR: PLAN_ARCHIVE_CONFLICT scope="archive" effect=none',
             },
@@ -508,7 +574,7 @@ describe("helper protocol and nonblocking continuation", () => {
                 response: {
                     code: 1,
                     stdout: "",
-                    stderr: "ERROR: PLAN_POSTCONDITION_FAILED: plan=2026-08-09-1700_demo state=uncertain path=.agents/plans/2026-08-09-1700_demo.md effect=possible-complete: uncertain\n",
+                    stderr: "ERROR: PLAN_POSTCONDITION_FAILED: plan=2026-09-04-1200_demo state=uncertain path=.agents/plans/2026-09-04-1200_demo.md effect=possible-complete: uncertain\n",
                 },
                 message:
                     'plan-artifact-sync: demo: ERROR: PLAN_POSTCONDITION_FAILED scope="active" effect=possible-complete',
@@ -543,7 +609,7 @@ describe("wire protocol enforcement and live skew", () => {
         ]);
         expect(currentResult).toEqual({
             code: 0,
-            stdout: "plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md\n",
+            stdout: "plan-artifact-copied: .agents/plans/2026-09-04-1200_demo.md\n",
             stderr: "",
         });
         expect(await readFile(current.active)).toEqual(planBytes());
@@ -599,13 +665,37 @@ describe("wire protocol enforcement and live skew", () => {
         expect(await exists(files.active)).toBe(false);
     });
 
+    test("rejects a slug and source identity mismatch before repository mutation", async () => {
+        const files = await fixture();
+        const result = await runHelper(files.root, [
+            "copy",
+            "--protocol",
+            COPY_PROTOCOL,
+            "--slug",
+            "other",
+            "--content-file",
+            files.localPath,
+        ]);
+
+        expect(result).toEqual({
+            code: 1,
+            stdout: "",
+            stderr:
+                "ERROR: PLAN_IDENTITY_MISMATCH: plan=other state=source-basename-mismatch path=none effect=none: " +
+                "content file identity must match slug 'other'\n",
+        });
+        expect(await exists(files.active)).toBe(false);
+        expect(await exists(planPaths(files.root, "other").active)).toBe(false);
+        expect(await exists(files.archive)).toBe(false);
+    });
+
     test("persists a mismatch when a loaded extension sees a replaced helper", async () => {
         const files = await fixture();
         const helperRoot = await temporaryDirectory("omp-plan-helper-generation-");
         const helperFixture = join(helperRoot, "omp-copy-plan-artifact");
         await writeFile(
             helperFixture,
-            '#!/usr/bin/env bun\nconsole.log("plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md");\n'
+            '#!/usr/bin/env bun\nconsole.log("plan-artifact-copied: .agents/plans/2026-09-04-1200_demo.md");\n'
         );
         await chmod(helperFixture, 0o755);
 
@@ -622,7 +712,7 @@ if (protocolIndex === -1 || process.argv[protocolIndex + 1] !== "plan-artifact-c
     );
     process.exit(2);
 }
-console.log("plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md");
+console.log("plan-artifact-copied: .agents/plans/2026-09-04-1200_demo.md");
 `
         );
         await chmod(helperFixture, 0o755);
@@ -698,56 +788,31 @@ console.log("plan-artifact-copied: .agents/plans/2026-08-09-1700_demo.md");
     });
 });
 
-describe("actual parser-backed copy and archive behavior", () => {
-    test("creates and replaces active bytes through consecutive mutations", async () => {
-        const files = await fixture();
-        const pi = createFakePi();
-        planArtifactSync(pi);
-        const notifications = [];
-        const ctx = context(files.root, files.localRoot, notifications);
-
-        await emit(pi, { toolName: "write", isError: false, input: { path: files.localPath } }, ctx);
-        expect(await readFile(files.active)).toEqual(planBytes());
-
-        const replacement = planBytes({ status: "IN_PROGRESS", marker: "second" });
-        await writeFile(files.localPath, replacement);
-        await emit(pi, { toolName: "edit", isError: false, input: { path: files.localPath } }, ctx);
-        expect(await readFile(files.active)).toEqual(replacement);
-        expect(notifications).toEqual([]);
-    });
-
-    test("archives both completion-record spellings and repeats exact terminal bytes", async () => {
-        for (const record of ["bare", "bulleted"]) {
-            const terminal = planBytes({ status: "DONE", record, marker: record });
-            const files = await fixture({ bytes: terminal });
+describe("actual parser-backed active copy behavior", () => {
+    test("copies every valid lifecycle to the active path without creating an archive", async () => {
+        for (const status of ["PENDING", "IN_PROGRESS", "DONE", "CLOSED"]) {
+            const bytes = planBytes({ status, marker: status.toLowerCase() });
+            const files = await fixture({ bytes });
             const pi = createFakePi();
             planArtifactSync(pi);
             const notifications = [];
             const ctx = context(files.root, files.localRoot, notifications);
 
-            await emit(pi, { toolName: "write", isError: false, input: { path: files.localPath } }, ctx);
-            expect(await exists(files.active)).toBe(false);
-            expect(await readFile(files.archive)).toEqual(terminal);
+            expect(
+                await emit(pi, { toolName: "write", isError: false, input: { path: files.localPath } }, ctx)
+            ).toBeUndefined();
+            expect(await readFile(files.active)).toEqual(bytes);
+            expect(await exists(files.archive)).toBe(false);
+            expect(await exists(dirname(files.archive))).toBe(false);
+
             await emit(pi, { toolName: "edit", isError: false, input: { path: files.localPath } }, ctx);
-            expect(await readFile(files.archive)).toEqual(terminal);
+            expect(await readFile(files.active)).toEqual(bytes);
+            expect(await exists(files.archive)).toBe(false);
             expect(notifications).toEqual([]);
         }
     });
 
-    test("archives CLOSED and refuses malformed terminal state without replacing active bytes", async () => {
-        const closed = planBytes({ status: "CLOSED", marker: "closed" });
-        const closedFiles = await fixture({ bytes: closed });
-        const closedPi = createFakePi();
-        planArtifactSync(closedPi);
-        const closedNotifications = [];
-        await emit(
-            closedPi,
-            { toolName: "write", isError: false, input: { path: closedFiles.localPath } },
-            context(closedFiles.root, closedFiles.localRoot, closedNotifications)
-        );
-        expect(await readFile(closedFiles.archive)).toEqual(closed);
-        expect(closedNotifications).toEqual([]);
-
+    test("refuses parser-invalid bytes without replacing the active plan", async () => {
         const files = await fixture();
         const pi = createFakePi();
         planArtifactSync(pi);
@@ -755,7 +820,12 @@ describe("actual parser-backed copy and archive behavior", () => {
         const ctx = context(files.root, files.localRoot, notifications);
         await emit(pi, { toolName: "write", isError: false, input: { path: files.localPath } }, ctx);
         const before = await readFile(files.active);
-        await writeFile(files.localPath, planBytes({ status: "DONE", malformed: true, marker: "invalid" }));
+        const invalid = Buffer.from(
+            planBytes({ status: "DONE", marker: "invalid" })
+                .toString("utf8")
+                .replace("## Completion Summary", "## Invalid Completion Summary")
+        );
+        await writeFile(files.localPath, invalid);
         await emit(pi, { toolName: "edit", isError: false, input: { path: files.localPath } }, ctx);
 
         expect(await readFile(files.active)).toEqual(before);
@@ -768,38 +838,42 @@ describe("actual parser-backed copy and archive behavior", () => {
         ]);
     });
 
-    test("refuses divergent archives and active/archive ambiguity without collateral mutation", async () => {
-        const terminal = planBytes({ status: "DONE", marker: "original" });
-        const files = await fixture({ bytes: terminal });
-        const pi = createFakePi();
-        planArtifactSync(pi);
-        const notifications = [];
-        const ctx = context(files.root, files.localRoot, notifications);
-        await emit(pi, { toolName: "write", isError: false, input: { path: files.localPath } }, ctx);
-        const originalArchive = await readFile(files.archive);
-
-        await writeFile(files.localPath, planBytes({ status: "DONE", marker: "divergent" }));
-        await emit(pi, { toolName: "edit", isError: false, input: { path: files.localPath } }, ctx);
-        expect(await readFile(files.archive)).toEqual(originalArchive);
-        expect(notifications.at(-1)?.message).toBe(
-            'plan-artifact-sync: demo: ERROR: PLAN_ARCHIVE_CONFLICT scope="archive" effect=none'
-        );
-
-        const conflict = await fixture();
-        await mkdir(dirname(conflict.archive), { recursive: true });
-        await writeFile(conflict.active, "active-sentinel");
-        await writeFile(conflict.archive, "archive-sentinel");
-        const conflictPi = createFakePi();
-        planArtifactSync(conflictPi);
-        const conflictNotifications = [];
+    test("preserves archive-only and active/archive identity conflicts", async () => {
+        const archiveOnly = await fixture({ bytes: planBytes({ status: "DONE", marker: "archive-only" }) });
+        await mkdir(dirname(archiveOnly.archive), { recursive: true });
+        await writeFile(archiveOnly.archive, "historical-archive-sentinel");
+        const archivePi = createFakePi();
+        planArtifactSync(archivePi);
+        const archiveNotifications = [];
         await emit(
-            conflictPi,
-            { toolName: "write", isError: false, input: { path: conflict.localPath } },
-            context(conflict.root, conflict.localRoot, conflictNotifications)
+            archivePi,
+            { toolName: "write", isError: false, input: { path: archiveOnly.localPath } },
+            context(archiveOnly.root, archiveOnly.localRoot, archiveNotifications)
         );
-        expect(await readFile(conflict.active, "utf8")).toBe("active-sentinel");
-        expect(await readFile(conflict.archive, "utf8")).toBe("archive-sentinel");
-        expect(conflictNotifications).toEqual([
+        expect(await exists(archiveOnly.active)).toBe(false);
+        expect(await readFile(archiveOnly.archive, "utf8")).toBe("historical-archive-sentinel");
+        expect(archiveNotifications).toEqual([
+            {
+                message: 'plan-artifact-sync: demo: ERROR: PLAN_ARCHIVE_CONFLICT scope="archive" effect=none',
+                severity: "warning",
+            },
+        ]);
+
+        const both = await fixture();
+        await mkdir(dirname(both.archive), { recursive: true });
+        await writeFile(both.active, "active-sentinel");
+        await writeFile(both.archive, "archive-sentinel");
+        const bothPi = createFakePi();
+        planArtifactSync(bothPi);
+        const bothNotifications = [];
+        await emit(
+            bothPi,
+            { toolName: "write", isError: false, input: { path: both.localPath } },
+            context(both.root, both.localRoot, bothNotifications)
+        );
+        expect(await readFile(both.active, "utf8")).toBe("active-sentinel");
+        expect(await readFile(both.archive, "utf8")).toBe("archive-sentinel");
+        expect(bothNotifications).toEqual([
             {
                 message: 'plan-artifact-sync: demo: ERROR: PLAN_IDENTITY_CONFLICT scope="identity" effect=none',
                 severity: "warning",
@@ -807,35 +881,57 @@ describe("actual parser-backed copy and archive behavior", () => {
         ]);
     });
 
-    test("surfaces unsafe repository targets through one redacted nonblocking warning", async () => {
-        const files = await fixture();
+    test("surfaces unsafe active and historical archive targets through redacted warnings", async () => {
         const outside = await temporaryDirectory("omp-plan-target-outside-");
-        const sentinel = join(outside, "sentinel.md");
-        await mkdir(dirname(files.active), { recursive: true });
-        await writeFile(sentinel, "outside");
-        await symlink(sentinel, files.active);
 
-        const pi = createFakePi();
-        planArtifactSync(pi);
-        const notifications = [];
+        const activeFiles = await fixture();
+        const activeSentinel = join(outside, "active-sentinel.md");
+        await mkdir(dirname(activeFiles.active), { recursive: true });
+        await writeFile(activeSentinel, "outside-active");
+        await symlink(activeSentinel, activeFiles.active);
+        const activePi = createFakePi();
+        planArtifactSync(activePi);
+        const activeNotifications = [];
         await emit(
-            pi,
-            { toolName: "write", isError: false, input: { path: files.localPath } },
-            context(files.root, files.localRoot, notifications)
+            activePi,
+            { toolName: "write", isError: false, input: { path: activeFiles.localPath } },
+            context(activeFiles.root, activeFiles.localRoot, activeNotifications)
         );
-        expect(await readFile(sentinel, "utf8")).toBe("outside");
-        expect(notifications).toEqual([
+        expect(await readFile(activeSentinel, "utf8")).toBe("outside-active");
+        expect(activeNotifications).toEqual([
             {
                 message: 'plan-artifact-sync: demo: ERROR: PLAN_FILE_KIND_UNSAFE scope="active" effect=none',
                 severity: "warning",
             },
         ]);
-        expect(JSON.stringify(notifications)).not.toContain(outside);
+
+        const archiveFiles = await fixture();
+        const archiveSentinel = join(outside, "archive-sentinel.md");
+        await mkdir(dirname(archiveFiles.archive), { recursive: true });
+        await writeFile(archiveSentinel, "outside-archive");
+        await symlink(archiveSentinel, archiveFiles.archive);
+        const archivePi = createFakePi();
+        planArtifactSync(archivePi);
+        const archiveNotifications = [];
+        await emit(
+            archivePi,
+            { toolName: "write", isError: false, input: { path: archiveFiles.localPath } },
+            context(archiveFiles.root, archiveFiles.localRoot, archiveNotifications)
+        );
+        expect(await exists(archiveFiles.active)).toBe(false);
+        expect(await readFile(archiveSentinel, "utf8")).toBe("outside-archive");
+        expect(archiveNotifications).toEqual([
+            {
+                message: 'plan-artifact-sync: demo: ERROR: PLAN_FILE_KIND_UNSAFE scope="archive" effect=none',
+                severity: "warning",
+            },
+        ]);
+        expect(JSON.stringify({ activeNotifications, archiveNotifications })).not.toContain(outside);
     });
 
     test("rejects source and target drift before publication", async () => {
         const largeMarker = "A".repeat(32 * 1024 * 1024);
-        const large = Buffer.from(BASE_PLAN.replace("## Authority", `${largeMarker}\n\n## Authority`, 1));
+        const large = planBytes({ marker: largeMarker });
 
         const sourceFiles = await fixture({ bytes: large });
         const sourceReplacement = `${sourceFiles.localPath}.replacement`;

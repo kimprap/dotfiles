@@ -1,42 +1,32 @@
 ---
 name: dev-tdd
-description: Apply test-driven development inside a current implementation task when the user explicitly requests test-first work, red-green-refactor, or TDD-guided integration tests. Skip ordinary testing, verification, review, and implementation whose approved method is not test-first.
+description: Apply test-driven development inside an approved implementation child through one behavior-focused red-green-refactor loop without adding scope or test policy.
 ---
 
-# Test-Driven Development
+# Dev TDD
 
-TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Every section applies on every cycle — consult them before and during the loop, not after.
+Use only when the current implementation contract explicitly requires test-first work. TDD changes procedure, not intent, acceptance, ownership, effects, assurance, attempt count, or receiver.
 
-When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+## Bind the behavior
 
-## Support contract
+Take one owned acceptance item at a time:
 
-Require a current approved implementation Task Contract, exact acceptance criterion, approved observable test seam, and one implementation owner. For a plan-backed work task, `Methods: tdd` is explicit test-first authority: bind this skill and its approved seam before the task can enter `ready`. `Methods: none` loads no method skill. For direct or compact work without an Executor Plan, a current explicit user or approved authority selection of test-first binds this same skill before `ready`; otherwise bind `none`. `ponytail` is reserved and rejected until a separately authorized skill exists.
+```text
+Behavior: <observable>
+Check: <command or direct static proof>; expect <exact result>
+```
 
-TDD changes only the existing worker's implementation method. It creates no task, stage, todo phase, criterion, effect, assurance boundary, approval, or receiver. Each bounded cycle returns its red evidence, minimal green change, smoke, exact target/test identities, and any seam or authority blocker inside the worker's one Common Handoff to exactly one receiver already named by the Task Contract. Stop and return `authority-change-required` to that owner when the seam, behavior, scope, or effects differ from current authority; stop `no-progress-stop` when no plausible observable red case can be established. Never self-verify, review, refactor during review, or choose a new downstream owner.
+A static-only criterion is not a TDD target. For executable behavior, identify the smallest public seam that can show the missing behavior. Apply `skill://dev-implementation/references/test-value.md` as the sole policy for whether a changed test belongs in the permanent suite; this skill adds no competing test-value rules.
 
-Bind and apply [`../dev-implementation/references/test-value.md`](../dev-implementation/references/test-value.md) as `test-value/v1`. Red and green evidence remains mandatory for the approved behavior, but before the Common Handoff retain only permanent tests that defend an uncovered observable contract, regression, or invariant through the narrowest stable public seam with an independent oracle and one named plausible unique bug. Reuse, extend, or merge the closest existing test first; remove redundant tracer tests and reject duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, or production-logic oracle cases.
+## Red → green → refactor
 
-## What a good test is
+1. **Red:** Write or adjust the smallest focused behavioral test, run that test, and observe failure for the expected missing behavior. A syntax, fixture, environment, or unrelated failure is not red. If the test already passes, determine whether the behavior already exists or the test cannot observe it; do not manufacture a failure or new requirement.
+2. **Green:** Make the smallest production change that satisfies the approved behavior. Run the same focused test and observe the exact expected result. Do not add speculative behavior, future scaffolding, or testing-only architecture.
+3. **Refactor:** Improve names, duplication, or local structure only inside the changed contract while keeping behavior green. Re-run the focused test after each material refactor.
+4. Repeat only for another already-owned acceptance item or a distinct approved boundary required by the same item.
 
-Tests verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't. A good test reads like a specification — "user can checkout with valid cart" tells you exactly what capability exists — and survives refactors because it doesn't care about internal structure.
+Red evidence may use a temporary focused harness; remove it before candidate return unless `skill://dev-implementation/references/test-value.md` admits it as a permanent test. Reuse the repository's existing test runner, file, fixtures, and isolation patterns. Do not replace real behavior with mock choreography, source-text assertions, a broad suite, or reasoning.
 
-Load [tests.md](tests.md) only when selecting or correcting observable behavioral assertions. Load [mocking.md](mocking.md) only when a test double at a system boundary is under consideration. Near misses load neither reference.
+## Return to implementation
 
-## Seams — where tests go
-
-A **seam** is the public boundary you test at: the interface where you observe behavior without reaching inside. Tests live at seams, never against internals.
-
-**Test only at the approved seam in the current Task Contract or governing specification.** A worker consumes that seam; it does not ask the user to approve it again. If the seam is missing, stop and return to its authority owner. If evidence requires a different seam, stop with `authority-change-required`; only a new approved authority and task revision may resume.
-
-## Anti-patterns
-
-- **Implementation-coupled** — mocks internal collaborators, tests private methods, or verifies through a side channel (querying the database instead of using the interface). The tell: the test breaks when you refactor but behavior hasn't changed.
-- **Tautological** — the assertion recomputes the expected value the way the code does (`expect(add(a, b)).toBe(a + b)`, a snapshot derived by hand the same way, a constant asserted equal to itself), so it passes by construction and can never disagree with the code. Expected values must come from an independent source of truth — a known-good literal, a worked example, or the spec.
-- **Horizontal slicing** — writing all tests first, then all implementation. Bulk tests verify _imagined_ behavior: you test the _shape_ of things rather than user-facing behavior, the tests go insensitive to real changes, and you commit to test structure before understanding the implementation. Work in **vertical slices** instead — one test → one implementation → repeat, each test a **tracer bullet** that responds to what the last cycle taught you.
-
-## Rules of the loop
-
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
-- **One slice at a time.** One seam, one test, one minimal implementation per cycle.
-- **Refactoring is not part of the red → green loop or final review.** After green, any refactor is a separately backend-authorized implementation worker cycle or task with smoke, renewed verification, and later read-only review.
+Return a code candidate and concise red/green observations to the implementation child. Do not run the final direct-check smoke, emit a Handoff, invoke rethink, dispatch assurance, or change plan lifecycle here; `dev-implementation` owns those steps after the candidate. Any permanent test kept, merged, removed, or declined carries the disposition required by `skill://dev-implementation/references/test-value.md`.

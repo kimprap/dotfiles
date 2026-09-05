@@ -1,0 +1,66 @@
+{
+  "skill_name": "dev-code-review",
+  "evals": [
+    {
+      "id": "DCR-TESTS-FIRST-REQUIRED-FINDING",
+      "prompt": "Review an exact standard-assurance candidate with changed production code and changed permanent tests. A changed authorization test asserts only that a response object exists, so it passes when the forbidden operation returns success. The governing rule requires denial. Show the review order, verdict, file accounting, and the complete required finding without running checks.",
+      "expected_output": "Read the read-only rethink wrapper first, then inspect tests; contract and correctness; changed-test value through the sole policy; readability, ownership, reuse, and architecture; and relevant security or performance. Account for every changed file exactly once. Return REPAIR REQUIRED and a finding with exact location, the denial rule, direct false-confidence evidence, the smallest safe correction, and direct closure lines using Behavior: ... followed by Check: ...; expect .... Record the check as unrun by the reviewer and assigned to verification.",
+      "files": [],
+      "assertions": [
+        "The fixed tests-first axis order is preserved",
+        "Every changed file is accounted exactly once",
+        "The verdict is REPAIR REQUIRED because direct evidence shows material false confidence",
+        "The finding contains location, violated authority, direct evidence, smallest correction, and exact closure-check grammar",
+        "The reviewer remains read-only and does not execute the closure check"
+      ]
+    },
+    {
+      "id": "DCR-ADVISORY-MATERIALITY",
+      "prompt": "A complete review finds correct behavior and valuable changed tests. One helper name is less elegant than the reviewer's preference, and a possible performance issue has no measurement, requirement, or causal evidence. Return the verdict and classify those observations.",
+      "expected_output": "Return APPROVED after complete changed-file accounting. Omit the unsupported performance suspicion and either omit the naming preference or label it advisory. Neither taste nor speculation can require repair, and no closure check is invented for an advisory.",
+      "files": [],
+      "assertions": [
+        "The verdict is APPROVED",
+        "Taste and unsupported performance suspicion do not require repair",
+        "Advisories carry no repair or closure obligation",
+        "No mandatory praise, file-count, or unrelated cleanup criterion is introduced"
+      ]
+    },
+    {
+      "id": "DCR-COMPLETE-FILE-ACCOUNTING",
+      "prompt": "The supplied boundary contains source.ts, source.test.ts, generated.json, and a deleted legacy.ts. The review explains only the first two. Decide the verdict and the smallest allowed follow-up.",
+      "expected_output": "Return INCONCLUSIVE because generated.json and deleted legacy.ts are not accounted. The same reviewer may receive one clarification limited to completing those existing changed-file rows from the original discovery; the clarification cannot add findings, expand scope, or restart review.",
+      "files": [],
+      "assertions": [
+        "Generated and deleted files remain part of changed-file accounting",
+        "Omitted rows make the verdict INCONCLUSIVE",
+        "Only one same-reviewer evidence or field clarification is allowed",
+        "The clarification cannot add findings or restart discovery"
+      ]
+    },
+    {
+      "id": "DCR-CLARIFICATION-STOP",
+      "prompt": "A reviewer returns INCONCLUSIVE with one already named CR-1 missing direct evidence. The controller asks the same reviewer once. The reply remains INCONCLUSIVE and still lacks evidence. State the next action if another reviewer is available.",
+      "expected_output": "Stop. The single clarification is exhausted, unchanged INCONCLUSIVE is terminal, and a second reviewer or another review pass cannot replace or restart this review.",
+      "files": [],
+      "assertions": [
+        "Only one clarification is permitted",
+        "An unchanged INCONCLUSIVE after clarification stops",
+        "No replacement reviewer or rerun is dispatched",
+        "No repair authority is inferred"
+      ]
+    },
+    {
+      "id": "DCR-REPAIR-NO-RERUN",
+      "prompt": "The one review returns REPAIR REQUIRED with CR-1 and a valid direct closure check. Attempt 2 remains, the responsible implementation owner repairs the candidate and completes same-worker rethink. Route the repaired target.",
+      "expected_output": "Send the repaired target directly to the intended independent verifier with every original acceptance check and CR-1's exact closure check. Never send the repaired target back to the reviewer and never run a second review.",
+      "files": [],
+      "assertions": [
+        "Exactly one responsible implementation repair may use attempt 2",
+        "The repaired target goes directly to verification",
+        "Original acceptance checks and review closure checks are preserved",
+        "Review never reruns after repair"
+      ]
+    }
+  ]
+}

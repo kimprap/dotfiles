@@ -1,99 +1,88 @@
-# Session lifecycle envelope and portable workflow owners
+# Terminal envelope and lean completion protocol
 
 **Status:** ACTIVE  
-**Date:** 2026-08-20  
-**Updated:** 2026-09-01
-**Decision IDs:** D27  
-**Related authority:** ADR-0001 D01, D13, D15, D18, D19, D26; ADR-0003 D03, D04, D22, D28; ADR-0004 D07, D23; ADR-0005 P01; ADR-0007 D24
+**Date:** 2026-08-21  
+**Updated:** 2026-09-05  
+**Decision ID:** D27  
+**Related authority:** ADR-0001 D02, D17; ADR-0002 D29; ADR-0004 D07; ADR-0007 D24
 
 ## Scope
 
-This decision governs one host-neutral session envelope, portable continual-learning semantics, and the sole generic completion presenter. It applies to supported engineering, product, custom, and direct work after each specialty has validated its own outcome. It preserves specialty internals, one existing specialty Handoff, exact-manifest assurance gates, papercut capture and settlement ownership, and the existing engineering assurance tail. It does not create runtime state, approve effects, decide specialty completion, or authorize delivery.
+This record governs stateless workflow-session envelopes, lean internal Handoffs, the exact generic completion payload, and same-agent rendering. It applies to `dev-ask`, `product-ask`, `dev-handoff`, `completion-presentation`, the implementation terminal path, caller projections, and focused evals. It does not create persistence, resume, background jobs, product authority, implementation authority, delivery, or shipping.
 
 ## Context / problem
 
-Engineering continual learning and final completion rendering were embedded in engineering-specific owners. Product and custom workflows could reuse the intended semantics only by copying them or by routing through an unrelated engineering owner. Pause and compaction also needed an explicit portable boundary: callers must preserve their own completed stages, selected role slot, counters, and artifact identities without promoting transcripts, plans, ADRs, or a new state service into runtime authority.
+Specialty workflows need enough typed transport to preserve ownership and recovery within one active conversation, but process receipts and multi-report terminal formats had become larger than the work they described. Completion should tell a human what happened, what changed, what was checked, what remains, and what to do next—without a digest, manifest, archive ceremony, or model-scored proof layer. The workflow also must remain portable across hosts that cannot resume a hidden process.
 
-The framework needs one small outer envelope while each specialty remains opaque. Learning semantics must run from the same portable body in OMP and Grok. Completed outcomes need one concise, specialty-neutral rendering, but completion validity, papercut settlement, assurance, and product authority must stay with their existing owners.
+## Decision
 
-## Decisions
+### D27 — Stateless envelope and five-field completion
 
-### D27 — Session lifecycle envelope and portable workflow owners
+- **Decision:** Treat one active conversation as one workflow session. Bind a `Session Envelope` with session ID, route, mode, current phase, active artifact ID or path when one exists, current owner, last accepted Handoff, next owner, last completed transition, and pending gates. This envelope is typed transport, not durable state.
+- **Decision:** Use the current workflow sequence `intake → classify → work specialty → Handoff → papercut → assurance and learning when eligible → present`. A completed stage emits one lean Handoff containing outcome, affected paths and revisions, checks and exact results, blockers or risks, remaining work, and next receiver.
+- **Decision:** Missing or malformed required transport stops the next transition. A fresh or resumed session re-reads current repository artifacts and governing contracts; it does not trust hidden process state or a continuation receipt.
+- **Decision:** A successful generic terminal payload has exactly these five top-level fields in this order:
 
-- **Scope:** The seven-event session envelope; portable continual-learning modes; exact-manifest recovery and duplicate-dispatch boundaries; one generic completion renderer with separate aggregate scope and durable entry points; ordered papercut accounting; durable Completion Summary recovery; specialty normalization; portable distribution; and deferred future intent.
-- **Decision:** Use exactly `intake → classify → work-specialty → Handoff → papercut look (or silent skip) → assess (or silent skip) → present`. A specialty's internal lifecycle remains opaque. Repair, reapproval, explicit review, shipping, pause, compaction, and other re-entry are events against the current envelope, not stages or a persisted DAG. The envelope stores nothing. `present` is a terminal projection of one settled Handoff, not a task, transition, worker, or second Handoff.
-- **Decision:** After every work Handoff, the same child performs the papercut look; only child unavailability permits root fallback. Specialty callers retain every result or none-only accounting item in deterministic work-Handoff order. Papercut settlement remains caller-owned and precedes terminal normalization.
-- **Decision:** Before specialty dispatch or completion, compare current bytes with the once-bound target and applicable-rule manifests. Pause or compaction restores completed boundaries, selected role slot, attempt, repair-token state, continuation-receipt identity when applicable, terminal state, and digest-bound artifacts. Repeating an already issued tuple of parent outcome, target manifest, rule manifest, role slot, and semantic attempt or continuation receipt blocks as `idempotency-violation` without consuming state.
-- **Decision:** `continual-learning` owns portable `assess`, `review`, and `deep`. `assess` accepts a settled eligible outcome, completed Handoff, and nonempty affected-artifact manifest; it forwards complete Learning Candidates and may return `NO DURABLE LEARNING`. `review` requires an explicit human pointer and is proposal-only. `deep` requires explicit authority or settled severe/recurring/cross-contract/stale/conflicting evidence and remains separately authorized. The envelope never auto-dispatches a mode.
-- **Decision:** Engineering retains route-visible `dev-continual-learning`, which invokes portable `assess` once inside the standard/high-consequence backend after verification and review. Compact invokes neither owner. Learning uses no worker closure. The portable owner returns exactly `CURATED | NO DURABLE LEARNING | BLOCKED` with the current seven result fields and never reads or writes the papercut ledger.
-- **Decision:** Preserve the reporter-owned mutation tuple and canonical `CE-` identity exactly. The lifecycle caller validates authority, freshness, completeness, adjacent independence, and proof classification before mutation. The curator cannot create, replace, weaken, or omit that binding.
-- **Decision:** `completion-presentation` is the sole generic terminal renderer. It activates only when the same caller holds one current `completion-presentation-input` JSON fence with keys in this exact order: `status`, `outcome`, `change_scope`, `key_artifacts`, `verification`, `papercuts`, `learning`, `residual_risk`, `resume_from`, `handoff`, `constraints`, `next`. Status is `completed`; `change_scope` and `key_artifacts` are ordered arrays with one to three nonempty items each; `papercuts` is an array; every other value is nonempty; decoded strings exclude unsafe controls; Constraints contains `shipping not authorized` exactly once; and Next is `none` or one action/receiver authorized by the specialty Handoff. The legacy `changed` key, scalar list values, unknown, duplicate, missing, reordered, malformed, empty, placeholder, stale, prior-turn, unsafe-control, durability-invalid, constraint-invalid, unauthorized-Next, non-completed, and learning-`BLOCKED` input is rejected without a compatibility reader.
-- **Decision:** `papercuts` contains material existing results in deterministic Handoff order. None-only accounting is `[]`. The renderer emits the presenter-owned child `- none` for the empty array or one consecutive `- ` child per accepted material item. There is no versioned compatibility path or second result envelope.
-- **Decision:** The renderer preserves accepted control-safe values and emits exactly the H2 sections `Completed`, `Evidence`, and `Continuation`, in that order. Their field labels are exactly Outcome, Change scope, Key artifacts; Verification, Papercuts, Learning, Residual risk; and State, Resume from, Handoff, Constraints, Next. Every label is the no-colon line `**Label**`, with no leading hyphen. Spacing follows `.config/agents/references/packed-label.md`; consumers load that file by pointer and do not copy its spacing rules. Exactly one blank line appears before `## Evidence` and `## Continuation`.
-- **Decision:** A scalar value line and every array item line are exactly `- ` plus the original value bytes; array items remain consecutive and use the same form for one or multiple items. Empty Papercuts is exactly `- none`, State is exactly `- complete; no open frontier.`, and the final Next child is followed immediately by EOF. Removing exactly the first two bytes `- ` from every caller-owned child recovers the original bytes. Headings, labels, spacing, child markers, empty-papercut `none`, and State are presenter-owned.
-- **Decision:** Change scope contains concise aggregate count/category statements, Key artifacts contains one to three durable entry points, and exhaustive changed-path inventory remains in the exact manifest and/or Handoff. Verification, Resume from, Handoff, and every other scalar use the same packed child-bullet form. Raw locator bytes remain unchanged and may wrap only through host display. Resume from points to a durable `#completion-summary` section whose caller-validated contents include outcome, material decisions, immutable evidence identities, current residual risk, and the exact applicable manifest reference. The same specialty caller validates completion, constructs the fence, applies the presenter directly, and emits only the report. The `Changed` label is gone; callers provide no inline labels, no exhaustive report copy, and no compatibility shape.
-- **Decision:** Portable executable skills run without this repository's ADR corpus. OMP and Grok use the same bodies with transport-only syntax differences. Distribution may include the exact manual surface-verification package and disabled model wrappers but no host adapter, automatic activation, lifecycle store, or upstream alias.
-- **Why:** One semantic owner per concern prevents workflow clones and presentation drift. A non-persistent envelope exposes ordering without becoming orchestration. Separating aggregate scope from durable entry points makes the human report accurate without copying the exhaustive inventory, while the indexed Completion Summary restores exact decisions, evidence, risk, and manifest identity. Ordered material papercuts preserve plural evidence without losing none-only accounting or moving settlement authority into the presenter.
-- **Rejected alternatives / why not:** Dev-specific semantic clones, a dispatchable presenter, the ambiguous `Changed` label, an exhaustive report inventory, a mutable or content-incomplete resume pointer, second Handoff, persisted DAG/state/session/learning ledger, transcript mining, timers, per-task learning, compatibility readers, or automatic post-plan audit cleanup create duplicate owners, misleading output, weak recovery, or hidden state.
-- **Consequences:** Supported specialties compose inside one seven-event envelope while retaining their lifecycles and one Handoff. Engineering keeps one verification/review/learning backend, completion accepts plural ordered papercuts plus separate scope/artifact lists, and later owners resume through one digest-bound Completion Summary and its exact manifest reference.
-- **Reopen when:** A specialty cannot normalize terminal evidence without moving authority; supported hosts require different semantics; recovery cannot use current specialty references; plural presentation omits material evidence; or distribution needs another authorized seam.
+  ```text
+  Outcome
+  Changes
+  Checks
+  Risks
+  Next
+  ```
+
+- **Decision:** `Checks` contains executed checks with exact outcomes, all papercut result lines in boundary and authored-task order or `Papercut: none`, and the normalized learning line. Compact uses `Learning: skipped for compact`. Standard/high uses `Learning: curated`, `Learning: no durable learning`, or `Learning: blocked <reason>`.
+- **Decision:** For implementation completion, `Changes` or `Checks` identifies the current active `DONE` plan path when a plan existed. Completion does not require, create, move to, or cite an archive. It carries no plan digest, result manifest, generation map, receipt, repair grant, or model grade.
+- **Decision:** Ordinary learning failure remains a `Risk` and still permits presentation. A current governing-rule conflict that directly invalidates or makes the settled implementation unsafe blocks successful completion. Other incomplete required stages use the owning workflow's typed blocked or stopped report rather than the success payload.
+- **Decision:** The same agent that validated terminal success invokes `completion-presentation` only as a deterministic renderer of the already-complete five-field payload. The renderer performs no validation, routing, state transition, Handoff, artifact publication, delivery, or shipping.
+- **Decision:** Generic and product callers share the five-field shape but keep their own authority. `product-ask` reports Product Handoff, approved PRD or iteration, human decision, papercut, learning, risks, and next product owner without implying engineering implementation or shipping.
+
+## Why
+
+A small stable envelope preserves intra-session control while repository artifacts remain the source of truth. Five human-centered fields provide enough terminal evidence without a second protocol stack. Same-agent rendering prevents presentation from becoming another workflow stage.
+
+## Rejected alternatives
+
+- **Durable session ledgers or continuation receipts:** duplicate plans and Handoffs and do not port reliably across hosts.
+- **Twelve-field completion:** overfits internal machinery and exposes process rather than outcome.
+- **Digests, manifests, proof recipes, generation maps, or model grading:** add parallel evidence systems without improving direct checks.
+- **Archive-gated presentation:** couples semantic completion to a storage move.
+- **Presenter-owned validation or transition:** lets formatting reopen settled workflow state.
+- **Shipping recommendations in `Next`:** conflate local completion with separately authorized delivery.
+
+## Consequences
+
+- Hosts may transport the envelope in memory, task context, or an equivalent native structure; no common background-job substrate is required.
+- Handoffs stay lean and revision-aware enough for a named receiver to continue.
+- Successful output is always recognizable by its exact five top-level fields.
+- Papercut and Learning are visible under `Checks`, and ordinary learning failure remains visible under `Risks`.
+- Planned completion references the active `DONE` plan and leaves historical archives untouched.
+- The renderer is optional presentation machinery, not a new owner or gate.
+
 ## Affected contracts
 
-- `.config/agents/skills/continual-learning/SKILL.md` owns portable mode eligibility, mutation proof, terminal outcomes, and host-neutral stops.
-- `.config/agents/skills/continual-learning/WORKFLOW.md` documents current envelope and adapter maintenance; executable modes do not load it.
-- `.config/agents/skills/continual-learning/evals/evals.json` owns portable learning behavior cases.
-- `.config/agents/references/packed-label.md` owns packed bold-label visual grammar. `.config/agents/skills/completion-presentation/SKILL.md` owns activation from one current twelve-key fence, ordered `change_scope`, `key_artifacts`, and `papercuts`, filled-value and Completion Summary durability boundaries, the fixed three-section report, presenter lifecycle stops, and applying that grammar without copying its spacing.
-- `.config/agents/skills/completion-presentation/evals/evals.json` owns valid fences, none/one/multiple papercut results, scalar near misses, compact and standard goldens, durability, decoded control rejection, and specialty-neutral presentation behavior.
-- `dev-continual-learning` remains the thin engineering adapter and visible tail owner.
-- `dev-implementation` remains the engineering task, manifest, recovery, accounting, and completion-validity owner.
-- `dev-ask`, `product-ask`, and custom or direct specialties retain routing, completion validation, settlement, current fence construction, aggregate-scope and key-artifact selection, durable Completion Summary and manifest validation, constraint validation, exact Next authorization, and non-success reporting.
-- The Common Handoff and Product Handoff remain the sole specialty recovery envelopes; `completion-presentation` creates none.
-- The papercut rule, skill, and workflow own same-child post-Handoff capture, child-unavailable fallback, compact results, deterministic accounting order, and exact-record settlement.
-- ADR-0001 projects engineering routing and presentation ownership; ADR-0003 preserves assurance-tail ownership; ADR-0004 preserves D07 and focused discovery; ADR-0005 preserves product authority; ADR-0007 preserves papercut authority; `docs/adr/INDEX.md` provides focused discovery.
+- `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, `references/execution-flow.md`, and focused evals.
+- `.config/agents/skills/product-ask/SKILL.md`, `WORKFLOW.md`, and focused evals.
+- `.config/agents/skills/dev-handoff/SKILL.md`, `completion-presentation/SKILL.md`, implementation terminal behavior, plan lifecycle, papercut, and learning.
+- Stale-contract scans and ADR discovery.
 
 ## Evidence / source revisions
 
-- Governing local Executor Plan: `local://session-lifecycle-envelope-plan.md`, identity `2026-08-20-2012_session-lifecycle-envelope`, approved complete-byte revision `sha256:5bd3bcd909edd7150a0810c55d6c450f9f1c68bf732254cba491c108d52d2d70` before its authorized lifecycle status transition.
-- Completed assurance-tail baseline: archived plan `sha256:bfede4203edc9e12f571c012ffc6cf386bb386df1e3f8f3dc3c5fc9db1f79520` and its exact completion Handoff, target manifest, and applicable-rule manifest named by the governing plan.
-- Current executable and ADR baselines are the exact AUTH-SLE-CURRENT, AUTH-SLE-ACTIVE, AUTH-SLE-PRESENTATION-BASE, and target-map revisions in the governing plan.
-- Governing completion-presentation revision plan: `local://completion-presentation-resume-index-plan.md`, identity `2026-08-24-1243_completion-presentation-resume-index`, initial approved complete-byte revision `sha256:339deaeecb50a8f4aac08867f4e581eea6cace19fc3fdc88baa56def0d3a1f86`, and human-approved same-plan continuation revision `sha256:2ae1bfb111aee165275225837b2e8801cd3d1572b21ea1da3710557eb169b098` before its authorized implementation delta.
+- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Earlier completion and session records remain historical support only where consistent with this clean cutover.
 
 ## Human authority
 
-The human owner confirmed the session lifecycle envelope, portable learning modes, completion presentation, exact-manifest recovery, idempotency, specialty ownership, exclusions, and high-consequence route on 2026-08-20 and 2026-08-21. On 2026-08-24 the owner approved the current fenced input, filled evidence, durable Resume from and Handoff forms, mandatory shipping constraint, specialty-authorized Next, same-agent projection, and unchanged lifecycle/shipping ownership, then authorized one materially changed same-plan hypothesis for the bounded implementation correction.
-
-On 2026-08-25, the human owner explicitly requested list rendering for Changed and confirmed that the same treatment applies to any section whose current grammar carries multiple artifact items; Changed is the only such field.
-
-On 2026-08-26, the human-approved orchestration/test-value plan authorized the clean scalar-to-ordered-array cutover for `papercuts`, same-child work-Handoff accounting, and rejection of legacy scalar input without a compatibility reader.
-
-On 2026-08-26, the human owner replaced the misleading `changed` field and `Changed` label with separate ordered Change scope and Key artifacts lists, required exhaustive inventory to remain in the exact manifest and/or Handoff, and strengthened Resume from to a durable Completion Summary carrying outcome, decisions, immutable evidence identities, residual risk, and the exact applicable manifest reference.
-
-On 2026-08-27, the human owner approved the renderer-only clean cutover from inline field clauses to one uniform hanging field list, with exact whitespace and EOF grammar, type-specific byte-preserving prefixes, presenter-owned empty Papercuts and State values, unchanged twelve-key fence authority, and no compatibility renderer or caller-copy normalization.
-
-On 2026-08-29, the human owner approved AUTH-PACKED-HUMAN at `sha256:829a5149f24f2f6069dca8c8db09dbe8e1cc34f028fe2bb1d5001924fd337ba6`, superseding only the 2026-08-27 hanging renderer layout with the packed bold-label and `- ` child-bullet grammar while preserving the twelve-key input, all fields and caller bytes, visible Handoff, durability, transport, control, lifecycle, shipping, Next, and specialty-owned non-success authority.
-
-On 2026-09-01, the human owner unified packed bold-label spacing by adding a blank line after each H2 and `**Label**` and between fields. That grammar lives in `.config/agents/references/packed-label.md`; it is not a skill. Consumers load it by pointer.
+The human-approved lean workflow authorizes this session and terminal projection. It does not authorize implementation, product approval, external effects, publication, delivery, deployment, or shipping.
 
 ## Supersession
 
-D27 is additive. It supersedes neither D07 nor any engineering, product, papercut, setup, Handoff, assurance, or shipping authority. ADR-0006 remains superseded by ADR-0007. A later record supersedes D27 only by naming this decision and updating the focused index and executable owners together.
+This record remains ACTIVE until a newer focused ADR explicitly supersedes D27 and updates the index. The five-field payload cleanly replaces the prior expanded completion shape.
 
 ## Verification expectations
 
-- The only session order is `intake → classify → work-specialty → Handoff → papercut look/skip → assess/skip → present`; re-entry never adds a stage or persisted state.
-- Portable assessment distinguishes nonempty affected work, zero complete candidates, incomplete candidate evidence, and empty or ineligible intake; review reads only explicit pointers; Deep uses only approved triggers.
-- Mutation remains bound to one frozen reporter tuple, fresh adjacent proof, correct semantic evaluator ownership, safe restoration, three terminal outcomes, and the seven-field result.
-- Exact duplicate dispatch tuples block before a role call or counter, slot, transition, or Handoff change; distinct authorized slots and recorded pre-semantic safe retries remain eligible.
-- The presenter activates only from exactly one current control-safe twelve-key `completion-presentation-input` fence and emits exactly the ordered H2 sections `Completed`, `Evidence`, and `Continuation`; every field has one no-colon `**Label**` row with no leading hyphen and `- ` children for each scalar or ordered array item; spacing follows `.config/agents/references/packed-label.md`; exactly one blank line precedes Evidence and Continuation, empty Papercuts is `- none`, State is `- complete; no open frontier.`, Handoff remains visible, and the final Next child ends at EOF.
-- Compact and standard registry outputs match their bound goldens; every valid report has one to three concise aggregate Change scope items, one to three durable openable Key artifacts, named verification with verdict and immutable fetchable evidence, normalized papercut and learning values, and no `Changed` label, exhaustive manifest, completed Route, exposed fence, injected structure, extra heading, or shipping-bearing Next.
-- Every valid compact, standard, product, and custom golden uses the packed bold-label and `- ` child-bullet form for scalar and array fields, including one-item arrays; removing exactly `- ` recovers every caller-owned value byte-for-byte; array item lines have no intervening blank lines; raw scalar locators remain unchanged and receive only natural host display wrapping.
-- Missing, stale, prior-turn, duplicate, malformed, reordered, unknown/duplicate/missing-key, empty, placeholder, legacy-`changed`, scalar or invalid scope/artifact cardinality, decoded CR/LF/NEL, Unicode-line-separator, C0/C1-control, durability-invalid, missing/incomplete Completion Summary, unresolved-local-Handoff, absolute-host-session-Handoff, constraint-invalid, unauthorized-Next, non-completed, and learning-`BLOCKED` input emits no generic completed report.
-- OMP reads the repository skill and Grok discovers the project skill from the same portable body; host model renders match the fixed structure and field mapping without requiring whole-output byte equality.
-- Engineering and product completion validation, assurance, papercut settlement, product authority, compact exclusion, exact Next authorization, and non-success reporting remain with their current owners; the same caller presents after fence construction, and the presenter receives no task, dispatch, state, approval, Context Pack, backend attempt, or Handoff.
-
-## Temporary future-agent notes
-These lines are not current executable authority. They exist so a later iteration can resume intent without re-deriving it from transcripts. Delete each note when that work is specified or rejected.
-
-- Frontend specialty workflow (name not confirmed): plug in as isolated lineages plus Standards/criteria through the applicable-project-rule manifest on the existing one D04 verification and one D22 final review; never a nested review or nested orchestrator.
-- Consumer-repo executable-pack distribution beyond current `init-ask` seams: ship skills/activation rules only; never clone this repo's ADR corpus.
-- Host runtime (Flue, Cloudflare Workers, a dashboard, later migration): keep contracts host-neutral; do not name a host in executable skills.
+- Generic and product fixtures require exactly `Outcome`, `Changes`, `Checks`, `Risks`, and `Next` in order.
+- Checks include papercut and learning dispositions; compact and standard/high behavior differ exactly as specified.
+- Planned completion cites the current active `DONE` path and does not create or require an archive.
+- Same-agent presenter calls render only a complete success payload and never route, validate, dispatch, publish, deliver, or ship.
+- Blocked and stopped workflows do not emit a misleading success payload.

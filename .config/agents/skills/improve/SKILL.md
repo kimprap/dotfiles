@@ -74,28 +74,28 @@ Apply in all modes (depth varies):
 **standard mode (creates dated plan):**
 - Balanced audit of scope using core criteria.
 - Write one dated plan in `.agents/plans/YYYY-MM-DD-HHMM_improve-<variant>.md` (use `date +%Y-%m-%d-%H%M`; `<variant>` is the unprefixed effective mode or focus, e.g. `deep`, `security`, `standard`, so the literal `improve-` prefix appears exactly once).
-- Follow `references/plan-template.md`: compact by default, expanded only when risk or scope earns it.
+- Follow `skill://improve/references/plan-template.md`: emit only its current lean pending-plan grammar, compact by default and expanded within that grammar only when risk or scope earns it.
 - Verify plan realism + coverage of main findings.
 - Present plan location. Do not execute unless told.
 
 **deep mode (creates dated plan):**
 - Same as standard, but broader/thorough coverage and deeper analysis.
 - Plan reflects the extra depth in findings and grouping.
-- Use the same improve naming convention (filename will reflect the mode, e.g. `..._improve-deep.md`), same location, template, and "present" rules.
+- Use the same improve naming convention (filename will reflect the mode, e.g. `..._improve-deep.md`), location, lean template, and "present" rules.
 
 No mode keyword → standard plan. `direct` or `no-plan` suppresses plan creation and uses standard-depth direct work.
 
 ## Guardrails
 
 - Quick and direct/no-plan: never write plans; quick stays shallow, direct/no-plan uses standard-depth review before editing.
-- Standard/deep: always produce a dated plan in `.agents/plans/` using the improve naming convention (`improve-<variant>` slug) + the header metadata block + Tasks checklist per the base plan rule.
+- Standard/deep: always produce a dated pending plan in `.agents/plans/` using the improve naming convention (`improve-<variant>` slug) and exactly the lean grammar in `skill://improve/references/plan-template.md`.
 - Never destructive actions.
 - Respect current changes; do not ignore the actual diff for unrelated work.
 - If scope or mode remains ambiguous after parsing keywords, clarify briefly.
 - Plans are for review/execution. Do not auto-apply them.
 - If `direct`/`no-plan` conflicts with `deep`, ask once before doing broad direct edits.
 
-Always read `references/plan-template.md` and `.config/agents/rules/plan.md` before writing any plan (standard or deep).
+Always read `skill://improve/references/plan-template.md`, `rule://plan`, `rule://plan-repo-storage`, and `rule://plan-impl-spec` before writing any plan (standard or deep).
 
 This skill is mode-aware: quick is fast/direct; direct/no-plan is standard-depth direct; standard/deep yield proportional structured plans.
 

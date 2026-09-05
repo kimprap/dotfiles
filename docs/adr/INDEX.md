@@ -1,53 +1,88 @@
-# Workflow ADR index
+# Architecture Decision Record index
 
-| ID | Title | Status | Scope | Path | Affected authority | Supersession links |
-|---|---|---|---|---|---|---|
-| ADR-0001 | Dev workflow authority and routing | ACTIVE | Durable authority, thin routing, independent dimensions, clean cutover, semantic source roles including non-runtime custom-controller maps, lean planless direct work, planned compact child dispatch, explicit portfolio-audit intake, terminal completion, and shipping boundary | [`0001-dev-workflow-authority-and-routing.md`](0001-dev-workflow-authority-and-routing.md) | D01, D02, D05, D10–D20, D26; `dev-ask`; `dev-implementation`; `reconcile`; root `WORKFLOW.md`; skill-local `references/execution-flow.md` | D16 supersedes D05's former fixed one-follow-up cap only |
-| ADR-0002 | Executor plans and orchestration | ACTIVE | Executor Plan v1, plan-backed full/no-downgrade launch, pure control-plane root, shared-tree admission, mechanical projection, bounded same-child closure, worker discipline, and terminal archive boundary | [`0002-executor-plans-and-orchestration.md`](0002-executor-plans-and-orchestration.md) | D06, D08, D09, D21, D29; plan/transport rules; profile/assessor; `dev-implementation`; `dev-handoff`; `WORKFLOW.md` | None |
-| ADR-0003 | Bounded assurance and repair | ACTIVE | Two work attempts, one repair token, changed-hypothesis continuation, bounded same-child closure, independent assurance, one final review, explicit audit separation, and permanent-test portfolio value | [`0003-bounded-assurance-and-repair.md`](0003-bounded-assurance-and-repair.md) | D03, D04, D22, D28; implementation, verification, integration, review, TDD, audit, Handoff, and semantic fixtures | None |
-| ADR-0004 | Canonical discovery and continual learning | ACTIVE | Conditional discovery, focused provenance, qualifying custom-controller diagnostic maps, one terminal noncompact learning assessment, terminal engineering completion, closure-off-learning, and exact papercut settlement | [`0004-canonical-discovery-and-continual-learning.md`](0004-canonical-discovery-and-continual-learning.md) | D07, D23; ADR registry; root `WORKFLOW.md`; skill-local `references/execution-flow.md`; learning/backend seams | None |
-| ADR-0005 | Product development workflow and PRD authority | ACTIVE | Product routing, decision refinement, PRD identity/revisions, candidate promotion, artifact registry, and engineering handoff | [`0005-product-development-workflow-and-prd-authority.md`](0005-product-development-workflow-and-prd-authority.md) | P01–P09; product skills and engineering handoff | None |
-| ADR-0006 | Generic papercut evidence | SUPERSEDED | Original papercut evidence and v1 storage | [`0006-generic-papercut-evidence.md`](0006-generic-papercut-evidence.md) | Historical D24 | Superseded by ADR-0007 |
-| ADR-0007 | Automated papercut lifecycle and lean evidence | ACTIVE | Same-child post-work-Handoff look, bounded structured-lineage qualification, stable root-cause consolidation, child-unavailable fallback, ordered accounting, exact-record settlement, and compact v2 storage | [`0007-automated-papercut-lifecycle-and-lean-evidence.md`](0007-automated-papercut-lifecycle-and-lean-evidence.md) | D24; papercut rule/skill/helper/workflow; evidence ledger; lifecycle callers | Supersedes ADR-0006 |
-| ADR-0008 | Repository agent integration setup | ACTIVE | Approval-gated repository inspection and setup through current artifact owners | [`0008-repository-agent-integration-setup.md`](0008-repository-agent-integration-setup.md) | D25; `init-ask`; setup evals | None |
-| ADR-0009 | Session lifecycle envelope and portable workflow owners | ACTIVE | Seven-event envelope, portable learning, exact Completion Summary recovery, one unversioned completion fence with ordered scope, key-artifact, and papercut lists, and host-neutral distribution | [`0009-session-lifecycle-envelope-and-portable-learning.md`](0009-session-lifecycle-envelope-and-portable-learning.md) | D27; continual learning; completion presenter; engineering/product/custom/direct normalizers | None |
+This index is the canonical discovery surface for durable repository decisions. Open it only when work changes or questions architecture, workflow semantics, product authority, papercut behavior, repository setup, canonical domain language, or another listed scope. Then read only the applicable ACTIVE record and any explicitly named dependency. Executable skills and rules own runtime behavior; ADRs own durable decisions; human maps and maintenance journals are non-runtime projections or provenance.
 
-The five core generic-workflow records are ADR-0001, ADR-0002, ADR-0003, ADR-0004, and ADR-0009. ADR-0005, ADR-0007, and ADR-0008 remain separate ACTIVE concerns; ADR-0006 remains SUPERSEDED. Decision discovery spans D01–D29.
+## Current records
 
-Surface-verification contract discovery remains inside existing units: D11 owns profile/route neutrality; D06 separates runtime profile adapters from proof adapters; D08 owns proof-recipe Context Pack projection; D04 owns readiness-only doctor use and assurance consumption; D22 owns final-review identity checks; D07 owns existing-destination-only maintenance; D13 owns the exact clean cutover; D25 preserves owner-driven setup; and D27 owns manual distribution.
-
-D29 owns current-session terminal-plan archive triggering, ordering, archive-only planned recovery, already-terminal and planless exclusions, and storage-blocker caller stops; D27 remains the owner of the unchanged completion fence and renderer projection.
+| ADR | Status | Current scope | Decision IDs |
+|---|---|---|---|
+| [ADR-0001 — Development workflow authority and routing](0001-dev-workflow-authority-and-routing.md) | ACTIVE | Thin generic engineering router; child implementation authority; direct/planned classification; clean cutover; five-field completion; separation from product, custom workflows, and shipping | D01, D02, D05, D10–D20, D26 |
+| [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | Child-owned controller execution; lean plan grammar; mechanical scheduling; same-child code-then-test rethink; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29 |
+| [ADR-0003 — Bounded assurance and repair](0003-bounded-assurance-and-repair.md) | ACTIVE | Two semantic attempts; compact versus standard/high assurance; one tests-first review; verifier-owned closure; permanent-test value and A-first manual audit | D03, D04, D22, D28 |
+| [ADR-0004 — Canonical discovery and continual learning](0004-canonical-discovery-and-continual-learning.md) | ACTIVE | Conditional discovery; one terminal engineering learning assessment; human execution map; optional noncanonical maintenance-journal relationship | D07, D23 |
+| [ADR-0005 — Product development workflow and PRD authority](0005-product-development-workflow-and-prd-authority.md) | ACTIVE | Product routing, human product authority, product grilling, PRD identity and approval, iteration artifacts, engineering handoff | P01–P09 |
+| [ADR-0006 — Generic papercut evidence](0006-generic-papercut-evidence.md) | SUPERSEDED by ADR-0007 | Historical capture/storage design; not current lifecycle authority | D24 (historical) |
+| [ADR-0007 — Deterministic papercut observation](0007-automated-papercut-lifecycle-and-lean-evidence.md) | ACTIVE | One look after every completed repository-work boundary; complete stable-order root-cause accounting; strict exclusions; opt-in persistence | D24 |
+| [ADR-0008 — Repository agent integration setup](0008-repository-agent-integration-setup.md) | ACTIVE | Approval-gated inspection and initialization of supported repository integrations | D25 |
+| [ADR-0009 — Terminal envelope and lean completion protocol](0009-session-lifecycle-envelope-and-portable-learning.md) | ACTIVE | Stateless session transport; lean Handoffs; exact Outcome/Changes/Checks/Risks/Next completion; same-agent rendering | D27 |
 
 ## Decision discovery
 
-| Decision ID | Title | Scope | Active ADR |
-|---|---|---|---|
-| D01 | Durable decision authority | Generic workflow ADR storage, registry, and supersession | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d01--durable-decision-authority) |
-| D02 | Approval model | Route approval, downstream continuation, and material reapproval | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d02--approval-model) |
-| D03 | Post-assurance repair | Attempt one/two, one run-wide repair token, exact causal repair, continuation receipt, and finite stop | [ADR-0003](0003-bounded-assurance-and-repair.md#d03--post-assurance-repair) |
-| D04 | Assurance boundaries | Worker smoke, fresh independent proof, neutral fan-in, one final review, backend order, same-owner closure, and explicit audit separation | [ADR-0003](0003-bounded-assurance-and-repair.md#d04--assurance-boundaries) |
-| D05 | Grilling bound | Grilling applicability and each decision frontier | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d05--grilling-bound) |
-| D06 | Orchestrator binding | Plan-backed full/no-downgrade launch, child semantic ownership, serial runtime default, and direct generic downgrade preservation | [ADR-0002](0002-executor-plans-and-orchestration.md#d06--orchestrator-binding) |
-| D07 | Deep continual learning | One terminal noncompact assessment, terminal engineering completion, compact deferral, closure separation, and exact papercut settlement | [ADR-0004](0004-canonical-discovery-and-continual-learning.md#d07--deep-continual-learning) |
-| D08 | Executor plan shape | Preserved v1 grammar/fan-in/compact/tails plus exact target/effect scheduling, undeclared-write stop, and Context Pack projection | [ADR-0002](0002-executor-plans-and-orchestration.md#d08--executor-plan-shape) |
-| D09 | Todo projection | Authored task projection, mechanical scheduler state, task completion receipts, optional-tail/backend equivalence, and terminal completion | [ADR-0002](0002-executor-plans-and-orchestration.md#d09--todo-projection) |
-| D10 | Sole thin, stateless router | External classification, first dispatch, explicit portfolio-audit intake, and terminal completion normalization | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d10--sole-thin-stateless-router) |
-| D11 | Independent workflow dimensions | Assurance/lifecycle/topology independence, plan-backed activation, planless direct separation, and proof-adapter neutrality | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d11--independent-workflow-dimensions) |
-| D12 | Human authority at consequential boundaries | Product, architecture, scope, acceptance, topology/independence, destructive, and external effects | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d12--human-authority-at-consequential-boundaries) |
-| D13 | Clean cutover | Closed caller migration, root-fallback removal, preservation controls, and ordered scope, key-artifact, and papercut completion lists | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d13--clean-cutover) |
-| D14 | Separate shipping authority | Staging, commit, push, review request, release, deploy, rollout, and delivery effects | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d14--separate-shipping-authority) |
-| D15 | Semantic ownership and source roles | Authority, projections, executable skill prose, non-runtime root `WORKFLOW.md`, qualifying skill-local diagnostic flow maps, ADR rationale, and advisory research | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d15--semantic-ownership-and-source-roles) |
-| D16 | Iterative grilling completion | Grilling rounds, completion, pause, and no-progress boundaries | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d16--iterative-grilling-completion) |
-| D17 | Optional external-intake triage | Explicitly requested raw issue or pull-request intake | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d17--optional-external-intake-triage) |
-| D18 | Compact approval and completion presentation | Five-field packed route overview and current three-section completed report | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d18--compact-approval-and-completion-presentation) |
-| D19 | Ordered route presentation | Prospective ordered Route ending in the non-dispatchable presenter marker | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d19--ordered-route-presentation) |
-| D20 | Recommended route and conditional decision support | Router route selection and interview boundary | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d20--recommended-route-and-conditional-decision-support) |
-| D21 | Worker solution discipline | Smallest sufficient implementation, bounded same-owner closure rounds, and task-local test-value settlement | [ADR-0002](0002-executor-plans-and-orchestration.md#d21--worker-solution-discipline) |
-| D22 | Complexity lens inside the one final review | One discovery review, one repair-impact rerun, exact lineages, Standards tags, and material changed-test classification | [ADR-0003](0003-bounded-assurance-and-repair.md#d22--complexity-lens-inside-the-one-final-review) |
-| D23 | Focused decision provenance | Generic/stage-specific workflow decisions and edit-time, diagnostic-only `references/execution-flow.md` for qualifying custom controller loops | [ADR-0004](0004-canonical-discovery-and-continual-learning.md#d23--focused-decision-provenance) |
-| D24 | Automated papercut lifecycle and lean evidence | Same-child look, bounded structured-lineage escalation, stable root-cause consolidation, fallback only on unavailability, ordered accounting, exact settlement, and v2 evidence storage | [ADR-0007](0007-automated-papercut-lifecycle-and-lean-evidence.md#d24--automated-papercut-lifecycle-and-lean-evidence) |
-| D25 | Repository agent integration setup | Repository inventory, exact proposal, approval/recheck, lazy setup, and owner preservation | [ADR-0008](0008-repository-agent-integration-setup.md#d25--one-approval-gated-repository-integration-setup) |
-| D26 | Lean ordinary implementation path | Planless same-context compact and compact-plan child dispatch without an assurance tail | [ADR-0001](0001-dev-workflow-authority-and-routing.md#d26--lean-ordinary-implementation-path) |
-| D27 | Session lifecycle envelope and portable workflow owners | Seven events, portable learning, exact Completion Summary recovery, ordered scope/key-artifact/papercut lists, `.config/agents/references/packed-label.md` renderer, and host-neutral distribution | [ADR-0009](0009-session-lifecycle-envelope-and-portable-learning.md#d27--session-lifecycle-envelope-and-portable-workflow-owners) |
-| D28 | Permanent test portfolio value | Unique observable value, closest-test reuse, stable seam, independent oracle, plausible bug, consolidation, and changed-test disposition | [ADR-0003](0003-bounded-assurance-and-repair.md#d28--permanent-test-portfolio-value) |
-| D29 | Terminal plan archive boundary | Current-session terminal trigger, terminal-bytes → exact archive postcondition → caller-output order, archive-only planned recovery, exclusions, and visible storage blockers | [ADR-0002](0002-executor-plans-and-orchestration.md#d29--terminal-plan-archive-boundary) |
+| Question | Read first | Then read only if needed |
+|---|---|---|
+| Is this generic engineering work, product work, a custom controller, direct work, or shipping? | ADR-0001 D01, D02, D10, D11, D12, D18 | ADR-0005 for product authority; custom controller contracts for custom work |
+| Who may change code and how many semantic attempts exist? | ADR-0001 D02; ADR-0003 D03 | ADR-0002 D06, D21 for controller and rethink details |
+| Does this require a plan and what does the plan contain? | ADR-0001 D11; ADR-0002 D08, D09 | ADR-0002 D29 for lifecycle and storage |
+| Where does a plan remain after completion or stop? | ADR-0002 D29 | Plan storage and host transport rules for mechanics |
+| What assurance profile and ordering apply? | ADR-0001 D16, D20; ADR-0003 D04 | ADR-0003 D22 for review and D28 for test portfolio audit |
+| Who owns review closure after repair? | ADR-0003 D04, D22 | `dev-verification` for executable check handling |
+| When does permanent-test audit run? | ADR-0003 D28 | `dev-test-audit` and its protocol for exact transport |
+| When does papercut observation occur? | ADR-0007 D24 | Portable `papercut` for qualification and storage approval |
+| When does engineering learning run and can failure block completion? | ADR-0004 D07 | `dev-continual-learning` and portable `continual-learning` for executable behavior |
+| Where is the human execution map, and can it override runtime? | ADR-0004 D23 | `dev-ask/WORKFLOW.md` and `references/execution-flow.md`; maps never override runtime |
+| Who owns an optional skill or prompt maintenance journal, and what authority does it have? | ADR-0004 D23 | `craft-skill` for the append-only convention; the journal is provenance only |
+| What exactly is successful completion? | ADR-0009 D27 | `completion-presentation` for rendering only |
+| What is the current completion plan locator? | ADR-0002 D29; ADR-0009 D27 | The current active `DONE` path; no archive lookup is part of completion |
+| How are product decisions approved and handed to engineering? | ADR-0005 P01–P09 | Product skills and the approved PRD or iteration artifact |
+| How may repository integrations be initialized? | ADR-0008 D25 | `init-ask` for the current catalog and approval gate |
+
+## Authority and precedence
+
+1. Current human decisions and approved artifacts govern their stated scope.
+2. Injected system and repository rules govern execution.
+3. ACTIVE focused ADRs govern durable repository decisions.
+4. Executable owner skills govern runtime behavior within that authority.
+5. Human workflow maps summarize current flow but do not run it or win conflicts.
+6. Optional `MAINTENANCE.md` journals record append-only provenance but never approve, execute, or supersede behavior.
+7. Superseded ADRs and historical plan archives explain history only.
+
+If two current surfaces disagree, stop at the conflict, preserve the narrower/higher authority, and send correction to the owning record or skill. Do not maintain compatibility language in active runtime prose merely because a superseded record remains readable.
+
+## Current generic execution map
+
+The generic engineering path is:
+
+```text
+intake and classify
+  → direct child work or active lean plan
+  → candidate
+  → same-child code rethink then test rethink
+  → optional correction
+  → direct checks and lean Handoff
+  → one papercut look per completed repository-work boundary
+  → compact completion
+     or one review → one verifier → one learning assessment
+  → active DONE plan when planned
+  → exact five-field presentation
+```
+
+Manual permanent-test audit is an explicit separate read-only workflow. Shipping remains separately authorized. Reconcile and other qualifying custom controllers keep their own approved behavior and are not generic aliases.
+
+## Supersession discipline
+
+- A new durable decision must name every decision ID and record it supersedes.
+- Update this index in the same change.
+- Preserve superseded records and historical plan archives; do not rewrite them to resemble current runtime.
+- Remove stale executable branches, callers, fixtures, and human projections in a clean cutover unless a human explicitly approves compatibility.
+- A correction to optional maintenance provenance appends `Supersedes`; it never rewrites journal history.
+
+## Current evidence baseline
+
+The 2026-09-05 lean projection is authorized by:
+
+- `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`;
+- `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`;
+- the approved ticket graph for the same specification; and
+- the installed executable runtime contracts projected by ADRs 0001–0004, 0007, and 0009.
+
+The source inventory in `.config/agents/references/impl-rethink/MAINTENANCE.md` remains append-only non-runtime provenance and does not expand this authority.

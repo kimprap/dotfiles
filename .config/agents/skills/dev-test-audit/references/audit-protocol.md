@@ -1,97 +1,96 @@
-# Test audit protocol v1
+# Manual permanent-test audit protocol
 
-`test-audit/v1` is identified by the SHA-256 digest of this file. It defines exact-target intake, the read-only opinion receipt, deterministic evidence aggregation, and the audit extension to the existing Common Handoff. It is not a cleanup request, a second completion envelope, an implementation task, an assurance gate, or a scheduler.
+This protocol owns the explicit, read-only, A-first audit loop. Permanent-test value is defined only by `skill://dev-implementation/references/test-value.md`; this protocol defines scope, proposal shape, turn order, agreement, liveness, routing, and audit-specific closure without copying that policy.
 
-## Frozen audit tuple
+## Bound scope
 
-Before dispatch, bind one tuple:
+An audit starts only from an explicit manual request. Before the existing initial Route Overview approval:
 
-- evidence locator for the explicit user or external-scheduler request;
-- an exact target locator and identity for either a content-addressed working-tree manifest or commit;
-- one complete repository-suite boundary, or one complete named-subsystem boundary with the subsystem's stable name;
-- permanent-suite manifest locator/digest, discovery rule/boundary, ordered stable selectors, content identities, and selector-set digest;
-- optional completed-plan or parent-outcome provenance identity, with authority `none`;
-- `test-value/v1` URI/digest;
-- this protocol URI/digest;
-- portable opinion-prompt URI/digest;
-- exact controller-supplied role-table URI/digest and one native binding attestation for each logical opinion; and
-- the allowed Common Handoff receiver.
+1. Use the requester's explicit test scope when present; otherwise use the repository's complete permanent-test portfolio.
+2. Resolve that exact scope to an ordered list of every in-scope permanent-test file.
+3. Show the exact scope, complete ordered list, and every exclusion in the Route Overview. Do not launch auditor A or B.
+4. Continue only after approval binds the current target, scope, and ordered file list.
 
-The target is exact only when it is a commit or the working-tree manifest content-addresses the complete declared target. The suite manifest is complete only when its discovery boundary accounts for every permanent test in the declared repository or named-subsystem scope and every manifest row has one stable selector and current content identity. A named subsystem excludes repository tests outside its declared boundary but must enumerate every permanent test inside it. Generated artifacts, temporary comparison data, audit data, and non-permanent tracer tests stay outside the suite only when the bound discovery rule excludes them explicitly. Changed-tests-only, incomplete, stale, moving, or contradictory target/suite intake is ineligible and returns `blocked` before either opinion dispatch. Completed-plan provenance is optional and contributes no authority.
+Repository tests outside an explicit scope are out of scope, not implicitly audited. Temporary probes and generated test artifacts are excluded only when the repository's own permanent-test convention excludes them. If the file list cannot be completed, approval is missing or stale, the scope changes, or authority over an exclusion is contradictory, stop read-only before launching A.
 
-The two opinions receive the same frozen target, suite, policy, protocol, prompt, role-table, and request-provenance identities; each receives only its own controller-supplied binding attestation and no other opinion output.
+Bind only the current approved target, ordered file list, stated inclusions/exclusions, installed policy and rethink paths, requester, persistent auditor identities, current proposals, and final Handoff.
 
-## Opinion receipt
+## Complete proposal
 
-Each opinion returns one native child artifact whose controller-facing projection contains only:
+Every auditor proposal repeats the same ordered file set and contains exactly one compact row per file:
 
 ```text
-outcome: completed | transport-unavailable
-opinion: A | B
-attestation: exact agent and logical role; fresh child identity; role-table identity; native binding identity; requested and resolved model; reasoning; capability/tool boundary; isolation; fallback none; target identity; suite identity; policy identity; protocol identity
-coverage: manifest row count; ledger row count; selector-set digest; disposition counts; duplicate or omitted selectors
-ledger: native artifact locator; SHA-256 digest
-candidate index: one bounded entry for every non-keep ledger row
-transport mismatches: exact expected and observed values
+File: <path>
+Accounting: reviewed | skipped: <reason>
+Disposition: keep | merge | remove | unknown
 ```
 
-A completed receipt requires every attestation field to match the frozen tuple and controller-supplied binding, zero duplicate or omitted selectors, equal manifest/ledger counts, equal selector-set digests, and disposition counts that sum to the manifest count. A mismatch returns `transport-unavailable`; the child does not continue and the controller does not substitute another role. Transport failure changes only this explicit audit.
-
-The complete ledger remains behind its native locator. It contains exactly one row per manifest selector:
+For a `merge`, `remove`, or `unknown` finding, append:
 
 ```text
-row identity and stable selector
-source path and current test identity
-observable contract, regression, or invariant, or concrete absent/unknown evidence
-closest existing coverage and whether it subsumes the row
-stable public seam
-independent oracle
-one plausible bug the test uniquely catches, or concrete absent/unknown evidence
-disposition: keep | merge | remove | unknown
-evidence references and uncertainty
-merge/remove destination when applicable
-row digest
+Evidence: <direct source or behavior evidence>
+Closest coverage: <file/test and comparison, or none found>
+Stable seam: <public seam exercised, or absent/unknown>
+Independent oracle: <oracle, or absent/unknown>
+Plausible bug/absence: <bug uniquely caught, or concrete absence evidence>
+Uncertainty: <none or exact unresolved fact>
+Destination: <required for merge; retained coverage for remove; otherwise none>
 ```
 
-Apply `test-value/v1` in order. Do not reward path uniqueness, implementation details, snapshots, coverage, production-coupled oracles, or another opinion's claim. `unknown` is required when available evidence cannot support a value decision.
+Interpret these fields only through `skill://dev-implementation/references/test-value.md`. Inspect enough of every file and its closest coverage to mark it `reviewed`; a file that cannot be assessed from available evidence is `skipped: <reason>`, must be `unknown`, receives the detailed fields, and remains preserved. A reviewed `keep` row carries no detailed evidence. A proposal is incomplete if a scoped file is omitted or duplicated, accounting or disposition is invalid, required finding/unknown detail is absent, keep detail is added, or an out-of-scope file appears.
 
-The bounded candidate index is not a partial ledger. It contains every non-`keep` selector exactly once and only: selector; proposed disposition; a concise bounded projection of the observable value or concrete absence evidence, closest coverage comparison, stable seam, oracle, plausible bug or absence evidence, and uncertainty; merge/remove destination when present; ledger row digest; native row locator; and concise evidence locators. These fields let the controller validate the originating recommendation without fetching its full row. Receipt counts and the selector-set digest prove complete coverage while full `keep` rows and unbounded analysis stay out of controller context.
+A **finding** is any `merge`, `remove`, or `unknown` row. “No findings” means every file is `reviewed` and `keep`. Recommendations are not mutation authority.
 
-## Controller admission
+## Persistent A-first loop
 
-Reject the pair as `transport-unavailable` when either receipt is missing, mismatched, fallback-backed, not read-only, not exact-model/exact-reasoning, not fresh, fails its supplied binding attestation, or shares a child identity. Never accept a single opinion, sequential self-opinions from one child, a copied ledger, or a substitute role or model.
+Use the native persistent opinion agents named by the harness wrappers.
 
-For an admitted pair:
+1. After the current Route Overview approval, start persistent auditor A with the bound scope and installed policy reference. Do not start B. A's first outer-loop return must be one complete proposal and must not have received the rethink prompt.
+2. After validating A's complete first return, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A exactly once. A returns a complete revised proposal.
+3. If A's revised proposal has no findings, accept it immediately. Do not create B.
+4. If findings remain, start persistent auditor B with the identical bound scope, the same policy reference, and A's complete revised proposal. B's first outer-loop return must be complete and must not have received the rethink prompt.
+5. After validating B's complete first return, send the same test rethink file to that same B exactly once. B returns a complete revised proposal.
+6. If the revised proposals agree, accept. Otherwise send B's revised proposal to persistent A and request a proposal revision only. Then, if needed, send A's revision to persistent B. Continue alternating the same persistent A and B with counterpart proposals only.
+7. Never send the rethink prompt after an auditor's first-return rethink. Never create fresh auditors to continue the loop.
 
-1. Union the candidate-index selectors without changing order: opinion A index order first, then previously unseen opinion B selectors.
-2. For each A candidate fetch only B's exact counterpart ledger row; for each B-only candidate fetch only A's exact counterpart row. Verify every row digest and selector against its opinion ledger receipt. Do not fetch unrelated `keep` rows or either full ledger.
-3. Validate each recommendation independently against `test-value/v1`. A recommendation with a missing contract/value basis, closest-coverage comparison, stable seam, independent oracle, plausible bug, or concrete absence evidence is unsupported.
-4. Aggregate by evidence, never by vote:
-   - `remove` only when both independent supported rows recommend removal and prove the same test is tautological, duplicate, or subsumed without losing an observable contract; a subsumption claim names the retained selector.
-   - `merge` only when both independent supported rows recommend merge, identify the same compatible retained destination, and preserve every unique observable contract.
-   - `keep` when both supported rows keep, or when one supported keep row proves unique observable value and the opposing non-keep row is unsupported.
-   - `unknown` for supported disagreement, different non-keep destinations/dispositions, missing counterpart evidence, any source `unknown`, only one supported non-keep recommendation, or any unresolved uncertainty.
-5. Preserve every unsupported or `unknown` case. Aggregate `remove` and `merge` are read-only recommendations, not mutation authority.
+An incomplete first return stops as `persistent blockage`; do not spend the rethink prompt trying to reconstruct missing scope. After their rethink, every later return is still a complete proposal over the unchanged file list.
 
-Recommendation count, confidence adjectives, model reputation, test length, file age, coverage percentage, and implementation similarity alone never decide a row.
+## Agreement and liveness
 
-## Stability and result
+Agreement requires the same complete file set, compatible evidence, and the same disposition and destination for every file, or one auditor's explicit acceptance of the counterpart's complete proposal. Agreement on `unknown` preserves that file and authorizes no fix.
 
-After counterpart reads, rehash the exact target, suite manifest, selector set, and policy. Any drift yields a non-mutating blocked Common Handoff naming the changed identity; do not publish stale candidates. When exact, emit one existing Common Handoff extended with:
+After acceptance, send the accepted proposal to the other live auditor so both persistent sessions are synchronized. A-only early success needs no B synchronization.
 
-```markdown
-## Test audit
-- Protocol identity: test-audit/v1 URI and digest
-- Frozen target, suite, selector-set, and policy identities; evidence prose states explicit user or external-scheduler provenance, target kind, repository-complete or named-subsystem repository-partial scope, and optional completed-plan/parent-outcome provenance with authority none
-- Opinion A: exact binding attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
-- Opinion B: exact binding attestation, child identity, receipt locator/digest, ledger locator/digest, coverage proof
-- Pair admission and distinct-identity result
-- Candidate union order and exact counterpart rows fetched
-- Aggregate selector → keep | merge | remove | unknown → evidence rule → opinion row references
-- Unsupported and unknown selectors preserved
-- Pre/post identity equality and repository no-mutation evidence
-- Audit outcome: completed | transport-unavailable | blocked; evidence prose labels named-subsystem results partial relative to the repository
-- Cleanup authority: none
-```
+Stop read-only and name exactly one primary reason when:
 
-The Handoff references native artifacts instead of copying ledgers. `transport-unavailable` names every expected/observed binding mismatch and any unstarted or cancelled counterpart. `blocked` names the exact ineligible, incomplete, stale, or moving non-transport field and records opinion dispatch count zero when preflight fails. Neither outcome changes implementation, assurance, repair, review, learning, completion, plan, or suite state. No audit role runs worker closure.
+- **unchanged/repeated proposals** — the next proposal repeats that auditor's prior proposal or another already-seen proposal without accepting it;
+- **non-applicable revision** — a response does not revise against the supplied counterpart, changes the bound file set, or proposes work outside permanent-test value;
+- **persistent blockage** — an auditor cannot return a complete applicable proposal from available repository evidence;
+- **lost reviewer** — a persistent A or B session required during proposal exchange becomes unavailable; or
+- **authority conflict** — scope, policy, target, or requester authority conflicts and cannot be resolved inside the read-only audit.
+
+Do not add a round limit, select a winner, count votes, replace an auditor, or mutate to break a tie.
+
+## Accepted fixes and one batch
+
+An accepted proposal with `merge` or `remove` rows is a candidate fix set, not approval to edit. Return the exact rows, destinations, evidence, and preserved behavior to `dev-ask`. `dev-ask` must provide one Route Overview that explicitly approves the exact fix batch and chooses a direct or planned implementation route. The default mutation allowance is one separately approved batch; only the human may adjust it. Audit roles never implement, run tests, stage, commit, or ship.
+
+An all-`keep` result or a result containing only preserved `unknown` rows has no mutation batch.
+
+## Original-A closure
+
+Retain original A's persistent session when an approved audit fix batch is implemented. After that batch and before normal final review or verification, send original A only the accepted proposal, approved batch, applied delta, and resulting target. Do not send the rethink prompt again.
+
+Original A performs one read-only audit-specific closure over the approved batch and returns:
+
+- `CLOSED` — every approved fix is applied as approved and its named observable value is preserved;
+- `NOT CLOSED` — direct evidence shows an approved fix is missing, exceeded, or lost named observable value; or
+- `INCONCLUSIVE` — the applied target or required evidence is unavailable or contradictory.
+
+Closure cannot add findings, reopen portfolio scope, authorize repair, or start another batch. If original A is unavailable only at this post-batch boundary, omit audit-specific closure, report `original-A closure unavailable`, do not substitute A or claim closure, and continue through the approved route's normal assurance. Do not reopen the audit or mutation batch.
+
+## Lean Handoff
+
+Return one lean `dev-handoff` envelope. Put the bound file list, final complete proposal or liveness stop, sequence actually taken, accepted exact fix rows, and original-A closure state or `original-A closure unavailable` when applicable in `Outcome`. Set `Changed targets/effects` to `none; audit was read-only`. In `Checks`, state the complete-file accounting and read-only observation. Put uncertainties or a proposal-loop liveness stop in `Blocker/risk`; closure unavailability is reported without claiming closure and does not block normal assurance.
+
+The next receiver is `dev-ask` only for accepted `merge` or `remove` fixes. Otherwise return to the explicit requester/controller. No audit result changes implementation, review, verification, completion, shipping, or plan state by itself.

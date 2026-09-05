@@ -1,55 +1,73 @@
-# Automated papercut lifecycle and lean evidence
+# Deterministic papercut observation
 
 **Status:** ACTIVE  
-**Date:** 2026-08-12  
-**Updated:** 2026-08-31  
-**Decision IDs:** D24  
-**Supersedes:** ADR-0006  
-**Related authority:** ADR-0001 D15; ADR-0004 D07, D23; ADR-0005 P07
+**Date:** 2026-08-20  
+**Updated:** 2026-09-05  
+**Decision ID:** D24  
+**Related authority:** ADR-0001 D05, D14; ADR-0004 D07
 
 ## Scope
 
-This decision governs current-work and bounded structured-execution-lineage papercut qualification, repository-opt-in evidence, Learning Candidate delivery, exact-record workflow settlement, compact storage, and framework documentation. It applies to `.config/agents/rules/papercut.md`, the portable `papercut` skill and its helper/evals/current-workflow reference, `.agents/papercuts.json`, and the settlement seam consumed by workflow owners. It supersedes ADR-0006 D24. It does not create product authority, a workflow stage, issue tracker, repair queue, retry ledger, transcript miner, memory backend, background process, or shipping authority.
+This record governs when repository-owned reusable-friction evidence is observed and how complete repository-work outcomes are presented to portable `papercut`. It applies to `dev-implementation`, direct engineering work, learning-curation repository work, `dev-shipping` delivery stages that change repository state, `dev-handoff`, the portable `papercut` skill, and workflow projections. It does not broaden qualification, storage, or mutation authority.
 
 ## Context / problem
 
-ADR-0006 made papercut capture portable, redacted, repository-owned, and opt-in, but exposed storage choreography to callers and left the final loop disconnected. Callers had to understand a separate JSON Schema, five helper commands, expected digests, and retries. A complete papercut Learning Candidate could reach an authorized workflow outcome without settling the exact source record, so users still had to review and resolve evidence manually. The empty dotfiles ledger permitted a clean format cutover without transforming observations. The terminal-attempt-only soft look also let a clean final attempt hide severe reusable friction from earlier structured attempts, including exhausted cycles, repeated execution-mechanics authority changes, recurring blocker classes, and an otherwise completed proof result lost before persistence.
+Papercut observation is most useful immediately after a repository-work boundary while evidence is fresh. Calling it before work settles, batching unrelated boundaries into one terminal pass, or returning only one conveniently selected result loses causal evidence. Conversely, treating ordinary code defects, external outages, protected boundaries, or one-off content requests as reusable workflow friction creates noise. Invocation and result accounting therefore must be deterministic while qualification stays skill-owned.
 
 ## Decision
 
-### D24 — Automated papercut lifecycle and lean evidence
+### D24 — One look per completed repository-work boundary
 
-- **Scope:** Candidate-triggered activation; semantic qualification/redaction; bounded structured-lineage escalation; repository opt-in evidence; one post-work-Handoff soft look; deterministic completion accounting; exact-record settlement; compact v2 storage; proposal-only review; and separation from memory, transcripts, trackers, product authority, repair, and delivery.
-- **Decision:** Keep one small always-applied activation rule and one portable `papercut` skill with four public modes: automatic `capture`, and explicit `init`, `review`, and `resolve`. The rule owns current or bounded-lineage activation. The skill owns allowed lineage sources, qualification, repository-ownership judgment, redaction, stable root-cause consolidation, record selection, Learning Candidate construction, immutable `PC-ID` delivery, workflow-result mapping, and authority boundaries. One private standard-library helper owns unchanged storage mechanics: strict validation, stable IDs, bounded locking, exact mechanical deduplication, and atomic persistence.
-- **Decision:** After every work Common Handoff, the same child applies the soft look once. It begins with the completed attempt and widens within the same work lineage only when directly referenced plan blocker tables, Common Handoffs, or immutable attempt receipts show an exhausted attempt or repair budget, a recurring blocker class, loss of an otherwise completed result before persistence, or repeated human authority needed solely for execution mechanics. These markers permit inspection; counts, budget state, and authority revisions alone do not qualify a papercut. A clean final attempt cannot erase severe qualifying structured friction. Only child unavailability permits root fallback.
-- **Decision:** Consolidate repeated symptoms by stable surface and root-cause class, not attempt. A repository-owned final accounting step that considered only terminal observations despite an escalation marker may itself qualify as run-lineage blindness; its stable surface is the qualification policy, not the failed attempts. Keep attempt IDs, hashes, timestamps, providers, models, and paths in redacted observation evidence only, never in stable `surface` or `summary`. The look may classify multiple stable root-cause candidates but selects at most one for automatic capture and performs at most one ledger `record` call. Other candidates receive an explicit report-only qualification or repository-ownership rejection in the same compact result. No candidate means no papercut skill or ledger access and no papercut output. Capture changes no task state and dispatches no learning. Papercut is never a task, Methods token, route stage, todo phase, worker-closure round, or per-task learning trigger.
-- **Decision:** The lifecycle caller retains every result or none-only accounting item in deterministic work-Handoff order. Terminal normalization sends only material existing results as the ordered `papercuts` array; none-only accounting becomes `[]`. Papercut output never creates a second completion envelope.
-- **Decision:** A complete candidate carries one originating `PC-ID`. The current authorized workflow may supply that ID to portable continual learning, which returns the unchanged ID and candidate-specific evidence without ledger access. After the terminal result, the workflow settles only that exact record: verified durable correction maps to `fixed`; candidate-specific rejection maps to `rejected`; replacement maps to `superseded`; blocked, incomplete, deferred, or non-specific outcomes keep it open.
-- **Decision:** Store one canonical JSON v2 ledger with only `version` and `records`. Each record keeps stable ID, surface, summary, first/last dates, monotonic occurrence count, bounded observations, and latest resolution. Redacted observation evidence may carry volatile receipt details; stable identity and summary never do. Resolution removes detailed prose; recurrence reopens the same record while retaining prior resolution. Candidate, evaluation, task, workflow, scheduling, retry, and memory state are never persisted.
-- **Decision:** `init` creates v2 when absent, is idempotent on valid v2, and migrates only the exact valid empty v1 shape. Nonempty v1 or malformed/unsafe state fails closed without mutation. Explicit `review` stays proposal-only and explicit `resolve` remains available, but neither is required in the normal lifecycle.
-- **Why:** Same-child observation retains local evidence without expanding the control-plane root. Bounded structured escalation prevents a clean terminal attempt from hiding earlier severe friction while direct references and four markers prevent ambient mining. Stable root-cause consolidation avoids per-attempt records and keeps identities portable. Exact-ID settlement closes the loop without letting a broad result affect unrelated evidence. Ordered material-only presentation preserves every receipt internally while keeping terminal output bounded.
-- **Rejected alternatives / why not:** Terminal-attempt-only qualification, root-first capture, fallback while the child is available, one record per attempt, unbounded lineage scans, raw transcript/history/memory/provider-log mining, ledger-wide review, counters or authority revisions as qualification, timers, queues, stored retry or candidate state, workflow-specific adapters, automatic product/ADR authority, repair, tracker effects, shipping, dual readers, or compatibility aliases either hide reusable friction or duplicate authority and create hidden scheduling.
-- **Consequences:** OMP, Grok, and other hosts use the same repository-neutral qualification and settlement semantics; invocation and evidence locators remain transport seams only. Ordinary no-candidate work performs no papercut skill or ledger access, and no-marker work performs no lineage inspection, but lifecycle accounting still records that the required look occurred. Severe structured friction remains visible across a clean final attempt. Every mutation remains redacted, repository-local, disclosed, locked, validated, atomic, and limited to one selected record per look. Resolved evidence remains non-authoritative.
-- **Reopen when:** qualification/redaction, lineage escalation markers or allowed sources, same-child ownership, fallback eligibility, root-cause consolidation, deterministic ordering, completion projection, storage, settlement, record identity, recurrence, repository scope, or authority boundaries change.
+- **Decision:** After each completed repository-work Handoff, run exactly one papercut look before the next workflow stage. The implementation child runs the look after its attempt Handoff. The parent may run it only when that child is unavailable. Direct engineering without a child runs one look after its completed boundary.
+- **Decision:** Separately executed learning curation and shipping or delivery repository mutations create their own completed boundaries and therefore their own one look. A completed Handoff that preserves repository work while reporting a blocker is a boundary. Read-only work and repository work abandoned before such a Handoff are not boundaries.
+- **Decision:** Pass the affected path boundary and direct execution evidence. Portable `papercut` alone qualifies root causes and returns one result for every distinct qualifying cause in stable authored-task order. Consolidate equivalent same-cause evidence before presentation; never select only the easiest or most important result.
+- **Decision:** Exclude ordinary code defects, requests for more tests or debugging, external-provider or environment failures outside repository control, missing product or engineering authority, deliberate safety boundaries, already-fixed friction with no reusable residue, and content-only one-off work. A source suggestion or external essay cannot qualify a papercut by itself.
+- **Decision:** Preserve portable `papercut`'s opt-in persistence. Repository initialization requires the skill's existing human approval gate; after that opt-in, automatic capture may record each qualifying cause in an initialized writable ledger. Absent, malformed, unsafe, or unauthorized storage leaves every cause report-only, and review stays proposal-only. Invocation creates no automatic issue, plan, learning item, initialization, or unrelated file.
+- **Decision:** There is no numeric result cap, severity threshold, model score, review-policy import, or terminal retry. If papercut cannot run, record the unavailable boundary once and continue unless a separate governing rule makes completion unsafe.
+
+## Why
+
+The workflow owns deterministic observation timing and complete accounting. The portable skill owns the harder judgment of whether local friction is reusable, repository-owned, safe to retain, and eligible for storage. Keeping those responsibilities separate avoids both silent omission and noisy capture.
+
+## Rejected alternatives
+
+- **One terminal papercut pass:** loses the boundary and task that produced the evidence.
+- **Parent-only invocation:** breaks same-owner evidence continuity and turns the controller into a semantic worker.
+- **Single-result selection or numeric caps:** silently drops distinct qualifying causes.
+- **Automatic initialization:** bypasses the portable skill's redaction and repository opt-in boundary.
+- **Imported review heuristics or source scoring:** lets advisory material redefine runtime qualification.
+- **Calling after read-only or pre-Handoff abandoned work:** treats absence of a completed repository-work boundary as reusable friction.
+
+## Consequences
+
+- Every completed implementation, eligible learning-curation, and delivery mutation boundary gets exactly one look.
+- Multiple distinct qualifying causes all appear under `Checks` as separate `Papercut: <disposition>` lines in stable order; no result becomes `Papercut: none`.
+- A completed boundary with no qualifying cause records `Papercut: none`.
+- Papercut never reopens accepted implementation, assurance, product, or shipping state by itself.
+- Journal source treatments remain provenance and cannot alter this decision.
+
 ## Affected contracts
 
-- `.config/agents/rules/papercut.md` owns only candidate-triggered activation, the four bounded-lineage escalation markers, and the structured-source gate.
-- `.config/agents/skills/papercut/SKILL.md` owns the four public modes, allowed lineage sources, semantic qualification, repository-ownership judgment, stable root-cause consolidation, candidate delivery, settlement mapping, reporting, and authority boundaries.
-- `.config/agents/skills/papercut/scripts/papercut_ledger.py` owns only the unchanged v2 path, schema, `surface` plus `summary` identity, validation, lock, deduplication, compaction, and atomic-write mechanics.
-- `.config/agents/skills/papercut/WORKFLOW.md` describes current behavior for maintenance only.
-- `.agents/papercuts.json` is repository-local opt-in evidence with no authority beyond its validated records.
-- ADR-0004 D07 remains the sole owner of generic engineering continual-learning evaluation and terminal curation. Its backend seam carries and settles an originating `PC-ID`; this decision does not create another curation lifecycle.
-- ADR-0005 P07, product owners, custom-workflow owners, Mnemopi, future `.agents/memory/`, issue trackers, and shipping remain separate and unchanged.
-
-Executable rule, skill, helper, eval, and workflow contracts define current behavior. This ADR alone owns D24 rationale, rejected alternatives, source qualification, and reopen triggers.
+- `.config/agents/skills/papercut/SKILL.md` and its focused evals.
+- `.config/agents/skills/dev-implementation/SKILL.md`, direct engineering guidance, `dev-handoff`, terminal completion, learning curation, and shipping delivery orchestration.
+- `.config/agents/skills/dev-ask/WORKFLOW.md`, `references/execution-flow.md`, and caller projections.
 
 ## Evidence / source revisions
 
-- Governing specification: `local://papercut-automation-init-ask-spec.md`, revision `PAPERCUT-AUTOMATION-SPEC-20260812-r1`, SHA-256 `83252a629a21a87281d84a780c687672b8e0112233d0a4b5cc093a439231bd16`.
-- Superseded baseline: ADR-0006 and `SELF-IMPROVEMENT-DESIGN-20260812-r1`, approved executor-plan revision `b919e29f11e991a1a3594b13c9bcca83c6dc0159494ae4a2985029fb71b9c84f`.
-- Bounded-lineage maintenance evidence: `.agents/plans/archive/2026-08-29-1827_reconcile-workflow.md@sha256:1f0749cde55399395138ae38442c1ef14651c91b498532d9a259971e64f6bbc7#completion-summary`; `local://reconcile-t1-r7-common-handoff.md@sha256:a215350134d8df0aecf9463ba4a59b79a114d696ad417dbb56900694286ce1ab`; `local://reconcile-t1-r7-papercut-accounting.json@sha256:5c3a3b478d301690237ea7e34fc95c46b018d32e06349765642f518f113cb4ea`.
-- Steve Ruiz's first-party post and media cited in ADR-0006 support proactive in-the-moment capture and later human cleanup. They do not establish this repository's v2 schema, exact settlement mapping, authority boundaries, recurrence behavior, or memory separation; those remain human-approved local decisions.
+- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- The prompt-bundle maintenance journal records advisory source treatments but is non-runtime provenance.
 
 ## Human authority
 
-The human owner approved the lean automated papercut design, exact original specification revision above, clean empty-ledger cutover, automatic exact-record settlement, framework documentation, and high-consequence implementation route on 2026-08-12. On 2026-08-31, the human owner approved bounded structured-lineage qualification, stable root-cause consolidation, and the unchanged one-record/four-mode/four-operation lifecycle while preserving repository ownership, transcript exclusion, and external-behavior boundaries.
+The human-approved lean workflow authorizes deterministic observation and complete result accounting. It does not authorize automatic persistence, mutation, issue creation, external publication, or shipping.
+
+## Supersession
+
+This record remains ACTIVE until a newer focused ADR explicitly supersedes D24 and updates the index.
+
+## Verification expectations
+
+- Fixtures cover one implementation boundary, multiple authored tasks, direct work, learning-curation work, a completed delivery mutation, and failed/read-only stages.
+- One look occurs per completed boundary, in boundary order, with child ownership or unavailable-child fallback.
+- Every distinct qualifying root cause is returned in stable authored-task order and equivalent causes consolidate.
+- Strict exclusions and opt-in persistence remain owned by portable `papercut`.

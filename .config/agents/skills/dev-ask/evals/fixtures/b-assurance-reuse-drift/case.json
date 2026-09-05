@@ -1,6 +1,0 @@
-{
-  "inputs": {
-    "request": "Read-only standard assurance trace with two separate scenarios; emit canonical events only. Scenario one preserves the current repair-only control: frozen AC-A/PR-A and AC-B/PR-B remain unchanged; repair changes surface-A and proposes EVID-B-OLD for AC-B, but dep-B changed from sha256:old-b to sha256:new-b after the backend froze repair actions. The verifier rejects reuse, invokes PR-A once and PR-B once fresh, and emits one fresh VERIFIED aggregate. Scenario two starts from a separately valid backend freeze for a promoted later-cycle package. After dispatch, the verifier independently resolves current file://dep-b and detects sha256:stale-b where the validated current package binds sha256:current-b. Return INCONCLUSIVE before proof with proof invocations=0, no fresh fallback, no repair, no mutation, and no aggregate verdict."
-  },
-  "scripted_replies": []
-}

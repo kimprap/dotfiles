@@ -1,33 +1,44 @@
 ---
 name: dev-continual-learning
-description: Adapt one eligible engineering terminal assessment or separately authorized Deep route to the portable continual-learning skill. Skip compact, keep one Common Handoff, and never fork qualification, curation, settlement, or scheduling semantics.
+description: Run one engineering terminal learning assessment after standard or high review and verification. Adapt lean settled evidence to portable continual-learning, skip compact work, and never retry or turn ordinary learning failure into an implementation blocker.
 ---
 
 # Engineering Continual Learning
 
-## Adapter contract
+## Route position
 
-Keep `dev-continual-learning` as the sole route-visible engineering learning owner. Invoke the portable `continual-learning` skill exactly once in the bound mode:
+Keep `dev-continual-learning` as the sole route-visible engineering learning owner. Standard and high assurance invoke it exactly once after the one `dev-code-review` and a final `VERIFIED` result from `dev-verification`. Compact invokes neither this adapter nor portable `continual-learning` and records `Learning: skipped for compact` at completion.
 
-- map one settled standard or high-consequence terminal assessment to `assess`;
-- map one separately authorized engineering Deep route to `deep`.
+A separately authorized engineering Deep request may use this adapter in portable `deep` mode. It is a new explicit maintenance route, not a second assessment of the completed implementation.
 
-Reject compact intake and any second direct portable invocation for an adapter-owned outcome. Portable `review` is not an engineering profile-tail mode. Apply the portable skill's eligibility, qualification, curation, proof, seven-field result payload, papercut return boundary, and stop semantics unchanged; do not restate or fork them here. This assurance-tail role never runs `worker-closure/v1`.
+## Lean intake
 
-## Engineering intake
+For terminal `assess`, require only:
 
-For `assess`, require the engineering Task Contract with `Methods: none`, its exact Context Pack, the settled reviewed target and terminal outcome, the completed Common Handoff, a nonempty affected-artifact manifest, every available complete Learning Candidate, and residual incomplete-candidate evidence. For `deep`, require the separately authorized engineering Deep Task Contract, `Methods: none`, and its exact Context Pack.
+- the settled implementation outcome, completed one-shot review, and final `VERIFIED` result;
+- every affected path;
+- the lean Handoffs in authored-task and stage order;
+- every papercut result from completed repository-work boundaries; and
+- every complete Learning Candidate, with incomplete candidates identified as evidence only.
 
-The Task Contract and Context Pack bind the portable mode and input. The backend binds each manifest exactly once: the once-bound target-manifest and applicable-project-rule-manifest digests, selected profile-tail source and role slot, inherited semantic-attempt, repair, review, and learning counters, applicable continuation-receipt identity, reached stages and terminal state, and exact artifact and receipt identities. Before dispatch or resume, the backend proves current target and rule bytes equal those bound manifests.
+Do not require or carry target manifests, rule manifests, digests, counters, receipts, role slots, retry identities, archive locators, or a second recovery envelope. Reject a duplicate assessment for the same engineering outcome before portable invocation.
 
-Pause or compaction preserves those values through the existing Common Handoff and immutable digest-bound references; it creates no task, state, manifest, counter, slot, or second Handoff. An exact repeated tuple of parent outcome, target-manifest digest, applicable-project-rule-manifest digest, role slot, and semantic-attempt or continuation-receipt identity is an `idempotency-violation` before portable invocation and consumes no call, slot, counter, transition, or Handoff. A distinct authorized slot and a recorded pre-semantic safe transport retry are not duplicates.
+## One portable invocation
 
-Pass the exact completed Handoff, affected-artifact input, available candidates, frozen evaluation tuple and `CE-` digest when present, unchanged originating `PC-ID` when present, current manifest evidence, selected slot, counters, reached stages, terminal state, advisories, ordered work-Handoff papercut accounting, and artifact or receipt identities to the portable skill without inventing or weakening semantics.
+Invoke portable `continual-learning` once in `assess` mode with the lean intake. Preserve its qualification, curation, redaction, destination authority, validation, and papercut-ID boundaries. Do not prequalify candidates or fork portable policy in this adapter.
 
-## Result mapping
+There is no semantic or transport retry, resume loop, second curator, or second portable call. A missing dependency or ordinary assessment/curation failure is returned once as `blocked <reason>`.
 
-Fill the existing adapter attempt's single Common Handoff with `Methods: none`, the exact portable mode and result identity, reviewed target, terminal outcome `CURATED | NO DURABLE LEARNING | BLOCKED`, the portable seven-field payload, and exactly one receiver: `dev-implementation`. Add the digest-bound current manifests, selected role slot, inherited counters, reached stages and terminal state, and artifact or receipt identities needed for cold-start, pause, or compaction recovery. This is the adapter Task Contract's required Common Handoff; the portable invocation creates no task or Handoff, and the adapter creates no second recovery or presentation Handoff.
+## Result and completion impact
 
-The backend alone consumes the portable result. `CURATED` and `NO DURABLE LEARNING` satisfy the dispatched engineering learning gate; `BLOCKED` names the portable resume condition and leaves the settled implementation unchanged. The backend validates any returned originating `PC-ID`, maps only its candidate-specific result, and invokes portable papercut settlement at most once for that exact ID. The adapter and portable skill never read or mutate the papercut ledger.
+Normalize the portable terminal status to exactly one completion check line:
 
-Return to `dev-implementation`. Do not schedule another profile tail, add a lifecycle transition, repair implementation, rerun assurance, declare completion, present the result, or ship.
+- `Learning: curated`
+- `Learning: no durable learning`
+- `Learning: blocked <reason>`
+
+`curated` and `no durable learning` permit completion. An ordinary `blocked <reason>` also permits completion and the same reason is reported as residual risk. Stop completion only when the assessment establishes a current governing-rule conflict that directly makes the settled implementation invalid or unsafe; return that conflict to the governing authority instead of constructing completion input.
+
+Return one lean `dev-handoff` envelope to the lifecycle controller. Include any guidance paths changed by curation, the assessment checks, candidate-specific papercut dispositions, the normalized learning line, the exact residual or governing conflict, and no extra transport fields. The adapter never reads or writes the papercut ledger, reruns review or verification, repairs implementation, presents completion, or ships.
+
+If curation changed repository material, that completed Handoff is itself a repository-work boundary: load `papercut` once afterward under the generic scheduling rule. That look never triggers another learning assessment.

@@ -1,120 +1,48 @@
-# Improvement Plan
+# Improvement plan template
 
-Read `.config/agents/rules/plan.md` and `.config/agents/rules/plan-repo-storage.md` first. `plan.md` owns the core lifecycle and canonical content metadata (`Datetime`/optional `Mode`/`Scope`/`Summary`/`Status`), `## Tasks` checkbox rules, stable task reference codes, completion timestamps, and Completion Summary. `plan-repo-storage.md` owns filenames, active/archive locations, and archive mechanics. `/improve` writes its complete plan directly to the active repository path, so this template emits portable plan bytes followed by `/improve`-specific `Mode`.
-
-When used by `/improve`, the `<slug>` must follow `improve-<mode-or-params>` (e.g. `2026-06-14-1530_improve-deep.md`, `..._improve-security.md`, `..._improve-standard.md`). Use `date +%Y-%m-%d-%H%M` for the prefix.
-
-## Proportionality
-
-Plans target a fresh executor with zero session context, but they are not transcripts. Include the minimum evidence needed to execute safely.
-
-- **standard**: compact executable plan by default. Use focused findings, exact in/out scope, tasks, verification, and STOP conditions. Add longer context only when it reduces risk.
-- **deep** or high-risk/multi-subsystem work: expanded plan. Include more current-state context, phased findings, command details, and maintenance notes.
-- Quote code only when exact shape matters. Prefer `file:line` references and 1-3 line excerpts over copied blocks.
-- Omit empty audit categories. Collapse related findings.
-- Do not paste full validation scripts unless the exact script is non-obvious or intended for reuse.
-
-## Standard compact plan
-
-Use this shape for default `/improve` unless the audit finds broad or risky work:
+For `/improve standard` and `/improve deep`, first read `rule://plan`, `rule://plan-repo-storage`, and `rule://plan-impl-spec`. Write the complete pending plan directly to `.agents/plans/YYYY-MM-DD-HHMM_improve-<variant>.md`, using `date +%Y-%m-%d-%H%M` for the prefix and one lowercase kebab-case variant. Emit only the portable lean plan bytes below.
 
 ```markdown
-# Improvement Plan: <imperative title of what will be true>
+# <imperative title of what will be true>
 
 **Datetime**: <YYYY-MM-DD-HHMM>
-**Mode**: standard
 **Scope**: <bounded area of work>
-**Summary**: <1-2 sentences on the main opportunity and outcome>
+**Summary**: <one or two sentences describing the intended outcome>
 **Status**: PENDING
 
-## Findings
+## Outcome and authority
 
-- `path/to/file.ext:line` — <problem> → <planned fix>. <Short evidence; include a tiny excerpt only if needed.>
-- `path/to/other.ext:line` — <problem> → <planned fix>.
+- Outcome: <observable result>
+- Authority: <current approved human, product, or engineering authority>
+- Assurance: <compact | standard | high>
 
-## Scope
+## Scope and effects
 
-**In scope**:
-- `exact/path`
-
-**Out of scope**:
-- `adjacent/path` — reason
+- Scope: <included repository paths, surfaces, and behavior>
+- Effects: <allowed repository and non-repository effects, or repository changes only>
+- Non-goals: <explicit exclusions>
 
 ## Tasks
 
-- [ ] T1. <focused execution batch>
-- [ ] T2. <verification/review batch if separate>
+- [ ] T1. <vertical implementation intent>
+  - Owner: <one child owner>
+  - Depends on: none
+  - Targets: <comma-separated exact owned paths or surfaces>
+  - Acceptance: <comma-separated AC IDs>
+  - Receiver: <one owner>
 
-## Verification / Done criteria
+## Acceptance
 
-- [ ] `<targeted command>` exits 0
-- [ ] <observable behavior or diff invariant holds>
-- [ ] `git status --porcelain <in-scope paths>` shows only expected paths
+- [ ] AC-1. <short criterion name>
+  Behavior: <observable>
+  Check: <command or direct static proof>; expect <exact result>
 
-## STOP conditions
+## Recovery and stops
 
-- Current file contents no longer match the cited findings.
-- A task requires an out-of-scope file.
-- A verification command fails after one reasonable fix attempt.
+- Recovery: <how to preserve completed work and resume inside current authority, or none>
+- Stops: <conditions that halt rather than weaken ownership, checks, assurance, or effects>
 ```
 
-## Expanded plan additions
+Add more `T*` tasks and `AC-*` criteria only in their existing sections. Standard plans stay compact; deep or higher-risk plans may carry more precise evidence in field values, task intents, and checks, but never add another H2 or header field. A pending `/improve` plan has no `Completed At` and no `## Completion Summary`; the executor adds those only when the plan reaches valid `DONE`.
 
-Use these sections for `/improve deep`, larger refactors, migrations, security work, or plans with multiple dependent batches. Include only sections that earn their place.
-
-```markdown
-## Why this matters
-
-2-4 sentences. Concrete problem, cost, and expected improvement.
-
-## Current state
-
-- Files and roles:
-  - `path/to/foo.lua` — primary logic for Y; relevant lines 120-145
-- Evidence:
-  - `path/to/foo.lua:123-126` — short excerpt or summarized pattern.
-- Applicable conventions:
-  - <local pattern or rule to preserve>
-
-## Commands you will need
-
-| Purpose | Command | Expected on success |
-|---|---|---|
-| Parse | `<real command>` | exit 0 |
-| Verify | `<real command>` | expected result |
-
-## Scope
-
-**In scope**:
-- `exact/path1`
-- `exact/path2`
-
-**Out of scope**:
-- `other/path` — reason
-
-## Audit Findings
-
-### <category or subsystem>
-- `file:line` — finding → planned fix.
-
-## Execution notes
-- Re-capture state before editing if the tree is dirty or the plan is old.
-- Keep edits surgical and inside scope.
-
-## Maintenance notes
-- Future interaction or reviewer focus.
-- Deferred items and why.
-
-## Open Questions / Assumptions
-- <assumption and impact>
-```
-
-## Quality bar before emitting a plan
-
-- A model that never saw the audit can execute using only the plan plus the repo.
-- Every task has enough file/path detail to act without re-discovering the whole problem.
-- Verification is concrete and targeted.
-- STOP conditions are plan-specific risks, not boilerplate.
-- The plan follows `plan.md` for the exact `Datetime → optional Mode → Scope → Summary → Status` header, stable task reference codes, `## Tasks`, completion timestamps, and Completion Summary; `plan-repo-storage.md` owns its repository identity and archive lifecycle.
-- The plan is proportional: small standard plans stay short; deep plans carry enough detail to avoid unsafe guessing.
-- No secret material.
+Plans are for review and later execution. `/improve` does not execute them and assigns no plan-publication responsibility to `dev-ticketing` or any other stage.

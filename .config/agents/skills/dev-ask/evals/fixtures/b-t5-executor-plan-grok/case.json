@@ -1,7 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "Read-only Executor Plan repository-readiness trace: bind one exact active repository plan path, its approved revision, and the PLAN-SHA used by the paired OMP case. The backend runs executor_plan.py validate PLAN exactly once against that file; the valid result carries PLAN-SHA. Report that Grok discovers the transport rule through .grok/rules, authors the active repository file directly, and uses it for execution and continuation. Identity presentation, model, role, tools, and recovery remain adapter-owned. Discovery supplies no parser meaning, validator success, or parent attestation; perform no publication or mutation."
-  },
-  "scripted_replies": []
-}

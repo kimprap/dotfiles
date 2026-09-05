@@ -61,11 +61,26 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 - If a requested skill mostly says “do X, but with Y context”, prefer a short wrapper over copying X.
 - If the requested artifact is a rule file under `.config/agents/rules/`, `.agents/rules/`, `.omp/rules/`, `.cursor/rules/`, `.windsurf/rules/`, or `.clinerules`, use `craft-rule` instead of applying skill frontmatter guidance.
 
-## Caller-owned adapter authoring
+## Optional maintenance journal convention
 
-For `create-surface-verification-adapter` and `maintain-surface-verification-adapter`, accept exactly one caller-owned tuple: approved adapter root, exact file manifest, manual frontmatter, required sections, absent/current baselines, preservation boundary, and validation recipe.
+`craft-skill` alone owns the optional hybrid `MAINTENANCE.md` convention for skills and prompt bundles. Do not create a journal merely because a skill exists or changes. Use one only when durable decision or source provenance will materially help later maintenance.
 
-Own only skill-file authoring and evaluation. Recheck the supplied baselines, preserve every path outside the manifest, apply only the supplied root and files, validate the supplied frontmatter and section contract, and return the exact changed manifest. The wrapper retains eligibility, exact approval, naming, proof semantics, maintenance classification, product behavior, and shipping authority. Never broaden the tuple, create an absent maintenance destination, repair product code, or reinterpret a validation failure.
+A conforming journal is append-only, non-runtime, and noncanonical. Structured entries and source rows may coexist with optional free-form maintenance notes. Executable skill or rule prose, approved artifacts, and active ADRs remain authoritative; discovery, invocation, and runtime execution never load or interpret the journal.
+
+Every structured entry records:
+
+- a stable identity and kind;
+- `Supersedes: none` or the exact superseded entry IDs;
+- context;
+- decision;
+- applied paths;
+- rejected alternatives;
+- validation; and
+- a revisit condition.
+
+Every source row records the exact source URL or stable local URI, access date, `Use: adopted | adapted | caution | rejected | superseded`, `Basis: local evidence | primary source | secondary source | unverified`, applied path, and concise local treatment. A source row records provenance; it does not import an article or create runtime policy.
+
+Later corrections append a new entry with `Supersedes`; never rewrite or delete earlier history. Do not store raw transcripts, copied articles, provider trivia, or numeric source scores. Preserve every existing journal entry byte-for-byte unless the explicit task is to append a conforming correction.
 
 ## Activation and transport
 

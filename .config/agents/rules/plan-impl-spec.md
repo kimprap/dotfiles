@@ -1,103 +1,109 @@
 ---
-description: Apply with plan.md when drafting or revising a durable future-execution plan for code or agent-behavior changes; skip direct, investigation-only, verification-only, and cleanup-only work.
+description: Defines the exact lean executable body and structural validation contract for implementation plans.
+paths: ["**/.agents/plans/*.md"]
 ---
 
-# Executor Plan v1
+# Lean implementation plan
 
-Apply `plan.md` first. It owns the H1/header, identity, lifecycle, checkboxes, completion, approval, and transport precedence. This companion owns only the portable implementation-grade body. Storage and harness companions own materialization; the backend owns runtime task state. Reference exact requirements, specifications, ADRs, tickets, or direct authority instead of copying them. Never create a semantic sidecar or duplicate header schema.
+Apply with `plan.md`. The header is followed by these H2 sections exactly once and in this order:
 
-## Ordered portable body
+1. `## Outcome and authority`
+2. `## Scope and effects`
+3. `## Tasks`
+4. `## Acceptance`
+5. `## Recovery and stops`
+6. `## Completion Summary` only when status is `DONE`
 
-After the base header, include each H2 exactly once in this order:
+No other H2 section is valid. Historical detailed plans remain historical data; the active validator accepts only this lean format.
 
-1. `Objective`
-2. `Authority`
-3. `Governing decisions`
-4. `Scope, non-goals, and prohibited effects`
-5. `Fixed shared contracts`
-6. `Target map`
-7. `Execution policy`
-8. `Tasks`
-9. `Acceptance`
-10. `Verification / Done criteria`
-11. `Result / Handoff`
-12. `Blockers and recovery`
-13. `Critical anchors and assumptions`
+## Outcome and authority
 
-| Section | Required contract |
-|---|---|
-| `Objective` | One stable `OUT-...` ID, observable end state, and criterion- or blocker-level progress signal. Activity, elapsed time, agent count, or token use is not progress. |
-| `Authority` | `Authority ID \| Kind \| URI \| Revision \| Approval`; stable `AUTH-...` IDs and exact non-placeholder revisions/states. Project the governing authority; never expand it. |
-| `Governing decisions` | `Decision ID \| Revision \| Execution effect`; only active relevant decisions and constraining rejected alternatives, referenced rather than reproduced. |
-| `Scope, non-goals, and prohibited effects` | Explicit `Read surfaces`, `Change surfaces`, `Non-goals`, and `Prohibited effects`, plus `Effect ID \| Kind \| Authority \| Limit / reversibility`. Every permitted effect has a stable `EFF-...` ID; tasks may cause only referenced effects. `none` is valid only as an explicit no-effect declaration backed by the authority boundary. |
-| `Fixed shared contracts` | `Contract ID \| Surface \| Owner task \| Revision \| Consumers`; stable `CONTRACT-...` IDs for fixed interface, state, data, compatibility, degraded behavior, and approved break/removal ownership. Exactly one implementation owner; all references resolve. |
-| `Target map` | `Target ID \| Path / surface \| Owner task \| Base identity \| Callers / fixtures \| Criteria`; stable `TGT-...` IDs covering every changed/produced path, symbol, behavior, caller, fixture, and criterion boundary. Exactly one implementation owner; every target is tasked. |
-| `Execution policy` | Declare `Assurance`, `Topology`, `Max concurrency`, `Isolation`, `Lineages`, `Fan-in task`, `Fan-in inputs`, `Contention policy`, `Decomposition`, `Effect limit`, and `Orchestrator profile`. Keep lifecycle, assurance, and topology independent. Default to one owner. Multiple isolated lineages require distinct IDs, neutral fan-in of every input, and post-fan-in proof. Every approved parser-valid implementation plan launches through full orchestration with `downgrade: none`; missing or mismatched capability stops `transport-unavailable`. |
-| `Tasks` | One monotonic `T*` family. Every task has exactly one Owner, Receiver, short human Intent sentence, and Methods value; implementation leaves fit one fresh worker session. |
-| `Acceptance` | `Criterion ID \| Condition / input \| Expected observable / threshold \| Surface \| Owning task`; stable `AC-...` IDs, exactly one owner each, and no duplicate or orphan. |
-| `Result / Handoff` | `Output ID \| Producing task \| Artifact / identity \| Allowed outcomes \| Receiver \| Handoff contract`; each `OUTP-...` appears once, has one receiver, and uses the Common Handoff from `dev-handoff`. Outcomes and receivers stay within the Task Contract. |
-| `Blockers and recovery` | `Blocker ID \| Owner \| Recovery evidence \| Affected tasks \| Revision / approval boundary \| Ready condition`; stable `BLK-...` IDs with exact recovery, dependency cone, and reapproval rule. Keep runtime attempt state out of the plan. |
-| `Critical anchors and assumptions` | `Anchor ID \| Kind \| Exact reference \| Execution role`; stable `ANC-...` IDs for disambiguating paths, symbols, rules, skills, ADRs, and external contracts. Record evidenced `ASM-...` assumptions with only pre-decided fallbacks, or write exactly `Assumptions: none`. No unresolved placeholders. |
-
-### Tasks
-
-Use the base checkbox form and monotonic order:
+Use these nonempty fields once:
 
 ```markdown
-- [ ] T1. <bounded vertical task>
-  - Owner: <exactly one owner>
-  - Intent: <one short human sentence without IDs, paths, or procedure>
-  - Methods: none | tdd
-  - Wave: W0
-  - Depends on: none | T...
-  - Targets: TGT-...
-  - Contracts: CONTRACT-...
-  - Criteria: AC-...
-  - Effects: none | EFF-...
-  - Output: OUTP-...
-  - Receiver: <exactly one receiver>
-  - Verification: VR-...
-  - Lineage: shared | LIN-...
+- Outcome: <observable result>
+- Authority: <current approved human/product/engineering authority>
+- Assurance: compact | standard | high
 ```
 
-Dependencies form a DAG, reference earlier waves, and match topology. Every task has one implementation owner, one output, one receiver, one target, one acceptance criterion, and one proof recipe for each owned criterion. Intent is one short human sentence with no IDs, paths, or procedure. Work-task Methods is exactly `none` or `tdd`; every authored profile-tail task uses `none`. `ponytail` is reserved and rejected until a separately authorized skill exists. Workers never invent tasks, criteria, effects, contracts, or receivers. Size each implementation task to one fresh worker context using the same best-effort ~150k guidance in `plan.md`; never record or validate the estimate or invent a lifecycle task to satisfy it.
+Authority must be sufficient for the outcome and effects. A plan records current authority; it does not create it.
 
-Standard and high-consequence plans may omit the numbered profile tail or append one exact final suffix owned, in order, by `dev-verification`, `dev-code-review`, and `dev-continual-learning`. A present suffix consumes those existing profile boundaries once. The last work task—or, after fan-in, the last non-tail D04 verification or integration boundary—receives the first suffix task; the suffix then forms one dependency and receiver chain, ending at `dev-implementation backend`. Without the suffix, the last non-tail task receives the existing scheduled owner `dev-verification` or `dev-implementation backend`; never invent a `T*` row solely to satisfy a Receiver. Earlier topology-required D04 verification and neutral integration tasks remain explicit and are not replaced, flattened, or repeated by either shape.
+## Scope and effects
 
-Compact work may use a direct Task Contract without an Executor Plan. If a compact plan is authored, it contains only work tasks and no numbered profile tail. Plan tasks project exact route ownership; the todo view remains a narrower phase projection and need not mirror task rows or route owners.
-
-Every approved parser-valid implementation Executor Plan enters plan orchestration regardless of assurance profile or task count. The plan root is a mechanical control plane and dispatches each authored work owner as a fresh child. A compact work-only plan remains compact and tail-free; planless direct compact remains the one-owner same-context lane. `Topology`, `Lineages`, `Isolation`, and `Fan-in` describe the authored graph and proof boundaries, not permission for the root to perform work.
-
-In a shared tree, exact declared target and effect ownership controls runtime admission. Mechanically disjoint dependency-ready tasks may overlap within the concurrency ceiling; declared overlap, unknown overlap, or an exclusive resource serializes. An undeclared write stops the child. A portable fan-in plan remains structurally valid. When live shared-tree transport cannot preserve its declared isolation or neutral fan-in, runtime stops `transport-unavailable` instead of weakening the plan. Direct `dev-integration` remains unchanged.
-
-`PROMOTE-SERIAL-DEFAULT` selects full orchestration with runtime concurrency one by default. It is not a sequential-child profile or downgrade and supports no general efficiency claim. The current optional profile-tail grammar remains valid; a plan may omit the tail and let its final work receiver plus the backend schedule the same assurance once.
-
-### Verification / Done criteria
+Use these nonempty fields once:
 
 ```markdown
-- [ ] VR-1. <proof recipe>
-  - Criterion: AC-...
-  - Proof class: <worker smoke | independent verification | review | other authorized class>
-  - Scenario / environment / fixture: <exact recipe>
-  - Evidence form: <observable artifact or result>
-  - Target recheck: TGT-...
-  - Receiver: <exactly one receiver>
+- Scope: <included repository paths/surfaces and behavior>
+- Effects: <allowed repository and non-repository effects, or repository changes only>
+- Non-goals: <explicit exclusions>
 ```
 
-Give every `AC-...` exactly one `VR-...` recipe naming its scenario/fixture, evidence, immutable target recheck, and receiver. Prove observable behavior or an explicitly authorized structural contract, not prose presence.
+Name destructive, credential, network, deployment, shipping, and external-system effects explicitly when authorized. Silence grants none.
 
-## Validation and readiness
+## Tasks
 
-Validate the exact active repository plan once:
+Each task uses one stable `T*` label and exactly these fields:
+
+```markdown
+- [ ] T1. <vertical implementation intent>
+  - Owner: <one child owner>
+  - Depends on: none | <comma-separated T IDs>
+  - Targets: <comma-separated exact owned paths/surfaces>
+  - Acceptance: <comma-separated AC IDs>
+  - Receiver: <one owner>
+```
+
+Checked tasks use `[x]` and immediately add their immutable completion record before the fields:
+
+```markdown
+- [x] T1. <vertical implementation intent>
+  completed YYYY-MM-DD-HHMM
+  - Owner: <one child owner>
+  - Depends on: none
+  - Targets: <exact owned path/surface>
+  - Acceptance: AC-1
+  - Receiver: <one owner>
+```
+
+Task IDs begin at `T1` and increase monotonically. Every task has one owner, at least one unique target, at least one acceptance ID, and one receiver. Each exact target and acceptance item belongs to one task. Dependencies resolve to authored tasks and form an acyclic graph. Parent control, review, verification, learning, audit, shipping, and presentation are not implementation tasks.
+
+## Acceptance
+
+Each item uses one stable unique `AC-*` label, one checkbox, and exactly the two indented lines shown:
+
+```markdown
+- [ ] AC-1. <short criterion name>
+  Behavior: <observable>
+  Check: <command or direct static proof>; expect <exact result>
+```
+
+The `Behavior` line describes externally observable behavior or an inherently structural invariant. The `Check` line names a runnable command/scenario or direct static inspection and one exact expected result. This is the only acceptance-check shape; indirect evidence and future validation notes do not substitute.
+
+Every acceptance item is referenced by exactly one task. `DONE` requires every acceptance checkbox to be `[x]`; other statuses preserve observed progress.
+
+## Recovery and stops
+
+Use these nonempty fields once:
+
+```markdown
+- Recovery: <how to preserve completed work and resume within current authority, or none>
+- Stops: <conditions that halt rather than weaken ownership, checks, assurance, or effects>
+```
+
+No recovery text authorizes another semantic attempt, scope change, destructive effect, or shipping action.
+
+## Completion Summary
+
+Add this final section only after all tasks and acceptance items are checked, task completion records exist, assurance is settled, `Completed At` exists, and status is `DONE`. Record the delivered outcome, material changes, exact check results, residual risks, and next destination. Keep the completed plan at its active path.
+
+`CLOSED`, `PENDING`, and `IN_PROGRESS` plans must not contain this section.
+
+## Structural validation
+
+Run:
 
 ```text
-.config/agents/skills/dev-implementation/scripts/executor_plan.py validate PLAN
+python3 skill://dev-implementation/scripts/executor_plan.py validate PLAN
 ```
 
-Consume only its `executor-plan-validation/v1` result. It enforces the portable header, ordered body, stable references, ownership, DAG/waves, effects, outputs/receivers, recovery, topology/fan-in, lifecycle records, and terminal completeness against the complete-byte revision. The result contains only `schema`, `status`, `issues`, `plan_sha256`, parsed `datetime`, `lifecycle_status`, and `terminal_complete`.
-
-Before initial readiness, resolve the active repository plan and Task Contract and accept only a valid result with lifecycle `PENDING` or `IN_PROGRESS`, current repository bytes, and current human approval. Bind the exact approved SHA-256. On continuation, parser-valid lifecycle bookkeeping may change without reapproval; every other semantic change follows ADR-0001 D02. Structural validity supplies no approval, product or architecture authority, storage authority, or runtime state, and no adapter supplies an alternate ready transition.
-
-## Activation checks
-
-Use this companion for a durable plan that a later executor will use to change code or agent behavior. Skip direct execution and plans limited to investigation, verification, or cleanup.
+A valid result proves only lean structure and lifecycle: header, ordered sections, unique IDs, dependency DAG, one owner per exact target and criterion, direct-check grammar, checkbox/completion consistency, and terminal summary rules. The validator derives transient parse state and returns no plan digest. Product correctness, approval truth, command success, and implementation quality remain runtime responsibilities.

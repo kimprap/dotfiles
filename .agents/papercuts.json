@@ -45,6 +45,21 @@
       "summary": "Keep embedded prompt goldens and expected outputs synchronized.",
       "surface": ".config/agents/skills/completion-presentation/evals/evals.json"
     },
+    "pc-5d2832458e2311c6": {
+      "first_seen": "2026-09-05",
+      "last_seen": "2026-09-05",
+      "observations": [
+        {
+          "date": "2026-09-05",
+          "friction": "During installed-root acceptance checks, rule://plan, rule://plan-repo-storage, and rule://plan-impl-spec resolved but exposed bytes older than their current repository source counterparts, leaving runtime policy consumers at risk of applying stale plan rules.",
+          "workaround": "Validated the updated improve plan template directly through the installed validator and left out-of-scope installed state unchanged."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Prevent installed rule locators from serving policy bytes older than their repository sources.",
+      "surface": "Installed rule:// policy projection"
+    },
     "pc-7360992214c3cd7d": {
       "first_seen": "2026-08-30",
       "last_seen": "2026-08-30",

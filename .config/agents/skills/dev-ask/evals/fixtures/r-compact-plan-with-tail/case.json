@@ -1,7 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "Bounded read-only compact Executor Plan repository-readiness negative. The exact active repository plan digest is sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee; it has one valid work task with Intent “Keep compact work tail-free.” and Methods none followed by an attempted dev-verification owner. The backend runs executor_plan.py validate PLAN exactly once against that active file and receives one context-free invalid validation receipt with TASK_TAIL_INVALID. Return backend blocked before ready with semantic attempt 0. Do not reinterpret as standard, run work, or consume the tail."
-  },
-  "scripted_replies": []
-}

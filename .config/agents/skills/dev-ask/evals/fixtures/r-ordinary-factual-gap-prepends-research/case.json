@@ -1,6 +1,9 @@
 {
+  "additional_files": [],
   "inputs": {
-    "request": "The implementation route cannot yet be selected because one bounded factual question remains: does the pinned upstream API support atomic compare-and-swap on this platform? Current repository evidence is insufficient. Route to dev-research for that exact fact, then back to dev-ask; do not approve or dispatch implementation."
+    "request": "The implementation route cannot yet be selected because one bounded factual question remains: does the pinned upstream API support atomic compare-and-swap on this platform? Current repository evidence is insufficient. Present the existing Route Overview for dev-research → dev-ask, obtain approval, then dispatch dev-research for that exact fact and return to dev-ask without approving or dispatching implementation."
   },
-  "scripted_replies": []
+  "scripted_replies": [
+    "APPROVE the current Route Overview"
+  ]
 }

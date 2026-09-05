@@ -73,26 +73,37 @@
     },
     {
       "id": 7,
-      "prompt": "/skill:create-surface-verification-adapter has already established eligibility and received exact approve for an unchanged proposal. Author only the supplied adapter root and file manifest from its caller-owned tuple, then return the changed manifest.",
-      "expected_output": "Craft-skill acts as a thin authoring owner: it rechecks supplied baselines, writes only approved adapter files, validates manual frontmatter and required sections, and returns the exact changed manifest without taking adapter semantics or approval authority.",
+      "prompt": "Maintain a skill whose existing MAINTENANCE.md already has two structured entries and a source table. A later source correction changes the local treatment of one URL. Preserve the journal's history and record the correction.",
+      "expected_output": "An append-only correction entry that names the prior entry in Supersedes, records every required entry field and a conforming source row, and leaves all existing journal bytes unchanged.",
       "files": [],
       "assertions": [
-        "The response accepts the complete caller-owned adapter tuple without broadening it",
-        "Only the approved root and manifest are writable",
-        "Eligibility, naming, approval, proof semantics, product repair, and shipping stay with the wrapper",
-        "The result contains the exact changed manifest and validation result"
+        "The correction appends rather than edits or deletes earlier history",
+        "The entry records identity and kind, superseded IDs, context, decision, applied paths, rejected alternatives, validation, and revisit condition",
+        "The source row records the exact source, access date, allowed Use and Basis values, applied path, and concise local treatment",
+        "The journal remains non-runtime provenance and does not override executable skill prose or an active ADR"
       ]
     },
     {
       "id": 8,
-      "prompt": "/skill:maintain-surface-verification-adapter passes one exact existing adapter URI/digest, owned file manifest, current baselines, preservation boundary, and re-drive recipe. One product file and one neighboring skill are outside the tuple.",
-      "expected_output": "Craft-skill preserves ownership: it may update only the existing adapter-owned files named in the tuple, leaves the product and neighboring skill unchanged, and cannot create a missing destination or reinterpret a product regression.",
+      "prompt": "Create a skill from complete local requirements. No durable source treatment, maintenance decision, or correction history needs to be retained. Should you add MAINTENANCE.md anyway?",
+      "expected_output": "No journal is created. The optional convention is used only when durable provenance materially helps later maintenance.",
       "files": [],
       "assertions": [
-        "The existing adapter root and supplied baselines are rechecked before mutation",
-        "The product file, neighboring skill, and every unlisted path remain unchanged",
-        "A missing adapter destination is blocked rather than created",
-        "The wrapper retains maintenance classification and recipe-rebind authority"
+        "MAINTENANCE.md is optional rather than a required skill file",
+        "The response does not invent provenance or boilerplate",
+        "The skill remains complete with the smallest useful structure"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Append source provenance to a prompt-bundle MAINTENANCE.md. The proposed entry includes the full article body, raw interview transcript, provider metadata, and a numeric credibility score. Rewrite the proposal to the allowed convention without changing runtime prompts.",
+      "expected_output": "A compact append-only provenance entry with required fields and source rows, excluding raw copied material, provider trivia, and numeric scores; runtime behavior remains owned elsewhere.",
+      "files": [],
+      "assertions": [
+        "Raw transcripts and copied articles are excluded",
+        "Provider trivia and numeric source scores are excluded",
+        "Each source receives an allowed Use and Basis value plus applied path and concise treatment",
+        "No source row becomes runtime or canonical authority"
       ]
     }
   ]

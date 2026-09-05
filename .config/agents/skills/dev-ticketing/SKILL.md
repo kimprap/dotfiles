@@ -1,73 +1,49 @@
 ---
 name: dev-ticketing
-description: >
-  Derive an acyclic graph of vertical implementation tickets from a current
-  engineering specification. Use when multiple owners, dependency fan-in,
-  recovery, or durable acceptance require tickets; skip for cohesive direct work
-  and never implement or redesign the specification.
+description: Derive an acyclic graph of vertical implementation tickets with exact ownership, dependencies, direct checks, and one receiver per ticket.
 ---
 
-# Engineering Ticketing
+# Dev Ticketing
 
-Own derivative execution tickets. The approved specification remains authority; tickets project it without redesign.
+Turn a current approved engineering specification into executable implementation ownership. Do not redesign the specification, implement code, add assurance-tail tickets, or create orchestration artifacts beyond the lean graph.
 
 ## Intake
 
-Require an approved Engineering Specification revision, every governing requirements/product revision it binds, fixed shared interfaces and ownership, observable acceptance and verification recipes, and explicit approval for migrations or destructive effects.
+Require the current specification revision, stable `AC-*` items with exact direct checks, affected paths/surfaces, dependency and migration constraints, allowed effects, assurance level, and next implementation owner. Stop for stale authority, unresolved product/architecture decisions, or acceptance that cannot be assigned without changing scope.
 
-Reject stale or conflicting authority, unresolved product/architecture/scope decisions, missing test seams, ambiguous ownership, or a cyclic/unnamed blocker.
+Use this skill only when work genuinely needs multiple owners, dependencies, fan-in, ordered effects/migration, or durable cross-context recovery. If one child can own the cohesive result, return that direct-contract recommendation instead of manufacturing tickets.
 
-## Procedure
+## Derive the graph
 
-1. Bind the ticket set to exact governing revisions and approvals.
-2. Identify the minimum vertical tracer bullets that each produce a demonstrable behavior. Keep coupled files, interfaces, state, and reasoning under one owner; path separation alone is not independence.
-3. Declare every dependency by stable ticket name and exact upstream artifact or Handoff. Dependencies carry explicit context, never ambient sibling state.
-4. Order tickets into an acyclic graph. Fan-out consumers bind the same upstream revision; fan-in names every required lineage and gives arrival order no precedence.
-5. Give each ticket one observable objective, behavioral/state ownership, fixed shared contracts, explicit non-goals, stable acceptance-criterion IDs, verification scenarios/evidence, decomposition permission, isolation/integration needs, decision gates, and expected receiver. When affected, project the governing specification's compatibility/degraded-behavior decision into those existing fields without reinterpreting it.
-6. Ensure at least one early vertical tracer bullet can exercise the real seam without creating a horizontal scaffold or placeholder.
-7. Account for every specification criterion exactly once as owned work or explicit shared verification. Do not invent retries, runtime mechanisms, adapter bindings, todos, or shipping.
+1. Slice vertically by observable behavior. Each ticket should deliver a usable contract slice rather than a horizontal layer or scaffold.
+2. Give each ticket one stable `T*` ID, one concrete owner, exact owned paths/surfaces, one or more specification acceptance IDs, and exactly one receiver.
+3. Assign every changed target and acceptance ID to exactly one ticket. Split an interface boundary only when ownership remains explicit; never let sibling tickets mutate the same target.
+4. Add only true producer-to-consumer dependencies. Keep independent work independent and verify that the graph is acyclic. A fan-in or migration step is an authored child-owned ticket, not parent implementation work.
+5. Copy every owned acceptance item unchanged:
 
-Copy each specification-owned `surface-proof-recipe/v1` object and `VR-...@sha256:...` identity unchanged into the owning vertical ticket. Never split one criterion across recipes, invent an adapter binding, or recanonicalize different bytes as an equivalent recipe. If a direct-authority ticket has no specification, the implementation backend owns complete recipe derivation before readiness.
+   ```text
+   Behavior: <observable>
+   Check: <command or direct static proof>; expect <exact result>
+   ```
 
-Ticket dependencies include every recipe fixture and dependency identity, plus every finite current consumer/callsite entry carried in recipe `inputs`. Adapter presence changes no graph edge, proof class, assurance profile, lifecycle depth, topology, owner, or receiver.
-8. Validate the graph before publication. A faithful acyclic projection continues automatically under the approved route. If the graph exposes a changed interface, material ownership/topology change, destructive/external effect, shipping action, or another human-owned decision, stop for confirmation and create a new ticket-set revision after it is settled.
-9. Return an `unchanged` Handoff directly to `dev-implementation` when that is the already-approved next owner. Return to `dev-ask` only when route impact changed.
+   Preserve the direct check unchanged; do not substitute indirect or model-scored evidence.
+6. State permitted effects and recovery/stop conditions where they constrain an owner. Preserve project instructions and explicit TDD authority, but do not create method, review, verification, learning, audit, shipping, or presentation tickets; runtime schedules those boundaries.
 
 ## Ticket shape
 
-```markdown
-# <stable ticket name>
-## Authority
-- Governing specification and requirements revisions
-- Required human approvals
-## Objective
-- One observable vertical outcome
-## Ownership
-- May read
-- May change or produce
-- Must not change
-- Fixed shared interfaces or state
-## Dependencies
-- Blocking ticket names
-- Exact upstream handoffs or artifact revisions
-## Acceptance
-- Stable acceptance-criterion ID → observable criterion
-## Verification
-- Scenario, environment, proof class, and evidence per criterion
-## Execution policy
-- Decomposition permission
-- Isolation and integration needs
-- Material decision gates
-## Completion output
-- Required artifacts and next receiver
+```text
+T<n>. <vertical intent>
+Owner: <one child>
+Depends on: none | <T IDs>
+Targets: <exact comma-separated paths/surfaces>
+Acceptance: <owned AC IDs>
+Receiver: <one owner>
 ```
 
-The backend later projects this shape into Task Contracts and runtime state. Do not create implementation artifacts, runtime mechanisms, verification verdicts, integration results, or shipping effects here.
+List each owned acceptance item under the ticket with its exact Behavior and Check lines. Keep shared outcome, authority, global scope/effects, and recovery in the surrounding lean plan rather than copying them into every ticket.
 
-## Handoff and next owner
+## Validate and hand off
 
-Emit one common Handoff with the exact ticket-set/specification identity, `route-impact: unchanged|changed`, graph/criterion accounting, unresolved blocker if any, and exactly one receiver. `unchanged` names `dev-implementation` and continues the already-approved route without an artifact-completion or intermediate router approval. `changed` names `dev-ask` for recomputation. A blocked graph names its exact requirements, specification, architecture, or human authority owner. The derivative Handoff does not authorize implementation by itself.
+Before publication, confirm unique task and acceptance IDs, one owner per target and criterion, no dangling or cyclic dependency, no empty ticket, and a receiver for every edge and terminal result. Preserve specification wording; a changed interface, material ownership/topology change, destructive/external effect, or new acceptance requires a revised authority/specification rather than a ticketing guess.
 
-## Graph checks and stops
-
-Before publication and continuation, prove stable unique names, no dependency cycle, no missing blocker, no unowned criterion, no overlapping behavioral/state authority, no dependent tasks marked independent, and no ticket that changes the governing contract. Stop with one Handoff to the exact owner of any requirements, specification, architecture, or human-authority defect rather than repairing it in place.
+Return one lean `dev-handoff` to the implementation controller with the graph, direct-contract alternative if applicable, exact local delta, blockers/risks, and one receiver. Add `Route impact` because ticket topology is lifecycle-owned here.

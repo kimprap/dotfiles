@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 /**
- * Copy one session-local OMP plan snapshot into repository-owned plan storage.
- * Parser-invalid bytes never reach an active or archived target. The source is
- * never changed.
+ * Copy one session-local OMP plan snapshot into the active repository plan.
+ * Parser-invalid bytes never reach the active target. The source and historical
+ * archives are never changed.
  *
  * Usage:
  *   omp-copy-plan-artifact copy --protocol plan-artifact-copy/v1 --slug <slug> --content-file <path>
  */
 
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { constants } from "node:fs";
 import { link, lstat, mkdir, mkdtemp, open, realpath, rename, rm } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, relative } from "node:path";
@@ -17,7 +17,6 @@ import { tmpdir } from "node:os";
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const COPY_PROTOCOL = "plan-artifact-copy/v1";
 const LIFECYCLE_STATUSES = new Set(["PENDING", "IN_PROGRESS", "DONE", "CLOSED"]);
-const TERMINAL_STATUSES = new Set(["DONE", "CLOSED"]);
 const HELPER_ROOT = dirname(dirname(import.meta.path));
 const PARSER = join(HELPER_ROOT, ".config", "agents", "skills", "dev-implementation", "scripts", "executor_plan.py");
 
@@ -114,9 +113,6 @@ function parseArguments(argv) {
     return { slug, contentFile };
 }
 
-function sha256(bytes) {
-    return createHash("sha256").update(bytes).digest("hex");
-}
 
 function statIdentity(value) {
     return `${value.dev}:${value.ino}:${value.mode}:${value.size}:${value.mtimeMs}:${value.ctimeMs}`;
@@ -279,7 +275,6 @@ async function observeTarget(root, targetPath, plan) {
             exists: true,
             identity: descriptor.identity,
             bytes: descriptor.bytes,
-            digest: sha256(descriptor.bytes),
         };
     } catch (error) {
         throw operationError(
@@ -296,7 +291,7 @@ async function observeTarget(root, targetPath, plan) {
 function sameObservation(left, right) {
     if (left.exists !== right.exists) return false;
     if (!left.exists) return true;
-    return left.identity === right.identity && left.digest === right.digest && left.bytes.equals(right.bytes);
+    return left.identity === right.identity && left.bytes.equals(right.bytes);
 }
 
 async function assertTargetsCurrent(root, activePath, archivePath, observed, plan) {
@@ -311,14 +306,13 @@ async function assertTargetsCurrent(root, activePath, archivePath, observed, pla
             "target-changed",
             "none",
             "none",
-            "active or archived target changed before publication"
+            "active or historical archive target changed before publication"
         );
     }
     return current;
 }
 
 async function validateSnapshot(root, slug, bytes) {
-    const digest = sha256(bytes);
     const temporaryRoot = await mkdtemp(join(tmpdir(), "omp-plan-artifact-"));
     const snapshotPath = join(temporaryRoot, `${slug}-plan.md`);
     let report;
@@ -382,16 +376,14 @@ async function validateSnapshot(root, slug, bytes) {
 
     const lifecycleStatus = report.lifecycle_status;
     const terminalComplete = report.terminal_complete;
-    const expectedTerminal = TERMINAL_STATUSES.has(lifecycleStatus);
     if (
-        report.schema !== "executor-plan-validation/v1" ||
+        report.schema !== "executor-plan-validation/v2" ||
         !Array.isArray(report.issues) ||
         report.issues.length !== 0 ||
-        report.plan_sha256 !== digest ||
         typeof report.datetime !== "string" ||
         !LIFECYCLE_STATUSES.has(lifecycleStatus) ||
         typeof terminalComplete !== "boolean" ||
-        terminalComplete !== expectedTerminal
+        terminalComplete !== (lifecycleStatus === "DONE" || lifecycleStatus === "CLOSED")
     ) {
         throw operationError(
             "PLAN_ARTIFACT_INVALID",
@@ -399,16 +391,11 @@ async function validateSnapshot(root, slug, bytes) {
             "parser:RESULT_INVALID",
             "none",
             "none",
-            "shared parser result did not bind the exact plan snapshot"
+            "shared parser returned an invalid result contract"
         );
     }
 
-    return {
-        datetime: report.datetime,
-        lifecycleStatus,
-        terminalComplete,
-        digest,
-    };
+    return { datetime: report.datetime };
 }
 
 async function stageBytes(targetPath, bytes) {
@@ -438,7 +425,7 @@ function requireExactTarget(observation, bytes) {
     return observation.exists && observation.bytes.equals(bytes);
 }
 
-async function copyNonterminal(root, sourcePath, source, activePath, archivePath, plan) {
+async function copyActive(root, sourcePath, source, activePath, archivePath, plan) {
     const observed = {
         active: await observeTarget(root, activePath, plan),
         archive: await observeTarget(root, archivePath, plan),
@@ -450,7 +437,7 @@ async function copyNonterminal(root, sourcePath, source, activePath, archivePath
             "active-and-archive",
             "none",
             "none",
-            "active and archived targets both exist for this plan identity"
+            "active and historical archive targets both exist for this plan identity"
         );
     }
     if (observed.archive.exists) {
@@ -460,7 +447,7 @@ async function copyNonterminal(root, sourcePath, source, activePath, archivePath
             "archive-exists",
             relative(root, archivePath),
             "none",
-            "a terminal archive already exists for this plan identity"
+            "a historical archive already exists for this plan identity"
         );
     }
 
@@ -484,7 +471,7 @@ async function copyNonterminal(root, sourcePath, source, activePath, archivePath
         const active = await observeTarget(root, activePath, plan);
         const archive = await observeTarget(root, archivePath, plan);
         if (!requireExactTarget(active, source.bytes) || archive.exists) {
-            throw safeFailure("active target did not retain the exact validated snapshot");
+            throw safeFailure("active target did not retain the exact validated snapshot or an archive appeared");
         }
         await assertSourceCurrent(sourcePath, source, plan, "possible-complete");
         return `plan-artifact-copied: ${relative(root, activePath)}`;
@@ -513,102 +500,6 @@ async function copyNonterminal(root, sourcePath, source, activePath, archivePath
     }
 }
 
-async function copyTerminal(root, sourcePath, source, activePath, archivePath, plan) {
-    const observed = {
-        active: await observeTarget(root, activePath, plan),
-        archive: await observeTarget(root, archivePath, plan),
-    };
-    if (observed.active.exists && observed.archive.exists) {
-        throw operationError(
-            "PLAN_IDENTITY_CONFLICT",
-            plan,
-            "active-and-archive",
-            "none",
-            "none",
-            "active and archived targets both exist for this plan identity"
-        );
-    }
-    if (observed.archive.exists) {
-        if (!observed.archive.bytes.equals(source.bytes)) {
-            throw operationError(
-                "PLAN_ARCHIVE_CONFLICT",
-                plan,
-                "archive-divergent",
-                relative(root, archivePath),
-                "none",
-                "existing archive differs from the validated terminal snapshot"
-            );
-        }
-        await assertSourceCurrent(sourcePath, source, plan);
-        const confirmedArchive = await observeTarget(root, archivePath, plan);
-        const confirmedActive = await observeTarget(root, activePath, plan);
-        if (!requireExactTarget(confirmedArchive, source.bytes) || confirmedActive.exists) {
-            throw operationError(
-                "PLAN_TARGET_STALE",
-                plan,
-                "archive-changed",
-                relative(root, archivePath),
-                "none",
-                "existing archive changed before its postcondition was confirmed"
-            );
-        }
-        return `plan-artifact-archived: ${relative(root, archivePath)}`;
-    }
-
-    let temporaryPath;
-    let effectStarted = false;
-    try {
-        temporaryPath = await stageBytes(archivePath, source.bytes);
-        await assertSourceCurrent(sourcePath, source, plan);
-        await assertTargetsCurrent(root, activePath, archivePath, observed, plan);
-        await publishNoOverwrite(temporaryPath, archivePath);
-        effectStarted = true;
-        await rm(temporaryPath);
-        temporaryPath = undefined;
-
-        const archived = await observeTarget(root, archivePath, plan);
-        if (!requireExactTarget(archived, source.bytes)) {
-            throw safeFailure("archive did not retain the exact validated snapshot");
-        }
-        if (observed.active.exists) {
-            const active = await observeTarget(root, activePath, plan);
-            if (!sameObservation(observed.active, active)) {
-                throw safeFailure("active target changed before terminal removal");
-            }
-            await rm(activePath);
-        }
-
-        const finalActive = await observeTarget(root, activePath, plan);
-        const finalArchive = await observeTarget(root, archivePath, plan);
-        if (finalActive.exists || !requireExactTarget(finalArchive, source.bytes)) {
-            throw safeFailure("terminal archive postcondition could not be confirmed");
-        }
-        await assertSourceCurrent(sourcePath, source, plan, "possible-complete");
-        return `plan-artifact-archived: ${relative(root, archivePath)}`;
-    } catch (error) {
-        if (effectStarted) {
-            throw operationError(
-                "PLAN_POSTCONDITION_FAILED",
-                plan,
-                "postcondition-uncertain",
-                relative(root, archivePath),
-                "possible-complete",
-                safeReason(error, "terminal archive postcondition could not be established")
-            );
-        }
-        if (error instanceof PlanArtifactError) throw error;
-        throw operationError(
-            error?.code === "EEXIST" ? "PLAN_TARGET_STALE" : "PLAN_FILE_KIND_UNSAFE",
-            plan,
-            error?.code === "EEXIST" ? "archive-appeared" : "archive-publication-failed",
-            relative(root, archivePath),
-            "none",
-            "terminal archive could not be created safely"
-        );
-    } finally {
-        if (temporaryPath) await rm(temporaryPath, { force: true }).catch(() => {});
-    }
-}
 
 async function copyPlan(root, slug, contentFile) {
     if (basename(contentFile) !== `${slug}-plan.md`) {
@@ -630,11 +521,7 @@ async function copyPlan(root, slug, contentFile) {
 
     await ensureSafeDirectory(root, [".agents"], plan);
     await ensureSafeDirectory(root, [".agents", "plans"], plan);
-    if (validation.terminalComplete) {
-        await ensureSafeDirectory(root, [".agents", "plans", "archive"], plan);
-        return await copyTerminal(root, contentFile, source, activePath, archivePath, plan);
-    }
-    return await copyNonterminal(root, contentFile, source, activePath, archivePath, plan);
+    return await copyActive(root, contentFile, source, activePath, archivePath, plan);
 }
 
 async function main() {

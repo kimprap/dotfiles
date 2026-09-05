@@ -1,6 +1,0 @@
-{
-  "inputs": {
-    "request": "Read-only standard verification trace. The immutable target changes universal invariant INV-1. Its finite current consumer map contains direct-caller, effect-consumer, and successor-like-consumer. Direct-caller and effect-consumer pass their declared proofs, but successor-like-consumer has no observed result. Return NOT VERIFIED naming AC-INV-1 and successor-like-consumer. Do not emit VERIFIED or dispatch review."
-  },
-  "scripted_replies": []
-}

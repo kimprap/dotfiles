@@ -1,65 +1,79 @@
 ---
 name: papercut
-description: Capture, review, initialize, or resolve redacted repository-owned reusable-friction evidence from current work or a bounded structured execution lineage. Use automatically only after plausible friction exists, or explicitly for papercut init, review, or resolution.
+description: Discover, qualify, redact, consolidate, capture, review, initialize, or resolve repository-owned reusable-friction evidence. Automatic use occurs once after every completed repository-work boundary; explicit init, review, and resolution keep their existing opt-in authority.
 ---
 
 # Papercut evidence
 
-Own one portable current-work evidence module. Papercut is never a task, Methods token, workflow or route stage, todo phase, assurance event, or per-task continual-learning trigger; capture changes no task state. Do not create a host adapter. Resolve `scripts/papercut_ledger.py` relative to this skill. Read `WORKFLOW.md` only when maintaining, auditing, or extending this module.
+Papercut is a portable repository-friction module. It is never a task, route or workflow stage, Methods token, todo phase, assurance event, code review, test review, or learning trigger. It changes no completed-work state. Resolve `scripts/papercut_ledger.py` relative to this skill and read `WORKFLOW.md` only when maintaining or auditing ledger mechanics.
 
-## Activation and post-work look
+## Automatic boundary look
 
-Candidate-triggered activation remains available throughout current dev, product, custom, and direct work. Current includes the active attempt and the bounded execution lineage ending at its work-task Common Handoff. After that Handoff is emitted, the same work child applies the always-applied rule exactly once; the root falls back only when that child is unavailable. Run the Handoff first, select at most one qualified candidate for automatic capture, bind the single compact capture or report-only result to that Handoff, and retain accounting in deterministic work-Handoff order. The look is state-neutral and dispatches no learning. No candidate means this skill is not loaded, no ledger is accessed, and no papercut output is emitted.
+The generic papercut rule schedules exactly one `capture` look after every completed repository-work boundary:
+
+- workflow work: after the owner emits its completed lean Handoff, the same child loads this skill; the parent falls back only when that child is unavailable;
+- direct non-workflow implementation: after verification and before completion, the direct owner loads this skill.
+
+The rule decides only when and who. This skill owns discovery, qualification, redaction, consolidation, persistence, and the compact result. Load it even when the completed boundary reports no candidate; in that case return `Papercut: none` without ledger access. A workflow boundary is complete when its final lean Handoff is emitted, including a Handoff that preserves repository work and reports a blocker. Read-only work and work abandoned before a repository-work Handoff are not boundaries.
 
 ## Modes
 
-- `capture`: automatic only after the always-applied rule qualifies plausible friction during active work or the single post-Handoff soft look and selects at most one candidate.
+- `capture`: perform the automatic boundary look and return every qualifying result.
 - `init`: explicit repository opt-in only.
 - `review`: explicit proposal-only maintenance.
-- `resolve`: explicit maintenance, or automatic exact-record settlement after an authoritative workflow result.
+- `resolve`: explicit maintenance or exact-record settlement authorized by a completed learning result.
 
-An explicit invocation without a mode returns these four modes without reading storage. OMP `/skill:papercut` and Grok `/papercut` use this same body; invocation syntax changes no semantics.
+An explicit invocation without a mode returns these modes without reading storage. OMP `/skill:papercut` and Grok `/papercut` use this same body.
 
-## Qualification
+## Bounded discovery and order
 
-Capture one selected candidate only when the friction belongs to active work or the bounded execution lineage ending at the just-emitted Handoff; is repository-owned; is plausibly reproducible and reusable; can be redacted without secrets, personal data, transcript text, or unrelated payload; and is not an already-owned defect or lifecycle event. A reproduction or independently described recurrence can establish reuse. A count, exhausted budget, or authority revision alone cannot.
+Start with the just-completed work and its lean Handoff or direct-work verification evidence. Inspect only directly referenced dependency Handoffs, current-plan task/check/blocker records for that outcome, and other structured evidence explicitly carried by those artifacts. Do not mine transcripts, session history, long-term memory, provider logs, trackers, timers, background state, or repository-wide inventories.
 
-During the single post-Handoff look, inspect the bounded lineage only when directly referenced structured evidence shows at least one escalation marker:
+Discover all plausible friction in that bounded evidence. Consolidate repeated symptoms that share the same stable surface and repository-owned root-cause class. Do not split recurrences by attempt, timestamp, path, model, provider, hash, or error wording. Order distinct candidates by authored task order and then by first qualifying observation within the task. Direct work without authored tasks uses first qualifying observation order. Preserve that order in recording, return, Handoff accounting, and completion. There is no numeric result cap.
 
-- an attempt or repair budget was exhausted;
-- the same blocker or root-cause class recurred;
-- an otherwise completed semantic or proof result was lost before persistence; or
-- new human authority was repeatedly required solely to overcome execution mechanics.
+## Qualification and exclusions
 
-Markers permit lineage inspection; they do not establish qualification. Follow only the current plan blocker table, Common Handoffs from the same work lineage, and immutable attempt receipts they directly reference. Stop at that work lineage. Never inspect raw transcripts, session history, memory, provider logs, trackers, timers, background state, or repository- or session-wide inventories.
+A result qualifies only when all of these are true:
 
-Consolidate repeated symptoms into stable surface and root-cause classes rather than one candidate per attempt. Express the root-cause class in a stable `summary`. Keep attempt IDs, hashes, timestamps, provider or model details, and paths in redacted observation evidence only; never put them in `surface` or `summary`. A clean final attempt cannot supersede severe structured friction from earlier attempts.
-Run-lineage blindness qualifies when a repository-owned post-Handoff look or accounting step considered only terminal-attempt observations and therefore omitted severe friction already available through the allowed structured sources. Generalize the qualification policy as the surface and terminal-only evidence scope as the root-cause summary; the failed attempts remain evidence, not identity. Bounded structured-lineage escalation is the durable prevention seam.
+- the friction is material to completing or safely repeating repository work;
+- the repository owns a durable prevention seam such as its policy, default, tool, check, or caller;
+- the root cause is plausibly reproducible and reusable, established by a reproduction or independent recurrence;
+- the evidence can be redacted without secrets, personal data, raw transcript text, or unrelated payload; and
+- capture does not weaken authority, scope, targets, verification, delivery, or shipping restrictions.
 
-Repository-owned means the repository can provide durable prevention through a policy, default, tool, proof recipe, or caller it owns. A lost completed result qualifies when it reached such a caller but was not persisted and capture-before-analysis can prevent recurrence. Reject it with an explicit repository-ownership rationale when the result never reached repository control or only external provider or runtime code can fix it.
+A stable severe root cause remains visible even when a later attempt succeeds. Counts, retries, budget exhaustion, authority revisions, and blocker rows are evidence only; none establishes qualification or identity by itself.
 
-Treat task or plan state, retry counts, authority revisions, and blocker rows only as evidence, never as papercut identity. Exclude tracked, blocking, product, or security defects; secrets; external outages or provider behavior; external harness or tool-contract inconsistencies without a repository-owned prevention seam; ordinary assertion failures; intentional boundaries; concurrent or unattributed activity; harmless acknowledgements; one-off operator mistakes; preferences; and any case whose capture would weaken scope, authority, immutable targets, verification, or delivery restrictions. Route each excluded case to its existing owner without ledger access.
+Exclude task or plan progress; tracked blocking, product, security, privacy, or data-loss defects; secrets; external outages or provider behavior; external harness or tool-contract inconsistency without a repository-owned prevention seam; ordinary assertion failures; intentional boundaries; concurrent or unattributed activity; harmless acknowledgements; one-off operator mistakes; preferences; and speculative or unverified causes. Route an excluded observation to its existing owner without ledger access.
 
-## Capture and candidate delivery
+Papercut does not judge changed-code correctness, test value, review sufficiency, or architecture taste and does not derive such policy from implementation, code-rethink, test-rethink, or review sources. Those concerns remain with their existing owners.
 
-1. Determine repository root and exact write authority only after the always-applied rule has qualified plausible friction and selected one candidate. Use only the bounded sources above; do not inspect memory, transcripts, history, trackers, timers, or background state.
-2. Generalize `surface`, stable root-cause `summary`, current `friction`, optional `workaround`, and observation date. Put volatile receipt metadata only in redacted `friction` or `workaround` evidence. Select at most one current record semantically; never by count alone.
-3. If the ledger is absent, malformed, unsafe, or outside authority, report the selected redacted candidate without initializing or repairing storage.
-4. Otherwise call `list`, then call `record --repo PATH --input FILE` once with exactly `surface`, `summary`, `observed_on`, and observation `{friction, workaround}`. The helper computes identity, deduplicates exact observations, locks, validates, and writes atomically. Do not retry semantically. Use `--dry-run` only to report the prospective result without mutation.
-5. Disclose `recorded`, `updated`, `reopened`, `unchanged`, or report-only with the exact `PC-ID` when known and the work-Handoff identity that preceded the look. In the same compact result, explicitly classify any other stable root-cause candidate as report-only or reject it with its repository-ownership rationale; make no second ledger call. No candidate means no skill load, storage access, or papercut output.
+## Capture and compact return
 
-Independent evidence may support one Learning Candidate. Include the proposed durable statement; exact source revisions; project scope and destination; recurrence or severity; prevention; redaction; conflicts or supersession; and one complete Evaluation proposal with source case, independent adjacent case, frozen expectations, proof methods, freshness, and deterministic, semantic, or mixed mode. Carry exactly one immutable originating `PC-ID`. Deliver it only to the current authorized lifecycle owner, or in the final response when none exists. Incomplete evidence remains evidence-only with its missing field named. Never dispatch, curate, repair, retain memory, create tracker state, stage, ship, or persist candidate/workflow state.
+1. Discover, qualify, redact, and consolidate the complete bounded set before accessing storage.
+2. For each distinct qualifying root cause, derive stable `surface` and root-cause `summary`, plus current `friction`, optional `workaround`, and observation date. Volatile evidence belongs only in the redacted observation, never identity.
+3. If no result qualifies, return exactly `Papercut: none` and do not inspect the ledger.
+4. Determine repository root and write authority only after qualification. If the ledger is absent, malformed, unsafe, or outside authority, keep every result report-only. Automatic capture never initializes or repairs storage.
+5. For an initialized writable ledger, call `list --repo PATH` once, then call `record --repo PATH --input FILE` once for each distinct result in stable order. The helper computes identity, exact deduplication, locking, validation, and atomic writes. Do not retry a failed call. After a write failure, keep that and any unsafe-to-write remaining results report-only rather than dropping them.
+6. Return one compact line per qualifying root cause in stable order:
+
+```text
+Papercut: <PC-ID or report-only>; <recorded | updated | reopened | unchanged | report-only> — <surface>: <root-cause summary>
+```
+
+Every distinct qualifying root cause appears exactly once in the return, including report-only results. Do not sort by `PC-ID`, ledger order, completion time, or severity.
+
+A qualifying result may also produce a complete Learning Candidate with proposed durable statement, exact source evidence, project scope and authorized destination, recurrence or severity, prevention relationship, sensitivity/redaction, conflicts or supersession, and source plus independent adjacent checks. Carry the unchanged originating `PC-ID` when known. Deliver every complete candidate and identify missing fields for incomplete candidates; never dispatch learning, mutate guidance, retain memory, create tracker state, stage, commit, or ship.
 
 ## Init, review, and resolve
 
-`init` rechecks root and authority, then calls `init --repo PATH`. It creates absent v2, migrates only the exact valid empty v1 ledger, leaves valid v2 unchanged, and reports every other state without repair. `--dry-run` reports the prospective result without persistence. Automatic capture never initializes.
+`init` rechecks repository root and authority, then calls `init --repo PATH`. It creates an absent v2 ledger, migrates only the exact canonical empty v1 ledger, leaves valid v2 unchanged, and reports every other state without repair. `--dry-run` reports only. Automatic capture never calls `init`.
 
-`review` calls `list --repo PATH`, then `list --repo PATH --id PC-ID` only for selected full records. It may propose deduplication, resolution, or a complete Learning Candidate. It writes nothing and does not initialize, dispatch, curate, retain, track, stage, or ship.
+`review` calls `list --repo PATH`, then `list --repo PATH --id PC-ID` only for selected full records. It may propose deduplication, resolution, or Learning Candidates. It writes nothing and does not initialize, dispatch, curate, retain, track, stage, commit, or ship.
 
 `resolve` requires one exact `PC-ID`, `fixed | rejected | superseded`, valid date, durable reference, summary, and authority. Call `resolve --repo PATH --id PC-ID --input FILE` once. Use `--dry-run` only for a prospective result. Under narrower authority, return a proposal only.
 
-After an originating Learning Candidate reaches its authoritative terminal result, settle only its immutable `PC-ID`: verified durable correction to `fixed`; candidate-specific final rejection or failed frozen evaluation to `rejected`; replacement by another record or decision to `superseded`; blocked, incomplete, deferred, global, or unrelated outcomes remain open. The current workflow owner supplies the exact terminal payload; the helper never interprets outcomes.
+After a papercut-originated Learning Candidate reaches an authoritative result, settle only its unchanged `PC-ID`: verified durable correction may be `fixed`, candidate-specific final rejection may be `rejected`, and replacement by another record or decision may be `superseded`. Blocked, incomplete, deferred, global, or unrelated learning leaves the record open. The workflow owner supplies the exact disposition; the helper never interprets learning.
 
 ## Helper boundary
 
-Use only `init --repo PATH [--dry-run]`, `list --repo PATH [--id PC-ID]`, `record --repo PATH --input FILE [--dry-run]`, and `resolve --repo PATH --id PC-ID --input FILE [--dry-run]`. Treat JSON statuses and stable errors as mechanics, not semantic judgment. The helper owns v2 schema, stable IDs, exact deduplication, bounded locking, compact resolution, recurrence, and atomic persistence. This skill owns qualification, redaction, semantic record selection, candidate readiness, routing, result mapping, and disclosure.
+Use only `init --repo PATH [--dry-run]`, `list --repo PATH [--id PC-ID]`, `record --repo PATH --input FILE [--dry-run]`, and `resolve --repo PATH --id PC-ID --input FILE [--dry-run]`. Treat JSON statuses and stable errors as mechanics, not semantic judgment. The helper continues to own the v2 schema, stable IDs, exact deduplication, bounded locking, compact resolution, recurrence, and atomic persistence. This skill owns meaning and disclosure.

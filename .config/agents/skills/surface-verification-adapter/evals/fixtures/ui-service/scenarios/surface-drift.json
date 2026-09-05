@@ -1,5 +1,0 @@
-{
-  "id": "surface-drift",
-  "injection": "change the post-readiness form path",
-  "expected": "stale proof is blocked before drive and requires explicit rebind"
-}

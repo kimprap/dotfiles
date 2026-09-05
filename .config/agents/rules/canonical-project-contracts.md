@@ -29,6 +29,12 @@ When the task touches one of these concerns, inspect project instructions and li
 6. **Keep one owner per concern.** Use the repository’s established path. Do not duplicate the same contract in another directory or mirror it into a README.
 7. **Cite, do not dump.** In reports, cite the relevant path and clause; do not reproduce the whole document.
 
+## Maintenance journals are provenance
+
+A skill or prompt bundle may have an optional `MAINTENANCE.md` under the append-only convention owned by `craft-skill`. The convention is durable; an individual journal is not a canonical contract, runtime input, approval record, decision owner, or supersession authority. It records maintenance and source provenance only.
+
+Never load a journal to execute the skill or use it to override executable prose, current human authority, an approved artifact, or an active ADR. On disagreement, follow the applicable authority and append a conforming correction only when maintenance of that journal is explicitly in scope. Do not rewrite journal history.
+
 ## Absence and near misses
 
 - If no canonical contract exists for the concern, infer intent from the user, project instructions, code, tests, and schemas. Create a contract only when the user or an explicit project convention requires one.

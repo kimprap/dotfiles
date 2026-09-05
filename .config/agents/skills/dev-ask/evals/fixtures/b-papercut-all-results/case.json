@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "request": "Complete authored tasks T1 then T2. T1 exposes two distinct qualifying repository-owned root causes and T2 exposes one equivalent repeat plus one new cause."
+  },
+  "scripted_replies": [],
+  "additional_files": []
+}

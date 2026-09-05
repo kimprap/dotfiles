@@ -1,7 +1,5 @@
 {
-  "additional_files": [
-    "answer.txt"
-  ],
+  "additional_files": [],
   "inputs": {
     "request": "Use the installed dev-ask entry point to read answer.txt and answer the read-only question from current fixture evidence. Do not mutate files."
   },

@@ -1,70 +1,36 @@
-# Plan orchestration
+# Lean plan orchestration
 
-This progressive reference applies when `dev-implementation` executes an approved, parser-valid implementation Executor Plan. It coordinates existing `executor-plan-validation/v1`, `orchestrator-role-profile/v1`, Task Contract, Context Pack, Common Handoff, papercut, and assurance surfaces. It is procedure, not another plan grammar, context schema, result envelope, runtime store, or permission grant.
+Use this procedure only for an approved lean implementation plan. It adds no plan grammar or authority.
 
-## Enter the plan-backed route
+## Enter
 
-1. Resolve the active repository plan and run `scripts/executor_plan.py validate PLAN` against its exact current bytes. Bind the valid `executor-plan-validation/v1` result, current plan digest, approval, status, authority revision, Task Contracts, target/effect ownership, and proof recipes before dispatch.
-2. Bind a current Orchestrator Role Profile and fresh launch attestation to the same Task Contract, plan, and authority identities. Run `scripts/orchestrator_profile.py assess-plan-backed`. Continue only on `full-orchestration` with profile `downgrade` exactly `none`; any other decision is `transport-unavailable`.
-3. Project the authored task graph exactly. Do not add, split, merge, substitute, or hide a task. `Topology`, `Lineages`, `Isolation`, and `Fan-in` describe its proof and integration boundaries; none authorizes the root to perform leaf work.
-4. Bind each child's existing Context Pack before dispatch. Include only its unchanged Task Contract; owned acceptance and proof recipes; governing authority and private-reference identities; declared dependency Handoffs; target/effect boundary; attempt, repair-token, and applicable continuation state; bounded environment facts; native artifact locators; and one receiver. Exclude transcripts, broad repository summaries, unrelated files, and another copy of the plan.
+1. Resolve the current active plan and run `python3 skill://dev-implementation/scripts/executor_plan.py validate PLAN` against those bytes. Continue only on a valid `PENDING` or `IN_PROGRESS` plan.
+2. Project the authored task IDs, owners, dependencies, targets, acceptance IDs, and receivers exactly. Do not add, split, merge, substitute, or hide work.
+3. Confirm native child transport can preserve every task's owner, dependencies, path/effect boundary, attempt number, and one receiver. If not, stop `transport-unavailable` and do not let the parent implement.
+4. Before the first dispatch, change `PENDING` to `IN_PROGRESS`. Plan lifecycle writes record state; they grant no new behavior or effects.
 
-A compact work-only plan enters this route and dispatches its authored work owner or owners as children. It remains compact and tail-free. Planless direct work stays on the current one-owner same-context path and does not use this gate.
+## Schedule
 
-Retain the status from the root's initial exact validation as bounded current-run state. Only an initial `PENDING` or `IN_PROGRESS` followed by a terminal transition owned by this same run supplies the archive trigger. Intake already at `DONE` or `CLOSED` stops execution without archive lookup, action, reconciliation, historical sweep, or mutation.
+- A task is ready only when every dependency Handoff has been accepted and its owned targets do not conflict with active work.
+- Dispatch mechanically disjoint ready tasks concurrently when the runtime safely supports it. Serialize overlap, ambiguous ownership, exclusive resources, ordered migration, and fan-in.
+- The parent may read, validate, schedule, enforce boundaries, request rethink, aggregate Handoffs, dispatch assurance and learning, and update plan lifecycle. It never performs code-changing task work or semantic repair.
+- A child receives only approved intent and acceptance IDs, exact owned paths/surfaces, dependency Handoffs, applicable project instructions, semantic attempt number, and one receiver.
+- Undeclared path or effect mutation stops that task. Preserve completed independent work; do not reinterpret the plan to absorb drift.
 
-## Keep the root mechanical
+## Close a work attempt
 
-The plan-backed root may validate and bind exact identities, project task state, calculate the ready frontier, admit shared-tree ownership, dispatch fresh children, record child identity and monotonic timing, observe and control the same child, validate bounded Handoff fields and artifact locators, enforce target/effect boundaries, quarantine invalid descendants, perform lifecycle and papercut bookkeeping, schedule the declared backend, invoke and validate the existing terminal archive operation as mechanical lifecycle bookkeeping, and prepare already-settled presenter input.
+1. The child implements its task and reports a candidate before final smoke or Handoff.
+2. The parent sends `~/.agents/references/impl-rethink/impl-rethink.md` once to that same child. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check and changed-path smoke, and returns one lean Handoff.
+3. The same child then loads `papercut` once for that completed repository-work boundary. The parent substitutes only when the child is unavailable.
+4. The parent mechanically accepts only declared targets/effects, complete owned check records, exact task/attempt identity, and the authored receiver. It does not redo the child's semantic judgment.
+5. Mark the task complete, add `  completed YYYY-MM-DD-HHMM` immediately after its checked task line, and check each criterion only after its exact check reports the expected result.
 
-When the root has no other admissible action and is waiting on a bound child, use automatic delivery or exactly one indefinite `hub wait`. Repeated finite waits against the same still-running child are forbidden.
+Attempt 1 is implementation plus the same-child rethink, optional correction, and smoke. Do not self-rethink twice. A proof, tool, or transport correction that changes no product/code bytes consumes no semantic attempt. The only attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Its responsible child follows the same candidate → parent rethink → one correction → smoke → Handoff sequence. Attempts are limited to attempt 1 and an eligible attempt 2. An unchanged repeated failure, a failed attempt-2 code result, or a blocker with no authorized correction stops descendants and remains visible.
 
-The root must not edit a task target, run task smoke, inspect a child transcript, make a semantic correction, decide whether implementation is sufficient, repair a finding, conduct worker closure, perform an audit opinion or semantic review, substitute itself for a child, weaken isolation, or invent a fallback topology. `Max concurrency` is only a ceiling; using one slot for one safe ready task is scheduling, not downgrade.
+## Assurance and finish
 
-## Admit the shared-tree frontier
-
-At every frontier:
-
-1. Require every candidate task's exact declared targets, effects, dependency Handoffs, exclusive resources, and isolation needs.
-2. Release only dependency-ready tasks. Mechanically disjoint ready ownership may overlap within the concurrency ceiling. Declared overlap, unknown overlap, or an exclusive resource serializes.
-3. Compare each child's writes and effects with its bound ownership. An undeclared mutation stops that child and invalidates affected descendants; it never broadens ownership after the fact.
-4. Preserve the authored isolation and neutral fan-in boundary. When the live shared tree cannot preserve either, stop `transport-unavailable`; never rewrite the plan into a weaker topology. Portable fan-in remains structurally valid, and direct `dev-integration` remains a separate unchanged specialty.
-5. Recheck target and dependency identities before accepting each result. Unexpected semantic drift returns `authority-change-required`; unrelated user work is preserved.
-
-## Run a work attempt
-
-1. Dispatch plan-backed attempt one to one fresh child with the bounded Context Pack and exact child/task/attempt identity. The root sends no semantic implementation advice after dispatch.
-2. The child implements only its Task Contract and produces a nonterminal candidate. It reports candidate readiness to the root without settling tests, running final smoke, or sealing a Handoff.
-3. Through native same-child control, the root sends the exact mandatory round-one challenge owned only by [`worker-closure.md`](worker-closure.md). If round one made any actual admitted correction, the root sends that reference's exact round-two challenge to the same child. No other prompt, copied prompt, third round, or replacement child may stand in for closure.
-4. After closure, the same child applies [`test-value.md`](test-value.md) to every changed permanent test and settles `keep | merge | remove`, or records the concrete existing-coverage/no-new-contract decision. It does not inspect untouched portfolio tests. It then runs task-local smoke for every owned criterion, corrected finding, and plausible correction-caused regression.
-5. The child emits exactly one existing Common Handoff. It carries the unchanged Intent and Methods, child/attempt and before/after target identities, outcome and criterion delta, `worker-closure/v1` digest and round dispositions, changed-test rows or no-new-contract basis, final smoke evidence, current continuation-receipt identity and changed falsifiable hypothesis when one exists, inherited convergence and papercut-accounting state, decisions/assumptions, risks, and exactly one receiver.
-6. Only after sealing that Handoff, the same child performs one current papercut soft look and returns the existing compact papercut result referencing the Handoff. The root falls back only when that child is unavailable. The root retains every result in deterministic work-Handoff order.
-7. The root admits the Handoff mechanically: child/task/attempt and dependency identities match; changed targets/effects are declared; every owned criterion maps to smoke; closure and changed-test accounting are present; the receiver is exact; and papercut accounting follows. It does not replace independent verification or make a semantic acceptance decision.
-
-## Bound attempts and recovery
-
-Attempt two uses a fresh child under the unchanged Task Contract and target boundary. It is eligible only when attempt-one evidence structurally records criterion progress, exact blocker resolution, or a materially changed falsifiable hypothesis already authorized under the contract. Its Context Pack includes the exact prior failure frontier and inherited run-wide repair state. There is no ordinary attempt three.
-
-After attempt exhaustion, bare continue, elapsed time, another opinion, or an unchanged hypothesis changes no state. Only explicit human authorization naming the active plan and a materially changed falsifiable hypothesis creates one continuation receipt and a fresh attempt-one/two cycle. The receipt binds the active plan and target identities, blocked task, remaining criteria, changed hypothesis, authorizer and time, cycle, and inherited repair-token state. It remains in the existing Context Pack and Common Handoff seam; it is not another recovery schema.
-
-On failure, preserve completed Handoffs and exact partial-effect identities, stop the transitive dependency cone, cancel unsafe descendants, and keep the plan `IN_PROGRESS`. Independent branches may continue only when their authority, inputs, ownership, safety, and later integration are demonstrably unaffected. A blocker never authorizes root rescue, broader targets, hidden repair, or a weaker transport.
-
-## Schedule the backend
-
-Before a noncompact verifier dispatch, the backend natively resolves every current `file://`, `local://`, and `agent://` binding, retains live adapter-tree validation, and calls `validate_recipe_generation(...)` for the exact current acceptance set, canonical wrappers, and flattened current manifest. Invalid current intake dispatches no verifier or proof. A reusable prior generation exists only as the exact frozen acceptance set, wrappers, manifest bindings, evidence, and identities named by the last complete aggregate; byte-compare and validate that snapshot without I/O or live prior rereads, and never union it with the current generation. Missing or inexact prior state selects complete current all-fresh proof.
-
-Only after both generations pass and D02 admits the current contract may the backend freeze `criterion → old recipe ID → new recipe ID → target-delta edge or none → fresh-or-reuse` for every frozen criterion. Each edge is an ordered `(uri, old digest, new digest)` sequence; every changed digest must use an approved edge on a URI already present in both otherwise byte-equal recipes. Rebound criteria run their current recipes fresh, exact no-edge identities are only reuse-eligible, and ambiguous edges select all-fresh. Approved semantic changes select all-fresh under current authority; unapproved non-digest changes return `authority-change-required`. Do not add a recipe field, store, cache, ledger, compatibility reader, or schema.
-
-The verifier independently repeats current native resolution, current and frozen-prior generation validation, and typed-map consistency. Invalid current or dispatched reuse intake is `INCONCLUSIVE` before proof, with no repair or silent downgrade. The verifier decides every action, runs rebound and rejected-reuse entries fresh, accepts reuse only for exact current-target unaffected evidence, and returns one fresh complete aggregate over every current criterion.
-
-The run owns one post-assurance repair token. A blocking verifier or reviewer Handoff may consume it once for a topologically ordered Build repair covering only the original causally implicated task IDs. Every repair uses a fresh work child, the unchanged contract, the same `worker-closure/v1` procedure, exact impacted smoke, and one Common Handoff. Re-run the last canonical projection owner whenever canonical projections changed. The existing repair-only impacted-fresh versus exact-unaffected reuse boundary remains exact. Exhaustion leaves the plan `IN_PROGRESS` with its blocker Handoff.
-
-After the last accepted work Handoff, schedule the existing profile backend exactly once: fresh current-target `dev-verification`, then one current-target `dev-code-review`, then terminal `dev-continual-learning`, except where an authored valid optional profile tail already consumes those boundaries. Verification, review, learning, audit controllers, audit opinions, and neutral integration do not run worker closure. Repair requires fresh impacted proof and review on the repaired identity.
-
-Complete semantic work only after all authored tasks, criteria, Handoffs, papercut accounting, required assurance, stable target identities, and current completion requirements are terminal. The root performs accounting, the bounded terminal archive bookkeeping below, and presentation preparation only; no accounting step reruns semantic work or proof. Normal completion is terminal and schedules no audit; an explicit later portfolio audit is a separate router intake with no plan-state effect.
-
-For `DONE`, first settle the applicable semantic work and smoke, Common Handoffs, papercut accounting, required verification/review/learning, and all task and criterion records. Then write the complete Completion Summary, `Completed At`, and parser-valid terminal plan bytes; invoke the existing archive operation; and validate active identity path absent plus archive identity path present as a regular non-symlink file byte-identical to that terminal snapshot. A current successful adapter archive result may satisfy this postcondition without a second action. Only then may the root prepare completion normalization and the unchanged same-agent presentation. Planned `resume_from` is the archive identity path followed by `@sha256:`, the lowercase SHA-256 of the exact archived terminal bytes, and `#completion-summary`; the active terminal path is never a completion locator.
-
-For a current-session `CLOSED` transition, explicit human cancellation authority produces parser-valid terminal bytes without `Completed At` or a Completion Summary. Reach the same archive postcondition before one cancellation-close report and emit zero completed presentations. A compact work-only plan follows the same terminal-bytes → archive-postcondition → output order after its existing work-only boundary and remains tail-free. Planless compact never enters this route and performs zero repository-plan lookups, archive actions or receipt requests, and synthetic-plan creations.
-
-Archival is mechanical lifecycle bookkeeping, not an authored task, hidden tail, semantic-completion proof, new stage, Handoff, or presenter effect. Both identity paths present, divergent archive, parser-invalid terminal bytes, unsafe file kind, source or target drift, or uncertain postcondition remains the existing visible storage blocker. Preserve exact paths, kinds, and bytes; do not overwrite, blindly retry without changed evidence, continue semantic work, emit another Handoff, normalize or present completion, issue cancellation close, or speculatively revert terminal bytes.
+- Compact ends after accepted work Handoffs and papercut accounting. It dispatches no independent review, verification, or learning.
+- Standard and high dispatch one independent `dev-code-review` after the complete changed target exists, then one independent `dev-verification`, then `dev-continual-learning` once. Review runs exactly once. Verification runs every original acceptance check plus every reviewer closure check.
+- A required review finding may consume attempt 2 before verification. If attempt 2 remains unused and the verifier finds a code defect, the responsible child may consume it; the same verification owner closes the repaired delta without restarting discovery. Any unresolved failure after attempt 2 stops.
+- Learning receives the settled outcome, affected paths, lean Handoffs, papercut results, and complete candidates. It does not retry. Only a current governing-rule conflict that invalidates the implementation blocks completion; other learning blockers remain risks.
+- When every task and acceptance item is checked, every task has its completion record, and assurance is settled, add a nonempty final `## Completion Summary`, add `Completed At`, and set the plan to `DONE`. Keep it at the active path. `CLOSED` records an explicitly stopped plan and carries neither `Completed At` nor a Completion Summary.

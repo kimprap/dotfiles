@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "request": "Execute standard work where review approves, the verifier directly proves one code defect, the responsible child repairs it, and the original verifier performs closure."
+  },
+  "scripted_replies": [],
+  "additional_files": []
+}

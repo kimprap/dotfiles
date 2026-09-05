@@ -11,6 +11,8 @@ description: >
 
 Own neutral fan-in. Integration combines exact verified inputs; it does not supply missing behavior or decide product, architecture, scope, or interface semantics.
 
+This standalone owner is not part of ordinary planned fan-in. A normal specification/ticket route authors fan-in as one child-owned `dev-implementation` task, completes assembly, and then runs the assembled target's single final review and verification. Use this skill only for the independently verified multi-lineage intake below.
+
 ## Intake
 
 Require:

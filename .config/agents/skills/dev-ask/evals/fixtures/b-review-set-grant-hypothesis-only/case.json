@@ -1,6 +1,0 @@
-{
-  "inputs": {
-    "request": "Read-only exhausted review control. Both original review slots are consumed. Input one carries legacy label GRANT-9 plus hypothesis “consumer-Z may fail,” but does not explicitly authorize a continuation or bind the active plan, target, blocked task, remaining criteria, authorizer/time, cycle, and inherited token. It causes no state change. Input two explicitly authorizes PLAN-REVIEW and TARGET-REVIEW with changed falsifiable hypothesis “exercise consumer-Z through its public seam” and supplies every continuation field. Create CONT-REVIEW-1, but do not infer causal review admission; fresh work evidence remains required."
-  },
-  "scripted_replies": []
-}

@@ -1,7 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "Read-only Executor Plan repository-readiness negative: the exact active repository plan has this defect: missing required Result / Handoff section. The backend runs executor_plan.py validate PLAN exactly once against those bytes. Return SECTION_MISSING once and block before ready, publication, or mutation; do not infer, default, repair, publish, or mutate."
-  },
-  "scripted_replies": []
-}

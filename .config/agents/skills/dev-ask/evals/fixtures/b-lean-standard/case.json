@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "request": "Execute one standard code-changing task whose first candidate is correct. Observe the complete lifecycle through terminal success."
+  },
+  "scripted_replies": [],
+  "additional_files": []
+}
