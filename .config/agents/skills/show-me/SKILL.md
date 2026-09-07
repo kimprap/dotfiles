@@ -43,6 +43,8 @@ src/
 └── transport/      # sends API requests
 ```
 
+Before authoring Mermaid, load and follow `rule://mermaid`.
+
 - Show component interaction, control flow, or data flow with Mermaid:
 
 ```mermaid

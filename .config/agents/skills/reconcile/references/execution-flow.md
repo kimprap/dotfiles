@@ -14,23 +14,23 @@ stateDiagram-v2
     Brief --> Brief: binding corrected without approval
     Brief --> Pair: approve bound brief
     Pair --> OuterInit: distinct A and B retained
-    OuterInit --> PassChoice: base = working; next = A
+    OuterInit --> PassChoice: base = working, next = A
     state PassChoice <<choice>>
     PassChoice --> Initial: reviewer's first actual turn
     PassChoice --> Later: reviewer already reviewed
     Initial --> Rethink: provisional initial complete
-    Initial --> Initial: same-child correction; ordinary result; still provisional
+    Initial --> Initial: same-child correction, ordinary result, still provisional
     Rethink --> Admit: finalized post-rethink
     Later --> Admit: finalized later
-    Admit --> Admit: same-child finalized correction; IRC and ignored echo; no rethink
-    Admit --> PassChoice: changed applicable REVISE; alternate
+    Admit --> Admit: same-child finalized correction, IRC and ignored echo, no rethink
+    Admit --> PassChoice: changed applicable REVISE, alternate
     Admit --> Sync: exact current-identity VALID
     Admit --> Stopped: liveness or authority stop
-    Sync --> RepairStop: delivery fails; stop before presentation
+    Sync --> RepairStop: delivery fails, stop before presentation
     Sync --> Accepted: delivery receipt succeeds
     state Accepted <<choice>>
     Accepted --> Cleanup: unchanged or closure-only capacity
-    Cleanup --> TerminalGuard: pair disposed; pending success or capacity
+    Cleanup --> TerminalGuard: pair disposed, pending success or capacity
     TerminalGuard --> DriftStopped: artifact bytes drift or cannot be read
     Accepted --> Apply: changed and capacity remains
     Apply --> RepairStop: failed or partial application
@@ -38,19 +38,19 @@ stateDiagram-v2
     Validate --> RepairStop: native validation fails
     Validate --> ClosureInit: valid result and count reaches cap
     Validate --> OuterInit: valid result and capacity remains
-    ClosureInit --> PassChoice: applied base = working; next = A; closure-only
+    ClosureInit --> PassChoice: applied base = working, next = A, closure-only
     RepairStop --> Sync: identity-preserving sync repair
     RepairStop --> Apply: exact base or permission repair
-    RepairStop --> Validate: validator repair; applied identity unchanged
-    RepairStop --> OuterInit: content changed; binding remains current
+    RepairStop --> Validate: validator repair, applied identity unchanged
+    RepairStop --> OuterInit: content changed, binding remains current
     RepairStop --> Rebind: target, mode, scope, authority, child, or lineage changed
-    RepairStop --> Cleanup: repair abandoned; actual termination
+    RepairStop --> Cleanup: repair abandoned, actual termination
     DriftStopped --> EndStopped: no adoption, mutation, or new outer
     Stopped --> Cleanup: non-resumable frontier
     Rebind --> Cleanup: old run terminates
-    TerminalGuard --> Succeeded: unchanged; conversation or matching artifact bytes
-    TerminalGuard --> CapStopped: capacity; conversation or matching artifact bytes
-    Cleanup --> EndStopped: non-resumable stop; owned reviewers disposed
+    TerminalGuard --> Succeeded: unchanged, conversation or matching artifact bytes
+    TerminalGuard --> CapStopped: capacity, conversation or matching artifact bytes
+    Cleanup --> EndStopped: non-resumable stop, owned reviewers disposed
     Cleanup --> CleanupBlocked: native release unavailable or fails
     CapStopped --> [*]
     Succeeded --> [*]

@@ -28,7 +28,7 @@ statusLine:
         showUntracked: true
   compactThinkingLevel: false
 symbolPreset: nerd
-defaultThinkingLevel: medium
+defaultThinkingLevel: xhigh
 tier:
   subagent: inherit
 memory:

@@ -1,0 +1,234 @@
+#!/usr/bin/env bun
+/**
+ * bin/mermaid-check — validate Mermaid with mermaid.parse.
+ *
+ * Usage:
+ *   mermaid-check [file ...]
+ *   mermaid-check -          # stdin
+ *   printf '%s\n' '...' | mermaid-check
+ *
+ * Accepts raw diagrams or Markdown with Mermaid fences.
+ * Exit 0 if every diagram validates; 1 on invalid source; 2 on usage.
+ */
+
+import { JSDOM } from "jsdom@30.0.1";
+
+const USAGE = `Usage:
+  mermaid-check [file ...]
+  mermaid-check -    # stdin
+  printf '%s\\n' 'flowchart LR\\nA --> B' | mermaid-check
+`;
+
+function setupDom() {
+  if (typeof globalThis.window !== "undefined") {
+    return;
+  }
+  const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+    url: "http://localhost",
+    pretendToBeVisual: true,
+  });
+  for (const [key, value] of [
+    ["window", dom.window],
+    ["document", dom.window.document],
+    ["navigator", dom.window.navigator],
+    ["DOMParser", dom.window.DOMParser],
+  ]) {
+    Object.defineProperty(globalThis, key, {
+      value,
+      configurable: true,
+      writable: true,
+    });
+  }
+}
+
+setupDom();
+const mermaid = (await import("mermaid@11.17.2")).default;
+mermaid.initialize({
+  startOnLoad: false,
+  suppressErrorRendering: true,
+  logLevel: "fatal",
+});
+
+function literalCodeLine(raw, rendered) {
+  const content = rendered.replace(/^ */, "");
+  const prefixEnd = raw.length - content.length;
+  if (!raw.endsWith(content) || !/^[ \t>]*$/.test(raw.slice(0, prefixEnd))) {
+    throw new Error("Cannot recover literal Markdown code source");
+  }
+  let width = 0;
+  for (let i = 0; i < prefixEnd; i++) {
+    width += raw[i] === "\t" ? 4 - width % 4 : 1;
+  }
+  const removed = width - (rendered.length - content.length);
+  let column = 0;
+  let offset = 0;
+  while (column < removed && offset < prefixEnd) {
+    column += raw[offset++] === "\t" ? 4 - column % 4 : 1;
+  }
+  if (removed < 0 || column < removed) {
+    throw new Error("Cannot recover Markdown container indentation");
+  }
+  // Only a tab straddling the removed Markdown prefix becomes spaces.
+  // Tabs wholly inside the diagram remain literal, including YAML indentation.
+  return " ".repeat(column - removed) + raw.slice(offset);
+}
+
+function extractDiagrams(text, origin) {
+  // Native parsing recognizes real fences, containers and EOF boundaries.
+  // Language tags recover positions; callback indentation is used only to
+  // remove Markdown prefixes from the original lines, never as diagram text.
+  let marker = "mermaid-check-line-";
+  while (text.includes(marker)) {
+    marker += "-";
+  }
+  const lines = text.split("\n");
+  const tagged = lines.map((line, index) =>
+    line.replace(/(`{3,}|~{3,})([ \t]*)mermaid(?=$|[ \t])/g, `$1$2${marker}${index + 2}`)
+  ).join("\n");
+  const tags = new RegExp(`${marker}\\d+`, "g");
+  const diagrams = [];
+  Bun.markdown.render(tagged, {
+    code: (source, meta) => {
+      if (meta?.language?.startsWith(marker)) {
+        const contentLine = Number(meta.language.slice(marker.length));
+        const rendered = source.replace(tags, "mermaid").split("\n");
+        rendered.pop(); // Bun emits one newline for each physical code line.
+        const end = contentLine - 1 + rendered.length;
+        const literal = rendered.map((line, index) =>
+          literalCodeLine(lines[contentLine - 1 + index], line)
+        ).join("\n");
+        diagrams.push({
+          origin,
+          contentLine,
+          source: literal + (rendered.length > 0 && end < lines.length ? "\n" : ""),
+        });
+      }
+      return "";
+    },
+  });
+  return diagrams.length > 0 ? diagrams : [{ origin, contentLine: 1, source: text }];
+}
+
+function stateLabelSemicolons(source) {
+  const kind = mermaid.detectType(source);
+  if (kind !== "state" && kind !== "stateDiagram") {
+    return [];
+  }
+  const findings = [];
+  // Match Mermaid's frontmatter/directive boundaries without shifting lines.
+  const blank = (text) => text.replace(/[^\n]/g, "");
+  const lines = source
+    .replace(/^([^\S\n\r]*)-{3}\s*[\n\r](.*?)[\n\r]\1-{3}\s*[\n\r]+/s, blank)
+    .replace(/%{2}{\s*(?:(\w+)\s*:|(\w+))\s*(?:(\w+)|((?:(?!}%{2}).|\r?\n)*))?\s*(?:}%{2})?/gi, blank)
+    .split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*%%/.test(line)) {
+      continue;
+    }
+    const label = line.match(/-->[^:\n]*:(.*)$/)?.[1];
+    if (label?.includes(";")) {
+      findings.push({
+        line: i + 1,
+        message:
+          "stateDiagram transition label contains ';'; mermaid ends the label there and may silently split the rest into extra states. Use a comma.",
+      });
+    }
+  }
+  return findings;
+}
+
+async function parseDiagram(source) {
+  const muted = console.error;
+  console.error = () => {};
+  try {
+    return await mermaid.parse(source);
+  } finally {
+    console.error = muted;
+  }
+}
+
+function formatError(error) {
+  if (error instanceof Error) {
+    return error.message.split("\n")[0];
+  }
+  return String(error);
+}
+
+async function checkDiagram(diagram) {
+  const loc = `${diagram.origin}:${diagram.contentLine}`;
+  if (!diagram.source.trim()) {
+    console.error(`FAIL ${loc} empty diagram`);
+    return false;
+  }
+
+  try {
+    const extras = stateLabelSemicolons(diagram.source);
+    for (const extra of extras) {
+      console.error(`FAIL ${diagram.origin}:${diagram.contentLine + extra.line - 1} ${extra.message}`);
+    }
+    const result = await parseDiagram(diagram.source);
+    if (extras.length > 0) {
+      return false;
+    }
+    if (!result || typeof result.diagramType !== "string") {
+      throw new Error("Mermaid parser did not return a diagram type");
+    }
+    console.log(`OK   ${loc} ${result.diagramType}`);
+    return true;
+  } catch (error) {
+    console.error(`FAIL ${loc} ${formatError(error)}`);
+    return false;
+  }
+}
+
+async function readStdin() {
+  const chunks = [];
+  for await (const chunk of Bun.stdin.stream()) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8");
+}
+
+async function main(argv) {
+  if (argv.includes("-h") || argv.includes("--help")) {
+    process.stdout.write(USAGE);
+    return 0;
+  }
+
+  const inputs = [];
+  if (argv.length === 0 || (argv.length === 1 && argv[0] === "-")) {
+    inputs.push({ origin: "<stdin>", text: await readStdin() });
+  } else if (argv.includes("-")) {
+    console.error("mermaid-check: mix of files and stdin is not supported");
+    process.stderr.write(USAGE);
+    return 2;
+  } else {
+    for (const path of argv) {
+      const file = Bun.file(path);
+      if (!(await file.exists())) {
+        console.error(`mermaid-check: file not found: ${path}`);
+        return 2;
+      }
+      inputs.push({ origin: path, text: await file.text() });
+    }
+  }
+
+  let ok = true;
+  let saw = false;
+  for (const input of inputs) {
+    for (const diagram of extractDiagrams(input.text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n"), input.origin)) {
+      saw = true;
+      if (!(await checkDiagram(diagram))) {
+        ok = false;
+      }
+    }
+  }
+  if (!saw) {
+    console.error("FAIL no mermaid source");
+    return 1;
+  }
+  return ok ? 0 : 1;
+}
+
+process.exit(await main(Bun.argv.slice(2)));
