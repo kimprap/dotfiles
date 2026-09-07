@@ -133,7 +133,8 @@ Your first actual review has exactly two passes:
 
 Every subsequent review uses pass `later` and never loads `rethink`. A
 context-only packet does not count as an actual review. For every Main-requested
-`post-rethink`, `later`, or response-contract-correction response:
+`post-rethink` or `later` response, including corrections of those finalized
+responses:
 
 1. Send exactly one complete outer response as the entire authoritative IRC
    payload to the bound invoking Main identity.
@@ -143,9 +144,13 @@ context-only packet does not count as an actual review. For every Main-requested
 The local echo is non-authoritative. Main does not await, parse, compare, record,
 or gate on it. Do not use Submit Result for this finalized path. Do not make a
 second IRC send, await a receipt, address a peer, send an unsolicited message,
-or append transport commentary. A contract correction retains the provisional
-or finalized authority of the response it corrects, does not switch reviewer,
-and does not add another rethink.
+or append transport commentary.
+
+A contract correction inherits the response's pass, authority, and transport.
+Corrected `initial` returns only through the ordinary task result and remains
+provisional: it cannot mutate working state or terminate negotiation. Corrected
+`post-rethink` or `later` follows the authoritative IRC send and ignored local
+echo above. Keep the same reviewer and add no rethink for either correction.
 
 The complete finalized response is sufficient bounded handoff evidence. The
 working proposal packet carries its digest in lineage; create no separate
@@ -173,3 +178,14 @@ the turn. Do not review or reassess the packet, load `rethink`, emit `VALID`,
 `REVISE`, or `BLOCKED`, use IRC, produce a local echo, mutate, dispatch, or
 control the loop. Main relies only on the host's delivery receipt and neither
 awaits nor consumes the wait result.
+
+The same pair remains retained for another outer iteration or an eligible
+identity-preserving repair pause. At actual run termination Main alone silently
+stops/releases both exact run-owned reviewers through the native host lifecycle
+seam; on OMP this is `hub cancel`, including its parent-owned registered-subagent
+fallback after an original job settles, not Eval `AgentHandle.cancel`. It does
+not require a reviewer message or a turn completion. Do not acknowledge shutdown
+or leave the context wait to help cleanup. Main must observe disposal before
+completion; absent or failed cleanup blocks success and never justifies ending
+Main or another agent. Artifact freshness and drift handling remain Main's
+controller responsibility, not a new review request.

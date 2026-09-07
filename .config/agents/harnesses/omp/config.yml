@@ -55,14 +55,13 @@ display:
 task:
   showResolvedModelBadge: true
   agentModelOverrides:
-    verification-worker: openai-codex/gpt-5.6-sol:xhigh
-    reviewer: openai-codex/gpt-5.6-sol:xhigh
-    security-reviewer: openai-codex/gpt-5.6-sol:xhigh
-    scout: openai-codex/gpt-5.6-sol:xhigh
-    sonic: openai-codex/gpt-5.6-sol:xhigh
-    task: openai-codex/gpt-5.6-sol:xhigh
-    designer: openai-codex/gpt-5.6-sol:xhigh
-    librarian: openai-codex/gpt-5.6-sol:xhigh
+    verification-worker: openai-codex/gpt-6-astra:xhigh
+    reviewer: openai-codex/gpt-6-astra:xhigh
+    security-reviewer: openai-codex/gpt-6-astra:xhigh
+    scout: openai-codex/gpt-6-astra:xhigh
+    sonic: openai-codex/gpt-6-astra:xhigh
+    task: openai-codex/gpt-6-astra:xhigh
+    librarian: openai-codex/gpt-6-astra:xhigh
 hideThinkingBlock: true
 providers:
   webSearchExclude:
@@ -75,17 +74,16 @@ providers:
 github:
   enabled: true
 modelRoles:
-  default: openai-codex/gpt-5.6-sol:xhigh
-  slow: openai-codex/gpt-5.6-sol:max
+  default: openai-codex/gpt-6-astra:xhigh
+  slow: openai-codex/gpt-6-astra:max
   plan: openai-codex/gpt-5.6-sol:max
-  advisor: openai-codex/gpt-5.6-sol:xhigh
+  advisor: openai-codex/gpt-6-astra:xhigh
   smol: xai-oauth/grok-4.6:xhigh
-  task: openai-codex/gpt-5.6-sol:xhigh
-  tiny: openai-codex/gpt-5.6-sol:xhigh
-  designer: openai-codex/gpt-5.6-sol:xhigh
-  test_audit_opinion_a: openai-codex/gpt-5.6-sol:xhigh
+  task: openai-codex/gpt-6-astra:xhigh
+  tiny: openai-codex/gpt-6-astra:xhigh
+  test_audit_opinion_a: openai-codex/gpt-6-astra:xhigh
   test_audit_opinion_b: xai-oauth/grok-4.6:xhigh
-  second_opinion_a: openai-codex/gpt-5.6-sol:xhigh
+  second_opinion_a: openai-codex/gpt-6-astra:xhigh
   second_opinion_b: xai-oauth/grok-4.6:xhigh
 vault:
   enabled: true

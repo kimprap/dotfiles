@@ -19,16 +19,19 @@ stateDiagram-v2
     PassChoice --> Initial: reviewer's first actual turn
     PassChoice --> Later: reviewer already reviewed
     Initial --> Rethink: provisional initial complete
+    Initial --> Initial: same-child correction; ordinary result; still provisional
     Rethink --> Admit: finalized post-rethink
     Later --> Admit: finalized later
+    Admit --> Admit: same-child finalized correction; IRC and ignored echo; no rethink
     Admit --> PassChoice: changed applicable REVISE; alternate
     Admit --> Sync: exact current-identity VALID
     Admit --> Stopped: liveness or authority stop
     Sync --> RepairStop: delivery fails; stop before presentation
     Sync --> Accepted: delivery receipt succeeds
     state Accepted <<choice>>
-    Accepted --> Succeeded: working equals outer base
-    Accepted --> CapStopped: changed and closure-only
+    Accepted --> Cleanup: unchanged or closure-only capacity
+    Cleanup --> TerminalGuard: pair disposed; pending success or capacity
+    TerminalGuard --> DriftStopped: artifact bytes drift or cannot be read
     Accepted --> Apply: changed and capacity remains
     Apply --> RepairStop: failed or partial application
     Apply --> Validate: committed changed application
@@ -41,10 +44,18 @@ stateDiagram-v2
     RepairStop --> Validate: validator repair; applied identity unchanged
     RepairStop --> OuterInit: content changed; binding remains current
     RepairStop --> Rebind: target, mode, scope, authority, child, or lineage changed
+    RepairStop --> Cleanup: repair abandoned; actual termination
+    DriftStopped --> EndStopped: no adoption, mutation, or new outer
+    Stopped --> Cleanup: non-resumable frontier
+    Rebind --> Cleanup: old run terminates
+    TerminalGuard --> Succeeded: unchanged; conversation or matching artifact bytes
+    TerminalGuard --> CapStopped: capacity; conversation or matching artifact bytes
+    Cleanup --> EndStopped: non-resumable stop; owned reviewers disposed
+    Cleanup --> CleanupBlocked: native release unavailable or fails
     CapStopped --> [*]
     Succeeded --> [*]
-    Stopped --> [*]
-    Rebind --> [*]
+    EndStopped --> [*]
+    CleanupBlocked --> [*]: report blocker, never success
 ```
 
 **Non-runtime table caption.** Main's action and mutation boundary at each guard.
@@ -54,19 +65,24 @@ stateDiagram-v2
 | Preflight passes and the bound brief is approved | Retain distinct read-only A and B, then initialize outer one | No |
 | Outer initialization | Set canonical candidate as immutable base and initial working proposal; start with A | No |
 | Reviewer's first actual turn | Collect provisional initial, then same-child rethink and finalized post-rethink | No |
+| Correctable response contract | Keep the child, pass, and authority; corrected initial uses ordinary provisional result, finalized correction uses IRC and ignored echo; no extra rethink | No |
 | Reviewer has already reviewed | Request finalized later pass without rethink | No |
 | Changed applicable REVISE | Replace ephemeral working proposal and alternate to the counterpart | No |
 | Exact current-identity VALID | Synchronize the already-live counterpart | No |
 | Synchronization receipt fails | Stop at the exact working identity | No |
-| Synchronized working proposal equals outer base | Present unchanged success | No |
+| Synchronized working proposal equals outer base | Silently dispose the pair, then in artifact mode freshly compare canonical bytes to reviewed base immediately before unchanged success | No |
 | Synchronized proposal changed and capacity remains | Apply once, re-identify, validate, and begin a new A-led outer | Once, after synchronization |
 | A committed application reaches the cap | Begin one closure-only outer from the applied base | No further mutation |
-| Closure accepts another changed proposal | Synchronize, then stop `CAP_REACHED` with canonical and pending identities | No |
-| Liveness, persistent blocking, malformed response, lost child, or authority guard fails | Stop at the exact frontier | No |
+| Closure accepts another changed proposal | Synchronize and dispose the pair, then freshly identify artifact bytes if applicable immediately before `CAP_REACHED` reporting with canonical and pending identities | No |
+| Terminal artifact freshness finds drift or unreadable bytes | The pair is already disposed; stop without adoption or a fresh review loop and report reviewed and observed identities or the read error | No |
+| Liveness, persistent blocking, malformed response, lost child, or authority guard fails | Stop at the exact frontier; dispose the pair if non-resumable | No |
 | Application or validation fails | Stop on observed bytes and request one exact repair authority | No automatic mutation or rollback |
 | Explicit repair preserves every bound content identity | Verify identity and retry only the failed sync, apply, or validation step | Only the already-accepted exact apply retry |
 | Repair changes content while the binding remains current | Invalidate VALID and begin a fresh A-led outer | No until freshly accepted and synchronized |
 | Target, mode, scope, authority, child binding, or lineage changes | Require a revised Reconcile binding | No |
+| Further outer or eligible identity-preserving repair pause | Retain the same pair, including the counterpart's exact no-prose Main-bound indefinite wait; Main consumes only the sync receipt | No |
+| Actual termination, including abandoned repair pause | Native `hub cancel` both exact owned reviewer IDs, including original-job-settled children; observe disposal while Main continues, with no new reviewer message | No |
+| Silent cleanup unavailable or failed | Report unresolved owned IDs and capability blocker; never success or a falsely completed capacity stop | No |
 
 Behavior-changing maintenance updates the owning executable prose, every affected
 diagram edge or table row, and at least one semantic eval in the same change.

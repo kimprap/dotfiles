@@ -30,8 +30,13 @@ mutating:
    logical A and B. Prove retained exact child identities, ordinary provisional
    task results, same-child normal-prompt follow-up and `skill://rethink` load,
    authoritative finalized-response IRC send to this Main identity, one-way
-   context-delivery receipts, and readable shared context. Do not emulate two
-   roles with one child, replace a lost child, or weaken any seam.
+   context-delivery receipts, readable shared context, and native silent
+   stop/release of both exact run-owned reviewers while Main continues. On OMP,
+   use `hub cancel` with those reviewer IDs: its parent-owned registered-subagent
+   fallback also releases a retained child after its original job has settled
+   or disappeared. Eval `AgentHandle.cancel` is job-scoped and is not a substitute.
+   Unavailable silent cleanup is a capability blocker. Do not emulate two roles
+   with one child, replace a lost child, or weaken any seam.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
    `unresolved`. Bind exact UTF-8 proposal bytes as
@@ -165,11 +170,12 @@ iteration:
 Every later actual review uses pass `later`, sends no run-original bytes, and
 never loads `rethink`. It returns one complete finalized response through IRC,
 then one ignored exact local echo. A response-contract correction returns to the
-same child, retains the authority status of the response being corrected, uses
-one complete authoritative IRC response and one ignored exact local echo, and
-does not switch reviewer or add another rethink. A `BLOCKED` response may
-receive already-approved readable original context once through the same child;
-persistent `BLOCKED` stops.
+same child and inherits the corrected response's pass, authority, and transport:
+corrected `initial` uses only the ordinary task result and stays provisional;
+corrected `post-rethink` or `later` uses one authoritative IRC response followed
+by one ignored exact local echo. Neither switches reviewer nor adds a rethink.
+A `BLOCKED` response may receive already-approved readable original context
+once through the same child; persistent `BLOCKED` stops.
 
 Accept only the protocol's exact complete response for the expected reviewer,
 pass, and current working identity. A duplicate, malformed, stale, mismatched,
@@ -240,11 +246,21 @@ failed delivery receipt stops before every mutation or terminal presentation.
 
 After successful synchronization:
 
-1. If accepted working identity equals the outer-base identity, succeed without
-   mutation. This also closes a closure-only iteration.
-2. If accepted working state differs and the iteration is closure-only, stop
-   `CAP_REACHED` before mutation. Preserve and report the exact canonical and
-   pending working identities.
+At either terminal branch below (unchanged success or capacity), perform terminal
+cleanup first. Then, in artifact mode only, immediately before reporting, freshly
+read and identify the canonical artifact bytes and compare them with the reviewed
+outer-base identity. The pending Correction identity is not a disk identity.
+Unreadable bytes block reporting; drift stops with both reviewed and observed
+identities, without mutation, adoption, or a new review loop. Do not present stale
+success or label the reviewed identity as current. This terminal freshness guard
+does not add disk checks to conversation mode.
+
+1. If accepted working identity equals the outer-base identity, finish with
+   unchanged success only after the terminal cleanup below. This also closes a
+   closure-only iteration.
+2. If accepted working state differs and the iteration is closure-only, finish
+   `CAP_REACHED` before mutation and only after terminal cleanup. Preserve and
+   report the freshly confirmed canonical and pending working identities.
 3. If accepted working state differs and the cap is `none` or committed
    changed-application count is below it, Main applies the complete accepted
    working proposal exactly once. Conversation mode replaces the canonical
@@ -266,6 +282,28 @@ Reviewer turns, provisional responses, rethink, Corrections, synchronization,
 unchanged closure, failed or partial application, validation itself, and
 identity-preserving repair never add a capacity count. Main performs at most one
 canonical application before starting a new outer iteration.
+
+## Terminal cleanup
+
+Keep the same pair live between outer iterations and during an eligible
+identity-preserving repair pause. A counterpart's context wait is synchronization,
+not a request to terminate the run.
+
+At actual run termination—unchanged success, `CAP_REACHED`, terminal artifact
+drift, any other non-resumable stop, or abandonment of a repair pause—silently
+stop/release both exact run-owned reviewer IDs before completion. On OMP invoke
+native `hub cancel` against those IDs, including retained reviewers whose
+original jobs have finished; do not use Eval `AgentHandle.cancel`. Do not send a
+shutdown prompt, request an acknowledgement, await another reviewer message,
+weaken the no-prose context wait, cancel unrelated agents, or terminate Main.
+Require host-confirmed removal or terminal non-running disposal; a cancellation
+receipt or host teardown alone does not establish cleanup.
+
+Missing or failed cleanup blocks success: preserve the pending disposition and
+exact unresolved reviewer IDs and report the cleanup capability failure rather
+than `Final proposal` or a falsely completed capacity stop. Do not replace a
+reviewer to recover cleanup. An eligible repair pause is not completion and
+retains the pair; label it as a paused frontier.
 
 ## Liveness, failure, and repair
 
@@ -302,20 +340,23 @@ add a capacity count until one changed canonical application commits;
 validation repair on the unchanged applied identity does not add a second
 count.
 
-Any changed outer base, Correction, or intended final content invalidates
-`VALID`. If target, mode, scope, authority, both persistent children, and lineage
+Within explicitly authorized repair, any changed outer base, Correction, or
+intended final content invalidates `VALID`.
+If target, mode, scope, authority, both persistent children, and lineage
 remain current, bind the observed canonical content and begin a fresh A-led
 outer iteration. A changed target, mode, scope, authority, child binding, or
 lineage requires a revised Reconcile binding. A lost child is never replaced,
 and a different committed canonical identity is never exempted from the cap.
+This repair path does not authorize automatic adoption or re-review after the
+terminal artifact freshness guard detects drift.
 
 ## Presentation
 
 Read and follow [packed-label](../../references/packed-label.md) for every
 user-facing section. Project the full trace into `## Review rounds` using child
 kind `table`. Include each authoritative finalized verdict exactly once, plus
-context-sync, apply, validate, cap, and stop milestones. Exclude provisional
-initial responses and ignored local echoes.
+context-sync, apply, validate, freshness, cleanup, cap, and stop milestones.
+Exclude provisional initial responses and ignored local echoes.
 
 ```markdown
 ## Review rounds
