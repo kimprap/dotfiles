@@ -9,14 +9,22 @@ This protocol and `../SKILL.md` are the only executable Reconcile semantic
 owners. Do not load `execution-flow.md`; it is a non-runtime human maintenance
 map.
 
+Perform only the operation requested by the current controller message. Return
+the complete response in its bound format and delivery channel. Do not initiate
+or prepare subsequent workflow operations.
+
 ## Bootstrap packet
 
 Main creates and retains A and B before outer iteration one. A bootstrap packet
 binds your logical role, this protocol's exact locator and digest, and the
 invoking Main identity. Bootstrap is not a review: produce no `VALID`, `REVISE`,
-or `BLOCKED`, load no `skill://rethink`, inspect no candidate, and wait for
-Main's first review-turn packet. Do not contact the counterpart. A context-only
-synchronization packet is also not a review and follows its own section below.
+or `BLOCKED`, and inspect no candidate. Return one
+role-bound readiness line, `Ready: reviewer {A or B}`, through the ordinary
+native-result recipe below. This bootstrap-only line may end at EOF or with one
+LF or CRLF; no other whitespace, text, or lines are allowed. This does not relax
+or normalize any review response. Remain retained for Main's first review-turn
+packet. Do not contact the counterpart. A context-only synchronization packet
+is also not a review and follows its own section below.
 
 ## Review-turn packet
 
@@ -57,12 +65,14 @@ IRC except for the one Main-requested authoritative send described below.
 
 Return only one complete matching template, without a code fence or additional
 prose. The verdict is exactly one bare uppercase token on line 1. Use the
-expected reviewer, pass, and exact reviewed working-proposal identity.
+expected reviewer, pass, and exact reviewed working-proposal identity. The
+expected pass is exactly `initial`, `post-rethink`, or `later` as supplied by
+the current controller message.
 
 ```text
 VALID
 Reviewer: {A or B}
-Pass: {initial, post-rethink, or later}
+Pass: {exact expected pass supplied by the controller}
 Candidate: {exact reviewed identity}
 
 Blocking issues: none
@@ -74,7 +84,7 @@ Recommendations:
 ```text
 REVISE
 Reviewer: {A or B}
-Pass: {initial, post-rethink, or later}
+Pass: {exact expected pass supplied by the controller}
 Candidate: {exact reviewed identity}
 
 Blocking issues:
@@ -88,7 +98,7 @@ Preserve:
 ```text
 BLOCKED
 Reviewer: {A or B}
-Pass: {initial, post-rethink, or later}
+Pass: {exact expected pass supplied by the controller}
 Candidate: {exact reviewed identity}
 
 Blocker: {missing evidence, authority, or transport}
@@ -118,23 +128,26 @@ status. Do not ask Main to normalize prose or invent a semantic edit.
 
 ## Review passes and response transport
 
-Your first actual review has exactly two passes:
+For bootstrap, `initial`, and corrected `initial`, use one ordinary native
+task result containing only the required acknowledgment or complete response.
+On OMP, emit that text once as your last assistant message, then call
+Submit Result exactly as `yield({"type":"result"})`, with scalar string
+`type` and no `data`, and stop. This terminal operation preserves that last
+message as raw output. An array `type` is incremental, not terminal; a `data`
+wrapper or accumulated sections are not a raw response. Do not wrap the text,
+yield sections, repeat it across calls, or append commentary. This recipe does
+not apply to finalized IRC responses or the context-only wait.
 
-1. For `initial`, inspect the exact working proposal and return the complete
-   provisional response only through the ordinary host task result. It has no
-   mutation or terminal authority and is superseded by your post-rethink
-   response.
-2. On Main's normal-prompt follow-up, read and load the existing
-   `skill://rethink` exactly once, reassess your own immediately preceding
-   provisional response from first principles, and render one complete
-   finalized outer response with pass `post-rethink`. The outer contract
-   supersedes `rethink`'s standalone wrapper and `reject`, `reuse`, `extend`,
-   `test`, and `proceed` vocabulary.
+For `initial`, inspect the exact working proposal and return the complete
+provisional response only through the ordinary host task result. It has no
+mutation or terminal authority and is superseded by a later admitted finalized
+response for the same candidate.
 
-Every subsequent review uses pass `later` and never loads `rethink`. A
-context-only packet does not count as an actual review. For every Main-requested
-`post-rethink` or `later` response, including corrections of those finalized
-responses:
+Your current request supplies exactly one expected pass. Do not infer a
+supplemental skill load from that label, a later request, a correction, or a
+context-only packet. A context-only packet does not count as an actual review.
+For every Main-requested `post-rethink` or `later` response, including
+corrections of those finalized responses:
 
 1. Send exactly one complete outer response as the entire authoritative IRC
    payload to the bound invoking Main identity.
@@ -150,7 +163,8 @@ A contract correction inherits the response's pass, authority, and transport.
 Corrected `initial` returns only through the ordinary task result and remains
 provisional: it cannot mutate working state or terminate negotiation. Corrected
 `post-rethink` or `later` follows the authoritative IRC send and ignored local
-echo above. Keep the same reviewer and add no rethink for either correction.
+echo above. Keep the same reviewer. Perform only the correction requested by the
+current controller message.
 
 The complete finalized response is sufficient bounded handoff evidence. The
 working proposal packet carries its digest in lineage; create no separate
@@ -174,7 +188,7 @@ immediately and without prose with exactly `op: wait`, `from: {bound invoking
 Main identity}`, and `timeoutMs: 0`. This indefinite pair-bound wait is the sole
 exception to the review-turn prohibition on await.
 Do not emit a local message before or after the tool call and do not complete
-the turn. Do not review or reassess the packet, load `rethink`, emit `VALID`,
+the turn. Do not review or reassess the packet, emit `VALID`,
 `REVISE`, or `BLOCKED`, use IRC, produce a local echo, mutate, dispatch, or
 control the loop. Main relies only on the host's delivery receipt and neither
 awaits nor consumes the wait result.

@@ -13,19 +13,22 @@ stateDiagram-v2
     Preflight --> Brief: capabilities and binding valid
     Brief --> Brief: binding corrected without approval
     Brief --> Pair: approve bound brief
-    Pair --> OuterInit: distinct A and B retained
+    Pair --> OuterInit: distinct A and B retained, native readiness lines checked
+    Pair --> Pair: one total nudge per original bootstrap return, prerequisites intact
+    Pair --> Stopped: further invalid return after nudge, or unrecoverable failure
     OuterInit --> PassChoice: base = working, next = A
     state PassChoice <<choice>>
     PassChoice --> Initial: reviewer's first actual turn
     PassChoice --> Later: reviewer already reviewed
-    Initial --> Rethink: provisional initial complete
-    Initial --> Initial: same-child correction, ordinary result, still provisional
+    Initial --> Rethink: native raw result checked, provisional initial complete
+    Initial --> Initial: one total nudge per original initial return, prerequisites intact
+    Initial --> Stopped: further invalid return after nudge, or unrecoverable failure
     Rethink --> Admit: finalized post-rethink
     Later --> Admit: finalized later
-    Admit --> Admit: same-child finalized correction, IRC and ignored echo, no rethink
+    Admit --> Admit: one total nudge per original finalized return, prerequisites intact
     Admit --> PassChoice: changed applicable REVISE, alternate
     Admit --> Sync: exact current-identity VALID
-    Admit --> Stopped: liveness or authority stop
+    Admit --> Stopped: further invalid return after nudge, liveness or run-binding stop
     Sync --> RepairStop: delivery fails, stop before presentation
     Sync --> Accepted: delivery receipt succeeds
     state Accepted <<choice>>
@@ -62,10 +65,13 @@ stateDiagram-v2
 
 | Event or guard | Main action | Canonical mutation allowed |
 |---|---|---|
-| Preflight passes and the bound brief is approved | Retain distinct read-only A and B, then initialize outer one | No |
+| Preflight passes and the bound brief is approved | Retain distinct read-only A and B; verify both ordinary native bootstrap results and role-bound readiness lines under the protocol's bootstrap-only line-ending rule before outer one, without a review or extra stage. Bootstrap and initial child inputs include no supplemental-skill loading recipe or path | No |
 | Outer initialization | Set canonical candidate as immutable base and initial working proposal; start with A | No |
-| Reviewer's first actual turn | Collect provisional initial, then same-child rethink and finalized post-rethink | No |
-| Correctable response contract | Keep the child, pass, and authority; corrected initial uses ordinary provisional result, finalized correction uses IRC and ignored echo; no extra rethink | No |
+| Reviewer's first actual turn | Check designated native result and completion before raw provisional response text, then send an explicit same-child `skill://rethink` follow-up that names the immediately preceding complete provisional response and requires one caller-owned `post-rethink` IRC result for the same candidate identity | No |
+| Correctable invalid expected return, nudge unused | With approved run binding, retained child, and required channel intact, spend the one total allowance across delivery, format, and identity; restate the violated requirement, request one complete return using the original expected pass's transport, and fully revalidate. Rejection does not itself prove lost authority/capability; use observed delivery/completion facts, never the ignored echo | No |
+| Corrected return is valid | Continue with inherited authority: bootstrap stays bootstrap, initial stays provisional, finalized response follows normal verdict handling; no new child, review, or rethink | No |
+| Further invalid return after the nudge | Stop and clean up even if the defect category changes or the return is duplicated; correction never creates another allowance or permits normalization, unwrapping, deduplication, or last-block selection | No |
+| Valid REVISE/BLOCKED, ignored echo, context-only sync, or separately authorized repair | Keep each existing path, including once-approved-context correction; none consumes or replenishes the original return's malformed-return allowance | Only under the existing acceptance and repair rules |
 | Reviewer has already reviewed | Request finalized later pass without rethink | No |
 | Changed applicable REVISE | Replace ephemeral working proposal and alternate to the counterpart | No |
 | Exact current-identity VALID | Synchronize the already-live counterpart | No |
@@ -75,7 +81,7 @@ stateDiagram-v2
 | A committed application reaches the cap | Begin one closure-only outer from the applied base | No further mutation |
 | Closure accepts another changed proposal | Synchronize and dispose the pair, then freshly identify artifact bytes if applicable immediately before `CAP_REACHED` reporting with canonical and pending identities | No |
 | Terminal artifact freshness finds drift or unreadable bytes | The pair is already disposed; stop without adoption or a fresh review loop and report reviewed and observed identities or the read error | No |
-| Liveness, persistent blocking, malformed response, lost child, or authority guard fails | Stop at the exact frontier; dispose the pair if non-resumable | No |
+| Revoked/conflicting approved binding, lost child, or actually unavailable required seam; other liveness/stop guard | Stop at the exact frontier without spending an unused nudge to bypass the failure; do not infer this loss merely from an invalid returned message. Dispose the pair if non-resumable | No |
 | Application or validation fails | Stop on observed bytes and request one exact repair authority | No automatic mutation or rollback |
 | Explicit repair preserves every bound content identity | Verify identity and retry only the failed sync, apply, or validation step | Only the already-accepted exact apply retry |
 | Repair changes content while the binding remains current | Invalidate VALID and begin a fresh A-led outer | No until freshly accepted and synchronized |

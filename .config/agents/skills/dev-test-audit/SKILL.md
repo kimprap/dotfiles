@@ -10,7 +10,7 @@ description: >
 
 Own one explicit manual audit of permanent-test value. The audit is read-only and does not itself gate implementation or authorize cleanup. It never starts automatically, mutates the suite, runs audited tests, grants implementation authority, or substitutes for normal code review or verification.
 
-Read `skill://dev-test-audit/references/audit-protocol.md` before starting an audit. It is the sole audit-loop contract. Both persistent opinion wrappers read `skill://dev-test-audit/references/opinion-agent.md`. Permanent-test value itself remains owned only by `skill://dev-implementation/references/test-value.md`; do not copy its policy here.
+Read `skill://dev-test-audit/references/audit-protocol.md` before starting an audit. It is the sole audit-loop contract. Both persistent opinion wrappers read only `skill://dev-test-audit/references/opinion-agent.md`. Permanent-test value itself remains owned only by `skill://dev-implementation/references/test-value.md`; do not copy its policy here.
 
 ## Intake and scope
 
@@ -28,17 +28,17 @@ Stop read-only if scope cannot be enumerated, the target or boundary moves, appr
 
 Use the protocol's exact sequence:
 
-1. After the Route Overview is approved, start persistent `test-audit-opinion-a` alone on the complete bound file list.
-2. After A's first complete outer-loop return, send `~/.agents/references/impl-rethink/test-rethink.md` to the same A exactly once.
+1. After the Route Overview is approved, start persistent `test-audit-opinion-a` alone on the complete bound file list. Include no deferred wrapper path or scheduling recipe in that initial packet.
+2. After A's first complete outer-loop return, send `~/.agents/references/impl-rethink/test-rethink.md` to the same A exactly once as an explicit follow-up that asks A to read it once and return a complete revised proposal.
 3. If A's revised proposal has no findings, accept and stop without B.
-4. Otherwise start persistent `test-audit-opinion-b` with the same boundary and A's revised proposal.
-5. After B's first complete outer-loop return, send `~/.agents/references/impl-rethink/test-rethink.md` to the same B exactly once.
+4. Otherwise start persistent `test-audit-opinion-b` with the same boundary and A's revised proposal. Include no deferred wrapper path or scheduling recipe in B's initial packet.
+5. After B's first complete outer-loop return, send `~/.agents/references/impl-rethink/test-rethink.md` to the same B exactly once as an explicit follow-up that asks B to read it once and return a complete revised proposal.
 6. If they do not yet agree, alternate proposal revisions between the same persistent A and B. Later turns contain proposals only; never send rethink again.
 7. Agreement accepts. Synchronize the other live auditor with the accepted proposal.
 
-Every proposal accounts for every scoped file in order with `reviewed` or `skipped: <reason>` and a `keep | merge | remove | unknown` disposition. Detailed evidence, closest coverage, stable seam, independent oracle, plausible bug or concrete absence, uncertainty, and destination appear only for findings or unknown-value tests. A skipped file is `unknown` and remains preserved. These are output fields interpreted by reference to `skill://dev-implementation/references/test-value.md`, not a second policy.
+Every proposal uses the complete proposal contract in `skill://dev-test-audit/references/opinion-agent.md`. A skipped file is `unknown` and remains preserved. These are output fields interpreted by reference to `skill://dev-implementation/references/test-value.md`, not a second policy.
 
-During proposal exchange, stop on exactly the named liveness conditions: unchanged/repeated proposals, non-applicable revision, persistent blockage, lost reviewer, or authority conflict. Do not pick a winner, add a round cap, replace a lost auditor, or mutate to resolve disagreement. Post-batch original-A unavailability follows the nonblocking closure rule below instead.
+During proposal exchange, stop on exactly the named liveness conditions defined in that opinion-agent contract. Do not pick a winner, add a round cap, replace a lost auditor, or mutate to resolve disagreement. Post-batch original-A unavailability follows the nonblocking closure rule below instead.
 
 ## Read-only result and later fixes
 

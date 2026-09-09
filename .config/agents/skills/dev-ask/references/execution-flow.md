@@ -104,13 +104,13 @@ approved graph is projected without automatic repartitioning.
 | Event | Transition |
 |---|---|
 | Explicit permanent-test audit | Before the initial Route Overview approval, show the exact requested or complete-suite scope and ordered list of every scoped test file; do not launch A or B |
-| Route Overview approved for that target and boundary | Start persistent A alone |
-| A's first complete return | Send installed `test-rethink.md` to the same A exactly once |
+| Route Overview approved for that target and boundary | Start persistent A alone; include no deferred wrapper path in that initial packet |
+| A's first complete return | Send installed `test-rethink.md` to the same A exactly once as an explicit follow-up |
 | A's revised proposal has no findings | Accept and end the audit without starting B |
-| A's revised proposal retains findings | Start persistent B with the identical boundary and A's revised proposal |
-| B's first complete return | Send installed `test-rethink.md` to the same B exactly once |
+| A's revised proposal retains findings | Start persistent B with the identical boundary and A's revised proposal; include no deferred wrapper path in B's initial packet |
+| B's first complete return | Send installed `test-rethink.md` to the same B exactly once as an explicit follow-up |
 | B's revised proposal does not establish agreement | Alternate complete proposal revisions between the same persistent A and B; later turns contain proposals only and never resend rethink |
-| Every proposal | Account for each file as `reviewed` or `skipped: reason`; include detailed evidence only for findings or unknown-value tests |
+| Every proposal | Use the opinion-agent complete-proposal contract; a skipped file is unknown and remains preserved |
 | Agreement | Accept the complete proposal and synchronize the other live auditor |
 | Unchanged/repeated proposals, non-applicable revision, persistent blockage, lost reviewer during proposal exchange, or authority conflict | Stop read-only, preserve every test and completed result, and do not pick a winner, add a round cap, or replace an auditor |
 | Accepted proposal has no `merge` or `remove` fix | End the audit without changing implementation state |

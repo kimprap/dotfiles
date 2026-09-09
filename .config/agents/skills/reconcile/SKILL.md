@@ -145,22 +145,34 @@ artifact transport only when the intended child can read it.
 
 After approval, spawn A and B as one retained pair before outer iteration one.
 Give each only bootstrap instructions to bind its logical role and protocol,
-produce no verdict, load no `rethink`, and wait for Main's first review request.
-Begin the first outer iteration only after both distinct exact child identities
-exist. Both remain read-only and persistent for the run. Never replace a lost
-child.
+produce no verdict, and return the protocol's acknowledgment through its
+ordinary native-result recipe. Include no supplemental-skill loading recipe or
+path. Begin the first outer iteration only
+after both distinct exact child identities exist and both native bootstrap
+results pass the transport and role-bound readiness-line checks below. This exercises the
+initial-result path without a review or extra stage. Both remain read-only and
+persistent for the run. Never replace a lost child.
 
 On each child's first actual reviewing turn, even if it occurs in a later outer
 iteration:
 
 1. Send that child the full run original or approved readable locator and the
-   current review-turn packet with pass `initial`.
-2. Collect its complete provisional response only through the ordinary task
-   result. Validate and trace it as provisional and superseded. It cannot
-   change working state or terminate negotiation.
-3. Prompt the same child to load `skill://rethink` and reassess that immediately
-   preceding response from first principles. Collect one complete finalized
-   response with pass `post-rethink` only through the authoritative IRC send.
+   current review-turn packet with pass `initial`. Include no supplemental-skill
+   loading recipe or path.
+2. Collect its complete provisional response only through the ordinary native
+   task result, using the protocol's recipe. Check native delivery before
+   validating its response text, then trace it as provisional and superseded.
+   It cannot change working state or terminate negotiation.
+3. After admitting that complete initial result, send the same child one
+   follow-up that explicitly instructs it to load `skill://rethink` once,
+   reassess its immediately preceding complete provisional response from first
+   principles, and return one complete caller-owned finalized outer response
+   with pass `post-rethink` for the same candidate identity. The follow-up
+   states that the outer Reconcile contract supersedes `rethink`'s standalone
+   wrapper and `reject`, `reuse`, `extend`, `test`, and `proceed` vocabulary.
+   Do not infer this invocation from the pass label, a later request, a
+   correction, or context-only synchronization. Collect that response only
+   through the authoritative IRC send.
    The protocol requires one exact final local echo for inspectability; Main
    ignores it completely and never awaits, parses, compares, records, or gates
    on it. No Submit Result is required.
@@ -176,6 +188,47 @@ corrected `post-rethink` or `later` uses one authoritative IRC response followed
 by one ignored exact local echo. Neither switches reviewer nor adds a rethink.
 A `BLOCKED` response may receive already-approved readable original context
 once through the same child; persistent `BLOCKED` stops.
+
+For bootstrap and every `initial` result, first inspect the host's designated
+native result and completion status. Distinguish the host envelope from its
+payload: inspect only the documented payload field, not arbitrary nested keys.
+A failed or missing native result, nonterminal incremental yield, wrapped
+payload, or accumulated sections is a delivery failure, not a malformed
+reviewer verdict. A wake notification or concatenated assistant transcript
+does not substitute for that result. Only after successful raw-text delivery
+check the protocol's bootstrap readiness line or exact review response contract.
+
+For each original expected bootstrap or review return, allow at most one
+corrective nudge total across delivery, format, and identity failures. The
+corrected return remains part of that original expectation: a changed error
+category, duplicate, or repeated invalid response cannot reset the allowance.
+Recoverability depends on the approved run binding, retained child, and required
+delivery channel remaining intact. A revoked or conflicting approved binding,
+lost child, or actually unavailable required seam stops immediately. Failure of
+the returned message to satisfy its required channel or response contract does
+not itself establish loss of that authority or capability. With those
+prerequisites intact, correct the invalid return under this allowance without
+admitting its payload. Establish a return failure only from observed
+delivery/completion facts for that expectation, never from its ignored local
+echo.
+
+For a correctable invalid return with its nudge unused, restate the concrete
+violated requirement and prescribed operation or complete response shape. Ask
+the same child, pass, and candidate where applicable for one complete compliant
+return, not a fragment or silently relabeled stale output. Every correction
+inherits the original expected pass's response transport from the protocol,
+not the rejected return's channel. Revalidate delivery and the full applicable
+contract, including reviewer, pass, and candidate identity. A valid correction
+continues with its inherited authority; any further invalid return for that
+expectation stops and cleans up, even if it fails a different requirement.
+Never switch the bound child or required transport, add a review or rethink, unwrap, normalize,
+deduplicate, or select a last block.
+
+This allowance governs invalid expected returns only. Valid `REVISE` and
+`BLOCKED` keep their existing handling, including the once-approved-context
+correction; ignored echoes, context-only synchronization, and separately
+authorized repairs remain outside this guard. None consumes a return-contract
+nudge or replenishes one already spent for the same original expectation.
 
 Accept only the protocol's exact complete response for the expected reviewer,
 pass, and current working identity. A duplicate, malformed, stale, mismatched,
@@ -317,7 +370,8 @@ mutation on any of these frontiers:
   an A/B cycle, or a repeated unresolved frontier;
 - persistent `BLOCKED` or required context still unreadable after the one
   allowed approved-context correction;
-- uncorrectable malformed or stale response;
+- an invalid expected return after its one corrective nudge, or an
+  uncorrectable malformed or stale response;
 - lost persistent child, same-child follow-up, IRC channel, or required delivery
   seam;
 - failed context synchronization;

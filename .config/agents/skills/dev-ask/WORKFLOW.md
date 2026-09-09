@@ -95,15 +95,15 @@ The verifier returns a fresh aggregate over the complete fixed check set. After 
 
 `dev-test-audit` is explicit, separate, and read-only. The requested scope wins; otherwise the whole permanent-test portfolio is in scope. Before the initial Route Overview approval, show the exact scope and ordered list of every scoped test file; do not launch auditor A or B. After approval, apply `skill://dev-implementation/references/test-value.md` as the sole permanent-test policy.
 
-1. Start persistent auditor A alone with the approved complete boundary.
-2. After A's first complete proposal, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A once.
+1. Start persistent auditor A alone with the approved complete boundary. Include no deferred wrapper path in that initial packet.
+2. After A's first complete proposal, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A once as an explicit follow-up.
 3. If A then has no findings, accept and stop without B.
-4. Otherwise start persistent B with the identical boundary and A's revised proposal.
-5. After B's first complete proposal, send the same installed test rethink to that same B once.
+4. Otherwise start persistent B with the identical boundary and A's revised proposal. Include no deferred wrapper path in B's initial packet.
+5. After B's first complete proposal, send the same installed test rethink to that same B once as an explicit follow-up.
 6. Later turns alternate complete proposals only; never resend rethink.
 7. Accept agreement or stop on unchanged/repeated proposals, non-applicable revision, persistent blockage, lost reviewer during proposal exchange, or authority conflict.
 
-Every proposal accounts for every scoped file in order as `reviewed` or `skipped: <reason>` with a `keep | merge | remove | unknown` disposition. Only findings or unknown-value tests carry detailed evidence, closest coverage, stable seam, independent oracle, plausible bug or concrete absence, uncertainty, and destination. A skipped file is `unknown` and remains preserved.
+Every proposal uses the complete proposal contract in `skill://dev-test-audit/references/opinion-agent.md`. A skipped file is `unknown` and remains preserved.
 
 Accepted fixes return to `dev-ask` for one separately approved direct or planned mutation batch; only the human may adjust that default. Original A performs the one audit-specific closure after the batch and before normal review or verification. If original A is unavailable only for closure, omit and report `original-A closure unavailable`; never substitute or claim closure, but continue normal assurance without opening another batch.
 

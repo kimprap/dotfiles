@@ -1,6 +1,6 @@
 # Manual permanent-test audit protocol
 
-This protocol owns the explicit, read-only, A-first audit loop. Permanent-test value is defined only by `skill://dev-implementation/references/test-value.md`; this protocol defines scope, proposal shape, turn order, agreement, liveness, routing, and audit-specific closure without copying that policy.
+This protocol owns the explicit, read-only, A-first audit loop. Permanent-test value is defined only by `skill://dev-implementation/references/test-value.md`. Proposal rows, accounting, applicable stop results, and closure results are defined only by `skill://dev-test-audit/references/opinion-agent.md`. This protocol defines scope, turn order, agreement, routing, and audit-specific closure scheduling without copying that policy or those result shapes. Persistent opinion children read only the opinion-agent contract; they do not load this scheduling protocol.
 
 ## Bound scope
 
@@ -17,39 +17,17 @@ Bind only the current approved target, ordered file list, stated inclusions/excl
 
 ## Complete proposal
 
-Every auditor proposal repeats the same ordered file set and contains exactly one compact row per file:
-
-```text
-File: <path>
-Accounting: reviewed | skipped: <reason>
-Disposition: keep | merge | remove | unknown
-```
-
-For a `merge`, `remove`, or `unknown` finding, append:
-
-```text
-Evidence: <direct source or behavior evidence>
-Closest coverage: <file/test and comparison, or none found>
-Stable seam: <public seam exercised, or absent/unknown>
-Independent oracle: <oracle, or absent/unknown>
-Plausible bug/absence: <bug uniquely caught, or concrete absence evidence>
-Uncertainty: <none or exact unresolved fact>
-Destination: <required for merge; retained coverage for remove; otherwise none>
-```
-
-Interpret these fields only through `skill://dev-implementation/references/test-value.md`. Inspect enough of every file and its closest coverage to mark it `reviewed`; a file that cannot be assessed from available evidence is `skipped: <reason>`, must be `unknown`, receives the detailed fields, and remains preserved. A reviewed `keep` row carries no detailed evidence. A proposal is incomplete if a scoped file is omitted or duplicated, accounting or disposition is invalid, required finding/unknown detail is absent, keep detail is added, or an out-of-scope file appears.
-
-A **finding** is any `merge`, `remove`, or `unknown` row. “No findings” means every file is `reviewed` and `keep`. Recommendations are not mutation authority.
+Use the complete proposal, accounting, finding, incomplete-proposal, applicable stop, and closure-result definitions in `skill://dev-test-audit/references/opinion-agent.md`. Do not copy them here.
 
 ## Persistent A-first loop
 
 Use the native persistent opinion agents named by the harness wrappers.
 
-1. After the current Route Overview approval, start persistent auditor A with the bound scope and installed policy reference. Do not start B. A's first outer-loop return must be one complete proposal and must not have received the rethink prompt.
-2. After validating A's complete first return, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A exactly once. A returns a complete revised proposal.
+1. After the current Route Overview approval, start persistent auditor A with the bound scope, installed policy reference, and current request. Do not start B. Include no deferred wrapper path or scheduling recipe in that initial packet. A's first outer-loop return must be one complete proposal as defined in the opinion-agent contract.
+2. After validating A's complete first return, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A exactly once as an explicit follow-up that asks A to read it once and return a complete revised proposal. Do not rely on an advance recipe in A's initial packet.
 3. If A's revised proposal has no findings, accept it immediately. Do not create B.
-4. If findings remain, start persistent auditor B with the identical bound scope, the same policy reference, and A's complete revised proposal. B's first outer-loop return must be complete and must not have received the rethink prompt.
-5. After validating B's complete first return, send the same test rethink file to that same B exactly once. B returns a complete revised proposal.
+4. If findings remain, start persistent auditor B with the identical bound scope, the same policy reference, A's complete revised proposal, and the current request. Include no deferred wrapper path or scheduling recipe in B's initial packet. B's first outer-loop return must be one complete applicable proposal.
+5. After validating B's complete first return, send the same test rethink file to that same B exactly once as an explicit follow-up that asks B to read it once and return a complete revised proposal.
 6. If the revised proposals agree, accept. Otherwise send B's revised proposal to persistent A and request a proposal revision only. Then, if needed, send A's revision to persistent B. Continue alternating the same persistent A and B with counterpart proposals only.
 7. Never send the rethink prompt after an auditor's first-return rethink. Never create fresh auditors to continue the loop.
 
@@ -61,15 +39,7 @@ Agreement requires the same complete file set, compatible evidence, and the same
 
 After acceptance, send the accepted proposal to the other live auditor so both persistent sessions are synchronized. A-only early success needs no B synchronization.
 
-Stop read-only and name exactly one primary reason when:
-
-- **unchanged/repeated proposals** — the next proposal repeats that auditor's prior proposal or another already-seen proposal without accepting it;
-- **non-applicable revision** — a response does not revise against the supplied counterpart, changes the bound file set, or proposes work outside permanent-test value;
-- **persistent blockage** — an auditor cannot return a complete applicable proposal from available repository evidence;
-- **lost reviewer** — a persistent A or B session required during proposal exchange becomes unavailable; or
-- **authority conflict** — scope, policy, target, or requester authority conflicts and cannot be resolved inside the read-only audit.
-
-Do not add a round limit, select a winner, count votes, replace an auditor, or mutate to break a tie.
+Stop read-only and name exactly one primary reason using the applicable stop results in `skill://dev-test-audit/references/opinion-agent.md`. Do not add a round limit, select a winner, count votes, replace an auditor, or mutate to break a tie.
 
 ## Accepted fixes and one batch
 
@@ -81,13 +51,7 @@ An all-`keep` result or a result containing only preserved `unknown` rows has no
 
 Retain original A's persistent session when an approved audit fix batch is implemented. After that batch and before normal final review or verification, send original A only the accepted proposal, approved batch, applied delta, and resulting target. Do not send the rethink prompt again.
 
-Original A performs one read-only audit-specific closure over the approved batch and returns:
-
-- `CLOSED` — every approved fix is applied as approved and its named observable value is preserved;
-- `NOT CLOSED` — direct evidence shows an approved fix is missing, exceeded, or lost named observable value; or
-- `INCONCLUSIVE` — the applied target or required evidence is unavailable or contradictory.
-
-Closure cannot add findings, reopen portfolio scope, authorize repair, or start another batch. If original A is unavailable only at this post-batch boundary, omit audit-specific closure, report `original-A closure unavailable`, do not substitute A or claim closure, and continue through the approved route's normal assurance. Do not reopen the audit or mutation batch.
+Original A performs one read-only audit-specific closure over the approved batch and returns one of the closure results defined in `skill://dev-test-audit/references/opinion-agent.md`. Closure cannot add findings, reopen portfolio scope, authorize repair, or start another batch. If original A is unavailable only at this post-batch boundary, omit audit-specific closure, report `original-A closure unavailable`, do not substitute A or claim closure, and continue through the approved route's normal assurance. Do not reopen the audit or mutation batch.
 
 ## Lean Handoff
 

@@ -11,7 +11,20 @@
         "Out-of-scope repository tests are stated",
         "Auditor A is not launched before approval",
         "Approved audit starts with A alone",
+        "A's initial packet and required child references omit test-rethink.md and the audit-loop scheduling protocol",
         "No partial-scope result is represented as repository-wide"
+      ]
+    },
+    {
+      "id": "DTA-INITIAL-NO-DEFERRED-RECIPE",
+      "prompt": "After Route Overview approval, inspect auditor A's required initial references and start packet. State whether they may name test-rethink.md or the audit scheduling protocol, when the parent may send the installed test rethink, and whether a later proposal exchange, correction, or original-A closure may include that wrapper.",
+      "expected_output": "A's initial contract is opinion-agent.md plus bound scope, policy, and current request. It does not load audit-protocol or name test-rethink.md. After A's complete first return, the parent sends the installed test-rethink.md once to that same A as an explicit follow-up. Later proposal exchange, correction, and original-A closure receive no additional rethink wrapper.",
+      "files": [],
+      "assertions": [
+        "Initial child inputs omit test-rethink.md and the scheduling protocol",
+        "Canonical test-value policy is available from the first pass",
+        "Authorized follow-up sends test-rethink.md only after the complete first return",
+        "Later exchange, correction, and closure turns do not include the wrapper"
       ]
     },
     {
@@ -21,7 +34,7 @@
       "files": [],
       "assertions": [
         "A returns complete file accounting before rethink",
-        "A receives test rethink exactly once after the first outer-loop return",
+        "A receives test rethink exactly once after the first outer-loop return as an explicit follow-up, not from an advance initial recipe",
         "No findings after A rethink ends the audit",
         "B is not spawned",
         "No mutation batch is created"
@@ -34,6 +47,7 @@
       "files": [],
       "assertions": [
         "B starts only after A's revised proposal retains a finding",
+        "B's initial packet omits test-rethink.md and the audit-loop scheduling protocol",
         "B receives the same boundary plus A's revised proposal",
         "B receives rethink only after its first complete return and only once",
         "Agreement accepts and the other live auditor is synchronized",
