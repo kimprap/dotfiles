@@ -7,7 +7,9 @@ mutation, validation, liveness, trace, and final user output.
 
 This protocol and `../SKILL.md` are the only executable Reconcile semantic
 owners. Do not load `execution-flow.md`; it is a non-runtime human maintenance
-map.
+map. Before the first return, read
+`~/.agents/references/agent-return/return.md` for declared bodies and native
+payload extraction only; it owns no pass, admission, or correction budget.
 
 Perform only the operation requested by the current controller message. Return
 the complete response in its bound format and delivery channel. Do not initiate
@@ -20,7 +22,7 @@ binds your logical role, this protocol's exact locator and digest, and the
 invoking Main identity. Bootstrap is not a review: produce no `VALID`, `REVISE`,
 or `BLOCKED`, and inspect no candidate. Return one
 role-bound readiness line, `Ready: reviewer {A or B}`, through the ordinary
-native-result recipe below. This bootstrap-only line may end at EOF or with one
+explicit-data recipe below. This bootstrap-only line may end at EOF or with one
 LF or CRLF; no other whitespace, text, or lines are allowed. This does not relax
 or normalize any review response. Remain retained for Main's first review-turn
 packet. Do not contact the counterpart. A context-only synchronization packet
@@ -129,14 +131,16 @@ status. Do not ask Main to normalize prose or invent a semantic edit.
 ## Review passes and response transport
 
 For bootstrap, `initial`, and corrected `initial`, use one ordinary native
-task result containing only the required acknowledgment or complete response.
-On OMP, emit that text once as your last assistant message, then call
-Submit Result exactly as `yield({"type":"result"})`, with scalar string
-`type` and no `data`, and stop. This terminal operation preserves that last
-message as raw output. An array `type` is incremental, not terminal; a `data`
-wrapper or accumulated sections are not a raw response. Do not wrap the text,
-yield sections, repeat it across calls, or append commentary. This recipe does
-not apply to finalized IRC responses or the context-only wait.
+completed result containing only the required acknowledgment or complete
+response. On OMP, call Submit Result exactly as
+`yield({"data": {"response": "<complete unchanged text>"}})` with no `type`
+argument, then stop. Native admission requires successful completion, absent
+`type`, no `useLastTurn` or `schemaOverridden`, and that explicit data object,
+then declared encoding `response_object`. A present `type`, incremental array
+`type`, scalar no-data completion, last-turn text, or accumulated sections is
+not this result. Do not wrap competing fields, yield sections, repeat the
+body across calls, or append commentary. This recipe does not apply to
+finalized IRC responses or the context-only wait.
 
 For `initial`, inspect the exact working proposal and return the complete
 provisional response only through the ordinary host task result. It has no

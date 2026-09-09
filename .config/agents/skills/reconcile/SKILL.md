@@ -19,7 +19,10 @@ this file and that protocol are the only executable Reconcile semantic owners.
 non-normative human maintenance map. Maintainers may open it only while changing
 or diagnosing Reconcile's controller loop. Invocation, preflight, approval, and
 live execution never load, hash, send, or interpret it; a mismatch is an
-edit-time documentation defect, and the two executable owners win.
+edit-time documentation defect, and the two executable owners win. Declared
+bodies and native payload extraction live in
+[agent-return](../../references/agent-return/return.md); it owns no Reconcile
+pass, admission, or correction budget.
 
 ## Preflight and approval
 
@@ -28,10 +31,13 @@ mutating:
 
 1. Prove two distinct enabled host-provided persistent read-only role bindings,
    logical A and B. Prove retained exact child identities, ordinary provisional
-   task results, same-child normal-prompt follow-up and `skill://rethink` load,
-   authoritative finalized-response IRC send to this Main identity, one-way
-   context-delivery receipts, readable shared context, and native silent
-   stop/release of both exact run-owned reviewers while Main continues. On OMP,
+   explicit-data completion for each configured role, same-child normal-prompt
+   follow-up and `skill://rethink` load, authoritative finalized-response IRC
+   send to this Main identity, one-way context-delivery receipts, readable
+   shared context, and native silent stop/release of both exact run-owned
+   reviewers while Main continues. On OMP, ordinary completion is Submit Result
+   with `data.response` and no `type`; missing that seam on a configured role
+   is a capability blocker. Do not invent a fallback or shadow protocol. On OMP,
    use `hub cancel` with those reviewer IDs: its parent-owned registered-subagent
    fallback also releases a retained child after its original job has settled
    or disappeared. Eval `AgentHandle.cancel` is job-scoped and is not a substitute.
@@ -145,8 +151,8 @@ artifact transport only when the intended child can read it.
 
 After approval, spawn A and B as one retained pair before outer iteration one.
 Give each only bootstrap instructions to bind its logical role and protocol,
-produce no verdict, and return the protocol's acknowledgment through its
-ordinary native-result recipe. Include no supplemental-skill loading recipe or
+produce no verdict, and return the protocol's acknowledgment through ordinary
+explicit-data completion. Include no supplemental-skill loading recipe or
 path. Begin the first outer iteration only
 after both distinct exact child identities exist and both native bootstrap
 results pass the transport and role-bound readiness-line checks below. This exercises the
@@ -160,8 +166,9 @@ iteration:
    current review-turn packet with pass `initial`. Include no supplemental-skill
    loading recipe or path.
 2. Collect its complete provisional response only through the ordinary native
-   task result, using the protocol's recipe. Check native delivery before
-   validating its response text, then trace it as provisional and superseded.
+   task result, using the protocol's recipe. Check native provenance and the
+   declared response object before validating protocol text, then trace it as
+   provisional and superseded.
    It cannot change working state or terminate negotiation.
 3. After admitting that complete initial result, send the same child one
    follow-up that explicitly instructs it to load `skill://rethink` once,
@@ -191,12 +198,18 @@ once through the same child; persistent `BLOCKED` stops.
 
 For bootstrap and every `initial` result, first inspect the host's designated
 native result and completion status. Distinguish the host envelope from its
-payload: inspect only the documented payload field, not arbitrary nested keys.
-A failed or missing native result, nonterminal incremental yield, wrapped
-payload, or accumulated sections is a delivery failure, not a malformed
-reviewer verdict. A wake notification or concatenated assistant transcript
-does not substitute for that result. Only after successful raw-text delivery
-check the protocol's bootstrap readiness line or exact review response contract.
+payload using the documented ordinary-result seam in
+[agent-return](../../references/agent-return/return.md): inspect only that
+payload, not arbitrary nested keys, last-turn assistant text, or transcripts.
+A failed or missing native result, nonterminal incremental yield, present
+`type`, scalar no-data completion, `useLastTurn`, `schemaOverridden`, or
+accumulated sections is a delivery failure, not a malformed reviewer verdict.
+Only after that provenance admits an explicit data object, decode it as
+declared encoding `response_object`. A decode rejection is not a reviewer
+verdict and is not repaired by trying `text`. A wake notification or
+concatenated assistant transcript does not substitute for that result. Only
+after successful declared-body delivery check the protocol's bootstrap
+readiness line or exact review response contract.
 
 For each original expected bootstrap or review return, allow at most one
 corrective nudge total across delivery, format, and identity failures. The

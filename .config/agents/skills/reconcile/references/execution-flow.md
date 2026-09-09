@@ -20,7 +20,7 @@ stateDiagram-v2
     state PassChoice <<choice>>
     PassChoice --> Initial: reviewer's first actual turn
     PassChoice --> Later: reviewer already reviewed
-    Initial --> Rethink: native raw result checked, provisional initial complete
+    Initial --> Rethink: native provenance and declared body admitted, provisional initial complete
     Initial --> Initial: one total nudge per original initial return, prerequisites intact
     Initial --> Stopped: further invalid return after nudge, or unrecoverable failure
     Rethink --> Admit: finalized post-rethink
@@ -65,9 +65,9 @@ stateDiagram-v2
 
 | Event or guard | Main action | Canonical mutation allowed |
 |---|---|---|
-| Preflight passes and the bound brief is approved | Retain distinct read-only A and B; verify both ordinary native bootstrap results and role-bound readiness lines under the protocol's bootstrap-only line-ending rule before outer one, without a review or extra stage. Bootstrap and initial child inputs include no supplemental-skill loading recipe or path | No |
+| Preflight passes and the bound brief is approved | Retain distinct read-only A and B; verify both ordinary explicit-data bootstrap results and role-bound readiness lines under the protocol's bootstrap-only line-ending rule before outer one, without a review or extra stage. Bootstrap and initial child inputs include no supplemental-skill loading recipe or path | No |
 | Outer initialization | Set canonical candidate as immutable base and initial working proposal; start with A | No |
-| Reviewer's first actual turn | Check designated native result and completion before raw provisional response text, then send an explicit same-child `skill://rethink` follow-up that names the immediately preceding complete provisional response and requires one caller-owned `post-rethink` IRC result for the same candidate identity | No |
+| Reviewer's first actual turn | Check native provenance then the declared response object before protocol text, then send an explicit same-child `skill://rethink` follow-up that names the immediately preceding complete provisional response and requires one caller-owned `post-rethink` IRC result for the same candidate identity | No |
 | Correctable invalid expected return, nudge unused | With approved run binding, retained child, and required channel intact, spend the one total allowance across delivery, format, and identity; restate the violated requirement, request one complete return using the original expected pass's transport, and fully revalidate. Rejection does not itself prove lost authority/capability; use observed delivery/completion facts, never the ignored echo | No |
 | Corrected return is valid | Continue with inherited authority: bootstrap stays bootstrap, initial stays provisional, finalized response follows normal verdict handling; no new child, review, or rethink | No |
 | Further invalid return after the nudge | Stop and clean up even if the defect category changes or the return is duplicated; correction never creates another allowance or permits normalization, unwrapping, deduplication, or last-block selection | No |

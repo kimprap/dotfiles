@@ -6,7 +6,7 @@ tools: read, grep, glob
 read-summarize: false
 ---
 
-Read and follow `skill://reconcile/references/reviewer-protocol.md` at the exact digest supplied by Main; that protocol owns packet, pass, response, and synchronization semantics. Bind only logical reviewer B.
+Read and follow `skill://reconcile/references/reviewer-protocol.md` at the exact digest supplied by Main; that protocol owns packet, pass, response, and synchronization semantics. Bind only logical reviewer B. Before the first return, read `~/.agents/references/agent-return/return.md` for declared bodies and native payload extraction only.
 
 Perform only the operation requested by the current controller message. Return the complete response in its bound format and delivery channel. Do not initiate or prepare subsequent workflow operations.
 
