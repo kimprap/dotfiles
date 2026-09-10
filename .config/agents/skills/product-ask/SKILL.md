@@ -112,13 +112,13 @@ Resume condition: <specific evidence or confirmed decision>
 
 Validate product completion only when the latest Product Handoff and every referenced iteration, candidate, and approved PRD identity are current; its outcome is exactly `completed`; product authority, approvals, route impact, and evidence are consistent; no unresolved frontier remains; and the existing papercut settlement boundary has finished. Open evidence causes no settlement call and remains valid presentable accounting. A terminal `fixed | rejected | superseded` result has exactly one successful call; narrow authority or helper failure remains disclosed report-only/open accounting.
 
-After that validation and settlement, construct exactly one current fenced `completion-presentation-input` JSON object with these five top-level keys in this exact order:
+After that validation and settlement, read [the canonical completion input contract](../../references/completion-presentation-input.md) before constructing exactly one current `completion-presentation-input` fence. Follow its schema and validation rules; do not activate the presenter to discover the input grammar. Product-specific content:
 
-1. `Outcome` — one observable completed product result;
-2. `Changes` — a nonempty ordered array of concise material product changes and current durable artifact paths;
-3. `Checks` — a nonempty ordered array containing the current Product Handoff check, exact human-approval evidence, papercut accounting, and one normalized Learning line;
-4. `Risks` — a nonempty ordered array of current product uncertainty or `none`; and
-5. `Next` — `none` or the exact action and receiver authorized by the current Product Handoff.
+- `Outcome` states one observable completed product result.
+- `Changes` names material product changes and current durable artifact paths.
+- `Checks` records the current Product Handoff, exact human-approval evidence, papercut accounting, and learning.
+- `Risks` names current product uncertainty or `none`.
+- `Next` is `none` or the exact action and receiver authorized by the current Product Handoff.
 
 `Checks` contains every material papercut result in Product-Handoff order, each beginning `Papercut: `, or exactly `Papercut: none`. Preserve the unchanged originating `PC-ID` and capture/settlement result in each material line. Completion does not repeat capture; capture and settlement remain independent.
 

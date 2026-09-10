@@ -119,13 +119,7 @@ Standard and high invoke `dev-continual-learning` once after review and verifica
 
 ### Five-field presentation
 
-After terminal success, the specialty constructs one current `completion-presentation-input` JSON fence with exactly these ordered keys:
-
-1. `Outcome`
-2. `Changes`
-3. `Checks`
-4. `Risks`
-5. `Next`
+After terminal success, the specialty reads [the canonical completion input contract](../../references/completion-presentation-input.md) before constructing its current fence. The reference owns the schema and validation rules; presenter activation remains after construction.
 
 `Checks` includes the terminal checks, every material papercut line in authored-task order or `Papercut: none`, and exactly one normalized Learning line. Planned completion also names the current active plan and `DONE` state. The same agent applies `completion-presentation` directly and emits only the five corresponding H2 sections. The presenter is not dispatched and does not verify, repair, settle, archive, create a Handoff, or ship.
 
