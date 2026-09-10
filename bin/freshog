@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep upstream comparison settings and sessions separate from the daily profile.
+# Preserve the root when freshog is launched from its own integrated terminal.
+export FRESHOG_ROOT="${FRESHOG_ROOT:-$HOME/.local/share/freshog}"
+export HOME="$FRESHOG_ROOT/home"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_RUNTIME_DIR="$FRESHOG_ROOT/run"
+export TMPDIR="$FRESHOG_ROOT/tmp"
+
+mkdir -p "$HOME" "$XDG_RUNTIME_DIR" "$TMPDIR"
+chmod 700 "$XDG_RUNTIME_DIR" "$TMPDIR"
+
+exec "$FRESHOG_ROOT/bin/fresh" "$@"
