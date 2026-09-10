@@ -1,0 +1,6 @@
+AC-C5 plain: PASS exact text/head/count/range/primary/roundtrip and both undo states
+AC-C5 unicode-nonzero: PASS exact text/head/count/range/primary/roundtrip and both undo states
+AC-C5/CR-4 backward multiline: PASS exact states and both undo states
+AC-C5 secondaries and Unicode/CR-4 ZWJ: PASS precise cursor state
+AC-C1 recovery: PASS actual formatter save retained comment; uncomment restored property; native JSONC effective settings retained
+AC-C2 direct effective binding proof: PASS

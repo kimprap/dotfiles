@@ -1,0 +1,16 @@
+{
+  "affected": "AC-C1",
+  "initial_observation": "JSON comment/save/uncomment succeeded, but the runner hardcoded PATH excludes existing prettier; effective config requests prettier and shutil.which under that PATH returned None. The evaluator did not establish the required save-with-existing-formatter proof.",
+  "diagnostic_capture": "Additional missing-formatter save only captured the existing degraded-path state; references overlay obscured the status line. No target edits and no check/oracle edits.",
+  "correction": "Path/environment-only driver adaptation: add existing npm-prettier/3.8.4/bin and existing Node bin; separate fresh isolated HOME and outputs; single recovery of AC-C1 only.",
+  "paths": {
+    "root": "/tmp/fresh-native.vc1.ij8kfvgh",
+    "prettier": "/Users/kim/.local/share/mise/installs/npm-prettier/3.8.4/bin/prettier",
+    "node": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin/node"
+  },
+  "dependency_hashes": {
+    "/Users/kim/.local/share/mise/installs/npm-prettier/3.8.4/bin/prettier": "ac5523cd57e7e9d8eac71caef7e022a8a8489bcdc19ca8a778b7e728ec103b93",
+    "/Users/kim/.local/share/mise/installs/node/26.3.1/bin/node": "31cfaa3b3d2662541b33814b20ed72bf6faf59a868ab5ada98bcb37edb88c9ca"
+  },
+  "recovery_observation": "PASS: native save with existing Prettier produced 25-byte formatted JSON containing //; rendered status Saved (with on-save actions); uncomment parsed to {\"tab_size\":4}. Same candidate/native binary and same native JSONC effective configuration, apart from per-runtime rust-analyzer log output path."
+}

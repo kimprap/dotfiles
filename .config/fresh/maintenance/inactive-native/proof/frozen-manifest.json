@@ -1,0 +1,22 @@
+{
+  "frozen_at": 1788940654.316128,
+  "binary": "8df58507112cd459e30961d82600eacddc37138c67b0d20b7f6e0427ea14ab12",
+  "files": {
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/src/input/actions.rs": "35fb86e956df8b93e7ca3200065b4fab77448b9bf66c122b8a5dc170c01b5013",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/src/app/text_ops.rs": "3b96ce09047bb034c86bc20d085c338b59cc06b34a6cc62c4541a53a9fb67645",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/src/input/commands.rs": "6cd1489b0f2b76252c74246cd5d0df4afdd631a32e1558790e0f0ae5051ba1ac",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/src/input/keybindings.rs": "00501127f78de1d58122aef58b8d004e981c89e5e32173392d82f9c512fe8a4b",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/src/input/line_move.rs": "0662817da656dea93aea9517831e4469537697712afa7edb61deeba4df622fa6",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/locales/en.json": "475484eed6fc37195a55cdda56b1fa590c5021334d2ab0405eeaa9f0d309e763",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/tests/semantic/duplicate_line.rs": "9410edf1b7bef7ebfc6391d1d72f26d764f8000d6ed32444199ad8727b5c4e6d",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/tests/semantic/migrated_duplicate_line_full.rs": "16362570a7f37ace819ca5e1cb3890c764c4c60b593b557aaf8ef854cc929229",
+    "/tmp/fresh-native.Bpjr0R/source/crates/fresh-editor/tests/semantic/toggle_comment.rs": "5105c8b54fa5dc3bf90a63095e059df37f451cefd7e30a3acdd315d1de3970ff",
+    "/tmp/fresh-native.Bpjr0R/candidate/init.ts": "d5a73b0c3628f32ba0171c276d2a29db7d84cdc15c052aebca2006165d421ec7",
+    "/tmp/fresh-native.Bpjr0R/candidate/config.json": "a74a92861ebeb34b8c21941f7a3643f192f6c2081af6eaae9fadec9156407011",
+    "/tmp/fresh-native.Bpjr0R/target/debug/fresh": "8df58507112cd459e30961d82600eacddc37138c67b0d20b7f6e0427ea14ab12",
+    "/Users/kim/.dotfiles/.config/fresh/init.ts": "983c3e0d3b3ce844f97e664979cfe2da78d3bc943ed670ae84377464c84d7a18",
+    "/Users/kim/.dotfiles/.config/fresh/config.json": "c487e0b1d467df4664e0f2fa6b5aa2db17c6747b2418a5ac5c8d77095a1f35ef",
+    "/Users/kim/.dotfiles/.config/ghostty/fresh/keybinds.ghostty": "f6283756b73d04d6b59e26aae7262f1ba33702219144312a63b23bf76c5553fc",
+    "/opt/homebrew/bin/fresh": "a98650896db87ee07faa3f3ae4bcd08b2da3ad55f25cc1059e0e491c5bc8ce08"
+  }
+}
