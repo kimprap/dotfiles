@@ -17,6 +17,93 @@ editor.defineMacro("p", [
 ]);
 // fresh:end macro p
 
+// Fresh 0.5.1 emits no plain-arrow movement at the selection's boundary line,
+// leaving its anchor intact. Keep native movement everywhere else.
+let boundaryMoves: Promise<void> | null = null;
+
+function moveClearingBoundarySelection(down: boolean): void | Promise<void> {
+  const bufferId = editor.getActiveBufferId();
+  const windowId = editor.activeWindow();
+  const splitId = editor.getActiveSplitId();
+  const action = down ? "move_down" : "move_up";
+  const documentAction = down ? "move_document_end" : "move_document_start";
+  const cursor = editor.getPrimaryCursor();
+  const selection = cursor?.selection;
+  const single = () =>
+    editor.getAllCursors().length <= 1 && editor.getAllCursorPositions().length <= 1;
+
+  if (!boundaryMoves) {
+    if (!selection || !single()) {
+      editor.executeAction(action);
+      return;
+    }
+    if (down ? selection.end === editor.getBufferLength(bufferId) : selection.start === 0) {
+      editor.executeAction(documentAction);
+      return;
+    }
+  }
+
+  // Only non-endpoint selections need a boundary check. Queue following arrows
+  // through the flush so key repeats observe the preceding native movement.
+  const pending = (boundaryMoves ?? Promise.resolve()).then(async () => {
+    if (editor.getActiveBufferId() !== bufferId || editor.activeWindow() !== windowId ||
+        editor.getActiveSplitId() !== splitId) return;
+    const before = editor.getPrimaryCursor();
+    const range = before?.selection;
+    if (!range || !single()) {
+      editor.executeAction(action);
+      await editor.flush();
+      return;
+    }
+    const length = editor.getBufferLength(bufferId);
+    const unchanged = () => {
+      if (editor.getActiveBufferId() !== bufferId || editor.activeWindow() !== windowId ||
+          editor.getActiveSplitId() !== splitId ||
+          editor.getBufferLength(bufferId) !== length || !single()) return false;
+      const current = editor.getPrimaryCursor();
+      return current?.position === before.position &&
+        current.selection?.start === range.start && current.selection?.end === range.end;
+    };
+    // The stock line-position/count APIs copy the entire document. Read only
+    // bounded chunks toward the relevant edge, stopping at the first newline.
+    let edge = down ? range.end : range.start;
+    let boundary = true;
+    while (down ? edge < length : edge > 0) {
+      const start = down ? edge : Math.max(0, edge - 1024);
+      const end = down ? Math.min(length, edge + 1024) : edge;
+      const text = await editor.getBufferText(bufferId, start, end);
+      if (!unchanged()) return;
+      if (!text || text.includes("\n")) {
+        boundary = false;
+        break;
+      }
+      edge = down ? end : start;
+    }
+    editor.executeAction(boundary ? documentAction : action);
+    await editor.flush();
+  }).catch((error) => {
+    editor.error(`Boundary selection movement: ${error}`);
+  });
+  boundaryMoves = pending;
+  void pending.then(() => {
+    if (boundaryMoves === pending) boundaryMoves = null;
+  });
+  return pending;
+}
+
+registerHandler("moveUpClearingBoundarySelection", () => moveClearingBoundarySelection(false));
+registerHandler("moveDownClearingBoundarySelection", () => moveClearingBoundarySelection(true));
+editor.registerCommand(
+  "Move Up (clear boundary selection)",
+  "Move up natively, clearing a single first-line selection to document start",
+  "moveUpClearingBoundarySelection",
+);
+editor.registerCommand(
+  "Move Down (clear boundary selection)",
+  "Move down natively, clearing a single last-line selection to document end",
+  "moveDownClearingBoundarySelection",
+);
+
 // Per-file explorer icons. Fresh has no built-in filetype glyphs; plugins
 // set them via leading slots. Folders keep the tree_indicator glyphs.
 type FileIcon = { text: string; color: [number, number, number] };
@@ -193,6 +280,37 @@ editor.on("editor_initialized", "refreshFileIcons");
 editor.on("after_file_explorer_change", "refreshFileIcons");
 editor.on("after_file_save", "refreshFileIcons");
 refreshFileIcons();
+
+// External creates do not emit after_file_explorer_change, even when the
+// native explorer is refreshed. Keep slots ready when those files appear.
+let fileIconWatch: number | null = null;
+let fileIconRefreshTimer: number | null = null;
+const fileIconRoot = editor.getCwd();
+registerHandler("refreshExternalFileIcons", () => {
+  fileIconRefreshTimer = null;
+  refreshFileIcons();
+});
+registerHandler(
+  "externalFileIconsChanged",
+  (event: { handle: number; path: string; kind: string }) => {
+    if (event.handle !== fileIconWatch || event.kind === "modify") return;
+    if (!event.path.startsWith(fileIconRoot + "/")) return;
+    const parts = event.path.slice(fileIconRoot.length + 1).split("/");
+    if (
+      parts.length > FILE_ICON_DEPTH + 1 ||
+      parts.slice(0, -1).some((part) => FILE_ICON_SKIP[part])
+    ) return;
+    // Coalesce filesystem bursts without polling or a timer per path.
+    if (fileIconRefreshTimer === null) {
+      fileIconRefreshTimer = editor.setTimeout(100, "refreshExternalFileIcons");
+    }
+  },
+);
+editor.on("path_changed", "externalFileIconsChanged");
+void editor.watchPath(fileIconRoot, true).then(
+  (handle) => { fileIconWatch = handle; },
+  (error) => { editor.error(`File icon watcher: ${error}`); },
+);
 
 // Reopen Closed Tab (Cmd+Shift+T). Fresh has no closed-tab stack;
 // remember file-backed buffers and reopen the last closed path.

@@ -35,7 +35,7 @@
     "show_gitignored": true,
     "tree_indicator_collapsed": "\uf07b",
     "tree_indicator_expanded": "\uf07c",
-    "preview_tabs": false
+    "preview_tabs": true
   },
   "file_browser": {
     "show_hidden": true
@@ -106,9 +106,14 @@
     {"key": "F3", "modifiers": ["shift"], "action": "stepSearchPrev", "when": "searchPrompt"},
     {"key": "Backspace", "modifiers": ["alt"], "action": "delete_word_backward", "when": "normal"},
     {"key": "Backspace", "modifiers": ["alt"], "action": "prompt_delete_word_backward", "when": "prompt"},
+    // Native vertical movement leaves a single selection anchored at document edges.
+    {"key": "Up", "modifiers": [], "action": "moveUpClearingBoundarySelection", "when": "normal"},
+    {"key": "Down", "modifiers": [], "action": "moveDownClearingBoundarySelection", "when": "normal"},
     // Repeat native Cmd+Up/Down bindings so removing Ghostty's binding is enough.
     {"key": "Up", "modifiers": ["super"], "action": "move_document_start", "when": "normal"},
     {"key": "Down", "modifiers": ["super"], "action": "move_document_end", "when": "normal"},
+    {"key": "Up", "modifiers": ["super", "shift"], "action": "select_document_start", "when": "normal"},
+    {"key": "Down", "modifiers": ["super", "shift"], "action": "select_document_end", "when": "normal"},
     // Cursor Cmd+Left is smart Home, not absolute column 0.
     {"key": "Left", "modifiers": ["super"], "action": "smart_home", "when": "normal"},
     // Repeat native Cmd+/ so Ghostty unbind is enough; caret stays on the source character.
@@ -148,6 +153,7 @@
     {"keys": [{"key": "r", "modifiers": ["super"]}, {"key": "m", "modifiers": []}], "action": "set_language", "when": "global"},
     {"keys": [{"key": "r", "modifiers": ["super"]}, {"key": "m", "modifiers": ["super"]}], "action": "set_language", "when": "global"},
     {"keys": [{"key": "r", "modifiers": ["super"]}, {"key": "c", "modifiers": ["shift", "super"]}], "action": "open_terminal", "when": "normal"},
+    {"keys": [{"key": "r", "modifiers": ["super"]}, {"key": "c", "modifiers": ["shift", "super"]}], "action": "open_terminal", "when": "mode:markdown-source"},
     {"key": "t", "modifiers": ["shift", "super"], "action": "reopenClosedTab", "when": "global"},
     {"key": "q", "modifiers": ["ctrl"], "action": "prompt_select_next", "when": "prompt"},
     {"key": "h", "modifiers": ["shift", "super"], "action": "prev_split", "when": "global"},
@@ -169,6 +175,13 @@
     {"keys": [{"key": "k", "modifiers": ["ctrl", "shift", "super"]}, {"key": "k", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabDown", "when": "normal"},
     {"keys": [{"key": "l", "modifiers": ["ctrl", "shift", "super"]}, {"key": "l", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabRight", "when": "normal"},
     {"keys": [{"key": "i", "modifiers": ["ctrl", "shift", "super"]}, {"key": "i", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabUp", "when": "normal"},
+    // Source-mode dispatch clears normal chord prefixes; bind the same editor
+    // chords in that mode. Single keys already fall through to normal; leave
+    // Markdown Enter/Tab, review panels, prompts and terminal routing intact.
+    {"keys": [{"key": "j", "modifiers": ["ctrl", "shift", "super"]}, {"key": "j", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabLeft", "when": "mode:markdown-source"},
+    {"keys": [{"key": "k", "modifiers": ["ctrl", "shift", "super"]}, {"key": "k", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabDown", "when": "mode:markdown-source"},
+    {"keys": [{"key": "l", "modifiers": ["ctrl", "shift", "super"]}, {"key": "l", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabRight", "when": "mode:markdown-source"},
+    {"keys": [{"key": "i", "modifiers": ["ctrl", "shift", "super"]}, {"key": "i", "modifiers": ["ctrl", "shift", "super"]}], "action": "moveEditorTabUp", "when": "mode:markdown-source"},
     // Cmd+Ctrl+=/- grow/shrink the active pane; native first-child actions are side-corrected in init.ts.
     {"key": "=", "modifiers": ["ctrl", "super"], "action": "growActiveEditorPane", "when": "normal"},
     {"key": "+", "modifiers": ["ctrl", "super"], "action": "growActiveEditorPane", "when": "normal"},

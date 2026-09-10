@@ -33,6 +33,8 @@ keybind = super+backslash=unbind
 keybind = super+j=unbind
 keybind = super+arrow_up=unbind
 keybind = super+arrow_down=unbind
+keybind = super+shift+arrow_up=unbind
+keybind = super+shift+arrow_down=unbind
 keybind = super+ctrl+==unbind
 keybind = super+ctrl++=unbind
 keybind = super+ctrl+-=unbind
