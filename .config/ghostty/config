@@ -41,3 +41,4 @@ custom-shader = ~/.config/ghostty/shaders/cursor_sweep.glsl
 custom-shader-animation = always
 
 config-file = ?tode/keybinds.ghostty
+config-file = ?fresh/keybinds.ghostty

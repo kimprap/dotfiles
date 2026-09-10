@@ -14,6 +14,7 @@ docs
 .config/ghostty
 .config/yazi
 .config/cursor
+.config/fresh
 .config/karabiner
 .config/herdr
 .config/lazygit

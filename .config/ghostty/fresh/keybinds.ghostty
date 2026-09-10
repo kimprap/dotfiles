@@ -1,0 +1,41 @@
+# Pass the ported Fresh Cmd chords through to its macos-gui overrides.
+# Keep this after Tode: its Cmd+Shift+[ and Cmd+Shift+] escape mappings
+# are replaced with native Kitty keyboard reporting for Fresh.
+# Cmd+K (clear) and Cmd+0 (font reset) remain Ghostty-owned.
+# Shift+Cmd+\ is macOS Window > Show All Tabs (AppKit), not Ghostty's
+# Linux tab overview. Ghostty unbind cannot clear that menu equivalent;
+# bootstrap writes NSUserKeyEquivalents "Show All Tabs" = \0.
+keybind = super+shift+backslash=unbind
+keybind = super+shift+\=unbind
+keybind = super+shift+t=unbind
+keybind = super+y=unbind
+keybind = super+shift+c=unbind
+keybind = super+shift+]=unbind
+keybind = super+shift+[=unbind
+keybind = super+ctrl+shift+[=unbind
+keybind = super+ctrl+shift+]=unbind
+keybind = super+alt+i=unbind
+keybind = super+ctrl+tab=unbind
+keybind = super+shift+e=unbind
+keybind = super+p=unbind
+keybind = super+r=unbind
+keybind = super+shift+h=unbind
+keybind = super+shift+i=unbind
+keybind = super+shift+j=unbind
+keybind = super+shift+k=unbind
+keybind = super+shift+l=unbind
+keybind = super+ctrl+shift+i=unbind
+keybind = super+ctrl+shift+j=unbind
+keybind = super+ctrl+shift+k=unbind
+keybind = super+ctrl+shift+l=unbind
+keybind = super+shift+f=unbind
+keybind = super+backslash=unbind
+keybind = super+j=unbind
+keybind = super+arrow_up=unbind
+keybind = super+arrow_down=unbind
+keybind = super+ctrl+==unbind
+keybind = super+ctrl++=unbind
+keybind = super+ctrl+-=unbind
+keybind = super+slash=unbind
+keybind = super+/=unbind
+keybind = super+arrow_left=unbind

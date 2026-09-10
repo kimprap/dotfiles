@@ -1,0 +1,21 @@
+{
+  "name": "cursor-dark",
+  "extends": "builtin://dark",
+  "editor": {
+    "bg": [37, 37, 37],
+    "indentation_guide_fg": [218, 220, 64],
+    "selection_bg": [48, 78, 117]
+  },
+  "ui": {
+    "tab_active_bg": [91, 91, 91],
+    "tab_inactive_bg": [50, 55, 65],
+    "semantic_highlight_bg": [73, 73, 73]
+  },
+  "search": {
+    "match_bg": [101, 101, 101],
+    "match_fg": [220, 220, 220]
+  },
+  "syntax": {
+    "comment": [189, 121, 165]
+  }
+}
