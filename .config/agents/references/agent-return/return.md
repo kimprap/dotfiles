@@ -55,35 +55,30 @@ the details envelope. Do not try encoding `text` if `response_object` fails.
 A present `type`, incremental array `type`, scalar no-data completion,
 missing/non-object `data`, or the details envelope itself is not this payload.
 
-### Controller ordinary completion
-
-The invoking controller's `hub wait` and `hub send` (await) receipts are not
-the producer envelope. Recorded ordinary-completion receipts carry native job
-identity and status (`jobs[].id`, `jobs[].status`, `jobs[].type`,
-`jobs[].resolvedModel`) plus a rendered `resultText` or `waited.body` string.
-Those rendered strings are host `<task-result>` wrappers with extra prose, not
-a predeclared payload field. Do not scrape `<output>` blocks, JSON slices,
-last fences, concatenated transcripts, last-turn assistant text, or arbitrary
-nested keys from them.
-
-After that wait admits the exact owned child (`jobs[].id` equals the retained
-child and `jobs[].status` is `completed`), read `agent://<that-id>` once
-before any further dispatch to that child. That native read returns the
-structured completed-result object without the display wrapper. Pass that
-object to `decode.py` as encoding `response_object`. It is the same payload as
-producer `details.data`.
-
-`agent://<id>` is the latest ordinary result for that exact child. A later
-yield replaces it. Binding is the wait-then-read before further dispatch, not
-a later mutable guess, `?q=` extraction, or nested path. If wait does not
-admit that child, do not read `agent://` for this expectation. There is no
-separate historical per-request payload store.
-
 ### Owner-directed messages
 
-After IRC provenance (`from`, `to`, and message id), the native message body
-is the complete `waited.body` string. Use encoding `text`. This file does not
-map those acts onto workflow passes.
+For an owner-directed IRC request, the owner authors a unique correlation
+token and includes it in the request packet. The child replies with `hub send`
+to the bound owner and `replyTo` equal to that supplied token, copied unchanged.
+The token is not a native message ID. The response grammar remains entirely in
+`message`, with no added correlation field or header.
+
+Collect the native `waited` message on awaited send or `hub wait`, or each
+native `inbox[]` message on queued collection. Check `from` against the exact
+owned child, `to` against this owner, and `replyTo` against the current authored
+token. Reject `wakeRelay: true`; it is not an explicit child report. Consume a
+valid token once; no duplicate can be admitted again. Decode only that message's
+complete `body` string using encoding `text`. Native
+renderings may expose the message ID, sender and reply tag with the body;
+the enclosing owner-bound receipt supplies the recipient. Do not parse those
+transport labels as response text or choose among competing payloads.
+
+A correlated message proves delivery of that report, not successful terminal
+completion of its producing turn. No native send-receipt ID, incoming native
+message ID, host completion field, bootstrap-job lookup, latest-child `agent://`
+output, local echo, or transcript is required or an alternative payload source.
+Workflow owners keep token issuance, pass authority and invalid-return handling;
+this file does not map acts to passes.
 
 No child-wide output schema. Each expected return is checked call-locally by
 the owning controller against native provenance, then this declared body,

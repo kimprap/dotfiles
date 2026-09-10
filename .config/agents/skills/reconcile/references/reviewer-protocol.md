@@ -17,16 +17,20 @@ or prepare subsequent workflow operations.
 
 ## Bootstrap packet
 
-Main creates and retains A and B before outer iteration one. A bootstrap packet
+Main creates and retains A and B before outer iteration one. The launch packet
 binds your logical role, this protocol's exact locator and digest, and the
-invoking Main identity. Bootstrap is not a review: produce no `VALID`, `REVISE`,
-or `BLOCKED`, and inspect no candidate. Return one
-role-bound readiness line, `Ready: reviewer {A or B}`, through the ordinary
-explicit-data recipe below. This bootstrap-only line may end at EOF or with one
-LF or CRLF; no other whitespace, text, or lines are allowed. This does not relax
-or normalize any review response. Remain retained for Main's first review-turn
-packet. Do not contact the counterpart. A context-only synchronization packet
-is also not a review and follows its own section below.
+invoking Main identity. End that local launch turn without an authoritative
+report; remain retained. Launch output is not readiness. Do not inspect a
+candidate, produce a verdict, or load a supplemental skill.
+
+After binding both native child IDs, Main sends each a bootstrap readiness
+request over IRC with a Main-authored correlation token. Copy that token to
+`replyTo` and send one role-bound line, `Ready: reviewer {A or B}`, using the
+owner-directed recipe below.
+This bootstrap-only line may end at EOF or with one LF or CRLF; no other
+whitespace, text, or lines are allowed. This does not relax or normalize any
+review response. Remain retained for Main's first review-turn packet. Do not
+contact the counterpart. Context-only synchronization is not bootstrap or review.
 
 ## Review-turn packet
 
@@ -44,7 +48,8 @@ Require a review-turn packet to supply:
 - this protocol's exact locator and digest;
 - expected logical reviewer and pass;
 - the invoking Main controller identity; and
-- the host-provided authoritative IRC-send seam.
+- the host-provided authoritative IRC-send seam and a Main-authored correlation
+  token in the request packet, to copy unchanged into `replyTo`.
 
 On your first actual reviewing turn, the packet also supplies the full immutable
 run-original content or an approved readable locator. Later packets retain only
@@ -130,45 +135,40 @@ status. Do not ask Main to normalize prose or invent a semantic edit.
 
 ## Review passes and response transport
 
-For bootstrap, `initial`, and corrected `initial`, use one ordinary native
-completed result containing only the required acknowledgment or complete
-response. On OMP, call Submit Result exactly as
-`yield({"data": {"response": "<complete unchanged text>"}})` with no `type`
-argument, then stop. Native admission requires successful completion, absent
-`type`, no `useLastTurn` or `schemaOverridden`, and that explicit data object,
-then declared encoding `response_object`. A present `type`, incremental array
-`type`, scalar no-data completion, last-turn text, or accumulated sections is
-not this result. Do not wrap competing fields, yield sections, repeat the
-body across calls, or append commentary. This recipe does not apply to
-finalized IRC responses or the context-only wait.
+For readiness and every `initial`, `post-rethink`, or `later` response, including
+each contract correction, use the same owner-directed IRC recipe:
 
-For `initial`, inspect the exact working proposal and return the complete
-provisional response only through the ordinary host task result. It has no
-mutation or terminal authority and is superseded by a later admitted finalized
-response for the same candidate.
+1. Send exactly one complete acknowledgment or response as the entire `message`
+   of `hub send`, with `to` equal to the bound invoking Main identity and
+   `replyTo` equal to this request's Main-authored correlation token.
+2. Repeat the exact same text once as the final local in-conversation message
+   for inspectability, then stop. Do not use Submit Result for these reports.
+
+Copy the supplied token exactly; do not substitute a native incoming message ID,
+send-receipt ID, launch ID, report ID, or previous request's token. Never add a
+correlation field to the response body. The host binds sender and recipient;
+`replyTo` carries the authored token. A missing request token or host rejection/
+stripping of it blocks the transport; do not guess or change the body grammar.
+A report proves no successful terminal completion of its producing turn; Main
+admits the valid correlated report itself.
+
+For `initial`, inspect the exact working proposal and send the complete
+provisional response only. It has no mutation or terminal authority and is
+superseded by a later admitted finalized response for the same candidate.
 
 Your current request supplies exactly one expected pass. Do not infer a
 supplemental skill load from that label, a later request, a correction, or a
 context-only packet. A context-only packet does not count as an actual review.
-For every Main-requested `post-rethink` or `later` response, including
-corrections of those finalized responses:
+For every requested report, the local echo is non-authoritative. Main does not
+await, parse, compare, record, or gate on it. Do not make a second IRC send,
+await a receipt, address a peer, send an unsolicited message, or append
+transport commentary.
 
-1. Send exactly one complete outer response as the entire authoritative IRC
-   payload to the bound invoking Main identity.
-2. After that send, repeat the exact same response once as your final local
-   in-conversation message for inspectability, then stop.
-
-The local echo is non-authoritative. Main does not await, parse, compare, record,
-or gate on it. Do not use Submit Result for this finalized path. Do not make a
-second IRC send, await a receipt, address a peer, send an unsolicited message,
-or append transport commentary.
-
-A contract correction inherits the response's pass, authority, and transport.
-Corrected `initial` returns only through the ordinary task result and remains
-provisional: it cannot mutate working state or terminate negotiation. Corrected
-`post-rethink` or `later` follows the authoritative IRC send and ignored local
-echo above. Keep the same reviewer. Perform only the correction requested by the
-current controller message.
+A contract correction inherits the response's pass, authority, and transport
+but replies with the corrective request's own fresh authored token. Corrected
+`initial` remains provisional: it cannot mutate working state or terminate
+negotiation. Corrected `post-rethink` or `later` remains finalized. Keep the
+same reviewer and perform only the correction requested by the current message.
 
 The complete finalized response is sufficient bounded handoff evidence. The
 working proposal packet carries its digest in lineage; create no separate

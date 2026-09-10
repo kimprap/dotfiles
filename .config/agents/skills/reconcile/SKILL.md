@@ -30,14 +30,19 @@ Complete preflight before rendering a brief, spawning a child, reviewing, or
 mutating:
 
 1. Prove two distinct enabled host-provided persistent read-only role bindings,
-   logical A and B. Prove retained exact child identities, ordinary provisional
-   explicit-data completion for each configured role, same-child normal-prompt
-   follow-up and `skill://rethink` load, authoritative finalized-response IRC
-   send to this Main identity, one-way context-delivery receipts, readable
-   shared context, and native silent stop/release of both exact run-owned
-   reviewers while Main continues. On OMP, ordinary completion is Submit Result
-   with `data.response` and no `type`; missing that seam on a configured role
-   is a capability blocker. Do not invent a fallback or shadow protocol. On OMP,
+   logical A and B. Prove retained exact child identities, same-child normal
+   prompt follow-up and `skill://rethink` load, owner-directed IRC reports to
+   this Main identity, preservation of controller-authored correlation tokens
+   in `replyTo` with native sender/recipient on awaited and queued collection,
+   one-way context-delivery receipts,
+   readable shared context, and native silent stop/release of both exact
+   run-owned reviewers while Main continues. On installed OMP, readiness and
+   every review use explicit `hub send` reports, not ordinary completion.
+   A valid correlated report is the admission guarantee, not successful terminal
+   completion of its producing turn. Require no patched host fields or bootstrap
+   job lifetime. Missing native sender/recipient or token-preserving delivery
+   capability is a blocker, not permission to change response grammar or use
+   another channel. No native request-ID exposure is required. On OMP,
    use `hub cancel` with those reviewer IDs: its parent-owned registered-subagent
    fallback also releases a retained child after its original job has settled
    or disappeared. Eval `AgentHandle.cancel` is job-scoped and is not a substitute.
@@ -114,6 +119,9 @@ reviewer state object, or hidden protocol state:
 - bounded lineage for the working proposal;
 - the two persistent A/B child identities and each child's
   first-actual-review-completed flag;
+- each original pending return's bound child/controller, expected role/pass/
+  candidate, current Main-authored correlation token, consumed/pending status,
+  and nonresetting correction-used flag;
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
 - terminal finalized response, counterpart context-sync delivery receipt, and
@@ -141,7 +149,8 @@ exclusions; exact mode; complete current working proposal or exact readable
 artifact base plus complete current edit set; current working identity and the
 six lineage fields; decision-bearing readable context; this protocol's exact
 locator and digest; expected reviewer and pass; the invoking Main identity; and
-the authoritative IRC-send seam. It carries the immutable run-original identity
+the authoritative IRC-send seam and a Main-authored correlation token to copy
+unchanged into `replyTo`. It carries the immutable run-original identity
 on every turn. It carries the full run-original content or approved readable
 locator only on that child's first actual reviewing turn, or once more to
 correct an otherwise resolvable `BLOCKED`. Large context may use native shared
@@ -150,14 +159,16 @@ artifact transport only when the intended child can read it.
 ## Retained reviewer lifecycle
 
 After approval, spawn A and B as one retained pair before outer iteration one.
-Give each only bootstrap instructions to bind its logical role and protocol,
-produce no verdict, and return the protocol's acknowledgment through ordinary
-explicit-data completion. Include no supplemental-skill loading recipe or
-path. Begin the first outer iteration only
-after both distinct exact child identities exist and both native bootstrap
-results pass the transport and role-bound readiness-line checks below. This exercises the
-initial-result path without a review or extra stage. Both remain read-only and
-persistent for the run. Never replace a lost child.
+The launch packet binds only logical role, protocol locator/digest and this
+Main identity; it requests no readiness report or review. Let the launch turn
+end locally and ignore all launch output. Include no supplemental-skill loading
+recipe or path. Once both native child IDs are bound, send each a bootstrap
+readiness request with `hub send`, including a separately authored unique
+correlation token for that child. Launch output supplies no readiness authority;
+no launch or incoming native message ID is needed. Admit both role-bound
+readiness reports through the same IRC seam below before outer one. Bootstrap
+adds no review or rethink. Both remain read-only and persistent for the run;
+never replace a lost child.
 
 On each child's first actual reviewing turn, even if it occurs in a later outer
 iteration:
@@ -165,10 +176,10 @@ iteration:
 1. Send that child the full run original or approved readable locator and the
    current review-turn packet with pass `initial`. Include no supplemental-skill
    loading recipe or path.
-2. Collect its complete provisional response only through the ordinary native
-   task result, using the protocol's recipe. Check native provenance and the
-   declared response object before validating protocol text, then trace it as
-   provisional and superseded.
+2. Collect its complete provisional response through the current request's
+   owner-directed IRC report, using the correlation and text admission below.
+   The expired bootstrap job is irrelevant. Trace the admitted response as
+   provisional and superseded by its eventual finalized response.
    It cannot change working state or terminate negotiation.
 3. After admitting that complete initial result, send the same child one
    follow-up that explicitly instructs it to load `skill://rethink` once,
@@ -190,31 +201,56 @@ Every later actual review uses pass `later`, sends no run-original bytes, and
 never loads `rethink`. It returns one complete finalized response through IRC,
 then one ignored exact local echo. A response-contract correction returns to the
 same child and inherits the corrected response's pass, authority, and transport:
-corrected `initial` uses only the ordinary task result and stays provisional;
-corrected `post-rethink` or `later` uses one authoritative IRC response followed
-by one ignored exact local echo. Neither switches reviewer nor adds a rethink.
+corrected `initial` uses correlated IRC and stays provisional; corrected
+`post-rethink` or `later` uses correlated IRC and stays finalized. All have one
+ignored exact local echo. Neither switches reviewer nor adds a rethink.
 A `BLOCKED` response may receive already-approved readable original context
 once through the same child; persistent `BLOCKED` stops.
 
-For bootstrap and every `initial` result, first inspect the host's designated
-native result and completion status. Distinguish the host envelope from its
-payload using the documented ordinary-result seam in
-[agent-return](../../references/agent-return/return.md): inspect only that
-payload, not arbitrary nested keys, last-turn assistant text, or transcripts.
-A failed or missing native result, nonterminal incremental yield, present
-`type`, scalar no-data completion, `useLastTurn`, `schemaOverridden`, or
-accumulated sections is a delivery failure, not a malformed reviewer verdict.
-Only after that provenance admits an explicit data object, decode it as
-declared encoding `response_object`. A decode rejection is not a reviewer
-verdict and is not repaired by trying `text`. A wake notification or
-concatenated assistant transcript does not substitute for that result. Only
-after successful declared-body delivery check the protocol's bootstrap
-readiness line or exact review response contract.
+For readiness and every review or correction, apply the owner-directed message
+seam in [agent-return](../../references/agent-return/return.md). Before sending,
+author a fresh unique token (for example UUIDv4) and bind it to the exact child,
+this controller, expected role/pass/candidate and original return expectation.
+Include `Reply token: {token}` in the request packet, never in the response
+grammar. Never reuse a token, including for a correction or approved-context
+resend. Require a successful delivery receipt, not a native receipt ID.
+
+Collect `waited` on awaited send or `hub wait`, or `inbox[]` on queued delivery.
+Require native `from` = owned child, `to` = this controller, and `replyTo` =
+current authored token, with no `wakeRelay: true`. Decode only that explicit
+message's complete `body` as declared encoding `text`, then check readiness or
+exact review grammar and identity. Consume an admitted token once. A correction
+retires the rejected request's token while retaining its original expectation
+and spent allowance; late reports for that token cannot gain authority.
+Retained requests remain admissible after bootstrap jobs expire; do not look up
+those jobs, refresh them, poll, or recover mutable latest-agent output.
+
+An unsolicited, foreign, stale-request or already-consumed report cannot satisfy
+the current expectation. Leave an unrelated message pending outside admission;
+do not nudge a foreign sender or redispatch the legitimate request. A malformed
+report from the owned child claiming the current expectation (including wrong
+role/pass/candidate) follows the one-nudge rule below. If an owned child sends a
+misbound reply as its observed attempted current return, reject it and use only
+that same allowance; never silently relabel a stale response. Missing required
+native sender/recipient evidence, host rejection/stripping of the token, or an
+actually unavailable channel stops for the transport blocker, not a content
+nudge to recreate host facts or a fallback response field.
+
+An ignored echo, automatic wake relay, ordinary task output, or absence of a
+report alone is not an observed invalid current report: leave the request
+pending without redispatch. No completion metadata is a gate. A fully valid
+correlated report is admitted even if its producing turn subsequently fails or
+is cancelled; it proves the report, not terminal turn success. Loss of the
+retained child still triggers the independent lifecycle stop.
 
 For each original expected bootstrap or review return, allow at most one
 corrective nudge total across delivery, format, and identity failures. The
 corrected return remains part of that original expectation: a changed error
 category, duplicate, or repeated invalid response cannot reset the allowance.
+This allowance repairs an observed invalid expected return, not missing host
+capability. An observed wrong-channel attempt may receive the operation-specific
+nudge only when native delivery evidence binds that attempt to this expectation;
+absence of an IRC report or ignored local echo alone is not such evidence.
 Recoverability depends on the approved run binding, retained child, and required
 delivery channel remaining intact. A revoked or conflicting approved binding,
 lost child, or actually unavailable required seam stops immediately. Failure of
@@ -222,17 +258,17 @@ the returned message to satisfy its required channel or response contract does
 not itself establish loss of that authority or capability. With those
 prerequisites intact, correct the invalid return under this allowance without
 admitting its payload. Establish a return failure only from observed
-delivery/completion facts for that expectation, never from its ignored local
-echo.
+delivery facts for that expectation, never from its ignored local echo.
 
 For a correctable invalid return with its nudge unused, restate the concrete
 violated requirement and prescribed operation or complete response shape. Ask
 the same child, pass, and candidate where applicable for one complete compliant
 return, not a fragment or silently relabeled stale output. Every correction
 inherits the original expected pass's response transport from the protocol,
-not the rejected return's channel. Revalidate delivery and the full applicable
-contract, including reviewer, pass, and candidate identity. A valid correction
-continues with its inherited authority; any further invalid return for that
+not the rejected return's channel. Author and send a fresh correction token,
+retiring the old token without resetting the original allowance. Revalidate
+delivery and the full contract, including reviewer, pass, and candidate identity.
+A valid correction continues with its inherited authority; any further invalid return for that
 expectation stops and cleans up, even if it fails a different requirement.
 Never switch the bound child or required transport, add a review or rethink, unwrap, normalize,
 deduplicate, or select a last block.
