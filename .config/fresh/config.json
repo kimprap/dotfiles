@@ -20,8 +20,8 @@
     "tab_size": 2,
     "status_bar": {
       "left": ["{trust}", "{remote}", "{git_statusbar:branch}", "{diagnostics}", "{messages}", "{terminal_restart}"],
-      "right": ["{cursor-status:cursor_total}", "{cursor_count}", "{read_only}", "{language}", "{warnings}"],
-      "separator": ""
+      "right": ["{cursor-status:cursor_total}", "{cursor_count}", "{read_only}", "{language}", "{lsp}", "{warnings}"],
+      "separator": " "
     }
   },
   "plugins": {

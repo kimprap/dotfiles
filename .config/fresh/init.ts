@@ -47,7 +47,7 @@ function moveClearingBoundarySelection(down: boolean): void | Promise<void> {
   // through the flush so key repeats observe the preceding native movement.
   const pending = (boundaryMoves ?? Promise.resolve()).then(async () => {
     if (editor.getActiveBufferId() !== bufferId || editor.activeWindow() !== windowId ||
-        editor.getActiveSplitId() !== splitId) return;
+      editor.getActiveSplitId() !== splitId) return;
     const before = editor.getPrimaryCursor();
     const range = before?.selection;
     if (!range || !single()) {
@@ -58,8 +58,8 @@ function moveClearingBoundarySelection(down: boolean): void | Promise<void> {
     const length = editor.getBufferLength(bufferId);
     const unchanged = () => {
       if (editor.getActiveBufferId() !== bufferId || editor.activeWindow() !== windowId ||
-          editor.getActiveSplitId() !== splitId ||
-          editor.getBufferLength(bufferId) !== length || !single()) return false;
+        editor.getActiveSplitId() !== splitId ||
+        editor.getBufferLength(bufferId) !== length || !single()) return false;
       const current = editor.getPrimaryCursor();
       return current?.position === before.position &&
         current.selection?.start === range.start && current.selection?.end === range.end;
@@ -392,6 +392,23 @@ const SEARCH_YELLOW_FG: [number, number, number] = [37, 37, 37];
 const SELECTION_BLUE: [number, number, number] = [48, 78, 117];
 const MULTI_CURSOR_GREY: [number, number, number] = [101, 101, 101];
 
+// Fixed interaction and tab colors sit above any selected base theme. Editor
+// backgrounds and syntax remain theme-owned; search overlays use the constants above.
+const CUSTOM_HIGHLIGHTS: Record<string, [number, number, number]> = {
+  "editor.indentation_guide_fg": [218, 220, 64],
+  "editor.selection_bg": SELECTION_BLUE,
+  "ui.semantic_highlight_bg": [73, 73, 73],
+  "ui.tab_active_bg": [91, 91, 91],
+  "ui.tab_inactive_bg": [50, 55, 65],
+  "ui.status_warning_indicator_bg": [63, 120, 167],
+  "ui.status_warning_indicator_fg": [255, 255, 255],
+  "ui.status_warning_indicator_hover_bg": [63, 120, 167],
+  "ui.status_warning_indicator_hover_fg": [255, 255, 255],
+  "search.match_bg": MULTI_CURSOR_GREY,
+  "search.match_fg": [220, 220, 220],
+};
+let customHighlightsDirty = true;
+
 let paintedSearchBuffer: number | null = null;
 let paintedSearchPosition: number | null = null;
 let searchCommands = Promise.resolve();
@@ -399,15 +416,43 @@ let pendingSearchCommands = 0;
 let searchWasActive = false;
 let multiCursorGreyOn = false;
 
-function syncMultiCursorSelection(): void {
-  if (editor.hasActiveSearch()) return;
-  const multi = Math.max(editor.getAllCursors().length, editor.getAllCursorPositions().length) > 1;
-  if (multi === multiCursorGreyOn) return;
+function syncCustomHighlights(): void {
+  const multi = editor.hasActiveSearch()
+    ? multiCursorGreyOn
+    : Math.max(editor.getAllCursors().length, editor.getAllCursorPositions().length) > 1;
+  if (!customHighlightsDirty && multi === multiCursorGreyOn) return;
   multiCursorGreyOn = multi;
-  editor.overrideThemeColors({
-    "editor.selection_bg": multi ? MULTI_CURSOR_GREY : SELECTION_BLUE,
-  });
+  CUSTOM_HIGHLIGHTS["editor.selection_bg"] = multi ? MULTI_CURSOR_GREY : SELECTION_BLUE;
+  if (editor.overrideThemeColors(CUSTOM_HIGHLIGHTS)) customHighlightsDirty = false;
 }
+
+registerHandler("refreshCustomHighlights", () => {
+  // Config reload can reapply the same named theme, clearing runtime overrides.
+  customHighlightsDirty = true;
+  syncCustomHighlights();
+});
+editor.on("config_changed", "refreshCustomHighlights");
+syncCustomHighlights();
+
+// Applying the same theme still replaces its colors, but need not emit
+// config_changed. Invalidate on directory events because atomic config saves
+// can report only the temporary source path of the rename. Events coalesce
+// into one palette update at the next render; idle renders do not repaint it.
+let highlightConfigWatch: number | null = null;
+const highlightConfigDir = editor.getConfigDir();
+registerHandler(
+  "onHighlightConfigWrite",
+  (event: { handle: number }) => {
+    if (event.handle === highlightConfigWatch) {
+      customHighlightsDirty = true;
+    }
+  },
+);
+editor.on("path_changed", "onHighlightConfigWrite");
+void editor.watchPath(highlightConfigDir, false).then(
+  (handle) => { highlightConfigWatch = handle; },
+  (error) => { editor.error(`Highlight config watcher: ${error}`); },
+);
 
 function clearSearchPaint(): void {
   if (paintedSearchBuffer === null) return;
@@ -472,10 +517,10 @@ editor.registerCommand("Find Previous", "Find previous match and mark it yellow"
 registerHandler("onSearchRenderStart", () => {
   const active = editor.hasActiveSearch();
   if (!active || editor.getActiveBufferId() !== paintedSearchBuffer ||
-      (pendingSearchCommands === 0 && editor.getPrimaryCursor()?.position !== paintedSearchPosition)) {
+    (pendingSearchCommands === 0 && editor.getPrimaryCursor()?.position !== paintedSearchPosition)) {
     clearSearchPaint();
   }
-  syncMultiCursorSelection();
+  syncCustomHighlights();
   // Built-in confirmation bypasses prompt hooks and searchPrompt Enter bindings.
   // Observe its state transition, but never mutate overlays on every frame.
   if (active && !searchWasActive && pendingSearchCommands === 0) {
@@ -483,7 +528,7 @@ registerHandler("onSearchRenderStart", () => {
   }
   searchWasActive = active;
 });
-registerHandler("onSearchCursorMoved", syncMultiCursorSelection);
+registerHandler("onSearchCursorMoved", syncCustomHighlights);
 editor.on("render_start", "onSearchRenderStart");
 editor.on("cursor_moved", "onSearchCursorMoved");
 
@@ -578,7 +623,7 @@ registerHandler("selectAllOccurrences", async () => {
   if (!needle) return;
   const text = await editor.getBufferText(bufferId);
   let total = 0;
-  for (let i = 0; i < text.length; ) {
+  for (let i = 0; i < text.length;) {
     const found = text.indexOf(needle, i);
     if (found < 0) break;
     total++;
@@ -590,7 +635,7 @@ registerHandler("selectAllOccurrences", async () => {
     editor.executeActions([{ action: "add_cursor_next_match", count: remaining }]);
     await editor.flush();
   }
-  syncMultiCursorSelection();
+  syncCustomHighlights();
 });
 editor.registerCommand(
   "Select All Occurrences",
@@ -900,7 +945,7 @@ async function selectByteRange(
   if (forward) {
     editor.setBufferCursor(id, start);
     await editor.flush();
-    for (;;) {
+    for (; ;) {
       const cur = editor.getPrimaryCursor();
       if (!cur || cur.position >= end) return;
       const before = cur.position;
@@ -912,7 +957,7 @@ async function selectByteRange(
   }
   editor.setBufferCursor(id, end);
   await editor.flush();
-  for (;;) {
+  for (; ;) {
     const cur = editor.getPrimaryCursor();
     if (!cur || cur.position <= start) return;
     const before = cur.position;
@@ -1036,7 +1081,7 @@ async function reselectNeedle(
     await editor.flush();
   }
   let units = 0;
-  for (;;) {
+  for (; ;) {
     units++;
     editor.executeAction("select_left");
     await editor.flush();
