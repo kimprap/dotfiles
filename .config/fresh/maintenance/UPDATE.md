@@ -1,131 +1,101 @@
-# Fresh maintenance: preserve behavior, then update
+# Fresh upgrades: preserve behavior, then simplify
 
-## Decision and accepted baseline
+## Current policy
 
-Keep **stock Fresh 0.4.10, with no active local patches**. Do not install the inactive native build. The source review found no justified deletion: the existing helpers still supply behavior not established as equivalent upstream. This package preserves the accepted experience; it does not simplify shortcuts or remove explicit preferences merely because a value resembles a default.
+This is the single human/agent entry point for Fresh upgrades. The current working setup is **stock Fresh 0.5.1 with the repository-owned profile and no active native patches**. The inventory below reflects the customizations retained after the September 2026 work. Capture actual installed identities for each upgrade; this version statement is not a frozen rollback bundle or a claim that the historical checker passed.
 
-The current application is an arm64 Homebrew release build. Its receipt records `runtime_dependencies=[]`. Protected source identities:
+The minimum protocol is: preserve the working binary/profile pair, compare the exact target release, rehearse in isolation, check the final combination, then activate with paired rollback ready. Cover every inventory item once; deepen checks where upstream or local changes justify it. Routine upgrades do not require a separate old-baseline rerun, full replay, or independent review pipeline.
 
-| Input | SHA256 |
-| --- | --- |
-| Stock application | `a98650896db87ee07faa3f3ae4bcd08b2da3ad55f25cc1059e0e491c5bc8ce08` |
-| Current config.json, including global Cmd+R correction | `b64e8ef59df623c8a96f915aec2be08019cbd1ae09366f4e7d8c41b3230d0623` |
-| Current init.ts | `983c3e0d3b3ce844f97e664979cfe2da78d3bc943ed670ae84377464c84d7a18` |
-| Preserved config.json.bak.20260909-182957 | `c487e0b1d467df4664e0f2fa6b5aa2db17c6747b2418a5ac5c8d77095a1f35ef` |
+This policy replaces this guide's former mandatory full-gate-plus-replay upgrade procedure. It does **not** change checker result semantics, reopen the CLOSED maintenance plan, waive its failures, or promote historical partial evidence. No new updater, skill, scheduler, invocation surface, or parallel checklist is required. The person or agent performing an authorized upgrade owns the comparison and compact record here; installation, activation, rollback, and shipping retain their explicit permission boundaries.
 
-An accepted bundle is identified by its **explicit immutable manifest path and digest**, not a dated directory convention or a mutable `latest` pointer. A directory name is not evidence of acceptance. Its `result.json` must have `scope=full`, `status=pass`, `protected_unchanged=true`, all thirteen canonical IDs in `selected_cases`, and all thirteen case records passing with intact, correlated native evidence and shutdown records. The result's manifest digest and run ID must match; recompute all manifest file hashes. `manifest.json` remains the sole version record within each bundle.
+## Prepare and evaluate
 
-A focused result is never an accepted baseline, including a focused invocation that explicitly names all thirteen IDs. Failed and partial bundles remain useful immutable development evidence, not rollback approval. Full replay preflight checks the selected input bundle's full-scope acceptance, evidence and frozen hashes before launching Fresh. Focused development may inspect frozen inputs, but cannot promote them.
+1. **Preserve the working pair before changing it.** Resolve the daily executable and retain its actual bytes, version/hash, provenance, and required runtime assets/dependencies. Copy the complete runtime `.config/fresh` profile and the Ghostty source tree with include order preserved. Record the dotfiles revision and capture any uncommitted Fresh changes; a commit ID or Homebrew version alone is insufficient. Store the snapshot in a fresh private directory outside the live trees, for example under `$HOME/.local/share/fresh-maintenance`. Record its exact path, relative file hashes, and live symlink targets. Check that the preserved executable can report its version under an isolated HOME and that the snapshot hashes match the captured inputs; this is a recoverability check, not a full baseline rerun. Stop rather than overwrite divergent live files or broken links.
+2. **Compare the exact target release against the inventory.** Review release notes and relevant source changes between the installed and selected versions, including configuration keys, action/context routing, plugin APIs, rendering, and session migrations. Mark affected items **keep**, **adapt**, or **retirement candidate**. Confirm a referenced fix is included in that release; a merged PR, similar action name, or matching default is not equivalence evidence. Keep deliberate preferences explicit. Stock upgrades need no Rust build or patch rebase; native patch adoption is a separate decision.
+3. **Prepare a new isolated candidate.** With explicit acquisition authority, obtain the selected official macOS arm64 release, record provenance, and verify its available release checksum. Do not upgrade the live package first. Copy the unchanged working runtime profile and Ghostty inputs into a new candidate directory. Reuse the isolation pattern in `bin/freshog`, not the existing comparison installation itself: separate HOME, XDG config/data/state/cache/runtime, and TMPDIR, with no inherited session attachment. On macOS, XDG variables or `--no-restore` alone are not sufficient isolation. Keep daily Fresh, existing `freshog`, and all live links unchanged. Use disposable files/repositories with no remotes; keep bundled plugins enabled when they are part of the behavior under test. Resolve existing formatter/LSP/tool paths before isolating HOME; do not silently install missing prerequisites.
+4. **Adapt or retire only in that candidate.** Start with the new binary plus unchanged profile. For each retirement candidate, disable only the relevant workaround and exercise the native replacement against the inventory's required behavior. Keep preferred bindings/styling when still needed. On demonstrated equivalence, migrate every binding/command/caller and remove only now-exclusive helpers, imports, or assets; keep no shadow fallback or alias. Preserve meaningful regression cases and immutable historical evidence. Compatible but uncertain workarounds stay. Incompatible or non-equivalent behavior blocks activation rather than silently shrinking the feature set.
+5. **Check the final combined candidate once.** After all candidate edits, exercise every inventory row using the smallest valid existing case or a direct manual/native check. Several rows may share a scenario; this need not be one process. All observations must refer to the same final binary/profile/Ghostty identities, not a collection of superseded intermediate candidates. Use actual keys, cursor/selection state, saved fixture bytes, pane focus/geometry, and visible rendering as appropriate; config parsing alone proves none of these. Check deeper edges for adaptations/retirements and shared input/plugin/rendering/session changes. If a correction changes an already-observed behavior or dependency, replace the affected evidence; do not repeat unrelated tours. Stop on unexplained regressions, unsafe effects, or failed cleanup rather than turning the upgrade into open-ended repair.
 
-**Current blocker:** the preserved stock duplication wrapper creates one undo entry per copied block. After two selected copies, one Undo leaves three `foo` lines instead of the required two. The checker must report that failure while measuring independently initialized above/comment variants and later groups. Complete copied-selection readiness is required before Undo; neither extra undos nor a known-failure waiver satisfies the contract. No accepted full baseline or replay promotion is allowed while this or another required behavior fails. Production/native repair or a requirement change needs separate authority; continue using the unchanged stock profile meanwhile.
+Preservation includes `config.json`, `init.ts`, `themes/cursor-dark.json`, `plugins/cursor-status.ts`, and the entire `vendor/unicode-segmenter-0.17.3` directory including its license, plus any later runtime additions. The top-level `maintenance/` tree is tooling/history, not runtime profile content. Preserve the checker inputs separately if they supply evidence. Do not substitute generated live types, tsconfig, caches, logs, or old backups for authoritative sources.
 
-The bundle binds the application, complete profile (config, init, theme, plugin and all seven vendor files), Ghostty source including ordered includes, package metadata, and four exact checker inputs. It retains the real application, not a version string in place of the application. The copied checker allows replay even after the maintained checker evolves. Generated live types, tsconfig, logs, inactive packages and backups are not overwrite targets or substitutes for the source profile.
+Bootstrap owns five Fresh links from `~/.config/fresh`: `config.json`, `init.ts`, `themes/cursor-dark.json`, `plugins/cursor-status.ts`, and `vendor/unicode-segmenter-0.17.3`, each targeting the corresponding repository path. `~/.config/ghostty` points to the repository Ghostty tree. Record the actual link map and any relevant launcher target; do not run bootstrap to repair divergence during evaluation. Even configuration-inspection commands belong in the isolated candidate, not the real HOME.
 
-## Focused checks, full measurements and replay
+## Customization inventory and retirement checks
 
-Use an existing Python environment with the exact versions in `requirements.txt`: pexpect 4.9.0, ptyprocess 0.7.0, pyte 0.8.2, wcwidth 0.8.3. Resolve existing `node`, `prettier`, `basedpyright`, `basedpyright-langserver`, and `git` executables on PATH before HOME isolation. `/bin/sh` and `/bin/ps` provide disposable terminal and process-ownership support. No checker path inserts a temporary dependency directory, installs packages, fetches source, invokes brew/bootstrap, or changes system preferences. Missing prerequisites fail before Fresh launches; obtain separate setup authority rather than adding an automatic installer.
+Paths below are relative to `.config/fresh` unless stated otherwise. **P** means a deliberate preference, **W** a compatibility workaround; an item can be both. Existing case names identify reusable starting points, not proof that the historical case covers every later customization. Supplement missing coverage with the stated direct check. No upstream replacement is presumed merely because a tracking link exists.
 
-For the initial execution, the already-discovered machine-specific executable directories and Python module location are recorded separately in `$HOME/.local/share/fresh-maintenance/evidence/T1-attempt1-protected.json`. Supply that execution environment when running the following commands; those locations are not permanent checker defaults.
-
-Run from the repository root using the already-resolved Python and tool environment. Choose new unique output paths for every invocation; the checker rejects existing paths, including symlinks, and outputs inside input trees. For example, set `PYTHON` to the resolved executable and choose a new UUID-based key:
-
-```sh
-export HOLD="$HOME/.local/share/fresh-maintenance"
-export PYTHON="$(command -v python3)"
-export RUN_KEY="$("$PYTHON" -c 'import uuid; print(uuid.uuid4())')"
-export MEASURE_OUT="$HOLD/runs/$RUN_KEY-measurement"
-export FOCUSED_OUT="$HOLD/runs/$RUN_KEY-focused"
-```
-
-Full measurement uses no `--case`. It collects independent group results even when required behavior fails:
-
-```sh
-"$PYTHON" .config/fresh/maintenance/check.py --binary /opt/homebrew/bin/fresh --profile .config/fresh --ghostty .config/ghostty --upstream-ref v0.4.10 --out "$MEASURE_OUT"
-```
-
-Focused development uses the same entry point. Repeat `--case` to select groups; argument order does not change canonical execution order. Unknown or duplicate IDs are input errors. Keep each selected group's complete fixtures and assertions:
-
-```sh
-"$PYTHON" .config/fresh/maintenance/check.py --binary /opt/homebrew/bin/fresh --profile .config/fresh --ghostty .config/ghostty --upstream-ref v0.4.10 --case file-chords --case profile-ui --out "$FOCUSED_OUT"
-```
-
-Only after every required behavior is eligible, choose a new `RUN_KEY`, an absent `BASELINE_OUT` under `$HOLD/bundles`, and an absent `REPLAY_OUT` under `$HOLD/runs`. Record both exact expanded commands and paths with the execution evidence. The source capture and its paired replay use these relationships, with **no `--case` on either command**:
-
-```sh
-export BASELINE_OUT="$HOLD/bundles/$RUN_KEY-stock-0.4.10"
-export REPLAY_OUT="$HOLD/runs/$RUN_KEY-replay"
-"$PYTHON" .config/fresh/maintenance/check.py --binary /opt/homebrew/bin/fresh --profile .config/fresh --ghostty .config/ghostty --upstream-ref v0.4.10 --out "$BASELINE_OUT"
-```
-
-Inspect the completed full result and all evidence before replay. Failed or focused input bundles are ineligible as accepted replay baselines:
-
-```sh
-"$PYTHON" "$BASELINE_OUT/checker/check.py" --binary "$BASELINE_OUT/inputs/bin/fresh" --profile "$BASELINE_OUT/inputs/fresh" --ghostty "$BASELINE_OUT/inputs/ghostty" --upstream-ref v0.4.10 --out "$REPLAY_OUT"
-```
-
-Run through the process supervisor with readiness pattern `FRESH_COMPAT_READY`, then **wait for process exit**. Readiness is the first matching native probe response, not completion. When the supervisor rewrites login-shell PATH, launch `/usr/bin/env` with the explicitly resolved `PATH`, optional existing `PYTHONPATH`, `PYTHONDONTWRITEBYTECODE=1`, and the Python command as arguments. This is execution-environment setup, not a checker fallback or installation.
-
-| Result | Meaning |
-| --- | --- |
-| Exit 0, `scope=full`, `status=pass` | Every required group passed with intact evidence; eligible for the explicit bundle acceptance checks above. |
-| Exit 0, `scope=focused`, `status=partial` | Only the selected development scope passed; unselected groups are `unrun`, and this is never accepted baseline evidence. |
-| Exit 1, `status=fail` | A selected runtime/behavior/integrity/shutdown check failed. Inspect the complete available matrix and preserved evidence. |
-| Exit 2 | Invalid input, selection or prerequisite; existing results are never overwritten. |
-
-There is no skip-within-group, eval-only, accept, install, activate or restore-to-live mode. Full measurement failures are not automatically retried or promoted.
-
-The gate runs real 130-column by 42-row Fresh PTYs, one private full-profile session and tiny Git fixture per group. It uses the copied application, correlated native buffer/mode/selection/pane observations, actual key bytes or actual palette entries, rendered pyte cell attributes, real save output, the configured Python language server and a disposable `/bin/sh` terminal. Startup trust remains **Keep Restricted**. Every HOME/XDG/TMP/history location is private. It never attaches to a user session. Runtime homes, caches, probes and fixture repositories are removed after owned processes exit; accepted assets are inputs, checker, manifest/result and small direct evidence. Failures retain relevant logs.
-
-Failed groups additionally retain up to the last 128 KiB of their native and PTY logs as `fresh.log.tail` and `pty.log.tail`, alongside correlated state/screen and sent-key evidence. These are bounded failure tails, not complete transcripts. Later checks never trim or overwrite an existing run.
-
-The thirteen groups, in fixed order, are `profile-ui`, `file-chords`, `dup-comment`, `json-save`, `python-nav`, `search-selection`, `explorer-focus`, `terminal-focus`, `pane-layout`, `tab-move`, `tab-reopen`, `markdown-preview`, and `review-focus`. A group requires every subcase. Ordinary behavioral failures are captured and the owned session is closed before the next independent group runs. Independent duplication/comment fixtures also retain individual results; failed undo does not prevent measuring a freshly initialized above/comment fixture. Interruption, unsafe initialization/effects, changed frozen/protected inputs or failed teardown stop further launches. Unselected or safely unreachable groups remain `unrun`, never passing. No prior temporary snapshots or archived native outputs can satisfy a current run.
-
-Raw PTY evidence does not claim physical macOS/Fn/Ghostty keypress or font-rendering verification. Ghostty's source is preserved; a real-session smoke belongs to separately approved activation.
-
-## Keep-source inventory and retirement conditions
-
-Retirement is conditional on the same observable behavior in the **final combined upstream candidate**, not a similarly named action or release-note promise.
-
-| Keep now | Purpose | Observable upstream replacement required before retirement |
+| Item / source / kind | Required behavior and retirement condition | Smallest check / upstream tracking |
 | --- | --- | --- |
-| Split-focus macros `n`/`p`, including H/J/I previous and K/L next bindings | Restore keyboard focus to an editor after leaving the explorer, not merely highlighted chrome | `explorer-focus`: next/previous pane geometry and actual sentinel insertion into the intended editor, with the other file unchanged. Plain next_split/prev_split is not equivalent. |
-| File-icon overrides | Display the configured folder indicators and Python glyph while showing hidden/gitignored files | `profile-ui`: `.agents`, navigation.py, folder glyph and U+E606 render through the current source profile. |
-| Closed-file stack and `reopenClosedTab` | Reopen the last real path, excluding virtual views | `tab-reopen`: close a real tab and a diff; Cmd+Shift+T restores the file, not the diff. |
-| `focusIntegratedTerminal` | No-op without a terminal; focus an existing dock PTY | `terminal-focus`: actual printf proof in the private fixture, editor bytes unchanged, no terminal created by the initial Cmd+J. |
-| Search painting and cleared-query wrapper | Exact active match yellow, other match grey; retain an intentionally empty search | `search-selection`: forward/reverse native occurrence positions and exact colors, then empty reopened query. |
-| Unsaved Markdown preview helper and namespace cleanup | Reversible compose for untitled Markdown without extending file-backed eligibility | `markdown-preview`: exact text preserved, compose/source toggles, visible source markup restored, named-file handling remains native. Preserve its page-width rules. |
-| `selectAllOccurrences` and multi-selection paint | Select every exact occurrence once; distinguish multi- from single-selection colors | `search-selection`: two exact foo selections, repeat adds none, multi grey and single blue without file mutation. |
-| Directional tab movement helpers and bundled move_tab_left/right bindings | Reorder in-pane; move only the source tab left/down/right/up, creating an editor neighbor and skipping terminals | `tab-move`: rendered tab membership and native geometry for all four directions, a third existing copy retained, terminal not replaced. A moveBufferToSplit call alone is not equivalence. |
-| Side-correct resize helpers and thin `equalizeAllPanes` handler | Grow/shrink the active side on both axes; expose distributeSplitsEvenly as a command | `pane-layout`: both sides grow/shrink correctly and siblings equalize within one cell. Keep terminal ratio keys separate. |
-| Duplicate/comment wrappers | Preserve stock caret/copy placement and exact required reversible-text behavior | `dup-comment`: single-caret byte positions, complete selected-copy text/count/ranges, one Undo restoring the original text, and indented/UTF-8 comment roundtrips. Current per-block multi-copy undo remains a required FAIL, not an exception. Do not impose inactive native full secondary-cursor undo or disjoint secondary-line guarantees. Ctrl+D remains a separate native binding. |
-| cursor-status plugin and unicode-segmenter vendor closure | Unpadded grapheme-aware line:column and total lines, hidden for terminals | `profile-ui` and `terminal-focus`: emoji caret byte 5 renders `1:3|2`, two lines; terminal status omits the custom token. |
-| Explicit config/theme preferences, file-command contexts and review binding | Preserve animations=false, active indentation guide, rulers, whitespace/formatting choices, theme colors, global Cmd+R m/d held/released variants and global all-files review | Full gate: ordinary/Markdown/generic-mode language picker/current diff, reversible review focus, JSON comment-preserving formatting, actual basedpyright navigation, and exact editor/tab/selection colors. Do not trim explicit same-as-default values. |
+| Presentation and startup — `config.json`, `themes/cursor-dark.json`; P | Preserve theme/tab/selection colors, grapheme status layout, blinking bar, active indentation guide, whitespace, rulers, language indentation, animations off, viewport fade off, and Welcome auto-open off. Matching upstream defaults do not justify deleting explicit preferences. | `profile-ui` plus startup/visible-preference inspection against the candidate config and theme. |
+| Native keymap preferences — `config.json`, repository `.config/ghostty/fresh/keybinds.ghostty`; P | Keep macos-gui overrides for file/command/buffer pickers, live grep, split/maximize, tab cycling/reordering, reveal/copy path, redo, native Ctrl+D, line-end cursors, word deletion, and prompt navigation. Preserve shifted-glyph variants and editor/prompt/terminal context separation. | Exercise the configured gestures on disposable files/prompt; inspect each binding family against `config.json`. Physical Ghostty gestures are checked after authorized activation. |
+| Document navigation/selection — `config.json` and Ghostty arrow unbinds; P | Cmd+Up/Down reach document bounds; Cmd+Shift+Up/Down select to them; Cmd+Left remains smart Home. Ghostty must not consume the document-selection arrows. | Plain text and Markdown source, including selection and return to ordinary cursor movement. |
+| Boundary selection clearing — `init.ts: moveClearingBoundarySelection`, plain-arrow bindings; W | A single downward selection anchored at the first line clears to document start on plain Up; the EOF counterpart clears to document end on plain Down. Preserve normal/interior movement, multiple cursors, modified keys, and bounded edge reads rather than whole-document scans. | Direct original Shift+Down → release modifiers → Up and Shift+Up → release → Down scenarios in text/Markdown, plus unaffected movement. Repeat/Unicode/multi-chunk checks when this helper or native movement changes. No linked upstream fix established. |
+| Explorer icons and external-create refresh — `init.ts: refreshFileIcons`, `externalFileIconsChanged`, icon maps; P/W | Show the chosen file/folder glyphs, hidden and gitignored files. External creates and Save As must acquire mapped glyphs without restarting Fresh. This watcher prepares icon slots; it does not promise automatic tree-entry refresh. | `profile-ui` plus create a mapped file externally and Save As; use native tree refresh if required, then inspect glyphs. Preserve bounded traversal and coalescing when replacing the watcher. |
+| Preview tabs — `config.json: file_explorer.preview_tabs`; P | Explorer clicks open/reuse preview tabs; editing promotes the preview and saved content persists. | Actual mouse press/release on two files, replace preview, edit/promote/save/reopen. Not covered by a config-value assertion. |
+| Explorer-to-editor focus — `init.ts` macros `n`/`p`, explorer bindings; W | Restore actual editor keyboard focus, not just split chrome. Preserve H/J/I previous and K/L next behavior. | `explorer-focus`: move from tree to each intended pane and insert/undo a sentinel there. Plain next_split/prev_split is not automatically equivalent. |
+| File commands and Markdown chords — `config.json` global Cmd+R m/d/review and `mode:markdown-source` overrides; P/W | Preserve language picker, current-file diff, all-files review, terminal chord, and held-modifier jj/kk/ll/ii tab moves in ordinary and Markdown source modes. Markdown Enter/Tab must remain native. | `file-chords` and `review-focus`, supplemented with Cmd+R then Cmd+Shift+C and all four held Cmd+Ctrl+Shift doubled letters in Markdown source. Verify actual mode and held/released Cmd suffixes. |
+| Reopen closed file — `init.ts: reopenClosedTab`; W | Reopen the last real file, excluding virtual diff/review buffers. | `tab-reopen`: close a file and a virtual view, then Cmd+Shift+T. |
+| Terminal focus and shortcut separation — `init.ts: focusIntegratedTerminal`, terminal bindings; P/W | Cmd+J does not create a terminal when none exists; it focuses an existing PTY without editing the file. Terminal resize keys remain distinct from editor tab-move chords. | `terminal-focus`: actual shell output to a fixture file and unchanged editor text; observe resize geometry separately. Track [PR #3245](https://github.com/sinelaw/fresh/pull/3245) for terminal resize dispatch, not as a replacement for the focus helper. |
+| Search and multi-selection — `init.ts: stepSearchNext/Prev`, `startSearchRespectingClear`, `selectAllOccurrences`, paint helpers; P/W | Current search match yellow, other matches grey; intentionally cleared search stays empty; select-all adds each exact occurrence once; single selection blue and multi-selection grey. | `search-selection`: forward/backward match and color changes, clear/confirm/reopen, repeat select-all without duplicates. |
+| Unsaved Markdown preview — `init.ts: toggleUnsavedMarkdownPreview` and cleanup; W | Reversible compose/source for unnamed Markdown with exact text preserved and source markup restored; named files continue using native compose. | `markdown-preview`: toggle twice on an untitled Markdown buffer and check text/rendering; check named-file path separately. TOC functionality is not added to this upgrade contract. |
+| Directional tab movement — `init.ts: moveEditorTab*`, keybindings; W | Move only the source pane's tab left/down/right/up, create an editor neighbor when absent, skip terminals, retain a third pane's existing copy. | `tab-move` plus Markdown chord checks; native moveBufferToSplit alone is not proof of source-only movement. |
+| Editor resizing/equalization — `init.ts: growActiveEditorPane`, `shrinkActiveEditorPane`, `equalizeAllPanes`; W | Grow/shrink the active side on both axes and equalize panes. Do not substitute terminal ratio semantics. | `pane-layout`: both active sides and axes, equal sizes within one terminal cell. |
+| Duplication — `init.ts: duplicateLinesAbove/Below`; P/W | Preserve copied text, caret/selection placement, and current undo behavior. Native retirement requires equivalent copied selections/carets and one-step undo for the replaced variants, not merely extra lines. | `dup-comment`: single-caret above/below and selected-copy variants, recording exact state before/after Undo. Track [PR #3244](https://github.com/sinelaw/fresh/pull/3244); inclusion and equivalence must be checked at upgrade time. Historical multi-copy undo failure is not automatically a current pass or a new regression. |
+| Comment/save behavior — `init.ts: toggleCommentPreserveCursor`, `config.json` JSON/JSONC and save settings; P/W | Comment roundtrip retains the source character/selection; JSON save actually formats and preserves configured // comments; whitespace/final-newline preferences survive. | `dup-comment` and `json-save`: inspect saved bytes and parsed data, with real Prettier available. |
+| Python/navigation and file detection — `config.json` languages/lsp; P | Keep basedpyright definition/reference navigation and configured language/indentation rules, including shell filenames and *.env detection. | `python-nav` with real basedpyright; open representative filename overrides and inspect language/indent behavior. |
+| Cursor status/vendor — `plugins/cursor-status.ts`, `vendor/unicode-segmenter-0.17.3`; P/W | Unpadded grapheme-aware line:column and total lines; token absent in terminals. | `profile-ui` and `terminal-focus`: emoji caret and line count, then terminal status. Retire the vendor only when no remaining consumer requires it. |
+| Review/diff and wrap boundary — `config.json` review commands/Shift+Tab; P | Open all-files review and per-file diff from ordinary/Markdown source, preserve untracked visibility and reverse focus. Only normal-editor Alt+Z is configured. Diff wrapping is unsupported in the retained 0.5.1 setup; the ineffective diff bindings were removed. | `review-focus` and `file-chords`, plus ordinary Alt+Z. Do not use review discard/stage actions on a real repository. A future wrap fix is a separate behavior decision, not a preservation requirement. |
+| Isolated upstream comparison — repository `bin/freshog`; P | Separate executable/profile/session state from daily Fresh, including nested integrated-terminal launches. Bundled plugins remain available; Ghostty settings are shared. | If launcher or runtime-path behavior changes, start the candidate with isolated paths and verify its effective paths/no daily state writes, then cleanly exit. Do not overwrite the existing freshog installation for a trial. |
 
-Source review found no justified cleanup in these entries. Keeping working source is the intended result of that review, not an unfinished cleanup task.
+Tracking links are discovery pointers, not current PR-status claims or installed patch declarations. Other inventory rows have no established linked upstream replacement; investigate the relevant selected-release source rather than inventing an issue association. Update the relevant inventory row whenever a later customization is deliberately added, adapted, or retired.
 
-## Update and replacement-retirement order
+## Reuse the existing checker without changing its meaning
 
-1. **Preserve and confirm the current accepted pair.** Resolve its explicit immutable manifest. Verify result/evidence and every manifest file digest, then confirm installed application and authoritative dotfiles runtime sources agree with the accepted application/profile/Ghostty. Confirm the five live Fresh links and Ghostty link point to their source-of-truth targets. Preserve the pre-fix backup unchanged. Stop on live divergence; never overwrite divergent live files.
-2. **Prepare the chosen upstream application/profile in isolation.** Acquisition or installation requires its own authority; this package does neither. With an already-prepared candidate binary, create a new private candidate profile from the accepted frozen profile and a separate Ghostty copy. Work only on that copy, never the active source or links. For example, after choosing unused `CANDIDATE` and the explicit accepted `BUNDLE`:
+`check.py` remains an optional execution aid for the inventory, not an automatic upgrade/activation command. Use an existing environment satisfying `requirements.txt` (pexpect 4.9.0, ptyprocess 0.7.0, pyte 0.8.2, wcwidth 0.8.3) and resolve Node, Prettier, basedpyright/basedpyright-langserver, and Git before HOME isolation. Missing prerequisites are explicit blockers or reasons to choose a genuinely equivalent direct check, not silent passes or permission to install tools.
 
-   ```sh
-   python3 -c 'import os, pathlib, shutil; r=pathlib.Path(os.environ["CANDIDATE"]); r.mkdir(mode=0o700); b=pathlib.Path(os.environ["BUNDLE"]); shutil.copytree(b/"inputs/fresh",r/"fresh"); shutil.copytree(b/"inputs/ghostty",r/"ghostty"); [(p.chmod(0o700 if p.is_dir() else 0o600)) for p in r.rglob("*")]'
-   ```
+From the repository root, set `PYTHON` to the resolved interpreter, `CANDIDATE_BINARY` to the preserved candidate executable, `CANDIDATE_PROFILE` and `CANDIDATE_GHOSTTY` to the isolated copies, `UPSTREAM_REF` to the exact release tag, and `OUT` to a new absent directory outside all input trees. Example: run the two existing groups relevant to appearance and file commands:
 
-   Supply `CANDIDATE_BINARY`, `UPSTREAM_REF`, and an unused `CANDIDATE_OUT`. During development, run the affected group without repeating unrelated tours; this example checks actual explorer-to-editor focus:
+```sh
+"$PYTHON" .config/fresh/maintenance/check.py \
+  --binary "$CANDIDATE_BINARY" --profile "$CANDIDATE_PROFILE" \
+  --ghostty "$CANDIDATE_GHOSTTY" --upstream-ref "$UPSTREAM_REF" \
+  --out "$OUT" --case profile-ui --case file-chords
+```
 
-   ```sh
-   "$PYTHON" .config/fresh/maintenance/check.py --binary "$CANDIDATE_BINARY" --profile "$CANDIDATE/fresh" --ghostty "$CANDIDATE/ghostty" --upstream-ref "$UPSTREAM_REF" --case explorer-focus --out "$CANDIDATE_OUT"
-   ```
+Repeat `--case` for other valid groups. Unknown/duplicate IDs and existing output paths (including symlinks) are input errors. Do not strip failing assertions or skip within a group. Run supervised, observe `FRESH_COMPAT_READY`, then wait for exit; readiness alone is not completion. Inspect result/evidence and owned-process cleanup. Raw PTY bytes do not prove physical macOS/Fn/Ghostty delivery or font rendering.
 
-   Stock upgrades require **no Rust build or patch rebase**. Standalone candidates without package metadata are recorded as such, not guessed to be Homebrew builds.
-3. **Retire only proven equivalents, in that candidate.** Match the inventory condition. Migrate every binding, command and caller; delete only now-exclusive helpers/imports/assets; remove the active patch/workaround entry. Retain meaningful behavior-regression cases. Do not keep aliases, shadow fallbacks or obsolete re-exports. Do not delete immutable rollback or inactive evidence as dead code. A replacement that only changes highlighted chrome fails even if its action name looks right.
-4. **Run the full gate on the final combined candidate and inspect the relevant delta.** Use a fresh output and the same candidate inputs without `--case`. Do not accept independent focused successes as a combined result. Only a successful full candidate is eligible for full replay from its frozen checker/application/profile/Ghostty into another unused root. Compare application/profile/Ghostty digests and require distinct run IDs and fresh evidence. Preserve failed runs; use a new unique sibling output after an authorized checker correction. Never erase or overwrite a run to make a command appear fresh, weaken an oracle to fit a candidate, or reclassify a required failure as optional.
-5. **Obtain activation approval separately, then smoke the real session with paired rollback ready.** The existing delivery owner, not this checker, performs any application/profile activation and agreed session stop/restart. Check real macOS/Fn/Ghostty gestures and visual rendering only under that authority. If rollback is approved, restore the selected application **and its matched dotfiles-source profile** from the same accepted manifest, preserving unrelated/generated files and agreed live links. Do not restore the older inactive candidate wholesale or mix its profile with the accepted stock binary. No user-session restart or actual live restoration is part of this maintenance package.
+The thirteen existing IDs are `profile-ui`, `file-chords`, `dup-comment`, `json-save`, `python-nav`, `search-selection`, `explorer-focus`, `terminal-focus`, `pane-layout`, `tab-move`, `tab-reopen`, `markdown-preview`, and `review-focus`. Their assertions predate some current customizations. Inspect their applicability before use; supplement missing coverage with direct checks. A stale checker assertion is not proof of product failure, but its failed result must remain failed. Record why a different direct observation answers the current behavior; an unexplained disagreement blocks activation. Checker repairs require their own bounded authority, not a maintenance rerun loop.
 
-## Inactive native history
+| Existing checker result | Unchanged meaning |
+| --- | --- |
+| Exit 0, `scope=focused`, `status=partial` | Only selected complete groups passed. Unselected groups remain unrun. Never rewrite this as full acceptance, even if all IDs were explicitly selected. |
+| Exit 0, `scope=full`, `status=pass` | All thirteen historical groups passed with intact correlated evidence, unchanged protected inputs, and successful teardown. This does not cover newly added inventory behavior by itself. |
+| Exit 1, `status=fail` | Runtime, assertion, integrity, or shutdown failure; preserve the result and available evidence. |
+| Exit 2 | Invalid inputs, missing prerequisites, or ineligible replay input; no acceptance claim. |
 
-`inactive-native/` is **inactive immutable historical evidence**, not an alternative live profile, fallback loader, install source, or accepted stock bundle. The eight archived files are:
+Omitting `--case` still runs the existing full measurement. Its frozen-bundle replay remains available only with an accepted full input: matching explicit manifest/digest and run ID, all thirteen selected and passing records, intact evidence/hashes, and successful shutdown. Focused/failed inputs remain ineligible. Neither full measurement nor full replay is mandatory for this protocol, and the checker has no install/activate/restore-to-live mode. The compact upgrade decision records inventory coverage separately; it never edits `result.json` to implement the new policy.
+
+## Accept, activate, or defer
+
+1. **Record the decision before activation.** Every inventory item needs a concrete observation on the final candidate, or an explicit unchanged existing limitation with its evidence and acceptance boundary. Unrun required behavior and unexplained failures are not acceptance. A limitation remains a limitation, not a pass; do not invent stronger historical guarantees or silently accept a new loss. Reuse trustworthy existing baseline evidence rather than rerunning a user-reported failure merely to confirm it.
+2. **Activate only with explicit permission.** Save work, close Fresh under the agreed session boundary, and preserve session data before the new version can migrate it. Switch the tested executable and matched repository-source profile together; retain the link map and unrelated files. Preserve dependency/runtime assets required by both versions. Acquisition/testing approval does not authorize live package upgrade, bootstrap execution, commit, push, or automatic updater use.
+3. **Smoke the real surface once.** Check the relevant Ghostty/macOS gestures, font/rendering, and everyday editing/save/focus on safe files after launch. Confirm the live links still target the intended sources. Native candidate PTY evidence does not replace this physical-surface check. Keep the previous working pair until the candidate has survived normal use.
+4. **Roll back or defer without losing newer work.** If an upgrade regresses, stop using it and obtain rollback authority. Preserve any newer unsaved/saved work before restoring the old executable and its matched profile from the same snapshot. Restore session data only when necessary and compatible; never overwrite newer work or unrelated changes wholesale. A failed evaluation leaves the daily installation untouched. Do not expand into native patching or open-ended repair without a new decision.
+
+## Compact upgrade record
+
+Keep one entry with the upgrade's preserved evidence, not another maintained ledger or active checklist. The entry contains:
+
+- Date, old → target versions, executable provenance/hashes and runtime dependencies, dotfiles revision plus captured uncommitted delta, final profile/Ghostty identities, and exact rollback snapshot/link-map location.
+- Inventory items kept/adapted/retired and the release/source evidence plus behavioral reason for each change.
+- Checks actually performed on the final combination, their commands or manual scenarios and outcomes, and evidence locations; retain raw checker scope/status unchanged.
+- Remaining limitations, blocked/unrun requirements, and the explicit accept/defer decision; activation/real-surface observations and rollback outcome only if those actions were authorized and performed.
+
+## Historical evidence and inactive native work
+
+The former stock 0.4.10 maintenance effort remains **CLOSED with blockers**, as recorded in `.agents/plans/2026-09-09-2049_fresh-maintenance.md` and its retained evidence. Its multi-copy undo failure and other failed checks were not waived; full accepted-baseline replay was not established by that closure. Those records are not a current 0.5.1 certification or authorization to reopen the work. Later official 0.5.1 activation and separately verified customizations establish different, bounded evidence. The prior guide is recoverable in Git history; do not overwrite old run records to make them conform to this policy.
+
+`inactive-native/` is immutable historical evidence, never an alternative live profile, fallback loader, install source, or accepted stock bundle. Its eight archived files remain:
 
 - `IDENTITY.txt`
 - `candidate/init.ts`
@@ -136,8 +106,6 @@ Source review found no justified cleanup in these entries. Keeping working sourc
 - `verification/noncode-recovery-result.json`
 - `verification/additional-evidence-checks.txt`
 
-Upstream was `v0.4.10` at `a7dca75c04ebc57c99a9786051729b55fdd72a2f`. The final debug binary SHA256 was `8df58507112cd459e30961d82600eacddc37138c67b0d20b7f6e0427ea14ab12`. **`proof/frozen-manifest.json` takes precedence for the final candidate.** `IDENTITY.txt` describes the initial experiment and contains superseded patched-file hashes. Later proof corrections closed, but this archived candidate config predates the global Cmd+R fix. Never feed it to the stock gate as the current profile or reconstruct an old native candidate from memory.
+That experiment used upstream `v0.4.10` at `a7dca75c04ebc57c99a9786051729b55fdd72a2f`; final debug binary SHA256 `8df58507112cd459e30961d82600eacddc37138c67b0d20b7f6e0427ea14ab12`. **`proof/frozen-manifest.json` takes precedence** over `IDENTITY.txt`, which describes the initial experiment and contains superseded hashes. Its config predates the global Cmd+R correction. The archive excludes source/build caches, the debug binary, raw user files, and complete runtime trees; never reconstruct or activate it from this guide.
 
-The archive intentionally excludes the source clone, Cargo caches, debug binary, raw user-file snapshots and complete temporary runtime trees. It preserves evidence only; there is no current native installation decision.
-
-If a future separately approved decision adopts native patches, preserve the upstream base commit, patch set and exact build identity, drop patches already upstream, inspect conflicts, and extend this gate with the archived stronger edit contracts before claiming that **patched combination** ready. That conditional native branch is not implemented or authorized here. Native code quality does not replace full-profile, real-key, formatting, LSP, rendering and paired rollback proof.
+The later duplicate-caret and terminal-resize work is tracked by `.agents/plans/2026-09-10-1439_fresh-upstream-caret-resize.md` and PRs #3244/#3245 above; these are not active local binary patches. If a future separate decision adopts native patches, preserve the exact upstream base, patch set, and build identity, drop patches already included upstream, check conflicts, and prove the final patched combination against the required behavior before activation. That is not part of a routine stock upgrade.
