@@ -68,6 +68,8 @@ Check: <command or direct static proof>; expect <exact result>
 
 The final two lines are the direct closure check and must use that grammar exactly. The reviewer does not run it. Advisories are labeled `Advisory`, cite evidence, and carry no repair or closure obligation.
 
+Before selecting required closure checks, read `skill://dev-implementation/references/test-value.md` and apply its common proof-selection principles. Keep material selection rationale with the finding. Sharing compatible observations preserves each finding's exact closure condition; it neither broadens discovery nor changes original acceptance. The reviewer selects but never executes these checks.
+
 ## Verdict
 
 Emit exactly one overall verdict:

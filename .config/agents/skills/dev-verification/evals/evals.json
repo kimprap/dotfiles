@@ -2,6 +2,31 @@
   "skill_name": "dev-verification",
   "evals": [
     {
+      "id": "DV-SHARED-FRESH-OBSERVATIONS",
+      "prompt": "You are the independent verifier after one APPROVED review on unchanged target R. The approved checks explicitly share one fresh scenario S: AC-1 requires a completed export and AC-2 requires no temporary residue. Both use the same isolated fixture and target. Your own fresh execution of S returned export-complete and no-residue observations for both criteria. The implementer also previously passed S. Explain additional execution, per-criterion accounting, and the aggregate if there are no other checks. If a later eligible code repair changes R, explain the required closure. Do not invent tool runs or observations.",
+      "expected_output": "No duplicate execution is needed solely for AC-2: the verifier's fresh shared scenario established both exact observations on R. Account for AC-1 and AC-2 individually and return VERIFIED on the supplied facts, not from the implementer's result. An eligible code repair requires the same verifier to freshly execute the complete unchanged check set on the repaired target and issue a new aggregate; review never reruns.",
+      "files": [],
+      "assertions": [
+        "Compatible observations from this verifier's fresh shared scenario satisfy both criteria without redundant execution",
+        "Each criterion retains its own observation and pass result on R",
+        "The aggregate is VERIFIED from supplied independent observations, with no invented runs",
+        "Code repair preserves attempt eligibility, same-verifier complete unchanged closure, and no review rerun"
+      ]
+    },
+    {
+      "id": "DV-SHARED-BLOCKED-AND-INCOMPATIBLE",
+      "prompt": "You are the independent verifier after one APPROVED review. AC-1 and AC-2 share approved scenario S on target R. Your fresh S observation directly contradicts AC-1, and execution stopped before AC-2 could be observed; only the implementer has an earlier passing AC-2 result. AC-3 spells the same command as S but requires a different initial authorization state and is still unexecuted. Explain the per-item results, remaining required execution when safe, aggregate limits, and why neither the command spelling nor worker result establishes AC-2/AC-3. If directly evidenced code repair is eligible, preserve the existing attempt limit, no review rerun, and same-verifier complete unchanged check-set closure. Do not invent observations.",
+      "expected_output": "AC-1 fails; AC-2 and AC-3 are inconclusive until independently observed. Continue required execution when safe, keeping AC-3's different initial authorization state separate. The direct contradiction supports NOT VERIFIED, with missing observations explicitly accounted; no passing aggregate is possible. Worker evidence cannot fill AC-2 and command spelling cannot establish AC-3. Only a directly evidenced code defect with unused attempt 2 permits repair, followed by the same verifier's fresh complete unchanged check set without review rerun.",
+      "files": [],
+      "assertions": [
+        "AC-1 is fail and the unobserved criteria remain inconclusive, never inherited passes",
+        "Required remaining execution continues when safe after a failure",
+        "AC-3 requires its incompatible authorization condition despite identical command spelling",
+        "The contradiction and missing proof prevent VERIFIED without invented observations",
+        "Repair requires available attempt 2 and a directly evidenced code defect, then same-verifier complete unchanged closure without review rerun"
+      ]
+    },
+    {
       "id": "DV-COMPLETE-FIXED-SET",
       "prompt": "After one APPROVED review, verification receives original checks AC-1 and AC-2 and no required review findings. AC-1 passes, but AC-2 has not been run. Produce the aggregate and explain whether implementation smoke may fill the gap.",
       "expected_output": "Return INCONCLUSIVE. The verifier must independently execute and account for every original acceptance check; an implementation smoke or passing subset cannot substitute for the missing AC-2 observation.",

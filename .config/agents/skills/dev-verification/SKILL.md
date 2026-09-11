@@ -38,6 +38,8 @@ The verifier owns one ordered union:
 
 Account for every item exactly once. Advisories add no checks. The verifier may perform setup needed by an exact check but may not replace a behavioral check with source inspection, a build, or worker evidence unless that is the declared check.
 
+Read `skill://dev-implementation/references/test-value.md` for common proof accounting, not permission to reselect the fixed set. In one fresh pass, an approved shared scenario may establish several items on the same target under compatible conditions without repetition solely for each reference. Execute it at its first required occurrence and account for every item in the ordered union with its own exact observation. Identical command text does not merge incompatible conditions or independent starting states. If execution fails before another required observation, that item remains unproved; continue its required execution when safe, never fill it from worker evidence. Eligible code repair still requires a new complete unchanged pass by this same verifier.
+
 ## Independent procedure
 
 1. Bind the exact target, environment, attempt state, original acceptance checks, and review closure checks. Confirm that review preceded this verifier and that a review repair, if any, used attempt 2.

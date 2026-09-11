@@ -8,7 +8,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 |---|---|---|---|
 | [ADR-0001 — Development workflow authority and routing](0001-dev-workflow-authority-and-routing.md) | ACTIVE | Thin generic engineering router; child implementation authority; sized direct/planned classification; clean cutover; five-field completion; separation from product, custom workflows, and shipping | D01, D02, D05, D10–D20, D26 |
 | [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | Child-owned controller execution; shared task-sizing projection; lean plan grammar; mechanical scheduling; same-child code-then-test rethink; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29 |
-| [ADR-0003 — Bounded assurance and repair](0003-bounded-assurance-and-repair.md) | ACTIVE | Two semantic attempts; compact versus standard/high assurance; one tests-first review; verifier-owned closure; permanent-test value and A-first manual audit | D03, D04, D22, D28 |
+| [ADR-0003 — Bounded assurance and repair](0003-bounded-assurance-and-repair.md) | ACTIVE | Two semantic attempts; compact versus standard/high assurance; one tests-first review; fresh shared-proof accounting and verifier-owned closure; common proof selection, permanent-test value, and A-first manual audit | D03, D04, D22, D28 |
 | [ADR-0004 — Canonical discovery and continual learning](0004-canonical-discovery-and-continual-learning.md) | ACTIVE | Conditional discovery; one terminal engineering learning assessment; human execution map; optional noncanonical maintenance-journal relationship | D07, D23 |
 | [ADR-0005 — Product development workflow and PRD authority](0005-product-development-workflow-and-prd-authority.md) | ACTIVE | Product routing, human product authority, product grilling, PRD identity and approval, iteration artifacts, engineering handoff | P01–P09 |
 | [ADR-0006 — Generic papercut evidence](0006-generic-papercut-evidence.md) | SUPERSEDED by ADR-0007 | Historical capture/storage design; not current lifecycle authority | D24 (historical) |
@@ -27,6 +27,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | Where does a plan remain after completion or stop? | ADR-0002 D29 | Plan storage and host transport rules for mechanics |
 | What assurance profile and ordering apply? | ADR-0001 D16, D20; ADR-0003 D04 | ADR-0003 D22 for review and D28 for test portfolio audit |
 | Who owns review closure after repair? | ADR-0003 D04, D22 | `dev-verification` for executable check handling |
+| How are sufficient verification scenarios selected and shared without weakening acceptance? | ADR-0003 D04, D22, D28; ADR-0002 D08, D09, D21 | `dev-implementation/references/test-value.md` for the single executable policy |
 | When does permanent-test audit run? | ADR-0003 D28 | `dev-test-audit` and its protocol for exact transport |
 | When does papercut observation occur? | ADR-0007 D24 | Portable `papercut` for qualification and storage approval |
 | When does engineering learning run and can failure block completion? | ADR-0004 D07 | `dev-continual-learning` and portable `continual-learning` for executable behavior |

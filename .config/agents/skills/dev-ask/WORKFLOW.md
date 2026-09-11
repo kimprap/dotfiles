@@ -65,6 +65,8 @@ Behavior: <observable>
 Check: <command or direct static proof>; expect <exact result>
 ```
 
+Concrete-check authors in specification, self-contained plans, and direct contracts read `dev-implementation/references/test-value.md` before acceptance binds. Its common principles select sufficient representative proof and compatible shared observations; permanent-only requirements remain scoped to retained tests. Ticketing projects exact acceptance, and later meaning changes return to authority rather than being optimized during execution.
+
 The active repository path remains the sole execution and continuation source through `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED`. Storage copies exact bytes to that path for every valid state. Completion leaves a plan `DONE` there; cancellation leaves an explicitly authorized plan `CLOSED` there. Automatic archival, active-path removal, or an archive completion gate is not part of the workflow. Historical archives remain read-only history.
 
 ### Child work and attempts
@@ -90,6 +92,8 @@ Standard and high operate on the completely assembled target and use exactly:
 Review runs once and never returns after repair. It reports `APPROVED`, `REPAIR REQUIRED`, or `INCONCLUSIVE`; required findings need direct material evidence, the smallest safe correction, and the exact acceptance-check grammar. A repair required by review goes directly to verification.
 
 The verifier returns a fresh aggregate over the complete fixed check set. After a concrete non-code proof defect is corrected without target mutation, the same verifier may retry only the affected check under unchanged acceptance meaning. If the unchanged failure repeats, stop; if acceptance meaning would change, return to authority. If attempt 2 remains and a check directly proves a code defect, one implementation child may repair it; the same verifier then reruns the complete unchanged check set. The verifier never repairs, drops checks, reopens review, or delegates its conclusion.
+
+Within a fresh pass, approved shared scenarios may establish multiple criteria without repeating execution solely per reference. Each item keeps its exact observation and ordered accounting on the same target under compatible conditions; command spelling and another role's result prove nothing missing. Blocked later observations remain unproved, and incompatible conditions require separate execution. Required closure-check selection uses the same shared policy without reviewer execution.
 
 ## Manual permanent-test audit
 

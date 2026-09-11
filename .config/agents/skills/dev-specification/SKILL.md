@@ -19,7 +19,7 @@ Use `canonical-project-contracts` when a durable repository contract governs the
 2. Define the smallest architecture that fits existing module ownership and local conventions. State component responsibilities, dependency direction, data flow, error behavior, security/privacy boundaries, and observability only where the outcome needs them.
 3. Specify public interfaces, data shapes, invariants, state transitions, compatibility, migration/cutover, rollback, and permitted non-repository effects. Prefer a clean cutover; do not preserve aliases or obsolete paths unless authority requires compatibility.
 4. Before identifying implementation ownership, read `skill://dev-ticketing/references/task-sizing.md` and apply it to each new boundary. One cohesive child stays a direct contract; multiple owners/dependencies, fan-in, ordered effects/migration, or likely cross-context recovery require a lean plan. Record the material sizing choice in the specification's existing ownership discussion rather than adding metadata.
-5. Assign stable `AC-*` labels. Every criterion must be observable and use exactly:
+5. Before selecting concrete checks, read `skill://dev-implementation/references/test-value.md` and apply its common proof-selection principles. Keep material selection rationale in the existing acceptance/test-seam discussion. Assign stable `AC-*` labels. Every criterion must be observable and use exactly:
 
    ```text
    Behavior: <observable>
@@ -27,7 +27,7 @@ Use `canonical-project-contracts` when a durable repository contract governs the
    ```
 
    Commands name the real surface and exact expected result. Static proof is allowed only when behavior is inherently structural; this direct check is the sole acceptance-check shape.
-6. Define test seams that let implementation exercise each behavior without exposing private production machinery. Permanent-test value remains owned solely by `skill://dev-implementation/references/test-value.md`; the specification does not copy that policy.
+6. Define test seams that let implementation exercise each behavior without exposing private production machinery. Apply the referenced policy's permanent-only requirements when proposing retained tests; do not copy that policy.
 7. Record material assumptions, known risks, explicit stops, and recovery boundaries. Continue through engineering details inside authority; request human confirmation for changed product behavior, destructive/external effects, materially different architecture, or shipping.
 
 ## Specification shape

@@ -2,6 +2,18 @@
   "skill_name": "dev-code-review",
   "evals": [
     {
+      "id": "DCR-CLOSURE-PROOF-SELECTION",
+      "prompt": "Within an otherwise complete one-shot review, two already-established required findings need closure checks: CR-1 proves a successful save reports the wrong record count; CR-2 proves that same successful save leaves temporary residue. One existing isolated public-seam fixture can observe both results. A third established finding, CR-3, concerns cancellation while the real process is publishing; the public-seam fixture cannot deliver signals or observe process cleanup. Choose exact Behavior/Check closure lines and material rationale. Do not execute checks or add findings.",
+      "expected_output": "Use the adequate existing focused fixture for compatible CR-1/CR-2 observations while keeping each finding's exact closure result. Keep a separate real-process cancellation check for CR-3 and explain the otherwise-unproved signal/publication cleanup behavior. Preserve original acceptance, the existing findings, reviewer non-execution, and verifier-owned closure; impose no numeric scenario cap.",
+      "files": [],
+      "assertions": [
+        "CR-1 and CR-2 use compatible shared focused proof with distinct exact expected observations",
+        "CR-3 retains real-process cancellation proof and explains why cheaper evidence is inadequate",
+        "Closure lines use the required Behavior/Check grammar",
+        "No original acceptance, finding boundary, execution authority, or assurance invariant is changed"
+      ]
+    },
+    {
       "id": "DCR-TESTS-FIRST-REQUIRED-FINDING",
       "prompt": "Review an exact standard-assurance candidate with changed production code and changed permanent tests. A changed authorization test asserts only that a response object exists, so it passes when the forbidden operation returns success. The governing rule requires denial. Show the review order, verdict, file accounting, and the complete required finding without running checks.",
       "expected_output": "Read the read-only rethink wrapper first, then inspect tests; contract and correctness; changed-test value through the sole policy; readability, ownership, reuse, and architecture; and relevant security or performance. Account for every changed file exactly once. Return REPAIR REQUIRED and a finding with exact location, the denial rule, direct false-confidence evidence, the smallest safe correction, and direct closure lines using Behavior: ... followed by Check: ...; expect .... Record the check as unrun by the reviewer and assigned to verification.",

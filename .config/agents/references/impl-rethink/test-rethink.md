@@ -1,3 +1,3 @@
 # Test rethink
 
-Apply `skill://dev-implementation/references/test-value.md` to every permanent test changed or proposed by the current candidate. Use that file as the sole policy: return its required disposition for each changed test, or its no-new-test basis when tests remain unchanged. Do not inspect unrelated portfolio tests or add policy here.
+Read `skill://dev-implementation/references/test-value.md`. Apply its common proof-selection principles to checks changed or proposed by the current candidate without silently changing approved behavior or check meaning; return such changes to the existing authority owner. Apply its permanent-only requirements to every changed or proposed permanent test: return the required disposition for each, or its no-new-test basis when tests remain unchanged. Do not inspect unrelated portfolio tests, add another rethink, or copy policy here.

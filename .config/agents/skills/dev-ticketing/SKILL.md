@@ -32,7 +32,7 @@ fields or manufacture a graph for one cohesive direct task.
    Check: <command or direct static proof>; expect <exact result>
    ```
 
-   Preserve the direct check unchanged; do not substitute indirect or model-scored evidence.
+   Preserve the direct check unchanged, including any authored shared scenario and each criterion's exact expected observation; shared execution is not merged acceptance or ownership. Do not substitute indirect or model-scored evidence or optimize checks during projection. A changed check meaning returns to the specification owner.
 6. State permitted effects and recovery/stop conditions where they constrain an owner. Preserve project instructions and explicit TDD authority, but do not create method, review, verification, learning, audit, shipping, or presentation tickets; runtime schedules those boundaries.
 
 ## Ticket shape

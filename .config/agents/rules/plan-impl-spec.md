@@ -1,11 +1,48 @@
 ---
-description: Defines the exact lean executable body and structural validation contract for implementation plans.
-paths: ["**/.agents/plans/*.md"]
+description: Use before authoring or revising lean implementation plans, including harness-local drafts and plans linked to technical specifications.
 ---
 
 # Lean implementation plan
 
-Apply with `plan.md`. The header is followed by these H2 sections exactly once and in this order:
+Apply with `plan.md` before the first implementation-plan draft or revision,
+including a harness-local draft intended for repository copying. A specification
+or ordinary design note is not itself an execution plan.
+
+## Authoring and linked specifications
+
+- Before selecting checks for self-contained acceptance, read
+  `skill://dev-implementation/references/test-value.md` and apply its common
+  proof-selection principles. Keep material rationale in existing surrounding
+  prose, not new fields or sections. Linked acceptance remains an exact
+  projection, not another opportunity to optimize approved checks.
+- Keep a self-contained lean plan when it expresses the work clearly. If required
+  technical detail, procedures, or fixtures need more space or structure, reuse a
+  suitable repository specification; create one only when that gap remains. Do
+  not require a second document or a universal specification directory.
+- Link supporting detail through the existing `Authority` field using a readable
+  repository locator and an exact revision or content identity. Keep outcome,
+  authority, scope/effects, task ownership/dependencies, direct acceptance,
+  recovery, and lifecycle in the lean plan. Do not embed the executable plan in
+  a larger document submitted to the plan-copy adapter, or pack that document
+  into a lean field to evade the grammar.
+- Keep one semantic source for each requirement. When acceptance is projected
+  from a specification, follow `dev-ticketing`'s existing contract: preserve
+  stable IDs and the exact `Behavior` and `Check` text. Do not maintain those
+  copies as independently editable requirements.
+- After accepted specification changes, refresh affected plan content and its
+  revision binding before approval or execution. Confirm that the referenced
+  content is readable, its identity matches, and the projection remains
+  consistent. A refreshed binding does not authorize unapproved requirements;
+  missing or conflicting authority stops rather than being silently adopted.
+  Use `plan.md`'s existing approval and drift rules, without a new approval gate
+  merely because a specification or link exists.
+- Use `plan-repo-storage.md` and the applicable harness companion for publication
+  and active-path authority. Local drafts are copies, not alternate execution
+  sources. This guidance adds no parser fields, workflow stage, or runtime state.
+
+## Header and sections
+
+The header is followed by these H2 sections exactly once and in this order:
 
 1. `## Outcome and authority`
 2. `## Scope and effects`
@@ -106,4 +143,4 @@ Run:
 python3 skill://dev-implementation/scripts/executor_plan.py validate PLAN
 ```
 
-A valid result proves only lean structure and lifecycle: header, ordered sections, unique IDs, dependency DAG, one owner per exact target and criterion, direct-check grammar, checkbox/completion consistency, and terminal summary rules. The validator derives transient parse state and returns no plan digest. Product correctness, approval truth, command success, and implementation quality remain runtime responsibilities.
+A valid result proves only lean structure and lifecycle: header, ordered sections, unique IDs, dependency DAG, one owner per exact target and criterion, direct-check grammar, checkbox/completion consistency, and terminal summary rules. The validator derives transient parse state and returns no plan digest. It does not establish design correctness, approval, dependency availability, or referenced specification freshness; those remain review and execution-preflight responsibilities, alongside command success and implementation quality.

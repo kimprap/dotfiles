@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-06  
+**Updated:** 2026-09-11  
 **Decision IDs:** D06, D08, D09, D21, D29
 
 ## Scope
@@ -36,6 +36,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 - **Decision:** The validator checks lifecycle, ordered sections, unique IDs, dependency acyclicity, target and criterion ownership, direct-check grammar, terminal checkboxes and completion records, and a nonempty terminal summary. It derives transient parse state and returns no plan digest.
 - **Decision:** Authors of new plans consult `.config/agents/skills/dev-ticketing/references/task-sizing.md` and record a material boundary rationale only in existing prose. Sizing adds no field, section, status, or validator rule.
+- **Decision:** Before concrete acceptance becomes binding, specification, self-contained plan, and direct-contract authors apply the common proof-selection policy in `dev-implementation/references/test-value.md`. Material selection rationale stays in existing prose; no field, section, count cap, or stage is added.
 - **Why:** These are the durable facts a fresh executor needs; everything else belongs to runtime.
 - **Rejected alternatives:** Target identity tables, generated task or sizing metadata, assurance-tail tasks, and transport receipts duplicate controller state and obscure the human outcome.
 - **Consequences:** The active validator accepts only the lean format. Existing archived plans remain historical data and are not compatibility input.
@@ -45,6 +46,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 - **Decision:** Project authored task IDs, owners, dependencies, targets, acceptance IDs, and receivers exactly. Do not add, split, merge, substitute, or hide work.
 - **Decision:** New task graphs apply the shared sizing policy at real ownership and dependency seams. The implementation controller projects an approved graph unchanged; a later estimate alone does not authorize splitting, merging, or substituting tasks, while a material change follows existing authority and reapproval rules.
+- **Decision:** Project specification acceptance IDs and exact Behavior/Check text, including shared scenarios and per-item expected observations, unchanged. Shared execution does not merge criterion ownership; later changes to behavior or check meaning return to the existing authority owner.
 - **Decision:** A task becomes ready only when all dependencies have accepted Handoffs and its target/effect boundary does not conflict with active work. Undeclared mutation stops the task while completed independent work remains preserved.
 - **Decision:** Check a task and add its immutable completion record only after its same-child rethink, direct checks, lean Handoff, and papercut accounting complete. Check an acceptance item only after its exact expected result is observed.
 - **Decision:** Review, verification, learning, manual audit, shipping, and presentation are lifecycle owners, not authored implementation tasks.
@@ -57,7 +59,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 - **Decision:** After an implementation candidate, the parent explicitly sends `.config/agents/references/impl-rethink/impl-rethink.md` to the same child. The wrapper applies code rethink, then test rethink. The child may make one correction, runs all owned direct checks and the changed path, and emits one lean Handoff. There is no second self-rethink.
 - **Decision:** The code rethink preserves approved behavior and safety, traces edge, error, and state paths, reuses existing owners and local patterns, and chooses the lowest total lifecycle cost among eligible solutions. It never treats fewer files or lines as improvement when decisions or indirection increase.
-- **Decision:** `dev-implementation/references/test-value.md` remains the sole permanent-test policy. Reuse the closest existing test file, test at the lowest effective level, and keep tests deterministic and isolated. If a production seam existed only for tests that the policy now rejects, remove it unless runtime behavior or architecture still justifies it.
+- **Decision:** `dev-implementation/references/test-value.md` owns common proof selection and remains the sole permanent-test policy. Test rethink consumes the common principles for current proposed checks without redefining approved acceptance, and applies the permanent-only requirements to retained tests. Reuse the closest existing test file, test at the lowest effective level, and keep permanent tests deterministic and isolated. If a production seam existed only for tests that the policy now rejects, remove it unless runtime behavior or architecture still justifies it.
 - **Why:** One bounded same-owner challenge catches omissions without adding another repair role or duplicating test policy.
 - **Rejected alternatives:** Repeated self-review, separate closure rounds, copied test policy, source-restating tests, and an ablation ceremony create more process without stronger behavioral evidence.
 - **Consequences:** Attempt 1 includes candidate, rethink, optional correction, direct checks, and Handoff. Assurance and audit roles never perform this rethink.
@@ -82,6 +84,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 ## Evidence / source revisions
 
 - Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`; `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`; and the human-approved `local://task-sizing-direct-contract.md`, confirmed 2026-09-06.
+- Confirmed `verification-proof-design/v1` and separately approved `verification-policy-implementation/v1`, 2026-09-11, extend proof selection at existing authoring and rethink seams without altering plan lifecycle, storage, transport, or task sizing.
 - Earlier plan and transport records remain historical support where consistent with this clean cutover.
 - The prompt-bundle `MAINTENANCE.md` is provenance only; executable prompt files own rethink behavior.
 
@@ -97,6 +100,7 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes it an
 
 - Lean valid plans pass; proof-heavy bodies, duplicate or unowned targets, missing direct checks, cycles, and incomplete terminal states fail.
 - New plan tasks follow the shared sizing policy without changing lean grammar; implementation projects approved task ownership and dependencies exactly.
+- Concrete-check authoring selects representative adequate proof before approval; linked acceptance remains exact, including compatible shared observations and necessary separate outcomes.
 - Every code-changing task is child-owned and receives one same-child code-then-test rethink before direct checks and Handoff.
 - `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal.
 - Human maps, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, and D29.

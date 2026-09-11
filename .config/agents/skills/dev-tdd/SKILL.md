@@ -16,7 +16,7 @@ Behavior: <observable>
 Check: <command or direct static proof>; expect <exact result>
 ```
 
-A static-only criterion is not a TDD target. For executable behavior, identify the smallest public seam that can show the missing behavior. Apply `skill://dev-implementation/references/test-value.md` as the sole policy for whether a changed test belongs in the permanent suite; this skill adds no competing test-value rules.
+A static-only criterion is not a TDD target. For executable behavior, identify the smallest public seam that can show the missing behavior. Read `skill://dev-implementation/references/test-value.md` before selecting proof, applying its common principles to temporary or retained checks and its permanent-only requirements to suite admission; this skill adds no competing test-value rules.
 
 ## Red → green → refactor
 

@@ -1,0 +1,19 @@
+{
+  "skill_name": "dev-specification",
+  "evals": [
+    {
+      "id": "DS-SUFFICIENT-SHARED-PROOF",
+      "prompt": "Author verification acceptance for a small batch-import CLI change. Required outcomes: successful single-item and multi-item imports produce correct durable results, accurate summaries, and clean temporary files; malformed records and forbidden destinations are rejected without altering durable data; cancellation while the real process is writing leaves no partial published result. Existing deterministic public-seam tests already cover parser boundaries and destination authorization. An isolated filesystem-level integration fixture can observe rejection and unchanged durable data. Successful result, summary, and cleanup are compatible observations in one CLI journey. Signal delivery and cancellation cleanup must be observed through the real CLI process and cannot be established by static source inspection or the parser tests. A proposed draft assigns a separate full CLI end-to-end scenario to each requirement and input variation. Produce concise Behavior/Check acceptance and the material proof-selection rationale; preserve every required outcome and identify which observations can share a run. Assume standard assurance and no permission to weaken independent verification. Do not implement or execute the fictional CLI.",
+      "expected_output": "Preserve every single-item, multi-item, summary, cleanup, rejection, durable-data, and cancellation obligation in exact Behavior/Check acceptance. Combine compatible successful CLI observations, reuse existing adequate public-seam proof and focused filesystem rejection proof, and separately observe cancellation through the real process. Explain otherwise-unproved behavior for additional expensive execution without imposing a count cap or reduction percentage. Independent verification still freshly executes the approved complete set; do not claim the fictional CLI ran.",
+      "files": [],
+      "assertions": [
+        "Every required outcome remains explicitly checkable with an exact expected observation",
+        "Compatible successful result, summary, and cleanup observations share proof rather than mechanically creating full journeys per requirement",
+        "Existing parser and authorization coverage and adequate focused rejection proof are used instead of redundant full journeys",
+        "Cancellation remains separately observed through the real CLI process, not source inspection or parser tests",
+        "Additional expensive scenarios explain their otherwise-unproved behavior and cheaper-proof insufficiency without a numeric cap",
+        "Independent complete verification and acceptance authority remain unchanged, with no invented execution"
+      ]
+    }
+  ]
+}

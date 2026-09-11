@@ -65,6 +65,10 @@ choosing direct or planned entry. Record only a brief rationale in existing
 prose. The sizing heuristic neither adds a stage nor changes assurance, and an
 approved graph is projected without automatic repartitioning.
 
+Before checks bind, specification, self-contained plan, and direct-contract authors
+use the shared `dev-implementation/references/test-value.md` policy. Projection
+preserves exact acceptance; later meaning changes return to authority.
+
 | From | Condition | Next |
 |---|---|---|
 | Approved direct work | One child can own and check the cohesive result in one reliable fresh context | Implementation child without a repository plan |
@@ -87,6 +91,12 @@ approved graph is projected without automatic repartitioning.
 | Verification recovery | Required behavior, check meaning, or expected result would change | Return to the owning authority |
 | Verification | Direct code defect and attempt 2 is still available | Implementation child repairs; the same verifier reruns the complete unchanged check set |
 | Verification | Attempt 2 is unavailable, code closure fails, or nonrecoverable evidence is inconclusive | Stop |
+
+A fresh approved shared scenario may support several exact item observations
+under compatible conditions on one target, with no repetition solely per reference.
+Ordered accounting remains complete; blocked observations and incompatible states
+cannot be filled by command matching or another role's evidence. Code repair still
+requires the same verifier's complete unchanged check set.
 
 ## Terminal hooks
 

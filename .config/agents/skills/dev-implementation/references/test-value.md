@@ -1,8 +1,21 @@
-# Permanent test value
+# Proof selection and permanent test value
 
-This file is the sole permanent-test policy for implementation, rethink, TDD, review, verification, and audit callers. Other contracts may point here; they must not copy or fork its criteria.
+This file is the sole shared proof-selection and permanent-test policy. Authoring, implementation, rethink, TDD, review, verification, and audit callers read it at their existing boundary; they must not copy or fork its criteria.
 
-Apply it only to permanent tests changed or proposed for the current task unless an explicit test audit owns a frozen wider portfolio.
+## Common proof selection
+
+Apply these principles whenever the current owner creates or revises verification checks: permanent tests, temporary smoke checks, native end-to-end scenarios, and model-driven evaluations. This does not initiate unrelated audits or impose checks on unrelated read-only answers.
+
+1. **Distinct obligations.** Select from observable outcomes, meaningful boundaries, and relevant failure mechanisms. Use representative inputs, not a separate execution for every requirement, variation, or combination.
+2. **Cheapest adequate evidence.** Prefer focused behavioral checks through stable public seams when they reliably establish the obligation. Reserve full end-to-end journeys for integration or runtime behavior cheaper checks cannot establish. Static inspection proves structural facts, not actual agent decisions, routing, cleanup, or other runtime behavior; simulated answers and source-text assertions do not substitute for required live behavior.
+3. **Compatible shared observations.** One designed execution may cover multiple criteria, each retaining its exact expected and observed result. Share setup only when safe; keep contradictory outcomes, independent starting conditions, and necessary isolation separate. A failure that prevents a later observation leaves that criterion unproved.
+4. **Marginal value.** For each additional expensive scenario, briefly identify the otherwise-unproved behavior or failure mechanism and why existing or cheaper checks cannot cover it. Consider setup, nested work, generation/grading, and independent repetition, not scenario names or file counts. Keep material rationale in existing planning prose; add no universal count cap, quota, ledger, or approval stage.
+5. **Authority before economy.** Optimize during specification, self-contained plan, or direct-contract authoring, before checks become binding. Projection preserves exact acceptance. Later changes to required behavior or check meaning return to the existing authority owner; this policy never permits silent substitution or dropped checks.
+6. **Independent complete proof.** The implementer exercises the selected checks and the independent verifier freshly executes the complete approved set. Within one pass, a shared scenario need not run again solely for another criterion if it establishes each exact observation on the same target under compatible conditions. Command spelling alone is not equivalence; another role's result is not independent proof. Preserve required ordering, per-item accounting, the two-semantic-attempt limit, one-shot review, same-verifier closure, the complete unchanged check set after eligible code repair, and bounded non-code proof recovery.
+
+## Permanent-only admission and retention
+
+The requirements below apply only to permanent tests changed or proposed for the current task, unless an explicit test audit owns a frozen wider portfolio. Temporary proof does not acquire permanent placement, retention, determinism, isolation, or disposition obligations merely by consuming the common principles.
 
 A permanent test earns its place only when all of these are true:
 

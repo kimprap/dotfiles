@@ -18,6 +18,8 @@ task graph exactly: a later estimate alone never authorizes the parent to
 split, merge, or otherwise repartition it; material changes follow the existing
 authority and reapproval rules.
 
+Before authoring or revising concrete checks for a planless direct contract, read `skill://dev-implementation/references/test-value.md` and apply its common proof-selection principles. Keep material rationale in the contract's existing prose. Already-approved checks remain binding; changed behavior or check meaning returns to its authority owner before dispatch.
+
 Use a planless direct contract when one child can own the cohesive result. Require a repository plan only for multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery. A plan must validate with:
 
 ```text
@@ -48,7 +50,7 @@ Behavior: <observable>
 Check: <command or direct static proof>; expect <exact result>
 ```
 
-Run the changed behavior, not merely a test file. Use existing changed-contract tests; add or alter permanent tests only through `skill://dev-implementation/references/test-value.md`, the sole permanent-test policy. An executable check may not be replaced by prose, a broad passing suite, or a model score.
+Run the changed behavior, not merely a test file. Read `skill://dev-implementation/references/test-value.md` for common proof selection and its separate permanent-test requirements; use existing changed-contract tests and admit retained changes only through that policy. An executable check may not be replaced by prose, a broad passing suite, or a model score. For approved shared scenarios, preserve every item's exact expected and actual observation within the child pass; sharing never drops a check or supplies an unobserved result.
 
 ## Attempt 1: implement, rethink, smoke
 
