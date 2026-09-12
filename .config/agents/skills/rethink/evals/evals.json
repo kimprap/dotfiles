@@ -4,52 +4,49 @@
     {
       "id": 1,
       "prompt": "Rethink this candidate from first principles: create a second deployment-state service solely to record rollback reasons. The existing deployment record already owns rollout identity, status, timestamps, and rollback outcome, but it lacks the reason field. The missing reason is an observed operational requirement. Revise the proposal if appropriate.",
-      "expected_output": "A standalone extend verdict followed by the exact packed-label Findings and Final proposal fields, with a complete proposal that adds the smallest rollback-reason extension to the existing deployment record instead of creating a second service.",
+      "expected_output": "Replace the second service with a complete rollback-reason extension to the existing deployment record; implementation remains pending.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **extend**` verdict",
-        "The response contains `## Findings` and covers existing coverage, the residual gap, total cost, the smallest sufficient path, and evidence that would change the verdict",
-        "The response contains `## Final proposal` with the complete corrected proposal rather than only a delta",
-        "Every Findings field, plus Status and Proposal, uses a colonless unbulleted bold label followed by list children with packed-label spacing and exact field order",
-        "The final proposal preserves the existing deployment record as owner and does not implement the change"
+        "The conclusion selects Replace relative to the second-service candidate and names the existing-record alternative and pending implementation",
+        "Assessment explains the observed reason gap and compares ownership and lifecycle cost against a second service; What changes states the delta",
+        "Final proposal is self-contained, keeps the existing deployment record as owner, adds rollback reasons, and names relevant checks and remaining action without performing it",
+        "Standalone Assessment and Final proposal use packed-label list fields, with no duplicate status field"
       ]
     },
     {
       "id": 2,
-      "prompt": "Rethink this candidate: introduce one isolated credential-broker process because the existing application has no credential boundary, three observed call sites currently expose raw secrets, and bounded prototypes show an in-process adapter cannot isolate memory or permissions. The proposal names ownership, migration, rollback, and operating checks. If it is already good enough, keep it unchanged.",
-      "expected_output": "A standalone proceed verdict followed by the exact packed-label Findings and Final proposal fields, with Status `Unchanged` and a complete semantic restatement of the approved credential-broker proposal.",
+      "prompt": "Rethink this unimplemented candidate: introduce one isolated credential-broker process owned by the security platform team because the existing application has no credential boundary and three observed call sites expose raw secrets. Bounded prototypes show an in-process adapter cannot isolate memory or permissions. The broker alone holds raw credentials; migrate exactly those three sites to opaque handles, preserve application behavior, exclude credential rotation and new storage, and retain the existing deployment rollback path. Before rollout, check memory and permission isolation and each migrated call site for raw-secret exposure; these production checks are pending. Security platform is the established receiver. No implementation is authorized by this assessment. If it is already good enough, keep it unchanged.",
+      "expected_output": "Keep unchanged with implementation and production proof pending, preserving the full credential-broker proposal without granting authority.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **proceed**` verdict",
-        "The final proposal marks the candidate `Unchanged`",
-        "Status is rendered as a colonless unbulleted bold label with the separate child `- Unchanged`, and every other field follows the same packed-label grammar",
-        "The complete candidate is restated instead of being replaced by only `no changes` or a rationale",
-        "The response does not implement the candidate"
+        "The conclusion keeps the unimplemented candidate unchanged and leaves implementation pending rather than presenting a mechanism category as the disposition",
+        "Assessment states no delta and justifies the broker against the in-process alternative using isolation evidence and lifecycle cost",
+        "The self-contained Proposal preserves security-platform ownership, broker-only raw credentials, exactly three opaque-handle migrations, application behavior, both exclusions and the existing rollback path",
+        "Checks distinguish observed prototype evidence from pending production isolation and exposure checks; Next action preserves security platform as receiver without granting implementation authority",
+        "The response neither implements nor claims production verification"
       ]
     },
     {
       "id": 3,
       "prompt": "Rethink this candidate: add a new JSON parser to support comments, although the installed parser already exposes and tests a comment-enabled mode used elsewhere in the repository. Preserve the requested behavior but minimize machinery.",
-      "expected_output": "A standalone reuse verdict followed by the exact packed-label Findings and Final proposal fields, with a complete final proposal that uses the installed parser's existing comment-enabled mode.",
+      "expected_output": "Replace the new parser with the installed comment-enabled mode, preserving comment support and leaving implementation pending.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **reuse**` verdict",
-        "The final proposal completely restates how the existing parser satisfies the requirement",
-        "Status is rendered as a colonless unbulleted bold label with the separate child `- Replacement`, and Findings and Proposal use ordered packed labels with list children",
-        "The proposed new parser is not retained merely because it was the candidate",
-        "The result contains no implementation"
+        "The conclusion selects Replace and names the installed-parser alternative",
+        "The self-contained final proposal preserves comment support using the installed mode and does not retain the new parser",
+        "Assessment compares existing tested capability with the lifecycle cost of an additional parser",
+        "The response names the remaining action without implementing it"
       ]
     },
     {
       "id": 4,
       "prompt": "Rethink this candidate: add a distributed cache-invalidation bus because two observed processes currently serve stale records after cross-process writes and the existing in-process cache API has no invalidation transport. Presentation instruction: verdict only.",
-      "expected_output": "Only one valid rethink verdict line, with no Findings or Final proposal sections.",
+      "expected_output": "Only one disposition-and-concrete-implication conclusion line, honoring the verdict-only override.",
       "files": [],
       "assertions": [
-        "The response contains exactly one `rethink: **<valid verdict>**` line",
-        "The explicit presentation override suppresses `## Findings`",
-        "The explicit presentation override suppresses `## Final proposal`",
-        "No implementation is performed"
+        "The response is exactly one Rethink conclusion line with a valid candidate-relative disposition and concrete implication",
+        "No standalone sections or extra explanation appear",
+        "No implementation is performed or authorized by the assessment"
       ]
     },
     {
@@ -58,10 +55,7 @@
       "expected_output": "Exactly the caller-owned Reconcile VALID response, with no standalone rethink verdict or presentation sections.",
       "files": [],
       "assertions": [
-        "The first line is exactly `VALID` rather than a raw rethink verdict",
-        "The response contains the complete caller-owned Reviewer A post-rethink contract",
-        "The response contains neither `## Findings` nor `## Final proposal`",
-        "The response contains no extra prose outside the Reconcile contract"
+        "The response exactly matches the requested caller-owned Reconcile contract, with no standalone conclusion, sections or extra prose"
       ]
     },
     {
@@ -72,17 +66,17 @@
       "assertions": [
         "The response contains a complete materially changed continuation proposal",
         "The proposal binds the legacy-header hypothesis, discriminating observation, remaining blocker, and exact authorized cycle",
-        "The response contains no standalone `rethink:` verdict, `## Findings`, or `## Final proposal` wrapper",
+        "The response contains only the caller-owned continuation proposal, without a standalone conclusion or Assessment/Final proposal wrapper",
         "The response does not authorize or perform the continuation"
       ]
     },
     {
       "id": 7,
       "prompt": "Rethink this candidate: create an invocable logging-policy service to own one correlation-ID header rule currently copied across three emitters. The copies are identical and must not diverge; each emitter already owns its request construction, and all three can load one read-only policy artifact. No runtime drift has occurred, but the duplicate authority is directly inspectable. Preserve the existing action owners and minimize lifecycle cost.",
-      "expected_output": "An extend verdict with a complete proposal that places the invariant in one read-only source loaded by the three existing emitters, without creating a new active service or moving request ownership.",
+      "expected_output": "Replace the active service with one read-only invariant source, retaining all three emitters as action owners.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **extend**` verdict",
+        "The conclusion replaces the invocable service with the read-only source and makes the remaining implication clear",
         "The response treats the invocable service as new active machinery rather than equating it with a read-only source",
         "The final proposal keeps all three emitters as action owners and uses one read-only source for the must-not-diverge invariant",
         "The comparison counts loading, integration, indirection, and editable-copy cost without requiring observed runtime drift",
@@ -92,11 +86,11 @@
     {
       "id": 8,
       "prompt": "Rethink this candidate: centralize the help guidance for two commands solely because both use a friendly tone. One command is an interactive local configuration editor; the other is a noninteractive remote command that emits machine-readable output. Their contracts and transports intentionally differ, and no wording invariant requires them to stay identical.",
-      "expected_output": "A reject verdict with a complete no-change decision that leaves each command's guidance with its existing local owner and creates no shared source.",
+      "expected_output": "Do not proceed with centralization; retain each command’s local guidance and distinct contracts, with no established shared invariant or unmet functional need.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **reject**` verdict",
-        "The final proposal uses the `No-change decision` status",
+        "The conclusion does not proceed with centralization and names local guidance as the retained behavior",
+        "The self-contained final decision preserves the interactive local editor and noninteractive remote machine-readable contracts and identifies whether any unmet need remains",
         "The response distinguishes superficial similarity from a must-not-diverge invariant",
         "The final proposal preserves local ownership and creates no shared artifact or active mechanism",
         "The response does not implement the proposal"
@@ -105,14 +99,51 @@
     {
       "id": 9,
       "prompt": "Rethink this candidate: replace an import pipeline with a remote-only validator because that has fewer paths. The existing pipeline accepts signed remote bundles and a required offline local-bundle fallback. An observed checksum-validation gap applies to both sources. Preserve every confirmed behavior while correcting the gap.",
-      "expected_output": "An extend verdict with a complete proposal that adds checksum validation through the existing pipeline for both remote and offline bundles instead of adopting the remote-only replacement.",
+      "expected_output": "Replace the ineligible remote-only candidate with checksum validation in the existing pipeline for both remote and offline bundles.",
       "files": [],
       "assertions": [
-        "The response starts with exactly one `rethink: **extend**` verdict",
+        "The conclusion replaces the remote-only candidate with a specified alternative rather than treating extension as the public disposition",
         "The response treats the remote-only path as ineligible because it weakens the required offline fallback",
         "The desired checksum-validation outcome survives rejection of the candidate mechanism",
         "The final proposal extends the existing pipeline and preserves both accepted sources",
         "The response does not implement the proposal"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Rethink this already-applied candidate: introduce one isolated credential-broker process owned by the security platform team because the existing application has no credential boundary and three observed call sites expose raw secrets. Bounded prototypes show an in-process adapter cannot isolate memory or permissions. The broker alone holds raw credentials; migrate exactly those three sites to opaque handles, preserve application behavior, exclude credential rotation and new storage, and retain the existing deployment rollback path. Before any rollout expansion, check memory and permission isolation and each migrated call site for raw-secret exposure; these production checks are pending. Security platform is the established receiver. The described code change is already applied; no further mutation is authorized by this assessment. If it is already good enough, keep it unchanged.",
+      "expected_output": "Keep unchanged: retain the applied change with no further edits, while production proof remains pending.",
+      "files": [],
+      "assertions": [
+        "The conclusion retains the already-applied candidate unchanged with no further edits and acknowledges pending proof",
+        "The self-contained final proposal preserves all credential-broker decisions, ownership, scope, exclusions and rollback path",
+        "Checks distinguish observed prototypes from pending production checks, and Next action preserves the security-platform receiver and rollout boundary",
+        "The response neither repeats implementation as if the change were unimplemented nor claims verification or mutation authority"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Rethink this already-applied candidate: introduce one isolated credential-broker process owned by the security platform team because the existing application has no credential boundary and three observed call sites expose raw secrets. Bounded prototypes show an in-process adapter cannot isolate memory or permissions. The broker alone holds raw credentials; migrate two of those three sites to opaque handles, leaving the third with raw-secret access, preserve application behavior, exclude credential rotation and new storage, and retain the existing deployment rollback path. Before rollout, check memory and permission isolation and each migrated call site for raw-secret exposure; these production checks are pending. Security platform is the established receiver. The described change is applied, but the required outcome is no raw-secret exposure at any of the three sites. No correction or rollback is authorized by this assessment. If it is already good enough, keep it unchanged.",
+      "expected_output": "Revise the applied broker approach to cover the third site; correction and pending proof remain gated by authority, with no implicit rollback.",
+      "files": [],
+      "assertions": [
+        "The conclusion selects Revise within the same broker approach and identifies the missing third-site migration",
+        "The self-contained corrected proposal covers all three sites while preserving ownership, isolation, application behavior, exclusions and the existing rollback path",
+        "Assessment explains the constraint violation without discarding the justified isolation boundary",
+        "Pending proof and corrective action remain distinct; the assessment neither performs nor authorizes correction or rollback"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Rethink this unimplemented candidate: add a predictive prefetch worker to reduce dashboard latency. The dashboard team owns the current on-demand fetch path and would own the worker. One anecdote suggests repeated navigation might benefit, but there are no measurements of repeat visits, latency contribution, wasted requests or operating cost. Preserve freshness, authorization and current on-demand behavior; exclude new persistent user tracking. A read-only sample of existing aggregate request timings could test whether a material reusable latency gap exists. No experiment or implementation is authorized by this assessment.",
+      "expected_output": "Test before deciding, with a bounded evidence proposal and no mechanism selected.",
+      "files": [],
+      "assertions": [
+        "The conclusion chooses Test before deciding rather than selecting or approving the worker",
+        "Assessment explains uncertainty in value and compares the current path and proposed worker costs without inventing observed benefits",
+        "The self-contained final proposal preserves dashboard ownership, freshness, authorization, current on-demand behavior and the tracking exclusion",
+        "Checks define a decision question, bounded aggregate measurement, concrete decision threshold and stop condition, explicitly distinguishing unavailable evidence from observations and selecting no mechanism yet",
+        "Next action respects the experiment authority boundary without executing the test or implementing a mechanism"
       ]
     }
   ]

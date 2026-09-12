@@ -33,14 +33,14 @@ integration, migration, conflict, review, operating cost, indirection, and
 independently editable copies of the same invariant.
 
 New active machinery is a new responsibility, owner, runtime, state, or
-invocation surface; it earns `proceed` only when an established required gap
+invocation surface; it is justified only when an established required gap
 survives every cheaper eligible path. A read-only artifact loaded by existing
 owners is an extension when it creates none of those boundaries, but its
 loading, integration, and indirection costs still count. Identical
 copies that must not diverge may justify one read-only source of truth; do
 not centralize merely similar guidance. If value is plausible but unobserved,
-use `test`. Do not require a runtime failure for an inspectable constraint
-violation. Ignore sunk cost.
+choose a bounded test before selecting a mechanism. Do not require a runtime
+failure for an inspectable constraint violation. Ignore sunk cost.
 
 Challenge the user's premise and your own equally. Ask only about a remaining
 human-owned trade-off.
@@ -52,7 +52,7 @@ Perform the reassessment once, then obey exactly one output owner.
 - When an already-loaded caller supplies an outer response contract or requires
   only a complete corrected proposal, that caller owns rendering. Use
   `rethink` internally and return only the caller-owned response. Do not emit
-  the standalone `rethink:` verdict, `## Findings`, or `## Final proposal`
+  the standalone `Rethink:` conclusion, `## Assessment`, or `## Final proposal`
   wrapper.
 - Otherwise use the standalone response below. Subject, scope, and evaluation
   instructions do not change its shape. Only an explicit presentation request
@@ -61,42 +61,51 @@ Perform the reassessment once, then obey exactly one output owner.
 ## Standalone response
 
 Before rendering, read and follow
-[packed-label](../../references/packed-label.md). The mandatory verdict line is
-the sole preface outside the packed-label surface.
+[packed-label](../../references/packed-label.md). The conclusion line is the
+sole preface outside the packed-label surface.
 
-Lead with exactly one corrected verdict in the form
-`rethink: **<verdict>**`, where `<verdict>` is `reject`, `reuse`, `extend`,
-`test`, or `proceed`.
+Lead with `Rethink: **<disposition> — <concrete implication>**`. Choose the
+disposition relative to the candidate, independently of its mechanism class:
 
-Then render exactly these packed-label sections and fields:
+- `Keep unchanged`: the candidate needs no revision.
+- `Revise`: correct the candidate within the same approach.
+- `Replace`: adopt a specified alternative instead of the candidate.
+- `Test before deciding`: gather bounded evidence before selecting a mechanism.
+- `Do not proceed`: do not adopt the candidate; name the current behavior to
+  retain and any unmet need.
 
-- `## Findings`, with required `list` fields in this order: `Existing
-  coverage`, `Residual gap`, `Total-cost reason`, `Smallest sufficient path`,
-  and `Evidence that would change the verdict`. Each field has exactly one
-  concise child.
+The implication names what this means now: distinguish an already-applied
+change from an unimplemented proposal, and acknowledge pending verification.
+Keeping an applied candidate may mean no further edits, not that it is proven;
+keeping a proposal leaves implementation pending. A favorable assessment grants
+no execution authority, and rejecting an applied candidate authorizes no rollback.
+Mechanism classes guide the internal comparison, not the public disposition.
 
-`Total-cost reason` compares the applicable listed costs on both the chosen
-path and displaced alternatives. `Smallest sufficient path` means the
-eligible path that covers the residual gap at lowest total lifecycle cost.
+Render these packed-label sections with `list` fields in the stated order.
+Use concise, distinct children as needed; do not force a single child per field.
 
-- `## Final proposal`, with required `list` fields in this order: `Status` and
-  `Proposal`. `Status` has exactly one child selected from `Unchanged`,
-  `Revised`, `Replacement`, `Bounded test`, or `No-change decision`. `Proposal`
-  has one or more consecutive children, one per operative proposal item.
+- `## Assessment`
+  - `Why` (required): decisive evidence and material lifecycle cost or trade-off
+    against the strongest viable alternative.
+  - `What changes` (required): the concrete delta, or explicitly none.
+  - `Limits` (conditional): material uncertainty, pending proof, a blocker, or
+    evidence that would reverse the decision. Omit when none is material.
+- `## Final proposal`
+  - `Proposal` (required): the complete operative decision set, self-contained
+    without Assessment. Preserve relevant outcome, ownership, scope, behavior,
+    constraints, exclusions, exact artifacts/interfaces, and required actions,
+    including decisions that remain unchanged. Incorporate corrections; omit
+    superseded alternatives and process narration.
+  - `Checks` (conditional): relevant observed checks and pending checks,
+    explicitly distinguished. For a bounded test, include the question,
+    measurement, decision threshold, and stop condition; state that no mechanism
+    is selected yet. Propose concrete bounds and a threshold when none are
+    supplied, labeling them as proposals rather than observed or approved facts;
+    do not leave the test criteria to be defined later.
+  - `Next action` (required): the remaining action and authority boundary, or
+    explicitly none. Preserve an established receiver; do not invent one.
 
-Restate the complete current proposal or decision set semantically, not merely
-its delta: preserve every operative decision, constraint, exclusion, and
-required action; incorporate accepted corrections; and omit superseded
-alternatives and process narration. When the candidate survives unchanged, use
-`Unchanged` and still restate it in full. Use these verdict-specific final
-positions:
-
-- `reject`: the complete no-change or alternative decision, without presenting
-  the rejected mechanism as operative;
-- `reuse`: the complete proposal using existing capabilities;
-- `extend`: the complete smallest corrected proposal;
-- `test`: the complete bounded test, measurement, decision threshold, and an
-  explicit statement that no mechanism is approved yet; or
-- `proceed`: the complete candidate, normally marked `Unchanged`.
+The final proposal is portable decision content, not automatic workflow approval
+or a new Handoff. Do not add a duplicate status field.
 
 Do not implement the candidate.
