@@ -1,5 +1,7 @@
 # Retrace multi-scope implementation specification
 
+> Historical archive: relocated here by explicit human cleanup authorization after completion. The original content and references below are preserved; they grant no current execution authority. Current Retrace behavior is owned by `.config/agents/skills/retrace/SKILL.md`, its `evals/evals.json`, and ADR-0001 D15. The archived execution plan retains its original specification hash.
+
 ## Context
 
 Implement the reconciled Retrace design as an explicit-only, read-only evaluator of repository agent-harness configurations. Normalize requests into human-approved scopes, evaluate up to four direct children, have each scope child run current Reconcile on its conversational report, and consolidate only reviewed, evidence-current results. Preserve the distinction between a successfully reviewed report and a resolved evaluation: a reviewed `blocker` report is authoritative but does not count toward resolved scopes.
