@@ -21,6 +21,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | Question | Read first | Then read only if needed |
 |---|---|---|
 | Is this generic engineering work, product work, a custom controller, direct work, or shipping? | ADR-0001 D01, D02, D10, D11, D12, D18 | ADR-0005 for product authority; custom controller contracts for custom work |
+| What authority does explicit multi-scope repository-harness evaluation delegate? | ADR-0001 D15 | `retrace/SKILL.md` and `reconcile/SKILL.md` for the custom report-only scope-controller seam; no generic routing, implementation, assurance, mutation or shipping authority |
 | Who may change code and how many semantic attempts exist? | ADR-0001 D02; ADR-0003 D03 | ADR-0002 D06, D21 for controller and rethink details |
 | How may an owner recover from an execution-mechanism failure? | ADR-0003 D03, D04 | ADR-0002 D21 for rethink separation; `dev-implementation/references/execution-recovery.md` for the executable policy; `.config/agents/references/impl-rethink/recovery-rethink.md` for the exact same-owner pre-retry core |
 | Does this require a plan and what does the plan contain? | ADR-0001 D11; ADR-0002 D08, D09 | ADR-0002 D29 for lifecycle and storage |

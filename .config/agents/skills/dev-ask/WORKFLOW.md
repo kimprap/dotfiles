@@ -28,6 +28,8 @@ Initial Route Overview approval authorizes the named prospective route, includin
 
 Durable workflow rationale and supersession links live in [`docs/adr/INDEX.md`](../../../../docs/adr/INDEX.md). The human execution diagram is [`references/execution-flow.md`](references/execution-flow.md). Neither file runs the workflow.
 
+Custom boundary (non-runtime): [ADR-0001 D15](../../../../docs/adr/0001-dev-workflow-authority-and-routing.md#d15--semantic-ownership-and-source-roles) identifies explicit-only Retrace as read-only repository-harness evaluation. Its human-approved scopes delegate report-only conversational Reconcile to the same scope child, which owns its reviewers. This is not a generic route, implementation or assurance stage, completion tail, repository/evidence mutation grant, or shipping authority. The executable custom contracts own those mechanics; D13's separate authorization and generic Reconcile exclusions remain unchanged.
+
 New implementation boundaries consult the shared
 [task-sizing guidance](../dev-ticketing/references/task-sizing.md). It considers
 complete worker-attempt effort separately from reliable fresh-context fit,
