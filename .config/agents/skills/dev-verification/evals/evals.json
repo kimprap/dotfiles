@@ -76,42 +76,68 @@
       ]
     },
     {
-      "id": "DV-NONCODE-PROOF-RECOVERY",
-      "prompt": "Attempt 2 remains. During AC-4, the runner writes the capture to the wrong temporary directory, so the check is inconclusive. The runner configuration is corrected without changing the target, AC-4 behavior, check, or expected result, and AC-4 then passes. State the allowed recovery and attempt effect.",
-      "expected_output": "After the concrete runner/capture defect is corrected without changing the target, the same verifier may retry only AC-4. Record both observations and the correction. Because target and acceptance meaning are unchanged and no product or code bytes change, this proof recovery consumes no semantic attempt; the verifier continues its fresh aggregate from the recovered AC-4 result.",
+      "id": "DV-EXECUTION-RECOVERY-FIRST-CORRECTION",
+      "prompt": "Attempt 2 remains. During AC-4, the verifier's runner writes the capture to the wrong temporary directory, so the check is inconclusive. This concrete cause has used zero corrected executions. Failure evidence is retained, prior effects are known safe, and the same verifier has formed a targeted runner-path correction without changing the evaluated target, AC-4 behavior, check, expected result, ownership, or authorized effects. State what must happen before and during another execution and its semantic-attempt effect.",
+      "expected_output": "The same verifier explicitly applies the installed recovery rethink once to the proposal before retrying. If the rethink confirms eligibility and safe cleanup, it may execute the smallest complete AC-4 scenario as the first corrected execution for that concrete cause. Record the cause, correction, decisive observation, used allowance, first failure, and recovery result. This task-local execution correction leaves the evaluated target and acceptance unchanged, so it consumes no semantic attempt and grants no target mutation.",
       "files": [],
       "assertions": [
-        "A concrete non-code defect may be corrected",
-        "Only the affected check is retried by the same verifier",
-        "Target, behavior, check, and expected result remain unchanged",
-        "Proof recovery consumes no semantic attempt",
-        "Verification remains read-only"
+        "The same verifier explicitly applies recovery rethink before execution",
+        "Only permitted task-local execution machinery may change",
+        "Target, behavior, check, expected result, ownership, and effects remain unchanged",
+        "Cause and used allowance remain in existing evidence",
+        "Execution recovery consumes no semantic attempt"
       ]
     },
     {
-      "id": "DV-NONCODE-UNCHANGED-REPEAT-STOPS",
-      "prompt": "The same verifier retries AC-4 after the identified capture defect is corrected, but the unchanged check again produces the same inconclusive result. No target or acceptance bytes changed. Decide whether another retry, verifier, or implementation repair is allowed.",
-      "expected_output": "Stop with AC-4 and the aggregate INCONCLUSIVE. An unchanged repeated failure ends proof recovery; do not retry again, substitute a verifier or check, rerun review, mutate the target, or consume attempt 2.",
+      "id": "DV-EXECUTION-RECOVERY-SECOND-CORRECTION",
+      "prompt": "The same verifier used one corrected execution for AC-4's concrete capture-path cause, but it failed. New retained evidence now shows the runner inherited a different enclosing working directory, supporting a materially different correction. Prior effects are known safe and the evaluated target and acceptance remain unchanged. Decide whether another corrected execution is allowed and what precedes it.",
+      "expected_output": "A second corrected execution for the same concrete cause is allowed because new evidence supports a materially different correction. Before executing it, the same verifier must explicitly apply the installed recovery rethink once again, preserve prior failure and allowance evidence, and confirm safe cleanup. This does not consume semantic attempt 2. If the cause persists or recurs after this second corrected execution, autonomous recovery stops.",
       "files": [],
       "assertions": [
-        "An unchanged repeated failure stops",
-        "No additional retry or substitute verifier is allowed",
-        "No check substitution or review rerun is allowed",
-        "A non-code failure does not authorize implementation repair",
-        "Attempt 2 remains unconsumed"
+        "New evidence supports a materially different second correction",
+        "The same verifier applies recovery rethink again before execution",
+        "At most two corrected executions are allowed for the cause",
+        "The semantic-attempt allowance is unchanged",
+        "Persistence or recurrence after the second correction stops recovery"
       ]
     },
     {
-      "id": "DV-NONCODE-AUTHORITY-CHANGE-STOPS",
+      "id": "DV-EXECUTION-RECOVERY-EXHAUSTED-CAUSE-STOPS",
+      "prompt": "AC-4's same concrete execution cause already used two corrected executions. It briefly succeeded, then recurred under another verifier agent and root with different error wording. The target and acceptance are unchanged. Decide whether recovery receives another allowance.",
+      "expected_output": "Stop autonomous execution for AC-4 and retain the resulting failure or inconclusive aggregate. Two corrected executions exhausted this concrete cause; temporary success, different wording, and new agent or root identity do not reset or replenish the allowance. Do not substitute a verifier or check, rerun review, mutate the target, relabel the cause, or consume attempt 2.",
+      "files": [],
+      "assertions": [
+        "Two corrected executions exhaust the concrete cause",
+        "Temporary success does not reset the allowance",
+        "Different wording, agent, or root identity does not reset the allowance",
+        "No substitute verifier, check, or review rerun is allowed",
+        "A non-code execution failure does not authorize semantic repair"
+      ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-AUTHORITY-CHANGE-STOPS",
       "prompt": "AC-4 cannot run as written. A proposed recovery would change its required behavior and expected result to accept a different service response while leaving the implementation target untouched. Decide whether the verifier may adopt it.",
-      "expected_output": "Stop and return the proposed acceptance-meaning change to the owning authority. Proof recovery is allowed only while the exact target, required behavior, check meaning, and expected result remain unchanged; the verifier may not redefine AC-4, mutate, substitute proof, or consume a semantic attempt.",
+      "expected_output": "Stop and return the proposed acceptance change to the owning authority. Execution recovery is allowed only while the evaluated target, required behavior, check meaning, expected result, ownership, and authorized effects remain unchanged; a code-free or target-untouched change is not enough. The verifier may not redefine AC-4, substitute proof, mutate the target, or consume a semantic attempt.",
       "files": [],
       "assertions": [
         "Changed acceptance meaning returns to authority",
+        "A code-free or target-untouched change does not establish eligibility",
         "The verifier cannot redefine required behavior or expected result",
         "No substitute proof or target mutation is allowed",
-        "No semantic attempt is consumed",
         "Verification remains read-only"
+      ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-TRANSIENT",
+      "prompt": "Compare two temporary service failures during a verification check. In A, no finite retry policy exists, no unchanged retry has occurred, prior effects are known safe, and the verifier proposes one unchanged retry. In B, prior side effects are uncertain. State the allowed action and required rethink for each.",
+      "expected_output": "For A, the same verifier may use the single safe unchanged fallback retry only after explicitly applying the installed recovery rethink once and recording the transient basis and attempt. A configured finite service policy would win instead. For B, uncertain prior effects prohibit repetition, so diagnose without rerunning or report the blocker. Transient retries never replenish corrected executions, and relabeling cannot erase either history.",
+      "files": [],
+      "assertions": [
+        "An existing finite transient policy wins",
+        "Without one, at most one safe unchanged retry is allowed",
+        "Recovery rethink precedes the unchanged retry",
+        "Uncertain prior effects prohibit repetition",
+        "Transient and corrected histories cannot replenish or erase each other"
       ]
     }
   ]

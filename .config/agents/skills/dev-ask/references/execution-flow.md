@@ -73,9 +73,10 @@ preserves exact acceptance; later meaning changes return to authority.
 |---|---|---|
 | Approved direct work | One child can own and check the cohesive result in one reliable fresh context | Implementation child without a repository plan |
 | Approved lean plan | Necessary multiple-owner or dependency ownership, fan-in, ordered effects or migration, or recovery uses known safe task seams | Implementation controller schedules dependency-ready child tasks; any ordinary fan-in is an authored child-owned task completed before final review and verification |
-| Candidate | Child has finished its first implementation pass | Same child receives the single code-then-test rethink |
+| Candidate | Child has finished its first implementation pass | Same child receives the single implementation code-then-test rethink |
 | Rethink | Direct checks pass | Child emits one lean Handoff, then loads papercut once |
-| Rethink | A required direct check still fails | Child emits a blocked lean Handoff, loads papercut once, then stops with the failed check and preserved work |
+| Current execution | A concrete execution-mechanism failure has unchanged authority, acceptance, ownership, target, and effects | Same owner follows `skill://dev-implementation/references/execution-recovery.md`, explicitly applies recovery rethink before every retry, and retains cause and allowance evidence in the existing Handoff |
+| Rethink | A required direct check still fails and the shared execution-recovery policy permits no further execution | Child emits a blocked lean Handoff, loads papercut once, then stops with the failed check and preserved work |
 
 ## Review and verification
 
@@ -86,9 +87,9 @@ preserves exact acceptance; later meaning changes return to authority.
 | Review | Required finding and attempt 2 is available | Implementation child performs attempt 2, rethink, checks, Handoff, and papercut; then go directly to the verifier |
 | Review | Inconclusive or repair cannot close | Stop; do not rerun review |
 | Verification | Every original and review-closure check passes | Learning |
-| Verification | A concrete runner, transport, environment, or capture defect is corrected without changing target, required behavior, check meaning, or expected result | Same verifier retries only the affected check; no semantic attempt is consumed |
-| Verification recovery | The unchanged failure repeats | Stop with the resulting failure or inconclusive evidence; do not retry or substitute |
-| Verification recovery | Required behavior, check meaning, or expected result would change | Return to the owning authority |
+| Verification | A concrete execution-mechanism failure is eligible under unchanged target, required behavior, check meaning, expected result, ownership, and effects | Same verifier follows the shared execution-recovery policy, applies recovery rethink before every retry, and reruns the smallest complete valid affected-check scenario without consuming a semantic attempt |
+| Verification recovery | The shared per-cause or transient policy requires a stop, prior effects are uncertain, or allowance history is unknown | Preserve the failed or inconclusive evidence; do not retry, substitute, or infer a reset |
+| Verification recovery | Required behavior, check meaning, expected result, target, ownership, or effects would change | Return to the owning authority |
 | Verification | Direct code defect and attempt 2 is still available | Implementation child repairs; the same verifier reruns the complete unchanged check set |
 | Verification | Attempt 2 is unavailable, code closure fails, or nonrecoverable evidence is inconclusive | Stop |
 

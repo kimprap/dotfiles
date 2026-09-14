@@ -40,6 +40,12 @@ Use these headings once and in this order:
 `Changed targets/effects` is the local delta, not a repository manifest. Include every declared target actually changed, material preserved behavior, and any allowed non-file effect. Do not include hashes, proof recipes, adapter bindings, receipts, generation maps, or transcript summaries.
 
 `Checks` preserves each owned acceptance item's exact `Behavior` and `Check` lines and records what was observed. Failed or unrun checks remain explicit; reasoning and broad suite status do not substitute. Review findings use their direct closure checks in the same grammar.
+When execution recovery occurred, keep its evidence inside the existing
+`Checks` and `Blocker/risk` fields. Record the concrete cause, correction or
+transient basis, decisive observation, proceed/stop decision, and corrected or
+unchanged executions already used. Preserve any unknown or exhausted allowance
+and uncertain prior effects as blockers; new error wording, agent, or root
+identity and temporary success do not imply a reset. Add no recovery field or ledger.
 
 `Blocker/risk` separates completion-blocking facts from residual risk. A blocked Handoff names the current failure, affected acceptance, completed work worth preserving, and the condition under which the receiver may proceed. It grants no new attempt, scope, or effect.
 

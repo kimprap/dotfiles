@@ -120,6 +120,21 @@
       "summary": "Make repository-specific proof mechanics and bounded evidence partitioning explicit before assurance runs.",
       "surface": "dev-* assurance-tail evidence selection"
     },
+    "pc-cb1b8cb02f18d49b": {
+      "first_seen": "2026-09-14",
+      "last_seen": "2026-09-14",
+      "observations": [
+        {
+          "date": "2026-09-14",
+          "friction": "Six new execution-recovery projection requirements were reported missing even though their source clauses were present, blocking AC-REC-4 until diagnosis showed that normalize() retains commas while the alternatives omitted them.",
+          "workaround": "Copy each source snippet's normalized punctuation exactly into REQUIRED_PROJECTIONS alternatives."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Required-projection matching preserves punctuation while projection authors can assume punctuation-insensitive normalization.",
+      "surface": ".config/agents/skills/dev-ask/evals/scan_stale_contracts.py required projections"
+    },
     "pc-e1c8b1660bfd1b81": {
       "first_seen": "2026-08-13",
       "last_seen": "2026-08-13",

@@ -6,6 +6,10 @@ This is the concise, non-runtime map of the current generic engineering flow. Ex
 
 A request takes the smallest route that can settle its outcome. Cohesive one-owner work uses a planless direct contract. Multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery require a lean repository plan. Every code-changing task belongs to a child; the implementation parent validates, schedules, enforces ownership, requests the one same-child rethink, aggregates lean Handoffs, and controls assurance and plan lifecycle without implementing or semantically repairing. Ordinary planned fan-in is itself an authored child-owned implementation task and finishes before the assembled target's one final review and verification.
 
+Generic invocation and proof recovery stay with the current execution owner
+under `dev-implementation/references/execution-recovery.md`; it is separate from
+the single implementation candidate rethink and from semantic repair.
+
 Common routes are:
 
 - sufficient current evidence → direct answer;
@@ -39,6 +43,7 @@ metadata and does not determine assurance.
 | Lean plans, child scheduling, lifecycle, active-path persistence, and same-child rethink | ADR-0002: D06, D08, D09, D21, D29 |
 | New task sizing and approved-graph projection | ADR-0001: D11; ADR-0002: D08, D09 |
 | Two attempts, one-shot review, verifier closure, and permanent-test value | ADR-0003: D03, D04, D22, D28 |
+| Same-owner execution recovery, recurrence, and transient fallback | ADR-0003: D03, D04; ADR-0002: D21 |
 | Learning and the human-map/journal authority relationship | ADR-0004: D07, D23 |
 | Every-boundary papercut accounting | ADR-0007: D24 |
 | Portable session envelope and five-field completion | ADR-0009: D27 |
@@ -73,9 +78,9 @@ The active repository path remains the sole execution and continuation source th
 
 Each implementation child receives only approved intent and its acceptance IDs, exact owned paths and effects, dependency Handoffs when applicable, project instructions, semantic attempt `1` or `2`, and one receiver.
 
-Attempt 1 is one candidate, followed by the parent explicitly sending `~/.agents/references/impl-rethink/impl-rethink.md` to the same child. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and returns one lean Handoff. There is no second self-rethink.
+Attempt 1 is one candidate, followed by the parent explicitly sending `~/.agents/references/impl-rethink/impl-rethink.md` to the same child. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and returns one lean Handoff. There is no second implementation self-rethink.
 
-Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same candidate → same-child rethink → optional correction → direct checks → lean Handoff sequence. After a concrete runner, transport, environment, or capture defect is corrected without changing the target, the same verifier may retry only the affected check while required behavior, check meaning, and expected result remain unchanged; this proof recovery consumes no semantic attempt and grants no mutation authority. An unchanged repeated failure stops, and changed acceptance meaning returns to authority. Code repair still requires the complete unchanged fixed set to run again.
+Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same candidate → same-child implementation rethink → optional correction → direct checks → lean Handoff sequence. A task-local execution-mechanism failure instead follows `skill://dev-implementation/references/execution-recovery.md`: the same execution owner explicitly applies the separate recovery rethink before every retry, preserves cause and allowance evidence, and gains no semantic attempt, target-mutation authority, route stage, or execution-state store.
 
 Every completed repository-work Handoff is followed by exactly one papercut look from the same child; only child unavailability permits parent fallback.
 
@@ -91,7 +96,7 @@ Standard and high operate on the completely assembled target and use exactly:
 
 Review runs once and never returns after repair. It reports `APPROVED`, `REPAIR REQUIRED`, or `INCONCLUSIVE`; required findings need direct material evidence, the smallest safe correction, and the exact acceptance-check grammar. A repair required by review goes directly to verification.
 
-The verifier returns a fresh aggregate over the complete fixed check set. After a concrete non-code proof defect is corrected without target mutation, the same verifier may retry only the affected check under unchanged acceptance meaning. If the unchanged failure repeats, stop; if acceptance meaning would change, return to authority. If attempt 2 remains and a check directly proves a code defect, one implementation child may repair it; the same verifier then reruns the complete unchanged check set. The verifier never repairs, drops checks, reopens review, or delegates its conclusion.
+The verifier returns a fresh aggregate over the complete fixed check set. Its invocation, runner, transport, environment, automation, fixture, collection, and capture failures follow the shared execution-recovery policy while the same verifier remains read-only toward the evaluated target and acceptance. A required recovery stop retains the resulting failed or inconclusive evidence. If attempt 2 remains and a check directly proves a code defect, one implementation child may repair it; the same verifier then reruns the complete unchanged check set. The verifier never repairs product or code, drops checks, reopens review, or delegates its conclusion.
 
 Within a fresh pass, approved shared scenarios may establish multiple criteria without repeating execution solely per reference. Each item keeps its exact observation and ordered accounting on the same target under compatible conditions; command spelling and another role's result prove nothing missing. Blocked later observations remain unproved, and incompatible conditions require separate execution. Required closure-check selection uses the same shared policy without reviewer execution.
 

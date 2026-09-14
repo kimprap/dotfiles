@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-11  
+**Updated:** 2026-09-14  
 **Decision IDs:** D06, D08, D09, D21, D29
 
 ## Scope
@@ -58,6 +58,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 ### D21 — Same-child rethink and test value
 
 - **Decision:** After an implementation candidate, the parent explicitly sends `.config/agents/references/impl-rethink/impl-rethink.md` to the same child. The wrapper applies code rethink, then test rethink. The child may make one correction, runs all owned direct checks and the changed path, and emits one lean Handoff. There is no second self-rethink.
+- **Decision:** That single implementation candidate rethink is separate from execution recovery. Before every eligible corrected or unchanged retry, the same execution owner explicitly applies `.config/agents/references/impl-rethink/recovery-rethink.md` once; it may correct the proposal once and is not an independent opinion, recursive rethink, second implementation rethink, or assurance stage. `dev-implementation/references/execution-recovery.md` owns the executable eligibility, recurrence, transient, evidence, and stop procedure without adding plan or scheduler state.
 - **Decision:** The code rethink preserves approved behavior and safety, traces edge, error, and state paths, reuses existing owners and local patterns, and chooses the lowest total lifecycle cost among eligible solutions. It never treats fewer files or lines as improvement when decisions or indirection increase.
 - **Decision:** `dev-implementation/references/test-value.md` owns common proof selection and remains the sole permanent-test policy. Test rethink consumes the common principles for current proposed checks without redefining approved acceptance, and applies the permanent-only requirements to retained tests. Reuse the closest existing test file, test at the lowest effective level, and keep permanent tests deterministic and isolated. If a production seam existed only for tests that the policy now rejects, remove it unless runtime behavior or architecture still justifies it.
 - **Why:** One bounded same-owner challenge catches omissions without adding another repair role or duplicating test policy.
@@ -85,6 +86,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 - Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`; `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`; and the human-approved `local://task-sizing-direct-contract.md`, confirmed 2026-09-06.
 - Confirmed `verification-proof-design/v1` and separately approved `verification-policy-implementation/v1`, 2026-09-11, extend proof selection at existing authoring and rethink seams without altering plan lifecycle, storage, transport, or task sizing.
+- Confirmed `execution-recovery-policy/v1`, SHA-256 `1b46e0f4c09e800223e49f2dde437510fc7ab4ceb89c369e96ad45815c288256`, and its separately approved implementation route, 2026-09-13, distinguish same-owner pre-retry recovery rethink from the single implementation candidate rethink without changing plan lifecycle or controller ownership.
 - Earlier plan and transport records remain historical support where consistent with this clean cutover.
 - The prompt-bundle `MAINTENANCE.md` is provenance only; executable prompt files own rethink behavior.
 

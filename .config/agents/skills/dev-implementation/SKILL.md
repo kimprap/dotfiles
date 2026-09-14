@@ -52,6 +52,19 @@ Check: <command or direct static proof>; expect <exact result>
 
 Run the changed behavior, not merely a test file. Read `skill://dev-implementation/references/test-value.md` for common proof selection and its separate permanent-test requirements; use existing changed-contract tests and admit retained changes only through that policy. An executable check may not be replaced by prose, a broad passing suite, or a model score. For approved shared scenarios, preserve every item's exact expected and actual observation within the child pass; sharing never drops a check or supplies an unobserved result.
 
+## Execution recovery
+
+When any current execution owner proposes another execution after a concrete
+execution-mechanism failure, read
+`skill://dev-implementation/references/execution-recovery.md`. That reference
+alone owns eligibility, same-cause accounting, finite transient fallback, and
+stops. The same owner must form the proposal and explicitly apply
+`~/.agents/references/impl-rethink/recovery-rethink.md` once before every retry.
+Preserve its cause, allowance, effects, and observation evidence through the
+existing Handoff rather than router or scheduler state. This recovery rethink
+is separate from the one implementation code-then-test rethink and adds no
+semantic attempt or mutation authority.
+
 ## Attempt 1: implement, rethink, smoke
 
 1. Dispatch the child to implement the contract and return a candidate before final smoke or Handoff.
@@ -65,7 +78,7 @@ Attempt 1 includes implementation, the single same-child rethink, its optional c
 
 Attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Dispatch one responsible implementation child with the unchanged intent, owned acceptance, affected targets, finding evidence, and direct closure check. After its candidate, send the same rethink wrapper once; the child gets one correction pass, runs original impacted checks plus closure checks, returns one lean Handoff, and performs papercut accounting.
 
-A proof, tool, or transport correction consumes no semantic attempt unless product/code bytes change. Attempts are limited to attempt 1 and an eligible attempt 2. Stop on undeclared mutation, failed child transport, unchanged repeated failure, exhausted attempt 2, or unresolved code failure after attempt 2. Preserve accepted independent work and report the exact blocker and receiver.
+A task-local proof, tool, transport, environment, automation, fixture, collection, or capture correction follows `skill://dev-implementation/references/execution-recovery.md`. It consumes no semantic attempt only while the evaluated target, deliverable, acceptance, ownership, and authorized effects remain unchanged; role, not change size or temporary location, determines eligibility. Attempts remain limited to attempt 1 and an eligible attempt 2. Stop on undeclared mutation, failed child transport, exhausted attempt 2, unresolved code failure after attempt 2, or a recovery stop required by the shared policy. Preserve accepted independent work and report the exact blocker and receiver.
 
 ## Assurance
 

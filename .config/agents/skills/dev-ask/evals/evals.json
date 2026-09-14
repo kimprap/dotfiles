@@ -3898,6 +3898,61 @@
       ]
     },
     {
+      "id": "R-EXECUTION-RECOVERY",
+      "layer": "router",
+      "fixture_dir": "fixtures/r-execution-recovery",
+      "criterion": "Eligible execution recovery stays with the current execution owner under unchanged authority, invokes the separate recovery rethink before retry, and creates no route, semantic-attempt, or state reset.",
+      "inputs": {
+        "request": "An approved standard implementation is still with its current implementation child. A local command failed because it used the wrong working directory; this concrete cause has used zero corrected executions, the failure is retained, prior effects are known safe, and the evaluated target, acceptance, ownership, and authorized effects remain unchanged. Continue the current route without changing the deliverable."
+      },
+      "scripted_replies": [],
+      "additional_files": [],
+      "expected": {
+        "artifacts": [
+          "existing execution evidence",
+          "recovery rethink",
+          "lean Handoff"
+        ],
+        "first_owner": "implementation-child",
+        "gates": [
+          "eligible execution recovery",
+          "same-owner recovery rethink",
+          "per-cause allowance"
+        ],
+        "mode": "same owner",
+        "outcome": "current owner performs bounded execution recovery",
+        "owners": [
+          "implementation-child"
+        ],
+        "route": "unchanged approved route"
+      },
+      "required_events": [
+        "load:execution-recovery",
+        "rethink:recovery",
+        "record:cause-and-allowance",
+        "retry:same-owner"
+      ],
+      "forbidden_events": [
+        "overview",
+        "approval",
+        "new-route-stage",
+        "retry-ledger",
+        "semantic-attempt:2",
+        "target-mutation",
+        "acceptance-change",
+        "shipping"
+      ],
+      "required_capabilities": [],
+      "absent_capabilities": [],
+      "proof": "Fresh router continuation trace against the shared execution-recovery policy.",
+      "repetition_tier": "hard",
+      "rubric": [
+        "Keep the approved route and current execution owner unchanged.",
+        "Require the separate same-owner recovery rethink before retry and preserve cause and allowance in existing evidence.",
+        "Reject a new approval, route stage, ledger, semantic attempt, target change, or effect expansion."
+      ]
+    },
+    {
       "id": "B-CLEAN-CUTOVER",
       "layer": "backend",
       "fixture_dir": "fixtures/b-clean-cutover",

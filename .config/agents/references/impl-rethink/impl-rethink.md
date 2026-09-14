@@ -9,4 +9,8 @@ Continue in the same implementation child with the unchanged authority, task, se
 
 This is the only self-rethink for this candidate. Do not load a general rethink skill, request another self-rethink, broaden the task, or replace direct checks with reasoning.
 
+This implementation candidate rethink is separate from execution recovery.
+Execution retries use `~/.agents/references/impl-rethink/recovery-rethink.md`
+before every retry and do not create another implementation self-rethink.
+
 Maintenance-only provenance: [`MAINTENANCE.md`](MAINTENANCE.md). Maintainers may consult it when changing this bundle; never load it during invocation or rethink, and assign it no runtime authority.

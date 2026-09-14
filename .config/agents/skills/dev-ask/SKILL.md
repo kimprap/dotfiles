@@ -48,6 +48,14 @@ proposal only; do not dispatch or execute unless that approval becomes current.
 
 10. **Execution topology** — send executable authority to `dev-implementation`. Planless direct work keeps the lean one-owner lane. Every approved parser-valid repository plan uses child ownership for each authored work task; the implementation parent remains a mechanical controller. Ordinary planned fan-in is an authored child-owned implementation task that assembles the target before its single final review and verification; it does not add `dev-integration` or pre-fan-in lineage verification to the ordinary route.
 
+After dispatch, generic execution recovery remains inside the current execution
+owner under
+`skill://dev-implementation/references/execution-recovery.md`. `dev-ask` does
+not grant retries, apply the recovery rethink, or persist cause and allowance
+state. Eligible recovery preserves the approved route; a proposed authority,
+acceptance, ownership, target, effect, or other material change uses the
+existing return and reapproval rules.
+
 For ordinary implementation route composition, apply these mandatory router gates in order:
 
 1. Classify safety and whether current evidence already answers the request.
@@ -102,7 +110,7 @@ Choose only from:
 - **`dev-diagnosing-bugs`** for hard unexplained bugs or performance regressions with settled expected behavior. A valid fix contract continues through implementation under the stable route; a known or routine fix skips diagnosis.
 - **`dev-improve-codebase-architecture`** for explicit survey and selection only. Return the selected candidate and constraints for route recomputation; do not silently start the refactor.
 - **`dev-prototype`** only when `dev-requirements`, `dev-grilling`, or `dev-specification` needs runnable or visible fidelity. It returns disposable decision evidence to that exact owner and never folds into production.
-- **Direct implementation lane** when current authority, architecture, named acceptance, and direct checks are settled and durable plan recovery is unnecessary. Attempt 1 includes the implementation child's one code-then-test rethink and direct checks. Only a required finding from the one review or the verifier may admit attempt 2; review never reruns, and the same verifier owns eligible repair closure. A disjoint outcome-relevant blocker returns `authority-change-required`; wording-only advisory cleanup requested after terminal completion is a fresh maintenance outcome.
+- **Direct implementation lane** when current authority, architecture, named acceptance, and direct checks are settled and durable plan recovery is unnecessary. Attempt 1 includes the implementation child's one code-then-test rethink and direct checks. Eligible execution-machinery recovery stays with the same owner under `skill://dev-implementation/references/execution-recovery.md` and neither creates a route stage nor replenishes semantic attempts. Only a required finding from the one review or the verifier may admit attempt 2; review never reruns, and the same verifier owns eligible repair closure. A disjoint outcome-relevant blocker returns `authority-change-required`; wording-only advisory cleanup requested after terminal completion is a fresh maintenance outcome.
 - **Specification/ticket lane** only when its corresponding authority is missing. Start with `dev-specification` when durable technical decisions are unresolved; start with `dev-ticketing` when a complete current specification has known implementation seams but still lacks necessary task or dependency ownership. Reuse a complete specification or graph rather than regenerating it for task sizing. Faithful specifications and ticket graphs continue automatically under the current approved Route Overview unless they introduce a new human-owned decision, material trigger, or separately gated effect. Ticketing authors ordinary fan-in as a child-owned `dev-implementation` task; assembly completes before the assembled target's one final review and verification.
 - **Wayfinder lane** only when the route itself is not specifiable. A resolved map returns for route recomputation and never authorizes implementation.
 - **Validated direct-stage lane** for an explicit request to verify, integrate, review, audit permanent-test value, ship, curate, use TDD, or maintain domain authority. Validate that leaf's exact intake and human gates. Shipping always requires separate delivery authority.

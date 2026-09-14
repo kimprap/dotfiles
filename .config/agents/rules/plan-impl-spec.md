@@ -129,6 +129,12 @@ Use these nonempty fields once:
 
 No recovery text authorizes another semantic attempt, scope change, destructive effect, or shipping action.
 
+When execution recovery is relevant, point to
+`skill://dev-implementation/references/execution-recovery.md` rather than
+copying its eligibility, recurrence, or transient algorithm into the plan.
+Preserve concrete cause and used allowance through existing execution evidence
+and Handoffs. The plan's recovery field creates no retry state or reset.
+
 ## Completion Summary
 
 Add this final section only after all tasks and acceptance items are checked, task completion records exist, assurance is settled, `Completed At` exists, and status is `DONE`. Record the delivered outcome, material changes, exact check results, residual risks, and next destination. Keep the completed plan at its active path.

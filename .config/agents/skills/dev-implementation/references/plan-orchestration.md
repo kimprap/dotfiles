@@ -17,6 +17,14 @@ Use this procedure only for an approved lean implementation plan. It adds no pla
 - A child receives only approved intent and acceptance IDs, exact owned paths/surfaces, dependency Handoffs, applicable project instructions, semantic attempt number, and one receiver.
 - Undeclared path or effect mutation stops that task. Preserve completed independent work; do not reinterpret the plan to absorb drift.
 
+If an invocation, runner, transport, environment, automation, fixture,
+collection, capture, or task-local helper fails anywhere in planned execution,
+the same execution owner follows
+`skill://dev-implementation/references/execution-recovery.md` before any retry,
+including the explicit recovery rethink it requires. Preserve the cause and
+used allowance in existing evidence and the lean Handoff; do not add plan or
+scheduler state.
+
 ## Close a work attempt
 
 1. The child implements its task and reports a candidate before final smoke or Handoff.
@@ -25,7 +33,7 @@ Use this procedure only for an approved lean implementation plan. It adds no pla
 4. The parent mechanically accepts only declared targets/effects, complete owned check records, exact task/attempt identity, and the authored receiver. It does not redo the child's semantic judgment.
 5. Mark the task complete, add `  completed YYYY-MM-DD-HHMM` immediately after its checked task line, and check each criterion only after its exact check reports the expected result.
 
-Attempt 1 is implementation plus the same-child rethink, optional correction, and smoke. Do not self-rethink twice. A proof, tool, or transport correction that changes no product/code bytes consumes no semantic attempt. The only attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Its responsible child follows the same candidate → parent rethink → one correction → smoke → Handoff sequence. Attempts are limited to attempt 1 and an eligible attempt 2. An unchanged repeated failure, a failed attempt-2 code result, or a blocker with no authorized correction stops descendants and remains visible.
+Attempt 1 is implementation plus the same-child rethink, optional correction, and smoke. Do not self-rethink twice. Execution recovery is separately governed by `skill://dev-implementation/references/execution-recovery.md`; it consumes no semantic attempt only while the evaluated target and deliverable remain unchanged, and it never resets the two-attempt bound. The only attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Its responsible child follows the same candidate → parent rethink → one correction → smoke → Handoff sequence. Attempts are limited to attempt 1 and an eligible attempt 2. An unresolved semantic failure, a failed attempt-2 code result, or a blocker with no authorized recovery stops descendants and remains visible.
 
 ## Assurance and finish
 
