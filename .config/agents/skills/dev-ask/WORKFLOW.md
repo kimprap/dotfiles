@@ -10,6 +10,18 @@ Generic invocation and proof recovery stay with the current execution owner
 under `dev-implementation/references/execution-recovery.md`; it is separate from
 the single implementation candidate rethink and from semantic repair.
 
+Specification, planless direct-contract, ticket-graph, and standalone-plan
+authors resolve applicable current sources before drafting and apply the shared
+planning rethink once after a substantive candidate and before final submission
+or execution readiness. Inline authors explicitly load it as a separate step;
+for delegated authoring, the caller sends one explicit follow-up to that same
+author. At most one author-owned correction follows. Newly selected graph
+ownership or dependencies are substantive even when acceptance is projected
+unchanged; exact projections, storage copies, lifecycle-only updates, and
+unchanged approved contracts do not trigger another pass. This planning pass is
+separate from implementation and recovery rethink and adds no owner, stage,
+state, or approval gate.
+
 Common routes are:
 
 - sufficient current evidence → direct answer;
@@ -42,7 +54,7 @@ metadata and does not determine assurance.
 | Concern | Canonical decision |
 |---|---|
 | Routing, approval, semantic ownership, clean cutover, planless direct work, presentation, and shipping separation | ADR-0001: D01, D02, D05, D10–D20, D26 |
-| Lean plans, child scheduling, lifecycle, active-path persistence, and same-child rethink | ADR-0002: D06, D08, D09, D21, D29 |
+| Lean plans, planning-authoring rethink, child scheduling, lifecycle, active-path persistence, and same-child implementation rethink | ADR-0002: D06, D08, D09, D21, D29, D30 |
 | New task sizing and approved-graph projection | ADR-0001: D11; ADR-0002: D08, D09 |
 | Two attempts, one-shot review, verifier closure, and permanent-test value | ADR-0003: D03, D04, D22, D28 |
 | Same-owner execution recovery, recurrence, and transient fallback | ADR-0003: D03, D04; ADR-0002: D21 |

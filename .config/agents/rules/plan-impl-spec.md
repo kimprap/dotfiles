@@ -4,17 +4,22 @@ description: Use before authoring or revising lean implementation plans, includi
 
 # Lean implementation plan
 
-Apply with `plan.md` before the first implementation-plan draft or revision,
-including a harness-local draft intended for repository copying. A specification
-or ordinary design note is not itself an execution plan.
+Apply with `plan.md` before the first substantive implementation-plan draft or
+revision, including a harness-local draft intended for repository copying.
+Before drafting, resolve the current authority, bound specification and
+applicable canonical project contracts; read the task-sizing source for new
+boundaries and the proof-selection source for checks this author may select.
+Reuse current material already loaded and retrieve missing or stale sources.
+Load repository storage and the actual harness companion only when publishing.
+A specification or ordinary design note is not itself an execution plan.
 
 ## Authoring and linked specifications
 
-- Before selecting checks for self-contained acceptance, read
-  `skill://dev-implementation/references/test-value.md` and apply its common
-  proof-selection principles. Keep material rationale in existing surrounding
-  prose, not new fields or sections. Linked acceptance remains an exact
-  projection, not another opportunity to optimize approved checks.
+- Apply
+  `skill://dev-implementation/references/test-value.md` before selecting checks
+  for self-contained acceptance. Keep material rationale in existing
+  surrounding prose, not new fields or sections. Linked acceptance remains an
+  exact projection, not another opportunity to optimize approved checks.
 - Keep a self-contained lean plan when it expresses the work clearly. If required
   technical detail, procedures, or fixtures need more space or structure, reuse a
   suitable repository specification; create one only when that gap remains. Do
@@ -39,6 +44,10 @@ or ordinary design note is not itself an execution plan.
 - Use `plan-repo-storage.md` and the applicable harness companion for publication
   and active-path authority. Local drafts are copies, not alternate execution
   sources. This guidance adds no parser fields, workflow stage, or runtime state.
+- `plan.md` owns the single post-candidate planning rethink and its inline or
+  delegated same-author timing. Apply it once before final approval or execution
+  readiness; do not repeat it for publication, exact projection, or lifecycle
+  operations.
 
 ## Header and sections
 

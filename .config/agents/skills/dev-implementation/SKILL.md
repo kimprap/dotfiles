@@ -11,14 +11,19 @@ Control one approved engineering outcome. Every code-changing task belongs to a 
 
 Require settled human intent, observable acceptance, exact writable targets and allowed effects, applicable project instructions, one receiver, and an approved assurance level: `compact`, `standard`, or `high`. Keep shipping, credentials, destructive/external effects, and unrelated work outside the contract unless separately authorized.
 
-At intake, read
-`skill://dev-ticketing/references/task-sizing.md`. Apply it to a planless direct
-contract without treating sizing as assurance. Project an already-approved
-task graph exactly: a later estimate alone never authorizes the parent to
-split, merge, or otherwise repartition it; material changes follow the existing
-authority and reapproval rules.
+At intake, read `skill://dev-ticketing/references/task-sizing.md`. When
+authoring or substantively revising a planless direct contract, resolve the
+current human authority, any bound specification, and applicable canonical
+project contracts before drafting, and read
+`skill://dev-implementation/references/test-value.md` before selecting concrete
+checks. Reuse current sources already loaded and retrieve missing or stale
+sources. Keep material sizing and proof rationale in the contract's existing
+prose without treating sizing as assurance.
 
-Before authoring or revising concrete checks for a planless direct contract, read `skill://dev-implementation/references/test-value.md` and apply its common proof-selection principles. Keep material rationale in the contract's existing prose. Already-approved checks remain binding; changed behavior or check meaning returns to its authority owner before dispatch.
+Project an already-approved task graph and its checks exactly: a later estimate
+alone never authorizes the parent to split, merge, or otherwise repartition it,
+and changed behavior or check meaning returns to its authority owner before
+dispatch.
 
 Use a planless direct contract when one child can own the cohesive result. Require a repository plan only for multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery. A plan must validate with:
 
@@ -27,6 +32,17 @@ python3 skill://dev-implementation/scripts/executor_plan.py validate PLAN
 ```
 
 Read `skill://dev-implementation/references/plan-orchestration.md` for every planned route. Read `skill://dev-implementation/references/compact-checklist.md` before compact dispatch. Native child transport must preserve ownership and same-child follow-up; if it cannot, stop `transport-unavailable` and do not let the parent implement.
+
+## Planless contract authoring
+
+After producing a substantive planless direct-contract candidate, explicitly
+read `~/.agents/references/plan-rethink.md` as a separate inline step and apply
+it once before child dispatch. Make at most one bounded correction to
+direct-contract decisions this role owns; otherwise preserve the candidate.
+This is a pre-readiness planning-author pass, not the implementation
+code-then-test rethink, and it never manufactures a repository plan. An exact
+unchanged projection of an already approved direct contract or task graph does
+not trigger another planning pass.
 
 ## Child contract
 

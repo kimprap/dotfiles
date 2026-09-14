@@ -1139,6 +1139,7 @@
       "rubric": [
         "Derive the exact ordinary lifecycle route dev-specification → dev-ticketing → dev-implementation → dev-code-review → dev-verification → dev-continual-learning → completion-presentation.",
         "Require the planned fan-in to be an authored child-owned dev-implementation task completed before the assembled target's single final review and verification; reject pre-fan-in lineage verification, ordinary dev-integration, or review after verification.",
+        "Treat each substantive specification, new ownership/dependency graph, and standalone-plan candidate as followed by one explicit installed planning-rethink return to the same delegated author before its final Handoff or readiness; keep that return inside the existing owners with no added route row or approval gate.",
         "Distinguish immediate dispatch from prospective downstream or return owners. A stop or terminal answer has no dispatched first owner.",
         "Require route approval or reapproval only for executable or routed work and named material semantic triggers; allow targeted confirmation only for newly synthesized human-owned decisions or separately gated effects; never gate on derivative artifact count, unchanged stage returns, unrelated byte drift, or terminal presentation.",
         "Events must contain only immediate observable classification, approval when required, identity-check, stop, answer, or first-dispatch effects in causal order; downstream work must remain unexecuted.",
@@ -1193,6 +1194,7 @@
         "Derive exactly the compact route dev-implementation → completion-presentation and dispatch only dev-implementation after approval.",
         "Keep the cohesive small change in one direct task; reject specification, ticketing, a repository plan, padding, and sizing metadata.",
         "Require a brief task-boundary rationale in the Route Overview's existing Plan prose without adding a sizing field.",
+        "Do not invoke planning rethink during this route-only presentation or manufacture a plan; a substantive direct-contract candidate is authored and challenged later inside dev-implementation, while an unchanged approved contract receives no extra pass.",
         "Reject mutation, persistence, shipping, authority invention, or downstream execution before approval."
       ],
       "scripted_replies": [

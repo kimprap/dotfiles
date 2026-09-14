@@ -196,6 +196,18 @@ Immediately before dispatch, reread every load-bearing artifact and capability n
 
 After valid approval, dispatch exactly one first owner. Never dispatch a batch of prospective stage owners from the router.
 
+After a delegated `dev-specification`, `dev-ticketing`, or standalone
+execution-plan author returns its first substantive candidate, send
+`~/.agents/references/plan-rethink.md` once as an explicit follow-up to that
+same author before accepting the final Handoff or execution-ready plan. The
+author may make at most one bounded correction and returns the revised or
+preserved candidate through its existing procedure. A graph that newly selects
+ownership or dependencies is substantive even when acceptance is projected
+unchanged. Do not send this follow-up for an exact unchanged projection,
+storage copy, lifecycle-only update, or unchanged approved contract. This
+follow-up adds no route owner, stage, approval gate, or caller authority; if the
+same author cannot receive it, stop rather than substitute another author.
+
 `dev-implementation` is the common execution controller for approved code-changing work. It binds the direct contract or lean repository plan, dispatches each code-changing task to its child, sends the one same-child rethink after each candidate, accepts lean Handoffs with direct-check observations, and schedules assurance. The parent never implements or semantically repairs. Attempt 1 performs the work and rethink; one required reviewer or verifier finding may admit attempt 2. Review runs once before verification and never reruns. When verifier repair is eligible, the same verifier closes the complete unchanged check set. Disjoint outcome-relevant blockers return `authority-change-required`, authority conflicts return to their owner, and later advisory cleanup requires fresh maintenance authority.
 
 The approved Route Overview delegates downstream derivation while preserving human authority:

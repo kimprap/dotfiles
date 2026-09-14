@@ -65,9 +65,23 @@ choosing direct or planned entry. Record only a brief rationale in existing
 prose. The sizing heuristic neither adds a stage nor changes assurance, and an
 approved graph is projected without automatic repartitioning.
 
-Before checks bind, specification, self-contained plan, and direct-contract authors
-use the shared `dev-implementation/references/test-value.md` policy. Projection
-preserves exact acceptance; later meaning changes return to authority.
+Before drafting, specification, planless direct-contract, ticket-graph, and
+standalone-plan authors resolve the applicable current authority and shared
+sizing, proof, plan, and canonical sources for decisions they own. Storage and
+the actual harness companion are resolved only when publishing. After a
+substantive candidate, the same author applies the shared planning
+rethink once before final submission or execution readiness and may make at
+most one bounded correction. A delegated caller sends it as an explicit
+follow-up to that same author; an inline author loads it as a separate step. A
+new ownership/dependency graph is substantive even with exact projected
+acceptance. Exact projections, storage copies, lifecycle-only updates, and
+unchanged approved contracts bypass this authoring pass. This adds no route
+owner, stage, state, or approval gate.
+
+Before checks bind, specification, self-contained plan, and direct-contract
+authors use the shared `dev-implementation/references/test-value.md` policy.
+Projection preserves exact acceptance; later meaning changes return to
+authority.
 
 | From | Condition | Next |
 |---|---|---|

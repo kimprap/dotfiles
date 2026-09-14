@@ -7,12 +7,29 @@ paths: ["**"]
 
 Use this rule only for a durable future-execution engineering plan. A cohesive result owned by one implementation child remains a planless direct contract unless the user explicitly asks for a plan. A repository plan is required for multiple owners/dependencies, fan-in, ordered effects or migration, or likely cross-context recovery.
 
-When authoring new task boundaries, read
-`skill://dev-ticketing/references/task-sizing.md` and record any material
+Before drafting or substantively revising a plan, resolve the current approved
+authority and any bound specification or applicable canonical project contract.
+Read `skill://dev-ticketing/references/task-sizing.md` for new task boundaries
+and `rule://plan-impl-spec` for the implementation body. Reuse current material
+already loaded, retrieve missing or stale sources, and record any material
 boundary rationale in existing plan prose. Add no sizing field or validator
 rule. Once a graph is approved, later estimates alone do not repartition it.
 
 This base owns identity and lifecycle. Implementation body grammar belongs to `plan-impl-spec`; repository location and harness transport belong to their companion rules.
+
+After a substantive candidate exists, apply
+`~/.agents/references/plan-rethink.md` once before final submission for approval
+or execution readiness. An inline author explicitly reads it as a separate
+post-candidate step. A delegated author first returns the candidate, then
+applies the caller's explicit follow-up in that same author. Make at most one
+bounded correction to decisions the author owns. A newly authored graph is
+substantive even when acceptance is an exact projection; an unchanged approved
+contract, exact projection or storage copy, and checkbox or lifecycle-only
+update do not trigger another pass.
+
+Automatic draft persistence may occur before this pass. The pass gates final
+submission or readiness, not initial storage, and changes no publication or
+approval mechanics.
 
 ## Identity and header
 

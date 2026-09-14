@@ -13,11 +13,14 @@ Require the current specification revision, stable `AC-*` items with exact direc
 
 Use this skill only when work genuinely needs multiple owners, dependencies, fan-in, ordered effects/migration, or durable cross-context recovery. If one child can own the cohesive result, return that direct-contract recommendation instead of manufacturing tickets.
 
-Before deriving a new graph, read
-`skill://dev-ticketing/references/task-sizing.md`. This reference is the single
-owner of the sizing heuristic. Apply it to each proposed task and explain any
-material boundary choice in existing surrounding plan prose; never add sizing
-fields or manufacture a graph for one cohesive direct task.
+Before drafting a new graph, resolve the current bound specification and read
+`skill://dev-ticketing/references/task-sizing.md`, the single owner of the
+sizing heuristic. If the graph is authored as an execution plan, also read
+`rule://plan` and `rule://plan-impl-spec`; load storage and the actual harness
+companion only when publishing. Reuse current sources already loaded and
+retrieve missing or stale sources. Apply sizing to each proposed task and
+explain any material boundary choice in existing surrounding plan prose; never
+add sizing fields or manufacture a graph for one cohesive direct task.
 
 ## Derive the graph
 
@@ -34,6 +37,16 @@ fields or manufacture a graph for one cohesive direct task.
 
    Preserve the direct check unchanged, including any authored shared scenario and each criterion's exact expected observation; shared execution is not merged acceptance or ownership. Do not substitute indirect or model-scored evidence or optimize checks during projection. A changed check meaning returns to the specification owner.
 6. State permitted effects and recovery/stop conditions where they constrain an owner. Preserve project instructions and explicit TDD authority, but do not create method, review, verification, learning, audit, shipping, or presentation tickets; runtime schedules those boundaries.
+7. After producing a substantive graph candidate, including a graph that newly
+   selects ownership or dependencies while projecting acceptance unchanged,
+   apply `~/.agents/references/plan-rethink.md` once before final submission for
+   approval, execution readiness, or Handoff. An inline author explicitly reads
+   it as a separate post-candidate step. A delegated author first returns the
+   candidate, then applies the caller's explicit follow-up in that same author.
+   Make at most one bounded
+   correction to graph decisions this role owns; return out-of-authority
+   changes to their owner. An exact unchanged projection of an already approved
+   graph does not trigger another pass.
 
 ## Ticket shape
 

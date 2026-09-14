@@ -14,6 +14,29 @@
         "Additional expensive scenarios explain their otherwise-unproved behavior and cheaper-proof insufficiency without a numeric cap",
         "Independent complete verification and acceptance authority remain unchanged, with no invented execution"
       ]
+    },
+    {
+      "id": "DS-PLAN-RETHINK-SAME-AUTHOR",
+      "prompt": "Author a technical specification from settled requirements for a repository-only migration. The candidate must choose implementation boundaries and concrete proof, and an applicable canonical contract is current. Work inline in one author: resolve the current requirements, canonical contract, task-sizing guidance, and proof-selection guidance before drafting; then, only after a substantive candidate exists, apply the installed planning rethink once before the final Handoff. Preserve product behavior and assurance, make at most one correction to technical decisions owned by specification, and execute no fictional application checks.",
+      "expected_output": "A revision-bound specification whose trace distinguishes current-source resolution, initial candidate, one same-author post-candidate planning rethink, any single bounded correction, and final Handoff. Product behavior, effects, assurance, and downstream ticket ownership remain outside the specification author's correction authority. No new stage, ledger, plan field, or invented runtime evidence appears.",
+      "files": [],
+      "assertions": [
+        "Applicable current authority, canonical, sizing, and proof sources are resolved before the initial candidate rather than reconstructed from memory",
+        "The same specification author performs one explicit planning rethink only after a substantive candidate and before the final Handoff",
+        "Any correction is bounded to specification-owned technical decisions and preserves confirmed behavior, effects, and assurance",
+        "The result adds no planning stage or state and claims no fictional execution"
+      ]
+    },
+    {
+      "id": "DS-PLAN-RETHINK-MECHANICAL-NEAR-MISS",
+      "prompt": "The current approved technical specification is supplied byte-for-byte and needs only an unchanged forwarding Handoff to its existing next owner. Make no technical, boundary, proof, authority, or effect decision. Preserve the artifact exactly; do not perform a new planning rethink merely because it is being forwarded.",
+      "expected_output": "The unchanged approved specification is forwarded through the existing Handoff procedure without a planning-rethink pass, correction, new approval, or rewritten acceptance.",
+      "files": [],
+      "assertions": [
+        "An exact unchanged approved specification projection does not trigger planning rethink",
+        "The existing authority, acceptance, route, and Handoff destination remain unchanged",
+        "No new stage, approval gate, or author-owned decision is invented"
+      ]
     }
   ]
 }
