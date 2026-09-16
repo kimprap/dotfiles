@@ -5,7 +5,7 @@ description: Transfer one bounded task result across a real ownership or context
 
 # Dev Handoff
 
-Use one lean Handoff when task ownership or context changes, a completed implementation attempt returns to its controller, or blocked recovery must survive a boundary. Do not emit one for an intermediate candidate, ambient status, a parent handing work to itself, or terminal presentation.
+Use one lean Handoff when task ownership or context changes, a completed implementation attempt returns to its concrete bound controller, an explicitly delegated controller returns to its concrete route owner, or blocked recovery must survive a boundary. Do not emit one for an intermediate candidate, ambient status, an in-place role change, a controller handing work to itself, or terminal presentation.
 
 ## Required envelope
 
@@ -49,4 +49,4 @@ identity and temporary success do not imply a reset. Add no recovery field or le
 
 `Blocker/risk` separates completion-blocking facts from residual risk. A blocked Handoff names the current failure, affected acceptance, completed work worth preserving, and the condition under which the receiver may proceed. It grants no new attempt, scope, or effect.
 
-`Next receiver` contains one concrete owner. Parallel results each carry their own receiver; the controller orders them without merging envelopes. A Handoff does not approve shipping, decide semantic sufficiency for an independent role, or authorize work beyond its source contract.
+`Next receiver` contains one concrete bound actor, not merely a skill name or generic `dev-ask`. A semantic next-owner field may remain `dev-implementation` or `dev-ask`, but the Handoff receiver names the actor already bound to perform that role. Parallel results each carry their own receiver; the controller orders them without merging envelopes. Required identities are reused or resumed, never replaced under the same role name. A Handoff does not approve shipping, decide semantic sufficiency for an independent role, or authorize work beyond its source contract.

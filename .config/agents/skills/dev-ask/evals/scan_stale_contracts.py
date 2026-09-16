@@ -56,6 +56,7 @@ ACTIVE_PATHS = (
     ".config/agents/skills/continual-learning/WORKFLOW.md",
     ".config/agents/skills/continual-learning/evals/evals.json",
     ".config/agents/skills/completion-presentation/SKILL.md",
+    ".config/agents/references/completion-presentation-input.md",
     ".config/agents/skills/completion-presentation/evals/evals.json",
     ".config/agents/skills/product-ask/SKILL.md",
     ".config/agents/skills/product-ask/WORKFLOW.md",
@@ -178,7 +179,9 @@ REQUIRED_PROJECTIONS = (
     Requirement(
         "same-child-rethink",
         ".config/agents/skills/dev-implementation/SKILL.md",
-        ("send ~/.agents/references/impl rethink/impl rethink.md explicitly to that same child",),
+        (
+            "send ~/.agents/references/impl rethink/impl rethink.md explicitly to that same child",
+        ),
     ),
     Requirement(
         "code-then-test-rethink",
@@ -188,7 +191,9 @@ REQUIRED_PROJECTIONS = (
     Requirement(
         "standard-owner-order",
         ".config/agents/skills/dev-ask/SKILL.md",
-        ("dev implementation then dev code review then dev verification then dev continual learning then completion presentation",),
+        (
+            "dev implementation then dev code review then dev verification then dev continual learning then completion presentation",
+        ),
     ),
     Requirement(
         "review-before-verification",
@@ -228,11 +233,21 @@ REQUIRED_PROJECTIONS = (
     Requirement(
         "learning-blocker-threshold",
         ".config/agents/skills/dev-continual-learning/SKILL.md",
-        ("stop completion only when the assessment establishes a current governing rule conflict",),
+        (
+            "stop completion only when the assessment establishes a current governing rule conflict",
+        ),
     ),
     Requirement(
         "five-field-presenter",
         ".config/agents/skills/completion-presentation/SKILL.md",
+        (
+            "exactly these five top level keys in this order",
+            "that reference owns the schema and validation rules",
+        ),
+    ),
+    Requirement(
+        "five-field-input-contract",
+        ".config/agents/references/completion-presentation-input.md",
         ("exactly these five top level keys in this order",),
     ),
     Requirement(
@@ -246,6 +261,9 @@ REQUIRED_PROJECTIONS = (
         (
             "exactly these five top level keys in this order",
             "with these five top level keys in this exact order",
+            "read the canonical completion input contract",
+            "the canonical completion input contract",
+            "follow its schema and validation rules",
         ),
     ),
     Requirement(
@@ -389,7 +407,9 @@ def required_missing(texts: dict[str, str]) -> list[str]:
             missing.append(f"{requirement.name}: missing path {requirement.path}")
             continue
         normalized = normalize(text)
-        if not any(normalize(needle) in normalized for needle in requirement.alternatives):
+        if not any(
+            normalize(needle) in normalized for needle in requirement.alternatives
+        ):
             missing.append(f"{requirement.name}: {requirement.path}")
     return missing
 
@@ -473,9 +493,7 @@ def run_selftest() -> dict[str, object]:
         "resume from": "### Resume from",
     }
     for needle, sample in retired_field_cases.items():
-        if not any(
-            hit["needle"] == needle for hit in scan_text("active.md", sample)
-        ):
+        if not any(hit["needle"] == needle for hit in scan_text("active.md", sample)):
             failures.append(f"retired field was not detected: {needle}")
     exclusion_samples = {
         ".config/agents/skills/reconcile/SKILL.md": "custom-controller",
@@ -501,10 +519,53 @@ def run_selftest() -> dict[str, object]:
         "Construct exactly one current fenced completion-presentation-input JSON "
         "object with these five top-level keys in this exact order."
     )
-    if any(
-        item.startswith(product.name) for item in required_missing(product_texts)
-    ):
+    if any(item.startswith(product.name) for item in required_missing(product_texts)):
         failures.append("current product five-field projection was not accepted")
+    product_texts[product.path] = (
+        "After validation, read the canonical completion input contract before "
+        "constructing exactly one current completion-presentation-input fence."
+    )
+    if any(item.startswith(product.name) for item in required_missing(product_texts)):
+        failures.append(
+            "current product canonical-contract delegation was not accepted"
+        )
+    product_texts[product.path] = (
+        "read [the canonical completion input contract]("
+        "../../references/completion-presentation-input.md) before constructing "
+        "exactly one current completion-presentation-input fence. "
+        "Follow its schema and validation rules."
+    )
+    if any(item.startswith(product.name) for item in required_missing(product_texts)):
+        failures.append(
+            "markdown-linked product canonical-contract delegation was not accepted"
+        )
+    presenter = next(
+        requirement
+        for requirement in REQUIRED_PROJECTIONS
+        if requirement.name == "five-field-presenter"
+    )
+    presenter_texts = synthetic_required_texts()
+    presenter_texts[presenter.path] = (
+        "Read the canonical input contract and validate the current fence against it. "
+        "That reference owns the schema and validation rules; callers read it before construction."
+    )
+    if any(
+        item.startswith(presenter.name) for item in required_missing(presenter_texts)
+    ):
+        failures.append(
+            "current presenter canonical-contract delegation was not accepted"
+        )
+    contract = next(
+        requirement
+        for requirement in REQUIRED_PROJECTIONS
+        if requirement.name == "five-field-input-contract"
+    )
+    contract_texts = synthetic_required_texts()
+    contract_texts[contract.path] = "The presenter renders five H2 sections."
+    if not any(
+        item.startswith(contract.name) for item in required_missing(contract_texts)
+    ):
+        failures.append("missing five-field input contract was not detected")
     first = REQUIRED_PROJECTIONS[0]
     texts[first.path] = texts[first.path].replace(first.alternatives[0], "", 1)
     if not any(item.startswith(first.name) for item in required_missing(texts)):

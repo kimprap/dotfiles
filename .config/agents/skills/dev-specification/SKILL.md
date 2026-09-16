@@ -64,4 +64,4 @@ Link governing authority rather than duplicating it. Name exact paths/surfaces w
 
 ## Completion
 
-A complete specification accounts for every requirement and effect, leaves no unresolved implementation placeholder, and gives each acceptance item one executable or direct static check with an exact expected result. Return one lean `dev-handoff` to `dev-ticketing` or the approved direct implementation owner. Add `Route impact` only because this role owns that lifecycle decision.
+A complete specification accounts for every requirement and effect, leaves no unresolved implementation placeholder, and gives each acceptance item one executable or direct static check with an exact expected result. Return one lean `dev-handoff` to the concrete bound route owner with next-owner role `dev-ticketing` or `dev-implementation` for the approved direct lane. Reaching `dev-implementation` activates that bound owner's controller role in place unless the approved topology already names a separate controller. Add `Route impact` only because this role owns that lifecycle decision.

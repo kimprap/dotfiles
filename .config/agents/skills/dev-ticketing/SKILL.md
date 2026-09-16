@@ -65,4 +65,4 @@ List each owned acceptance item under the ticket with its exact Behavior and Che
 
 Before publication, confirm unique task and acceptance IDs, one owner per target and criterion, no dangling or cyclic dependency, no empty ticket, and a receiver for every edge and terminal result. Preserve specification wording; a changed interface, material ownership/topology change, destructive/external effect, or new acceptance requires a revised authority/specification rather than a ticketing guess.
 
-Return one lean `dev-handoff` to the implementation controller with the graph, direct-contract alternative if applicable, exact local delta, blockers/risks, and one receiver. Add `Route impact` because ticket topology is lifecycle-owned here.
+Return one lean `dev-handoff` with the graph, direct-contract alternative if applicable, exact local delta, blockers/risks, next-owner role `dev-implementation`, and the concrete bound controller receiver. The route-owning agent activates that controller role in place unless the approved topology already names a separate controller. Add `Route impact` because ticket topology is lifecycle-owned here.

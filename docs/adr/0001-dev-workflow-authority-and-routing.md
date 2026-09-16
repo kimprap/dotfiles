@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-06  
+**Updated:** 2026-09-16  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -42,13 +42,13 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ### D10 — Sole thin, stateless router
 
-- **Decision:** `dev-ask` is the sole generic engineering router. It classifies, presents one route approval, dispatches only the first owner, handles material reapproval, validates terminal success, constructs the five-field completion fence, and applies the presenter in the same agent.
-- **Decision:** It owns no execution state, implementation, semantic repair, audit opinion, learning policy, rendering policy, or workflow ledger.
+- **Decision:** `dev-ask` is the sole generic engineering router. While acting in that role, the route-owning agent classifies, presents one route approval, starts only the first owner, handles material reapproval, validates terminal success, constructs the five-field completion fence, and applies the presenter in the same agent. Delegated first owners are dispatched; when implementation is reached, the route-owning agent activates `dev-implementation` in place by default, including after unchanged prerequisite continuation. Standalone implementation likewise uses the invoking agent as controller.
+- **Decision:** The router role owns no execution state, implementation, semantic repair, audit opinion, learning policy, rendering policy, or workflow ledger. In-place controller activation is a role change under approved authority, not router-owned stage work, and creates no self-Handoff. A separate implementation controller is valid only when the current approved topology explicitly binds it.
 - **Decision:** `dev-test-audit` is a separate explicit read-only route. Before its initial Route Overview approval, show the exact scope and ordered list of every in-scope test file and launch no auditor. Normal completion never schedules it. Accepted audit fixes return for one fresh direct or planned mutation approval.
-- **Why:** One thin router prevents competing lifecycle authority while keeping specialist procedure in specialist skills.
-- **Rejected alternatives:** A second router, hidden scheduler, automatic completion-tail audit, or router-owned state store duplicates existing owners.
-- **Consequences:** A completed engineering route is terminal; later cleanup is a new maintenance outcome.
-- **Reopen when:** Router ownership, explicit audit intake, or terminal normalization ownership changes.
+- **Why:** One thin router prevents competing lifecycle authority while keeping specialist procedure in specialist skills; in-place controller activation avoids a ceremonial controller hop without moving controller procedure into the router.
+- **Rejected alternatives:** A second router, an unconditionally spawned implementation controller, hidden scheduler, automatic completion-tail audit, or router-owned state store duplicates existing owners. Letting an in-place controller spawn another controller recursively weakens approved topology and double-schedules work.
+- **Consequences:** `dev-implementation` remains the semantic route owner while the invoking route agent normally supplies its physical controller identity. Prerequisite next-owner roles remain intact: `dev-implementation` reaches the bound controller, and `dev-ask` reaches the bound router. A completed engineering route is terminal; later cleanup is a new maintenance outcome.
+- **Reopen when:** Router ownership, controller-entry topology, explicit audit intake, or terminal normalization ownership changes.
 
 ### D11 — Independent workflow dimensions
 

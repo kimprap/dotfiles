@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-14  
+**Updated:** 2026-09-16  
 **Decision IDs:** D06, D08, D09, D21, D29, D30
 
 ## Scope
@@ -17,12 +17,13 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 ### D06 — Implementation controller binding
 
-- **Decision:** One `dev-implementation` parent controls an approved outcome. It validates intake, schedules dependency-ready work, enforces exact path and effect ownership, sends the single rethink wrapper to the same child, mechanically accepts lean Handoffs, dispatches assurance and learning, and updates plan lifecycle.
-- **Decision:** Every code-changing task, repair, and authored fan-in belongs to a child. The parent never implements, semantically repairs, or chooses a winner during integration. If native child transport cannot preserve owner, dependencies, effects, attempt, and receiver, stop `transport-unavailable`.
-- **Why:** Separating control from semantic work preserves ownership and makes failure recovery explicit.
-- **Rejected alternatives:** Parent implementation, hidden rescue work, and weakened sequential substitutions collapse the controller and worker roles.
-- **Consequences:** Mechanically disjoint ready tasks may run concurrently; overlap, ordered effects, exclusive resources, and fan-in serialize.
-- **Reopen when:** Native child transport or controller ownership changes.
+- **Decision:** The invoking agent is the one `dev-implementation` controller by default. A route-owning agent activates that role in place; standalone invocation does the same. A separate controller exists only when the approved topology explicitly binds it, controls its own implementation children without recursive controller delegation or outer-agent double scheduling, and returns across the real boundary to the concrete route owner. In-place role activation creates no self-Handoff.
+- **Decision:** The controller validates intake, schedules dependency-ready work, enforces exact path and effect ownership, sends the single rethink wrapper to the same child, mechanically accepts lean Handoffs addressed to its concrete identity, dispatches independent assurance and learning, and updates plan lifecycle. For an execution-related child stop, Handoff validation confirms that the stop identifies a real shared-policy stop condition; otherwise the controller returns the specific eligibility question to the same responsible owner without redoing semantic judgment, repairing machinery, manufacturing eligibility, or repeatedly challenging a settled blocker.
+- **Decision:** Every code-changing task, repair, and authored fan-in belongs to a child. The controller never implements, semantically repairs, or chooses a winner during integration. Required controller, child, and verifier identities are reused or resumed rather than replaced. Missing native capability to preserve owner, dependencies, effects, attempt, receiver, or required follow-up is `transport-unavailable`; a concrete failed invocation is assessed under execution recovery before escalation.
+- **Why:** Separating control from semantic work preserves ownership and makes failure recovery explicit, while in-place activation avoids a weightless controller layer.
+- **Rejected alternatives:** Controller self-Handoffs, unconditional or recursive controller spawning, outer-agent double scheduling, parent implementation, hidden rescue work, and weakened sequential substitutions collapse or duplicate controller and worker roles.
+- **Consequences:** Mechanically disjoint ready tasks may run concurrently; overlap, ordered effects, exclusive resources, and fan-in serialize. `PENDING` becomes `IN_PROGRESS` immediately before the first implementation-child dispatch, not merely when the controller role activates.
+- **Reopen when:** Native child transport, controller entry or identity, or controller ownership changes.
 
 ### D08 — Lean plan shape
 
@@ -58,13 +59,13 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 ### D21 — Same-child rethink and test value
 
 - **Decision:** After an implementation candidate, the parent explicitly sends `.config/agents/references/impl-rethink/impl-rethink.md` to the same child. The wrapper applies code rethink, then test rethink. The child may make one correction, runs all owned direct checks and the changed path, and emits one lean Handoff. There is no second self-rethink.
-- **Decision:** That single implementation candidate rethink is separate from execution recovery. Before every eligible corrected or unchanged retry, the same execution owner explicitly applies `.config/agents/references/impl-rethink/recovery-rethink.md` once; it may correct the proposal once and is not an independent opinion, recursive rethink, second implementation rethink, or assurance stage. `dev-implementation/references/execution-recovery.md` owns the executable eligibility, recurrence, transient, evidence, and stop procedure without adding plan or scheduler state.
+- **Decision:** That single implementation candidate rethink is separate from execution recovery. A concrete execution-mechanism failure is assessed by the current owner before it is escalated; only an eligible corrected or unchanged retry triggers that same owner to apply `.config/agents/references/impl-rethink/recovery-rethink.md` once before execution. The recovery rethink may correct the proposal once and is not an independent opinion, recursive rethink, second implementation rethink, or assurance stage. `dev-implementation/references/execution-recovery.md` alone owns executable eligibility, recurrence, transient fallback, evidence, required-versus-disposable resource handling, explicit caps, continuation, and stops without adding plan or scheduler state.
 - **Decision:** The code rethink preserves approved behavior and safety, traces edge, error, and state paths, reuses existing owners and local patterns, and chooses the lowest total lifecycle cost among eligible solutions. It never treats fewer files or lines as improvement when decisions or indirection increase.
 - **Decision:** `dev-implementation/references/test-value.md` owns common proof selection and remains the sole permanent-test policy. Test rethink consumes the common principles for current proposed checks without redefining approved acceptance, and applies the permanent-only requirements to retained tests. Reuse the closest existing test file, test at the lowest effective level, and keep permanent tests deterministic and isolated. If a production seam existed only for tests that the policy now rejects, remove it unless runtime behavior or architecture still justifies it.
 - **Why:** One bounded same-owner challenge catches omissions without adding another repair role or duplicating test policy.
 - **Rejected alternatives:** Repeated self-review, separate closure rounds, copied test policy, source-restating tests, and an ablation ceremony create more process without stronger behavioral evidence.
-- **Consequences:** Attempt 1 includes candidate, rethink, optional correction, direct checks, and Handoff. Assurance and audit roles never perform this rethink.
-- **Reopen when:** Rethink ownership, order, correction bound, or permanent-test policy ownership changes.
+- **Consequences:** Attempt 1 includes candidate, rethink, optional correction, direct checks, and Handoff. Assurance and audit roles never perform this rethink. A premature execution-related blocked return does not end the approved outcome when the shared policy still permits same-owner recovery; exhausted semantic repair still prohibits another deliverable change.
+- **Reopen when:** Rethink ownership, order, correction bound, execution-recovery activation, controller Handoff validation, or permanent-test policy ownership changes.
 
 ### D29 — Active plan lifecycle and persistence
 

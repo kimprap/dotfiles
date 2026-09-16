@@ -4,11 +4,17 @@
 
 This is the concise, non-runtime map of the current generic engineering flow. Executable skills and rules remain authoritative; on disagreement, stop and repair this projection rather than treating it as an alternate workflow.
 
-A request takes the smallest route that can settle its outcome. Cohesive one-owner work uses a planless direct contract. Multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery require a lean repository plan. Every code-changing task belongs to a child; the implementation parent validates, schedules, enforces ownership, requests the one same-child rethink, aggregates lean Handoffs, and controls assurance and plan lifecycle without implementing or semantically repairing. Ordinary planned fan-in is itself an authored child-owned implementation task and finishes before the assembled target's one final review and verification.
+A request takes the smallest route that can settle its outcome. Cohesive one-owner work uses a planless direct contract. Multiple owners or dependencies, fan-in, ordered effects or migration, or likely cross-context recovery require a lean repository plan. When implementation is reached, the route-owning agent activates `dev-implementation` in place by default; standalone entry likewise uses the invoking agent as controller. Every code-changing task belongs to a distinct child. The controller validates, schedules, enforces ownership, requests the one same-child rethink, aggregates lean Handoffs, and controls assurance and plan lifecycle without implementing or semantically repairing. Ordinary planned fan-in is itself an authored child-owned implementation task and finishes before the assembled target's one final review and verification.
 
 Generic invocation and proof recovery stay with the current execution owner
-under `dev-implementation/references/execution-recovery.md`; it is separate from
-the single implementation candidate rethink and from semantic repair.
+under `dev-implementation/references/execution-recovery.md`. Owners assess that
+policy before escalating an execution-related blocker; recovery rethink applies
+only before an eligible retry and remains separate from the single
+implementation candidate rethink and semantic repair. Custom controllers inherit
+nothing automatically. They may adopt the same sole policy only when either the
+named invocation contract or a current named-skill contract explicitly binds it
+before the affected operation; reusable skill adoption is not retroactive and
+does not widen another custom controller.
 
 Specification, planless direct-contract, ticket-graph, and standalone-plan
 authors resolve applicable current sources before drafting and apply the shared
@@ -36,11 +42,11 @@ Common routes are:
 - an explicit permanent-test value audit → the separate read-only `dev-test-audit` route; and
 - separately authorized delivery → `dev-shipping`.
 
-Initial Route Overview approval authorizes the named prospective route, including bounded research before its dispatch. Reapprove only for a material change in authority, route, scope, acceptance, topology or independence, effects, shipping, a shared assumption, or equivalent capability. Stage returns, derivative artifacts, Handoffs with unchanged route impact, review, verification, learning, and presentation do not create approval gates.
+Initial Route Overview approval authorizes the named prospective route, including bounded research before its dispatch. It starts exactly one first owner: delegated specialties are dispatched, while `dev-implementation` is activated in the route-owning agent by default. Reapprove only for a material change in authority, route, scope, acceptance, topology or independence, effects, shipping, a shared assumption, or equivalent capability. Stage returns, derivative artifacts, Handoffs with unchanged route impact, review, verification, learning, and presentation do not create approval gates.
 
 Durable workflow rationale and supersession links live in [`docs/adr/INDEX.md`](../../../../docs/adr/INDEX.md). The human execution diagram is [`references/execution-flow.md`](references/execution-flow.md). Neither file runs the workflow.
 
-Custom boundary (non-runtime): [ADR-0001 D15](../../../../docs/adr/0001-dev-workflow-authority-and-routing.md#d15--semantic-ownership-and-source-roles) identifies explicit-only Retrace as read-only repository-harness evaluation. Its human-approved scopes delegate report-only conversational Reconcile to the same scope child, which owns its reviewers. This is not a generic route, implementation or assurance stage, completion tail, repository/evidence mutation grant, or shipping authority. The executable custom contracts own those mechanics; D13's separate authorization and generic Reconcile exclusions remain unchanged.
+Custom boundary (non-runtime): [ADR-0001 D15](../../../../docs/adr/0001-dev-workflow-authority-and-routing.md#d15--semantic-ownership-and-source-roles) identifies explicit-only Retrace as read-only repository-harness evaluation. Its human-approved scopes delegate report-only conversational Reconcile to the same scope child, which owns its reviewers. Retrace and Reconcile now explicitly adopt the sole generic execution-recovery policy for their authorized active-session invocation, setup, transport, collection, capture, and task-local machinery. That reusable named-skill adoption is known before launch, remains with the responsible execution owner, and cannot override admission, approval, reviewer identity, evidence, return budgets, semantic continuation/stops, or cleanup. All other custom controllers remain opted out absent an explicit current invocation or skill contract; historical invocation grants remain local. This is not a generic route, reusable launch template, implementation or assurance stage, completion tail, repository/evidence mutation grant, durable ledger, restart authority, or permission to resume an old run.
 
 New implementation boundaries consult the shared
 [task-sizing guidance](../dev-ticketing/references/task-sizing.md). It considers
@@ -57,7 +63,7 @@ metadata and does not determine assurance.
 | Lean plans, planning-authoring rethink, child scheduling, lifecycle, active-path persistence, and same-child implementation rethink | ADR-0002: D06, D08, D09, D21, D29, D30 |
 | New task sizing and approved-graph projection | ADR-0001: D11; ADR-0002: D08, D09 |
 | Two attempts, one-shot review, verifier closure, and permanent-test value | ADR-0003: D03, D04, D22, D28 |
-| Same-owner execution recovery, recurrence, and transient fallback | ADR-0003: D03, D04; ADR-0002: D21 |
+| Same-owner pre-escalation execution recovery, required versus disposable resources, recurrence, explicit caps, transient fallback, and explicit invocation-local or named-skill custom adoption | ADR-0003 D03, D04; ADR-0002 D06, D21 |
 | Learning and the human-map/journal authority relationship | ADR-0004: D07, D23 |
 | Every-boundary papercut accounting | ADR-0007: D24 |
 | Portable session envelope and five-field completion | ADR-0009: D27 |
@@ -66,7 +72,8 @@ metadata and does not determine assurance.
 
 ### Direct or planned entry
 
-`dev-implementation` receives settled human intent, observable acceptance, exact writable paths and effects, applicable instructions, one receiver, and the selected assurance.
+`dev-implementation` receives settled human intent, observable acceptance, exact writable paths and effects, applicable instructions, the concrete route owner for any delegated return boundary, and the selected assurance. Its controller is the invoking agent by default. A separate controller exists only when the approved topology explicitly binds one; it owns its children without recursive controller delegation or outer-agent double scheduling.
+Prerequisite artifacts keep their semantic next-owner roles. A return to `dev-implementation` reaches the same route agent's in-place controller unless an approved delegated controller was already bound; a return to `dev-ask` reaches the same route agent for recomputation. Neither unchanged continuation adds approval, a router hop, or a self-Handoff. Required controller, child, reviewer, and verifier identities are reused or resumed rather than replaced.
 
 Use a planless direct contract when one child can own and check the cohesive result in one reliable fresh context. Use a lean plan only when dependency ownership, fan-in, ordered effects or migration, or recovery requires it; known safe seams can divide an overall atomic cutover into dependency-ordered tasks. A lean plan contains only:
 
@@ -90,17 +97,17 @@ The active repository path remains the sole execution and continuation source th
 
 ### Child work and attempts
 
-Each implementation child receives only approved intent and its acceptance IDs, exact owned paths and effects, dependency Handoffs when applicable, project instructions, semantic attempt `1` or `2`, and one receiver.
+Each implementation child receives only approved intent and its acceptance IDs, exact owned paths and effects, dependency Handoffs when applicable, project instructions, semantic attempt `1` or `2`, and its concrete bound controller as receiver.
 
-Attempt 1 is one candidate, followed by the parent explicitly sending `~/.agents/references/impl-rethink/impl-rethink.md` to the same child. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and returns one lean Handoff. There is no second implementation self-rethink.
+Attempt 1 is one candidate, followed by the controller explicitly sending `~/.agents/references/impl-rethink/impl-rethink.md` to the same child. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and returns one lean Handoff to that controller. There is no second implementation self-rethink. For a plan, `IN_PROGRESS` is recorded immediately before the first implementation-child dispatch, not at controller activation.
 
-Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same candidate → same-child implementation rethink → optional correction → direct checks → lean Handoff sequence. A task-local execution-mechanism failure instead follows `skill://dev-implementation/references/execution-recovery.md`: the same execution owner explicitly applies the separate recovery rethink before every retry, preserves cause and allowance evidence, and gains no semantic attempt, target-mutation authority, route stage, or execution-state store.
+Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same candidate → same-child implementation rethink → optional correction → direct checks → lean Handoff sequence. A task-local execution-mechanism failure instead follows `skill://dev-implementation/references/execution-recovery.md` before escalation: the same execution owner assesses eligibility, explicitly applies the separate recovery rethink only before an eligible retry, preserves failed evidence, cause, and allowance, and gains no semantic attempt, target-mutation authority, route stage, or execution-state store. Exhausted semantic repair prevents another deliverable change, not otherwise eligible machinery correction; successful recovery continues the remaining approved outcome.
 
-Every completed repository-work Handoff is followed by exactly one papercut look from the same child; only child unavailability permits parent fallback.
+Every completed repository-work Handoff is followed by exactly one papercut look from the same child; only child unavailability permits controller fallback.
 
 ### Assurance
 
-Compact ends after attempt-1 rethink, direct smoke, lean Handoff, and papercut accounting. It dispatches no independent review, verifier, learning, or audit.
+Compact ends after attempt-1 rethink, direct smoke, lean Handoff, and papercut accounting. It dispatches no independent review, verifier, learning, or audit. The in-place controller proceeds without a self-Handoff.
 
 Standard and high operate on the completely assembled target and use exactly:
 
@@ -108,9 +115,11 @@ Standard and high operate on the completely assembled target and use exactly:
 2. one independent `dev-verification` over all original acceptance checks and every required review closure check; and
 3. one `dev-continual-learning` assessment.
 
+These remain independent actors and return to the concrete controller; controller activation does not absorb or impersonate them. Review never reruns. Verifier repair reuses the same responsible implementation child and the same verifier over the complete unchanged check set.
+
 Review runs once and never returns after repair. It reports `APPROVED`, `REPAIR REQUIRED`, or `INCONCLUSIVE`; required findings need direct material evidence, the smallest safe correction, and the exact acceptance-check grammar. A repair required by review goes directly to verification.
 
-The verifier returns a fresh aggregate over the complete fixed check set. Its invocation, runner, transport, environment, automation, fixture, collection, and capture failures follow the shared execution-recovery policy while the same verifier remains read-only toward the evaluated target and acceptance. A required recovery stop retains the resulting failed or inconclusive evidence. If attempt 2 remains and a check directly proves a code defect, one implementation child may repair it; the same verifier then reruns the complete unchanged check set. The verifier never repairs product or code, drops checks, reopens review, or delegates its conclusion.
+The verifier returns a fresh aggregate over the complete fixed check set. Its invocation, runner, transport, environment, automation, fixture, collection, and capture failures are assessed under the shared execution-recovery policy before escalation while the same verifier remains read-only toward the evaluated target and acceptance. A lower-level non-success label alone does not prove recovery exhausted. Replaceable machinery differs from the required verifier; loss of that verifier remains a stop. An initial execution allocation is not an implicit recovery cap, but an explicit total cap remains binding. After eligible recovery, the same verifier may issue a fresh complete aggregate from compatible valid observations and continues the fixed set. If attempt 2 remains and a check directly proves a code defect, one implementation child may repair it; the same verifier then reruns the complete unchanged check set. The verifier never repairs product or code, drops checks, reopens review, delegates its conclusion, or overrides custom-protocol decisions.
 
 Within a fresh pass, approved shared scenarios may establish multiple criteria without repeating execution solely per reference. Each item keeps its exact observation and ordered accounting on the same target under compatible conditions; command spelling and another role's result prove nothing missing. Blocked later observations remain unproved, and incompatible conditions require separate execution. Required closure-check selection uses the same shared policy without reviewer execution.
 
@@ -144,7 +153,7 @@ Standard and high invoke `dev-continual-learning` once after review and verifica
 
 After terminal success, the specialty reads [the canonical completion input contract](../../references/completion-presentation-input.md) before constructing its current fence. The reference owns the schema and validation rules; presenter activation remains after construction.
 
-`Checks` includes the terminal checks, every material papercut line in authored-task order or `Papercut: none`, and exactly one normalized Learning line. Planned completion also names the current active plan and `DONE` state. The same agent applies `completion-presentation` directly and emits only the five corresponding H2 sections. The presenter is not dispatched and does not verify, repair, settle, archive, create a Handoff, or ship.
+`Checks` includes the terminal checks, every material papercut line in authored-task order or `Papercut: none`, and exactly one normalized Learning line. Planned completion also names the current active plan and `DONE` state. The in-place controller consumes accepted child and assurance returns, its own conclusions, and current plan evidence directly before terminal validation; it emits no Handoff to itself or merely to `dev-ask`. A genuinely delegated controller returns once across its real boundary to the concrete route owner. The same agent that validates success applies `completion-presentation` directly and emits only the five corresponding H2 sections. The presenter is not dispatched and does not verify, repair, settle, archive, create a Handoff, or ship.
 
 No target manifest, proof digest, receipt, archive locator, or model score is completion evidence. Non-success, stale, malformed, reordered, or incomplete input preserves the specialty's stop instead of producing a completed report.
 

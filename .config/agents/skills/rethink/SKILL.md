@@ -18,10 +18,16 @@ Inspect only decision-bearing context. Find relevant existing capabilities,
 owners, contracts, prior decisions, and observed failures yourself; do not ask
 the user for discoverable facts.
 
-Bind the candidate's desired outcome and every confirmed constraint before
-comparing mechanisms. An option is ineligible if it weakens a required
-outcome or constraint. When a mechanism is rejected, preserve that outcome
-and choose among remaining eligible paths.
+State the observable outcome independently of candidate-specific choices, then
+bind it and every confirmed constraint before comparing mechanisms. Treat the
+mechanism under reassessment—including one previously selected by the user—as
+a candidate, not a constraint merely because it was selected. Acknowledge that
+prior selection and recommend changing it when evidence warrants;
+reassessment alone does not authorize acting on the change or overriding
+separately confirmed constraints. An option is ineligible only for a
+deficiency against a required outcome or confirmed constraint, not merely a
+guarantee introduced by the candidate. When a mechanism is rejected, preserve
+the outcome and constraints and choose among remaining eligible paths.
 
 Compare only viable, evidence-backed paths across no change, reuse,
 extension, bounded test, and new mechanism; do not invent a rung. Treat the
@@ -38,9 +44,13 @@ survives every cheaper eligible path. A read-only artifact loaded by existing
 owners is an extension when it creates none of those boundaries, but its
 loading, integration, and indirection costs still count. Identical
 copies that must not diverge may justify one read-only source of truth; do
-not centralize merely similar guidance. If value is plausible but unobserved,
-choose a bounded test before selecting a mechanism. Do not require a runtime
-failure for an inspectable constraint violation. Ignore sunk cost.
+not centralize merely similar guidance. When selecting a path depends on a
+material, unestablished claim, choose `Test before deciding` and use the
+bounded-test requirements below. Distinguish evidence needed to select the
+approach from later implementation verification: inspection or reasoning may
+establish a claim, so lack of runtime execution alone does not require a test.
+A leading candidate may be named but remains unselected. Do not require a
+runtime failure for an inspectable constraint violation. Ignore sunk cost.
 
 Challenge the user's premise and your own equally. Ask only about a remaining
 human-owned trade-off.
@@ -92,10 +102,13 @@ Use concise, distinct children as needed; do not force a single child per field.
     evidence that would reverse the decision. Omit when none is material.
 - `## Final proposal`
   - `Proposal` (required): the complete operative decision set, self-contained
-    without Assessment. Preserve relevant outcome, ownership, scope, behavior,
-    constraints, exclusions, exact artifacts/interfaces, and required actions,
-    including decisions that remain unchanged. Incorporate corrections; omit
-    superseded alternatives and process narration.
+    without Assessment. After removing or replacing parts, re-bind the complete
+    remaining proposal: explain what still makes each required guarantee hold
+    and, where relevant, identify responsibility, information or artifact
+    location, lifetime, and failure boundary. Preserve applicable constraints
+    and exclusions, plus relevant outcome, ownership, scope, behavior, exact
+    artifacts/interfaces, required actions, and decisions that remain unchanged.
+    Incorporate corrections; omit superseded alternatives and process narration.
   - `Checks` (conditional): relevant observed checks and pending checks,
     explicitly distinguished. For a bounded test, include the question,
     measurement, decision threshold, and stop condition; state that no mechanism

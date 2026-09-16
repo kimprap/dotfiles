@@ -1,7 +1,7 @@
 {
   "additional_files": [],
   "inputs": {
-    "request": "The exact approved compact authority and route remain current. AC-17 is named, approved, and unmet; no blocker or unexplained defect prevents implementation. Continue to dev-implementation and retain only the compact completion segment."
+    "request": "The exact approved compact authority and route remain current. AC-17 is named, approved, and unmet; no blocker or unexplained defect prevents implementation. Continue by activating dev-implementation in this same route-owning agent, without spawning another controller or requesting approval, and retain only the compact completion segment."
   },
   "scripted_replies": []
 }

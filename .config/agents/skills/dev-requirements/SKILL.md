@@ -42,7 +42,7 @@ Do not interview around that stop or create a substitute PRD.
 4. Separate established evidence from assumptions. Assign every unresolved question an owner and blocking status.
 5. Draft one revision-bound Engineering Requirements Brief when durable coordination needs it. For one-context direct work, the approved Route Overview plus explicit acceptance may remain the contract.
 6. Obtain explicit human confirmation only for requirements the stage synthesized, materially clarified, or changed. A verbatim projection of already approved authority needs no new prompt. A caveat or change creates a new revision; silence is not confirmation.
-7. Hand the current confirmed revision to the one next owner named by the approved route: `dev-specification`, or `dev-implementation` for a qualified direct lane. Return to `dev-ask` only when route impact changed.
+7. Hand the current confirmed revision to the concrete route owner with the one next-owner role already named by the approved route: `dev-specification`, or `dev-implementation` for a qualified direct lane. Return with next-owner role `dev-ask` only when route impact changed.
 
 ## Engineering Requirements Brief
 
@@ -67,7 +67,7 @@ Do not interview around that stop or create a substitute PRD.
 ## Open engineering questions
 - Question → owner → blocking status
 ## Next owner
-- One exact approved continuation owner: `dev-specification` or `dev-implementation`
+- One exact approved continuation role: `dev-specification` or `dev-implementation`, plus the concrete bound receiver
 ```
 For compatibility and degraded behavior, `Observable behavior` names actor/context/input, normal behavior, and each failure/degraded trigger → observable response → recovery boundary. `Constraints` names preserved callers, data, protocols, and behavior plus every approved break, removal, clean-cutover, or hard-failure condition. `Evidence and assumptions` identifies the observed baseline. Preservation may be `none` only with baseline evidence that no existing observable contract is affected; required degraded behavior may be `none` only when approved failure-boundary authority says no degraded path is required; approved breaks, removals, clean cutovers, and hard failures may be `none` only when authority approves no such change.
 
@@ -75,7 +75,7 @@ Do not create `CONTEXT.md`, `CONTEXT-MAP.md`, or an ADR. A real domain term or q
 
 ## Handoff and continuation
 
-Every exit emits one common Handoff with the exact requirements/authority identity, `route-impact: unchanged|changed`, unresolved blocker if any, and exactly one receiver. `unchanged` continues automatically to the next owner in the already-approved route after any necessary human-owned requirement confirmation; it does not add a router or artifact-count approval. `changed` returns to `dev-ask` with the changed facts for recomputation. A stop names the exact product, architecture, or requirements authority owner instead of a menu of receivers. This stage never authorizes specification or implementation by itself.
+Every exit emits one common Handoff with the exact requirements/authority identity, `route-impact: unchanged|changed`, unresolved blocker if any, and exactly one concrete receiver. `unchanged` preserves the next-owner role in the approved route and continues automatically after any necessary human-owned requirement confirmation; it does not add a router, controller spawn, or artifact-count approval. When that role is `dev-implementation`, the bound route agent activates the controller in place unless the approved topology already names a separate controller. `changed` returns to the same concrete route owner with next-owner role `dev-ask` for recomputation. A stop names the exact product, architecture, or requirements authority owner instead of a menu of receivers. This stage never authorizes specification or implementation by itself.
 
 ## Stop conditions
 

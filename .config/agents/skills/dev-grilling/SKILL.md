@@ -35,6 +35,6 @@ Stop earlier only when the user pauses or ends the interview, a human-authority 
 
 Record the requesting authority and revision, exact confirmed decisions, rejected alternatives and reasons, unresolved human authority, evidence links without copied source prose, and immutable artifact identity.
 
-Emit one common Handoff with `route-impact: unchanged|changed`, the evidence identity, any named blocker, and exactly one receiver. A standalone router-dispatched interview returns to `dev-ask`; a bounded support interview returns to its one requesting lifecycle owner. `unchanged` means the confirmed evidence preserves the exact approved authority and route; `changed` reports the changed facts for router classification but does not authorize or require a route by itself.
+Emit one common Handoff with `route-impact: unchanged|changed`, the evidence identity, any named blocker, and exactly one concrete receiver. A standalone router-dispatched interview returns to the bound route agent with next-owner role `dev-ask`; a bounded support interview returns to its one concrete requesting lifecycle owner. `unchanged` means the confirmed evidence preserves the exact approved authority and route; `changed` reports the changed facts for router classification but does not authorize or require a route by itself.
 
 The interview and its wrappers never authorize requirements, specification, ticketing, implementation, destructive/external effects, or shipping.

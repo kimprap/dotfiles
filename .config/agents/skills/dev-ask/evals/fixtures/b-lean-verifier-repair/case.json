@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Execute standard work where review approves, the verifier directly proves one code defect, the responsible child repairs it, and the original verifier performs closure."
+    "request": "Execute standard work under an in-place controller where review approves, the independent verifier directly proves one code defect, the same responsible child repairs it, and that same verifier performs complete closure."
   },
   "scripted_replies": [],
   "additional_files": []

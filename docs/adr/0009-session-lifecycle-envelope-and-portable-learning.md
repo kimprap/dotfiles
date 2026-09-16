@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-21  
-**Updated:** 2026-09-05  
+**Updated:** 2026-09-16  
 **Decision ID:** D27  
 **Related authority:** ADR-0001 D02, D17; ADR-0002 D29; ADR-0004 D07; ADR-0007 D24
 
@@ -18,9 +18,9 @@ Specialty workflows need enough typed transport to preserve ownership and recove
 
 ### D27 — Stateless envelope and five-field completion
 
-- **Decision:** Treat one active conversation as one workflow session. Bind a `Session Envelope` with session ID, route, mode, current phase, active artifact ID or path when one exists, current owner, last accepted Handoff, next owner, last completed transition, and pending gates. This envelope is typed transport, not durable state.
-- **Decision:** Use the current workflow sequence `intake → classify → work specialty → Handoff → papercut → assurance and learning when eligible → present`. A completed stage emits one lean Handoff containing outcome, affected paths and revisions, checks and exact results, blockers or risks, remaining work, and next receiver.
-- **Decision:** Missing or malformed required transport stops the next transition. A fresh or resumed session re-reads current repository artifacts and governing contracts; it does not trust hidden process state or a continuation receipt.
+- **Decision:** Treat one active conversation as one workflow session. Bind a `Session Envelope` with session ID, route, mode, current phase, active artifact ID or path when one exists, current owner, last accepted Handoff, next owner, last completed transition, and pending gates. This envelope is typed transport, not durable state. A route-owning agent may change from router to controller role in place without changing physical identity or creating a self-Handoff.
+- **Decision:** Use the current workflow sequence `intake → classify → work specialty → Handoff at a real ownership or context boundary → papercut → assurance and learning when eligible → present`. A boundary-crossing completed stage emits one lean Handoff containing outcome, affected paths and revisions, checks and exact results, blockers or risks, remaining work, and one concrete bound receiver. Semantic next-owner roles such as `dev-implementation` and `dev-ask` remain distinct from that physical receiver identity. An in-place controller consumes child and assurance returns, controller conclusions, and current plan evidence without a Handoff to itself; an approved delegated controller returns one Handoff to the concrete route owner.
+- **Decision:** Missing or malformed required transport stops the next transition. Required owner identities are reused or resumed rather than replaced. A fresh or resumed session re-reads current repository artifacts and governing contracts; it does not trust hidden process state or a continuation receipt.
 - **Decision:** A successful generic terminal payload has exactly these five top-level fields in this order:
 
   ```text
@@ -54,7 +54,7 @@ A small stable envelope preserves intra-session control while repository artifac
 ## Consequences
 
 - Hosts may transport the envelope in memory, task context, or an equivalent native structure; no common background-job substrate is required.
-- Handoffs stay lean and revision-aware enough for a named receiver to continue.
+- Handoffs stay lean and revision-aware enough for one concrete bound receiver to continue; in-place role changes create no ceremonial self-Handoff.
 - Successful output is always recognizable by its exact five top-level fields.
 - Papercut and Learning are visible under `Checks`, and ordinary learning failure remains visible under `Risks`.
 - Planned completion references the active `DONE` plan and leaves historical archives untouched.

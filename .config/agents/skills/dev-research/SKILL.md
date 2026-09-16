@@ -29,7 +29,7 @@ Reject open-ended product discovery, market/customer/positioning/pricing/launch/
 2. Search primary sources first: official documentation, specifications, source code, papers, or first-party announcements. Use secondary sources only to locate or corroborate primary evidence.
 3. Record immutable source identity when available, publication/access dates, exact relevant claims, and limitations. Distinguish observation from inference.
 4. Reconcile contradictions and report gaps. Do not force consensus where the sources differ.
-5. Return concise cited evidence and one common Handoff to the named requesting owner. State what the evidence supports, what it does not establish, the smallest remaining question, and `route-impact: unchanged|changed`.
+5. Return concise cited evidence and one common Handoff to the concrete named requesting owner. State what the evidence supports, what it does not establish, the smallest remaining question, and `route-impact: unchanged|changed`.
 
 ## Optional Atlas capability
 
@@ -67,7 +67,7 @@ Use Atlas only when the current workspace or user configuration exposes a qualif
 
 Do not choose product direction, rewrite requirements or specifications, implement the answer, or create domain artifacts. If evidence reveals an authority conflict, name it in the Handoff to the exact requesting owner; do not reroute it independently.
 
-The Handoff binds the Research Evidence identity, reports any broken assumption or authority conflict, and names exactly one receiver. `unchanged` resumes the requesting owner's approved route without router reapproval. `changed` reports the changed fact to that same owner, which returns to `dev-ask` only if the router owns recomputation. Research never selects the route or authorizes a downstream stage.
+The Handoff binds the Research Evidence identity, reports any broken assumption or authority conflict, and names exactly one concrete receiver. `unchanged` resumes that requesting owner's approved role without router reapproval. `changed` reports the changed fact to the same owner, which resumes `dev-ask` only when router recomputation is required. Research never selects the route or authorizes a downstream stage.
 
 ## Stop conditions
 

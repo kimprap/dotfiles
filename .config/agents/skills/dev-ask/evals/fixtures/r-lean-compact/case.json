@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Route a settled bounded code change with exact acceptance, reversible effects, no compact disqualifier, and no need for durable plan recovery. Approve the route."
+    "request": "Route a settled bounded code change with exact acceptance, reversible effects, no compact disqualifier, and no need for durable plan recovery. Approve the route, then activate dev-implementation in the route-owning agent and dispatch only its distinct implementation child."
   },
   "scripted_replies": [
     "approve"

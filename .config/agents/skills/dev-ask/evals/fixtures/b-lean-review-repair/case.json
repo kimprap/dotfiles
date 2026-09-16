@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Execute standard work where the one review returns one material required finding with an exact closure check, and the responsible child repairs it on attempt 2."
+    "request": "Execute standard work under an in-place controller where the one independent review returns one material required finding with an exact closure check, and the same responsible child repairs it on attempt 2 before independent verification."
   },
   "scripted_replies": [],
   "additional_files": []
