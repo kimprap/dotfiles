@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-16  
+**Updated:** 2026-09-17  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -27,6 +27,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 - **Decision:** Present one compact prospective Route Overview and obtain one approval before routed or executable effects, including dispatch of bounded `dev-research`. Reapprove only when authority, route, material scope, acceptance, topology or independence, destructive or external effects, shipping, a shared assumption, or equivalent capability changes.
 - **Decision:** Requirements request targeted confirmation only when they synthesize or materially clarify human-owned behavior. Faithful research return, specification, ticket, stage, Handoff, review, verification, learning, and presentation continuations need no additional approval.
+- **Decision:** The approved route covers the `dev-implementation` controller's awaited collection of the same bound implementation child's rethink Handoff in either semantic attempt and the return from an already-authorized same-child execution-recovery operation. Those two exact continuations require no repeated consent, attendance, external-supervisor, or abort-capability gate. This is not a blanket recovery or custom-controller exemption; Reconcile, Retrace, and other collectors retain their own preflight.
 - **Why:** Approval should track human decisions and effects, not artifact count or phase transitions.
 - **Rejected alternatives:** Reapproving every return adds waiting without changing authority; letting the first approval cover later consequential changes infers authority the human did not grant.
 - **Consequences:** Byte drift triggers semantic comparison. Unrelated or non-material drift does not reopen the route.

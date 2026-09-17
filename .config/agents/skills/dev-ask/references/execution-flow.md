@@ -5,9 +5,11 @@ This is a human-only overview. It does not run work or define transitions. `dev-
 ```mermaid
 flowchart TD
     A[Approved direct work or lean plan] --> K[Route owner activates controller in place]
-    K --> B[Distinct implementation child]
-    B --> C[Same child rethinks code, then tests]
-    C --> D{Direct checks pass?}
+    K --> B[Distinct resumable implementation child with explicit response schema]
+    B --> J[Terminal ordinary candidate job]
+    J --> N[Retain exact native job result and admit candidate]
+    N --> C[Same child receives awaited rethink and rethinks code, then tests]
+    C --> D{Direct checks and owner-directed Handoff reply pass?}
     D -- No --> HB[Blocked Handoff, then papercut once]
     HB --> X[Stop with the exact blocker]
     D -- Yes --> H[Lean Handoff, then papercut once]
@@ -60,6 +62,18 @@ flowchart TD
 
 The semantic route names `dev-implementation`, while the invoking route agent normally performs that controller role in place. Standalone entry uses its invoking agent the same way. Only a topology already approved by the human may insert a separate controller; that controller owns its children and returns across the real boundary without recursive controller delegation or outer-agent double scheduling.
 
+For the `dev-implementation` controller only, the awaited collection of that
+same bound child's implementation-rethink Handoff in attempt 1 or 2 and the
+return from an already-authorized same-child recovery operation need no second
+consent, attendance, external-supervisor, or abort-capability preflight. Native
+OMP send-await remains non-interruptible through TUI steering and Alt+C, though
+the awaited child's terminal or unregistration/hard-abort event and a
+caller/tool abort can end the waiter. A child that reaches none of those
+endings can block the parent indefinitely; that residual is accepted without a
+new deadline, observer, replay, replacement, or unattended-completion promise.
+Custom collectors, including Reconcile and Retrace, retain their external-owner
+and five-minute observation requirements.
+
 
 ## Entry and implementation
 
@@ -93,9 +107,10 @@ authority.
 | Approved lean plan | Necessary multiple-owner or dependency ownership, fan-in, ordered effects or migration, or recovery uses known safe task seams | In-place controller schedules dependency-ready child tasks; any ordinary fan-in is an authored child-owned task completed before final review and verification |
 | Prerequisite Handoff | Next-owner role is `dev-implementation` and route impact is unchanged | Concrete route owner activates its controller role in place unless the approved topology already bound a separate controller; no extra approval or router hop |
 | Prerequisite Handoff | Next-owner role is `dev-ask` | Concrete route owner resumes router recomputation before continuing |
-| Candidate | Child has finished its first implementation pass | Same child receives the single implementation code-then-test rethink |
-| Rethink | Direct checks pass | Child emits one lean Handoff to the concrete controller, then loads papercut once |
+| Candidate job | Explicit-schema resumable child terminal-completed its type-absent ordinary candidate | Collect only the exact job, immediately retain the original native result and job record, validate and decode only the adapter-designated structured data, then admit exact task/attempt/receiver/phase; job settlement is not task completion or disposal |
+| Admitted candidate | Exact candidate admission succeeded | Send the same child one fresh-token awaited owner-directed implementation rethink under the exact generic implementation collection exemption; after checks, accept only its Handoff reply on that request's message channel, never yield, ordinary completion, a missing awaited return, or a replacement child |
 | Current execution | A concrete execution-mechanism failure prevents continuation or would otherwise be escalated | Same owner first assesses `skill://dev-implementation/references/execution-recovery.md`; an eligible proposal receives recovery rethink before execution, while an ineligible failure preserves evidence and names the exact stop |
+| Authorized implementation recovery | The same child has applied recovery rethink for an eligible, already-authorized recovery operation | Collect that operation's return under the same exact role-and-purpose exemption; do not send another implementation rethink or add a deadline, supervisor, replay, replacement, or allowance |
 | Child Handoff | An execution-related stop names no actual shared-policy stop condition | Controller returns the specific eligibility question to the same responsible owner without repair, replacement, or repeated challenge |
 | Rethink | A required direct check still fails and the shared execution-recovery policy permits no further execution | Child emits a blocked lean Handoff to the concrete controller, loads papercut once, then stops with the failed check and preserved work |
 
@@ -128,7 +143,7 @@ requires the same verifier's complete unchanged check set.
 |---|---|---|
 | Papercut | After every completed repository-work Handoff; for direct non-workflow work, after verification and before completion | One look owned by the child or direct owner; controller fallback only if the child is unavailable; all distinct qualifying root causes retained in authored-task order |
 | Compact | After rethink, direct checks, child Handoff, and papercut | In-place controller validates and renders completion without a self-Handoff; an approved delegated controller alone returns to its concrete route owner |
-| Learning | Once after review and verification for standard/high | `curated`, `no durable learning`, or `blocked <reason>` |
+| Learning | Once after review and verification for standard/high | Adapter invokes portable assessment once, loads canonical `dev-handoff`, and first-returns one checked canonical Handoff with assessment evidence plus exactly one Learning line in `Checks`, no invented AC IDs, and the concrete controller receiver |
 | Ordinary learning block | Assessment cannot finish for a non-governing reason | Continue to completion and report the reason as risk |
 | Governing-rule conflict | A current rule makes the implementation invalid or unsafe | Stop without completion presentation |
 | Completion | Successful terminal evidence is settled | Render only Outcome, Changes, Checks, Risks, and Next |

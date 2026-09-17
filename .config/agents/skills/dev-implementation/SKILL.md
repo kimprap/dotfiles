@@ -63,6 +63,13 @@ Each child receives only what it needs:
 - semantic attempt number, `1` or `2`;
 - exactly one concrete receiver: the bound controller identity.
 
+Before dispatch, require a caller-selected declared response-object schema and a
+child transport that remains resumable under the same identity after its
+candidate job settles. Bind the exact controller, child, native job, task,
+semantic attempt, and expected `candidate` phase. Missing explicit caller
+schema, a one-shot or isolated child, or an unbound identity is a preflight
+failure; do not allocate the child.
+
 The child rechecks its targets and callers, follows existing local conventions, changes only owned surfaces, and preserves unrelated user work. An authored fan-in or integration task is child-owned like any other code-changing task; the controller does not merge semantically. If TDD was explicitly requested, bind `dev-tdd` without adding scope or acceptance.
 Semantic next-owner roles in prerequisite artifacts remain `dev-implementation` or `dev-ask`; they do not authorize a new actor. An unchanged prerequisite return to `dev-implementation` reaches this same bound controller, while a return to `dev-ask` reaches the same route owner for router recomputation.
 
@@ -92,20 +99,41 @@ existing Handoff rather than router or scheduler state. This recovery rethink
 is separate from the one implementation code-then-test rethink and adds no
 semantic attempt or mutation authority.
 
+## Owner-directed return preflight
+
+The controller's awaited collections from the same bound implementation child
+are exempt from another consent, attendance, external-supervisor, or
+abort-capability preflight only for these two purposes:
+
+1. the implementation rethink Handoff after an admitted candidate in semantic
+   attempt 1 or 2; and
+2. a return from an already-authorized same-child execution-recovery operation.
+
+This is an exact role-and-purpose exemption under the current approved route,
+not a blanket recovery or indefinite-wait exemption. It adds no deadline,
+observer, service, ledger, replay, replacement, unattended-completion promise,
+or authority. Recovery still applies the separate recovery rethink before every
+eligible retry and never receives a second implementation rethink. Custom
+controllers, including Reconcile and Retrace, keep their own external-owner and
+five-minute observation preflight. Follow the loaded host adapter for native
+waiter mechanics and endings.
+
 ## Attempt 1: implement, rethink, smoke
 
-1. Dispatch the child to implement the contract and return a candidate before final smoke or Handoff. For a planned route, set `IN_PROGRESS` before this first implementation-child dispatch; controller activation alone does not change plan state.
-2. Send `~/.agents/references/impl-rethink/impl-rethink.md` explicitly to that same child. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check plus the changed path, and returns one lean `dev-handoff` envelope to the concrete bound controller.
-3. Accept the Handoff only when task/attempt/receiver and declared targets/effects match and every owned check records its expected result. For an execution-related stop, confirm it identifies an actual shared-policy stop; otherwise return the specific eligibility question to the same responsible owner. The controller does not reinterpret or rerun semantic work, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.
-4. After the completed repository-work Handoff, have the same child load `papercut` once. Controller fallback is allowed only when that child is unavailable.
+1. Preflight the explicit declared response-object schema, resumable same-child transport, and exact controller/child/job/task/attempt/`candidate` bindings, then dispatch. For a planned route, set `IN_PROGRESS` before this first implementation-child dispatch; controller activation alone does not change plan state.
+2. The child implements the contract and returns a candidate report by terminal type-absent ordinary completion before final smoke or Handoff. It does not publish the candidate incrementally or park for rethink.
+3. Collect only that exact completed job. Immediately retain the complete original native result and matching job record before decoding or unrelated work. Apply the loaded adapter's successful-terminal, structured-valid, schema-data, and exact-identity checks; decode only its designated data as the declared response object, then require exact task, attempt, receiver, and `candidate` phase. A missing, invalid, mismatched, consumed, or alternate-source payload is unadmitted. Job settlement is not semantic task completion or child disposal.
+4. After candidate admission, send `~/.agents/references/impl-rethink/impl-rethink.md` to that same child through the loaded adapter's awaited owner-directed request with a fresh correlation token. This exact implementation-rethink Handoff collection uses the role-and-purpose exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check plus the changed path, and replies through that request's owner-directed message channel with one lean `dev-handoff` envelope. A yield, ordinary completion, missing awaited return, or replacement child cannot satisfy the Handoff.
+5. Retain and validate the original owner-directed native return before decoding its complete body. Accept the Handoff only when task/attempt/receiver and declared targets/effects match and every owned check records its expected result. For an execution-related stop, confirm it identifies an actual shared-policy stop; otherwise return the specific eligibility question to the same responsible owner. The controller does not reinterpret or rerun semantic work, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.
+6. After the completed repository-work Handoff, have the same child load `papercut` once. Controller fallback is allowed only when that child is unavailable.
 
-Attempt 1 includes implementation, the single same-child rethink, its optional correction, and smoke. There is no second self-rethink.
+Attempt 1 includes the terminal candidate job, its admission, the single same-child rethink, its optional correction, direct checks, and owner-directed Handoff. There is no second self-rethink.
 
 ## Attempt 2 and stops
 
-Attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Dispatch the same responsible implementation child with the unchanged intent, owned acceptance, affected targets, finding evidence, and direct closure check. After its candidate, send the same rethink wrapper once; the child gets one correction pass, runs original impacted checks plus closure checks, returns one lean Handoff to the same controller, and performs papercut accounting.
+Attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Dispatch the same responsible implementation child with the unchanged intent, owned acceptance, affected targets, finding evidence, direct closure check, explicit declared response-object schema, and the same resumable job-then-owner-directed-return sequence: terminal ordinary candidate completion, exact-job native retention and admission, a fresh-token awaited rethink request to that same child under the exact implementation-rethink collection exemption above, at most one correction pass, original impacted checks plus closure checks, and one lean Handoff reply through the owner-directed message channel. The same child then performs papercut accounting.
 
-A task-local proof, tool, transport, environment, automation, fixture, collection, or capture failure follows `skill://dev-implementation/references/execution-recovery.md` before escalation. It consumes no semantic attempt only while the evaluated target, deliverable, acceptance, ownership, and authorized effects remain unchanged; role, not change size or temporary location, determines eligibility. A failed transport invocation is assessed, while transport that cannot preserve required ownership or same-child follow-up remains a stop. Required owners cannot be replaced by disposable resources. Attempts remain limited to attempt 1 and an eligible attempt 2, but exhausted semantic repair prohibits only another deliverable change, not otherwise eligible machinery correction. Stop on undeclared mutation, unavailable required ownership, unresolved code failure after attempt 2, or an exact recovery-policy stop. Preserve accepted independent work and failed evidence, and after eligible recovery continue the remaining approved outcome.
+A task-local proof, tool, transport, environment, automation, fixture, collection, or capture failure follows `skill://dev-implementation/references/execution-recovery.md` before escalation. It consumes no semantic attempt only while the evaluated target, deliverable, acceptance, ownership, and authorized effects remain unchanged; role, not change size or temporary location, determines eligibility. A failed transport invocation is assessed, while transport that cannot preserve required ownership or same-child follow-up remains a stop. Required owners cannot be replaced by disposable resources. After the separate recovery rethink, an already-authorized recovery operation's same-child return uses the exact role-and-purpose collection exemption above; it receives no second implementation rethink. Attempts remain limited to attempt 1 and an eligible attempt 2, but exhausted semantic repair prohibits only another deliverable change, not otherwise eligible machinery recovery under its existing allowance.
 
 ## Assurance
 

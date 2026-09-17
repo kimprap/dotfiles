@@ -31,9 +31,27 @@ An instruction conflict meeting that finding-eligibility rule is a causal candid
 
 This file has three entries: human-invoked parent, parent-bound scope evaluator, and optional parent-bound normalizer. Admit a child entry only from its actual native parent with the matching request and scope authority. A child never starts another Retrace parent, repeats table approval, or impersonates another scope.
 
-Use an existing controller-capable host child for each scope, bound read-only over repository and evidence. Do not use second-opinion roles as scope controllers: those restricted reviewers cannot own nested reviewers. Launch binds only role, actual parent, and exact request/scope contract; ignore launch output. After binding the exact registered child ID, send the actual normalization or evaluation request with its own unique reply token without waiting for bootstrap-job or launch-turn completion: a retained child may already be waiting for that request. Launch output is neither readiness nor evaluation authority. If separately requesting readiness, declare its exact role/parent/child-bound body and give it a separate token; readiness grants no evaluation authority.
+Use an existing controller-capable host child for each scope, bound read-only over repository and evidence. Do not use second-opinion roles as scope controllers: those restricted reviewers cannot own nested reviewers. Launch allocation binds only a prospective role, parent, and request/scope contract. Let the child's launch-only turn settle locally before establishing its exact registered, addressable child ID and actual parent through the current host roster or equivalent native registration evidence. Then send the separate actual normalization or evaluation request with its own unique reply token. Launch output, launch settlement, and roster presence are distinct from semantic readiness or report admission.
 
 The optional normalizer receives only its frozen normalization input and returns a scope proposal, not findings, evaluation, or Reconcile. The scope evaluator applies the complete Evidence boundary, Method, Readiness, and Result below to its approved scope, then follows the Scope protocol. It retains control of its own Reconcile and reviewer disposal; the outer parent handles only scope authority, scheduling, return admission, freshness, and aggregation.
+
+### Explicit execution-recovery adoption
+
+Retrace explicitly adopts the sole generic
+[execution-recovery policy](../dev-implementation/references/execution-recovery.md)
+for its approved active-session invocation, setup, transport, collection,
+capture, and task-local execution machinery. Each responsible execution owner
+assesses and corrects only its own eligible mechanism under that policy: the
+outer parent does not take over a scope child's evaluation or its Reconcile
+reviewers. This reusable skill-level adoption is known before launch but is not
+retroactive authority for an existing, paused, stopped, or historical run.
+
+Normal use of an already-supported observation path for the same pending
+operation is continuation, not a new evaluation or corrected execution.
+Correcting failed machinery follows the generic policy. Return formatting and
+semantic correction remain under Retrace or delegated Reconcile below. Neither
+path authorizes child-work replay, report re-emission, owner replacement,
+allowance reset, durable workflow state, or restart.
 
 ## Normalize and approve
 
@@ -45,15 +63,73 @@ The optional normalizer receives only its frozen normalization input and returns
 
 ## Content and return transport
 
-Load [agent-return](../../references/agent-return/return.md) before the first requested return. It owns native extraction only, not Retrace admission, budgets, or Reconcile verdicts. Use the installed shared owner, not a guessed skill-relative URI.
+Load [agent-return](../../references/agent-return/return.md) before the first
+requested return. It owns portable declared bodies, lifecycle distinctions,
+native-provenance obligations, extraction boundaries, and original current
+native return copying, not Retrace admission, budgets, or Reconcile verdicts. On
+OMP also load the [OMP agent-return adapter](../../harnesses/omp/agent-return.md)
+at this seam for the native envelope, collector, launch settlement,
+addressability, supervision, and disposal facts. Use the installed shared
+owners, not guessed skill-relative runtime URIs.
 
-The producer freezes the exact complete UTF-8 bytes of each content record before first dispatch and retains them request-locally with a receiver-readable immutable locator. Use lowercase SHA-256 identities: `scope-approval@sha256:{digest}`, `scope-contract@sha256:{digest}`, `conversation@sha256:{digest}` for reports, `evidence-manifest@sha256:{digest}`, `scope-proposal@sha256:{digest}`, and `scope-result-payload@sha256:{digest}`. Bind normalization input by its exact frozen content identity too. Every receiver re-reads and hashes the complete referenced bytes before admission. Hash bytes directly, never reconstructed prose, implicit concatenation, normalized newlines, tool-rendered anchors, or line wrappers. An opaque cross-session pointer is not readable content.
+The producer freezes the exact complete UTF-8 bytes of each content record
+before first dispatch and retains them request-locally with a receiver-readable
+immutable locator. Use lowercase SHA-256 identities:
+`scope-approval@sha256:{digest}`, `scope-contract@sha256:{digest}`,
+`conversation@sha256:{digest}` for reports,
+`evidence-manifest@sha256:{digest}`, `scope-proposal@sha256:{digest}`, and
+`scope-result-payload@sha256:{digest}`. Bind normalization input by its exact
+frozen content identity too. Every receiver re-reads and hashes the complete
+referenced bytes before admission. Hash bytes directly, never reconstructed
+prose, implicit concatenation, normalized newlines, tool-rendered anchors, or
+line wrappers. An opaque cross-session pointer is not readable content.
 
-Each request supplies `Reply token: {fresh unique token}`. The child sends its complete unchanged return as `hub send` `message` to its bound parent, copying that token only into native `replyTo`, never into the body. Ignore local echoes and ordinary output; no Submit Result or successful producing-turn gate is required.
+Each request supplies `Reply token: {fresh unique token}`. The child sends its
+complete unchanged return as one non-awaited `hub send` `message` to its bound
+parent, copying that token only into native `replyTo`, never into the body.
+Ignore local echoes and ordinary output; no Submit Result or successful
+producing-turn gate is required.
 
-Keep dispatch, native collection, and admission together in a foreground Eval operation wherever notifications could consume queued messages. Preserve independent child concurrency: launch ready scopes as a batch and use concurrent awaited requests/queued collection, not serial whole evaluations. Use the supported native awaited-send/queued seam without polling or a production delay. Native awaited send uses the exact `await: true` field and `timeoutMs: 0`; preserve an enclosing unbounded Eval timeout for collection. A waiter filters sender, not token, so still check correlation.
+Before each report operation, bind the exact expected child sender, the actual
+receiving controller, current authored token, semantic phase, and current native
+invocation before dispatch. For nested Reconcile reviewer traffic this owner is
+the actual current scope controller, never the outer Retrace parent; the outer
+parent uses only its own normalizer and scope-child expectations.
 
-Inspect native errors, delivery receipts and payload presence first. Admit only an actual native `waited` or `inbox[]` envelope with `from` = exact owned child, `to` = this controller, `replyTo` = its current authored token, and no `wakeRelay: true`. Decode only its complete `body` as declared `text`, then validate grammar, identities, phase and authority. Consume an admitted token once. Do not admit foreign, stale, consumed or misbound traffic. Sender calls, local echoes, ordinary task results, bootstrap-job records, latest `agent://` output, native message IDs, host completion metadata, and rendered notifications confer no report authority. Retain actual envelopes; never reconstruct missing provenance.
+Keep dispatch, native collection, and admission coupled wherever notifications
+could consume queued messages. Preserve independent child concurrency: batch
+ready scopes and collect distinct children concurrently, subject to the host and
+scope cap, rather than serializing whole evaluations. On OMP, follow the loaded
+adapter and use the original owner-directed awaited-send path with exact
+`await: true`, `timeoutMs: 0`, and at most one outstanding request per
+owner/child. Zero disables only the timer; terminal child events,
+unregistration, hard abort, or caller abort can still end and unregister the
+collector. Never place this wait in an unbounded Eval invocation: bind an
+existing external owner outside it that observes the same operation, process
+state, and log cursor every five minutes and can interrupt the exact operation
+when separately allowed, or report the missing execution capability without
+dispatch.
+
+Inspect operation errors, the requested recipient's delivery receipt, `details`,
+and `details.waited` presence in that order before body access. When present,
+mechanically copy the complete original current `details.waited` object and its
+exact returned body into the actual receiving owner's current invocation state
+before decoding or semantic work. Preserve the stock trim boundary: do not
+restore removed outer bytes or normalize internal newlines.
+
+When `details.waited` is absent, preserve the exact request frontier, child and
+receiving-owner identities, token, phase, delivery facts, and used or unknown
+allowances. Stop that request without body access, lookup, inbox, events, JSONL,
+branch/session or RPC message reads, history, agent output, rendered cards,
+report stores, replay, re-emission, a new collector, actor replacement, nudge for
+absence, or allowance reset. The outer parent continues independent ready work
+where safe but never takes over the blocked scope child's collection or
+Reconcile.
+
+After the current object is copied, decode only the complete returned `body` as
+`text`, validate the full native and semantic contract, then consume an admitted
+token once. Frozen content, direct hashes, local echoes, external captures, and
+ordinary completion never replace native provenance.
 
 ### Closed return bodies
 
@@ -126,6 +202,15 @@ Eligibility requires concrete evidence of an invalid attempted current response 
 The parent diagnoses from native failure facts and already-approved context only. Identify one concrete authorized correction and send it once to the same child for that action and one complete compliant return. Retire the old token, issue a fresh one, and preserve the original expectation/spent allowance, scope, candidate and existing review state. Do not restart evaluation, add diagnosis-only child loops, reset nested review allowances, replace children, rewrite findings, change evidence, widen scope or override Reconcile repair/pause rules. Recovery/control observations cannot seed findings or widen evidence closure.
 
 No authorized correction, unavailable child/binding/channel/state, or failed correction stops that request at its exact frontier while preserving work and continuing independent approved work subject to slots and cleanup. Lost receiving envelopes, missing provenance, parent-side collection failure or unavailable transport earn no child correction or report re-emission. Do not fabricate receipts or start a fresh attempt automatically.
+
+This return-correction allowance is semantic protocol authority, not generic
+execution recovery. Under Retrace's explicit adoption, the responsible owner may
+correct eligible failed outer machinery for the already-authorized dispatch or
+collection operation without issuing another child request, changing its token,
+refunding the spent return allowance, or replaying child work. Normal supported
+observation of that same still-pending operation is continuation. Missing native
+provenance, an unavailable required owner, a valid blocker or pause, and the
+terminal stop above remain owned here and cannot be relabeled to bypass them.
 
 ### Review, resolution and retention
 

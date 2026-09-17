@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-05  
+**Updated:** 2026-09-17  
 **Decision IDs:** D07, D23  
 **Related authority:** ADR-0001 D01, D15
 
@@ -22,10 +22,11 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 - **Decision:** Terminal assessment intake contains only the settled outcome, affected paths, lean Handoffs in authored-task and stage order, all papercut results, and complete Learning Candidates with incomplete candidates identified as evidence only.
 - **Decision:** The adapter calls portable `continual-learning` once. Portable learning alone owns qualification, curation, redaction, destination authority, validation, and candidate-specific papercut dispositions. There is no semantic or transport retry, second curator, or second portable call.
 - **Decision:** Normalize the result to `Learning: curated`, `Learning: no durable learning`, or `Learning: blocked <reason>`. Curated and no-durable-learning results permit completion. An ordinary blocked result is reported once as residual risk and still permits completion. Only a current governing-rule conflict that directly makes the settled implementation invalid or unsafe blocks completion and returns to the rule owner.
+- **Decision:** After the one portable terminal result, the engineering adapter explicitly loads canonical `dev-handoff` and first-returns one lean Handoff with the title and five headings once in order. `Checks` contains portable assessment evidence plus exactly one normalized Learning line and no fabricated implementation acceptance IDs; `Next receiver` names the concrete lifecycle controller. The adapter checks the unsent envelope and fixes only that draft in place, without reinvoking portable assessment or asking it to re-emit.
 - **Decision:** If curation changes repository material, its completed lean Handoff creates one ordinary repository-work boundary and therefore one papercut look. That look never triggers another learning assessment.
 - **Why:** One settled assessment can improve durable guidance without turning every task or failure into a maintenance loop.
 - **Rejected alternatives:** Per-task learning, retries, counters, calendar triggers, transcript mining, broad repository scans, model scoring, and learning-owned implementation repair create hidden state or duplicate authority.
-- **Consequences:** Standard/high order remains review → verification → learning → presentation. Ordinary learning failure is visible but not an implementation blocker.
+- **Consequences:** Standard/high order remains review → verification → learning → one canonical learning Handoff → presentation. Ordinary learning failure is visible but not an implementation blocker. Portable learning stays one-shot and Handoff-free; human completion retains its five fields and one Learning line.
 - **Reopen when:** Assessment eligibility, intake, invocation count, blocking threshold, curation authority, or result vocabulary changes.
 
 ### D23 — Human map and maintenance provenance

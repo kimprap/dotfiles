@@ -8,8 +8,11 @@ mutation, validation, liveness, trace, and final user output.
 This protocol and `../SKILL.md` are the only executable Reconcile semantic
 owners. Do not load `execution-flow.md`; it is a non-runtime human maintenance
 map. Before the first return, read
-`~/.agents/references/agent-return/return.md` for declared bodies and native
-payload extraction only; it owns no pass, admission, or correction budget.
+[`agent-return`](../../../references/agent-return/return.md) for portable
+declared-body, lifecycle, provenance, extraction, and observed-return retention
+rules only; it owns no pass, admission, or correction budget. On OMP also read
+the [OMP agent-return adapter](../../../harnesses/omp/agent-return.md) for native
+addressability, message, supervision, and disposal facts.
 
 Bind the exact invoking controller from native launch provenance: the real
 top-level Main for direct use, or the current scope-child ID for delegation,
@@ -27,20 +30,24 @@ or prepare subsequent workflow operations.
 
 ## Bootstrap packet
 
-The controller creates and retains A and B before outer iteration one. The launch packet
-binds your logical role, this protocol's exact locator and digest, and the
-invoking controller identity. End that local launch turn without an authoritative
-report; remain retained. Launch output is not readiness. Do not inspect a
-candidate, produce a verdict, or load a supplemental skill.
+The controller allocates and retains A and B before outer iteration one. The
+launch packet binds your logical role, this protocol's exact locator and digest,
+and the invoking controller identity. It requests no authoritative report,
+readiness, candidate inspection, verdict, or supplemental-skill load. Launch
+output and launch-turn completion are not readiness.
 
-After binding both native child IDs, the controller sends each a bootstrap readiness
-request over IRC with a controller-authored correlation token. Copy that token to
-`replyTo` and send one role-bound line, `Ready: reviewer {A or B}`, using the
-owner-directed recipe below.
+The controller first lets your launch-only turn settle locally. It then observes
+your exact child ID registered and addressable under that controller through the
+host's current native roster or equivalent evidence; allocation or launch
+settlement alone is insufficient. It sends a separate bootstrap readiness
+request over the owner-directed message seam with a fresh
+controller-authored correlation token. Copy that token to the native
+reply-correlation field and send one role-bound line, `Ready: reviewer {A or B}`.
 This bootstrap-only line may end at EOF or with one LF or CRLF; no other
 whitespace, text, or lines are allowed. This does not relax or normalize any
-review response. Remain retained for the controller's first review-turn packet. Do not
-contact the counterpart. Context-only synchronization is not bootstrap or review.
+review response. Remain retained for the controller's first review-turn packet.
+Do not contact the counterpart. Context-only synchronization is not bootstrap
+or review. Registered addressability does not supply semantic readiness.
 
 ## Review-turn packet
 
@@ -145,22 +152,29 @@ status. Do not ask the controller to normalize prose or invent a semantic edit.
 
 ## Review passes and response transport
 
-For readiness and every `initial`, `post-rethink`, or `later` response, including
-each contract correction, use the same owner-directed IRC recipe:
+For readiness and every `initial`, `post-rethink`, or `later` response,
+including each contract correction, use the same owner-directed native message
+seam. On OMP apply the loaded adapter and:
 
 1. Send exactly one complete acknowledgment or response as the entire `message`
-   of `hub send`, with `to` equal to the bound invoking controller identity and
-   `replyTo` equal to this request's controller-authored correlation token.
+   of one non-awaited `hub send`, with `to` equal to the bound invoking
+   controller identity and `replyTo` equal to this request's
+   controller-authored correlation token.
 2. Repeat the exact same text once as the final local in-conversation message
-   for inspectability, then stop. Do not use Submit Result for these reports.
+   for inspectability, then stop. Do not await a send result or use Submit Result
+   for these reports.
 
 Copy the supplied token exactly; do not substitute a native incoming message ID,
 send-receipt ID, launch ID, report ID, or previous request's token. Never add a
 correlation field to the response body. The host binds sender and recipient;
-`replyTo` carries the authored token. A missing request token or host rejection/
-stripping of it blocks the transport; do not guess or change the body grammar.
-A report proves no successful terminal completion of its producing turn; the controller
-admits the valid correlated report itself.
+`replyTo` carries the authored token. A missing request token or host rejection
+or stripping of it blocks transport; do not guess or change the body grammar.
+The report proves neither successful terminal completion of its producing turn
+nor later collector survival. Only a present original current native return can
+be admitted by the controller. Missing current `details.waited` remains
+unresolved and grants no producer retry, replay, re-emission, or second report.
+Any snapshot, local echo, ordinary completion, or rendered copy cannot replace
+native provenance.
 
 For `initial`, inspect the exact working proposal and send the complete
 provisional response only. It has no mutation or terminal authority and is
@@ -169,9 +183,9 @@ superseded by a later admitted finalized response for the same candidate.
 Your current request supplies exactly one expected pass. Do not infer a
 supplemental skill load from that label, a later request, a correction, or a
 context-only packet. A context-only packet does not count as an actual review.
-For every requested report, the local echo is non-authoritative. The controller does not
-await, parse, compare, record, or gate on it. Do not make a second IRC send,
-await a receipt, address a peer, send an unsolicited message, or append
+For every requested report, the local echo is non-authoritative. The controller
+does not await, parse, compare, record, or gate on it. Do not make a second IRC
+send, await a receipt, address a peer, send an unsolicited message, or append
 transport commentary.
 
 A contract correction inherits the response's pass, authority, and transport
@@ -197,23 +211,29 @@ identity field. The controller copies it verbatim from the admitted response and
 add another `Candidate:` or current-identity field, or concatenate, correct, or
 supersede its value. Every required provenance role identity remains present.
 
-Upon receipt, your sole next action is the injected `hub wait`: invoke it
+On OMP, your sole next action is the adapter's injected `hub wait`: invoke it
 immediately and without prose with exactly `op: wait`, `from: {bound invoking
-controller identity}`, and `timeoutMs: 0`. This indefinite pair-bound wait is the sole
-exception to the review-turn prohibition on await.
+controller identity}`, and `timeoutMs: 0`. The controller must already have
+bound an existing external time/abort owner outside this blocked invocation;
+the wait must not sit inside an unbounded enclosing Eval cell. This pair-bound
+parking wait is the sole exception to the review-turn prohibition on await.
+Zero disables only the timer and does not promise survival through terminal or
+abort events. Do not treat early settlement as a new request, report, semantic
+stop, or disposal; preserve that unresolved frontier for the controller.
 Do not emit a local message before or after the tool call and do not complete
-the turn. Do not review or reassess the packet, emit `VALID`,
-`REVISE`, or `BLOCKED`, use IRC, produce a local echo, mutate, dispatch, or
-control the loop. The controller relies only on the host's delivery receipt and neither
-awaits nor consumes the wait result.
+the turn. Do not review or reassess the packet, emit `VALID`, `REVISE`, or
+`BLOCKED`, use IRC, produce a local echo, mutate, dispatch, or control the loop.
+The controller relies only on the host's delivery receipt and neither awaits nor
+consumes the wait result.
 
 The same pair remains retained for another outer iteration or an eligible
-identity-preserving repair pause. At actual run termination the controller alone silently
-stops/releases both exact run-owned reviewers through the native host lifecycle
-seam; on OMP this is `hub cancel`, including its parent-owned registered-subagent
-fallback after an original job settles, not Eval `AgentHandle.cancel`. It does
-not require a reviewer message or a turn completion. Do not acknowledge shutdown
-or leave the context wait to help cleanup. The controller must observe disposal before
-completion; absent or failed cleanup blocks success and never justifies ending
-the controller or another agent. Artifact freshness and drift handling remain the controller's
+identity-preserving repair pause. At actual run termination the controller alone
+silently stops/releases both exact run-owned reviewers through the native host
+lifecycle seam. On OMP it follows the loaded adapter's parent-owned exact-ID
+disposal guidance, including after an original job settles; job-scoped Eval
+handle cancellation is not a substitute. Disposal requires no reviewer message
+or turn completion. Do not acknowledge shutdown or leave the context wait to
+help cleanup. The controller must observe disposal before completion; absent or
+failed cleanup blocks success and never justifies ending the controller or
+another agent. Artifact freshness and drift handling remain the controller's
 responsibility, not a new review request.

@@ -21,10 +21,32 @@ this file and that protocol are the only executable Reconcile semantic owners.
 non-normative human maintenance map. Maintainers may open it only while changing
 or diagnosing Reconcile's controller loop. Invocation, preflight, approval, and
 live execution never load, hash, send, or interpret it; a mismatch is an
-edit-time documentation defect, and the two executable owners win. Declared
-bodies and native payload extraction live in
-[agent-return](../../references/agent-return/return.md); it owns no Reconcile
-pass, admission, or correction budget.
+edit-time documentation defect, and the two executable owners win.
+
+Portable declared bodies, lifecycle distinctions, native-provenance
+obligations, extraction boundaries, and observed-return retention live in
+[agent-return](../../references/agent-return/return.md); they own no Reconcile
+pass, admission, or correction budget. On OMP, load the
+[OMP agent-return adapter](../../harnesses/omp/agent-return.md) with it before
+transport preflight. The adapter owns native envelope, collector,
+addressability, supervision, and disposal facts, not Reconcile semantics.
+
+### Explicit execution-recovery adoption
+
+Reconcile explicitly adopts the sole generic
+[execution-recovery policy](../dev-implementation/references/execution-recovery.md)
+for its approved active-session invocation, setup, transport, collection,
+capture, and task-local execution machinery. The actual controller remains
+responsible for its machinery; a delegated scope child remains owner of its
+reviewers. This reusable skill-level adoption is known before launch but is not
+retroactive authority for an existing, paused, stopped, or historical run.
+
+Normal use of an already-supported observation path for the same pending
+operation is continuation. Correcting a failed mechanism follows the generic
+policy. Reviewer return correction, verdicts, semantic pause/continuation, and
+cleanup remain owned here. Neither path authorizes another review request,
+child-work replay, report re-emission, required-reviewer replacement, allowance
+reset, durable workflow state, or restart.
 
 ## Preflight and approval
 
@@ -86,23 +108,29 @@ Direct entry completes preflight before rendering a brief, spawning a child,
 reviewing, or mutating:
 
 1. Establish two configured distinct enabled host-provided persistent read-only
-   role bindings, logical A and B, and documented native capabilities: retained
-   child identities, same-child normal prompt follow-up and `skill://rethink`
-   load, owner-directed IRC reports to this controller with native sender/
-   recipient and preserved authored `replyTo` tokens, one-way context-delivery
-   receipts, readable shared context, and exact-owned silent disposal while the
-   controller continues. This is static preflight: require no preapproval spawn
-   or actual-pair proof. Establish actual child bindings and correlated readiness
-   after approval, then same-child rethink, context delivery and disposal at
-   their respective operations.
-   On installed OMP, readiness and every review use explicit `hub send` reports,
-   not ordinary completion. Missing native provenance or token-preserving
-   delivery capability blocks; do not patch the host, change response grammar,
-   substitute a channel, or require native request IDs or bootstrap-job lifetime.
-   OMP `hub cancel` has a parent-owned registered-subagent fallback for retained
-   children after their original jobs settle or disappear; job-scoped Eval
-   `AgentHandle.cancel` is not a substitute. Unavailable silent cleanup blocks.
-   Do not emulate two roles with one child, replace a lost child, or weaken a seam.
+   role bindings, logical A and B, and documented native capabilities:
+   allocation distinct from launch settlement and registered addressability;
+   retained child identities under this exact owner; same-child normal prompt
+   follow-up and `skill://rethink` load; owner-directed reports with native
+   sender, recipient, preserved authored token, relay discrimination, and
+   original current native return; one-way context delivery; readable shared
+   context; and exact-owned silent disposal while the controller continues.
+   This is static preflight: require no preapproval spawn or actual-pair proof.
+   Establish launch settlement, actual registered child bindings, and correlated
+   readiness after approval, then same-child rethink, context delivery, and
+   disposal at their respective operations. Semantic readiness remains separate
+   from allocation, launch settlement, and addressability.
+   On OMP, follow the loaded adapter for the awaited native envelope,
+   `timeoutMs: 0` limits, launch-handle wait form, roster ownership/addressability,
+   external supervision, and exact disposal. Before any indefinite report
+   collector or counterpart parking wait, require an existing time/abort owner
+   outside the blocked invocation that can observe the concrete operation,
+   process state, and log cursor every five minutes and interrupt the exact
+   operation when allowed; an Eval timeout alone is insufficient. Missing
+   external supervision, native provenance, token-preserving delivery,
+   registered addressability, or silent cleanup blocks. Do not patch the host,
+   change response grammar, substitute a channel, require native request IDs,
+   emulate two roles with one child, replace a lost child, or weaken a seam.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
    `unresolved`. Bind exact UTF-8 proposal bytes as
@@ -184,6 +212,9 @@ reviewer state object, or hidden protocol state:
 - each original pending return's bound child/controller, expected role/pass/
   candidate, current controller-authored correlation token, consumed/pending status,
   and nonresetting correction-used flag;
+- every pending request's complete original current native return envelope,
+  exact returned body, current authored token, and observed delivery status, or
+  the exact unresolved transport frontier when no return is admitted;
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
 - terminal finalized response, counterpart context-sync delivery receipt, and
@@ -220,17 +251,22 @@ artifact transport only when the intended child can read it.
 
 ## Retained reviewer lifecycle
 
-After approval, spawn A and B as one retained pair before outer iteration one.
-The launch packet binds only logical role, protocol locator/digest and this
-controller identity; it requests no readiness report or review. Let the launch turn
-end locally and ignore all launch output. Include no supplemental-skill loading
-recipe or path. Once both native child IDs are bound, send each a bootstrap
-readiness request with `hub send`, including a separately authored unique
-correlation token for that child. Launch output supplies no readiness authority;
-no launch or incoming native message ID is needed. Admit both role-bound
-readiness reports through the same IRC seam below before outer one. Bootstrap
-adds no review or rethink. Both remain read-only and persistent for the run;
-never replace a lost child.
+After approval, allocate A and B as one retained pair before outer iteration
+one. The launch packet binds only logical role, protocol locator/digest, and this
+controller identity; it requests no readiness report or review. Include no
+supplemental-skill loading recipe or path. Allocation does not establish launch
+settlement or addressability. Let both launch-only turns settle locally,
+concurrently where supported, using the host's supported handle-wait form.
+Then observe both exact child IDs registered under this controller through the
+current native roster or equivalent addressability evidence. If either launch
+settlement or exact binding is unavailable, stop without dispatch or
+replacement. Send each child its separate bootstrap readiness request with a
+fresh controller-authored correlation token; distinct owner-child requests may
+run concurrently. Launch output and completion supply no readiness authority,
+and roster addressability supplies no semantic readiness. Admit both role-bound
+readiness reports through the return seam below before outer one. Bootstrap adds
+no review or rethink. Both children remain read-only, persistent, and required
+for the run; never replace a lost child.
 
 On each child's first actual reviewing turn, even if it occurs in a later outer
 iteration:
@@ -269,43 +305,54 @@ ignored exact local echo. Neither switches reviewer nor adds a rethink.
 A `BLOCKED` response may receive already-approved readable original context
 once through the same child; persistent `BLOCKED` stops.
 
-For readiness and every review or correction, apply the owner-directed message
-seam in [agent-return](../../references/agent-return/return.md). Before sending,
-author a fresh unique token (for example UUIDv4) and bind it to the exact child,
-this controller, expected role/pass/candidate and original return expectation.
+For readiness and every review or correction, apply
+[agent-return](../../references/agent-return/return.md) and the loaded OMP
+adapter at the owner-directed message seam. Before sending, author a fresh
+unique token (for example UUIDv4) and bind it to the exact child, this
+controller, expected role/pass/candidate, and original return expectation.
 Include `Reply token: {token}` in the request packet, never in the response
 grammar. Never reuse a token, including for a correction or approved-context
-resend. Every expected readiness, review, correction or approved-context response
-uses its original `hub send` with `await: true` and explicit `timeoutMs: 0`.
-Each request owns its awaited collector and token. Never reuse an outer
-scope-return token for nested reviewer traffic. Sequential awaited sends are
-acceptable; one waiter per call does not impose global serialization or require
-overlapping readiness. Never use standalone `hub wait` to collect a future
-Reconcile report. The counterpart's context-only wait below remains unchanged.
+resend.
 
-Inspect native delivery, errors and payload presence before accessing
-`details['waited']`, following the shared extraction seam. Require successful
-delivery, not a receipt ID; outer tool success, delivery success or missing
-`waited` is not report success. Awaited send filters by sender, not `replyTo`,
-so still require native `from` = owned child, `to` = this controller, and
-`replyTo` = current authored token, with no `wakeRelay: true`. Reject duplicates
-before decoding that explicit message's complete `body` as declared encoding
-`text`, then check complete readiness or review grammar and workflow bindings,
-including role/pass/candidate. Consume an admitted token once. A correction
-retires the rejected request's token while retaining its original expectation
-and spent allowance; late reports for that token cannot gain authority.
-Retained requests remain admissible after bootstrap jobs expire; do not look up
-those jobs, refresh them, poll, or recover mutable latest-agent output.
+On OMP, every expected readiness, review, correction, or approved-context
+response uses its original owner-directed awaited send with exact `await: true`
+and `timeoutMs: 0`. Keep at most one outstanding collector per owner/child;
+distinct A and B operations may collect concurrently, so this rule does not
+globally serialize independent children. Never reuse an outer scope-return token
+for nested reviewer traffic or use standalone `hub wait` to collect a future
+Reconcile report. Use the external supervision established at preflight. Zero
+disables only the timer: terminal child events, unregistration, hard abort, or
+caller cancellation may still settle and remove the collector. Neither finite
+nor zero timeout guarantees eventual report observation.
 
-If collection is interrupted or returns without the expected report, preserve
-the pending token. With approval and the retained pair intact, one native inbox
-inspection may admit an already-delivered current report under the same full
-admission checks. Otherwise pause or stop at the precise frontier under the
-existing lifecycle and cleanup rules; do not redispatch, request re-emission,
-nudge for mere absence, poll, or reattach a future collector. Collector or
-parent-handling failure adds no recovery allowance. Idle alone is not child
-loss. Ignore local echoes and transcripts as evidence or failure-classification
-inputs.
+Inspect the complete current native result for operation error,
+requested-recipient delivery, `details` and `details.waited` presence, exact
+owned-child sender, this actual receiving controller, current authored token,
+and forbidden relay before body access. Delivery or outer success proves no
+report. When `details.waited` exists, mechanically copy that complete original
+object and its exact returned body into the receiving controller's current
+invocation state before decoding or semantic work.
+
+When `details.waited` is absent, the request remains unresolved and unadmitted.
+Preserve its exact token, child/controller identities, phase, candidate,
+delivery facts, and used or unknown allowances. Do not access a body,
+redispatch, replay, re-emit, create a new collector, inspect inbox, events,
+JSONL, branch/session state, RPC messages, history or agent output, use a local
+echo or ordinary completion, replace an actor, nudge for absence, or reset an
+allowance. Terminal, unregistration, hard-abort, or caller-abort settlement
+does not change this frontier.
+
+After the current native object is copied, decode only its complete returned
+body as `text`, then apply exact expected role, pass, candidate identity,
+workflow grammar, authority, semantic, nudge-budget, and one-time
+token-consumption checks. Any writable immutable snapshot hashes the exact
+returned bytes directly and cannot replace native provenance. A correction
+retires the rejected token and uses a fresh one without changing the original
+expectation or resetting its spent allowance. Bootstrap-job expiry does not
+affect a current request; do not recover mutable latest-agent output. Late
+traffic on a retired or consumed token and further malformed,
+changed-category, wrong-role/pass/candidate, duplicate, or wrong-channel
+attempts do not satisfy the request and earn no additional nudge.
 
 An unsolicited, foreign, stale-request or already-consumed report cannot satisfy
 the current expectation. Leave an unrelated message pending outside admission;
@@ -318,29 +365,31 @@ native sender/recipient evidence, host rejection/stripping of the token, or an
 actually unavailable channel stops for the transport blocker, not a content
 nudge to recreate host facts or a fallback response field.
 
-An ignored echo, automatic wake relay, ordinary task output, or absence of a
-report alone is not an observed invalid current report: leave the request
-pending without redispatch. No completion metadata is a gate. A fully valid
-correlated report is admitted even if its producing turn subsequently fails or
-is cancelled; it proves the report, not terminal turn success. Loss of the
-retained child still triggers the independent lifecycle stop.
+An ignored echo, automatic wake relay, ordinary task output, absent
+`details.waited`, or absence of a report is not an observed invalid current
+report: preserve the unresolved request without redispatch or nudge. No
+completion metadata is a gate. A fully valid correlated current report is
+admitted even if its producing turn subsequently fails or is cancelled; it
+proves the report, not terminal turn success. Loss of the retained child still
+triggers the independent lifecycle stop.
 
 For each original expected bootstrap or review return, allow at most one
-corrective nudge total across delivery, format, and identity failures. The
-corrected return remains part of that original expectation: a changed error
-category, duplicate, or repeated invalid response cannot reset the allowance.
-This allowance repairs an observed invalid expected return, not missing host
-capability. An observed wrong-channel attempt may receive the operation-specific
-nudge only when native delivery evidence binds that attempt to this expectation;
-absence of an IRC report or ignored local echo alone is not such evidence.
-Recoverability depends on the approved run binding, retained child, and required
-delivery channel remaining intact. A revoked or conflicting approved binding,
-lost child, or actually unavailable required seam stops immediately. Failure of
-the returned message to satisfy its required channel or response contract does
-not itself establish loss of that authority or capability. With those
-prerequisites intact, correct the invalid return under this allowance without
-admitting its payload. Establish a return failure only from observed
-delivery facts for that expectation, never from its ignored local echo.
+corrective nudge total across delivery, format, and identity failures evidenced
+by an attempted current return. The corrected return remains part of that
+original expectation: a changed error category, duplicate, or repeated invalid
+response cannot reset the allowance. Missing `details.waited` or missing host
+capability is not eligible. An observed wrong-channel attempt may receive the
+operation-specific nudge only when native delivery evidence binds that attempt
+to this expectation; absence of an IRC report or ignored local echo alone is
+not such evidence. Recoverability depends on the approved run binding, retained
+child, and required delivery channel remaining intact. A revoked or conflicting
+approved binding, lost child, or actually unavailable required seam stops
+immediately. Failure of a present returned message to satisfy its required
+channel or response contract does not itself establish loss of that authority
+or capability. With those prerequisites intact, correct the invalid return
+under this allowance without admitting its payload. Establish a return failure
+only from observed delivery facts for that expectation, never from its ignored
+local echo.
 
 For a correctable invalid return with its nudge unused, restate the concrete
 violated requirement and prescribed operation or complete response shape. Ask
@@ -360,6 +409,16 @@ This allowance governs invalid expected returns only. Valid `REVISE` and
 correction; ignored echoes, context-only synchronization, and separately
 authorized repairs remain outside this guard. None consumes a return-contract
 nudge or replenishes one already spent for the same original expectation.
+
+The return-contract nudge is distinct from the adopted generic machinery policy.
+If the outer invocation of an already-authorized request, correction,
+collection, synchronization, or validator fails for an eligible execution
+cause, the responsible owner may correct that mechanism under the generic
+policy without issuing another semantic request, changing the authored token or
+review pass, refunding a nudge, or resetting either allowance. Supported
+observation of the same pending operation is continuation. A valid `REVISE`,
+`BLOCKED`, semantic stop, missing required owner/provenance, or exhausted nudge
+cannot be relabeled as machinery failure to reopen the protocol.
 
 Accept only the protocol's exact complete response for the expected reviewer,
 pass, and current working identity. A duplicate, malformed, stale, mismatched,
@@ -421,12 +480,16 @@ complete terminal response's existing `Candidate:` field is the packet's sole
 dedicated current-candidate identity field. Copy it verbatim from the admitted
 response; do not add another `Candidate:` or current-identity field, or
 concatenate, correct, or supersede its value. Preserve every required
-provenance role identity. Instruct the receiver that its sole next action
-is an immediate no-prose indefinite `hub wait` bound to the invoking controller
-identity. The controller uses only the host's one-way delivery receipt and does not await
-or consume the wait result. Do not request or consume a review, verdict,
-rethink, IRC response, local echo, mutation, dispatch, or other channel use. A
-failed delivery receipt stops before every mutation or terminal presentation.
+provenance role identity. On OMP, instruct the receiver that its sole next action
+is the adapter's immediate no-prose controller-bound parking wait with
+`timeoutMs: 0`. Use the existing external time/abort owner established at
+preflight; do not place it in an unbounded enclosing Eval invocation. The
+controller uses only the host's one-way delivery receipt and does not await or
+consume the wait result. Delivery proves neither waiter survival nor disposal;
+a terminal or abort settlement preserves an unresolved synchronization frontier
+and authorizes no replay. Do not request or consume a review, verdict, rethink,
+IRC response, local echo, mutation, dispatch, or other channel use. A failed
+delivery receipt stops before every mutation or terminal presentation.
 
 After successful synchronization:
 
@@ -475,14 +538,16 @@ not a request to terminate the run.
 
 At actual run termination—unchanged success, `CAP_REACHED`, terminal artifact
 drift, any other non-resumable stop, or abandonment of a repair pause—silently
-stop/release both exact run-owned reviewer IDs before completion. On OMP invoke
-native `hub cancel` from the bound controller against those IDs, including retained reviewers whose
-original jobs have finished; do not use Eval `AgentHandle.cancel`. Do not send a
-shutdown prompt, request an acknowledgement, await another reviewer message,
-weaken the no-prose context wait, cancel unrelated agents, or terminate the controller.
-The bound controller observes disposal; never route grandchild cleanup through
-the outer Retrace parent. Require host-confirmed removal or terminal non-running disposal; a cancellation
-receipt or host teardown alone does not establish cleanup.
+stop/release both exact run-owned reviewer IDs before completion. On OMP use the
+loaded adapter's parent-owned native exact-ID disposal seam, including retained
+reviewers whose original jobs have settled; do not substitute job-scoped Eval
+handle cancellation. Do not send a shutdown prompt, request an acknowledgement,
+await another reviewer message, weaken the no-prose context wait, cancel
+unrelated agents, or terminate the controller. The bound controller observes
+disposal; never route grandchild cleanup through the outer Retrace parent.
+Require host-confirmed removal or terminal non-running disposal; a cancellation
+request, receipt, report, turn completion, retained snapshot, or host teardown
+alone does not establish cleanup.
 
 Missing or failed cleanup blocks success: preserve the pending disposition and
 exact unresolved reviewer IDs and report the cleanup capability failure rather

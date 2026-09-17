@@ -56,6 +56,15 @@ rethink, or persist cause and allowance state. Eligible recovery preserves the
 approved route; a proposed authority, acceptance, ownership, target, effect, or
 other material change uses the existing return and reapproval rules.
 
+The approved implementation route also covers the `dev-implementation`
+controller's awaited collection of the same child's implementation-rethink
+Handoff in attempt 1 or 2 and a return from an already-authorized same-child
+execution-recovery operation. Do not re-enter router intake or ask for human
+consent, attendance, supervision, or an abort-capability inventory for those
+two exact role-and-purpose calls. This does not widen authority, add a recovery
+allowance, or exempt Reconcile, Retrace, or another custom collector from its
+own preflight.
+
 For ordinary implementation route composition, apply these mandatory router gates in order:
 
 1. Classify safety and whether current evidence already answers the request.

@@ -39,6 +39,23 @@ Normalize the portable terminal status to exactly one completion check line:
 
 `curated` and `no durable learning` permit completion. An ordinary `blocked <reason>` also permits completion and the same reason is reported as residual risk. Stop completion only when the assessment establishes a current governing-rule conflict that directly makes the settled implementation invalid or unsafe; return that conflict to the governing authority instead of constructing completion input.
 
-Return one lean `dev-handoff` envelope to the lifecycle controller. Include any guidance paths changed by curation, the assessment checks, candidate-specific papercut dispositions, the normalized learning line, the exact residual or governing conflict, and no extra transport fields. The adapter never reads or writes the papercut ledger, reruns review or verification, repairs implementation, presents completion, or ships.
+After portable learning returns its one terminal status, explicitly load
+`skill://dev-handoff` before composing the adapter return. Compose one lean
+Handoff on the first return: one `# Handoff:` title followed by `## Outcome`,
+`## Changed targets/effects`, `## Checks`, `## Blocker/risk`, and
+`## Next receiver` exactly once and in that order. Put the portable assessment
+evidence and exactly one matching `Learning: curated`,
+`Learning: no durable learning`, or `Learning: blocked <reason>` line inside
+`Checks`; do not invent implementation acceptance IDs. Name the bound concrete
+lifecycle controller as the sole next receiver.
+
+Before sending, check the unsent envelope against the loaded canonical Handoff
+contract and fix that draft in place if needed. Do not invoke portable
+`continual-learning` again, ask it to re-emit a report, or create a second
+assessment or Handoff. Include any guidance paths changed by curation,
+candidate-specific papercut dispositions, and the exact residual or governing
+conflict in the canonical fields. The adapter never reads or writes the
+papercut ledger, reruns review or verification, repairs implementation,
+presents completion, or ships.
 
 If curation changed repository material, that completed Handoff is itself a repository-work boundary: load `papercut` once afterward under the generic scheduling rule. That look never triggers another learning assessment.

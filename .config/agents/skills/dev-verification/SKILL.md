@@ -60,36 +60,44 @@ A passing subset never yields `VERIFIED`. The aggregate must be newly issued fro
 
 ## Execution recovery
 
-Before any retry after a concrete invocation, runner, transport, environment,
-automation, fixture, collection, or capture failure, read
-`skill://dev-implementation/references/execution-recovery.md`. The same
-verifier remains the execution owner and explicitly applies
-`~/.agents/references/impl-rethink/recovery-rethink.md` once to every retry
-proposal. It may correct only permitted task-local execution machinery while
-the evaluated target, required `Behavior`, `Check`, expected result, ownership,
-and authorized effects stay unchanged. Record the failed observation, concrete
-cause, correction or transient basis, decisive observation, and used allowance.
-This recovery is read-only toward the evaluated target and consumes no semantic
+When a concrete invocation, runner, transport, environment, automation, fixture,
+collection, or capture failure prevents a required observation or would
+otherwise be escalated as an execution-related blocker, first read and assess
+`skill://dev-implementation/references/execution-recovery.md`. Assessment grants
+no retry. For an eligible retry, the same verifier remains the execution owner,
+forms the proposal, and explicitly applies
+`~/.agents/references/impl-rethink/recovery-rethink.md` once before execution.
+It may correct only permitted task-local execution machinery while the evaluated
+target, required `Behavior`, `Check`, expected result, ownership, and authorized
+effects stay unchanged. Record the failed observation, concrete cause,
+correction or transient basis, decisive observation, and used allowance. This
+recovery is read-only toward the evaluated target and consumes no semantic
 attempt.
 
 The shared per-cause corrected-execution and finite transient limits apply; a
-first corrected failure is not by itself an unconditional stop. Use the
-smallest complete valid check scenario, preserve frozen failed or inconclusive
-evidence, and never stitch partial runs. A required recovery stop retains
-`NOT VERIFIED` for a direct contradiction and `INCONCLUSIVE` for unavailable or
-confounded proof. Any proposed target, required behavior, check-meaning,
-expected-result, ownership, or effect change returns to its authority instead
-of recovery. Execution recovery never substitutes a check or verifier, reruns
-review, repairs product or code, or weakens the complete unchanged fixed-set
-rerun after semantic repair.
+lower-level non-success label or first corrected failure is not by itself an
+unconditional stop. An initial execution allocation is not an implicit recovery
+cap, but an explicit total execution cap remains binding. Use the smallest
+complete valid check scenario, preserve frozen failed or inconclusive evidence,
+and never stitch partial runs. After successful recovery, this same verifier may
+issue a fresh complete aggregate from compatible valid observations and
+continues the remaining fixed set. A required verifier is not a disposable
+resource: loss of that verifier stops closure with no substitute or parent
+repair.
+
+Any proposed target, required behavior, check-meaning, expected-result,
+ownership, or effect change returns to its authority instead of recovery.
+Execution recovery never substitutes a check or verifier, reruns review, repairs
+product or code, weakens the complete unchanged fixed-set rerun after semantic
+repair, or overrides a custom protocol's own refusal or limits.
 
 ## One eligible implementation repair
 
-If review repair already consumed attempt 2, this verification is final for semantic repair. After eligible execution recovery is complete or unavailable, any `NOT VERIFIED` or `INCONCLUSIVE` result stops with the current evidence; no code repair, reviewer rerun, second verifier, or extra semantic attempt is allowed.
+If review repair already consumed attempt 2, verification is final for semantic repair. After assessing execution recovery, an eligible machinery correction may still proceed under its unchanged allowance, but any resulting `NOT VERIFIED` or `INCONCLUSIVE` code outcome stops with the current evidence; no further product repair, reviewer rerun, second verifier, or extra semantic attempt is allowed.
 
 If attempt 2 remains and verification produces `NOT VERIFIED` from a directly evidenced code defect, return the exact failing check, reproduction, expected and observed behavior, and affected target to the responsible implementation owner. That owner may perform the one code-changing attempt 2 and its same-worker rethink. Environment, fixture, authority, transport, or other execution-machinery failures do not qualify as code defects and do not authorize semantic repair; they follow the shared execution-recovery policy only when eligible.
 
-Keep the original verifier persistent. After the eligible repair, the same verifier receives the repaired target and implementation Handoff, then independently executes the complete unchanged fixed check set again and emits a fresh aggregate. This is verifier-owned closure of the repaired delta. It is final: unresolved failure stops, and review never reopens. Do not substitute another verifier if the original verifier is lost.
+Keep the original verifier persistent. After the eligible repair, the same verifier receives the repaired target and implementation Handoff, then independently executes the complete unchanged fixed check set again and emits a fresh aggregate. This is verifier-owned closure of the repaired delta. It is final for semantic repair: unresolved code failure stops, review never reopens, and execution recovery may address only otherwise eligible machinery. Loss of the required original verifier is an ownership blocker; do not substitute another verifier or let the parent repair or aggregate in its place.
 
 ## Handoff and next owner
 

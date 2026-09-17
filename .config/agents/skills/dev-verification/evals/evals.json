@@ -139,6 +139,55 @@
         "Uncertain prior effects prohibit repetition",
         "Transient and corrected histories cannot replenish or erase each other"
       ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-PRE-ESCALATION",
+      "prompt": "During AC-4, a disposable capture runner fails before observing the check. The original verifier immediately returns INCONCLUSIVE and says verification is blocked, but identifies no recovery-policy stop. Authority, target, acceptance, required verifier, effects, and cause history remain known and unchanged; no retry has been proposed yet. State what the implementation controller and verifier do, including when recovery rethink applies and what happens after successful correction.",
+      "expected_output": "Preserve the failed observation, but do not treat the premature INCONCLUSIVE return as proof that recovery is exhausted. The controller returns the specific eligibility question to the same verifier without repairing or deciding it. The verifier assesses the shared policy; if eligible, it forms the concrete machinery correction, applies recovery rethink once before executing that retry, and records the cause and used allowance. After a successful corrected observation, the same verifier continues the remaining fixed set and issues a fresh complete aggregate.",
+      "files": [],
+      "assertions": [
+        "Recovery is assessed before escalating the execution-related blocker even though no retry was proposed",
+        "The controller returns an eligibility question to the same verifier without repairing or manufacturing eligibility",
+        "Recovery rethink occurs only after an eligible retry proposal and before its execution",
+        "Failed evidence and allowance accounting are preserved",
+        "Successful recovery continues the remaining fixed set to a fresh complete aggregate"
+      ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-REQUIRED-OWNER",
+      "prompt": "Compare two AC-4 failures under otherwise unchanged authority and safe effects. In A, the isolated capture process exited and its identity is not required by acceptance; the concrete cause has available correction allowance. In B, the original independent verifier was disposed and cannot return, while the controller can launch another verifier. Decide whether each resource may be replaced and who owns any correction.",
+      "expected_output": "A may recreate the disposable capture process only through the same verifier's eligible recovery proposal and existing cause allowance. B stops with the required-verifier-unavailable ownership blocker: a fresh verifier cannot substitute, and the parent cannot repair or aggregate in the original verifier's place. Replacing resources never restores missing authority or resets an allowance.",
+      "files": [],
+      "assertions": [
+        "Disposable machinery may be recreated only when its identity is not required and the existing allowance permits it",
+        "Loss of the required original verifier is an ownership stop",
+        "No substitute verifier or parent repair is allowed",
+        "Fresh resources do not restore authority or reset recovery history"
+      ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-EXPLICIT-TOTAL-CAP",
+      "prompt": "Compare two otherwise eligible disposable-runner corrections for AC-4. In A, the contract allocated one initial execution but states no total execution cap, and the first execution failed with known safe effects. In B, the contract explicitly permits one total execution and that execution has been used. Fresh disposable processes are available in both cases. Decide whether another execution may proceed.",
+      "expected_output": "A's initial allocation is not automatically a recovery prohibition, so the same verifier may assess and use an otherwise eligible corrected execution under the shared cause allowance after recovery rethink. B must stop because the explicit total execution cap is exhausted. A fresh process cannot replenish the cap or create another invocation.",
+      "files": [],
+      "assertions": [
+        "An initial execution allocation without explicit total-cap language is not an automatic recovery stop",
+        "An explicit exhausted total execution cap prohibits replacement execution",
+        "Fresh disposable resources do not replenish the explicit cap",
+        "Any eligible retry still requires same-owner recovery rethink before execution"
+      ]
+    },
+    {
+      "id": "DV-EXECUTION-RECOVERY-SEMANTIC-FINALITY",
+      "prompt": "Review repair already consumed semantic attempt 2. During the verifier's unchanged fixed-set closure, a task-local runner uses a wrong working directory; target and deliverable bytes are unchanged, effects are safe, and this concrete machinery cause has available allowance. Contrast correcting only that runner setting with a proposed correction that changes the deliverable so AC-4 passes.",
+      "expected_output": "The same verifier may assess the wrong-working-directory cause and, after recovery rethink, execute an otherwise eligible machinery correction under its existing allowance; consuming attempt 2 did not exhaust machinery recovery. It must refuse the deliverable mutation because semantic repair is exhausted. The verifier remains read-only, preserves both observations, and continues only with the unchanged target and acceptance.",
+      "files": [],
+      "assertions": [
+        "Exhausted semantic repair does not prohibit otherwise eligible execution-machinery recovery",
+        "The machinery correction uses the existing cause allowance and recovery rethink",
+        "A deliverable mutation is refused because no semantic attempt remains",
+        "The verifier stays read-only and preserves failed evidence"
+      ]
     }
   ]
 }

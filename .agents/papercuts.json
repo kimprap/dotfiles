@@ -60,6 +60,21 @@
       "summary": "Prevent installed rule locators from serving policy bytes older than their repository sources.",
       "surface": "Installed rule:// policy projection"
     },
+    "pc-6d31171d9c5f04c1": {
+      "first_seen": "2026-09-16",
+      "last_seen": "2026-09-16",
+      "observations": [
+        {
+          "date": "2026-09-16",
+          "friction": "Exact projection of two finalized specification checks made plan publication fail with DIRECT_CHECK_INVALID because they used a period and capitalized Expect instead of the required semicolon-expect delimiter.",
+          "workaround": "The existing specification author mechanically corrected only the two delimiters in a new bound revision; ticketing refreshed the exact projection and republished successfully."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Final specification Check strings can omit the lean-plan parser's required semicolon-expect delimiter.",
+      "surface": "dev-specification to lean-plan acceptance projection"
+    },
     "pc-7360992214c3cd7d": {
       "first_seen": "2026-08-30",
       "last_seen": "2026-08-30",

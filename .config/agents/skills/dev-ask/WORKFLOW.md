@@ -16,6 +16,16 @@ named invocation contract or a current named-skill contract explicitly binds it
 before the affected operation; reusable skill adoption is not retroactive and
 does not widen another custom controller.
 
+The generic implementation controller has one narrower collection rule: after
+current route approval, its awaited return from the same bound implementation
+child needs no additional consent, attendance, external-supervisor, or
+abort-capability preflight when the purpose is the implementation-rethink
+Handoff in attempt 1 or 2 or a return from an already-authorized recovery
+operation. This adds no deadline, observer, replay, replacement, recovery
+allowance, or unattended-completion promise. Reconcile, Retrace, and other
+custom collectors keep their existing external-owner and five-minute
+obligations.
+
 Specification, planless direct-contract, ticket-graph, and standalone-plan
 authors resolve applicable current sources before drafting and apply the shared
 planning rethink once after a substantive candidate and before final submission
@@ -97,11 +107,11 @@ The active repository path remains the sole execution and continuation source th
 
 ### Child work and attempts
 
-Each implementation child receives only approved intent and its acceptance IDs, exact owned paths and effects, dependency Handoffs when applicable, project instructions, semantic attempt `1` or `2`, and its concrete bound controller as receiver.
+Each implementation child receives only approved intent and its acceptance IDs, exact owned paths and effects, dependency Handoffs when applicable, project instructions, semantic attempt `1` or `2`, its concrete bound controller as receiver, and an explicit caller-selected declared response-object schema. Before dispatch, bind the exact child and native job identities and require a transport that keeps that same child resumable after candidate-job settlement.
 
-Attempt 1 is one candidate, followed by the controller explicitly sending `~/.agents/references/impl-rethink/impl-rethink.md` to the same child. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and returns one lean Handoff to that controller. There is no second implementation self-rethink. For a plan, `IN_PROGRESS` is recorded immediately before the first implementation-child dispatch, not at controller activation.
+Attempt 1 uses the phase-specific sequence: terminal type-absent ordinary candidate completion; exact-job collection with immediate original-native-result retention, adapter validation, and decoding of only the designated structured data; then a fresh-token awaited owner-directed rethink request to that same child under the exact generic implementation collection exemption above. The child applies code rethink, then test rethink, may make one correction, runs every owned direct check and the changed path, and replies on the request's message channel with one lean Handoff to that controller. Candidate job settlement is not task completion or disposal; incremental publication, parking, yield, ordinary completion in place of the reply, a missing awaited return, or a replacement child cannot satisfy the sequence. For a plan, `IN_PROGRESS` is recorded immediately before the first implementation-child dispatch, not at controller activation.
 
-Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same candidate → same-child implementation rethink → optional correction → direct checks → lean Handoff sequence. A task-local execution-mechanism failure instead follows `skill://dev-implementation/references/execution-recovery.md` before escalation: the same execution owner assesses eligibility, explicitly applies the separate recovery rethink only before an eligible retry, preserves failed evidence, cause, and allowance, and gains no semantic attempt, target-mutation authority, route stage, or execution-state store. Exhausted semantic repair prevents another deliverable change, not otherwise eligible machinery correction; successful recovery continues the remaining approved outcome.
+Attempt 2 is the only later code-changing repair. It may close one required review finding or one directly evidenced verifier code defect. It uses the same explicit-schema, resumable terminal-candidate-job → exact native retention and admission → same-child fresh-token awaited rethink under the exact collection exemption → optional correction → direct checks → owner-directed Handoff reply sequence. A task-local execution-mechanism failure instead follows `skill://dev-implementation/references/execution-recovery.md` before escalation: the same execution owner assesses eligibility, explicitly applies the separate recovery rethink only before an eligible retry, preserves failed evidence, cause, and allowance, and gains no semantic attempt, target-mutation authority, route stage, or execution-state store. A return from that already-authorized same-child recovery operation uses the same collection exemption and receives no second implementation rethink. Exhausted semantic repair prevents another deliverable change, not otherwise eligible machinery recovery.
 
 Every completed repository-work Handoff is followed by exactly one papercut look from the same child; only child unavailability permits controller fallback.
 
@@ -147,7 +157,7 @@ After every completed repository-work boundary, load `papercut` once even when n
 
 ### Learning
 
-Standard and high invoke `dev-continual-learning` once after review and verification. Intake is the settled outcome, affected paths, lean Handoffs, all papercut results, and complete Learning Candidates. There is no retry. `curated` and `no durable learning` permit completion. An ordinary blocked assessment is reported as a residual risk. Only a current governing-rule conflict that makes the implementation invalid or unsafe blocks completion. Compact records `Learning: skipped for compact`.
+Standard and high invoke `dev-continual-learning` once after review and verification. Intake is the settled outcome, affected paths, lean Handoffs, all papercut results, and complete Learning Candidates. There is no retry. After portable assessment returns, the engineering adapter loads canonical `dev-handoff`, composes its first return with the title and five headings once in canonical order, puts assessment evidence and exactly one normalized Learning line inside `Checks` without invented implementation acceptance IDs, and names the concrete controller as receiver. It checks the unsent envelope and fixes only that draft in place; it never invokes portable assessment again. `curated` and `no durable learning` permit completion. An ordinary blocked assessment is reported as a residual risk. Only a current governing-rule conflict that makes the implementation invalid or unsafe blocks completion. Compact records `Learning: skipped for compact`.
 
 ### Five-field presentation
 
