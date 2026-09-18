@@ -14,7 +14,7 @@ Use this procedure only for an approved lean implementation plan. It adds no pla
 - A task is ready only when every dependency Handoff has been accepted and its owned targets do not conflict with active work.
 - Dispatch mechanically disjoint ready tasks concurrently when the runtime safely supports it. Serialize overlap, ambiguous ownership, exclusive resources, ordered migration, and fan-in.
 - The controller may read, validate, schedule, enforce boundaries, request rethink, aggregate Handoffs, dispatch assurance and learning, and update plan lifecycle. It never performs code-changing task work or semantic repair.
-- A child receives only approved intent and acceptance IDs, exact owned paths/surfaces, dependency Handoffs, applicable project instructions, semantic attempt number, the concrete bound controller as its one receiver, and an explicit caller-selected declared response-object schema. Bind its exact child and native job identities before collection, and use only a transport that keeps that same child resumable after candidate-job settlement.
+- A child receives only approved intent and acceptance IDs, exact owned paths/surfaces, dependency Handoffs, applicable project instructions, semantic attempt number, the concrete bound controller as its one receiver, and an explicit caller-selected declared response-object schema. Attempt 1 binds its exact child and native job before collection. Attempt 2 resumes that same retained child through a separately tokened owner-directed repair-candidate request; it never allocates another task job.
 - Undeclared path or effect mutation stops that task. Preserve completed independent work; do not reinterpret the plan to absorb drift.
 
 If an invocation, runner, transport, environment, automation, fixture,
@@ -25,24 +25,35 @@ the blocker. Only an eligible retry receives the explicit recovery rethink that
 policy requires. Preserve the failed evidence, cause, and used allowance in the
 lean Handoff; do not add plan or scheduler state.
 
-Only the `dev-implementation` controller's awaited collection of the same
-bound child's implementation-rethink Handoff in either semantic attempt and
-the return from an already-authorized same-child recovery operation bypass
-another consent, attendance, external-supervisor, or abort-capability
-preflight. This exact role-and-purpose exemption changes no authority,
-allowance, deadline, observer, replay, replacement, or custom-controller
-obligation.
+Only the `dev-implementation` controller's awaited collection of the same bound
+child's authorized attempt-2 repair candidate, implementation-rethink Handoff
+in either semantic attempt, or return from an already-authorized same-child
+recovery operation bypasses another consent, attendance, external-supervisor,
+or abort-capability preflight. This exact role-and-purpose exemption changes no
+authority, allowance, deadline, observer, replay, replacement, or
+custom-controller obligation.
 
 ## Close a work attempt
 
-1. Preflight the explicit declared response-object schema, resumable same-child transport, and exact controller/child/job/task/attempt/`candidate` bindings. The child implements its task and terminal-completes a type-absent ordinary candidate before final smoke or Handoff; incremental publication and parking are not candidate return.
-2. Collect only the exact completed job. Immediately retain the complete original native result and matching job record, apply the loaded adapter's terminal/status/schema/identity checks, and decode only its designated structured data before admitting the candidate. Missing, invalid, mismatched, consumed, or alternate-source output fails closed. Job settlement is neither task completion nor disposal.
-3. Send `~/.agents/references/impl-rethink/impl-rethink.md` once to that same child through a fresh-token awaited owner-directed request under the exact implementation collection exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check and changed-path smoke, and replies on the request's message channel with one lean Handoff to the concrete bound controller. Yield, ordinary completion, a missing awaited return, or replacement child cannot satisfy it.
-4. The same child then loads `papercut` once for that completed repository-work boundary. The controller substitutes only when the child is unavailable.
-5. The controller mechanically accepts only the retained owner-directed native return, declared targets/effects, complete owned check records, exact task/attempt identity, and its own bound receiver identity. If a Handoff escalates an execution-related stop without naming an actual shared-policy stop condition, return the specific eligibility question to the same responsible owner. The controller does not redo semantic judgment, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.
-6. Mark the task complete, add `  completed YYYY-MM-DD-HHMM` immediately after its checked task line, and check each criterion only after its exact check reports the expected result.
+For attempt 1:
 
-Attempt 1 is the terminal candidate job and admission, same-child rethink, optional correction, smoke, and owner-directed Handoff. Do not self-rethink twice. Execution recovery is separately governed by `skill://dev-implementation/references/execution-recovery.md`; it consumes no semantic attempt only while the evaluated target and deliverable remain unchanged, and it never resets the two-attempt bound. After recovery rethink, an already-authorized same-child recovery operation's return uses the exact collection exemption above and never receives a second implementation rethink. The only attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Its responsible child follows the same explicit-schema, resumable job-then-owner-directed-return sequence and the same exact implementation-rethink collection exemption. Attempts are limited to attempt 1 and an eligible attempt 2. Exhaustion stops another semantic change, not otherwise eligible machinery recovery under its existing allowance.
+1. Preflight the explicit declared response-object schema, normal non-isolated resumable child transport, and exact controller/child/job/task/attempt-1/receiver/`candidate` bindings. The child implements its task and terminal-completes a type-absent ordinary candidate before final smoke or Handoff; incremental publication and parking are not candidate return.
+2. Collect only the exact completed job. Immediately retain the complete original native result and matching job record, apply the loaded adapter's terminal/status/schema/identity checks, and decode only its designated structured data before admitting the candidate. Missing, invalid, mismatched, consumed, or alternate-source output fails closed. Job settlement is neither task completion nor disposal.
+
+For an authorized attempt-2 repair:
+
+1. Resume the same responsible child; do not allocate another task job. Pre-bind the exact controller/child/task/attempt-2/receiver/`candidate` phase, declared response-object schema, active invocation, and fresh owner-authored candidate token.
+2. Send one awaited owner-directed repair-candidate request. The child replies once by non-awaited owner-directed message with the exact `replyTo` and a complete body that is JSON encoding of exactly one string `response` field. It does not yield, ordinary complete, publish incrementally, or return a Handoff at this boundary.
+3. Immediately retain the complete original native return and returned message. Validate exact sender, recipient, token, no relay, phase, declared schema, and report identity before admission. Validate the live-message body consumer-side without inventing a caller-schema envelope. Missing, malformed, mismatched, relayed, or alternate-source output fails closed without reconstruction, re-emission, replacement, or retry.
+
+After either candidate is admitted:
+
+1. Send `~/.agents/references/impl-rethink/impl-rethink.md` once to that same child through a separate fresh-token awaited owner-directed request under the exact implementation collection exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check and changed-path smoke, and replies on this request's message channel with one lean Handoff to the concrete bound controller. Yield, ordinary completion, a missing awaited return, or replacement child cannot satisfy it.
+2. The same child then loads `papercut` once for that completed repository-work boundary. The controller substitutes only when the child is unavailable.
+3. The controller mechanically accepts only the retained owner-directed native return, declared targets/effects, complete owned check records, exact task/attempt identity, and its own bound receiver identity. If a Handoff escalates an execution-related stop without naming an actual shared-policy stop condition, return the specific eligibility question to the same responsible owner. The controller does not redo semantic judgment, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.
+4. Mark the task complete, add `  completed YYYY-MM-DD-HHMM` immediately after its checked task line, and check each criterion only after its exact check reports the expected result.
+
+Attempt 1 uses the terminal candidate job; attempt 2 uses the retained same child and a current awaited repair-candidate message. Both use one separately tokened same-child implementation rethink after candidate admission. Do not self-rethink twice. Execution recovery is separately governed by `skill://dev-implementation/references/execution-recovery.md`; it consumes no semantic attempt only while the evaluated target and deliverable remain unchanged, and it never resets the two-attempt bound. After recovery rethink, an already-authorized same-child recovery operation's return uses the exact collection exemption above and never receives a second implementation rethink. Attempts are limited to attempt 1 and an eligible attempt 2. Exhaustion stops another semantic change, not otherwise eligible machinery recovery under its existing allowance.
 
 ## Assurance and finish
 

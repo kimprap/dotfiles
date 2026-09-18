@@ -3500,9 +3500,9 @@
       "id": "B-LEAN-REVIEW-REPAIR",
       "layer": "backend",
       "fixture_dir": "fixtures/b-lean-review-repair",
-      "criterion": "One independent review finding may consume attempt 2 in the same responsible child; review never reruns and independent verification executes original checks plus the finding closure check.",
+      "criterion": "One independent review finding may consume attempt 2 in the same responsible child; attempt 1 uses its exact terminal candidate job, attempt 2 uses one current schema-valid owner-directed repair-candidate message before a separately tokened rethink/Handoff, review never reruns, and independent verification executes original checks plus finding closure.",
       "inputs": {
-        "request": "Execute standard work under an in-place controller where the one independent review returns one material required finding with an exact closure check, and the same responsible child repairs it on attempt 2 before independent verification."
+        "request": "Execute standard work under an in-place controller. Attempt 1 uses one normal non-isolated implementation child, explicit response-object schema, terminal ordinary candidate job, original job-result retention/admission, then a separately tokened same-child rethink/Handoff. One independent review returns one material required finding with an exact closure check. Attempt 2 resumes that exact child without a new task job: pre-bind controller/child/task/attempt-2/receiver/candidate phase, schema and fresh token; collect one JSON response-object candidate through an awaited owner-directed request and the child's non-awaited reply on that token; retain the original native returned message before consumer-side schema/identity admission and do not require source:caller. Only after admission send a different fresh-token awaited rethink/Handoff. Then independently verify. Reject replacement, alternate-source or malformed candidates, shared tokens, review rerun, and controller repair."
       },
       "scripted_replies": [],
       "additional_files": [],
@@ -3535,10 +3535,16 @@
       "required_events": [
         "activate:dev-implementation-in-place",
         "dispatch:implementation-child",
+        "candidate-job:attempt-1-original-retained",
         "handoff:attempt-1",
         "papercut:attempt-1",
         "review:repair-required",
-        "candidate:attempt-2-same-child",
+        "candidate-request:attempt-2-same-child-awaited",
+        "candidate-return:attempt-2-owner-directed",
+        "candidate-native-return:retained-before-decode",
+        "candidate-schema:consumer-validated",
+        "candidate:attempt-2-admitted",
+        "rethink-request:attempt-2-separate-token",
         "rethink:code",
         "rethink:tests",
         "direct-checks:pass",
@@ -3551,6 +3557,11 @@
       ],
       "forbidden_events": [
         "replacement:implementation-child",
+        "task-job:attempt-2",
+        "ordinary-completion:attempt-2-candidate",
+        "source-caller-envelope:attempt-2-message",
+        "same-token:candidate-and-rethink",
+        "alternate-source:attempt-2-candidate",
         "dispatch:dev-implementation-controller",
         "handoff:controller-to-self",
         "review:second-pass",
@@ -3565,17 +3576,18 @@
       "repetition_tier": "hard",
       "rubric": [
         "Require one material finding and bounded attempt-2 repair by the same responsible implementation child.",
+        "Require attempt 1 to retain and admit the exact terminal candidate job, but attempt 2 to use one separately tokened current owner-directed repair-candidate message with native retention before consumer-side schema and identity admission, followed only then by a different-token rethink/Handoff.",
         "Require verification of every original acceptance check followed by the review closure check.",
-        "Reject child replacement, controller spawn or self-Handoff, review rerun, third semantic attempt, or parent repair."
+        "Reject another attempt-2 task job, caller-envelope fiction for a live message, ordinary-completion or alternate-source repair candidate, shared candidate/rethink token, child replacement, controller spawn or self-Handoff, review rerun, third semantic attempt, or parent repair."
       ]
     },
     {
       "id": "B-LEAN-VERIFIER-REPAIR",
       "layer": "backend",
       "fixture_dir": "fixtures/b-lean-verifier-repair",
-      "criterion": "When independent review approved and attempt 2 remains, one verifier-proved code defect may be repaired once by the same responsible child and the same verifier reruns the complete unchanged fixed check set.",
+      "criterion": "When independent review approved and attempt 2 remains, one verifier-proved code defect may be repaired once by the same responsible child through a current schema-valid owner-directed repair-candidate message before a separately tokened rethink/Handoff, and the same verifier reruns the complete unchanged fixed check set.",
       "inputs": {
-        "request": "Execute standard work under an in-place controller where review approves, the independent verifier directly proves one code defect, the same responsible child repairs it, and that same verifier performs complete closure."
+        "request": "Execute standard work under an in-place controller. Attempt 1 uses one normal non-isolated implementation child, explicit response-object schema, terminal ordinary candidate job, original job-result retention/admission, then a separately tokened same-child rethink/Handoff. Review approves and the independent verifier directly proves one code defect. Attempt 2 resumes that exact child without a new task job: pre-bind controller/child/task/attempt-2/receiver/candidate phase, schema and fresh token; collect one JSON response-object candidate through an awaited owner-directed request and the child's non-awaited reply on that token; retain the original native returned message before consumer-side schema/identity admission and do not require source:caller. Only after admission send a different fresh-token awaited rethink/Handoff. The same verifier then performs complete closure. Reject replacement, alternate-source or malformed candidates, shared tokens, delta-only verification, and controller repair."
       },
       "scripted_replies": [],
       "additional_files": [],
@@ -3610,10 +3622,16 @@
       "required_events": [
         "activate:dev-implementation-in-place",
         "dispatch:implementation-child",
+        "candidate-job:attempt-1-original-retained",
         "handoff:attempt-1",
         "review:approved",
         "verification:not-verified",
-        "candidate:attempt-2-same-child",
+        "candidate-request:attempt-2-same-child-awaited",
+        "candidate-return:attempt-2-owner-directed",
+        "candidate-native-return:retained-before-decode",
+        "candidate-schema:consumer-validated",
+        "candidate:attempt-2-admitted",
+        "rethink-request:attempt-2-separate-token",
         "rethink:code",
         "rethink:tests",
         "direct-checks:pass",
@@ -3626,6 +3644,11 @@
       ],
       "forbidden_events": [
         "replacement:implementation-child",
+        "task-job:attempt-2",
+        "ordinary-completion:attempt-2-candidate",
+        "source-caller-envelope:attempt-2-message",
+        "same-token:candidate-and-rethink",
+        "alternate-source:attempt-2-candidate",
         "dispatch:dev-implementation-controller",
         "handoff:controller-to-self",
         "review:second-pass",
@@ -3640,8 +3663,9 @@
       "repetition_tier": "hard",
       "rubric": [
         "Require the bound verifier to own both failed aggregate and closure aggregate and the same responsible child to own repair.",
+        "Require attempt 1 to retain and admit the exact terminal candidate job, but attempt 2 to use one separately tokened current owner-directed repair-candidate message with native retention before consumer-side schema and identity admission, followed only then by a different-token rethink/Handoff.",
         "Require the complete unchanged fixed check set after repair.",
-        "Reject controller spawn or self-Handoff, another review, replacement child or verifier, delta-only proof, or third attempt."
+        "Reject another attempt-2 task job, caller-envelope fiction for a live message, ordinary-completion or alternate-source repair candidate, shared candidate/rethink token, controller spawn or self-Handoff, another review, replacement child or verifier, delta-only proof, or third attempt."
       ]
     },
     {

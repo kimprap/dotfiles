@@ -90,6 +90,21 @@
       "summary": "Bind the complete final proposal body to the confirmation interaction.",
       "surface": ".config/agents/skills/dev-grilling confirmation presentation"
     },
+    "pc-8ba3fb81c3a65110": {
+      "first_seen": "2026-09-18",
+      "last_seen": "2026-09-18",
+      "observations": [
+        {
+          "date": "2026-09-18",
+          "friction": "Two proof or control runs left an authoritative native observation vulnerable when an enclosing finite Eval expired while a child wait was still pending; the latest recurrence terminally blocked the required lifecycle proof even though the child later settled.",
+          "workaround": "Use direct hub collection or persist the complete original outside ephemeral Eval state before any further wait; never reconstruct an original after reset."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "Bounded Eval waits can reset ephemeral invocation state before the original native observation is retained.",
+      "surface": "OMP native proof observation collection"
+    },
     "pc-a2525abd541246f2": {
       "first_seen": "2026-09-05",
       "last_seen": "2026-09-05",

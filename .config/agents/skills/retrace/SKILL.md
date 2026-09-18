@@ -31,7 +31,19 @@ An instruction conflict meeting that finding-eligibility rule is a causal candid
 
 This file has three entries: human-invoked parent, parent-bound scope evaluator, and optional parent-bound normalizer. Admit a child entry only from its actual native parent with the matching request and scope authority. A child never starts another Retrace parent, repeats table approval, or impersonates another scope.
 
-Use an existing controller-capable host child for each scope, bound read-only over repository and evidence. Do not use second-opinion roles as scope controllers: those restricted reviewers cannot own nested reviewers. Launch allocation binds only a prospective role, parent, and request/scope contract. Let the child's launch-only turn settle locally before establishing its exact registered, addressable child ID and actual parent through the current host roster or equivalent native registration evidence. Then send the separate actual normalization or evaluation request with its own unique reply token. Launch output, launch settlement, and roster presence are distinct from semantic readiness or report admission.
+Use an existing controller-capable host child for each scope, bound read-only
+over repository and evidence. Do not use second-opinion roles as scope
+controllers: those restricted reviewers cannot own nested reviewers. Launch
+allocation binds only a prospective role, parent, and request/scope contract.
+Let the child's launch-only turn settle locally and retain its complete original
+native settlement observation in the actual parent's invocation state before
+establishing its exact registered, addressable child ID and actual parent through
+the current host roster or equivalent native registration evidence. Retain that
+complete original roster observation in a separate binding slot before sending
+the actual normalization or evaluation request with its own unique reply token.
+Launch output, launch settlement, and roster presence are distinct from semantic
+readiness or report admission, and later observations cannot replace either
+earlier slot.
 
 The optional normalizer receives only its frozen normalization input and returns a scope proposal, not findings, evaluation, or Reconcile. The scope evaluator applies the complete Evidence boundary, Method, Readiness, and Result below to its approved scope, then follows the Scope protocol. It retains control of its own Reconcile and reviewer disposal; the outer parent handles only scope authority, scheduling, return admission, freshness, and aggregation.
 
@@ -96,6 +108,25 @@ invocation before dispatch. For nested Reconcile reviewer traffic this owner is
 the actual current scope controller, never the outer Retrace parent; the outer
 parent uses only its own normalizer and scope-child expectations.
 
+Keep every original lifecycle observation in a distinct identity- and
+phase-bound invocation-local slot owned by the controller that actually observes
+it: direct-child launch settlement, pre-operative roster binding, each requested
+return, and exact disposal. Preserve filled slots across successive sends
+through scope-result admission, aggregate assembly, reviewer-then-scope cleanup,
+and any required proof export. Missing originals stay unresolved; matching IDs,
+hashes, copied payloads, later snapshots, or later native results cannot
+substitute for an earlier kind or phase. These lifecycle slots are distinct from
+the four direct-child capacity slots and end with the authorized invocation.
+
+If an authorized proof requires exported lifecycle observations, bind its exact
+owner, slot set, and session-local destinations in the root proof instructions
+and each affected scope contract before launching that scope. Repeat the same
+binding in the initial operative request; for nested reviewer observations the
+scope controller remains the responsible owner. Do not introduce it in
+`begin-reconcile`, at final admission, or through a new default return field.
+Incomplete export blocks the proof, not semantic review, and grants no alternate
+observation path.
+
 Keep dispatch, native collection, and admission coupled wherever notifications
 could consume queued messages. Preserve independent child concurrency: batch
 ready scopes and collect distinct children concurrently, subject to the host and
@@ -113,23 +144,27 @@ dispatch.
 Inspect operation errors, the requested recipient's delivery receipt, `details`,
 and `details.waited` presence in that order before body access. When present,
 mechanically copy the complete original current `details.waited` object and its
-exact returned body into the actual receiving owner's current invocation state
-before decoding or semantic work. Preserve the stock trim boundary: do not
-restore removed outer bytes or normalize internal newlines.
+exact returned body into a new operation- and phase-specific slot in the actual
+receiving owner's current invocation state before decoding or semantic work.
+Preserve the stock trim boundary: do not restore removed outer bytes or normalize
+internal newlines. Do not overwrite launch, roster, earlier return, or disposal
+slots with this object.
 
 When `details.waited` is absent, preserve the exact request frontier, child and
-receiving-owner identities, token, phase, delivery facts, and used or unknown
-allowances. Stop that request without body access, lookup, inbox, events, JSONL,
+receiving-owner identities, token, phase, delivery facts, used or unknown
+allowances, and all earlier filled slots. Stop that request without body access,
+lookup, working-draft or copied-payload substitution, inbox, events, JSONL,
 branch/session or RPC message reads, history, agent output, rendered cards,
-report stores, replay, re-emission, a new collector, actor replacement, nudge for
-absence, or allowance reset. The outer parent continues independent ready work
-where safe but never takes over the blocked scope child's collection or
-Reconcile.
+report stores, later snapshots, replay, re-emission, a new collector, actor
+replacement, nudge for absence, or allowance reset. The outer parent continues
+independent ready work where safe but never takes over the blocked scope child's
+collection or Reconcile.
 
 After the current object is copied, decode only the complete returned `body` as
 `text`, validate the full native and semantic contract, then consume an admitted
-token once. Frozen content, direct hashes, local echoes, external captures, and
-ordinary completion never replace native provenance.
+token once. Frozen content, direct hashes, matching child IDs, local echoes,
+external captures, ordinary completion used as an alternate report, and later
+native objects never replace native provenance.
 
 ### Closed return bodies
 
@@ -182,7 +217,14 @@ Result payload locator: {readable locator}
 
 ## Scheduler and scope protocol
 
-Keep only request-local approved scope/graph bindings, exact native identities, report/evidence identities, slot occupancy, status/frontiers, current return expectations and their correction-used state, and results/provenance needed to finish. Native transient content transport may hold large immutable records; it is not a searchable result archive or persistence API.
+Keep only request-local approved scope/graph bindings, exact native identities,
+report/evidence identities, capacity-slot occupancy, status/frontiers, current
+return expectations and their correction-used state, and results/provenance
+needed to finish. For each direct child, also keep separate original
+launch-settlement, roster-binding, operation/phase return, and disposal-evidence
+slots until aggregate assembly and cleanup finish. Native transient content
+transport may hold large immutable records; it is not a searchable result
+archive or persistence API.
 
 Immediately batch ready scopes into available slots, ordered by ascending `requires` depth then authored scope order. At most four direct normalizer/evaluator children may be live, including retained paused controllers. Nested reviewers do not count toward four, but host depth/concurrency limits still apply. A report, echo, turn completion or cancellation acknowledgement never frees a slot. The scope must first settle its own exact reviewer cleanup; the outer parent then observes native disposal of that exact direct child before slot release. Free slots remain usable; four paused/undisposed children are a quiescent blocked frontier, not permission to replace children or exceed capacity.
 
@@ -190,8 +232,8 @@ Immediately batch ready scopes into available slots, ordered by ascending `requi
 2. The parent admits only the current correlated envelope and validates actual sender/controller, scope/approval/contract, readable exact report, Result shape and evidence/authority boundaries, including the Invocation contract's finding eligibility. Reject a mismatch through the existing authorized correction/stop handling; do not redo evaluation, rewrite findings, or add a loop. Consume the token; freeze the exact admitted body and derive `candidate-ready@sha256:{digest}` directly from those bytes, excluding token/native message IDs.
 3. Send plain-text `begin-reconcile` to that same child with labeled `Caller: retrace`, actual `Parent`, exact `Controller`, `Scope`, `Scope approval` and locator, `Scope contract` and locator, `Candidate` and locator, `Evidence manifest` and locator, `Mode: Conversation replacement`, and `Authorization: candidate-ready@sha256:{digest}`. Include a fresh parent-authored `Reply token` for `scope-result`, distinct from the consumed evaluation token. The child checks actual native parent origin, current phase and exact approved bindings/provisional candidate before entry; a token or quoted caller label alone grants nothing.
 4. That same scope controller loads current `skill://reconcile` and its reviewer protocol, then invokes delegated Conversation replacement. Reconcile admits the complete matching binding and skips only its redundant brief/approval. It alone owns its full reviewer loop, actual nested A/B identities, separate readiness/review tokens, natural original first-review same-child `skill://rethink`, finalized acceptance, synchronization, repair/pause rules and exact reviewer disposal. Do not duplicate negotiation, add a Retrace rethink, mandatory B review, adaptive second reviewer or round cap. The outer parent neither consumes reviewer traffic nor disposes grandchildren. Pass only approved context/evidence closure; additional evidence follows Reconcile's authorized context-supply/stop rules.
-5. After review, the scope child sends one complete `scope-result` on the current result token. Its immutable payload contains in this exact order: original provisional report identity/locator; ordered authoritative Reconcile events; final report identity/locator or exact stop record; final supporting evidence-manifest identity/locator; finding identities; provisional-to-final changes; review status; evidence freshness; evaluation disposition; blocker/resume information. Retain every contributing evaluator identity, native review/cleanup evidence and exact frontier. The parent admits only scope/control reports, never echoes or reviewer traffic.
-6. Before accepting a final result, the parent checks the correlated envelope, approved boundaries including the same finding eligibility, exact report and payload identities, applicable Reconcile completion/cleanup evidence, and manifest with actual supporting source freshness reads. Review success, matching identities, and freshness cannot expand approved scope; a mismatch follows the same correction/stop handling, not parent rewriting. A reviewed blocker remains authoritative, not resolved. After terminal reviewer cleanup, silently dispose the exact scope through native owned-child lifecycle and observe removal or terminal disposal before releasing its slot; do not await an echo or successful producing-turn completion.
+5. After review, the scope child sends one complete `scope-result` on the current result token. Its immutable payload contains in this exact order: original provisional report identity/locator; ordered authoritative Reconcile events; final report identity/locator or exact stop record; final supporting evidence-manifest identity/locator; finding identities; provisional-to-final changes; review status; evidence freshness; evaluation disposition; blocker/resume information. Retain every contributing evaluator identity, the distinct original lifecycle slots for native review and cleanup observations, and the exact frontier across this send; do not collapse them into the payload or replace them with its hashes. The parent admits only scope/control reports, never echoes or reviewer traffic.
+6. Before accepting a final result, the parent checks the correlated envelope, approved boundaries including the same finding eligibility, exact report and payload identities, applicable Reconcile completion/cleanup evidence, and manifest with actual supporting source freshness reads. Review success, matching identities, and freshness cannot expand approved scope or prove a missing lifecycle slot; a mismatch follows the same correction/stop handling, not parent rewriting. A reviewed blocker remains authoritative, not resolved. After terminal reviewer cleanup, silently dispose the exact scope through native owned-child lifecycle, retain the complete original native disposal observation in that scope child's distinct slot, and observe removal or terminal disposal before releasing its capacity slot; do not await an echo or successful producing-turn completion.
 
 ### One corrective allowance per original return
 

@@ -63,12 +63,17 @@ Each child receives only what it needs:
 - semantic attempt number, `1` or `2`;
 - exactly one concrete receiver: the bound controller identity.
 
-Before dispatch, require a caller-selected declared response-object schema and a
-child transport that remains resumable under the same identity after its
-candidate job settles. Bind the exact controller, child, native job, task,
-semantic attempt, and expected `candidate` phase. Missing explicit caller
-schema, a one-shot or isolated child, or an unbound identity is a preflight
-failure; do not allocate the child.
+Before an attempt-1 dispatch, require a caller-selected declared
+response-object schema and a normal non-isolated child transport that remains
+resumable after its candidate job settles. Bind the exact controller, child,
+native job, task, attempt `1`, receiver, and expected `candidate` phase. Missing
+explicit caller schema, a one-shot or isolated child, or an unbound identity is
+a preflight failure; do not allocate the child.
+
+Attempt 2 does not dispatch another task job. It requires the same retained
+child and pre-binds the exact controller, child, task, attempt `2`, receiver,
+expected `candidate` phase, declared response-object schema, active invocation,
+and fresh owner-authored candidate-request token before the awaited request.
 
 The child rechecks its targets and callers, follows existing local conventions, changes only owned surfaces, and preserves unrelated user work. An authored fan-in or integration task is child-owned like any other code-changing task; the controller does not merge semantically. If TDD was explicitly requested, bind `dev-tdd` without adding scope or acceptance.
 Semantic next-owner roles in prerequisite artifacts remain `dev-implementation` or `dev-ask`; they do not authorize a new actor. An unchanged prerequisite return to `dev-implementation` reaches this same bound controller, while a return to `dev-ask` reaches the same route owner for router recomputation.
@@ -103,11 +108,12 @@ semantic attempt or mutation authority.
 
 The controller's awaited collections from the same bound implementation child
 are exempt from another consent, attendance, external-supervisor, or
-abort-capability preflight only for these two purposes:
+abort-capability preflight only for these three purposes:
 
-1. the implementation rethink Handoff after an admitted candidate in semantic
-   attempt 1 or 2; and
-2. a return from an already-authorized same-child execution-recovery operation.
+1. the authorized attempt-2 repair candidate;
+2. the implementation-rethink Handoff after an admitted candidate in attempt 1
+   or 2; and
+3. a return from an already-authorized same-child execution-recovery operation.
 
 This is an exact role-and-purpose exemption under the current approved route,
 not a blanket recovery or indefinite-wait exemption. It adds no deadline,
@@ -131,7 +137,31 @@ Attempt 1 includes the terminal candidate job, its admission, the single same-ch
 
 ## Attempt 2 and stops
 
-Attempt 2 is one later code-changing repair of a required reviewer or verifier finding. Dispatch the same responsible implementation child with the unchanged intent, owned acceptance, affected targets, finding evidence, direct closure check, explicit declared response-object schema, and the same resumable job-then-owner-directed-return sequence: terminal ordinary candidate completion, exact-job native retention and admission, a fresh-token awaited rethink request to that same child under the exact implementation-rethink collection exemption above, at most one correction pass, original impacted checks plus closure checks, and one lean Handoff reply through the owner-directed message channel. The same child then performs papercut accounting.
+Attempt 2 is one later code-changing repair of required review findings or one
+directly evidenced verifier code defect. Resume the same responsible child; do
+not allocate another task job or owner. Send one fresh-token awaited
+owner-directed repair-candidate request containing the unchanged intent, owned
+acceptance, affected targets, finding evidence, direct closure checks, exact
+task/attempt/owner/receiver/`candidate` identity, and declared response-object
+schema. The child replies once by non-awaited owner-directed message using the
+exact token, with a complete body that is JSON encoding of exactly one string
+`response` field containing its candidate report. It does not yield, ordinary
+complete, incrementally publish, or emit a Handoff at this boundary.
+
+Immediately retain the complete original native return and returned message
+before parsing. Validate exact sender, recipient, authored token, no relay, the
+bound candidate phase, the declared object schema, and exact report identity.
+A live message has no caller-schema envelope; validate the schema consumer-side
+without inventing `source: caller`. Missing, malformed, mismatched, relayed,
+alternate-source, or ordinary-completion output remains unadmitted and grants
+no reconstruction, re-emission, replacement, or retry.
+
+Only after attempt-2 candidate admission, use a separate fresh-token awaited
+request to send the implementation rethink to that same child. The child
+applies code rethink, then test rethink, may make at most one correction pass,
+runs original impacted checks plus closure checks and the changed path, and
+returns one lean Handoff through that request's owner-directed message channel.
+The same child then performs papercut accounting.
 
 A task-local proof, tool, transport, environment, automation, fixture, collection, or capture failure follows `skill://dev-implementation/references/execution-recovery.md` before escalation. It consumes no semantic attempt only while the evaluated target, deliverable, acceptance, ownership, and authorized effects remain unchanged; role, not change size or temporary location, determines eligibility. A failed transport invocation is assessed, while transport that cannot preserve required ownership or same-child follow-up remains a stop. Required owners cannot be replaced by disposable resources. After the separate recovery rethink, an already-authorized recovery operation's same-child return uses the exact role-and-purpose collection exemption above; it receives no second implementation rethink. Attempts remain limited to attempt 1 and an eligible attempt 2, but exhausted semantic repair prohibits only another deliverable change, not otherwise eligible machinery recovery under its existing allowance.
 

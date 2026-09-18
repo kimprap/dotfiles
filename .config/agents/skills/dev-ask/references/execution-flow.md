@@ -6,7 +6,7 @@ This is a human-only overview. It does not run work or define transitions. `dev-
 flowchart TD
     A[Approved direct work or lean plan] --> K[Route owner activates controller in place]
     K --> B[Distinct resumable implementation child with explicit response schema]
-    B --> J[Terminal ordinary candidate job]
+    B --> J[Attempt 1 terminal ordinary candidate job]
     J --> N[Retain exact native job result and admit candidate]
     N --> C[Same child receives awaited rethink and rethinks code, then tests]
     C --> D{Direct checks and owner-directed Handoff reply pass?}
@@ -17,12 +17,16 @@ flowchart TD
     P -- Compact --> Z[Five-field completion]
     P -- Standard or high --> R[One code review]
     R -- Clear --> V[One verification]
-    R -- Required repair --> I2[Attempt 2 by implementation child]
-    I2 --> V
+    R -- Required repair --> I2[Same child receives awaited attempt-2 repair candidate request]
+    I2 --> I2A[Retain native message and admit repair candidate]
+    I2A --> I2R[Separate awaited rethink, checks, and Handoff]
+    I2R --> V
     R -- Cannot close --> X
     V -- Verified --> L[One learning assessment]
-    V -- Eligible code repair --> I2V[Attempt 2 by implementation child]
-    I2V --> VC[Same verifier closes the full check set]
+    V -- Eligible code repair --> I2V[Same child receives awaited attempt-2 repair candidate request]
+    I2V --> I2VA[Retain native message and admit repair candidate]
+    I2VA --> I2VR[Separate awaited rethink, checks, and Handoff]
+    I2VR --> VC[Same verifier closes the full check set]
     VC -- Verified --> L
     VC -- Not verified --> X
     V -- Final failure --> X
@@ -63,16 +67,17 @@ flowchart TD
 The semantic route names `dev-implementation`, while the invoking route agent normally performs that controller role in place. Standalone entry uses its invoking agent the same way. Only a topology already approved by the human may insert a separate controller; that controller owns its children and returns across the real boundary without recursive controller delegation or outer-agent double scheduling.
 
 For the `dev-implementation` controller only, the awaited collection of that
-same bound child's implementation-rethink Handoff in attempt 1 or 2 and the
-return from an already-authorized same-child recovery operation need no second
-consent, attendance, external-supervisor, or abort-capability preflight. Native
-OMP send-await remains non-interruptible through TUI steering and Alt+C, though
-the awaited child's terminal or unregistration/hard-abort event and a
-caller/tool abort can end the waiter. A child that reaches none of those
-endings can block the parent indefinitely; that residual is accepted without a
-new deadline, observer, replay, replacement, or unattended-completion promise.
-Custom collectors, including Reconcile and Retrace, retain their external-owner
-and five-minute observation requirements.
+same bound child's authorized attempt-2 repair candidate,
+implementation-rethink Handoff in attempt 1 or 2, and return from an
+already-authorized same-child recovery operation need no second consent,
+attendance, external-supervisor, or abort-capability preflight. Native OMP
+send-await remains non-interruptible through TUI steering and Alt+C, though the
+awaited child's terminal or unregistration/hard-abort event and a caller/tool
+abort can end the waiter. A child that reaches none of those endings can block
+the parent indefinitely; that residual is accepted without a new deadline,
+observer, replay, replacement, or unattended-completion promise. Custom
+collectors, including Reconcile and Retrace, retain their external-owner and
+five-minute observation requirements.
 
 
 ## Entry and implementation
@@ -107,8 +112,9 @@ authority.
 | Approved lean plan | Necessary multiple-owner or dependency ownership, fan-in, ordered effects or migration, or recovery uses known safe task seams | In-place controller schedules dependency-ready child tasks; any ordinary fan-in is an authored child-owned task completed before final review and verification |
 | Prerequisite Handoff | Next-owner role is `dev-implementation` and route impact is unchanged | Concrete route owner activates its controller role in place unless the approved topology already bound a separate controller; no extra approval or router hop |
 | Prerequisite Handoff | Next-owner role is `dev-ask` | Concrete route owner resumes router recomputation before continuing |
-| Candidate job | Explicit-schema resumable child terminal-completed its type-absent ordinary candidate | Collect only the exact job, immediately retain the original native result and job record, validate and decode only the adapter-designated structured data, then admit exact task/attempt/receiver/phase; job settlement is not task completion or disposal |
-| Admitted candidate | Exact candidate admission succeeded | Send the same child one fresh-token awaited owner-directed implementation rethink under the exact generic implementation collection exemption; after checks, accept only its Handoff reply on that request's message channel, never yield, ordinary completion, a missing awaited return, or a replacement child |
+| Attempt-1 candidate job | Explicit-schema resumable child terminal-completed its type-absent ordinary candidate | Collect only the exact job, immediately retain the original native result and job record, validate and decode only the adapter-designated structured data, then admit exact task/attempt/receiver/phase; job settlement is not task completion or disposal |
+| Authorized attempt-2 repair | A required review finding or eligible verifier defect is bound and the same responsible child is retained | Bind the declared response-object schema, exact controller/child/task/attempt-2/receiver/`candidate` phase, active invocation, and fresh token; send one awaited repair-candidate request, retain its original native returned message, validate sender/recipient/token/no-relay/schema/report identity consumer-side, and admit no job, ordinary-completion, replacement-child, or alternate-source substitute |
+| Admitted implementation candidate | Exact attempt-1 job or attempt-2 message candidate admission succeeded | Send the same child one separate fresh-token awaited owner-directed implementation rethink under the exact generic implementation collection exemption; after checks, accept only its Handoff reply on that request's message channel, never yield, ordinary completion, a missing awaited return, or a replacement child |
 | Current execution | A concrete execution-mechanism failure prevents continuation or would otherwise be escalated | Same owner first assesses `skill://dev-implementation/references/execution-recovery.md`; an eligible proposal receives recovery rethink before execution, while an ineligible failure preserves evidence and names the exact stop |
 | Authorized implementation recovery | The same child has applied recovery rethink for an eligible, already-authorized recovery operation | Collect that operation's return under the same exact role-and-purpose exemption; do not send another implementation rethink or add a deadline, supervisor, replay, replacement, or allowance |
 | Child Handoff | An execution-related stop names no actual shared-policy stop condition | Controller returns the specific eligibility question to the same responsible owner without repair, replacement, or repeated challenge |

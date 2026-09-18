@@ -1,6 +1,6 @@
 {
   "inputs": {
-    "request": "Execute standard work under an in-place controller where the one independent review returns one material required finding with an exact closure check, and the same responsible child repairs it on attempt 2 before independent verification."
+    "request": "Execute standard work under an in-place controller. Attempt 1 uses one normal non-isolated implementation child, an explicit response-object schema, terminal ordinary candidate job, exact original job-result retention and admission, then a separately tokened same-child rethink/Handoff. One independent review returns one material required finding with an exact closure check. For attempt 2, keep that exact child: bind controller/child/task/attempt-2/receiver/candidate phase, the response-object schema and a fresh token before one awaited repair-candidate request; have the child reply once by non-awaited owner-directed message on that token with JSON encoding exactly one string response field; retain the original native returned message before consumer-side schema and identity admission, with no source:caller envelope. Only after admission send a different fresh-token awaited same-child rethink/Handoff request. Then run independent verification. Reject another task job, replacement child, candidate ordinary completion, shared candidate/rethink token, malformed or alternate-source candidate, review rerun, or controller repair."
   },
   "scripted_replies": [],
   "additional_files": []

@@ -46,6 +46,40 @@ Keep these facts separate; none implies a later one.
   report, turn completion, retention record, cancellation request, or echo is
   not disposal.
 
+## Retrace and Reconcile lifecycle observation slots
+
+The named slot, lifetime, and export rules in this section apply only when the
+current Retrace or Reconcile contract requires its owner to observe lifecycle
+facts. Other consumers still immediately retain each complete original current
+native result under the portable retention rules below, but this reference does
+not impose named lifecycle slots, cross-operation slot lifetime, or proof export
+on them.
+
+For Retrace and Reconcile, the actual owner immediately assigns each complete
+original native observation to a distinct named slot in the current authorized
+invocation before advancing. Keep at least one identity-bound slot for each
+child's launch settlement, its pre-readiness or pre-operative roster binding,
+every requested readiness or report return keyed by operation and phase, and
+its exact disposal evidence. These lifecycle observation slots are unrelated to
+scheduler or capacity slots.
+
+Slots are append-only for the run. A later return, roster snapshot,
+cancellation result, matching child ID, equal digest, copied payload, or other
+native object cannot overwrite, relabel, backfill, or prove an earlier slot.
+Preserve every filled slot across successive sends through the result assembly
+and cleanup that depend on it, then discard the slots when that invocation ends.
+Use only existing owner-held invocation state; create no registry, ledger,
+store, runtime, tool, or cross-run state.
+
+An absent original leaves that exact slot unresolved. Never populate it from a
+working draft, local echo, ordinary completion used as an alternate report,
+inbox, event, transcript or JSONL, branch/session accessor, history or agent
+output, later snapshot, copied payload, guessed metadata, external capture, or
+later native object. This does not prohibit a host-supported ordinary task
+completion that Retrace or Reconcile legitimately selected as the original
+launch-settlement observation; it remains launch evidence only and cannot
+become a readiness or report return.
+
 An owner-directed message and an ordinary completion are distinct publication
 acts. Neither automatically satisfies the other or ends the logical operation.
 A local echo may aid inspection only when a workflow requires it; it never gains
@@ -121,6 +155,22 @@ alone cannot reconstruct or satisfy sender, recipient, correlation, relay,
 grammar, identity, phase, or authority checks. Write-less producers continue
 returning over their authorized native channel; receiver-side copying does not
 change their tools, identity, send count, or semantic ownership.
+
+## Retrace and Reconcile optional proof export
+
+For Retrace and Reconcile, invocation-local lifecycle-slot retention is
+mandatory and export is optional. When an authorized proof additionally
+requires export, bind the responsible owner, exact slot kinds, and destination
+before that owner launches the covered child, in the same run contract that
+governs the launch. Root proof instructions, any delegated scope contract, and
+the operative request must agree before work begins. A final report, late
+request, or copied lifecycle object cannot add or repair that authority.
+
+Proof export adds no default response field, body grammar, evidence authority,
+collector, or persistence mechanism. An incomplete required export blocks that
+proof without converting a received semantic return into a missing reply,
+failed review, or different workflow outcome. No other portable consumer gains
+a proof-export obligation from this reference.
 
 ## Authority and recovery boundary
 

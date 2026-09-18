@@ -131,6 +131,18 @@ reviewing, or mutating:
    registered addressability, or silent cleanup blocks. Do not patch the host,
    change response grammar, substitute a channel, require native request IDs,
    emulate two roles with one child, replace a lost child, or weaken a seam.
+   Keep every complete original observation the controller already must obtain in
+   a distinct invocation-local slot: each reviewer's launch settlement,
+   pre-readiness roster binding, each readiness/review return keyed by operation
+   and phase, and exact disposal. Preserve those slots across later sends through
+   final assembly and cleanup; never substitute a later snapshot or equal
+   identity for an earlier kind or phase. This adds no persistent state or
+   transport surface.
+   If an authorized proof requires export, bind this controller, the exact slot
+   set, and session-local destinations in the approved run contract before
+   reviewer launch. For delegated proof, root instructions, scope contract,
+   reviewer launch binding, and operative requests must agree. Do not retrofit
+   proof export in a review request or response, and add no default report field.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
    `unresolved`. Bind exact UTF-8 proposal bytes as
@@ -209,12 +221,14 @@ reviewer state object, or hidden protocol state:
 - bounded lineage for the working proposal;
 - the two persistent A/B child identities and each child's
   first-actual-review-completed flag;
+- distinct original native observation slots for each child's launch settlement,
+  pre-readiness roster binding, every readiness/review return keyed by operation
+  and phase, and exact disposal evidence;
 - each original pending return's bound child/controller, expected role/pass/
   candidate, current controller-authored correlation token, consumed/pending status,
   and nonresetting correction-used flag;
-- every pending request's complete original current native return envelope,
-  exact returned body, current authored token, and observed delivery status, or
-  the exact unresolved transport frontier when no return is admitted;
+- the exact unresolved transport frontier when an expected observation is
+  missing, without backfilling it from working state or a later object;
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
 - terminal finalized response, counterpart context-sync delivery receipt, and
@@ -227,8 +241,9 @@ identity, parent proposal identity, author reviewer, author pass, and source
 finalized-response digest. At outer initialization, parent proposal identity is
 the outer-base identity and author reviewer, author pass, and source response
 are `none`. A changed working proposal records the prior working identity as its
-parent and hashes the exact complete finalized response. Do not retain or send
-full response history.
+parent and hashes the exact complete finalized response. Do not create or send a
+separate semantic response-history ledger; the required complete original native
+observation slots remain intact through assembly and cleanup.
 
 A conversation working identity is the lowercase SHA-256 of its exact complete
 UTF-8 replacement. An unchanged artifact working identity is the canonical
@@ -256,17 +271,21 @@ one. The launch packet binds only logical role, protocol locator/digest, and thi
 controller identity; it requests no readiness report or review. Include no
 supplemental-skill loading recipe or path. Allocation does not establish launch
 settlement or addressability. Let both launch-only turns settle locally,
-concurrently where supported, using the host's supported handle-wait form.
-Then observe both exact child IDs registered under this controller through the
-current native roster or equivalent addressability evidence. If either launch
-settlement or exact binding is unavailable, stop without dispatch or
-replacement. Send each child its separate bootstrap readiness request with a
-fresh controller-authored correlation token; distinct owner-child requests may
-run concurrently. Launch output and completion supply no readiness authority,
-and roster addressability supplies no semantic readiness. Admit both role-bound
-readiness reports through the return seam below before outer one. Bootstrap adds
-no review or rethink. Both children remain read-only, persistent, and required
-for the run; never replace a lost child.
+concurrently where supported, using the host's supported handle-wait form, and
+copy each complete original native settlement observation into that reviewer's
+distinct launch-settlement slot before advancing. Then observe both exact child
+IDs registered under this controller through the current native roster or
+equivalent addressability evidence and copy each complete original observation
+into its separate pre-readiness roster-binding slot before any readiness send.
+If either original launch settlement or exact binding is unavailable, leave that
+slot unresolved and stop without dispatch, reconstruction, later-snapshot
+substitution, or replacement. Send each child its separate bootstrap readiness
+request with a fresh controller-authored correlation token; distinct owner-child
+requests may run concurrently. Launch output and completion supply no readiness
+authority, and roster addressability supplies no semantic readiness. Admit both
+role-bound readiness reports through the return seam below before outer one.
+Bootstrap adds no review or rethink. Both children remain read-only, persistent,
+and required for the run; never replace a lost child.
 
 On each child's first actual reviewing turn, even if it occurs in a later outer
 iteration:
@@ -330,17 +349,22 @@ requested-recipient delivery, `details` and `details.waited` presence, exact
 owned-child sender, this actual receiving controller, current authored token,
 and forbidden relay before body access. Delivery or outer success proves no
 report. When `details.waited` exists, mechanically copy that complete original
-object and its exact returned body into the receiving controller's current
-invocation state before decoding or semantic work.
+object and its exact returned body into a new distinct slot keyed to the child,
+request operation, semantic phase, and current token in the receiving
+controller's invocation state before decoding or semantic work. Preserve that
+slot and all earlier launch, roster, and return slots across later requests.
 
-When `details.waited` is absent, the request remains unresolved and unadmitted.
-Preserve its exact token, child/controller identities, phase, candidate,
-delivery facts, and used or unknown allowances. Do not access a body,
+When `details.waited` is absent, the request slot remains unresolved and
+unadmitted. Preserve its exact token, child/controller identities, phase,
+candidate, delivery facts, used or unknown allowances, and all earlier filled
+slots. Do not access a body, substitute a working draft or copied payload,
 redispatch, replay, re-emit, create a new collector, inspect inbox, events,
 JSONL, branch/session state, RPC messages, history or agent output, use a local
-echo or ordinary completion, replace an actor, nudge for absence, or reset an
+echo, external capture, ordinary completion used as an alternate report, later
+snapshot or later native object, replace an actor, nudge for absence, or reset an
 allowance. Terminal, unregistration, hard-abort, or caller-abort settlement
-does not change this frontier.
+does not change this frontier. Matching child IDs or content hashes do not prove
+the missing observation kind or phase.
 
 After the current native object is copied, decode only its complete returned
 body as `text`, then apply exact expected role, pass, candidate identity,
@@ -544,10 +568,13 @@ reviewers whose original jobs have settled; do not substitute job-scoped Eval
 handle cancellation. Do not send a shutdown prompt, request an acknowledgement,
 await another reviewer message, weaken the no-prose context wait, cancel
 unrelated agents, or terminate the controller. The bound controller observes
-disposal; never route grandchild cleanup through the outer Retrace parent.
-Require host-confirmed removal or terminal non-running disposal; a cancellation
-request, receipt, report, turn completion, retained snapshot, or host teardown
-alone does not establish cleanup.
+disposal and copies each complete original native terminal non-running or
+removal observation into that exact reviewer's distinct disposal-evidence slot
+before final assembly; never route grandchild cleanup through the outer Retrace
+parent. Preserve launch, roster, and all return slots until both cleanup and
+result assembly finish. A cancellation request or receipt, report, turn
+completion, retained snapshot, later roster view, matching child ID/hash, or
+host teardown cannot fill or replace disposal evidence.
 
 Missing or failed cleanup blocks success: preserve the pending disposition and
 exact unresolved reviewer IDs and report the cleanup capability failure rather
