@@ -1,0 +1,17 @@
+{
+  "pool": "probe-soak",
+  "task": "T1",
+  "startedAt": "2026-09-25T09:49:08.054Z",
+  "endedAt": "2026-09-25T09:49:09.922Z",
+  "wallMs": 1866,
+  "modelWork": false,
+  "cost": {
+    "amount": 0,
+    "currency": "USD",
+    "basis": "no model work started"
+  },
+  "tokens": "unknown",
+  "priorWallMs": 0,
+  "priorCostKnownUsd": 0,
+  "note": "OAuth cost may be absent or delayed; unknown is never reported as zero. Monetary hard cap cannot be guaranteed."
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "acpx-omp-acp-trial.t1-repro.v1",
+  "runId": "t1-repro-20260925T120005Z-640ec4",
+  "cause": "t1-session-location",
+  "startedAt": "2026-09-25T12:00:05.671Z",
+  "argv": [
+    "/Users/kim/.local/bin/omp",
+    "acp",
+    "--model",
+    "xai-oauth/grok-4.7",
+    "--thinking",
+    "low",
+    "--tools",
+    "read,glob,grep,yield",
+    "--no-extensions",
+    "--no-skills",
+    "--no-rules",
+    "--no-lsp",
+    "--no-title",
+    "--config",
+    "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+    "--session-dir",
+    "/tmp/acpx-t1repro-bd31b3ec-7ef5-4113-9c1a-e6f99df4ad9b/sessions"
+  ],
+  "sessionDir": "/tmp/acpx-t1repro-bd31b3ec-7ef5-4113-9c1a-e6f99df4ad9b/sessions",
+  "sessionDirInLiveStore": false,
+  "processes": [
+    {
+      "label": "A:new",
+      "pid": 70295,
+      "exit": {
+        "pid": 70295,
+        "result": "ESRCH",
+        "observedMs": 102,
+        "msAfterStdinClose": 102
+      }
+    },
+    {
+      "label": "B:load",
+      "pid": 70334,
+      "exit": {
+        "pid": 70334,
+        "result": "ESRCH",
+        "observedMs": 101,
+        "msAfterStdinClose": 101
+      }
+    }
+  ],
+  "updates": {},
+  "sessionId": "01a0d86f-e7f1-701b-8798-0a33be7b5651",
+  "load": {
+    "ok": false,
+    "code": -32603,
+    "details": "ACP session not found: 01a0d86f-e7f1-701b-8798-0a33be7b5651"
+  },
+  "allPidsExited": true,
+  "cleanup": {
+    "sessionDir": null,
+    "sessionIds": [
+      "01a0d86f-e7f1-701b-8798-0a33be7b5651"
+    ],
+    "deleted": [],
+    "kept": [],
+    "folders": [
+      {
+        "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t1repro-bd31b3ec-7ef5-4113-9c1a-e6f99df4ad9b-cwd--",
+        "result": "removed"
+      }
+    ],
+    "complete": true
+  },
+  "privateRootRemoval": {
+    "removed": true,
+    "socketDir": "/tmp/acpx-7831c0d355",
+    "socketDirExisted": false
+  },
+  "modelRequest": "none-reported (no session/prompt sent)",
+  "verdict": "FAIL",
+  "wallMs": 2579,
+  "endedAt": "2026-09-25T12:00:08.250Z"
+}

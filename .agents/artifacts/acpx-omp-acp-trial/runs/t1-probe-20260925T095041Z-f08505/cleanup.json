@@ -1,0 +1,41 @@
+{
+  "privateRootRemovedAfterRetention": true,
+  "acpxSocketDirExisted": true,
+  "removedAt": "2026-09-25T09:50:45.275Z",
+  "evidenceWrittenBeforeRemoval": true,
+  "userDecisionClosure": {
+    "authority": "2026-09-25 user decision (spec-v9 launch section, spec sha256 36e37210c74de50089d06ef6f91e4e57732e53d8fdba1be3de8c79692ead2430; plan sha256 6addf65650889cd5aca3a3c92260f912282723e61f360b7249d600fa69257595): run-1-only cleanup close without published PIDs",
+    "basis": "acpx published no PID for this run, so ESRCH was impossible; an empty PID set is not exit proof (spec 366); closure rests only on the three facts below",
+    "facts": {
+      "noTrialProcess": {
+        "observedAt": "2026-09-25T11:58:26Z",
+        "method": "ps -axww -o pid=,command= filtered for omp acp|acpx|queue-owner",
+        "result": "none"
+      },
+      "noPrivateTmpAcpx": {
+        "observedAt": "2026-09-25T11:58:26Z",
+        "method": "ls -d /private/tmp/acpx*",
+        "result": "none"
+      },
+      "leftFoldersRemoved": [
+        {
+          "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8-cwd--",
+          "entriesBefore": 0,
+          "birth": "2026-09-25T09:50:45Z",
+          "removedBy": "rmdir",
+          "removedAt": "2026-09-25T11:58:26Z",
+          "origin": "this run: OMP session/load SessionManager.list(cwd) created the cwd-named folder"
+        },
+        {
+          "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t1diag-56135-cwd--",
+          "entriesBefore": 0,
+          "birth": "2026-09-25T09:51:32Z",
+          "removedBy": "rmdir",
+          "removedAt": "2026-09-25T11:58:26Z",
+          "origin": "t1diag diagnostic launch (see probe.json postRun.diagnosticLaunches)"
+        }
+      ]
+    },
+    "status": "closed (run-1-only user-decision basis)"
+  }
+}

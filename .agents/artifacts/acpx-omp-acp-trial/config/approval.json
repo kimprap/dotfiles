@@ -1,0 +1,126 @@
+{
+  "schema": "acpx-omp-acp-trial.approval.v1",
+  "authority": {
+    "spec": {
+      "path": ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md",
+      "revision": "acpx-omp-acp-trial/spec-v9",
+      "sha256": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748"
+    },
+    "decisions": {
+      "path": ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md",
+      "revision": "acpx-omp-acp-trial-decisions/v7"
+    },
+    "plan": ".agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md"
+  },
+  "execution_approval": {
+    "date": "2026-09-25",
+    "instruction": "continue the work from previous session, with additional notes taken into account. approve and execute the route.",
+    "assurance": "standard",
+    "approved_proposals": {
+      "t1_t2_debug_loop_extension": true,
+      "rehearsal_subcap": { "usd": 1.0, "wall_minutes": 15 },
+      "post_close_pid_observation_seconds": 10
+    }
+  },
+  "launch_pins": {
+    "A": { "model": "anthropic/claude-opus-5-5", "thinking": "medium" },
+    "B": { "model": "xai-oauth/grok-4.7", "thinking": "medium" },
+    "tiny": { "model": "xai-oauth/grok-4.7", "thinking": "low" }
+  },
+  "fallback_model": null,
+  "pools": {
+    "probe_soak": {
+      "usd": 4.5,
+      "wall_minutes": 20,
+      "grant": {
+        "date": "2026-09-25",
+        "old_usd": 2.00,
+        "new_usd": 4.50,
+        "scope": "probe/soak cost cap only; wall cap, production pool and T3 unchanged; any further grant needs the user",
+        "user_words": "i allow grants, if required, especially if it would have to close an entire plan because of it."
+      }
+    },
+    "production": { "usd": 20, "reported_tokens": 2000000, "wall_minutes": 120 }
+  },
+  "effects": [
+    "one pinned local npm install inside the bundle",
+    "isolated acpx/OMP processes",
+    "OAuth provider/model requests within the shared probe/soak pool",
+    "ordinary OAuth refresh/account-affinity bookkeeping in /Users/kim/.omp/agent via PI_CODING_AGENT_DIR",
+    "private HOME/TMPDIR/session storage creation and removal",
+    "one deliberate between-settled-expectation idle expiry",
+    "supported close and read-only signal-0 PID observation"
+  ],
+  "production_adoption": "not authorized",
+  "scenarios": {
+    "S1": {
+      "brief": {
+        "goal": "Settle a correct, minimal Zsh change that puts `/opt/homebrew/bin` first in PATH exactly once, so re-sourcing `~/.zshrc` does not grow PATH.",
+        "candidate": {
+          "text": "Proposal — add before prompt setup in `.config/zsh/zshrc`: `export PATH=\"/opt/homebrew/bin:$PATH\"`. This is safe to run on every source because Zsh removes duplicate PATH entries automatically."
+        },
+        "context": "Prior discussion: the user saw PATH grow on every `source ~/.zshrc` and asked for a fix that keeps Homebrew first. macOS on Apple Silicon, Homebrew at `/opt/homebrew`. The proposal was drafted quickly and is untested.",
+        "mode": "Conversation replacement",
+        "maxOuterIterations": "none",
+        "approval": {
+          "approvedBy": "human",
+          "at": "2026-09-25T16:22:45Z",
+          "fiveFields": true
+        }
+      }
+    },
+    "S2": {
+      "brief": {
+        "goal": "Make step 2 follow the stated rule; change nothing else.",
+        "candidate": {
+          "path": ".agents/artifacts/acpx-omp-acp-trial/config/s2-staging-note.md"
+        },
+        "context": "Harmless copied note; only the run's private copy is edited.",
+        "mode": "Artifact edits",
+        "maxOuterIterations": 1,
+        "approval": {
+          "approvedBy": "human",
+          "at": "2026-09-25T16:22:45Z",
+          "fiveFields": true
+        }
+      },
+      "validator": {
+        "requiredLines": [
+          "# Staging note",
+          "Rule: stage dotfiles changes only through `dot-add`, which accepts only paths listed in `manifest`.",
+          "1. Check which files changed with `dot status`.",
+          "3. Review the staged diff with `dot diff --cached`."
+        ]
+      }
+    },
+    "S3": {
+      "table": {
+        "root": "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config",
+        "scopes": [
+          {
+            "id": "s1",
+            "objective": "Establish whether `link.sh` `backup_then_link` satisfies R1 and R2; cite each failing case.",
+            "requires": []
+          },
+          {
+            "id": "s2",
+            "objective": "Using s1's admitted findings, propose the smallest corrected `backup_then_link` that satisfies R1 and R2 (report only).",
+            "requires": [
+              "s1"
+            ]
+          },
+          {
+            "id": "s3",
+            "objective": "Establish whether `path-check.sh` satisfies R3, including `..` traversal.",
+            "requires": []
+          }
+        ],
+        "approval": {
+          "approvedBy": "human",
+          "fullTable": true,
+          "at": "2026-09-25T16:22:45Z"
+        }
+      }
+    }
+  }
+}

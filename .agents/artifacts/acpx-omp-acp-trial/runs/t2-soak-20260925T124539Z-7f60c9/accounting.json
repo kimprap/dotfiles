@@ -1,0 +1,18 @@
+{
+  "pool": "probe-soak",
+  "task": "T2",
+  "startedAt": "2026-09-25T12:45:39.737Z",
+  "endedAt": "2026-09-25T12:49:23.309Z",
+  "wallMs": 223574,
+  "modelWork": true,
+  "cost": {
+    "amount": 0.873614,
+    "currency": "USD",
+    "basis": "public status cumulative session cost (reported, summed across per-process counters)"
+  },
+  "tokens": 78750,
+  "priorWallMs": 28091,
+  "priorCostKnownUsd": 0.031834,
+  "priorCostUnknownRuns": 1,
+  "note": "wallMs covers the whole T2 execution including scripted mechanics. OAuth cost may be absent or delayed; unknown is never reported as zero."
+}

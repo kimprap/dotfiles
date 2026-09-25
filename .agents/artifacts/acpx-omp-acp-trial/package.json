@@ -1,0 +1,17 @@
+{
+  "name": "acpx-omp-acp-trial",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Retained non-adopted acpx + OMP ACP Reconcile/Retrace trial (spec acpx-omp-acp-trial/spec-v9).",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "1.4.0",
+    "acpx": "0.19.2"
+  },
+  "overrides": {
+    "@agentclientprotocol/sdk": "1.4.0"
+  }
+}

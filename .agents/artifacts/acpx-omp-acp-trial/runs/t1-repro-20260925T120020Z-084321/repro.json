@@ -1,0 +1,109 @@
+{
+  "schema": "acpx-omp-acp-trial.t1-repro.v1",
+  "runId": "t1-repro-20260925T120020Z-084321",
+  "cause": "t1-session-location",
+  "startedAt": "2026-09-25T12:00:20.812Z",
+  "argv": [
+    "/Users/kim/.local/bin/omp",
+    "acp",
+    "--model",
+    "xai-oauth/grok-4.7",
+    "--thinking",
+    "low",
+    "--tools",
+    "read,glob,grep,yield",
+    "--no-extensions",
+    "--no-skills",
+    "--no-rules",
+    "--no-lsp",
+    "--no-title",
+    "--config",
+    "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+    "--session-dir",
+    "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321"
+  ],
+  "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321",
+  "sessionDirInLiveStore": true,
+  "processes": [
+    {
+      "label": "A:new",
+      "pid": 70504,
+      "exit": {
+        "pid": 70504,
+        "result": "ESRCH",
+        "observedMs": 101,
+        "msAfterStdinClose": 101
+      }
+    },
+    {
+      "label": "B:load",
+      "pid": 70523,
+      "exit": {
+        "pid": 70523,
+        "result": "ESRCH",
+        "observedMs": 100,
+        "msAfterStdinClose": 100
+      }
+    }
+  ],
+  "updates": {},
+  "sessionId": "01a0d870-220d-7310-a383-177dabe4eef0",
+  "load": {
+    "ok": true
+  },
+  "allPidsExited": true,
+  "cleanup": {
+    "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321",
+    "sessionIds": [
+      "01a0d870-220d-7310-a383-177dabe4eef0"
+    ],
+    "deleted": [
+      "2026-09-25T12-00-22-541Z_01a0d870-220d-7310-a383-177dabe4eef0.jsonl"
+    ],
+    "kept": [
+      ".2026-09-25T12-00-22-541Z_01a0d870-220d-7310-a383-177dabe4eef0.jsonl.lock.os"
+    ],
+    "folders": [
+      {
+        "path": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321",
+        "result": "kept:ENOTEMPTY",
+        "entries": [
+          ".2026-09-25T12-00-22-541Z_01a0d870-220d-7310-a383-177dabe4eef0.jsonl.lock.os"
+        ]
+      },
+      {
+        "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t1repro-88a43371-7f84-4578-8824-aecc31f4dae3-cwd--",
+        "result": "removed"
+      }
+    ],
+    "complete": false
+  },
+  "privateRootRemoval": {
+    "removed": true,
+    "socketDir": "/tmp/acpx-c8f9d838a7",
+    "socketDirExisted": false
+  },
+  "modelRequest": "none-reported (no session/prompt sent)",
+  "verdict": "PASS",
+  "wallMs": 2358,
+  "endedAt": "2026-09-25T12:00:23.170Z",
+  "cleanupAfterLockRule": {
+    "at": "2026-09-25T12:05:58.718Z",
+    "authority": "spec-v9 sha256 7fcc011e… rule (1) lock amendment",
+    "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321",
+    "sessionIds": [
+      "01a0d870-220d-7310-a383-177dabe4eef0"
+    ],
+    "deleted": [
+      ".2026-09-25T12-00-22-541Z_01a0d870-220d-7310-a383-177dabe4eef0.jsonl.lock.os"
+    ],
+    "kept": [],
+    "folders": [
+      {
+        "path": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120020Z-084321",
+        "result": "removed"
+      }
+    ],
+    "complete": true
+  }
+}

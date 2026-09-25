@@ -1,0 +1,634 @@
+{
+  "schema": "acpx-omp-acp-trial.t1.v1",
+  "runId": "t1-probe-20260925T095041Z-f08505",
+  "mode": "probe",
+  "task": "T1",
+  "startedAt": "2026-09-25T09:50:41.927Z",
+  "handles": {
+    "normal": {
+      "sessionKey": "t1-normal",
+      "ttlMs": 7800000,
+      "ledger": {
+        "samples": [
+          {
+            "point": "post-ensure",
+            "at": "2026-09-25T09:50:44.129Z",
+            "mono": 2293,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "closed": false,
+            "lastRequestId": null,
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "journal-settled:t1-probe-20260925T095041Z-f08505-e1-a1",
+            "at": "2026-09-25T09:50:45.196Z",
+            "mono": 3360,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "closed": false,
+            "lastRequestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "post-request:t1-probe-20260925T095041Z-f08505-e1-a1",
+            "at": "2026-09-25T09:50:45.197Z",
+            "mono": 3360,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "closed": false,
+            "lastRequestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "pre-close",
+            "at": "2026-09-25T09:50:45.198Z",
+            "mono": 3361,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "closed": false,
+            "lastRequestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "post-close",
+            "at": "2026-09-25T09:50:45.263Z",
+            "mono": 3426,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+            "closed": true,
+            "lastRequestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          }
+        ],
+        "pids": []
+      },
+      "requests": [
+        {
+          "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+          "windowStartCursor": null,
+          "submittedAt": "2026-09-25T09:50:44.560Z",
+          "submittedMono": 2723,
+          "control": {
+            "cancelled": false,
+            "ceiling": false,
+            "revoked": false
+          },
+          "promptStartFailure": "ACP_TURN_FAILED",
+          "turnResult": {
+            "status": "failed",
+            "errorCode": "NO_SESSION",
+            "errorDetailCode": "SESSION_RESUME_REQUIRED"
+          },
+          "turnSettledMono": 3324,
+          "turnSettledAt": "2026-09-25T09:50:45.161Z",
+          "windowClosedMono": 3360,
+          "drain": {
+            "events": 0,
+            "toolEvents": 0,
+            "textDeltas": 0
+          },
+          "window": {
+            "complete": true,
+            "startCursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDFd",
+            "endCursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDZd",
+            "duplicateCursorCount": 0,
+            "nullTraffic": 0,
+            "otherKnown": 0,
+            "unknownRequestIds": [],
+            "anomalies": [],
+            "rpc": {
+              "initialize": 1,
+              "sessionNew": 0,
+              "sessionResume": [
+                {
+                  "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDRd",
+                  "id": 1,
+                  "sessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+                  "responseCursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDVd",
+                  "ok": false
+                }
+              ],
+              "sessionLoad": 0,
+              "prompt": 0,
+              "errors": [
+                {
+                  "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDVd",
+                  "id": 1,
+                  "code": -32603
+                }
+              ]
+            },
+            "usage": [],
+            "events": [
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDFd",
+                "type": "turn_started",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1"
+              },
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDJd",
+                "type": "message",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+                "message": {
+                  "rpc": "request",
+                  "method": "initialize",
+                  "id": 0
+                }
+              },
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDNd",
+                "type": "message",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+                "message": {
+                  "rpc": "response",
+                  "id": 0,
+                  "resumeAdvertised": true
+                }
+              },
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDRd",
+                "type": "message",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+                "message": {
+                  "rpc": "request",
+                  "method": "session/resume",
+                  "id": 1,
+                  "sessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d"
+                }
+              },
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDVd",
+                "type": "message",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+                "message": {
+                  "rpc": "response",
+                  "id": 1,
+                  "error": {
+                    "code": -32603
+                  }
+                }
+              },
+              {
+                "cursor": "WyIwMWEwZDdmOS03MTBiLTcxYmEtYjJkMS05MzI5ODczYjdmOWQiLDZd",
+                "type": "turn_result",
+                "requestId": "t1-probe-20260925T095041Z-f08505-e1-a1",
+                "result": {
+                  "status": "failed",
+                  "errorCode": "NO_SESSION",
+                  "errorDetailCode": "SESSION_RESUME_REQUIRED",
+                  "retryable": true
+                }
+              }
+            ]
+          },
+          "firstCandidate": null,
+          "toolFacts": [],
+          "submitToTerminalMs": 601,
+          "classification": {
+            "windowComplete": true,
+            "unfinishedYield": [],
+            "unknownRequestIds": [],
+            "anomalies": [],
+            "row": "turn-not-completed",
+            "c4": false,
+            "reaskEligible": false
+          },
+          "expectation": 1,
+          "attempt": 1
+        }
+      ],
+      "ensureInvokedAt": "2026-09-25T09:50:43.685Z",
+      "ensured": true,
+      "identity": {
+        "acpxRecordId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d",
+        "backendSessionId": "01a0d7f9-710b-71ba-b2d1-9329873b7f9d"
+      },
+      "observedModel": "xai-oauth/grok-4.7",
+      "close": {
+        "reason": "t1 probe complete",
+        "closeInvokedAt": "2026-09-25T09:50:45.198Z",
+        "closeResolved": true,
+        "closeReturnedAt": "2026-09-25T09:50:45.263Z",
+        "closeDurationMs": 65,
+        "recordedClosed": true,
+        "pidResults": [],
+        "allPidsExited": false,
+        "pidCoverageNonEmpty": false
+      },
+      "shutdownMs": 1
+    },
+    "short": {
+      "sessionKey": "t1-short",
+      "ttlMs": 1000,
+      "ledger": {
+        "samples": [
+          {
+            "point": "post-ensure",
+            "at": "2026-09-25T09:50:44.559Z",
+            "mono": 2722,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "acpxRecordId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "closed": false,
+            "lastRequestId": null,
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "pre-close",
+            "at": "2026-09-25T09:50:45.264Z",
+            "mono": 3427,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "acpxRecordId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "closed": false,
+            "lastRequestId": null,
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          },
+          {
+            "point": "post-close",
+            "at": "2026-09-25T09:50:45.267Z",
+            "mono": 3430,
+            "pid": null,
+            "backendSessionId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "acpxRecordId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+            "closed": true,
+            "lastRequestId": null,
+            "currentModelId": "xai-oauth/grok-4.7",
+            "usage": {
+              "costAmount": null,
+              "costCurrency": null,
+              "totalTokens": null
+            }
+          }
+        ],
+        "pids": []
+      },
+      "requests": [],
+      "ensureInvokedAt": "2026-09-25T09:50:44.130Z",
+      "ensured": true,
+      "identity": {
+        "acpxRecordId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8",
+        "backendSessionId": "01a0d7f9-72bc-737f-8cae-37a87cc3b4e8"
+      },
+      "observedModel": "xai-oauth/grok-4.7",
+      "close": {
+        "reason": "t1 probe complete",
+        "closeInvokedAt": "2026-09-25T09:50:45.264Z",
+        "closeResolved": true,
+        "closeReturnedAt": "2026-09-25T09:50:45.267Z",
+        "closeDurationMs": 3,
+        "recordedClosed": true,
+        "pidResults": [],
+        "allPidsExited": false,
+        "pidCoverageNonEmpty": false
+      },
+      "shutdownMs": 0
+    }
+  },
+  "expectations": [
+    {
+      "index": 1,
+      "handle": "normal",
+      "kind": "probe-canary",
+      "requests": [
+        "t1-probe-20260925T095041Z-f08505-e1-a1"
+      ],
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "submissions": 1,
+      "reasksUsed": 0,
+      "outcome": "stopped-turn-not-completed",
+      "firstTryValid": false
+    },
+    {
+      "index": 2,
+      "handle": "normal",
+      "kind": "probe-reuse",
+      "requests": [],
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "submissions": 0,
+      "reasksUsed": 0,
+      "outcome": "not-run"
+    },
+    {
+      "index": 3,
+      "handle": "short",
+      "kind": "probe-short",
+      "requests": [],
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "submissions": 0,
+      "reasksUsed": 0,
+      "outcome": "not-run"
+    },
+    {
+      "index": 4,
+      "handle": "short",
+      "kind": "probe-restore",
+      "requests": [],
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "submissions": 0,
+      "reasksUsed": 0,
+      "outcome": "not-run"
+    }
+  ],
+  "authority": {
+    "approvalPath": "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/approval.json",
+    "problems": [],
+    "approvalSha256": "6c10a362f95e1c469d1637131fccbdee5c610b589a53cbc25b73087b6afa49a5",
+    "specSha256": "593a6ae6bae86975d783914a4c7feaa34d7db7f10f1447cb886e04db8bca12c2",
+    "decisionsRevisionPresent": true,
+    "planSha256": "489a51da9f1123186d8e9d40c600cb8873695236ed725869c3abaed25923a346",
+    "ok": true
+  },
+  "sources": {
+    "probe.mjs": "8c70338c7fc878201125eb6d84c37650f02664ecd1a45d4f285f8a47b8b40e51",
+    "probe-verify.mjs": "8996a70982e42d096c4b3faeec0e010eadce69da179ba7caba83a00d9ad0543f",
+    "package.json": "8fd3fceb3883f387c3aa4a55047ffbb0a1ff549238254f5d9fee3e39411216d7",
+    "package-lock.json": "f96a300ff80c61167b85367397a1a0683bc5d01ef3b6d43e083b99f5d928064a",
+    "prompts/native-probe.md": "8f21599bdbb5cb495cfcfb37714621bc17df84f27d10c6602a8d28d8fa541a1c",
+    "lib/native/adapter.mjs": "c2b6a4dc1c424018bce1ecd1619e5143a0775a15d0024697af2ed99447aacf24",
+    "lib/native/domain.mjs": "8b556765381077803adfe6a88ff37b2f26d825d77e7143c447ddaa0216708cc5",
+    "lib/native/env.mjs": "cf255168d61191a1880ff0867bd52c4b90246d6e70a26892f7c01608aa815158",
+    "lib/native/pins.mjs": "581406dfd0dbf48fe04ce654abfde0611cf5f294e955efd0e91b3b2ff93ed43b",
+    "lib/native/window.mjs": "606d52b2aa5ecc0f6d5e53b5e10cbc48d54f107eee347812dec779fe79a565a8",
+    "lib/evidence/export.mjs": "7efa5165631eabd631dbf9334c4a9964a4990d88e5f07016142c31b1e5a9a846",
+    "lib/evidence/io.mjs": "8056db6cbeea355f6be65b57107adcbee16b98748f84c0f50bfc2f42238a05bb",
+    "lib/evidence/report.mjs": "d9e179799938b3a9a0871dba829e5f4116975674486681b91154418b7f641e32",
+    "config/approval.json": "6c10a362f95e1c469d1637131fccbdee5c610b589a53cbc25b73087b6afa49a5",
+    "config/omp-overlay.yml": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+    "config/protected-sources.json": "0715d8632ffda4b1b0e79cc5b7a75d0aff0db8d56aae6a869843e8039fcfcf14"
+  },
+  "readonly": {
+    "protectedBefore": {
+      ".config/agents/skills/reconcile/SKILL.md": "b33e854319d3ca6e778e095892c5d6fd231e5cb685f8e81a89a7f1d65a07cdf1",
+      ".config/agents/skills/reconcile/references/reviewer-protocol.md": "934a4c3aa74434e138dafbdc4aebfa77901e470f4e965270c809368cfbf36fc9",
+      ".config/agents/skills/reconcile/references/execution-flow.md": "3666099fe40d965aec633013e7fca08ca1c19472ce7528d248da277a8da9859f",
+      ".config/agents/skills/reconcile/evals/evals.json": "2fb09b4ad04528cd4ee3452091166653cfa30129033542be551fe89d3e3e4c01",
+      ".config/agents/skills/retrace/SKILL.md": "d5c469d3494f97eb72203502a88e1cbdfa86a7245fdaff3f16b8a541b1a8619d",
+      ".config/agents/skills/retrace/evals/evals.json": "d52ac51a5a94c6d69c547ac1f1f80a155544a4024c90c2059f05d98bcc0ea099",
+      "docs/adr/INDEX.md": "597036cf9e9f0aa29806fee32cb7b380609a42ecd6d95747e488606c5833588b",
+      "docs/adr/0001-dev-workflow-authority-and-routing.md": "cb092495e69759687384272f7cc2b04413b03ba72e88f9c420fcd3f19fae39a6",
+      "docs/adr/0002-executor-plans-and-orchestration.md": "be7b66ebbf700e324ca3ee8f4161e4baa99a7098a13673e1a3ea66a1616f0181",
+      "docs/adr/0003-bounded-assurance-and-repair.md": "0bf7a1d6f6d79c15a3688eda600587d92ccd363477dd0e735de6da5f9a5298ba",
+      "docs/adr/0004-canonical-discovery-and-continual-learning.md": "231017aee9caac67c4378eea6e452caa5fba85fe0e4726a9b72cd46f75c6cb43",
+      "docs/adr/0010-replacement-lifecycle-plugin.md": "1bf8dd7f1c6215bb76c104982e2063c7465df65a20ca09ab2b6f98672631862a",
+      ".agents/artifacts/2026-09-23_reconcile-retrace-lean-redesign-spec.md": "376fd634f0c6c772252fe6929547a2d1bc0a5ba161477935a9cdaa7e1635fe51",
+      ".agents/plans/2026-09-23-2154_reconcile-retrace-lean-redesign.md": "b4a1008606bad986b02202217366290842f512693809c6d7ad040ba19113b4de",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md": "593a6ae6bae86975d783914a4c7feaa34d7db7f10f1447cb886e04db8bca12c2",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md": "3d24d1624fba624e80882c5675f24399a00b8ce1ffccb36a3ce1f8ddc7be7a66",
+      ".config/agents/harnesses/omp/config.yml": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25"
+    },
+    "canaryPath": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/cwd/probe-canary.txt",
+    "canaryBefore": "absent",
+    "canaryAfter": "absent",
+    "protectedAfter": {
+      ".config/agents/skills/reconcile/SKILL.md": "b33e854319d3ca6e778e095892c5d6fd231e5cb685f8e81a89a7f1d65a07cdf1",
+      ".config/agents/skills/reconcile/references/reviewer-protocol.md": "934a4c3aa74434e138dafbdc4aebfa77901e470f4e965270c809368cfbf36fc9",
+      ".config/agents/skills/reconcile/references/execution-flow.md": "3666099fe40d965aec633013e7fca08ca1c19472ce7528d248da277a8da9859f",
+      ".config/agents/skills/reconcile/evals/evals.json": "2fb09b4ad04528cd4ee3452091166653cfa30129033542be551fe89d3e3e4c01",
+      ".config/agents/skills/retrace/SKILL.md": "d5c469d3494f97eb72203502a88e1cbdfa86a7245fdaff3f16b8a541b1a8619d",
+      ".config/agents/skills/retrace/evals/evals.json": "d52ac51a5a94c6d69c547ac1f1f80a155544a4024c90c2059f05d98bcc0ea099",
+      "docs/adr/INDEX.md": "597036cf9e9f0aa29806fee32cb7b380609a42ecd6d95747e488606c5833588b",
+      "docs/adr/0001-dev-workflow-authority-and-routing.md": "cb092495e69759687384272f7cc2b04413b03ba72e88f9c420fcd3f19fae39a6",
+      "docs/adr/0002-executor-plans-and-orchestration.md": "be7b66ebbf700e324ca3ee8f4161e4baa99a7098a13673e1a3ea66a1616f0181",
+      "docs/adr/0003-bounded-assurance-and-repair.md": "0bf7a1d6f6d79c15a3688eda600587d92ccd363477dd0e735de6da5f9a5298ba",
+      "docs/adr/0004-canonical-discovery-and-continual-learning.md": "231017aee9caac67c4378eea6e452caa5fba85fe0e4726a9b72cd46f75c6cb43",
+      "docs/adr/0010-replacement-lifecycle-plugin.md": "1bf8dd7f1c6215bb76c104982e2063c7465df65a20ca09ab2b6f98672631862a",
+      ".agents/artifacts/2026-09-23_reconcile-retrace-lean-redesign-spec.md": "376fd634f0c6c772252fe6929547a2d1bc0a5ba161477935a9cdaa7e1635fe51",
+      ".agents/plans/2026-09-23-2154_reconcile-retrace-lean-redesign.md": "b4a1008606bad986b02202217366290842f512693809c6d7ad040ba19113b4de",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md": "593a6ae6bae86975d783914a4c7feaa34d7db7f10f1447cb886e04db8bca12c2",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md": "3d24d1624fba624e80882c5675f24399a00b8ce1ffccb36a3ce1f8ddc7be7a66",
+      ".config/agents/harnesses/omp/config.yml": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25"
+    },
+    "protectedUnchanged": true
+  },
+  "s0": {
+    "env": {
+      "keys": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "PI_CODING_AGENT_DIR",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "HOME": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/home",
+      "TMPDIR": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/tmp",
+      "PI_CODING_AGENT_DIR": "/Users/kim/.omp/agent",
+      "PATH": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin:/usr/bin:/bin"
+    },
+    "privateRoot": {
+      "path": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8",
+      "mode": "700",
+      "outsideBundle": true
+    },
+    "liveStore": {
+      "path": "/Users/kim/.omp/agent",
+      "isDirectory": true,
+      "mode": "700"
+    },
+    "pins": {
+      "node": {
+        "version": "26.3.1",
+        "execPath": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin/node",
+        "ok": true
+      },
+      "omp": {
+        "path": "/Users/kim/.local/bin/omp",
+        "bytes": 208460816,
+        "sha256": "d61fb411f24146bed48dd901b13b5912a297d899ee691dda69c4b5b7ab8c35dc",
+        "version": "omp/18.3.0",
+        "ok": true
+      },
+      "acpx": {
+        "installed": "0.19.2",
+        "locked": "0.19.2",
+        "lockedIntegrity": "sha512-wLeY2T3vfa63/Oa6fsrbtCXAx6PhfdWvAvw+F6mv3gO/NYWTQf6MpGAWWvmO2JYq8YAhRJ+zt48/BWKz1JiMWg==",
+        "ok": true
+      },
+      "sdk": {
+        "installed": "1.4.0",
+        "locks": [
+          {
+            "at": "node_modules/@agentclientprotocol/sdk",
+            "version": "1.4.0"
+          }
+        ],
+        "ok": true
+      },
+      "overlay": {
+        "path": ".agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+        "sha256": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b"
+      },
+      "ok": true
+    },
+    "liveConfig": {
+      "configPath": ".config/agents/harnesses/omp/config.yml",
+      "configSha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+      "expectedConfigSha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+      "lifecyclePlugin": {
+        "path": ".config/agents/harnesses/omp/extensions/lifecycle-plugin.js",
+        "sha256": "6aaa4b2faea055752708ba3940a37701cd08fbb1fef41bb13fe9b7b639838963"
+      },
+      "modelRoles": {
+        "default": "anthropic/claude-opus-5-5:high",
+        "slow": "anthropic/claude-opus-5-5:xhigh",
+        "task": "anthropic/claude-opus-5-5:medium",
+        "plan": "anthropic/claude-opus-5-5:xhigh",
+        "smol": "xai-oauth/grok-4.7:medium",
+        "tiny": "xai-oauth/grok-4.7:low",
+        "advisor": "openai-codex/gpt-5.6-sol:high",
+        "test_audit_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+        "test_audit_opinion_b": "xai-oauth/grok-4.7:xhigh",
+        "second_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+        "second_opinion_b": "xai-oauth/grok-4.7:xhigh",
+        "web": "web/brave"
+      }
+    },
+    "expectedLaunch": {
+      "profile": "tiny",
+      "model": "xai-oauth/grok-4.7",
+      "thinking": "low"
+    },
+    "registryArgv": [
+      "/Users/kim/.local/bin/omp",
+      "acp",
+      "--model",
+      "xai-oauth/grok-4.7",
+      "--thinking",
+      "low",
+      "--tools",
+      "read,glob,grep,yield",
+      "--no-extensions",
+      "--no-skills",
+      "--no-rules",
+      "--no-lsp",
+      "--no-title",
+      "--config",
+      "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+      "--session-dir",
+      "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/sessions"
+    ],
+    "agentId": "omp-trial"
+  },
+  "pool": {
+    "name": "probe-soak",
+    "limitUsd": 2,
+    "limitWallMs": 1200000,
+    "prior": {
+      "wallMs": 0,
+      "costKnownUsd": 0,
+      "costUnknownRuns": 0
+    }
+  },
+  "processesStarted": true,
+  "tokens": {
+    "e1": "TOKEN-185EC46B",
+    "e3": "TOKEN-C66E748C"
+  },
+  "disposalOrder": [
+    "close:normal",
+    "close:short",
+    "shutdown:normal",
+    "shutdown:short"
+  ],
+  "finishedModelWorkAt": "2026-09-25T09:50:45.270Z",
+  "stops": [
+    "expectation-1-turn-not-completed"
+  ],
+  "postRun": {
+    "diagnosticLaunches": [
+      {
+        "id": "t1diag",
+        "startedAt": "2026-09-25T09:51:32Z (16:51:32 +0700)",
+        "command": "not recoverable verbatim. Recorded from the T1 owner context: two throwaway Node scripts (bundle SDK 1.4.0 ClientSideConnection) each spawned the pinned `/Users/kim/.local/bin/omp acp` with the trial registry flags and a private `--session-dir`, private HOME/TMPDIR under /private/tmp/acpx-t1diag-56135, cwd /private/tmp/acpx-t1diag-56135/cwd and PI_CODING_AGENT_DIR=/Users/kim/.omp/agent",
+        "rpcs": "initialize, session/new, then in a new process session/resume and session/load (both -32603 ACP session not found), session/list with cwd ([]) and without cwd (returned live-store session metadata: titles/cwd; observed transiently, not retained)",
+        "modelRequest": "none: no session/prompt was sent [INFERENCE: zero provider usage; no usage/cost was reported]",
+        "cleanup": "both omp processes exited when the scripts closed their connections; the private /private/tmp/acpx-t1diag-56135 root and scripts were removed at the time; the live-store cwd-named folder it created remained empty (LEFT-1) and was removed by rmdir 2026-09-25T11:58:26Z",
+        "diagnosisCorrection": "the earlier conclusion that OMP ACP resume ignores --session-dir generally is superseded: OMP 18.3.0 uses --session-dir on create but ignores it on load (searches cwd-derived folder, then only <agentDir>/sessions/*/*.jsonl)"
+      }
+    ],
+    "causes": [
+      {
+        "id": "t1-session-location",
+        "owner": "T1",
+        "discoveredIn": "t1-probe-20260925T095041Z-f08505",
+        "cause": "launcher passed a private --session-dir; OMP 18.3.0 applies --session-dir on session/new but ignores it on load (searches the cwd-derived folder, then only <agentDir>/sessions/*/*.jsonl), so the queue owner same-ID session/resume failed with -32603 ACP session not found -> SESSION_RESUME_REQUIRED and no public PID was published",
+        "failedInvariant": "a session created by the launcher is loadable by a new agent process under the same launcher settings",
+        "authority": "2026-09-25 user decision (spec-v9 launch section; spec sha256 7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748, plan sha256 e6a2a7528bd076d2e65203676f5795638bf36cec2fa5e46e5724d6b66269b8b4)",
+        "fix": {
+          "files": [
+            "lib/native/pins.mjs (sessionDirFor -> /Users/kim/.omp/agent/sessions/acpx-trial-<runId>)",
+            "lib/native/env.mjs (cleanupLiveSessionFolders, liveCwdFolderFor)",
+            "probe.mjs (sessionDirFor, live-store cleanup after ESRCH, correctionGate)",
+            "probe-verify.mjs (expected argv, live-store cleanup checks)",
+            "fixtures/native/session-location-repro.mjs (REPRO-1)"
+          ],
+          "pinsSha256": "f9628c5742dae05bb76c4a4b6f594572b382de4d9c05fd89d23a68499d78f0c1"
+        },
+        "fixCount": 1,
+        "reproducer": {
+          "red": "t1-repro-20260925T120005Z-640ec4",
+          "green": "t1-repro-20260925T120605Z-3505ce",
+          "earlierGreenBeforeLockRule": "t1-repro-20260925T120020Z-084321"
+        },
+        "checks1": {
+          "repro": "PASS (REPRO PASS, t1-repro-20260925T120605Z-3505ce)",
+          "selfTest": "{\"fails\":[]}",
+          "mechanics": "MECHANICS PASS"
+        },
+        "affectedProof": "complete T1 probe unit",
+        "authorizedCorrectedExecutions": 1,
+        "status": "fixed-offline"
+      }
+    ]
+  }
+}

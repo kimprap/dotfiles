@@ -1,0 +1,20 @@
+{
+  "runId": "t1-probe-20260925T095041Z-f08505",
+  "command": "probe",
+  "launcherPid": 23367,
+  "privateRoot": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8",
+  "childEnvKeys": [
+    "HOME",
+    "LANG",
+    "PATH",
+    "PI_CODING_AGENT_DIR",
+    "TMPDIR"
+  ],
+  "childEnvFixed": {
+    "PATH": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin:/usr/bin:/bin",
+    "HOME": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/home",
+    "TMPDIR": "/tmp/acpx-t1-37194fb0-5ea1-4e10-bdea-cb750f23a4c8/tmp",
+    "PI_CODING_AGENT_DIR": "/Users/kim/.omp/agent"
+  },
+  "parentEnvKeyCount": 101
+}

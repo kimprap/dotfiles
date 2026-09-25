@@ -1,0 +1,3230 @@
+{
+  "offline": [
+    {
+      "group": "reconcile",
+      "name": "reject-missing-approval",
+      "guards": [
+        "KR1"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "reject-invalid-mode",
+      "guards": [
+        "KR1",
+        "KR2"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "reject-cap-zero",
+      "guards": [
+        "KR3"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "reject-cap-string-number",
+      "guards": [
+        "KR3"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "reject-artifact-with-conversation-fallback",
+      "guards": [
+        "KR1",
+        "KR2"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "reject-report-only-artifact",
+      "guards": [
+        "KR16"
+      ],
+      "observed": {
+        "status": "rejected",
+        "phases": [],
+        "restores": [],
+        "reviewerPortCalls": {},
+        "disposed": [],
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "artifactFinal": "alpha",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "a-first-valid-no-b",
+      "guards": [
+        "KR4",
+        "KR5",
+        "KR6",
+        "KR9",
+        "KR14",
+        "KR15"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false,
+        "renderHas": [
+          "## Review rounds",
+          "## Final proposal",
+          "still ok"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "revise-lazy-b-application-closure",
+      "guards": [
+        "KR4",
+        "KR5",
+        "KR6",
+        "KR7",
+        "KR8",
+        "KR10"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C1",
+        "applications": 1,
+        "rounds": 2,
+        "closureOnlyRounds": [
+          false,
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink",
+          "A:later"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 1,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "restore-preserves-first-review-flag",
+      "guards": [
+        "KR4",
+        "KR6"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C1",
+        "applications": 1,
+        "rounds": 2,
+        "closureOnlyRounds": [
+          false,
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink",
+          "A:later"
+        ],
+        "restores": [
+          {
+            "role": "A",
+            "sameBackendId": true
+          }
+        ],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 1,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "valid-recommendations-ignored",
+      "guards": [
+        "KR7"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 1,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "source-need-continues-pass",
+      "guards": [
+        "KR6"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+source",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 1,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "repeated-source-request-stops",
+      "guards": [
+        "KR12"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "repeated-source-request",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+source"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": false
+        },
+        "supplyCalls": 1,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "blocked-retry-then-valid",
+      "guards": [
+        "KR9"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "A:later+blocked-retry"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "persistent-blocked-stops",
+      "guards": [
+        "KR9",
+        "KR12"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "persistent-blocked",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "A:later+blocked-retry"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false,
+        "renderHas": [
+          "## Reconcile stopped"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "shared-c4-fourth-invalid-stops",
+      "guards": [
+        "KR12"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "c4-exhausted",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+reask",
+          "A:initial+reask",
+          "A:initial+reask"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": false
+        },
+        "supplyCalls": 0,
+        "reasks": 3,
+        "invalidReturns": 4,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "c4-not-reset-by-source-need",
+      "guards": [
+        "KR12"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "c4-exhausted",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+reask",
+          "A:initial+source",
+          "A:initial+reask",
+          "A:initial+reask"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": false
+        },
+        "supplyCalls": 1,
+        "reasks": 3,
+        "invalidReturns": 4,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "c4-third-reask-recovers",
+      "guards": [
+        "KR12"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+reask",
+          "A:initial+reask",
+          "A:initial+reask",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 3,
+        "invalidReturns": 3,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "delivery-uncertain-no-c4-no-replay",
+      "guards": [
+        "KR12",
+        "KS3"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "delivery-uncertain",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": false
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "noop-correction-reasked",
+      "guards": [
+        "KR8"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "A:rethink+reask"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 1,
+        "invalidReturns": 1,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "revise-correction-conflict-reasked",
+      "guards": [
+        "KR7",
+        "KR8"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:initial+reask",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 1,
+        "invalidReturns": 1,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "repeated-revise-pair-stops",
+      "guards": [
+        "KR12"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "label-reviewer-pair-without-new-evidence",
+        "canonical": "X",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink",
+          "A:later"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-edit-application-closure",
+      "guards": [
+        "KR2",
+        "KR8",
+        "KR10",
+        "KR11"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "alpha BETA gamma",
+        "applications": 1,
+        "rounds": 2,
+        "closureOnlyRounds": [
+          false,
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink",
+          "A:later"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 1,
+        "validations": 1,
+        "artifactFinal": "alpha BETA gamma",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-cap-one-closure-only-stops",
+      "guards": [
+        "KR3",
+        "KR10"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "cap",
+        "canonical": "alpha BETA gamma",
+        "applications": 1,
+        "rounds": 2,
+        "closureOnlyRounds": [
+          false,
+          true
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink",
+          "A:later",
+          "B:later"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 1,
+        "validations": 1,
+        "artifactFinal": "alpha BETA gamma",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-nonunique-edit-reasked",
+      "guards": [
+        "KR8"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "a a b",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "A:rethink+reask"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 1,
+        "invalidReturns": 1,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "artifactFinal": "a a b",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-drift-before-application-stops",
+      "guards": [
+        "KR11",
+        "KR13"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "terminal-drift",
+        "canonical": "alpha beta gamma",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "artifactFinal": "tampered",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-final-reread-drift-stops",
+      "guards": [
+        "KR11"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "terminal-drift",
+        "canonical": "alpha",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "artifactFinal": "alpha!",
+        "repairAuthority": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-validation-failure-no-rollback",
+      "guards": [
+        "KR10",
+        "KR13"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "failed-validation",
+        "canonical": "alpha beta gamma",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 1,
+        "validations": 1,
+        "artifactFinal": "alpha BETA gamma",
+        "repairAuthority": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "artifact-write-failure-stops",
+      "guards": [
+        "KR13"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "failed-application",
+        "canonical": "alpha beta gamma",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink",
+          "B:initial",
+          "B:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1,
+          "B": 1
+        },
+        "disposed": [
+          "A",
+          "B"
+        ],
+        "firstReviewFlags": {
+          "A": true,
+          "B": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "artifactFinal": "alpha beta gamma",
+        "repairAuthority": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "failed-disposal-blocks-success",
+      "guards": [
+        "KR14",
+        "KS4"
+      ],
+      "observed": {
+        "status": "stopped",
+        "stopCause": "failed-disposal",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false,
+        "renderHas": [
+          "## Reconcile stopped"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "reconcile",
+      "name": "render-reviewer-text-verbatim",
+      "guards": [
+        "KR15"
+      ],
+      "observed": {
+        "status": "final",
+        "canonical": "C0",
+        "applications": 0,
+        "rounds": 1,
+        "closureOnlyRounds": [
+          false
+        ],
+        "phases": [
+          "A:initial",
+          "A:rethink"
+        ],
+        "restores": [],
+        "reviewerPortCalls": {
+          "A": 1
+        },
+        "disposed": [
+          "A"
+        ],
+        "firstReviewFlags": {
+          "A": true
+        },
+        "supplyCalls": 0,
+        "reasks": 0,
+        "invalidReturns": 0,
+        "recommendationsIgnored": 0,
+        "artifactWrites": 0,
+        "validations": 0,
+        "repairAuthority": false,
+        "renderHas": [
+          "  Keep  THIS\n\ttext  ",
+          "- Reviewer A: VALID"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "dependency-order-overlap-and-admitted-identity",
+      "guards": [
+        "KT1",
+        "KT2",
+        "KT3",
+        "KT4",
+        "KS1",
+        "KS6"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 2,
+        "dispatchOrder": [
+          "s1",
+          "s3",
+          "s2"
+        ],
+        "states": {
+          "s1": "resolved",
+          "s3": "resolved",
+          "s2": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s3": 0,
+          "s2": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        },
+        "overlap": [
+          "s1",
+          "s3"
+        ],
+        "prerequisites": {
+          "s2": [
+            {
+              "scope": "s1",
+              "report": "REPORT-S1"
+            }
+          ]
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "unresolved-prerequisite-blocks-dependent-preserves-sibling",
+      "guards": [
+        "KT4",
+        "KS5"
+      ],
+      "observed": {
+        "status": "partial",
+        "peakActive": 2,
+        "dispatchOrder": [
+          "s1",
+          "s3"
+        ],
+        "states": {
+          "s1": "stopped",
+          "s3": "resolved",
+          "s2": "blocked-dependency"
+        },
+        "stopCauses": {
+          "s1": "persistent-blocked"
+        },
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s3": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-disposed"
+          ],
+          "s2": [],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "dependent-failure-preserves-siblings",
+      "guards": [
+        "KS5",
+        "KR12"
+      ],
+      "observed": {
+        "status": "partial",
+        "peakActive": 2,
+        "dispatchOrder": [
+          "s1",
+          "s3",
+          "s2"
+        ],
+        "states": {
+          "s1": "resolved",
+          "s3": "resolved",
+          "s2": "stopped"
+        },
+        "stopCauses": {
+          "s2": "c4-exhausted"
+        },
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s3": 0,
+          "s2": 3
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [
+            "scope-dispatched",
+            "scope-disposed"
+          ],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "four-actor-slot-limit",
+      "guards": [
+        "KT3"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 4,
+        "dispatchOrder": [
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "s5",
+          "s6"
+        ],
+        "states": {
+          "s1": "resolved",
+          "s2": "resolved",
+          "s3": "resolved",
+          "s4": "resolved",
+          "s5": "resolved",
+          "s6": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s2": 0,
+          "s3": 0,
+          "s4": 0,
+          "s5": 0,
+          "s6": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s4": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s5": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s6": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s4": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s5": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s6": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "requires-depth-then-authored-order",
+      "guards": [
+        "KT3"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 4,
+        "dispatchOrder": [
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "a"
+        ],
+        "states": {
+          "b": "resolved",
+          "c": "resolved",
+          "d": "resolved",
+          "e": "resolved",
+          "f": "resolved",
+          "a": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "e": 0,
+          "f": 0,
+          "a": 0
+        },
+        "flow": {
+          "a": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "b": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "c": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "d": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "e": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "f": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "b": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "c": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "d": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "e": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "f": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "a": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "slot-frees-only-on-observed-disposal",
+      "guards": [
+        "KT3",
+        "KS4"
+      ],
+      "observed": {
+        "status": "partial",
+        "peakActive": 4,
+        "dispatchOrder": [
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "states": {
+          "s1": "resolved",
+          "s2": "resolved",
+          "s3": "resolved",
+          "s4": "resolved",
+          "s5": "pending"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s2": 0,
+          "s3": 0,
+          "s4": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s4": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s5": []
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s4": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s5": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "final-freshness-invalidates-requires-dependents-only",
+      "guards": [
+        "KT4",
+        "KT5"
+      ],
+      "observed": {
+        "status": "partial",
+        "peakActive": 2,
+        "dispatchOrder": [
+          "s1",
+          "s3",
+          "s2"
+        ],
+        "states": {
+          "s1": "stale",
+          "s3": "resolved",
+          "s2": "stale"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s3": 0,
+          "s2": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "stale-at-acceptance-blocks-dependent",
+      "guards": [
+        "KT4",
+        "KT5"
+      ],
+      "observed": {
+        "status": "partial",
+        "peakActive": 2,
+        "dispatchOrder": [
+          "s1",
+          "s3"
+        ],
+        "states": {
+          "s1": "stale",
+          "s3": "resolved",
+          "s2": "blocked-dependency"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0,
+          "s3": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": [],
+          "s3": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s3": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "blocker-disposition-is-unresolved",
+      "guards": [
+        "KT4",
+        "KT5"
+      ],
+      "observed": {
+        "status": "blocked",
+        "peakActive": 1,
+        "dispatchOrder": [
+          "s1"
+        ],
+        "states": {
+          "s1": "unresolved",
+          "s2": "blocked-dependency"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ],
+          "s2": []
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          },
+          "s2": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "scope-paused-nonterminal-continues",
+      "guards": [
+        "KT4",
+        "KS6"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 1,
+        "dispatchOrder": [
+          "s1"
+        ],
+        "states": {
+          "s1": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 1,
+        "evaluatePhases": [
+          "evaluate",
+          "evaluate+scope-paused"
+        ],
+        "scopeReasks": {
+          "s1": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "repeated-paused-frontier-stops",
+      "guards": [
+        "KT4"
+      ],
+      "observed": {
+        "status": "blocked",
+        "peakActive": 1,
+        "dispatchOrder": [
+          "s1"
+        ],
+        "states": {
+          "s1": "stopped"
+        },
+        "stopCauses": {
+          "s1": "repeated-unresolved-frontier"
+        },
+        "pausedEvents": 1,
+        "evaluatePhases": [
+          "evaluate",
+          "evaluate+scope-paused"
+        ],
+        "scopeReasks": {
+          "s1": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 0,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "manifest-locator-outside-closure-reasked",
+      "guards": [
+        "KT1",
+        "KT5"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 1,
+        "dispatchOrder": [
+          "s1"
+        ],
+        "states": {
+          "s1": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate",
+          "evaluate+reask"
+        ],
+        "scopeReasks": {
+          "s1": 1
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {},
+        "rows": {
+          "s1": {
+            "outerRounds": 1,
+            "reportUpdates": 0
+          }
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "reject-unapproved-or-cyclic-table",
+      "guards": [
+        "KT2"
+      ],
+      "observed": {
+        "status": "rejected",
+        "problemsInclude": [
+          "requires graph has a cycle",
+          "the complete scope table lacks human approval"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "nested-report-only-reconcile-with-owned-reviewers",
+      "guards": [
+        "KR16",
+        "KT4",
+        "KS1",
+        "KS6"
+      ],
+      "observed": {
+        "status": "complete",
+        "peakActive": 1,
+        "dispatchOrder": [
+          "s1"
+        ],
+        "states": {
+          "s1": "resolved"
+        },
+        "stopCauses": {},
+        "pausedEvents": 0,
+        "evaluatePhases": [
+          "evaluate"
+        ],
+        "scopeReasks": {
+          "s1": 0
+        },
+        "flow": {
+          "s1": [
+            "scope-dispatched",
+            "candidate-ready",
+            "begin-reconcile",
+            "reconcile-result",
+            "scope-result",
+            "scope-disposed"
+          ]
+        },
+        "nestedReviewerOwners": {
+          "s1": [
+            "s1"
+          ]
+        },
+        "rows": {
+          "s1": {
+            "outerRounds": 2,
+            "reportUpdates": 1
+          }
+        },
+        "admittedReport": {
+          "s1": "Kind: conversation\n\nR1b"
+        }
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "retrace",
+      "name": "undisposed-children-fail-fast-snapshot",
+      "guards": [
+        "KS6",
+        "KS7"
+      ],
+      "observed": {
+        "throws": "INVARIANT_VIOLATION",
+        "invariant": "children-disposed-before-scope-result",
+        "snapshotFrozen": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "root-admission",
+      "name": "root-admits-scope-owned-result",
+      "guards": [
+        "KS1"
+      ],
+      "observed": {
+        "admitted": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "root-admission",
+      "name": "root-rejects-nested-review-result",
+      "guards": [
+        "KS1"
+      ],
+      "observed": {
+        "admitted": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "root-admission",
+      "name": "root-rejects-foreign-owner",
+      "guards": [
+        "KS1"
+      ],
+      "observed": {
+        "admitted": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "valid-token",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "token": "S1-E1-K7"
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "tolerant-keyword-variant",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "token": "S1-E1-K7"
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "identifier-not-case-folded",
+      "guards": [
+        "KB1",
+        "KR12"
+      ],
+      "observed": {
+        "row": "candidate-invalid",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "malformed-missing-field",
+      "guards": [
+        "KB1",
+        "KR12"
+      ],
+      "observed": {
+        "row": "candidate-invalid",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "intermediate-tool-error-then-valid",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "token": "T"
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "intermediate-tool-error-only",
+      "guards": [
+        "KB1",
+        "KR12"
+      ],
+      "observed": {
+        "row": "completed-no-result",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "duplicate-cursor-vs-lifecycle-update",
+      "guards": [
+        "KB1",
+        "KS1"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 2,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "token": "T"
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "two-terminal-submissions-first-wins",
+      "guards": [
+        "KB1",
+        "KS1"
+      ],
+      "observed": {
+        "row": "candidate-invalid",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "retained-result-then-turn-failure",
+      "guards": [
+        "KS2"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "token": "T"
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "missing-completion-at-closed-window",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "row": "delivery-uncertain",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [
+          "y1"
+        ],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "missing-turn-result-window-unavailable",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "row": "window-unavailable",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "foreign-and-null-owned-candidates-rejected",
+      "guards": [
+        "KB1",
+        "KS1"
+      ],
+      "observed": {
+        "row": "completed-no-result",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [
+          "OTHER"
+        ],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "pre-and-post-window-candidates-rejected",
+      "guards": [
+        "KB1",
+        "KS1"
+      ],
+      "observed": {
+        "row": "completed-no-result",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": [
+          "pre-window-message",
+          "post-window-message"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "ordinary-output-is-not-a-reply",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "completed-no-result",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "controller-cancel-precedes-c4",
+      "guards": [
+        "KS2",
+        "KR12"
+      ],
+      "observed": {
+        "row": "controller-stop",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "failed-turn-without-result",
+      "guards": [
+        "KS2"
+      ],
+      "observed": {
+        "row": "turn-not-completed",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": null,
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "size-below-threshold-invalid",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "candidate-invalid",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "size-at-threshold-exact-preserved",
+      "guards": [
+        "KB1"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": [],
+        "payloadBytes": 32768,
+        "payloadExact": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "review-valid-with-correction-conflicts",
+      "guards": [
+        "KR7",
+        "KR8"
+      ],
+      "observed": {
+        "row": "candidate-invalid",
+        "c4": true,
+        "c4Charges": 1,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "review-artifact-edits-shape",
+      "guards": [
+        "KR8"
+      ],
+      "observed": {
+        "row": "candidate-valid",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "window",
+      "name": "missing-capture-is-evidence-fault",
+      "guards": [
+        "KB1",
+        "KS3"
+      ],
+      "observed": {
+        "row": "evidence-fault",
+        "c4": false,
+        "c4Charges": 0,
+        "duplicateCursorCount": 0,
+        "unknownRequestIds": [],
+        "unfinishedYield": [],
+        "candidateToolCallId": "y1",
+        "anomaliesInclude": []
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "diagnostic",
+      "name": "journaled-terminal-present",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "result": "journaled",
+        "codeFault": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "diagnostic",
+      "name": "journaled-terminal-absent",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "result": "not-supported-required-observable-path",
+        "codeFault": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "diagnostic",
+      "name": "replay-unavailable",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "result": "unproved",
+        "codeFault": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "diagnostic",
+      "name": "replay-incomplete-window",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "result": "unproved",
+        "codeFault": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "diagnostic",
+      "name": "cancelled-not-applicable",
+      "guards": [
+        "KS3"
+      ],
+      "observed": {
+        "result": "not-applicable",
+        "codeFault": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "snapshot",
+      "name": "snapshot-frozen-before-cleanup",
+      "guards": [],
+      "observed": {
+        "fields": [
+          "invariant",
+          "requestId",
+          "state",
+          "toolCallId",
+          "windowStartCursor"
+        ],
+        "excluded": [
+          "rawText",
+          "credentials"
+        ],
+        "mutationRejected": true,
+        "cleanupEntries": 2
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "replay",
+      "name": "effect-free-deterministic-replay",
+      "guards": [],
+      "observed": {
+        "row": "candidate-invalid",
+        "identicalRuns": 2,
+        "blockedEffects": [
+          "fetch",
+          "spawn",
+          "net.connect"
+        ]
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "two-fixes-then-recurrence-ends-globally",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          {
+            "accepted": true
+          },
+          false,
+          {
+            "eligible": true,
+            "fixNumber": 1
+          },
+          true,
+          null,
+          null,
+          {
+            "ended": false
+          },
+          {
+            "eligible": true,
+            "fixNumber": 2
+          },
+          {
+            "eligible": false
+          },
+          {
+            "ended": true
+          },
+          {
+            "eligible": false
+          },
+          true
+        ],
+        "fixesCounted": {
+          "c1": 2,
+          "c2": 0
+        },
+        "proofUnits": 2
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "fix-provenance-requirements",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": true,
+            "fixNumber": 1
+          }
+        ],
+        "fixesCounted": {
+          "c1": 1
+        },
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "not-supported-is-not-a-code-defect",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": false
+          },
+          {
+            "accepted": false
+          },
+          {
+            "accepted": false
+          },
+          false
+        ],
+        "fixesCounted": {},
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "narrow-pool-exhaustion-keeps-offline-eligibility",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          null,
+          false,
+          true,
+          {
+            "eligible": true,
+            "fixNumber": 1
+          }
+        ],
+        "fixesCounted": {
+          "c1": 1
+        },
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "rehearsal-cap-versus-production-limit",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          null,
+          false,
+          true,
+          null,
+          true,
+          null,
+          false,
+          {
+            "eligible": false
+          }
+        ],
+        "fixesCounted": {
+          "c1": 0
+        },
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "final-assurance-rejects-exhausted-cause",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          {
+            "accepted": true
+          },
+          {
+            "eligible": true,
+            "fixNumber": 1
+          },
+          {
+            "eligible": true,
+            "fixNumber": 2
+          },
+          true,
+          null,
+          {
+            "eligible": false
+          },
+          {
+            "eligible": false
+          },
+          {
+            "eligible": true,
+            "fixNumber": 1
+          },
+          false
+        ],
+        "fixesCounted": {
+          "c1": 2,
+          "c2": 1
+        },
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "debugloop",
+      "name": "extension-not-approved-blocks-t2-fix",
+      "guards": [],
+      "observed": {
+        "steps": [
+          {
+            "accepted": true
+          },
+          {
+            "eligible": false
+          }
+        ],
+        "fixesCounted": {
+          "c1": 0
+        },
+        "proofUnits": 0
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "all-supported-allows",
+      "guards": [],
+      "observed": {
+        "production_allowed": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "t1-inconclusive-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "criterion-failed-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "criterion-missing-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "stale-identity-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "soak-not-supported-denies-but-evaluation-completes",
+      "guards": [],
+      "observed": {
+        "production_allowed": false,
+        "evaluationComplete": true
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "cleanup-open-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "unsafe-retention-denies",
+      "guards": [],
+      "observed": {
+        "production_allowed": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "gate",
+      "name": "unfixed-code-bug-denies-and-blocks-completion",
+      "guards": [],
+      "observed": {
+        "production_allowed": false,
+        "evaluationComplete": false
+      },
+      "pass": true,
+      "mismatches": []
+    },
+    {
+      "group": "export",
+      "name": "a7-safe-export",
+      "guards": [],
+      "observed": {
+        "exportEqual": true,
+        "canaryAbsent": true,
+        "t2Projections": 1
+      },
+      "pass": true,
+      "mismatches": []
+    }
+  ],
+  "publicRoute": {
+    "cases": {
+      "observer-loss-recovered": {
+        "watchError": "TRIAL_OBSERVER_DETACHED",
+        "recovered": true,
+        "row": "candidate-valid",
+        "promptSubmissions": 1,
+        "detachLogged": 1,
+        "duplicateCursorsOnRewatch": 0
+      },
+      "unfinished-yield": {
+        "row": "delivery-uncertain",
+        "c4": false
+      },
+      "two-yields": {
+        "row": "candidate-invalid",
+        "c4": true
+      },
+      "no-result": {
+        "row": "completed-no-result",
+        "c4": true
+      },
+      "same-id-restore": {
+        "firstRow": "candidate-valid",
+        "idleExit": "ESRCH",
+        "statusPidCleared": true,
+        "sameBackendId": true,
+        "sameRecordId": true,
+        "resumeSameId": true,
+        "sessionNew": 0,
+        "secondRow": "candidate-valid"
+      },
+      "restore-failure-no-fallback": {
+        "row": "turn-not-completed",
+        "errorDetailCode": "SESSION_RESUME_REQUIRED",
+        "sessionNew": 0,
+        "resumeRejected": true,
+        "c4": false
+      },
+      "observed-closes": {
+        "closes": 3,
+        "allResolved": true,
+        "allPidsExited": true,
+        "coverage": true
+      }
+    },
+    "errors": [],
+    "expectedCases": [
+      "observer-loss-recovered",
+      "same-id-restore",
+      "restore-failure-no-fallback",
+      "unfinished-yield",
+      "two-yields",
+      "no-result",
+      "observed-closes"
+    ],
+    "childExit": 0,
+    "privateRootRemoved": true
+  },
+  "large": {
+    "registryArgv": [
+      "node",
+      "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/fixture-agent/large.mjs"
+    ],
+    "renderedCommandBytes": 86,
+    "scriptPathBytes": 81,
+    "homeBytes": 54,
+    "cwdBytes": 53,
+    "identity": {
+      "acpxRecordId": "fixture-2m",
+      "backendSessionId": "fixture-2m"
+    },
+    "turnResult": {
+      "status": "completed",
+      "stopReason": "end_turn"
+    },
+    "windowComplete": true,
+    "rpc": {
+      "initialize": 1,
+      "sessionNew": 0,
+      "sessionResume": [
+        {
+          "ok": true,
+          "sessionId": "fixture-2m"
+        }
+      ],
+      "prompt": 1
+    },
+    "drain": {
+      "events": 2,
+      "toolEvents": 2,
+      "textDeltas": 0
+    },
+    "row": "candidate-valid",
+    "candidate": {
+      "cursor": "WyJmaXh0dXJlLTJtIiw4XQ",
+      "toolCallId": "yield-2m",
+      "kind": "transport-result"
+    },
+    "payload": {
+      "bytes": 2097152,
+      "sha256": "9c9214717e58d8ceaf581255faab35c026e5d6b408a0a9df56169b7e247cfebf",
+      "prefixOk": true,
+      "suffixOk": true,
+      "lf": 3
+    },
+    "retainedResultLineBytes": 2097196,
+    "journal": [
+      {
+        "file": "fixture-2m.stream.ndjson",
+        "bytes": 4196094,
+        "lines": 11,
+        "maxLineBytesInclLf": 2097589
+      }
+    ],
+    "limits": {
+      "queueIpc": 10485760,
+      "acpLine": 67108864
+    },
+    "close": {
+      "reason": "2m fixture complete",
+      "closeInvokedAt": "2026-09-25T12:45:54.756Z",
+      "closeResolved": true,
+      "closeReturnedAt": "2026-09-25T12:45:54.842Z",
+      "closeDurationMs": 86,
+      "recordedClosed": true,
+      "pidResults": [
+        {
+          "pid": 12215,
+          "result": "ESRCH",
+          "earlier": false,
+          "observedMsAfterReturn": 4
+        },
+        {
+          "pid": 12248,
+          "result": "ESRCH",
+          "earlier": false,
+          "observedMsAfterReturn": 4
+        }
+      ],
+      "allPidsExited": true,
+      "pidCoverageNonEmpty": true
+    },
+    "pids": [
+      {
+        "pid": 12215,
+        "firstPoint": "during-ensure"
+      },
+      {
+        "pid": 12248,
+        "firstPoint": "prompt-started:fixture-request"
+      }
+    ],
+    "childExit": 0,
+    "privateRoot": {
+      "pattern": "/tmp/acpx-2m-<uuid>",
+      "length": 49,
+      "removed": true
+    },
+    "envNpmPackageKeys": 0
+  }
+}

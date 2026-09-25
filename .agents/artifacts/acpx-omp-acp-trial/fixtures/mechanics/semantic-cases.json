@@ -1,0 +1,2742 @@
+{
+ "note": "Independently authored T2 mechanics expectations (spec-v9 'T2 deterministic mechanics'). Outcomes are derived from the guard baseline KR/KT/KS text and spec A1/B1/B2/B4/B5, not from running the controller. Scripted results are mechanics-only, never native OMP/model judgments. Step grammar: {data} = reviewer/evaluator yield data validated by the domain schema; {row} = a non-candidate A1 closure row.",
+ "reconcile": [
+  {
+   "name": "reject-missing-approval",
+   "guards": [
+    "KR1"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none"
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {}
+   }
+  },
+  {
+   "name": "reject-invalid-mode",
+   "guards": [
+    "KR1",
+    "KR2"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "patch",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {}
+   }
+  },
+  {
+   "name": "reject-cap-zero",
+   "guards": [
+    "KR3"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": 0,
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {}
+   }
+  },
+  {
+   "name": "reject-cap-string-number",
+   "guards": [
+    "KR3"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "2",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {}
+   }
+  },
+  {
+   "name": "reject-artifact-with-conversation-fallback",
+   "guards": [
+    "KR1",
+    "KR2"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md",
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": 1,
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {}
+   }
+  },
+  {
+   "name": "reject-report-only-artifact",
+   "guards": [
+    "KR16"
+   ],
+   "reportOnly": true,
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": 1,
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha"
+   },
+   "expect": {
+    "status": "rejected",
+    "reviewerPortCalls": {},
+    "artifactWrites": 0
+   }
+  },
+  {
+   "name": "a-first-valid-no-b",
+   "guards": [
+    "KR4",
+    "KR5",
+    "KR6",
+    "KR9",
+    "KR14",
+    "KR15"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "ok"
+      }
+     },
+     {
+      "data": {
+       "kind": "Review",
+       "verdict": "valid",
+       "rationale": "still ok"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "canonical": "C0",
+    "applications": 0,
+    "phases": [
+     "A:initial",
+     "A:rethink"
+    ],
+    "reviewerPortCalls": {
+     "A": 1
+    },
+    "disposed": [
+     "A"
+    ],
+    "renderHas": [
+     "## Review rounds",
+     "## Final proposal",
+     "still ok"
+    ]
+   }
+  },
+  {
+   "name": "revise-lazy-b-application-closure",
+   "guards": [
+    "KR4",
+    "KR5",
+    "KR6",
+    "KR7",
+    "KR8",
+    "KR10"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "rationale": "fix",
+       "correction": {
+        "replacement": "C1"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "rationale": "fix",
+       "correction": {
+        "replacement": "C1"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "closure"
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "b1"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "b2",
+       "recommendations": [
+        "rename it"
+       ]
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "canonical": "C1",
+    "applications": 1,
+    "rounds": 2,
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "B:initial",
+     "B:rethink",
+     "A:later"
+    ],
+    "reviewerPortCalls": {
+     "A": 1,
+     "B": 1
+    },
+    "disposed": [
+     "A",
+     "B"
+    ],
+    "firstReviewFlags": {
+     "A": true,
+     "B": true
+    }
+   }
+  },
+  {
+   "name": "valid-recommendations-ignored",
+   "guards": [
+    "KR7"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "recommendations": [
+        "use C9 instead"
+       ]
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "canonical": "C0",
+    "applications": 0,
+    "phases": [
+     "A:initial",
+     "A:rethink"
+    ],
+    "recommendationsIgnored": 1
+   }
+  },
+  {
+   "name": "source-need-continues-pass",
+   "guards": [
+    "KR6"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "source-need",
+       "locators": [
+        "/repo/doc.md"
+       ],
+       "reason": "need doc"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "phases": [
+     "A:initial",
+     "A:initial+source",
+     "A:rethink"
+    ],
+    "supplyCalls": 1,
+    "reasks": 0
+   }
+  },
+  {
+   "name": "repeated-source-request-stops",
+   "guards": [
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "source-need",
+       "locators": [
+        "/repo/doc.md"
+       ]
+      }
+     },
+     {
+      "data": {
+       "kind": "source-need",
+       "locators": [
+        "/repo/doc.md"
+       ]
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "repeated-source-request",
+    "supplyCalls": 1,
+    "disposed": [
+     "A"
+    ]
+   }
+  },
+  {
+   "name": "blocked-retry-then-valid",
+   "guards": [
+    "KR9"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "approved ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "BLOCKED",
+       "reason": "missing"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "BLOCKED",
+       "reason": "missing"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "A:later+blocked-retry"
+    ],
+    "canonical": "C0"
+   }
+  },
+  {
+   "name": "persistent-blocked-stops",
+   "guards": [
+    "KR9",
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "approved ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "BLOCKED",
+       "reason": "missing"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "BLOCKED",
+       "reason": "missing"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "BLOCKED",
+       "reason": "still missing"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "persistent-blocked",
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "A:later+blocked-retry"
+    ],
+    "renderHas": [
+     "## Reconcile stopped"
+    ]
+   }
+  },
+  {
+   "name": "shared-c4-fourth-invalid-stops",
+   "guards": [
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "data": {
+       "kind": "verdict"
+      }
+     },
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "data": {
+       "kind": "review"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "c4-exhausted",
+    "reasks": 3,
+    "invalidReturns": 4,
+    "phases": [
+     "A:initial",
+     "A:initial+reask",
+     "A:initial+reask",
+     "A:initial+reask"
+    ]
+   }
+  },
+  {
+   "name": "c4-not-reset-by-source-need",
+   "guards": [
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "data": {
+       "kind": "source-need",
+       "locators": [
+        "/repo/x"
+       ]
+      }
+     },
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "row": "completed-no-result"
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "c4-exhausted",
+    "reasks": 3,
+    "invalidReturns": 4,
+    "supplyCalls": 1
+   }
+  },
+  {
+   "name": "c4-third-reask-recovers",
+   "guards": [
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "row": "completed-no-result"
+     },
+     {
+      "data": {
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "reasks": 3,
+    "invalidReturns": 3
+   }
+  },
+  {
+   "name": "delivery-uncertain-no-c4-no-replay",
+   "guards": [
+    "KR12",
+    "KS3"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "row": "delivery-uncertain"
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "delivery-uncertain",
+    "reasks": 0,
+    "phases": [
+     "A:initial"
+    ]
+   }
+  },
+  {
+   "name": "noop-correction-reasked",
+   "guards": [
+    "KR8"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "C0"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "reasks": 1,
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "A:rethink+reask"
+    ],
+    "canonical": "C0"
+   }
+  },
+  {
+   "name": "revise-correction-conflict-reasked",
+   "guards": [
+    "KR7",
+    "KR8"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "correction": {
+        "replacement": "C5"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "reasks": 1,
+    "canonical": "C0"
+   }
+  },
+  {
+   "name": "repeated-revise-pair-stops",
+   "guards": [
+    "KR12"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "X"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "Y"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "Y"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "Y"
+       }
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "X"
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "replacement": "X"
+       }
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "label-reviewer-pair-without-new-evidence",
+    "applications": 0,
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "B:initial",
+     "B:rethink",
+     "A:later"
+    ]
+   }
+  },
+  {
+   "name": "artifact-edit-application-closure",
+   "guards": [
+    "KR2",
+    "KR8",
+    "KR10",
+    "KR11"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha beta gamma"
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "applications": 1,
+    "artifactFinal": "alpha BETA gamma",
+    "artifactWrites": 1,
+    "validations": 1,
+    "canonical": "alpha BETA gamma"
+   }
+  },
+  {
+   "name": "artifact-cap-one-closure-only-stops",
+   "guards": [
+    "KR3",
+    "KR10"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": 1,
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha beta gamma"
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "gamma",
+          "new": "GAMMA"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "cap",
+    "applications": 1,
+    "artifactFinal": "alpha BETA gamma",
+    "artifactWrites": 1,
+    "rounds": 2,
+    "closureOnlyRounds": [
+     false,
+     true
+    ],
+    "phases": [
+     "A:initial",
+     "A:rethink",
+     "B:initial",
+     "B:rethink",
+     "A:later",
+     "B:later"
+    ]
+   }
+  },
+  {
+   "name": "artifact-nonunique-edit-reasked",
+   "guards": [
+    "KR8"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "a a b"
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "a",
+          "new": "A"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "reasks": 1,
+    "artifactWrites": 0,
+    "artifactFinal": "a a b"
+   }
+  },
+  {
+   "name": "artifact-drift-before-application-stops",
+   "guards": [
+    "KR11",
+    "KR13"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha beta gamma",
+    "externalWriteOnRead": {
+     "read": 2,
+     "bytes": "tampered"
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "terminal-drift",
+    "artifactWrites": 0,
+    "artifactFinal": "tampered",
+    "applications": 0
+   }
+  },
+  {
+   "name": "artifact-final-reread-drift-stops",
+   "guards": [
+    "KR11"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha",
+    "externalWriteOnRead": {
+     "read": 2,
+     "bytes": "alpha!"
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "terminal-drift",
+    "artifactWrites": 0
+   }
+  },
+  {
+   "name": "artifact-validation-failure-no-rollback",
+   "guards": [
+    "KR10",
+    "KR13"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha beta gamma",
+    "validateFails": true
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "failed-validation",
+    "artifactWrites": 1,
+    "artifactFinal": "alpha BETA gamma",
+    "repairAuthority": true
+   }
+  },
+  {
+   "name": "artifact-write-failure-stops",
+   "guards": [
+    "KR13"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "path": "/tmp/a.md"
+    },
+    "context": "ctx",
+    "mode": "Artifact edits",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "artifact": {
+    "initial": "alpha beta gamma",
+    "writeFails": true
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "REVISE",
+       "correction": {
+        "edits": [
+         {
+          "old": "beta",
+          "new": "BETA"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "B": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "stopped",
+    "stopCause": "failed-application",
+    "artifactFinal": "alpha beta gamma",
+    "repairAuthority": true
+   }
+  },
+  {
+   "name": "failed-disposal-blocks-success",
+   "guards": [
+    "KR14",
+    "KS4"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID"
+      }
+     }
+    ]
+   },
+   "disposeFails": [
+    "A"
+   ],
+   "expect": {
+    "status": "stopped",
+    "stopCause": "failed-disposal",
+    "renderHas": [
+     "## Reconcile stopped"
+    ]
+   }
+  },
+  {
+   "name": "render-reviewer-text-verbatim",
+   "guards": [
+    "KR15"
+   ],
+   "brief": {
+    "goal": "g",
+    "candidate": {
+     "text": "C0"
+    },
+    "context": "ctx",
+    "mode": "Conversation replacement",
+    "maxOuterIterations": "none",
+    "approval": {
+     "approvedBy": "human",
+     "at": "t",
+     "fiveFields": true
+    }
+   },
+   "script": {
+    "A": [
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "x"
+      }
+     },
+     {
+      "data": {
+       "kind": "review",
+       "verdict": "VALID",
+       "rationale": "  Keep  THIS\n\ttext  "
+      }
+     }
+    ]
+   },
+   "expect": {
+    "status": "final",
+    "renderHas": [
+     "  Keep  THIS\n\ttext  ",
+     "- Reviewer A: VALID"
+    ]
+   }
+  }
+ ],
+ "retrace": [
+  {
+   "name": "dependency-order-overlap-and-admitted-identity",
+   "guards": [
+    "KT1",
+    "KT2",
+    "KT3",
+    "KT4",
+    "KS1",
+    "KS6"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     },
+     {
+      "id": "s3",
+      "objective": "o3"
+     }
+    ]
+   },
+   "sources": {
+    "/repo/a.md": "v1",
+    "/repo/b.md": "v1"
+   },
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "REPORT-S1",
+        "manifest": [
+         {
+          "locator": "/repo/a.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "REPORT-S2",
+        "manifest": [
+         {
+          "locator": "/repo/b.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "no-change"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s3": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "REPORT-S3",
+        "manifest": [
+         {
+          "locator": "/repo/b.md",
+          "role": "historical"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "complete",
+    "dispatchOrder": [
+     "s1",
+     "s3",
+     "s2"
+    ],
+    "overlap": [
+     "s1",
+     "s3"
+    ],
+    "peakActive": 2,
+    "states": {
+     "s1": "resolved",
+     "s2": "resolved",
+     "s3": "resolved"
+    },
+    "prerequisites": {
+     "s2": [
+      {
+       "scope": "s1",
+       "report": "REPORT-S1"
+      }
+     ]
+    },
+    "flow": {
+     "s1": [
+      "scope-dispatched",
+      "candidate-ready",
+      "begin-reconcile",
+      "reconcile-result",
+      "scope-result",
+      "scope-disposed"
+     ]
+    }
+   }
+  },
+  {
+   "name": "unresolved-prerequisite-blocks-dependent-preserves-sibling",
+   "guards": [
+    "KT4",
+    "KS5"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     },
+     {
+      "id": "s3",
+      "objective": "o3"
+     }
+    ]
+   },
+   "sources": {
+    "/repo/a.md": "v1"
+   },
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "stopped"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R2",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s3": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R3",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "partial",
+    "dispatchOrder": [
+     "s1",
+     "s3"
+    ],
+    "states": {
+     "s1": "stopped",
+     "s2": "blocked-dependency",
+     "s3": "resolved"
+    }
+   }
+  },
+  {
+   "name": "dependent-failure-preserves-siblings",
+   "guards": [
+    "KS5",
+    "KR12"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     },
+     {
+      "id": "s3",
+      "objective": "o3"
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "row": "completed-no-result"
+      },
+      {
+       "row": "completed-no-result"
+      },
+      {
+       "row": "completed-no-result"
+      },
+      {
+       "row": "completed-no-result"
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s3": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R3",
+        "manifest": [],
+        "disposition": "no-change"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "partial",
+    "states": {
+     "s1": "resolved",
+     "s2": "stopped",
+     "s3": "resolved"
+    },
+    "stopCauses": {
+     "s2": "c4-exhausted"
+    }
+   }
+  },
+  {
+   "name": "four-actor-slot-limit",
+   "guards": [
+    "KT3"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o"
+     },
+     {
+      "id": "s2",
+      "objective": "o"
+     },
+     {
+      "id": "s3",
+      "objective": "o"
+     },
+     {
+      "id": "s4",
+      "objective": "o"
+     },
+     {
+      "id": "s5",
+      "objective": "o"
+     },
+     {
+      "id": "s6",
+      "objective": "o"
+     }
+    ]
+   },
+   "sources": {},
+   "defaultScope": {
+    "evaluate": [
+     {
+      "data": {
+       "kind": "candidate-ready",
+       "report": "R",
+       "manifest": [],
+       "disposition": "no-change"
+      }
+     }
+    ],
+    "reconcile": "final"
+   },
+   "expect": {
+    "status": "complete",
+    "peakActive": 4,
+    "dispatchOrder": [
+     "s1",
+     "s2",
+     "s3",
+     "s4",
+     "s5",
+     "s6"
+    ]
+   }
+  },
+  {
+   "name": "requires-depth-then-authored-order",
+   "guards": [
+    "KT3"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "a",
+      "objective": "o",
+      "requires": [
+       "e"
+      ]
+     },
+     {
+      "id": "b",
+      "objective": "o"
+     },
+     {
+      "id": "c",
+      "objective": "o"
+     },
+     {
+      "id": "d",
+      "objective": "o"
+     },
+     {
+      "id": "e",
+      "objective": "o"
+     },
+     {
+      "id": "f",
+      "objective": "o"
+     }
+    ]
+   },
+   "sources": {},
+   "defaultScope": {
+    "evaluate": [
+     {
+      "data": {
+       "kind": "candidate-ready",
+       "report": "R",
+       "manifest": [],
+       "disposition": "no-change"
+      }
+     }
+    ],
+    "reconcile": "final"
+   },
+   "expect": {
+    "status": "complete",
+    "peakActive": 4,
+    "dispatchOrder": [
+     "b",
+     "c",
+     "d",
+     "e",
+     "f",
+     "a"
+    ]
+   }
+  },
+  {
+   "name": "slot-frees-only-on-observed-disposal",
+   "guards": [
+    "KT3",
+    "KS4"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o"
+     },
+     {
+      "id": "s2",
+      "objective": "o"
+     },
+     {
+      "id": "s3",
+      "objective": "o"
+     },
+     {
+      "id": "s4",
+      "objective": "o"
+     },
+     {
+      "id": "s5",
+      "objective": "o"
+     }
+    ]
+   },
+   "sources": {},
+   "defaultScope": {
+    "evaluate": [
+     {
+      "data": {
+       "kind": "candidate-ready",
+       "report": "R",
+       "manifest": [],
+       "disposition": "no-change"
+      }
+     }
+    ],
+    "reconcile": "final",
+    "disposeFails": true
+   },
+   "expect": {
+    "status": "partial",
+    "peakActive": 4,
+    "states": {
+     "s5": "pending"
+    },
+    "dispatchOrder": [
+     "s1",
+     "s2",
+     "s3",
+     "s4"
+    ]
+   }
+  },
+  {
+   "name": "final-freshness-invalidates-requires-dependents-only",
+   "guards": [
+    "KT4",
+    "KT5"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     },
+     {
+      "id": "s3",
+      "objective": "o3",
+      "sharedEvidence": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "sources": {
+    "/repo/a.md": "v1",
+    "/repo/b.md": "v1"
+   },
+   "mutate": {
+    "afterEvent": {
+     "type": "scope-disposed",
+     "scope": "s2"
+    },
+    "set": {
+     "/repo/a.md": "v2"
+    }
+   },
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [
+         {
+          "locator": "/repo/a.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R2",
+        "manifest": [
+         {
+          "locator": "/repo/b.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s3": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R3",
+        "manifest": [
+         {
+          "locator": "/repo/b.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "partial",
+    "states": {
+     "s1": "stale",
+     "s2": "stale",
+     "s3": "resolved"
+    }
+   }
+  },
+  {
+   "name": "stale-at-acceptance-blocks-dependent",
+   "guards": [
+    "KT4",
+    "KT5"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     },
+     {
+      "id": "s3",
+      "objective": "o3"
+     }
+    ]
+   },
+   "sources": {
+    "/repo/a.md": "v1"
+   },
+   "mutate": {
+    "afterEvent": {
+     "type": "begin-reconcile",
+     "scope": "s1"
+    },
+    "set": {
+     "/repo/a.md": "v2"
+    }
+   },
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [
+         {
+          "locator": "/repo/a.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R2",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s3": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R3",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "partial",
+    "states": {
+     "s1": "stale",
+     "s2": "blocked-dependency",
+     "s3": "resolved"
+    }
+   }
+  },
+  {
+   "name": "blocker-disposition-is-unresolved",
+   "guards": [
+    "KT4",
+    "KT5"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     },
+     {
+      "id": "s2",
+      "objective": "o2",
+      "requires": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [],
+        "disposition": "blocker"
+       }
+      }
+     ],
+     "reconcile": "final"
+    },
+    "s2": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R2",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "blocked",
+    "states": {
+     "s1": "unresolved",
+     "s2": "blocked-dependency"
+    }
+   }
+  },
+  {
+   "name": "scope-paused-nonterminal-continues",
+   "guards": [
+    "KT4",
+    "KS6"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "scope-paused",
+        "frontier": "F1"
+       }
+      },
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "complete",
+    "states": {
+     "s1": "resolved"
+    },
+    "pausedEvents": 1,
+    "evaluatePhases": [
+     "evaluate",
+     "evaluate+scope-paused"
+    ]
+   }
+  },
+  {
+   "name": "repeated-paused-frontier-stops",
+   "guards": [
+    "KT4"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "scope-paused",
+        "frontier": "F1"
+       }
+      },
+      {
+       "data": {
+        "kind": "scope-paused",
+        "frontier": "F1"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "blocked",
+    "states": {
+     "s1": "stopped"
+    },
+    "stopCauses": {
+     "s1": "repeated-unresolved-frontier"
+    }
+   }
+  },
+  {
+   "name": "manifest-locator-outside-closure-reasked",
+   "guards": [
+    "KT1",
+    "KT5"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     }
+    ]
+   },
+   "sources": {
+    "/repo/a.md": "v1"
+   },
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [
+         {
+          "locator": "/etc/hosts",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      },
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [
+         {
+          "locator": "/repo/a.md",
+          "role": "current"
+         }
+        ],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final"
+    }
+   },
+   "expect": {
+    "status": "complete",
+    "states": {
+     "s1": "resolved"
+    },
+    "scopeReasks": {
+     "s1": 1
+    }
+   }
+  },
+  {
+   "name": "reject-unapproved-or-cyclic-table",
+   "guards": [
+    "KT2"
+   ],
+   "table": {
+    "root": "/repo",
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o",
+      "requires": [
+       "s2"
+      ]
+     },
+     {
+      "id": "s2",
+      "objective": "o",
+      "requires": [
+       "s1"
+      ]
+     }
+    ]
+   },
+   "sources": {},
+   "expect": {
+    "status": "rejected",
+    "problemsInclude": [
+     "requires graph has a cycle",
+     "the complete scope table lacks human approval"
+    ]
+   }
+  },
+  {
+   "name": "nested-report-only-reconcile-with-owned-reviewers",
+   "guards": [
+    "KR16",
+    "KT4",
+    "KS1",
+    "KS6"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "Kind: conversation\n\nR1",
+        "manifest": [],
+        "disposition": "no-change"
+       }
+      }
+     ],
+     "reconcile": "nested",
+     "nestedScript": {
+      "A": [
+       {
+        "data": {
+         "kind": "review",
+         "verdict": "REVISE",
+         "correction": {
+          "replacement": "Kind: conversation\n\nR1b"
+         }
+        }
+       },
+       {
+        "data": {
+         "kind": "review",
+         "verdict": "REVISE",
+         "correction": {
+          "replacement": "Kind: conversation\n\nR1b"
+         }
+        }
+       },
+       {
+        "data": {
+         "kind": "review",
+         "verdict": "VALID"
+        }
+       }
+      ],
+      "B": [
+       {
+        "data": {
+         "kind": "review",
+         "verdict": "VALID"
+        }
+       },
+       {
+        "data": {
+         "kind": "review",
+         "verdict": "VALID"
+        }
+       }
+      ]
+     }
+    }
+   },
+   "expect": {
+    "status": "complete",
+    "states": {
+     "s1": "resolved"
+    },
+    "admittedReport": {
+     "s1": "Kind: conversation\n\nR1b"
+    },
+    "nestedReviewerOwners": {
+     "s1": [
+      "s1"
+     ]
+    },
+    "rows": {
+     "s1": {
+      "outerRounds": 2,
+      "reportUpdates": 1
+     }
+    }
+   }
+  },
+  {
+   "name": "undisposed-children-fail-fast-snapshot",
+   "guards": [
+    "KS6",
+    "KS7"
+   ],
+   "table": {
+    "root": "/repo",
+    "approval": {
+     "approvedBy": "human",
+     "fullTable": true
+    },
+    "scopes": [
+     {
+      "id": "s1",
+      "objective": "o1"
+     }
+    ]
+   },
+   "sources": {},
+   "scopes": {
+    "s1": {
+     "evaluate": [
+      {
+       "data": {
+        "kind": "candidate-ready",
+        "report": "R1",
+        "manifest": [],
+        "disposition": "proposal"
+       }
+      }
+     ],
+     "reconcile": "final-undisposed"
+    }
+   },
+   "expect": {
+    "throws": "INVARIANT_VIOLATION",
+    "invariant": "children-disposed-before-scope-result",
+    "snapshotFrozen": true
+   }
+  }
+ ],
+ "rootAdmission": [
+  {
+   "name": "root-admits-scope-owned-result",
+   "guards": [
+    "KS1"
+   ],
+   "message": {
+    "type": "scope-result",
+    "scope": "s1",
+    "owner": "s1"
+   },
+   "admitted": true
+  },
+  {
+   "name": "root-rejects-nested-review-result",
+   "guards": [
+    "KS1"
+   ],
+   "message": {
+    "type": "review-result",
+    "scope": "s1",
+    "owner": "s1"
+   },
+   "admitted": false
+  },
+  {
+   "name": "root-rejects-foreign-owner",
+   "guards": [
+    "KS1"
+   ],
+   "message": {
+    "type": "scope-result",
+    "scope": "s1",
+    "owner": "s2"
+   },
+   "admitted": false
+  }
+ ]
+}

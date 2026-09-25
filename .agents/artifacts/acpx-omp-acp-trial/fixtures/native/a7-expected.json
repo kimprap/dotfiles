@@ -1,0 +1,16 @@
+{
+  "note": "Independently authored from spec A7 (closed typed export): only enumerated identity/type/status/count fields and the declared domain fields survive; every canary position is absent.",
+  "events": [
+    { "cursor": "c1", "type": "turn_started", "requestId": "R1" },
+    { "cursor": "c2", "type": "message", "requestId": "R1", "message": { "rpc": "request", "method": "session/resume", "id": 7, "sessionId": "S-1" } },
+    { "cursor": "c3", "type": "message", "requestId": "R1", "message": { "rpc": "response", "id": 7 } },
+    { "cursor": "c4", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "agent_message_chunk" } } },
+    { "cursor": "c5", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "tool_call", "tool": { "toolCallId": "t-read", "status": "in_progress", "acpKind": "read", "input": { "keyCount": 2, "declaredYieldKeys": [], "undeclaredKeyCount": 2, "path": "notes.txt" } } } } },
+    { "cursor": "c6", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "tool_call_update", "tool": { "toolCallId": "t-read", "status": "failed", "output": { "detailsStatus": "error" } } } } },
+    { "cursor": "c7", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "tool_call", "tool": { "toolCallId": "t-yield", "status": "in_progress", "acpKind": "other", "input": { "keyCount": 1, "declaredYieldKeys": ["data"], "undeclaredKeyCount": 0, "hasData": true } } } } },
+    { "cursor": "c8", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "tool_call_update", "tool": { "toolCallId": "t-yield", "status": "completed", "output": { "detailsStatus": "success", "hasData": true } }, "candidateData": { "dataType": "object", "kind": "probe-reuse", "token": "TOK-1", "extraKeyCount": 1 } } } },
+    { "cursor": "c9", "type": "message", "requestId": "R1", "message": { "rpc": "notification", "method": "session/update", "update": { "kind": "usage_update", "usage": { "used": 1200, "size": 200000, "costAmount": 0.0012, "costCurrency": "USD" } } } },
+    { "cursor": "c10", "type": "message", "requestId": "R1", "message": { "rpc": "response", "id": 9, "error": { "code": -32000 } } },
+    { "cursor": "c11", "type": "turn_result", "requestId": "R1", "result": { "status": "failed", "errorCode": "RUNTIME", "errorDetailCode": "AGENT_EXIT", "retryable": false } }
+  ]
+}

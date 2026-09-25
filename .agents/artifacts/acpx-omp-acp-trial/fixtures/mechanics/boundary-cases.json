@@ -1,0 +1,2104 @@
+{
+ "note": "Independently authored T2 A1/B2/B4/B5/gate boundary expectations (spec-v9 A1, A2, B2, B4, B5, B6, AC-PRODUCTION-GATE). Window ops: start=turn_started R; tool=yield-signature tool_call (kind other, input keys [data]) unless kind/keys given; upd=tool_call_update with optional data; end=turn_result R; foreign=message of another request; null=message without requestId; dup=replay previous cursor; lifecycle=in_progress tool_call_update without data. Restore cases: independently authored planned-restore outcomes (same-ID, changed-ID, unknown outcome, rejection, fresh-session fallback, unobserved idle exit).",
+ "windows": [
+  {
+   "name": "valid-token",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "S1-E1-K7"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "S1-E1-K7"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "tolerant-keyword-variant",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "S1-E1-K7"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": " Soak_Token ",
+      "token": "S1-E1-K7",
+      "note": "extra"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false,
+    "token": "S1-E1-K7"
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "identifier-not-case-folded",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "S1-E1-K7"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "s1-e1-k7"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-invalid",
+    "c4": true
+   },
+   "guards": [
+    "KB1",
+    "KR12"
+   ]
+  },
+  {
+   "name": "malformed-missing-field",
+   "phase": "soak-token",
+   "ctx": {},
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-invalid",
+    "c4": true
+   },
+   "guards": [
+    "KB1",
+    "KR12"
+   ]
+  },
+  {
+   "name": "intermediate-tool-error-then-valid",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "r1",
+     "kind": "read",
+     "keys": [
+      "path"
+     ]
+    },
+    {
+     "op": "upd",
+     "id": "r1",
+     "status": "failed",
+     "detailsStatus": "error"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "intermediate-tool-error-only",
+   "phase": "soak-token",
+   "ctx": {},
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "r1",
+     "kind": "read",
+     "keys": [
+      "path"
+     ]
+    },
+    {
+     "op": "upd",
+     "id": "r1",
+     "status": "failed",
+     "detailsStatus": "error"
+    },
+    {
+     "op": "tool",
+     "id": "r2",
+     "kind": "read",
+     "keys": [
+      "path"
+     ]
+    },
+    {
+     "op": "upd",
+     "id": "r2",
+     "status": "failed",
+     "detailsStatus": "error"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "completed-no-result",
+    "c4": true,
+    "c4Charges": 1
+   },
+   "guards": [
+    "KB1",
+    "KR12"
+   ]
+  },
+  {
+   "name": "duplicate-cursor-vs-lifecycle-update",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "lifecycle",
+     "id": "y1"
+    },
+    {
+     "op": "dup"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "dup"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false,
+    "duplicateCursorCount": 2
+   },
+   "guards": [
+    "KB1",
+    "KS1"
+   ]
+  },
+  {
+   "name": "two-terminal-submissions-first-wins",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": ""
+     }
+    },
+    {
+     "op": "tool",
+     "id": "y2"
+    },
+    {
+     "op": "upd",
+     "id": "y2",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-invalid",
+    "c4": true,
+    "candidateToolCallId": "y1"
+   },
+   "guards": [
+    "KB1",
+    "KS1"
+   ]
+  },
+  {
+   "name": "retained-result-then-turn-failure",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "failed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false
+   },
+   "guards": [
+    "KS2"
+   ]
+  },
+  {
+   "name": "missing-completion-at-closed-window",
+   "phase": "soak-token",
+   "ctx": {},
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "delivery-uncertain",
+    "c4": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "missing-turn-result-window-unavailable",
+   "phase": "soak-token",
+   "ctx": {},
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    }
+   ],
+   "expect": {
+    "row": "window-unavailable",
+    "c4": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "foreign-and-null-owned-candidates-rejected",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "null"
+    },
+    {
+     "op": "foreign-yield",
+     "rid": "OTHER",
+     "id": "f1",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "completed-no-result",
+    "c4": true,
+    "unknownRequestIds": [
+     "OTHER"
+    ]
+   },
+   "guards": [
+    "KB1",
+    "KS1"
+   ]
+  },
+  {
+   "name": "pre-and-post-window-candidates-rejected",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "tool",
+     "id": "p1"
+    },
+    {
+     "op": "upd",
+     "id": "p1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "start"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    },
+    {
+     "op": "tool",
+     "id": "q1"
+    },
+    {
+     "op": "upd",
+     "id": "q1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    }
+   ],
+   "expect": {
+    "row": "completed-no-result",
+    "c4": true,
+    "anomaliesInclude": [
+     "pre-window-message",
+     "post-window-message"
+    ]
+   },
+   "guards": [
+    "KB1",
+    "KS1"
+   ]
+  },
+  {
+   "name": "ordinary-output-is-not-a-reply",
+   "phase": "soak-token",
+   "ctx": {
+    "expectedToken": "T"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "text",
+     "text": "{\"data\":{\"kind\":\"soak-token\",\"token\":\"T\"}}"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "completed-no-result",
+    "c4": true
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "controller-cancel-precedes-c4",
+   "phase": "soak-token",
+   "ctx": {},
+   "control": {
+    "cancelled": true
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "end",
+     "status": "cancelled"
+    }
+   ],
+   "expect": {
+    "row": "controller-stop",
+    "c4": false
+   },
+   "guards": [
+    "KS2",
+    "KR12"
+   ]
+  },
+  {
+   "name": "failed-turn-without-result",
+   "phase": "soak-token",
+   "ctx": {},
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "end",
+     "status": "failed"
+    }
+   ],
+   "expect": {
+    "row": "turn-not-completed",
+    "c4": false
+   },
+   "guards": [
+    "KS2"
+   ]
+  },
+  {
+   "name": "size-below-threshold-invalid",
+   "phase": "soak-size",
+   "ctx": {
+    "minPayloadBytes": 32768
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-size",
+      "payloadBytes": 32767
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-invalid",
+    "c4": true
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "size-at-threshold-exact-preserved",
+   "phase": "soak-size",
+   "ctx": {
+    "minPayloadBytes": 32768
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-size",
+      "payloadBytes": 32768,
+      "payloadUnicode": true
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false,
+    "payloadBytes": 32768,
+    "payloadExact": true
+   },
+   "guards": [
+    "KB1"
+   ]
+  },
+  {
+   "name": "review-valid-with-correction-conflicts",
+   "phase": "review",
+   "ctx": {
+    "mode": "conversation"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "review",
+      "verdict": "VALID",
+      "correction": {
+       "replacement": "x"
+      }
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-invalid",
+    "c4": true
+   },
+   "guards": [
+    "KR7",
+    "KR8"
+   ]
+  },
+  {
+   "name": "review-artifact-edits-shape",
+   "phase": "review",
+   "ctx": {
+    "mode": "artifact"
+   },
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "review",
+      "verdict": "Revise",
+      "correction": {
+       "edits": [
+        {
+         "old": "A",
+         "new": "B"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "candidate-valid",
+    "c4": false
+   },
+   "guards": [
+    "KR8"
+   ]
+  },
+  {
+   "name": "missing-capture-is-evidence-fault",
+   "phase": "soak-token",
+   "ctx": {},
+   "dropProjection": true,
+   "ops": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "row": "evidence-fault",
+    "c4": false
+   },
+   "guards": [
+    "KB1",
+    "KS3"
+   ]
+  }
+ ],
+ "diagnostics": [
+  {
+   "name": "journaled-terminal-present",
+   "observation": {
+    "row": "delivery-uncertain",
+    "turnStatus": "completed",
+    "cancelled": false,
+    "validRetained": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "replayOps": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "upd",
+     "id": "y1",
+     "status": "completed",
+     "detailsStatus": "success",
+     "data": {
+      "kind": "soak-token",
+      "token": "T"
+     }
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "result": "journaled",
+    "codeFault": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "journaled-terminal-absent",
+   "observation": {
+    "row": "delivery-uncertain",
+    "turnStatus": "completed",
+    "cancelled": false,
+    "validRetained": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "replayOps": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    },
+    {
+     "op": "end",
+     "status": "completed"
+    }
+   ],
+   "expect": {
+    "result": "not-supported-required-observable-path",
+    "codeFault": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "replay-unavailable",
+   "observation": {
+    "row": "delivery-uncertain",
+    "turnStatus": "completed",
+    "cancelled": false,
+    "validRetained": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "replayError": "WATCH_OUTCOME_UNKNOWN",
+   "expect": {
+    "result": "unproved",
+    "codeFault": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "replay-incomplete-window",
+   "observation": {
+    "row": "delivery-uncertain",
+    "turnStatus": "completed",
+    "cancelled": false,
+    "validRetained": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "replayOps": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "tool",
+     "id": "y1"
+    }
+   ],
+   "expect": {
+    "result": "unproved",
+    "codeFault": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  },
+  {
+   "name": "cancelled-not-applicable",
+   "observation": {
+    "row": "controller-stop",
+    "turnStatus": "cancelled",
+    "cancelled": true,
+    "validRetained": false,
+    "unfinishedYield": [
+     "y1"
+    ]
+   },
+   "replayOps": [
+    {
+     "op": "start"
+    },
+    {
+     "op": "end",
+     "status": "cancelled"
+    }
+   ],
+   "expect": {
+    "result": "not-applicable",
+    "codeFault": false
+   },
+   "guards": [
+    "KS3"
+   ]
+  }
+ ],
+ "snapshot": {
+  "name": "snapshot-frozen-before-cleanup",
+  "input": {
+   "invariant": "first-candidate-retained",
+   "state": "open",
+   "requestId": "R",
+   "windowStartCursor": "k1",
+   "toolCallId": "y1",
+   "rawText": "CANARY-SNAPSHOT-5c1e",
+   "credentials": "secret"
+  },
+  "cleanup": [
+   {
+    "pidResult": "ESRCH"
+   },
+   {
+    "privateRootRemoved": true
+   }
+  ],
+  "expect": {
+   "fields": [
+    "invariant",
+    "requestId",
+    "state",
+    "toolCallId",
+    "windowStartCursor"
+   ],
+   "excluded": [
+    "rawText",
+    "credentials"
+   ],
+   "mutationRejected": true,
+   "cleanupEntries": 2
+  }
+ },
+ "replay": {
+  "name": "effect-free-deterministic-replay",
+  "ops": [
+   {
+    "op": "start"
+   },
+   {
+    "op": "tool",
+    "id": "y1"
+   },
+   {
+    "op": "upd",
+    "id": "y1",
+    "status": "completed",
+    "detailsStatus": "success",
+    "data": {
+     "kind": "soak-token",
+     "token": ""
+    }
+   },
+   {
+    "op": "tool",
+    "id": "y2"
+   },
+   {
+    "op": "upd",
+    "id": "y2",
+    "status": "completed",
+    "detailsStatus": "success",
+    "data": {
+     "kind": "soak-token",
+     "token": "T"
+    }
+   },
+   {
+    "op": "end",
+    "status": "completed"
+   }
+  ],
+  "phase": "soak-token",
+  "ctx": {
+   "expectedToken": "T"
+  },
+  "expect": {
+   "row": "candidate-invalid",
+   "identicalRuns": 2,
+   "blockedEffects": [
+    "fetch",
+    "spawn",
+    "net.connect"
+   ]
+  }
+ },
+ "debugloop": [
+  {
+   "name": "two-fixes-then-recurrence-ends-globally",
+   "extensionApproved": true,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c2",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "mechanics",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "entryOpen",
+     "args": "soak",
+     "expect": false
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 1
+     }
+    },
+    {
+     "do": "entryOpen",
+     "args": "soak",
+     "expect": true
+    },
+    {
+     "do": "recordProofUnit",
+     "cause": "c1",
+     "unit": "soak-rerun"
+    },
+    {
+     "do": "recordProofUnit",
+     "cause": "c1",
+     "unit": "mechanics-rerun"
+    },
+    {
+     "do": "recordRecurrence",
+     "cause": "c1",
+     "expect": {
+      "ended": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 3
+      },
+      "green": {
+       "passed": true,
+       "at": 4
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 2
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 5
+      },
+      "green": {
+       "passed": true,
+       "at": 6
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "recordRecurrence",
+     "cause": "c1",
+     "expect": {
+      "ended": true
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c2",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 7
+      },
+      "green": {
+       "passed": true,
+       "at": 8
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "blocksDone",
+     "expect": true
+    }
+   ]
+  },
+  {
+   "name": "fix-provenance-requirements",
+   "extensionApproved": true,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "Someone",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 3
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": false
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true,
+      "changesApprovedBehavior": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "not-supported-is-not-a-code-defect",
+   "extensionApproved": true,
+   "owners": {},
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "n1",
+      "cls": "native-limitation",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": false
+     }
+    },
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "n2",
+      "cls": "delivery-uncertain",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": false
+     }
+    },
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c3",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true
+      }
+     },
+     "expect": {
+      "accepted": false
+     }
+    },
+    {
+     "do": "blocksDone",
+     "expect": false
+    }
+   ]
+  },
+  {
+   "name": "narrow-pool-exhaustion-keeps-offline-eligibility",
+   "extensionApproved": true,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "charge",
+     "pool": "probe-soak",
+     "amount": {
+      "usd": 4.5,
+      "wallMs": 60000
+     }
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "probe-soak",
+     "expect": false
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "production",
+     "expect": true
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "rehearsal-cap-versus-production-limit",
+   "extensionApproved": true,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T3",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "production",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "charge",
+     "pool": "rehearsal",
+     "amount": {
+      "usd": 1.0,
+      "wallMs": 1000
+     }
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "rehearsal",
+     "expect": false
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "production",
+     "expect": true
+    },
+    {
+     "do": "charge",
+     "pool": "production",
+     "amount": {
+      "usd": 18.5,
+      "tokens": 1000,
+      "wallMs": 1000
+     }
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "production",
+     "expect": true
+    },
+    {
+     "do": "charge",
+     "pool": "production",
+     "amount": {
+      "usd": 0.5
+     }
+    },
+    {
+     "do": "nativeWorkAllowed",
+     "args": "production",
+     "expect": false
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "final-assurance-rejects-exhausted-cause",
+   "extensionApproved": true,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T3",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "production",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c2",
+      "cls": "trial-code",
+      "target": {
+       "task": "T3",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "rehearsal",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 1
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 3
+      },
+      "green": {
+       "passed": true,
+       "at": 4
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 2
+     }
+    },
+    {
+     "do": "productionRerunAllowed",
+     "cause": "c1",
+     "expect": true
+    },
+    {
+     "do": "startFinalAssurance"
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "route": "attempt-2",
+      "red": {
+       "failed": true,
+       "at": 5
+      },
+      "green": {
+       "passed": true,
+       "at": 6
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c2",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "route": "debug-loop",
+      "red": {
+       "failed": true,
+       "at": 5
+      },
+      "green": {
+       "passed": true,
+       "at": 6
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c2",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "route": "attempt-2",
+      "red": {
+       "failed": true,
+       "at": 5
+      },
+      "green": {
+       "passed": true,
+       "at": 6
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": true,
+      "fixNumber": 1
+     }
+    },
+    {
+     "do": "productionRerunAllowed",
+     "cause": "c2",
+     "expect": false
+    }
+   ]
+  },
+  {
+   "name": "extension-not-approved-blocks-t2-fix",
+   "extensionApproved": false,
+   "owners": {
+    "controller.mjs": "AcpTrialPreparation"
+   },
+   "steps": [
+    {
+     "do": "recordCause",
+     "args": {
+      "id": "c1",
+      "cls": "trial-code",
+      "target": {
+       "task": "T2",
+       "file": "controller.mjs"
+      },
+      "discoveredIn": "soak",
+      "evidence": {
+       "snapshot": true,
+       "independent": true
+      }
+     },
+     "expect": {
+      "accepted": true
+     }
+    },
+    {
+     "do": "applyFix",
+     "cause": "c1",
+     "fix": {
+      "owner": "AcpTrialPreparation",
+      "red": {
+       "failed": true,
+       "at": 1
+      },
+      "green": {
+       "passed": true,
+       "at": 2
+      },
+      "fullChecks": true
+     },
+     "expect": {
+      "eligible": false
+     }
+    }
+   ]
+  }
+ ],
+ "gate": [
+  {
+   "name": "all-supported-allows",
+   "inputs": "ok",
+   "expect": {
+    "production_allowed": true
+   }
+  },
+  {
+   "name": "t1-inconclusive-denies",
+   "inputs": {
+    "patch": {
+     "t1.capability": "inconclusive"
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "criterion-failed-denies",
+   "inputs": {
+    "patch": {
+     "criteria.AC-RESTORE": "FAIL"
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "criterion-missing-denies",
+   "inputs": {
+    "patch": {
+     "criteria.AC-DEBUGLOOP": null
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "stale-identity-denies",
+   "inputs": {
+    "patch": {
+     "identities.current.controller": "changed"
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "soak-not-supported-denies-but-evaluation-completes",
+   "inputs": {
+    "patch": {
+     "soakCapability": "not-supported"
+    }
+   },
+   "evaluation": {
+    "codeChecksPassed": true,
+    "evidenceComplete": true,
+    "cleanupComplete": true,
+    "unfixedCodeBug": false,
+    "authorityOk": true
+   },
+   "expect": {
+    "production_allowed": false,
+    "evaluationComplete": true
+   }
+  },
+  {
+   "name": "cleanup-open-denies",
+   "inputs": {
+    "patch": {
+     "cleanup.complete": false
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "unsafe-retention-denies",
+   "inputs": {
+    "patch": {
+     "safety.unsafeRetention": true
+    }
+   },
+   "expect": {
+    "production_allowed": false
+   }
+  },
+  {
+   "name": "unfixed-code-bug-denies-and-blocks-completion",
+   "inputs": {
+    "patch": {
+     "unfixedCodeBug": true
+    }
+   },
+   "evaluation": {
+    "codeChecksPassed": true,
+    "evidenceComplete": true,
+    "cleanupComplete": true,
+    "unfixedCodeBug": true,
+    "authorityOk": true
+   },
+   "expect": {
+    "production_allowed": false,
+    "evaluationComplete": false
+   }
+  }
+ ],
+ "restores": [
+  {
+   "name": "same-id-resume-accepted",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [
+     {
+      "sessionId": "B1",
+      "ok": true
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "restored-same-id"
+   }
+  },
+  {
+   "name": "attach-changed-backend-id",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B2",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [
+     {
+      "sessionId": "B1",
+      "ok": true
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "changed-identity"
+   }
+  },
+  {
+   "name": "resume-targets-other-id",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [
+     {
+      "sessionId": "B2",
+      "ok": true
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "changed-identity"
+   }
+  },
+  {
+   "name": "resume-response-unobserved",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [
+     {
+      "sessionId": "B1"
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "unknown-outcome"
+   }
+  },
+  {
+   "name": "resume-rejected-no-fallback",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [
+     {
+      "sessionId": "B1",
+      "ok": false
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "restore-rejected"
+   }
+  },
+  {
+   "name": "fresh-session-instead-of-resume",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "ESRCH",
+    "resumes": [],
+    "sessionNew": 1
+   },
+   "expect": {
+    "outcome": "fresh-session-fallback"
+   }
+  },
+  {
+   "name": "idle-exit-not-observed",
+   "guards": [
+    "KS2",
+    "KS3"
+   ],
+   "input": {
+    "identity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "attachedIdentity": {
+     "backendSessionId": "B1",
+     "acpxRecordId": "R1"
+    },
+    "idleExit": "timeout",
+    "resumes": [
+     {
+      "sessionId": "B1",
+      "ok": true
+     }
+    ],
+    "sessionNew": 0
+   },
+   "expect": {
+    "outcome": "unproved-idle-exit"
+   }
+  }
+ ]
+}

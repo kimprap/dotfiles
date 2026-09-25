@@ -1,0 +1,114 @@
+{
+  "schema": "acpx-omp-acp-trial.t1-report.v1",
+  "run_id": "t1-preflight-20260925T094907Z-6044e9",
+  "task": "T1",
+  "mode": "preflight",
+  "branch": "preflight-pass",
+  "bindings": {
+    "spec_revision": "acpx-omp-acp-trial/spec-v9",
+    "spec_sha256": "593a6ae6bae86975d783914a4c7feaa34d7db7f10f1447cb886e04db8bca12c2",
+    "decisions_revision": "acpx-omp-acp-trial-decisions/v7",
+    "plan_sha256_provenance": "489a51da9f1123186d8e9d40c600cb8873695236ed725869c3abaed25923a346",
+    "approval_sha256": "6c10a362f95e1c469d1637131fccbdee5c610b589a53cbc25b73087b6afa49a5",
+    "omp": {
+      "path": "/Users/kim/.local/bin/omp",
+      "bytes": 208460816,
+      "sha256": "d61fb411f24146bed48dd901b13b5912a297d899ee691dda69c4b5b7ab8c35dc",
+      "version": "omp/18.3.0",
+      "ok": true
+    },
+    "acpx": {
+      "installed": "0.19.2",
+      "locked": "0.19.2",
+      "lockedIntegrity": "sha512-wLeY2T3vfa63/Oa6fsrbtCXAx6PhfdWvAvw+F6mv3gO/NYWTQf6MpGAWWvmO2JYq8YAhRJ+zt48/BWKz1JiMWg==",
+      "ok": true
+    },
+    "sdk": {
+      "installed": "1.4.0",
+      "locks": [
+        {
+          "at": "node_modules/@agentclientprotocol/sdk",
+          "version": "1.4.0"
+        }
+      ],
+      "ok": true
+    },
+    "overlay_sha256": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+    "live_config_sha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+    "lifecycle_plugin_sha256": "6aaa4b2faea055752708ba3940a37701cd08fbb1fef41bb13fe9b7b639838963",
+    "model_roles_provenance": {
+      "default": "anthropic/claude-opus-5-5:high",
+      "slow": "anthropic/claude-opus-5-5:xhigh",
+      "task": "anthropic/claude-opus-5-5:medium",
+      "plan": "anthropic/claude-opus-5-5:xhigh",
+      "smol": "xai-oauth/grok-4.7:medium",
+      "tiny": "xai-oauth/grok-4.7:low",
+      "advisor": "openai-codex/gpt-5.6-sol:high",
+      "test_audit_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+      "test_audit_opinion_b": "xai-oauth/grok-4.7:xhigh",
+      "second_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+      "second_opinion_b": "xai-oauth/grok-4.7:xhigh",
+      "web": "web/brave"
+    },
+    "sources": {
+      "probe.mjs": "f485042c3ce973bbf1d57cd8a65c60ba9947dc432242f65f8acd76d59591b6af",
+      "probe-verify.mjs": "65ee62f14d5f6b43a5228dcd7daeda0c14ffbf4bf5ac4a4cb0b2170c681b69b3",
+      "package.json": "8fd3fceb3883f387c3aa4a55047ffbb0a1ff549238254f5d9fee3e39411216d7",
+      "package-lock.json": "f96a300ff80c61167b85367397a1a0683bc5d01ef3b6d43e083b99f5d928064a",
+      "prompts/native-probe.md": "8f21599bdbb5cb495cfcfb37714621bc17df84f27d10c6602a8d28d8fa541a1c",
+      "lib/native/adapter.mjs": "c2b6a4dc1c424018bce1ecd1619e5143a0775a15d0024697af2ed99447aacf24",
+      "lib/native/domain.mjs": "8b556765381077803adfe6a88ff37b2f26d825d77e7143c447ddaa0216708cc5",
+      "lib/native/env.mjs": "6a3dd780f01d8de5567a0eebfa5317cc2ec7730ed88587b064e2e6d285a1958d",
+      "lib/native/pins.mjs": "581406dfd0dbf48fe04ce654abfde0611cf5f294e955efd0e91b3b2ff93ed43b",
+      "lib/native/window.mjs": "606d52b2aa5ecc0f6d5e53b5e10cbc48d54f107eee347812dec779fe79a565a8",
+      "lib/evidence/export.mjs": "7efa5165631eabd631dbf9334c4a9964a4990d88e5f07016142c31b1e5a9a846",
+      "lib/evidence/io.mjs": "8056db6cbeea355f6be65b57107adcbee16b98748f84c0f50bfc2f42238a05bb",
+      "lib/evidence/report.mjs": "d9e179799938b3a9a0871dba829e5f4116975674486681b91154418b7f641e32",
+      "config/approval.json": "6c10a362f95e1c469d1637131fccbdee5c610b589a53cbc25b73087b6afa49a5",
+      "config/omp-overlay.yml": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+      "config/protected-sources.json": "0715d8632ffda4b1b0e79cc5b7a75d0aff0db8d56aae6a869843e8039fcfcf14"
+    }
+  },
+  "implementation": {
+    "status": "runner-completed",
+    "note": "Independent check status is produced by probe-verify.mjs, not by this runner."
+  },
+  "capability": {
+    "launch": "not-run (preflight mode)",
+    "journal_result": "not-run",
+    "reuse": "not-run",
+    "restore": "not-run",
+    "pid_sampling": "not-run",
+    "disposal": "not-applicable (no process started)",
+    "tool_policy": "not-run",
+    "overall": "inconclusive"
+  },
+  "production_allowed": false,
+  "t2_entry_permitted": false,
+  "evaluation_complete": false,
+  "expectations": [],
+  "cleanup": {
+    "status": "complete",
+    "notes": [
+      "positive evidence: no ensureSession/startTurn call was made, so no actor process started (PID coverage not applicable)"
+    ]
+  },
+  "accounting": {
+    "wallMs": 1866,
+    "cost": {
+      "amount": 0,
+      "currency": "USD",
+      "basis": "no model work started"
+    },
+    "priorWallMs": 0
+  },
+  "stops": [],
+  "limits": [
+    "Tool policy is a trusted-process detect-after check over journaled tool events; it is not a sandbox or a complete tool inventory.",
+    "The yield signature (kind other + declared keys) does not authenticate the tool name.",
+    "Public pid= identifies the OMP agent child only, not the queue owner or descendants; PID reuse may cause a conservative false cleanup failure.",
+    "A stable backendSessionId after restore does not prove complete restored context; token recall is continuation evidence only.",
+    "Entirely unobserved tool starts/completions cannot be distinguished from no submission at this boundary.",
+    "Live config lists extensions (including lifecycle-plugin.js); --no-extensions governs discovery only and extension loading was not independently observed."
+  ]
+}

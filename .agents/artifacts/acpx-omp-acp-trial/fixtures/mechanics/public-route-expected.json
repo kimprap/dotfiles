@@ -1,0 +1,21 @@
+{
+  "note": "Independently authored expectations for the public-acpx scripted mechanics (T1 scripted ACP agent; mechanics-only). Observer loss re-watches the same original request without resubmission; restore is same-session-only through a between-settled idle expiry; a rejected same-ID resume never falls back to session/new.",
+  "cases": {
+    "observer-loss-recovered": { "watchError": "TRIAL_OBSERVER_DETACHED", "recovered": true, "row": "candidate-valid", "promptSubmissions": 1, "detachLogged": 1 },
+    "unfinished-yield": { "row": "delivery-uncertain", "c4": false },
+    "two-yields": { "row": "candidate-invalid", "c4": true },
+    "no-result": { "row": "completed-no-result", "c4": true },
+    "same-id-restore": { "firstRow": "candidate-valid", "idleExit": "ESRCH", "statusPidCleared": true, "sameBackendId": true, "sameRecordId": true, "resumeSameId": true, "sessionNew": 0, "secondRow": "candidate-valid" },
+    "restore-failure-no-fallback": { "row": "turn-not-completed", "errorDetailCode": "SESSION_RESUME_REQUIRED", "sessionNew": 0, "resumeRejected": true, "c4": false },
+    "observed-closes": { "closes": 3, "allResolved": true, "allPidsExited": true, "coverage": true }
+  },
+  "large": {
+    "registryArgv": ["node", "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/fixture-agent/large.mjs"],
+    "bytes": 2097152,
+    "sha256": "9c9214717e58d8ceaf581255faab35c026e5d6b408a0a9df56169b7e247cfebf",
+    "prefix": "BEGIN-2M\n",
+    "suffix": "\nEND-2M\n",
+    "queueIpcLimit": 10485760,
+    "acpLineLimit": 67108864
+  }
+}

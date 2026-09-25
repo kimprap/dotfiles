@@ -1,0 +1,86 @@
+{
+  "schema": "acpx-omp-acp-trial.t1-repro.v1",
+  "runId": "t1-repro-20260925T120605Z-3505ce",
+  "cause": "t1-session-location",
+  "startedAt": "2026-09-25T12:06:05.258Z",
+  "argv": [
+    "/Users/kim/.local/bin/omp",
+    "acp",
+    "--model",
+    "xai-oauth/grok-4.7",
+    "--thinking",
+    "low",
+    "--tools",
+    "read,glob,grep,yield",
+    "--no-extensions",
+    "--no-skills",
+    "--no-rules",
+    "--no-lsp",
+    "--no-title",
+    "--config",
+    "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+    "--session-dir",
+    "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120605Z-3505ce"
+  ],
+  "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120605Z-3505ce",
+  "sessionDirInLiveStore": true,
+  "processes": [
+    {
+      "label": "A:new",
+      "pid": 75425,
+      "exit": {
+        "pid": 75425,
+        "result": "ESRCH",
+        "observedMs": 102,
+        "msAfterStdinClose": 102
+      }
+    },
+    {
+      "label": "B:load",
+      "pid": 75460,
+      "exit": {
+        "pid": 75460,
+        "result": "ESRCH",
+        "observedMs": 102,
+        "msAfterStdinClose": 102
+      }
+    }
+  ],
+  "updates": {},
+  "sessionId": "01a0d875-6448-74d1-941b-4a464799f937",
+  "load": {
+    "ok": true
+  },
+  "allPidsExited": true,
+  "cleanup": {
+    "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120605Z-3505ce",
+    "sessionIds": [
+      "01a0d875-6448-74d1-941b-4a464799f937"
+    ],
+    "deleted": [
+      ".2026-09-25T12-06-07-176Z_01a0d875-6448-74d1-941b-4a464799f937.jsonl.lock.os",
+      "2026-09-25T12-06-07-176Z_01a0d875-6448-74d1-941b-4a464799f937.jsonl"
+    ],
+    "kept": [],
+    "folders": [
+      {
+        "path": "/Users/kim/.omp/agent/sessions/acpx-trial-t1-repro-20260925T120605Z-3505ce",
+        "result": "removed"
+      },
+      {
+        "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t1repro-5f7abe4e-9bd1-464d-ad8c-17b67e8ab67f-cwd--",
+        "result": "removed"
+      }
+    ],
+    "complete": true
+  },
+  "privateRootRemoval": {
+    "removed": true,
+    "socketDir": "/tmp/acpx-0c31a7cac7",
+    "socketDirExisted": false
+  },
+  "modelRequest": "none-reported (no session/prompt sent)",
+  "verdict": "PASS",
+  "wallMs": 2557,
+  "endedAt": "2026-09-25T12:06:07.814Z"
+}

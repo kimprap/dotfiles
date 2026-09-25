@@ -1,0 +1,68 @@
+{
+  "causes": [
+    {
+      "id": "C2",
+      "invariant": "A report-only nested Retrace review may replace the scope report: AC-RETRACE accepts nested applications only when the count equals the application events, each application digest is the next outer-start baseDigest, and the last digest equals the admitted reportDigest and the hash of the admitted report text; zero applications still pass.",
+      "target": {
+        "file": "verify.mjs",
+        "symbol": "checkRetrace"
+      },
+      "discoveredIn": "production",
+      "discoveredRun": "t3-run-20260925T162921Z-e42472",
+      "affectedScenarios": [
+        "S3"
+      ],
+      "status": "fixed-offline",
+      "authority": "User decision (2026-09-25), applied to this offline work: \"i allow grants, if required, especially if it would have to close an entire plan because of it.\"",
+      "fixes": [
+        {
+          "owner": "AcpTrialPreparation",
+          "verifySha256Before": "8095cffc2858be2bf8708c1906ef953dff256f0f4ad6eb407b8a4c47a6baff4e",
+          "verifySha256After": "ab384d9935c590788b12d62649251ba38b5a9c3dc9b60cf0585a57f97bb3a637",
+          "reproducer": "node verify.mjs <copy of runs/t3-run-20260925T162921Z-e42472> AC-RETRACE: before 'FAIL AC-RETRACE: s1: nested review applied edits' (s1 chain 6c9621c2... -> application 873409721b841f49f37c91882849e3ba8b622ee9d9b9f6b6b375ad186774460a = next baseDigest = admitted reportDigest = sha256(admitted report)); after no such failure. A copy with nested applications 2 against 1 application event fails with 'nested applications 2 != application events 1'.",
+          "affectedCriteria": [
+            "AC-RETRACE"
+          ],
+          "invalidatedNativeUnits": [],
+          "fullChecks": [
+            "node verify.mjs <copy of runs/t2-soak-20260925T162401Z-bf0035> T2 -> PASS T2 (copy parent also holds the T1 and T3 runs under their original names; only the T3 copy carries causes.json)",
+            "node verify.mjs <copy of runs/t3-run-20260925T162921Z-e42472 with causes.json> ALL -> PASS ALL (S1 supported, S2 supported, S3 inconclusive)",
+            "node fixtures/mechanics/t3-selftest.mjs --base /tmp/<private-dir>; node verify.mjs <printed RUN> ALL -> PASS ALL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "invariant": "Every production S3 actor runs on its production profile: evaluators and reviewer A on profile A, reviewer B on profile B (PROD_PROFILE by role, as reconcileTruth does for S1/S2), checked against the pinned registry argv, never against the actor's own recorded profile field.",
+      "target": {
+        "file": "verify.mjs",
+        "symbol": "checkRetrace"
+      },
+      "discoveredIn": "production",
+      "discoveredRun": "t3-run-20260925T162921Z-e42472",
+      "affectedScenarios": [
+        "S3"
+      ],
+      "status": "fixed-offline",
+      "authority": "User decision (2026-09-25), applied to this offline work: \"i allow grants, if required, especially if it would have to close an entire plan because of it.\"",
+      "fixes": [
+        {
+          "owner": "AcpTrialPreparation",
+          "verifySha256Before": "8095cffc2858be2bf8708c1906ef953dff256f0f4ad6eb407b8a4c47a6baff4e",
+          "verifySha256After": "ab384d9935c590788b12d62649251ba38b5a9c3dc9b60cf0585a57f97bb3a637",
+          "reproducer": "node verify.mjs <copy of runs/t3-run-20260925T162921Z-e42472> AC-RETRACE: before 'FAIL AC-RETRACE: production-S3-s1-B: S3 actor not on profile A' (reviewer B correctly launched on profile B); after no such failure.",
+          "affectedCriteria": [
+            "AC-RETRACE"
+          ],
+          "invalidatedNativeUnits": [],
+          "fullChecks": [
+            "node verify.mjs <copy of runs/t2-soak-20260925T162401Z-bf0035> T2 -> PASS T2 (copy parent also holds the T1 and T3 runs under their original names; only the T3 copy carries causes.json)",
+            "node verify.mjs <copy of runs/t3-run-20260925T162921Z-e42472 with causes.json> ALL -> PASS ALL (S1 supported, S2 supported, S3 inconclusive)",
+            "node fixtures/mechanics/t3-selftest.mjs --base /tmp/<private-dir>; node verify.mjs <printed RUN> ALL -> PASS ALL"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "pool": "production",
+  "task": "T3",
+  "startedAt": "2026-09-25T16:29:23.919Z",
+  "endedAt": "2026-09-25T17:07:00.714Z",
+  "wallMs": 2256904,
+  "modelWork": true,
+  "cost": {
+    "amount": 3.878528,
+    "currency": "USD",
+    "basis": "public status cumulative session cost per actor"
+  },
+  "tokens": 2028749,
+  "limits": {
+    "production": {
+      "usd": 20,
+      "tokens": 2000000,
+      "wallMs": 7200000
+    },
+    "rehearsal": {
+      "usd": 1,
+      "wallMs": 900000
+    }
+  },
+  "rehearsal": {
+    "wallMs": 824272,
+    "modelWork": true,
+    "cost": {
+      "amount": 1.010678,
+      "currency": "USD",
+      "basis": "public status cumulative session cost per actor"
+    },
+    "tokens": 580817
+  },
+  "prior": {
+    "runs": [],
+    "wallMs": 0,
+    "usdKnown": 0,
+    "usdUnknownRuns": 0,
+    "tokens": 0,
+    "tokensUnknownRuns": 0,
+    "rehearsal": {
+      "wallMs": 0,
+      "usdKnown": 0,
+      "usdUnknownRuns": 0
+    }
+  },
+  "limitReached": {
+    "rehearsal": {
+      "reason": "rehearsal-subcap: reported cost reached",
+      "at": "2026-09-25T16:43:08.009Z",
+      "mono": 826763
+    },
+    "production": {
+      "reason": "production-limit: reported tokens reached",
+      "at": "2026-09-25T17:07:00.497Z",
+      "mono": 2259324
+    }
+  },
+  "note": "wallMs covers the whole T3 execution including cleanup; rehearsal spend also counts inside the production pool. OAuth cost may be absent or delayed; unknown is never reported as zero."
+}

@@ -1,0 +1,17 @@
+{
+  "note": "Harmless A7 fixture: raw public watch events laced with the canary string CANARY-A7-SECRET in every excluded position (titles, prose, bodies, env, headers, error text, unknown extras). Expected output is authored independently in a7-expected.json.",
+  "canary": "CANARY-A7-SECRET",
+  "events": [
+    { "cursor": "c1", "type": "turn_started", "requestId": "R1", "env": { "TOKEN": "CANARY-A7-SECRET" } },
+    { "cursor": "c2", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "id": 7, "method": "session/resume", "params": { "sessionId": "S-1", "cwd": "/tmp/CANARY-A7-SECRET", "mcpServers": [] } } },
+    { "cursor": "c3", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "id": 7, "result": { "modes": { "note": "CANARY-A7-SECRET" } } } },
+    { "cursor": "c4", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "agent_message_chunk", "content": { "type": "text", "text": "CANARY-A7-SECRET prose" } } } } },
+    { "cursor": "c5", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "tool_call", "toolCallId": "t-read", "title": "Read CANARY-A7-SECRET", "kind": "read", "status": "in_progress", "rawInput": { "path": "notes.txt", "secret": "CANARY-A7-SECRET" } } } } },
+    { "cursor": "c6", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "tool_call_update", "toolCallId": "t-read", "status": "failed", "content": [{ "type": "content", "content": { "type": "text", "text": "CANARY-A7-SECRET" } }], "rawOutput": { "error": "CANARY-A7-SECRET", "details": { "status": "error", "meta": "CANARY-A7-SECRET" } } } } } },
+    { "cursor": "c7", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "tool_call", "toolCallId": "t-yield", "title": "yield CANARY-A7-SECRET", "kind": "other", "status": "in_progress", "rawInput": { "data": { "kind": "probe-reuse", "token": "TOK-1", "extra": "CANARY-A7-SECRET" } } } } } },
+    { "cursor": "c8", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "tool_call_update", "toolCallId": "t-yield", "status": "completed", "rawOutput": { "content": [{ "type": "text", "text": "CANARY-A7-SECRET" }], "details": { "status": "success", "data": { "kind": "probe-reuse", "token": "TOK-1", "extra": { "deep": "CANARY-A7-SECRET" } }, "meta": "CANARY-A7-SECRET" } } } } } },
+    { "cursor": "c9", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "method": "session/update", "params": { "sessionId": "S-1", "update": { "sessionUpdate": "usage_update", "used": 1200, "size": 200000, "cost": { "amount": 0.0012, "currency": "USD" }, "note": "CANARY-A7-SECRET" } } } },
+    { "cursor": "c10", "type": "message", "requestId": "R1", "message": { "jsonrpc": "2.0", "id": 9, "error": { "code": -32000, "message": "CANARY-A7-SECRET", "data": { "x": "CANARY-A7-SECRET" } } } },
+    { "cursor": "c11", "type": "turn_result", "requestId": "R1", "result": { "status": "failed", "error": { "code": "RUNTIME", "detailCode": "AGENT_EXIT", "message": "CANARY-A7-SECRET", "retryable": false } } }
+  ]
+}

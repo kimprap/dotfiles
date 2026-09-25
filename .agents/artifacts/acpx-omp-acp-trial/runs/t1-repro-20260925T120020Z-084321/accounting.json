@@ -1,0 +1,15 @@
+{
+  "pool": "probe-soak",
+  "task": "T1",
+  "kind": "repro",
+  "startedAt": "2026-09-25T12:00:20.812Z",
+  "endedAt": "2026-09-25T12:00:23.170Z",
+  "wallMs": 2358,
+  "modelWork": false,
+  "countsTowardWall": true,
+  "cost": {
+    "amount": 0,
+    "currency": "USD",
+    "basis": "no session/prompt sent; no usage reported"
+  }
+}

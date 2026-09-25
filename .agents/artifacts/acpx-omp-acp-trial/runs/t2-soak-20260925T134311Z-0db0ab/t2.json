@@ -1,0 +1,285 @@
+{
+  "schema": "acpx-omp-acp-trial.t2.v1",
+  "runId": "t2-soak-20260925T134311Z-0db0ab",
+  "task": "T2",
+  "attempt": 1,
+  "startedAt": "2026-09-25T13:43:12.068Z",
+  "authority": {
+    "approvalPath": "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/config/approval.json",
+    "problems": [],
+    "approvalSha256": "acfd0014de4f676dcf688d4dc8ad5cbcd073cc85f3176cb8797fd49751f82df4",
+    "specSha256": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+    "decisionsRevisionPresent": true,
+    "planSha256": "6b6a1d138256c1a14b5e2fe5f076e4e0668befe3889e2fdbbbda3f703e012806",
+    "ok": true
+  },
+  "sources": {
+    "run.mjs": "78a5e77e2a311b428e6400a161104ed2a0166ce862eb522d017d85f32d2747c0",
+    "controller.mjs": "8fe2ddd0772339f488c421bc6de932fba326622affa35bd7c69b56fad499f43b",
+    "verify.mjs": "afaf0eaa4c6e91746fff6f116da9d4be7cfcdf1f283be3db02e44446543bf4dc",
+    "probe.mjs": "65d0a1cf46576b200e42eae33d5d9b1f9e26a45c9afb4d7d0861d205a94a2066",
+    "probe-verify.mjs": "4de5843948c6b12db3288f3e1e04a5102486ce48a8633e703039f009e6a19ec2",
+    "package.json": "8fd3fceb3883f387c3aa4a55047ffbb0a1ff549238254f5d9fee3e39411216d7",
+    "package-lock.json": "f96a300ff80c61167b85367397a1a0683bc5d01ef3b6d43e083b99f5d928064a",
+    "prompts/transport-soak.md": "f83f4d1a401069f6c1e2736813fc200849671a748d65e79d8e20fe15d66223c1",
+    "lib/native/adapter.mjs": "1a46be3029d4e59665eb82b65adfb699be6f71f3045eb27482d4aa6bd314106c",
+    "lib/native/domain.mjs": "8b556765381077803adfe6a88ff37b2f26d825d77e7143c447ddaa0216708cc5",
+    "lib/native/env.mjs": "abe3f35c93c16f1aafa3287bdac3ee5050e93555ee58ae943504ce77169e37ac",
+    "lib/native/pins.mjs": "f9628c5742dae05bb76c4a4b6f594572b382de4d9c05fd89d23a68499d78f0c1",
+    "lib/native/window.mjs": "606d52b2aa5ecc0f6d5e53b5e10cbc48d54f107eee347812dec779fe79a565a8",
+    "lib/evidence/export.mjs": "7efa5165631eabd631dbf9334c4a9964a4990d88e5f07016142c31b1e5a9a846",
+    "lib/evidence/io.mjs": "8056db6cbeea355f6be65b57107adcbee16b98748f84c0f50bfc2f42238a05bb",
+    "lib/evidence/report.mjs": "d9e179799938b3a9a0871dba829e5f4116975674486681b91154418b7f641e32",
+    "lib/semantic/capture.mjs": "7517d474a2ebe5cd9aeb52e14e66844fd1ecee949d578a3a762837030f8acda9",
+    "lib/semantic/debugloop.mjs": "ecaed0cfda11464468b80859ecdb656c1fe0d75d9a0331adb9e4c4736e1147a0",
+    "lib/semantic/diagnostics.mjs": "035fccf3e0181c26a713b52e92af76fde473847b6efee831166d0d08cfe9a9c2",
+    "lib/semantic/domain.mjs": "e6fce5d1d7e33380aeb4d659e598dc717f2a71e93dcb5bf77791b420451edc77",
+    "lib/semantic/gate.mjs": "c3b3c068dd334148ac13db84aaeff7ae3a8b3bbefd28bd96caee5b724293757b",
+    "lib/semantic/large.mjs": "e49e1ed0b40444aa71838e50f606286827bc8623aa3c66cb0d92fc43e32c8e55",
+    "lib/semantic/mapping.mjs": "f070999084f837a283da7e7bc17b934f5c0c882924fa14595780fdcce26c1c4b",
+    "lib/semantic/mechanics.mjs": "aa701cd545a1f4943857bb91f61d5ac6298390384ca78c4950284b6cc0c3ebf7",
+    "lib/semantic/soak.mjs": "9246e567c1c46655909b8ad08d81dc554d0591bb634364f6927ca244744d0105",
+    "config/approval.json": "acfd0014de4f676dcf688d4dc8ad5cbcd073cc85f3176cb8797fd49751f82df4",
+    "config/omp-overlay.yml": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+    "config/protected-sources.json": "0715d8632ffda4b1b0e79cc5b7a75d0aff0db8d56aae6a869843e8039fcfcf14",
+    "fixture-agent/large.mjs": "8593328c13b80d0f35f060492e6f619ee7f90124ef3e359f10aa5afd4b0d2eda",
+    "fixture-agent/soak.mjs": "16fe7e6ba933c29dfe571f975fca71ee30184844e7881c5ec3bcc470b86b7349",
+    "prompts/semantic/reconcile-reviewer.md": "e84d326bddc3e67054cab78fc988882d8ad381dd63fa292325eb4e834d611c44",
+    "prompts/semantic/retrace-scope.md": "cf90ddbfffd86b92e04993beb087c738d6ce3412d19f834ebb455ef38cc83a39",
+    "fixtures/mechanics/boundary-cases.json": "7dca8aa3a412f0fba88e0cd314ca2b796cfb0069d81dd45315cea5d4f5176dd0",
+    "fixtures/mechanics/public-route-expected.json": "a789877895611d5c2d7b701383066885170598bebe8cae8af893c5c91bbbd2e0",
+    "fixtures/mechanics/semantic-cases.json": "7e3ca4746e16fe062396d75e37febaf96e2a05f2e9888ea62a64a1905419cdf7",
+    "fixtures/native/a7-expected.json": "e832cb32e5d6c74efe28e0ec285abce570cee7b9eb27a562b746c0b0906e647e",
+    "fixtures/native/a7-raw-events.json": "b0dc8519afd32941622e9b0bc0e35516a40fb7a61d3d56aa4c8a054a45d6e8ef",
+    "fixtures/native/approval-drift.json": "579b79c01d1bf84ad4f1dc3e08a4437c1c615182f82c6b8dc6ef9a026ca3244a",
+    "fixtures/native/mechanics.mjs": "07e84acfaa11f1af50ba4ca5fb4d6000fcc1e978b46d73bfd34c32cf1af5fee2",
+    "fixtures/native/scripted-agent.mjs": "e47a857f97ff5e0e730f914354926dc98d26c23198b263c7b66ea29c2283ac8d",
+    "fixtures/native/session-location-repro.mjs": "2547907ac32259bdffa8599b1a3a4c90ff4edbdec279304611dd45b5ca4424a8",
+    "fixtures/native/window-cases.json": "fa558e53049f1a14e4358bf5229103d816abf44398da15a60d88ef493e8c35e2",
+    "authority:spec": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+    "authority:plan": "6b6a1d138256c1a14b5e2fe5f076e4e0668befe3889e2fdbbbda3f703e012806"
+  },
+  "readonly": {
+    "protectedBefore": {
+      ".config/agents/skills/reconcile/SKILL.md": "b33e854319d3ca6e778e095892c5d6fd231e5cb685f8e81a89a7f1d65a07cdf1",
+      ".config/agents/skills/reconcile/references/reviewer-protocol.md": "934a4c3aa74434e138dafbdc4aebfa77901e470f4e965270c809368cfbf36fc9",
+      ".config/agents/skills/reconcile/references/execution-flow.md": "3666099fe40d965aec633013e7fca08ca1c19472ce7528d248da277a8da9859f",
+      ".config/agents/skills/reconcile/evals/evals.json": "2fb09b4ad04528cd4ee3452091166653cfa30129033542be551fe89d3e3e4c01",
+      ".config/agents/skills/retrace/SKILL.md": "d5c469d3494f97eb72203502a88e1cbdfa86a7245fdaff3f16b8a541b1a8619d",
+      ".config/agents/skills/retrace/evals/evals.json": "d52ac51a5a94c6d69c547ac1f1f80a155544a4024c90c2059f05d98bcc0ea099",
+      "docs/adr/INDEX.md": "597036cf9e9f0aa29806fee32cb7b380609a42ecd6d95747e488606c5833588b",
+      "docs/adr/0001-dev-workflow-authority-and-routing.md": "cb092495e69759687384272f7cc2b04413b03ba72e88f9c420fcd3f19fae39a6",
+      "docs/adr/0002-executor-plans-and-orchestration.md": "be7b66ebbf700e324ca3ee8f4161e4baa99a7098a13673e1a3ea66a1616f0181",
+      "docs/adr/0003-bounded-assurance-and-repair.md": "0bf7a1d6f6d79c15a3688eda600587d92ccd363477dd0e735de6da5f9a5298ba",
+      "docs/adr/0004-canonical-discovery-and-continual-learning.md": "231017aee9caac67c4378eea6e452caa5fba85fe0e4726a9b72cd46f75c6cb43",
+      "docs/adr/0010-replacement-lifecycle-plugin.md": "1bf8dd7f1c6215bb76c104982e2063c7465df65a20ca09ab2b6f98672631862a",
+      ".agents/artifacts/2026-09-23_reconcile-retrace-lean-redesign-spec.md": "376fd634f0c6c772252fe6929547a2d1bc0a5ba161477935a9cdaa7e1635fe51",
+      ".agents/plans/2026-09-23-2154_reconcile-retrace-lean-redesign.md": "b4a1008606bad986b02202217366290842f512693809c6d7ad040ba19113b4de",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md": "3d24d1624fba624e80882c5675f24399a00b8ce1ffccb36a3ce1f8ddc7be7a66",
+      ".config/agents/harnesses/omp/config.yml": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25"
+    },
+    "protectedAfter": {
+      ".config/agents/skills/reconcile/SKILL.md": "b33e854319d3ca6e778e095892c5d6fd231e5cb685f8e81a89a7f1d65a07cdf1",
+      ".config/agents/skills/reconcile/references/reviewer-protocol.md": "934a4c3aa74434e138dafbdc4aebfa77901e470f4e965270c809368cfbf36fc9",
+      ".config/agents/skills/reconcile/references/execution-flow.md": "3666099fe40d965aec633013e7fca08ca1c19472ce7528d248da277a8da9859f",
+      ".config/agents/skills/reconcile/evals/evals.json": "2fb09b4ad04528cd4ee3452091166653cfa30129033542be551fe89d3e3e4c01",
+      ".config/agents/skills/retrace/SKILL.md": "d5c469d3494f97eb72203502a88e1cbdfa86a7245fdaff3f16b8a541b1a8619d",
+      ".config/agents/skills/retrace/evals/evals.json": "d52ac51a5a94c6d69c547ac1f1f80a155544a4024c90c2059f05d98bcc0ea099",
+      "docs/adr/INDEX.md": "597036cf9e9f0aa29806fee32cb7b380609a42ecd6d95747e488606c5833588b",
+      "docs/adr/0001-dev-workflow-authority-and-routing.md": "cb092495e69759687384272f7cc2b04413b03ba72e88f9c420fcd3f19fae39a6",
+      "docs/adr/0002-executor-plans-and-orchestration.md": "be7b66ebbf700e324ca3ee8f4161e4baa99a7098a13673e1a3ea66a1616f0181",
+      "docs/adr/0003-bounded-assurance-and-repair.md": "0bf7a1d6f6d79c15a3688eda600587d92ccd363477dd0e735de6da5f9a5298ba",
+      "docs/adr/0004-canonical-discovery-and-continual-learning.md": "231017aee9caac67c4378eea6e452caa5fba85fe0e4726a9b72cd46f75c6cb43",
+      "docs/adr/0010-replacement-lifecycle-plugin.md": "1bf8dd7f1c6215bb76c104982e2063c7465df65a20ca09ab2b6f98672631862a",
+      ".agents/artifacts/2026-09-23_reconcile-retrace-lean-redesign-spec.md": "376fd634f0c6c772252fe6929547a2d1bc0a5ba161477935a9cdaa7e1635fe51",
+      ".agents/plans/2026-09-23-2154_reconcile-retrace-lean-redesign.md": "b4a1008606bad986b02202217366290842f512693809c6d7ad040ba19113b4de",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+      ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md": "3d24d1624fba624e80882c5675f24399a00b8ce1ffccb36a3ce1f8ddc7be7a66",
+      ".config/agents/harnesses/omp/config.yml": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25"
+    },
+    "protectedUnchanged": true
+  },
+  "s0": {
+    "env": {
+      "keys": [
+        "HOME",
+        "LANG",
+        "PATH",
+        "PI_CODING_AGENT_DIR",
+        "TMPDIR",
+        "__CF_USER_TEXT_ENCODING"
+      ],
+      "HOME": "/tmp/acpx-t2-a1ba14a1-40e5-45a6-949f-69fbe1a73d09/home",
+      "TMPDIR": "/tmp/acpx-t2-a1ba14a1-40e5-45a6-949f-69fbe1a73d09/tmp",
+      "PI_CODING_AGENT_DIR": "/Users/kim/.omp/agent"
+    },
+    "privateRoot": {
+      "path": "/tmp/acpx-t2-a1ba14a1-40e5-45a6-949f-69fbe1a73d09",
+      "mode": "700",
+      "outsideBundle": true
+    },
+    "liveStore": {
+      "path": "/Users/kim/.omp/agent",
+      "isDirectory": true,
+      "mode": "700"
+    },
+    "pins": {
+      "node": {
+        "version": "26.3.1",
+        "execPath": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin/node",
+        "ok": true
+      },
+      "omp": {
+        "path": "/Users/kim/.local/bin/omp",
+        "bytes": 208460816,
+        "sha256": "d61fb411f24146bed48dd901b13b5912a297d899ee691dda69c4b5b7ab8c35dc",
+        "version": "omp/18.3.0",
+        "ok": true
+      },
+      "acpx": {
+        "installed": "0.19.2",
+        "locked": "0.19.2",
+        "lockedIntegrity": "sha512-wLeY2T3vfa63/Oa6fsrbtCXAx6PhfdWvAvw+F6mv3gO/NYWTQf6MpGAWWvmO2JYq8YAhRJ+zt48/BWKz1JiMWg==",
+        "ok": true
+      },
+      "sdk": {
+        "installed": "1.4.0",
+        "locks": [
+          {
+            "at": "node_modules/@agentclientprotocol/sdk",
+            "version": "1.4.0"
+          }
+        ],
+        "ok": true
+      },
+      "overlay": {
+        "path": ".agents/artifacts/acpx-omp-acp-trial/config/omp-overlay.yml",
+        "sha256": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b"
+      },
+      "ok": true
+    },
+    "liveConfig": {
+      "configPath": ".config/agents/harnesses/omp/config.yml",
+      "configSha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+      "expectedConfigSha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+      "lifecyclePlugin": {
+        "path": ".config/agents/harnesses/omp/extensions/lifecycle-plugin.js",
+        "sha256": "6aaa4b2faea055752708ba3940a37701cd08fbb1fef41bb13fe9b7b639838963"
+      },
+      "modelRoles": {
+        "default": "anthropic/claude-opus-5-5:high",
+        "slow": "anthropic/claude-opus-5-5:xhigh",
+        "task": "anthropic/claude-opus-5-5:medium",
+        "plan": "anthropic/claude-opus-5-5:xhigh",
+        "smol": "xai-oauth/grok-4.7:medium",
+        "tiny": "xai-oauth/grok-4.7:low",
+        "advisor": "openai-codex/gpt-5.6-sol:high",
+        "test_audit_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+        "test_audit_opinion_b": "xai-oauth/grok-4.7:xhigh",
+        "second_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+        "second_opinion_b": "xai-oauth/grok-4.7:xhigh",
+        "web": "web/brave"
+      }
+    },
+    "expectedLaunch": {
+      "profile": "tiny",
+      "model": "xai-oauth/grok-4.7",
+      "thinking": "low"
+    }
+  },
+  "t1": {
+    "run": "t1-probe-20260925T120636Z-0324bc",
+    "capability": "supported",
+    "t2EntryPermitted": true,
+    "cleanup": "complete",
+    "verifyExit": 0,
+    "verifyLast": "PASS T1",
+    "verifyOk": true
+  },
+  "pool": {
+    "name": "probe-soak",
+    "limitUsd": 2,
+    "limitWallMs": 1200000,
+    "prior": {
+      "wallMs": 251665,
+      "costKnownUsd": 0.905448,
+      "costUnknownRuns": 1
+    }
+  },
+  "mechanicsSummary": {
+    "offlineCases": 99,
+    "offlineFails": [],
+    "publicRouteChildExit": 0,
+    "largeRow": "candidate-valid"
+  },
+  "processesStarted": true,
+  "liveStoreCleanup": {
+    "sessionDir": "/Users/kim/.omp/agent/sessions/acpx-trial-t2-soak-20260925T134311Z-0db0ab",
+    "sessionIds": [
+      "01a0d8ce-8188-7649-970a-3696737c63e1",
+      "01a0d8ce-8199-7008-af42-57e793d93a20",
+      "01a0d8ce-8185-74f3-8865-1526b2fe32ae",
+      "01a0d8ce-8198-7551-b542-cb318872598e"
+    ],
+    "deleted": [
+      ".2026-09-25T13-43-27-365Z_01a0d8ce-8185-74f3-8865-1526b2fe32ae.jsonl.lock.os",
+      ".2026-09-25T13-43-27-368Z_01a0d8ce-8188-7649-970a-3696737c63e1.jsonl.lock.os",
+      ".2026-09-25T13-43-27-384Z_01a0d8ce-8198-7551-b542-cb318872598e.jsonl.lock.os",
+      ".2026-09-25T13-43-27-385Z_01a0d8ce-8199-7008-af42-57e793d93a20.jsonl.lock.os",
+      "2026-09-25T13-43-27-365Z_01a0d8ce-8185-74f3-8865-1526b2fe32ae.jsonl",
+      "2026-09-25T13-43-27-368Z_01a0d8ce-8188-7649-970a-3696737c63e1.jsonl",
+      "2026-09-25T13-43-27-384Z_01a0d8ce-8198-7551-b542-cb318872598e.jsonl",
+      "2026-09-25T13-43-27-385Z_01a0d8ce-8199-7008-af42-57e793d93a20.jsonl"
+    ],
+    "kept": [],
+    "folders": [
+      {
+        "path": "/Users/kim/.omp/agent/sessions/acpx-trial-t2-soak-20260925T134311Z-0db0ab",
+        "result": "removed"
+      },
+      {
+        "path": "/Users/kim/.omp/agent/sessions/--private-tmp-acpx-t2-a1ba14a1-40e5-45a6-949f-69fbe1a73d09-cwd--",
+        "result": "removed"
+      }
+    ],
+    "complete": true
+  },
+  "stops": [],
+  "finishedModelWorkAt": "2026-09-25T13:46:53.385Z",
+  "debugLoop": {
+    "extensionApproved": true,
+    "causes": [
+      {
+        "id": "C1",
+        "invariant": "AC-RESTORE criteria computed by the runner must evaluate the same retained evidence as the standalone verifier; report.json does not exist while run.mjs spawns verify.mjs, so the first-review statement clause must apply only when report.json exists",
+        "target": {
+          "file": "verify.mjs",
+          "symbol": "checkRestore"
+        },
+        "discoveredIn": "t2-soak-20260925T134311Z-0db0ab",
+        "fixes": [
+          {
+            "owner": "AcpTrialPreparation",
+            "verifySha256Before": "afaf0eaa4c6e91746fff6f116da9d4be7cfcdf1f283be3db02e44446543bf4dc",
+            "reproducer": {
+              "command": "node verify.mjs <temporary copy of the run without report.json/report.md> AC-RESTORE",
+              "before": "FAIL",
+              "beforeFailure": "report does not state first-review flag coverage",
+              "after": "PASS"
+            },
+            "affectedCriteria": [
+              "AC-RESTORE"
+            ],
+            "invalidatedNativeUnits": [],
+            "verifySha256After": "ed9a5d52ef246a782f6a5c0f28fd4bd26148afcf12008ef5d01b869a0b256c28"
+          }
+        ],
+        "status": "fixed-offline"
+      }
+    ],
+    "blocksDone": false,
+    "entryOpen": true,
+    "note": "a trial-code cause is recorded only with a preserved snapshot and independent evidence; none is recorded unless listed"
+  }
+}

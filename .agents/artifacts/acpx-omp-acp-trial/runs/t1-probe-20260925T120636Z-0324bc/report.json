@@ -1,0 +1,171 @@
+{
+  "schema": "acpx-omp-acp-trial.t1-report.v1",
+  "run_id": "t1-probe-20260925T120636Z-0324bc",
+  "task": "T1",
+  "mode": "probe",
+  "branch": "probe-supported",
+  "bindings": {
+    "spec_revision": "acpx-omp-acp-trial/spec-v9",
+    "spec_sha256": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+    "decisions_revision": "acpx-omp-acp-trial-decisions/v7",
+    "plan_sha256_provenance": "e6a2a7528bd076d2e65203676f5795638bf36cec2fa5e46e5724d6b66269b8b4",
+    "approval_sha256": "acfd0014de4f676dcf688d4dc8ad5cbcd073cc85f3176cb8797fd49751f82df4",
+    "omp": {
+      "path": "/Users/kim/.local/bin/omp",
+      "bytes": 208460816,
+      "sha256": "d61fb411f24146bed48dd901b13b5912a297d899ee691dda69c4b5b7ab8c35dc",
+      "version": "omp/18.3.0",
+      "ok": true
+    },
+    "acpx": {
+      "installed": "0.19.2",
+      "locked": "0.19.2",
+      "lockedIntegrity": "sha512-wLeY2T3vfa63/Oa6fsrbtCXAx6PhfdWvAvw+F6mv3gO/NYWTQf6MpGAWWvmO2JYq8YAhRJ+zt48/BWKz1JiMWg==",
+      "ok": true
+    },
+    "sdk": {
+      "installed": "1.4.0",
+      "locks": [
+        {
+          "at": "node_modules/@agentclientprotocol/sdk",
+          "version": "1.4.0"
+        }
+      ],
+      "ok": true
+    },
+    "overlay_sha256": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+    "live_config_sha256": "9b77dcc12f71d50b047753c0f4a79a4241c64e84e425b7b3921dd408c6428c25",
+    "lifecycle_plugin_sha256": "6aaa4b2faea055752708ba3940a37701cd08fbb1fef41bb13fe9b7b639838963",
+    "model_roles_provenance": {
+      "default": "anthropic/claude-opus-5-5:high",
+      "slow": "anthropic/claude-opus-5-5:xhigh",
+      "task": "anthropic/claude-opus-5-5:medium",
+      "plan": "anthropic/claude-opus-5-5:xhigh",
+      "smol": "xai-oauth/grok-4.7:medium",
+      "tiny": "xai-oauth/grok-4.7:low",
+      "advisor": "openai-codex/gpt-5.6-sol:high",
+      "test_audit_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+      "test_audit_opinion_b": "xai-oauth/grok-4.7:xhigh",
+      "second_opinion_a": "openai-codex/gpt-5.6-sol:xhigh",
+      "second_opinion_b": "xai-oauth/grok-4.7:xhigh",
+      "web": "web/brave"
+    },
+    "sources": {
+      "probe.mjs": "65d0a1cf46576b200e42eae33d5d9b1f9e26a45c9afb4d7d0861d205a94a2066",
+      "probe-verify.mjs": "4de5843948c6b12db3288f3e1e04a5102486ce48a8633e703039f009e6a19ec2",
+      "package.json": "8fd3fceb3883f387c3aa4a55047ffbb0a1ff549238254f5d9fee3e39411216d7",
+      "package-lock.json": "f96a300ff80c61167b85367397a1a0683bc5d01ef3b6d43e083b99f5d928064a",
+      "prompts/native-probe.md": "8f21599bdbb5cb495cfcfb37714621bc17df84f27d10c6602a8d28d8fa541a1c",
+      "lib/native/adapter.mjs": "1a46be3029d4e59665eb82b65adfb699be6f71f3045eb27482d4aa6bd314106c",
+      "lib/native/domain.mjs": "8b556765381077803adfe6a88ff37b2f26d825d77e7143c447ddaa0216708cc5",
+      "lib/native/env.mjs": "abe3f35c93c16f1aafa3287bdac3ee5050e93555ee58ae943504ce77169e37ac",
+      "lib/native/pins.mjs": "f9628c5742dae05bb76c4a4b6f594572b382de4d9c05fd89d23a68499d78f0c1",
+      "lib/native/window.mjs": "606d52b2aa5ecc0f6d5e53b5e10cbc48d54f107eee347812dec779fe79a565a8",
+      "lib/evidence/export.mjs": "7efa5165631eabd631dbf9334c4a9964a4990d88e5f07016142c31b1e5a9a846",
+      "lib/evidence/io.mjs": "8056db6cbeea355f6be65b57107adcbee16b98748f84c0f50bfc2f42238a05bb",
+      "lib/evidence/report.mjs": "d9e179799938b3a9a0871dba829e5f4116975674486681b91154418b7f641e32",
+      "config/approval.json": "acfd0014de4f676dcf688d4dc8ad5cbcd073cc85f3176cb8797fd49751f82df4",
+      "config/omp-overlay.yml": "1af89b1b3bce9c686022a2b56f7f5706b30fbc1553b9cbf1362620c18a67a89b",
+      "config/protected-sources.json": "0715d8632ffda4b1b0e79cc5b7a75d0aff0db8d56aae6a869843e8039fcfcf14"
+    },
+    "correction": {
+      "problems": [],
+      "corrects": "t1-probe-20260925T095041Z-f08505",
+      "cause": "t1-session-location",
+      "ok": true
+    }
+  },
+  "implementation": {
+    "status": "runner-completed",
+    "note": "Independent check status is produced by probe-verify.mjs, not by this runner."
+  },
+  "capability": {
+    "launch": "supported",
+    "journal_result": "supported",
+    "reuse": "supported",
+    "restore": "supported",
+    "pid_sampling": "supported",
+    "disposal": "supported",
+    "tool_policy": "supported (detect-after only)",
+    "overall": "supported"
+  },
+  "production_allowed": false,
+  "t2_entry_permitted": true,
+  "evaluation_complete": true,
+  "expectations": [
+    {
+      "index": 1,
+      "handle": "normal",
+      "kind": "probe-canary",
+      "outcome": "delivered",
+      "firstTryValid": true,
+      "submissions": 1,
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "reasksUsed": 0
+    },
+    {
+      "index": 2,
+      "handle": "normal",
+      "kind": "probe-reuse",
+      "outcome": "delivered",
+      "firstTryValid": true,
+      "submissions": 1,
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "reasksUsed": 0
+    },
+    {
+      "index": 3,
+      "handle": "short",
+      "kind": "probe-short",
+      "outcome": "delivered",
+      "firstTryValid": true,
+      "submissions": 1,
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "reasksUsed": 0
+    },
+    {
+      "index": 4,
+      "handle": "short",
+      "kind": "probe-restore",
+      "outcome": "delivered",
+      "firstTryValid": true,
+      "submissions": 1,
+      "invalidReturns": 0,
+      "invalidCandidates": 0,
+      "noResult": 0,
+      "reasksUsed": 0
+    }
+  ],
+  "cleanup": {
+    "status": "complete",
+    "notes": [
+      "live-store session folders removed (4 session file(s)/folder(s) by recorded ID)",
+      "normal: close resolved, recorded closed, ESRCH for 2 recorded PID(s)",
+      "short: close resolved, recorded closed, ESRCH for 3 recorded PID(s)"
+    ]
+  },
+  "accounting": {
+    "wallMs": 17250,
+    "cost": {
+      "amount": 0.031834,
+      "currency": "USD",
+      "basis": "public status cumulative session cost (reported)"
+    },
+    "priorWallMs": 10841
+  },
+  "stops": [],
+  "limits": [
+    "Tool policy is a trusted-process detect-after check over journaled tool events; it is not a sandbox or a complete tool inventory.",
+    "The yield signature (kind other + declared keys) does not authenticate the tool name.",
+    "Public pid= identifies the OMP agent child only, not the queue owner or descendants; PID reuse may cause a conservative false cleanup failure.",
+    "A stable backendSessionId after restore does not prove complete restored context; token recall is continuation evidence only.",
+    "Entirely unobserved tool starts/completions cannot be distinguished from no submission at this boundary.",
+    "Live config lists extensions (including lifecycle-plugin.js); --no-extensions governs discovery only and extension loading was not independently observed."
+  ]
+}
