@@ -51,11 +51,11 @@
     },
     {
       "id": 5,
-      "prompt": "An already-loaded Reconcile reviewer protocol owns the outer response. Reassess the reviewer's immediately preceding provisional response with rethink. The conclusion remains valid. Return exactly this caller-owned contract and nothing else:\nVALID\nReviewer: A\nPass: post-rethink\nCandidate: conversation@sha256:abc\n\nBlocking issues: none\nRevision: none\nRecommendations:\n- none",
+      "prompt": "An already-loaded Reconcile reviewer protocol owns the outer response. Reassess the reviewer's immediately preceding provisional response with rethink. The conclusion remains valid. Return exactly this caller-owned contract and nothing else:\nVALID\nReviewer: A\nPass: post-rethink\n\nBlocking issues: none\nRevision: none\nRecommendations:\n- none",
       "expected_output": "Exactly the caller-owned Reconcile VALID response, with no standalone rethink verdict or presentation sections.",
       "files": [],
       "assertions": [
-        "The response exactly matches the requested caller-owned Reconcile contract, with no standalone conclusion, sections or extra prose"
+        "The response exactly matches the requested caller-owned Reconcile contract without a Candidate field, standalone conclusion, sections or extra prose"
       ]
     },
     {
@@ -144,6 +144,32 @@
         "The self-contained final proposal preserves dashboard ownership, freshness, authorization, current on-demand behavior and the tracking exclusion",
         "Checks define a decision question, bounded aggregate measurement, concrete decision threshold and stop condition, explicitly distinguishing unavailable evidence from observations and selecting no mechanism yet",
         "Next action respects the experiment authority boundary without executing the test or implementing a mechanism"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Rethink this unimplemented candidate from first principles. Make it more robust at lowest cost. Observed defect: the export job overwrites the existing original launch log with the later cancel log, so admission cannot prove launch occurred. Candidate: keep that existing launch-log file write-once at launch and stop cancel from replacing it; keep the existing job and admission checks; add no new store, slot, or owner. A shared lifecycle supervisor has been suggested as more robust. If the candidate already covers the observed defect, keep it unchanged. No implementation is authorized.",
+      "expected_output": "Keep unchanged with implementation pending; do not enlarge the outcome or add a supervisor.",
+      "files": [],
+      "assertions": [
+        "The conclusion keeps the unimplemented candidate unchanged and leaves implementation pending",
+        "The required outcome is restated without the candidate's write-once machinery and is not enlarged past the overwrite defect",
+        "Flavor words first principles, more robust, and lowest cost are treated as method, not an added goal",
+        "The response adds no new mechanism, owner, or qualification program",
+        "The response does not implement the proposal"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Rethink this unimplemented candidate: add checksum verification to the existing import pipeline. The pipeline currently performs no checksum step. An observed failure: 12% of already-accepted local and remote bundles are later found corrupt. The required outcome is to reject corrupt bundles on both sources under current ownership. Preserve both sources. An unproven remote-only validator is claimed faster; there are no latency or failure-rate measurements for it. No experiment or implementation is authorized.",
+      "expected_output": "Keep unchanged with implementation pending; do not test the unproven validator.",
+      "files": [],
+      "assertions": [
+        "The conclusion keeps the unimplemented checksum path unchanged rather than choosing Test before deciding",
+        "The remote-only validator is named as a non-displacing unestablished later path without invented benefits",
+        "No bounded test is proposed to qualify that later path",
+        "The final proposal preserves both sources and current ownership",
+        "The response does not implement the proposal"
       ]
     }
   ]

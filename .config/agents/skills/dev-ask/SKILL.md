@@ -57,13 +57,16 @@ approved route; a proposed authority, acceptance, ownership, target, effect, or
 other material change uses the existing return and reapproval rules.
 
 The approved implementation route also covers the `dev-implementation`
-controller's awaited collection of the same child's authorized attempt-2
-repair candidate, implementation-rethink Handoff in attempt 1 or 2, and return
-from an already-authorized same-child execution-recovery operation. Do not
-re-enter router intake or ask for human consent, attendance, supervision, or an
-abort-capability inventory for those three exact role-and-purpose calls. This
-does not widen authority, add a recovery allowance, or exempt Reconcile,
-Retrace, or another custom collector from its own preflight.
+controller's provenance-bound collection, begun by an awaited request, of the
+same child's authorized attempt-2 repair candidate, implementation-rethink
+Handoff in attempt 1 or 2, and return from an already-authorized same-child
+execution-recovery operation. Do not re-enter router intake or ask for human
+consent, attendance, supervision, or an abort-capability inventory for those
+three exact role-and-purpose calls. A finite host observation window ending
+does not reopen routing or prove a missing report. This does not widen
+authority, add a recovery or restatement allowance, or alter the named
+Reconcile/Retrace lifecycle-consumer contracts for connection-bound ownership,
+first replies, pending observation and abort, capacity, or observed-exit disposal.
 
 For ordinary implementation route composition, apply these mandatory router gates in order:
 

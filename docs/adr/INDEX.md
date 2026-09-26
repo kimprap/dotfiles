@@ -7,7 +7,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | ADR | Status | Current scope | Decision IDs |
 |---|---|---|---|
 | [ADR-0001 — Development workflow authority and routing](0001-dev-workflow-authority-and-routing.md) | ACTIVE | Thin role-scoped engineering router; in-place controller entry; child implementation authority; sized direct/planned classification; clean cutover; five-field completion; separation from product, custom workflows, and shipping | D01, D02, D05, D10–D20, D26 |
-| [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | In-place controller default with approved delegated exception; child-owned execution; shared task-sizing projection; lean plan grammar; explicit-schema resumable candidate jobs followed by same-child owner-directed rethink Handoffs; exact generic rethink/recovery-return collection exemption with native waiter limits and custom supervision preserved; same-author planning rethink; mechanical scheduling; controller validation of execution stops; distinct implementation and execution-recovery rethinks; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29, D30 |
+| [ADR-0002 — Lean plans and orchestration](0002-executor-plans-and-orchestration.md) | ACTIVE | In-place controller default with approved delegated exception; child-owned execution; shared task-sizing projection; lean plan grammar; exact explicit-schema launch-candidate admission followed by child-bound OMP wake-job candidate/Handoff returns, with native token/message rules preserved for other capable hosts; exact generic collection exemption with custom lifecycle/count rules preserved; same-author planning rethink; mechanical scheduling; controller validation of execution stops; distinct implementation and execution-recovery rethinks; active-path lifecycle with no automatic archive | D06, D08, D09, D21, D29, D30 |
 | [ADR-0003 — Bounded assurance and repair](0003-bounded-assurance-and-repair.md) | ACTIVE | Two semantic attempts; pre-escalation execution recovery with required/disposable identity and explicit-cap boundaries; explicit invocation-local or named-skill custom adoption without automatic inheritance; compact versus standard/high assurance; one tests-first review; fresh shared-proof accounting and verifier-owned closure; common proof selection, permanent-test value, and A-first manual audit | D03, D04, D22, D28 |
 | [ADR-0004 — Canonical discovery and continual learning](0004-canonical-discovery-and-continual-learning.md) | ACTIVE | Conditional discovery; one terminal engineering learning assessment and one canonical first-return Handoff; human execution map; optional noncanonical maintenance-journal relationship | D07, D23 |
 | [ADR-0005 — Product development workflow and PRD authority](0005-product-development-workflow-and-prd-authority.md) | ACTIVE | Product routing, human product authority, product grilling, PRD identity and approval, iteration artifacts, engineering handoff | P01–P09 |
@@ -15,6 +15,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | [ADR-0007 — Deterministic papercut observation](0007-automated-papercut-lifecycle-and-lean-evidence.md) | ACTIVE | One look after every completed repository-work boundary; complete stable-order root-cause accounting; strict exclusions; opt-in persistence | D24 |
 | [ADR-0008 — Repository agent integration setup](0008-repository-agent-integration-setup.md) | ACTIVE | Approval-gated inspection and initialization of supported repository integrations | D25 |
 | [ADR-0009 — Terminal envelope and lean completion protocol](0009-session-lifecycle-envelope-and-portable-learning.md) | ACTIVE | Stateless session transport; real-boundary Handoffs with concrete receivers; in-place role continuity; exact Outcome/Changes/Checks/Risks/Next completion; same-agent rendering | D27 |
+| [ADR-0010 — Replacement lifecycle plugin for Retrace and Reconcile](0010-replacement-lifecycle-plugin.md) | ACTIVE | Named opt-in lifecycle supervision for persistent custom-controller actors; connection-bound first replies; pending observation/abort; partial sibling accounting; observed-exit disposal; no generic collection-policy expansion | D31 |
 
 ## Decision discovery
 
@@ -22,7 +23,8 @@ This index is the canonical discovery surface for durable repository decisions. 
 |---|---|---|
 | Is this generic engineering work, in-place or delegated controller entry, product work, a custom controller, direct work, or shipping? | ADR-0001 D01, D02, D10, D11, D12, D18; ADR-0002 D06 | ADR-0005 for product authority; custom controller contracts for custom work |
 | What authority does explicit multi-scope repository-harness evaluation delegate? | ADR-0001 D15 | `retrace/SKILL.md` and `reconcile/SKILL.md` for the custom report-only scope-controller seam; no generic routing, implementation, assurance, mutation or shipping authority |
-| Who controls and changes code, how many semantic attempts exist, and which generic child-return collections bypass another supervision gate? | ADR-0001 D02, D10; ADR-0003 D03 | ADR-0002 D06, D21 for in-place controller entry, child ownership, exact role-and-purpose collection exemption, native waiter limits, and rethink details |
+| What owns persistent actor lifecycle, reply visibility, pending observation, capacity, and disposal for Retrace and Reconcile? | ADR-0010 D31 | `retrace/SKILL.md`, `reconcile/SKILL.md`, and `lifecycle-plugin.md` for executable consumer and protocol detail |
+| Who controls and changes code, how many semantic attempts exist, and how are generic child-return collections admitted or exempted from another supervision gate? | ADR-0001 D02, D10; ADR-0003 D03 | ADR-0002 D06, D21 for in-place controller entry, child ownership, OMP depth-0 pre-allocation capability gate and same-turn native-wait retention, failed/injected receipt stops, direct native child `yield` and the bounded no-job wait stop, exact launch-job and child-bound wake-job admission, preserved other-host token/topology rules, the exact collection exemption, and custom lifecycle/count preservation |
 | How may an owner recover from an execution-mechanism failure? | ADR-0003 D03, D04 | ADR-0002 D06, D21 for pre-escalation controller and rethink separation; `dev-implementation/references/execution-recovery.md` for the sole executable policy, resource/cap boundaries, explicit invocation-local or named-skill custom adoption, continuation, and stops; `.config/agents/references/impl-rethink/recovery-rethink.md` only for the exact same-owner pre-retry reasoning core |
 | Does this require a plan and what does the plan contain? | ADR-0001 D11; ADR-0002 D08, D09 | ADR-0002 D29 for lifecycle and storage |
 | How are new implementation tasks sized without changing assurance or plan grammar? | ADR-0001 D11; ADR-0002 D08, D09 | `dev-ticketing/references/task-sizing.md` for the executable shared heuristic |
@@ -65,10 +67,10 @@ intake and classify
   → route owner activates dev-implementation in place
   → distinct resumable child work or active lean plan with explicit response schema
   → terminal ordinary candidate job
-  → exact native job-result retention and candidate admission
-  → same-child awaited code rethink then test rethink under the exact generic collection exemption
+  → same-turn native wait and exact original job-result retention on OMP, then candidate admission
+  → same-child code rethink then test rethink under the exact generic collection exemption
   → optional correction
-  → direct checks and owner-directed lean Handoff reply to the concrete controller
+  → host-selected once-only lean Handoff admission, child-bound wake jobs on OMP
   → one papercut look per completed repository-work boundary
   → compact completion in place
      or one independent review → one independent verifier → one learning assessment → one canonical learning Handoff

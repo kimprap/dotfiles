@@ -9,20 +9,21 @@ This protocol and `../SKILL.md` are the only executable Reconcile semantic
 owners. Do not load `execution-flow.md`; it is a non-runtime human maintenance
 map. Before the first return, read
 [`agent-return`](../../../references/agent-return/return.md) for portable
-declared-body, lifecycle, provenance, extraction, and observed-return retention
-rules only; it owns no pass, admission, or correction budget. On OMP also read
-the [OMP agent-return adapter](../../../harnesses/omp/agent-return.md) for native
-addressability, message, supervision, and disposal facts.
+declared-body and semantic admission rules only; it owns no pass, admission, or
+correction budget. On OMP also read the
+[OMP agent-return adapter](../../../harnesses/omp/agent-return.md) for the named
+lifecycle consumer, connection-bound reply, turn/reuse, pending, and disposal
+facts.
 
-Bind the exact invoking controller from native launch provenance: the real
-top-level Main for direct use, or the current scope-child ID for delegation,
-never the outer Retrace parent. Keep this same binding for every report token,
-recipient, context wait, and disposal owner; never reuse an outer scope-return
-token. Delegated reviewer packets carry the approved report-only authorization
-context outside the unchanged six-field lineage. Check that context and its
-readable exact-byte identities; a Correction may replace only this scope's
-report, not repository/evidence bytes, objective/evaluand, protected behavior,
-exclusions, or another report. Recommendations do not authorize those effects.
+Bind the exact invoking controller from the current lifecycle connection: the
+real top-level Main for standalone use, or the current scope connection for
+delegation, never the outer Retrace parent. Keep this same binding for every
+request and cleanup owner. Delegated reviewer packets carry the approved
+report-only authorization context outside the unchanged six-field lineage.
+Check that context and its readable exact-byte identities; a Correction may
+replace only this scope's report, not repository/evidence bytes,
+objective/evaluand, protected behavior, exclusions, or another report.
+Recommendations do not authorize those effects.
 
 Perform only the operation requested by the current controller message. Return
 the complete response in its bound format and delivery channel. Do not initiate
@@ -30,24 +31,24 @@ or prepare subsequent workflow operations.
 
 ## Bootstrap packet
 
-The controller allocates and retains A and B before outer iteration one. The
-launch packet binds your logical role, this protocol's exact locator and digest,
-and the invoking controller identity. It requests no authoritative report,
-readiness, candidate inspection, verdict, or supplemental-skill load. Launch
-output and launch-turn completion are not readiness.
+The named `reconcile` consumer declares and retains A and B before outer
+iteration one. The controller dispatches each reviewer a separate bootstrap
+readiness request whose packet binds logical role, this protocol's exact
+receiver-readable locator, the invoking controller identity, and phase
+`readiness`. Re-read and hash the complete protocol bytes; require its
+`# Reconcile reviewer protocol` header and retain that identity for later reads.
+The controller retains the publish-time hash too; protocol drift stops rather
+than rebinding. Do not include a protocol-digest field in the request or reply;
+compute it from the referenced bytes. Bootstrap requests no candidate
+inspection, verdict, or supplemental-skill load.
 
-The controller first lets your launch-only turn settle locally. It then observes
-your exact child ID registered and addressable under that controller through the
-host's current native roster or equivalent evidence; allocation or launch
-settlement alone is insufficient. It sends a separate bootstrap readiness
-request over the owner-directed message seam with a fresh
-controller-authored correlation token. Copy that token to the native
-reply-correlation field and send one role-bound line, `Ready: reviewer {A or B}`.
-This bootstrap-only line may end at EOF or with one LF or CRLF; no other
-whitespace, text, or lines are allowed. This does not relax or normalize any
-review response. Remain retained for the controller's first review-turn packet.
-Do not contact the counterpart. Context-only synchronization is not bootstrap
-or review. Registered addressability does not supply semantic readiness.
+Reply once through the current connection-bound `lifecycle_channel` with the
+role-bound line `Ready: reviewer {A or B}`. This bootstrap-only line may end at
+EOF or with one LF or CRLF; no other whitespace, text, or lines are allowed.
+The first accepted reply establishes semantic readiness only; its request
+`turn` and `reuse` remain separate lifecycle facts. Remain retained for the
+controller's first review-turn packet. Do not contact the counterpart.
+Context-only synchronization is not bootstrap or review.
 
 ## Review-turn packet
 
@@ -62,42 +63,45 @@ Require a review-turn packet to supply:
   parent proposal identity, author reviewer, author pass, and source
   finalized-response digest;
 - decision-bearing readable context;
-- this protocol's exact locator and digest;
+- this protocol's exact receiver-readable locator;
 - expected logical reviewer and pass;
 - the invoking controller identity; and
-- the host-provided authoritative IRC-send seam and a controller-authored correlation
-  token in the request packet, to copy unchanged into `replyTo`.
+- the current named lifecycle request target and exact semantic phase.
 
 On your first actual reviewing turn, the packet also supplies the full immutable
 run-original content or an approved readable locator. Later packets retain only
-its identity. The controller may resend approved original context once only to correct an
-otherwise resolvable `BLOCKED` response.
+its identity. The controller may resend approved original context once only to
+correct an otherwise resolvable `BLOCKED` response.
 
-Confirm the protocol digest, reviewer, pass, working identity, lineage, controller
-identity, IRC seam, and readable inputs before reviewing. Return `BLOCKED` when
-required input is missing, unreadable, stale, or mismatched. Review only the
-current complete working proposal against approved authority. Never treat an
-unapplied artifact Correction as edits on another Correction: each complete edit
-set is interpreted against the immutable outer base.
+Re-read and hash the protocol at its bound locator; require its retained hash.
+Confirm reviewer, pass, the packet's working identity, lineage, controller
+identity, lifecycle phase, and readable inputs before reviewing.
+Return `BLOCKED` when required input is missing, unreadable, stale, or
+mismatched. Review only the current complete working proposal against approved
+authority. Never treat an unapplied artifact Correction as edits on another
+Correction: each complete edit set is interpreted against the immutable outer
+base.
 
 Do not mutate files or proposal text, delegate or spawn, control the loop,
 contact the counterpart, present final output, or use `history://` or
-`agent://` to inspect another reviewer. Never await, poll, read through, or use
-IRC except for the one controller-requested authoritative send described below.
+`agent://` to inspect another reviewer. Use only the current
+connection-authorized `lifecycle_channel.reply`; never request another actor,
+poll, observe the root run, or use another transport.
 
 ## Complete response contract
 
 Return only one complete matching template, without a code fence or additional
 prose. The verdict is exactly one bare uppercase token on line 1. Use the
-expected reviewer, pass, and exact reviewed working-proposal identity. The
-expected pass is exactly `initial`, `post-rethink`, or `later` as supplied by
-the current controller message.
+expected reviewer and pass. The exact reviewed working identity is bound by
+the current connection-owned request and its controller-supplied packet,
+not an echoed `Candidate:` field. Do not add such a field, even optionally.
+The expected pass is exactly `initial`, `post-rethink`, or `later` as supplied
+by the current controller message.
 
 ```text
 VALID
 Reviewer: {A or B}
 Pass: {exact expected pass supplied by the controller}
-Candidate: {exact reviewed identity}
 
 Blocking issues: none
 Revision: none
@@ -109,7 +113,6 @@ Recommendations:
 REVISE
 Reviewer: {A or B}
 Pass: {exact expected pass supplied by the controller}
-Candidate: {exact reviewed identity}
 
 Blocking issues:
 - {at least one blocking issue}
@@ -123,7 +126,6 @@ Preserve:
 BLOCKED
 Reviewer: {A or B}
 Pass: {exact expected pass supplied by the controller}
-Candidate: {exact reviewed identity}
 
 Blocker: {missing evidence, authority, or transport}
 Resume with: {exact input needed}
@@ -145,7 +147,7 @@ authorizes mutation.
 
 A duplicate verdict, raw `rethink` verdict such as `extend`, lowercase,
 synonymous, qualified, or multiple verdict, missing field, wrong reviewer,
-wrong pass, stale Candidate identity, unchanged Correction, or non-applicable
+wrong pass, stale request/candidate binding, unchanged Correction, or non-applicable
 Correction is malformed. On the controller's same-child contract-correction request,
 return one corrected complete response for the same candidate and authority
 status. Do not ask the controller to normalize prose or invent a semantic edit.
@@ -153,46 +155,36 @@ status. Do not ask the controller to normalize prose or invent a semantic edit.
 ## Review passes and response transport
 
 For readiness and every `initial`, `post-rethink`, or `later` response,
-including each contract correction, use the same owner-directed native message
-seam. On OMP apply the loaded adapter and:
+including each contract correction, publish exactly one complete body through
+the current connection-bound `lifecycle_channel` call with `op: "reply"`.
+Connection identity and the current request bind the actor, owner, request, and
+phase. Do not add a correlation field to the response body, emit a local echo,
+use ordinary completion, or publish through task, hub, yield, transcript, or
+another channel.
 
-1. Send exactly one complete acknowledgment or response as the entire `message`
-   of one non-awaited `hub send`, with `to` equal to the bound invoking
-   controller identity and `replyTo` equal to this request's
-   controller-authored correlation token.
-2. Repeat the exact same text once as the final local in-conversation message
-   for inspectability, then stop. Do not await a send result or use Submit Result
-   for these reports.
+The first accepted reply is authoritative and immediately owner-visible. It
+does not prove successful terminal completion or actor reuse; the controller
+keeps the returned reply, `turn`, and `reuse` facts separate. A host rejection
+blocks transport. A later reply, assistant text, tool acknowledgement, status
+wake, or inferred content cannot replace the first reply. Never resend,
+replay, re-emit, or ask for actor replacement.
 
-Copy the supplied token exactly; do not substitute a native incoming message ID,
-send-receipt ID, launch ID, report ID, or previous request's token. Never add a
-correlation field to the response body. The host binds sender and recipient;
-`replyTo` carries the authored token. A missing request token or host rejection
-or stripping of it blocks transport; do not guess or change the body grammar.
-The report proves neither successful terminal completion of its producing turn
-nor later collector survival. Only a present original current native return can
-be admitted by the controller. Missing current `details.waited` remains
-unresolved and grants no producer retry, replay, re-emission, or second report.
-Any snapshot, local echo, ordinary completion, or rendered copy cannot replace
-native provenance.
-
-For `initial`, inspect the exact working proposal and send the complete
+For `initial`, inspect the exact working proposal and publish the complete
 provisional response only. It has no mutation or terminal authority and is
 superseded by a later admitted finalized response for the same candidate.
 
 Your current request supplies exactly one expected pass. Do not infer a
 supplemental skill load from that label, a later request, a correction, or a
 context-only packet. A context-only packet does not count as an actual review.
-For every requested report, the local echo is non-authoritative. The controller
-does not await, parse, compare, record, or gate on it. Do not make a second IRC
-send, await a receipt, address a peer, send an unsolicited message, or append
-transport commentary.
+Finish the current turn after the accepted reply. Do not make a second reply,
+address a peer, send an unsolicited message, or append transport commentary.
 
-A contract correction inherits the response's pass, authority, and transport
-but replies with the corrective request's own fresh authored token. Corrected
-`initial` remains provisional: it cannot mutate working state or terminate
-negotiation. Corrected `post-rethink` or `later` remains finalized. Keep the
-same reviewer and perform only the correction requested by the current message.
+A contract correction inherits the response's pass and authority but arrives
+as a new lifecycle request with its own request ID and correction phase.
+Corrected `initial` remains provisional: it cannot mutate working state or
+terminate negotiation. Corrected `post-rethink` or `later` remains finalized.
+Keep the same reviewer and perform only the correction requested by the current
+message.
 
 The complete finalized response is sufficient bounded handoff evidence. The
 working proposal packet carries its digest in lineage; create no separate
@@ -201,39 +193,27 @@ artifact, response registry, or full-history transcript.
 ## Context-only synchronization packet
 
 After one reviewer returns the first finalized exact current-identity `VALID`,
-the controller sends the already-live counterpart one context-only packet before any
-mutation, unchanged presentation, or capacity presentation. It supplies the
-complete terminal working proposal or exact readable artifact base plus
-complete bounded edit set, six-field provenance, the complete terminal reviewer
-response, and the controller's intended disposition. The complete terminal response's
-existing `Candidate:` field is the packet's sole dedicated current-candidate
-identity field. The controller copies it verbatim from the admitted response and must not
-add another `Candidate:` or current-identity field, or concatenate, correct, or
-supersede its value. Every required provenance role identity remains present.
+the controller sends the already-live counterpart one context-only lifecycle
+request before any mutation, unchanged presentation, or capacity presentation.
+It supplies the complete terminal working proposal or exact readable artifact
+base plus complete bounded edit set, six-field provenance, the complete
+terminal reviewer response, and the controller's intended disposition. The
+controller copies the admitted response verbatim, without adding a `Candidate:`
+or other dedicated current-identity field to the response or synchronization
+packet. Bind the terminal candidate through the current connection-owned
+request, supplied complete proposal/artifact inputs, and unchanged six-field
+provenance; preserve every required provenance role identity.
 
-On OMP, your sole next action is the adapter's injected `hub wait`: invoke it
-immediately and without prose with exactly `op: wait`, `from: {bound invoking
-controller identity}`, and `timeoutMs: 0`. The controller must already have
-bound an existing external time/abort owner outside this blocked invocation;
-the wait must not sit inside an unbounded enclosing Eval cell. This pair-bound
-parking wait is the sole exception to the review-turn prohibition on await.
-Zero disables only the timer and does not promise survival through terminal or
-abort events. Do not treat early settlement as a new request, report, semantic
-stop, or disposal; preserve that unresolved frontier for the controller.
-Do not emit a local message before or after the tool call and do not complete
-the turn. Do not review or reassess the packet, emit `VALID`, `REVISE`, or
-`BLOCKED`, use IRC, produce a local echo, mutate, dispatch, or control the loop.
-The controller relies only on the host's delivery receipt and neither awaits nor
-consumes the wait result.
+Do not review or reassess the packet, emit `VALID`, `REVISE`, or `BLOCKED`,
+mutate, dispatch, or control the loop. Reply exactly once through
+`lifecycle_channel` with the single line `Synchronized`, then finish the turn.
+That acknowledgment proves only receipt of this context packet; it is not a
+review, verdict, semantic acceptance, or disposal result.
 
 The same pair remains retained for another outer iteration or an eligible
-identity-preserving repair pause. At actual run termination the controller alone
-silently stops/releases both exact run-owned reviewers through the native host
-lifecycle seam. On OMP it follows the loaded adapter's parent-owned exact-ID
-disposal guidance, including after an original job settles; job-scoped Eval
-handle cancellation is not a substitute. Disposal requires no reviewer message
-or turn completion. Do not acknowledge shutdown or leave the context wait to
-help cleanup. The controller must observe disposal before completion; absent or
-failed cleanup blocks success and never justifies ending the controller or
-another agent. Artifact freshness and drift handling remain the controller's
-responsibility, not a new review request.
+identity-preserving repair pause. At actual run termination the controller
+alone disposes both exact run-owned reviewers through the named lifecycle
+consumer. Do not acknowledge shutdown. Successful cleanup requires the
+supervisor's observed-exit disposal result; failed cleanup blocks success.
+Artifact freshness and drift handling remain the controller's responsibility,
+not a new review request.

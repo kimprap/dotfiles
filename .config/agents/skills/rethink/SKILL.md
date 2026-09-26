@@ -19,8 +19,13 @@ owners, contracts, prior decisions, and observed failures yourself; do not ask
 the user for discoverable facts.
 
 State the observable outcome independently of candidate-specific choices, then
-bind it and every confirmed constraint before comparing mechanisms. Treat the
-mechanism under reassessment—including one previously selected by the user—as
+bind it and every confirmed constraint before comparing mechanisms. Restating
+the outcome drops the candidate's mechanism, not its evidence. Add no required
+outcome beyond the stated need, an observed failure, or an inspected constraint
+violation; flavor never enlarges it. The residual gap is what that bound outcome
+still lacks and must be established; a broader gap inferred from it is not.
+Treat the mechanism under reassessment—including one previously selected by the
+user—as
 a candidate, not a constraint merely because it was selected. Acknowledge that
 prior selection and recommend changing it when evidence warrants;
 reassessment alone does not authorize acting on the change or overriding
@@ -44,9 +49,13 @@ survives every cheaper eligible path. A read-only artifact loaded by existing
 owners is an extension when it creates none of those boundaries, but its
 loading, integration, and indirection costs still count. Identical
 copies that must not diverge may justify one read-only source of truth; do
-not centralize merely similar guidance. When selecting a path depends on a
-material, unestablished claim, choose `Test before deciding` and use the
-bounded-test requirements below. Distinguish evidence needed to select the
+not centralize merely similar guidance. When the gap itself, or which eligible
+path covers it at lowest total lifecycle cost, depends on a material
+unestablished claim, choose `Test before deciding` and use the bounded-test
+requirements below. A claim is material only when it can change eligibility or
+which eligible path is cheapest-covering; an unestablished benefit of a later
+path neither displaces an established cheaper covering path nor triggers this
+disposition. Distinguish evidence needed to select the
 approach from later implementation verification: inspection or reasoning may
 establish a claim, so lack of runtime execution alone does not require a test.
 A leading candidate may be named but remains unselected. Do not require a

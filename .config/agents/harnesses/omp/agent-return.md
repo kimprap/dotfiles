@@ -9,21 +9,85 @@ one.
 
 ## Evidence scope
 
-The facts below are grounded in public OMP v18.1.21 source:
+The named lifecycle consumer facts below are grounded in the installed
+[`lifecycle-plugin.js`](extensions/lifecycle-plugin.js),
+[`lifecycle-supervisor.js`](extensions/lifecycle-supervisor.js), and
+[`lifecycle-consumers.js`](extensions/lifecycle-consumers.js). The remaining
+generic implementation-return facts are grounded in OMP v18.3.0 stock source;
+the version pin records evidence and does not enforce the runtime:
 
-- [`task/types.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/task/types.ts)
-- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/task/executor.ts)
-- [`tools/yield.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/tools/yield.ts)
-- [`tools/hub/jobs.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/tools/hub/jobs.ts)
-- [`session/async-job-delivery.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/session/async-job-delivery.ts)
-- [`irc/bus.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/irc/bus.ts)
-- [`tools/hub/messaging.ts`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/tools/hub/messaging.ts)
-- [`eval/js/shared/prelude.txt`](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/eval/js/shared/prelude.txt)
+- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts)
+- [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/index.ts)
+- [`async/job-manager.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/job-manager.ts)
+- [`internal-urls/agent-protocol.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/internal-urls/agent-protocol.ts)
 
-Stock OMP exposes the original current `details.waited` object from an awaited
-send. This contract selects no lookup, custom capture or publication mechanism,
-or report store. Static or synthetic fixture walks must be described as such,
-never as native execution.
+Stock OMP exposes original structured completion jobs through the native surfaces
+listed below. This contract selects no lookup, custom capture or publication
+mechanism, or report store. Static or synthetic fixture walks must be described
+as such, never as native execution.
+
+## Named lifecycle consumer adapter
+
+Retrace and Reconcile use the registered `lifecycle` tool with schema
+`omp-lifecycle-call/v1`. Root controllers call `open`, `dispatch`, `observe`,
+`dispose`, `abort`, and `close`; a delegated Retrace scope uses the injected
+connection-bound `lifecycle_channel` for `request`, `reply`, and owned-child
+`dispose`. Skills supply only the named definition, its semantic binding,
+target, phase, and exact body. They never supply graphs, profiles, argv, models,
+tools, prompts, process factories, or environment overrides.
+
+`open` uses definition `reconcile` with binding
+`{ mode: "standalone", controller }` or
+`{ mode: "delegated", controller, scope }`, or definition `retrace` with
+`{ controller, normalizer?, scopes, maxDirectActors: 4 }`. A Retrace run
+already compiles each scope's delegated Reconcile reviewers; a scope must use
+that connection-bound pair rather than opening another run. Preserve the
+returned `runId` and stable actor IDs for the current invocation only.
+
+`dispatch` returns immediately with one stable request row per call. A
+`pending` row is not a reply; `start-failed` and `delivery-unknown` affect only
+that row and never authorize resend, replay, or actor replacement. Use
+`observe` for root-owned replies and current state. The first accepted
+connection-bound reply body is authoritative and immediately owner-visible.
+Keep its `turn` and `reuse` fields separate: later success, failure, abort, or
+process exit cannot overwrite the reply, and a reply does not make an actor
+reusable until its turn succeeds.
+
+The supervisor owns pending observation and emits compact ID/status-only wakes
+at its fixed interval. A wake is observation-only and never a reply. Elapsed
+silence remains pending until an authoritative reply, concrete terminal
+failure, or explicit owner/user abort; consuming skills do not create polling,
+`hub wait`, Eval, timer, or external-supervision choreography. The owner may
+inspect or abort the exact run/request and must never infer or fabricate a body.
+
+Standalone Reconcile root owns A/B. In delegated Reconcile, the actual scope
+connection owns A/B; the outer Retrace root sees only redacted nested state and
+cannot admit reviewer bodies. Distinct actors may run concurrently. Retrace has
+at most four live direct normalizer/scope actors; nested reviewers do not
+consume that capacity. Partial startup preserves successful siblings and every
+original handle.
+
+A delegated scope calls `lifecycle_channel.dispose` for its exact reviewers and
+requires `data.state === "disposed"` before publishing `scope-result` through
+`lifecycle_channel.reply`. Root then calls `dispose` for that exact scope.
+Successful disposal and `close` require the supervisor's retained process-exit
+observation. These calls can return a success envelope whose `data.state` is
+`failed-cleanup`; callers inspect the state rather than `ok` alone.
+`failed-cleanup` preserves the unresolved actor/PID and capacity and is a
+blocker, not permission to signal unrelated processes, replay work, or replace
+an actor.
+
+Keep each complete original lifecycle result envelope until the semantic
+operation and cleanup that depend on it finish. This is ordinary
+invocation-local retention, not the former launch/roster/return/disposal slot
+scheme. The plugin exposes no proof-export operation or lifecycle-call
+destination field. If an authorized proof requires copying plugin-owned
+results, its prebound contract names the observing owner, definition, expected
+operation kinds, actor targets and phases, and session-local destination before
+`open` or covered `dispatch`. Record the returned run/actor/request IDs from
+each original result, then mechanically copy only already-retained envelopes
+and owner-visible authoritative bodies to that destination. This adds no
+default field, report store, lookup, replay, or alternate observation path.
 
 ## Allocation, addressability, and turns
 
@@ -34,19 +98,14 @@ report admission, and disposal as separate facts. For a participant with a
 readiness or operative request, first let its launch-only turn settle locally,
 then establish the exact registered child ID and actual owner through the
 current native roster or equivalent native registration evidence, then send a
-separate request with its own fresh token. Launch output and turn completion are
+separate request bound to its operation and phase. Launch output and turn completion are
 not readiness; roster presence is necessary for dispatch but proves neither
 semantic readiness, progress, collector survival, nor cleanup.
 
-For Retrace and Reconcile only, before advancing from launch settlement, the
-actual owner copies the complete original native observation that established
-that exact child's settled launch-only turn into its invocation-local
-launch-settlement slot. A legitimately selected ordinary task completion may
-supply this launch observation, but it cannot become readiness or report
-authority. Before sending the separate readiness or operative request, copy the
-complete native roster observation that established exact child ID and actual
-owner into a distinct roster-binding slot. A later roster snapshot, matching
-child ID, job result, or digest cannot fill or replace either earlier slot.
+The generic allocation and addressability facts in this section apply to
+callers that still use task/Eval children. Retrace and Reconcile instead use
+the named lifecycle adapter above; they do not collect launch-settlement or
+roster-binding observations.
 
 Keep independent-child concurrency. Operations for distinct owned children may
 run concurrently subject to the owning protocol and host capacity. Completion,
@@ -71,6 +130,15 @@ output is not this payload.
 
 ## Implementation candidate job collection
 
+Before creating any implementation child, require the OMP collector's
+`taskDepth` to be 0. At `taskDepth > 0`, stop `transport-unavailable` before
+allocation: OMP v18.3.0 does not expose native `wait` to subagents
+([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
+Do not substitute or spawn a delegated controller to bypass this gate.
+Depth 0 still requires every schema, identity and collection capability below.
+This host restriction does not change capable other-host topology or named
+lifecycle-consumer semantics.
+
 This is a separate consumer-side adapter surface from the producer `yield`
 extraction above. Before an implementation-child dispatch, require the caller
 to supply this exact response-object `outputSchema`; an agent or session schema
@@ -94,18 +162,32 @@ unbound controller, child, job, task, attempt, receiver, or expected
 OMP supplies no structured job payload.
 
 The child returns the candidate through one terminal type-absent `yield` with
-`data` equal to the complete response object. An incremental array `type`
-continues the job and is not a completed candidate. The child neither sends
-the candidate through IRC nor parks for rethink.
+`data` equal to the complete response object. That `yield` is one direct native
+tool call in the child's assistant turn, never invoked through eval,
+`tool.yield`, `getattr(tool, 'yield')`, a prelude helper or any other tool
+bridge: a bridged yield reports `Result submitted.` but emits no tool-execution
+events, so OMP registers no launch or wake job. Every controller request to an
+implementation child, launch or follow-up, states this direct native `yield`
+rule. An incremental array `type` continues the job and is not a completed
+candidate. The child neither sends the candidate through IRC nor parks for
+rethink.
+Every implementation-child request, launch or follow-up, also states the
+lean-return rule in
+[Assurance and audit return collection](#assurance-and-audit-return-collection).
 
-Collect by the exact bound job ID, never by `hub wait from=`. The two native
-first-consumer surfaces are:
+For attempt 1 collect the exact allocated launch job. For follow-ups use the
+child/request-order binding below, never launch-job ID equality. The original
+accepted surfaces are the auto-delivered `details.jobs[]` row (envelope
+`schema`) and a row returned by native wait (envelope `structured`).
+Keep native `wait` active in the same controller turn from the launch receipt
+or an eligible follow-up receipt until the selected original result and
+matching row are retained, or until the no-job wait stop below ends that
+follow-up. Do not end that turn before either. Ordinary wait-message traffic
+does not finish collection; continue native wait in the same turn.
+Auto-delivery is admissible only with its original structured object retained;
+display-only delivery is not a reply and cannot be repaired later.
+A result that renders as `<preview …>` is display-only and is not a reply.
 
-- an auto-delivered result's matching `details.jobs[]` row, whose structured
-  envelope is `schema`; or
-- the first unconsumed exact-ID `hub jobs` snapshot or job-winning `hub wait`
-  result's matching `details.jobs[]` row, whose structured envelope is
-  `structured`.
 
 First consumer wins. Immediately copy the complete original native tool result
 and matching job row into current controller invocation state before decoding,
@@ -115,143 +197,193 @@ obligation. Do not obtain or repair this payload through `agent://`, inbox,
 history, transcript or JSONL reads, rendered cards, latest output, copied
 payload, a later job snapshot, or reconstruction.
 
-Before extraction, require the exact bound job and child relationship, a
-successful terminal task job, and a structured envelope with `source` exactly
-`caller`, `status` exactly `valid`, and object-valued `data`. Reject a missing
-row or envelope, a running, failed, cancelled,
-schema-invalid or unavailable job, the wrong job or child, an already-consumed
-result with no structured payload, and any alternate payload source. Pass only
-`schema.data` or `structured.data`, respectively, to the adjacent decoder as
-`response_object`; never pass the native job row or structured envelope. Then
-apply the implementation report's exact task, attempt, receiver, and
-`candidate` phase checks. Candidate job settlement and admission imply neither
-semantic task completion nor child disposal.
+Before extraction, require the bound task job and child relationship, successful
+resolution, and a structured envelope with `source` exactly `caller`, `status`
+exactly `valid`, and object-valued `data`. A text-only resolve, running,
+failed/rejected, cancelled, invalid, unavailable, foreign or already-consumed
+result is unadmitted; structured data in a rejecting job does not make it a reply.
+Pass only `schema.data` or `structured.data`, respectively, to the existing
+decoder as `response_object`. Then require exact task, attempt, owner, receiver
+and phase. Job settlement and admission imply neither semantic task completion
+nor child disposal.
 
-The job result above is the attempt-1 candidate seam. It is not reused for a
-later semantic repair.
+## Implementation follow-up wake jobs
 
-An authorized attempt-2 repair uses the retained same child rather than another
-task job. Before its candidate request, bind the exact controller, retained
-child, task, attempt `2`, receiver, expected `candidate` phase, declared
-response-object schema, active invocation, and fresh owner-authored token. Send
-one awaited owner-directed request. The child replies once by non-awaited
-`hub send` with that exact `replyTo` and a complete body that is JSON encoding
-of exactly `{"response":"<complete candidate report>"}`. Immediately retain the
-complete original native tool return and `details.waited` object before parsing.
-Require exact `from`, `to`, `replyTo`, absence of `wakeRelay: true`, and the
-bound operation and phase. Parse the complete body once as the declared
-response object, enforce its schema consumer-side, then require the report's
-exact task, attempt, owner, receiver, and `candidate` phase. A live message has
-no caller-schema envelope: do not require or invent `source: caller`. Missing,
-malformed, mismatched, relayed, ordinary-completion, job, or alternate-source
-output leaves the repair candidate unadmitted and grants no reconstruction,
-re-emission, replacement, or retry.
+The authorized attempt-2 candidate, implementation-rethink Handoff in either
+attempt, and already-authorized same-child recovery return use the retained
+child's wake jobs. They do not allocate another child. Before each request bind
+the concrete controller/receiver, child registry ID, task, attempt, operation,
+logical report identity, phase and the explicitly declared launch response
+schema in the current invocation.
 
-Only after either candidate is admitted, send the implementation rethink
-wrapper to that same child through a separately tokened awaited request. This
-exact controller's collection of the authorized attempt-2 candidate and the
-same child's rethink Handoff is exempt from the external supervision preflight
-below. The rethink request tells the child to apply the wrapper, perform its
-checks, and make one non-awaited `hub send` back to the controller with the
-complete lean Handoff body and `replyTo` equal to the new token. Retain and
-validate the original returned `details.waited`, then decode only its complete
-`body` as `text`. A child `yield`, another ordinary completion, delivery without
-`details.waited`, a stopped await target, or a replacement child leaves the
-Handoff unresolved and unadmitted.
+Send through `write agent://<child>` and inspect the original
+`details.message.receipts[].outcome`, never rendered delivery text. These are
+delivery facts, not replies. `failed` and `injected` stop that request
+immediately, without waiting for a new wake row: injection is only an aside in
+the busy child's existing turn. A `revived` receipt with changed registry ID
+also stops. Only `woken` or `revived` with the same bound registry ID enters
+same-turn native wait collection. No resend, replacement or allowance reset.
+Allow one outstanding request per child; send the next only after retaining
+the preceding wake job or observing that turn end with no registered job
+through the no-job wait stop below. This adds no polling rule.
 
-## Owner-directed message collection
+The child ends the woken turn with one terminal type-absent `yield`, made as
+one direct native tool call under the rule above, whose `data` is exactly
+`{"response":"<complete report>"}`. Each follow-up request states that rule.
+The wake monitor inherits the launch `outputSchema`, mode and caller source; no
+second envelope or decoder is needed. Candidates do not publish incrementally
+or park.
 
-For `hub send` with `await: true`, OMP installs a waiter before dispatch and sets
-`drainPending: false`. Every owner request expecting a return uses exact
-`timeoutMs: 0`. The waiter matches only the sender and consumes the oldest
-matching waiter; it does not match `replyTo`. Keep at most one outstanding
-awaited request for each exact `(owner, child)` pair. Distinct children may be
-collected concurrently. Always validate the owner-authored token after native
-receipt, along with exact `from`, `to`, and absence of `wakeRelay: true`.
+Retain and consider only the FIRST task-job row for that child arriving after
+the request receipt, with every earlier job for that child already retained.
+The row's native `agentUrlId` (job `agentId`) must equal the bound registry ID.
+Immediately retain the complete original native result and matching row before
+decoding, semantic work or unrelated calls. Apply the successful-resolution,
+caller-schema and exact report checks above and admit the logical report once.
+The already-retained launch candidate cannot satisfy a follow-up.
 
-The same preflight exemption applies when that exact controller collects:
+Never bind follow-ups by job-ID equality or novelty. Launch and wake jobs both
+request `id=childId`; a held collision becomes `childId-2`, `-3`, and so on.
+The plain ID may be reused after eviction. Holds last about 30 seconds after
+consumption or five minutes if unconsumed. Do not wait for holds to expire just
+to avoid collisions. Old, duplicate or foreign rows cannot satisfy the next
+request, even when their job IDs look suitable.
 
-1. the authorized attempt-2 candidate from the retained same child;
-2. the implementation-rethink Handoff from that child in attempt 1 or 2; or
-3. a return from that child for an already-authorized execution-recovery
-   operation.
+Failure before accepted yield registers no wake job and may relay `wakeRelay`
+to the parent. Such a notice is nonauthoritative: no admission, resend,
+replacement or allowance reset. Accepted yield followed by failure registers
+a rejecting job, which remains unadmitted even with structured data. Parent
+relay is skipped only when that parent owns the registered wake job; other
+wakers may receive relays. Registration may fail because the manager is shut
+down or its running limit is reached, not because the desired ID is held.
+No-job registration failure stops. Absence of a row alone is not proof that a
+turn failed or ended.
 
-It applies only to these three `dev-implementation` collection purposes under
-the current approved route. It does not exempt Reconcile, Retrace, another
-custom controller, another recovery caller, or any unrelated indefinite
-collection. It adds no timer, observer, service, retry, resend, replacement,
-replay, or completion guarantee.
+The no-job wait stop is the positive native observation of such a turn end.
+After the controller has read an eligible receipt, a later native `wait` result
+whose `details.jobs` is empty and whose text is
+`No running background jobs to wait for.` means no owner job, running peer or
+live owned service remained: the woken turn ended without a registered job, for
+example after a bridged yield. Stop that request as a missing reply, with no
+admission, further wait, resend, replacement or allowance reset, and assess it
+under the shared execution-recovery policy. Issue that `wait` only after reading
+the receipt, never in parallel with or before the send: the woken turn claims
+running state in microtasks queued before the receipt returns, so only an
+earlier `wait` could observe the pre-start state. A `wakeRelay` or other
+ordinary message remains nonauthoritative and does not end collection. While an
+unrelated peer or owned service runs this result cannot occur, and collection
+stays bounded only by native wait limits. This adds no polling rule.
 
-The native result keeps delivery `receipts` separate from optional `waited`.
-Inspect `isError`, error details, the requested recipient's receipt, `details`,
-and `details.waited` presence in that order before extracting anything.
-Successful delivery with no `waited` or an interrupted outer call is not a
-report.
-When `details.waited` is present, mechanically copy that complete original
-object and its exact `body` into current owner-held invocation state before
-decoding or semantic work. When the current Retrace or Reconcile contract
-requires lifecycle slots, also assign that original to its distinct slot keyed
-to the bound child, operation, phase, and authored token, preserving earlier
-launch-settlement, roster-binding, and return slots across later sends. Other
-consumers gain no named slot or cross-operation lifetime obligation. Then apply
-exact `from`, `to`, authored token, relay, workflow grammar, identity, phase,
-semantic, allowance, and consumption checks and decode only the complete body
-using its predeclared encoding.
+After candidate admission send the one implementation rethink as a separate
+request to that same child. It applies code rethink then test rethink, at most
+one correction, and the owned checks, then terminal-yields its lean Handoff by
+direct native `yield` in the same response object. The three implementation
+collection purposes above retain their exact role-and-purpose preflight
+exemption; they add no recovery, replay, observer, deadline or
+unattended-completion authority.
 
-`executeSend` trims the outgoing recipient and message strings. It cannot
-preserve arbitrary leading or trailing body whitespace. Never reconstruct
-trimmed edges, guess whitespace, normalize newlines, or claim byte identity for
-bytes the native seam did not return. Protocol bodies that require exact edge
-whitespace must stop for an unsupported transport capability rather than repair
-content heuristically.
+OMP does not select a token/message, send-and-wait, or exact-body restatement
+branch for implementation returns. Its `agent://` send has no native reply
+correlation field. No text, agent-output, history, transcript, relay or message
+fallback is admissible. Named lifecycle consumers remain governed above.
 
-Explicit `timeoutMs: 0` disables only the positive timeout timer. Once this
-native `hub send` await is active, TUI steering and Alt+C do not interrupt it.
-The awaited collector can still settle and unregister on the awaited child's
-terminal `agent_end`, target unregistration or hard abort, or the caller/tool
-abort signal. The messaging operation may then retain successful delivery
-receipts while omitting `waited`. Zero timeout therefore does not guarantee
-that the waiter survives until a report arrives, and it authorizes no resend,
-re-emission, replacement, replay, reattachment, or allowance reset. A child
-that neither replies nor reaches one of those native endings can block its
-parent indefinitely; the generic implementation workflow explicitly accepts
-that residual for its three exempt collection purposes.
+## Assurance and audit return collection
+
+Review and verification dispatches pass the same caller `outputSchema` shown in
+[Implementation candidate job collection](#implementation-candidate-job-collection);
+an agent or session schema does not satisfy it.
+
+Every review, verification, learning and implementation-child request, and
+every test-audit auditor request including follow-ups, states this
+lean-return rule: keep the complete Handoff or auditor result well under OMP's
+inline task-result limit, `fullOutputThreshold`, currently 5000 characters of
+rendered body
+including JSON escaping, and reference bulky evidence such as logs, diffs,
+repeated hashes or restated conditions by path or command instead of pasting
+it. Never drop a required Handoff field or a fresh `Observed` result; a Handoff
+that cannot fit is still returned complete.
+
+Admit a review or verification return only when its model-visible result
+renders as `<output>`, not `<preview …>`, and its visible body is the
+caller-schema object `{"response": "<complete Handoff>"}`. Decode that with the
+existing decoder, then apply that role's Handoff contract. The
+implementation-only task, attempt, candidate-phase, `yield`, wake-job and
+`taskDepth` rules do not apply here, nor to the learning and auditor
+dispatches below.
+
+A `<preview …>` result is not observed. Do not fall back to its cut text,
+`details`, `agent://` or Eval, and do not request a shorter rewrite: review's
+one clarification covers only missing fields or format omission
+(`dev-code-review` "One clarification, never a rerun"), and restatement is
+byte-for-byte only under the
+[agent-return contract](../../references/agent-return/return.md) restatement
+rule. The return stops under the role's existing recovery policy.
+
+The single contract verdict stays inside the Handoff. The caller schema is what
+excludes an agent default such as `{overall_correctness, confidence,
+explanation}`; add no `verdict`, `kind` or `phase` field.
+
+A `dev-continual-learning` dispatch passes the same caller `outputSchema`.
+Admit only an `<output>` result whose `response` is the complete learning
+Handoff, then apply that Handoff's rules. A cut-off `<preview …>` result is not
+observed: use no cut text, request no shorter rewrite and do not retry. Before
+dispatch the controller saves repository status plus a content hash of every
+modified and untracked path. After a cut-off result it compares that saved
+state with the current one.
+Same paths and hashes: record `Learning: blocked return not observed` under
+Risks; this records an unseen return, not a learning-step result, and does not
+by itself stop completion. Any new path or changed hash: stop and build no
+completion report, with no blocked line, no `curated` and no guessed papercut.
+The unseen Handoff owed those paths and a papercut look
+([`dev-continual-learning`](../../skills/dev-continual-learning/SKILL.md)
+curation and papercut rule), and completion must account for every change
+([completion input](../../references/completion-presentation-input.md) Changes
+rule). A conflict present only in the unseen Handoff, with no files written, is
+not established and does not stop completion.
+
+Test-audit auditors A and B (`test-audit-opinion-a`, `test-audit-opinion-b`)
+receive the same caller `outputSchema` on every request. Admit only an
+`<output>` result whose `response` is exactly one auditor result: one complete
+proposal, one named liveness stop, one closure result (`CLOSED`, `NOT CLOSED`
+or `INCONCLUSIVE`), or one acknowledgment of the exact accepted proposal. Do not
+decode it as a Handoff. A proposal cannot be shortened to meet the limit named
+above; every per-file row is required. A cut-off `<preview …>` result is not
+observed: use no cut text, request no shorter proposal and do not narrow the
+file list within this audit. It is not any auditor stop, does not reuse the
+`transport-unavailable` gate and gets no audit Handoff. The controller
+records `auditor return not observed` as its own adapter record and stops the
+audit read-only, preserving every unresolved file. A narrower scope is a new
+audit, only when the requester names it.
 
 ## Retrace and Reconcile optional proof export
 
-OMP supplies the native observations above but this adapter selects no default
-export. Only when an authorized Retrace or Reconcile proof requires exported
-lifecycle evidence must its run contract bind the actual observing owner, exact
-invocation-local slots, and session-local destinations before the covered child
-launches. Root instructions, delegated scope contract, and operative request
-must agree. Export copies only already-retained originals; it cannot reconstruct
-a missing slot, change a semantic channel or body, or turn proof incompleteness
-into report failure. No other adapter consumer gains a proof-export obligation.
+For Retrace and Reconcile, use only the named lifecycle adapter's prebound
+proof-export seam above. Generic OMP message observations and task lifecycle
+facts do not become lifecycle-plugin proof slots or an alternate export source.
+No other adapter consumer gains a proof-export obligation.
 
 ## Inbox is not return recovery
 
-`hub inbox` exposes current mailbox and live-session-buffer data and can consume
-at least one source even with `peek: true`. Successfully injected messages do
-not remain in the bus mailbox; only a failed live handoff is buffered there.
-Inbox is therefore not a selected report-observation, reconstruction, or
-post-interruption admission path.
-
-Do not substitute inbox, `irc_message` events, JSONL, `sessionManager.getBranch()`,
-RPC message reads, `history://`, `agent://`, rendered cards, local echoes,
-ordinary completion, or any report store for `details.waited`. Those surfaces
-may aid independent observation only where another contract permits it; they
-never supply or recover the authoritative native return.
+Inbox, rendered messages, JSONL, branch/session accessors, RPC message reads,
+`history://`, `agent://` output reads, rendered cards, local echoes and report
+stores cannot recover or replace an original structured completion-job result.
+Sending a request with `write agent://<child>` does not make reading its output
+an admitted return surface.
 
 ## Supervise indefinite operations externally
 
+Named lifecycle-consumer operations governed by this adapter do not use the
+generic external-supervision requirement because the plugin owns their pending
+observation.
+
 Except for the three exact `dev-implementation` controller collection purposes
-defined above, before using an awaited report collector or reviewer parking
-wait with `timeoutMs: 0`, bind an existing time/abort owner that remains outside
-the blocked invocation, can inspect concrete progress, and can interrupt that
-exact operation under the current protocol. Do not invent another supervisor
-or place an unbounded wait inside an unbounded Eval cell. If no such external
-capability exists, report that execution limitation and do not begin the unsafe
-wait.
+defined above, before using a settings-driven unbounded awaited report
+collector or reviewer parking wait, bind an existing time/abort owner that
+remains outside the blocked invocation, can inspect concrete progress, and can
+interrupt that exact operation under the current protocol. Do not invent
+another supervisor or place an unbounded wait inside an unbounded Eval cell. If
+no such external capability exists, report that execution limitation and do
+not begin the unsafe wait.
 
 A finite Eval cell timeout is not sufficient protection for an Eval agent or
 completion handle wait: OMP pauses the cell watchdog while handle waits run and
@@ -272,22 +404,19 @@ protocol progress, suspected stall, demonstrated machinery failure, and a human
 cap remain distinct; silence or one repeated unchanged observation at or after
 five minutes proves none of them and authorizes no action.
 
-Preserve the operation token, delivery facts, exact owner/child identities, used
+Preserve the bound operation/request identity, delivery facts, exact owner/child identities, used
 or unknown semantic and recovery allowances, original native returns already
 observed, and unresolved frontier before unrelated handling. Do not replay a
 successfully delivered request.
 
 
-On actual Reconcile termination, the bound OMP controller uses parent-owned
-native `hub cancel` for the exact registered reviewer IDs, including retained
-reviewers whose original jobs settled; Eval `AgentHandle.cancel` is job-scoped
-and is not a substitute. Before completion, copy the complete original native
-result establishing protocol-required terminal non-running or removal into a
-distinct disposal-evidence slot for each exact owned reviewer and preserve the
-earlier lifecycle slots through final assembly. A later roster snapshot,
-cancellation request or receipt, matching child ID, report, or turn completion
-cannot fill that disposal slot. This cleanup seam neither changes reviewer
-ownership nor makes another lifecycle object disposal evidence.
+On actual Retrace or Reconcile termination, use the named lifecycle adapter:
+the delegated scope disposes its reviewers before its reply, the root disposes
+each exact completed scope, and the root closes remaining descendants before
+ancestors. Require `disposed` or `closed`; preserve `failed-cleanup` and its
+unresolved actor/PID as a blocker. Generic `hub cancel`, Eval handle
+cancellation, roster removal, a request receipt, report, or turn completion is
+not lifecycle-plugin disposal evidence.
 
 Retrace and Reconcile explicitly adopt the sole generic
 [execution-recovery policy](../../skills/dev-implementation/references/execution-recovery.md)

@@ -9,11 +9,12 @@ disable-model-invocation: true
 
 # Reconcile
 
-Bind the exact invoking controller from native identity: direct human use binds
-the real top-level Main; delegated use binds the actual scope child, never its
-outer Retrace parent. Keep that controller as the sole canonical-candidate owner,
-mutator, validator, liveness detector, ephemeral recorder, and presenter. Before
-any reviewer dispatch, read and follow
+Bind the exact invoking controller from the named lifecycle consumer: direct
+human use binds the real top-level Main through a standalone `reconcile` run;
+delegated use binds the actual Retrace scope connection in its existing
+`retrace` run, never the outer Retrace parent. Keep that controller as the sole
+canonical-candidate owner, mutator, validator, semantic liveness detector,
+ephemeral recorder, and presenter. Before any reviewer request, read and follow
 [the reviewer protocol](references/reviewer-protocol.md) completely; together
 this file and that protocol are the only executable Reconcile semantic owners.
 
@@ -23,13 +24,13 @@ or diagnosing Reconcile's controller loop. Invocation, preflight, approval, and
 live execution never load, hash, send, or interpret it; a mismatch is an
 edit-time documentation defect, and the two executable owners win.
 
-Portable declared bodies, lifecycle distinctions, native-provenance
-obligations, extraction boundaries, and observed-return retention live in
-[agent-return](../../references/agent-return/return.md); they own no Reconcile
-pass, admission, or correction budget. On OMP, load the
-[OMP agent-return adapter](../../harnesses/omp/agent-return.md) with it before
-transport preflight. The adapter owns native envelope, collector,
-addressability, supervision, and disposal facts, not Reconcile semantics.
+Portable declared bodies, semantic admission, and generic return boundaries
+live in [agent-return](../../references/agent-return/return.md); they own no
+Reconcile pass, admission, or correction budget. On OMP, load the
+[OMP agent-return adapter](../../harnesses/omp/agent-return.md) before lifecycle
+preflight. The adapter owns the named consumer, connection-bound reply,
+reply/turn separation, owner visibility, pending observation, abort, capacity,
+and observed-exit disposal facts, not Reconcile semantics.
 
 ### Explicit execution-recovery adoption
 
@@ -38,7 +39,7 @@ Reconcile explicitly adopts the sole generic
 for its approved active-session invocation, setup, transport, collection,
 capture, and task-local execution machinery. The actual controller remains
 responsible for its machinery; a delegated scope child remains owner of its
-reviewers. This reusable skill-level adoption is known before launch but is not
+reviewers. This reusable skill-level adoption is known before `open` but is not
 retroactive authority for an existing, paused, stopped, or historical run.
 
 Normal use of an already-supported observation path for the same pending
@@ -52,41 +53,50 @@ reset, durable workflow state, or restart.
 
 The inline trusted-caller allowlist is exactly `retrace`. Direct human entry
 uses the inference and binding gate below, retaining both modes. Delegated entry
-requires a plain-text `begin-reconcile` from the actual bound outer parent to the
-current scope child, with these labeled fields and receiver-readable locators:
+requires a plain-text `begin-reconcile` in the successor lifecycle request from
+the actual bound outer parent to the current scope actor, with these labeled
+fields and receiver-readable locators:
 
 - `Caller`: exactly `retrace`.
-- `Parent`: exact outer Retrace parent, verified against native task/message provenance.
-- `Controller`: exact current scope-child identity invoking Reconcile.
+- `Parent`: exact outer Retrace parent, verified against connection-bound
+  lifecycle request provenance.
+- `Controller`: exact current scope actor, verified against this connection.
 - `Scope`: stable approved scope ID.
-- `Scope approval`: `scope-approval@sha256:{digest}` and locator for the frozen
-  complete approved two-column table plus human objectives, protected behavior,
-  and exclusions; retain exact bytes and human approval provenance request-locally.
-- `Scope contract`: `scope-contract@sha256:{digest}` and locator for the exact
-  objective, evaluand, protected behavior, exclusions, prerequisite inputs, and
-  evidence boundary of this scope.
-- `Candidate`: `conversation@sha256:{digest}` and complete conversational report
-  bytes or their receiver-readable locator.
-- `Evidence manifest`: `evidence-manifest@sha256:{digest}` and locator for the
-  exact observations supporting this candidate.
+- `Scope approval locator`: exact parent-frozen locator for the complete
+  approved table, objectives, protected behavior, exclusions and approval
+  provenance; required record header `Kind: scope-approval`.
+- `Scope contract locator`: exact parent-frozen locator for this scope's
+  objective, evaluand, protections, exclusions, prerequisites and evidence
+  boundary; required record header `Kind: scope-contract`.
+- `Candidate locator`: admitted complete conversational report locator;
+  required record header `Kind: conversation`.
+- `Evidence manifest locator`: admitted supporting-observations locator;
+  required record header `Kind: evidence-manifest`.
 - `Mode`: exactly `Conversation replacement`.
-- `Authorization`: `candidate-ready@sha256:{digest}` of the previously admitted
-  complete `candidate-ready` body for this exact scope child and candidate.
+- `Authorization locator`: readable locator of the parent's frozen, previously
+  admitted complete `candidate-ready` body for this scope and candidate. Its
+  first line `candidate-ready` is the kind header; do not prepend or wrap it.
 
-For each content record the producing owner freezes the complete UTF-8 bytes
-before first dispatch, retains them request-locally, and supplies an
-identity-bound receiver-readable locator. Every receiver re-reads and hashes
-those exact bytes before admission. Digests are lowercase SHA-256; never
-reconstruct, implicitly concatenate, normalize newlines, or hash tool anchors.
-Neither the return token nor any native message ID belongs in the
-`candidate-ready` body or Authorization digest. Native parent-origin is checked
-against task/message provenance, not asserted by another body field.
+Use Retrace's closed `begin-reconcile` field order and locator-hash contract.
+The parent copies locators from its admitted freeze, not typed digest fields.
+Re-read and hash complete UTF-8 bytes, including each record's kind header;
+check its kind against the field, parent-known locators against the exact
+request-local freeze, and authorization bytes against the scope's corresponding
+published reply. Bind new records by their first successful locator hash; the
+parent retains that publish-time hash and later reads must match it. Changed
+bytes at a bound locator are drift, not a new baseline. Freeze owned filesystem
+records write-once (`0444` for OMP/proofs), without imposing that permission
+method on other transports or inventing a store. Never reconstruct, concatenate,
+normalize newlines, or hash tool anchors. Neither request/actor correlation
+tokens nor agent-composed digest echoes belong in the control body.
+Parent-origin is checked against the connection-bound lifecycle request.
 
-Admit only when all fields, frozen identities, approved scope/contract, native
-parent/current-controller bindings, current phase, and the exact previously
-admitted candidate-ready authorization match. Reject missing, stale, consumed,
+Admit only when all fields, frozen identities, approved scope/contract,
+connection-bound parent/current-controller provenance, current phase, and the
+exact previously admitted candidate-ready authorization match. Reject missing,
+stale, consumed,
 replayed, foreign, or unsupported delegation before reviewer dispatch. A quoted
-caller label, token alone, ordinary output, or automatic wake relay grants no
+caller label or request ID alone, ordinary output, or a status wake grants no
 authority. Never fall back to artifact mode. Independently explicit human entry
 still uses its own direct binding gate, not a rejected delegated packet.
 
@@ -104,45 +114,40 @@ delegation skips only the redundant Reconcile brief and approval (step 4);
 steps 1–3 still establish capabilities, original/candidate/context, and authority.
 In step 2 delegated entry uses its exact bound report, not direct inference.
 References to approval below mean this validated scope authority for delegation.
-Direct entry completes preflight before rendering a brief, spawning a child,
+Direct entry completes preflight before rendering a brief, opening a run,
 reviewing, or mutating:
 
-1. Establish two configured distinct enabled host-provided persistent read-only
-   role bindings, logical A and B, and documented native capabilities:
-   allocation distinct from launch settlement and registered addressability;
-   retained child identities under this exact owner; same-child normal prompt
-   follow-up and `skill://rethink` load; owner-directed reports with native
-   sender, recipient, preserved authored token, relay discrimination, and
-   original current native return; one-way context delivery; readable shared
-   context; and exact-owned silent disposal while the controller continues.
-   This is static preflight: require no preapproval spawn or actual-pair proof.
-   Establish launch settlement, actual registered child bindings, and correlated
-   readiness after approval, then same-child rethink, context delivery, and
-   disposal at their respective operations. Semantic readiness remains separate
-   from allocation, launch settlement, and addressability.
-   On OMP, follow the loaded adapter for the awaited native envelope,
-   `timeoutMs: 0` limits, launch-handle wait form, roster ownership/addressability,
-   external supervision, and exact disposal. Before any indefinite report
-   collector or counterpart parking wait, require an existing time/abort owner
-   outside the blocked invocation that can observe the concrete operation,
-   process state, and log cursor every five minutes and interrupt the exact
-   operation when allowed; an Eval timeout alone is insufficient. Missing
-   external supervision, native provenance, token-preserving delivery,
-   registered addressability, or silent cleanup blocks. Do not patch the host,
-   change response grammar, substitute a channel, require native request IDs,
-   emulate two roles with one child, replace a lost child, or weaken a seam.
-   Keep every complete original observation the controller already must obtain in
-   a distinct invocation-local slot: each reviewer's launch settlement,
-   pre-readiness roster binding, each readiness/review return keyed by operation
-   and phase, and exact disposal. Preserve those slots across later sends through
-   final assembly and cleanup; never substitute a later snapshot or equal
-   identity for an earlier kind or phase. This adds no persistent state or
-   transport surface.
-   If an authorized proof requires export, bind this controller, the exact slot
-   set, and session-local destinations in the approved run contract before
-   reviewer launch. For delegated proof, root instructions, scope contract,
-   reviewer launch binding, and operative requests must agree. Do not retrofit
-   proof export in a review request or response, and add no default report field.
+1. Establish the configured named `reconcile` consumer with distinct persistent
+   read-only logical A and B profiles. Direct mode must be able to `open`
+   `{ mode: "standalone", controller }`; delegated mode must arrive through the
+   current scope connection in the already-open Retrace run compiled for this
+   exact scope. Require stable actor IDs, connection-bound owner visibility,
+   same-actor successive requests, `skill://rethink` load, exact first-reply
+   retention, separate turn/reuse outcome, pending observation and explicit
+   abort, and owner-scoped observed-exit disposal. This is static preflight:
+   require no preapproval worker launch. `open` validates the complete binding
+   before effects and does not establish semantic readiness.
+   After approval, dispatch role-bound readiness requests to both actors and
+   admit their exact replies before outer iteration one. Distinct actor
+   requests may run concurrently. Missing named-consumer capability,
+   connection ownership, authoritative reply visibility, same-actor follow-up,
+   or observed-exit cleanup blocks. Do not patch the host, supply graphs,
+   profiles, argv, models, tools, prompts, process factories or environment,
+   substitute task/hub/Eval transport, require a caller correlation token,
+   emulate both roles with one actor, replace a lost actor, or weaken a seam.
+   Keep complete original lifecycle result envelopes only in current
+   invocation state until the semantic operations and cleanup that depend on
+   them finish; do not recreate the retired launch/roster/return/disposal slot
+   scheme.
+   If an authorized proof requires export, bind this controller, named
+   definition, expected operation kinds, actor targets and phases, and
+   session-local destinations before `open` or the covered `dispatch`. For
+   delegated proof, root instructions, scope contract, and operative requests
+   must agree. The plugin exposes no export operation or lifecycle-call
+   destination field. Record returned run/actor/request IDs from the original
+   results, then mechanically copy only already-retained envelopes and
+   owner-visible reply bodies to the bound destination; add no default report
+   field or alternate observation path.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
    `unresolved`. Bind exact UTF-8 proposal bytes as
@@ -218,20 +223,18 @@ reviewer state object, or hidden protocol state:
 - immutable outer base content and identity for the current iteration;
 - complete working proposal, exact identity, and origin (`outer-base` or one
   finalized reviewer Correction);
-- bounded lineage for the working proposal;
-- the two persistent A/B child identities and each child's
+- the two persistent A/B actor identities and each actor's
   first-actual-review-completed flag;
-- distinct original native observation slots for each child's launch settlement,
-  pre-readiness roster binding, every readiness/review return keyed by operation
-  and phase, and exact disposal evidence;
-- each original pending return's bound child/controller, expected role/pass/
-  candidate, current controller-authored correlation token, consumed/pending status,
-  and nonresetting correction-used flag;
-- the exact unresolved transport frontier when an expected observation is
-  missing, without backfilling it from working state or a later object;
+- the current lifecycle run binding, original operation results needed for
+  active semantic handling or cleanup, and each request's stable ID, actor,
+  phase, first reply when present, turn and reuse outcome;
+- each original pending return's expected role/pass/candidate,
+  consumed/pending status, and nonresetting correction-used flag;
+- the exact unresolved lifecycle frontier when an expected reply is missing,
+  without backfilling it from working state, a status wake, or a later body;
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
-- terminal finalized response, counterpart context-sync delivery receipt, and
+- terminal finalized response, counterpart context-sync result, and
   identity-safe repair state when present;
 - seen working-identity/reviewer pairs and unresolved frontiers; and
 - a full event trace with monotonically increasing `Step` values.
@@ -242,8 +245,8 @@ finalized-response digest. At outer initialization, parent proposal identity is
 the outer-base identity and author reviewer, author pass, and source response
 are `none`. A changed working proposal records the prior working identity as its
 parent and hashes the exact complete finalized response. Do not create or send a
-separate semantic response-history ledger; the required complete original native
-observation slots remain intact through assembly and cleanup.
+separate semantic response-history ledger; retain the complete original
+lifecycle results required for current assembly and cleanup.
 
 A conversation working identity is the lowercase SHA-256 of its exact complete
 UTF-8 replacement. An unchanged artifact working identity is the canonical
@@ -256,198 +259,152 @@ Every review-turn packet carries the approved goal, intent, constraints and
 exclusions; exact mode; complete current working proposal or exact readable
 artifact base plus complete current edit set; current working identity and the
 six lineage fields; decision-bearing readable context; this protocol's exact
-locator and digest; expected reviewer and pass; the invoking controller identity; and
-the authoritative IRC-send seam and a controller-authored correlation token to copy
-unchanged into `replyTo`. It carries the immutable run-original identity
-on every turn. It carries the full run-original content or approved readable
-locator only on that child's first actual reviewing turn, or once more to
-correct an otherwise resolvable `BLOCKED`. Large context may use native shared
-artifact transport only when the intended child can read it.
+locator; expected reviewer and pass; the invoking controller
+identity; and the exact lifecycle target and semantic phase. It carries the
+immutable run-original identity on every turn. It carries the full run-original
+content or approved readable locator only on that actor's first actual
+reviewing turn, or once more to correct an otherwise resolvable `BLOCKED`.
+Large context may use native shared artifact transport only when the intended
+actor can read it.
+The controller retains the protocol locator's publish-time hash and requires
+matching re-reads before subsequent dispatches. Reviewers independently hash
+that same file at bootstrap and before review; they do not echo its digest.
+Current working identity and all six lineage fields remain controller-computed
+from frozen content and retained responses, not reviewer-authored identity
+fields. Bind each response to the candidate in its current connection-owned
+request; an echoed `Candidate:` field is neither required nor allowed.
 
 ## Retained reviewer lifecycle
 
-After approval, allocate A and B as one retained pair before outer iteration
-one. The launch packet binds only logical role, protocol locator/digest, and this
-controller identity; it requests no readiness report or review. Include no
-supplemental-skill loading recipe or path. Allocation does not establish launch
-settlement or addressability. Let both launch-only turns settle locally,
-concurrently where supported, using the host's supported handle-wait form, and
-copy each complete original native settlement observation into that reviewer's
-distinct launch-settlement slot before advancing. Then observe both exact child
-IDs registered under this controller through the current native roster or
-equivalent addressability evidence and copy each complete original observation
-into its separate pre-readiness roster-binding slot before any readiness send.
-If either original launch settlement or exact binding is unavailable, leave that
-slot unresolved and stop without dispatch, reconstruction, later-snapshot
-substitution, or replacement. Send each child its separate bootstrap readiness
-request with a fresh controller-authored correlation token; distinct owner-child
-requests may run concurrently. Launch output and completion supply no readiness
-authority, and roster addressability supplies no semantic readiness. Admit both
-role-bound readiness reports through the return seam below before outer one.
-Bootstrap adds no review or rethink. Both children remain read-only, persistent,
-and required for the run; never replace a lost child.
+After approval, direct mode opens one named `reconcile` run with binding
+`{ mode: "standalone", controller }`; delegated mode uses the reviewer pair
+already declared for the exact scope by the outer named `retrace` run. Do not
+open a second delegated run. Retain the returned run and stable reviewer actor
+IDs in current invocation state. `open` declares the pair but neither launches
+workers nor establishes readiness.
 
-On each child's first actual reviewing turn, even if it occurs in a later outer
+Dispatch separate bootstrap requests to A and B with phase `readiness`; distinct
+actors may start concurrently. Each body binds only logical role, protocol
+locator, and controller identity and requests the reviewer protocol's
+exact readiness line. Admit readiness only from the first owner-visible reply
+for that exact actor/request/phase after validating `Ready: reviewer A` or
+`Ready: reviewer B`. Keep reply, turn, and reuse separate. Startup or delivery
+failure affects only that request; preserve the successful sibling and every
+stable handle. Do not resend, replay, reconstruct, or replace either required
+actor.
+
+On each actor's first actual reviewing turn, even if it occurs in a later outer
 iteration:
 
-1. Send that child the full run original or approved readable locator and the
-   current review-turn packet with pass `initial`. Include no supplemental-skill
-   loading recipe or path.
-2. Collect its complete provisional response through the current request's
-   owner-directed IRC report, using the correlation and text admission below.
-   The expired bootstrap job is irrelevant. Trace the admitted response as
-   provisional and superseded by its eventual finalized response.
-   It cannot change working state or terminate negotiation.
-3. After admitting that complete initial result, send the same child one
-   follow-up that explicitly instructs it to load `skill://rethink` once,
+1. Dispatch the full run original or approved readable locator and the current
+   review-turn packet to that actor with phase `initial`. Include no
+   supplemental-skill loading recipe or path.
+2. Admit its exact first reply as the complete provisional response. Trace it
+   as provisional and superseded by its eventual finalized response. It cannot
+   change working state or terminate negotiation.
+3. After admitting that provisional response, dispatch one successor request
+   to the same actor. Explicitly instruct it to load `skill://rethink` once,
    reassess its immediately preceding complete provisional response from first
-   principles, and return one complete caller-owned finalized outer response
-   with pass `post-rethink` for the same candidate identity. The follow-up
-   states that the outer Reconcile contract supersedes `rethink`'s standalone
-   wrapper and `reject`, `reuse`, `extend`, `test`, and `proceed` vocabulary.
-   Do not infer this invocation from the pass label, a later request, a
-   correction, or context-only synchronization. Collect that response only
-   through the authoritative IRC send.
-   The protocol requires one exact final local echo for inspectability; the controller
-   ignores it completely and never awaits, parses, compares, records, or gates
-   on it. No Submit Result is required.
-4. Mark that child's first actual review complete only after admitting the
+   principles, and reply with one complete finalized response with pass
+   `post-rethink` for the same candidate identity. The request states that the
+   outer Reconcile contract supersedes `rethink`'s standalone wrapper and
+   `reject`, `reuse`, `extend`, `test`, and `proceed` vocabulary. Do not infer
+   this invocation from the pass label, a later request, a correction, or
+   context-only synchronization.
+4. Mark that actor's first actual review complete only after admitting the
    finalized response.
 
-Every later actual review uses pass `later`, sends no run-original bytes, and
-never loads `rethink`. It returns one complete finalized response through IRC,
-then one ignored exact local echo. A response-contract correction returns to the
-same child and inherits the corrected response's pass, authority, and transport:
-corrected `initial` uses correlated IRC and stays provisional; corrected
-`post-rethink` or `later` uses correlated IRC and stays finalized. All have one
-ignored exact local echo. Neither switches reviewer nor adds a rethink.
-A `BLOCKED` response may receive already-approved readable original context
-once through the same child; persistent `BLOCKED` stops.
+Every later actual review uses pass and phase `later`, sends no run-original
+bytes, and never loads `rethink`. A response-contract correction returns to the
+same actor and inherits the corrected response's pass and authority:
+corrected `initial` stays provisional; corrected `post-rethink` or `later`
+stays finalized. Neither switches reviewer nor adds a rethink. A `BLOCKED`
+response may receive already-approved readable original context once through
+the same actor; persistent `BLOCKED` stops.
 
-For readiness and every review or correction, apply
-[agent-return](../../references/agent-return/return.md) and the loaded OMP
-adapter at the owner-directed message seam. Before sending, author a fresh
-unique token (for example UUIDv4) and bind it to the exact child, this
-controller, expected role/pass/candidate, and original return expectation.
-Include `Reply token: {token}` in the request packet, never in the response
-grammar. Never reuse a token, including for a correction or approved-context
-resend.
+For every readiness, review, correction, approved-context, or synchronization
+request, bind the exact actor, expected role/pass/candidate, semantic operation
+and phase before dispatch. Direct mode uses public `dispatch` and owner
+`observe`; delegated mode uses connection-bound `lifecycle_channel.request`.
+The request ID and physical connection establish correlation and ownership.
+Do not add a reply token to the body or use task, hub, Eval, yield, ordinary
+completion, transcript, history, agent output, local echo, or another channel
+as response authority.
 
-On OMP, every expected readiness, review, correction, or approved-context
-response uses its original owner-directed awaited send with exact `await: true`
-and `timeoutMs: 0`. Keep at most one outstanding collector per owner/child;
-distinct A and B operations may collect concurrently, so this rule does not
-globally serialize independent children. Never reuse an outer scope-return token
-for nested reviewer traffic or use standalone `hub wait` to collect a future
-Reconcile report. Use the external supervision established at preflight. Zero
-disables only the timer: terminal child events, unregistration, hard abort, or
-caller cancellation may still settle and remove the collector. Neither finite
-nor zero timeout guarantees eventual report observation.
+Public `dispatch` returns one stable row immediately. Preserve `pending`,
+`start-failed`, or `delivery-unknown` exactly and account every batched sibling.
+For a pending direct request, use `observe` only on an authorized controller
+turn, including a plugin status wake; create no polling loop, timer, waiter, or
+external supervisor. A delegated connection call returns the owned request
+views when their first replies or terminal failures settle. Elapsed silence
+stays pending until an authoritative reply, concrete terminal failure, or
+explicit owner/user abort. A periodic ID/status-only wake is observation-only
+and never a response.
 
-Inspect the complete current native result for operation error,
-requested-recipient delivery, `details` and `details.waited` presence, exact
-owned-child sender, this actual receiving controller, current authored token,
-and forbidden relay before body access. Delivery or outer success proves no
-report. When `details.waited` exists, mechanically copy that complete original
-object and its exact returned body into a new distinct slot keyed to the child,
-request operation, semantic phase, and current token in the receiving
-controller's invocation state before decoding or semantic work. Preserve that
-slot and all earlier launch, roster, and return slots across later requests.
+Admit only an owner-visible `RequestView.reply.body` from the exact request,
+actor and phase. Retain the complete original lifecycle result before decoding
+the body as text and applying exact expected role, pass, candidate identity,
+workflow grammar, authority, semantic, correction budget, and once-only
+request checks. The first accepted reply remains authoritative through later
+turn failure, process exit, or abort. `turn: succeeded` plus `reuse: ready` is
+required before ordinary later reuse; a reserved successor may wait for that
+same actor. `NO_REPLY`, `WORKER_FAILED`, `ACTOR_TERMINAL`,
+`DELIVERY_UNKNOWN`, or another concrete lifecycle failure never supplies or
+reconstructs a body.
 
-When `details.waited` is absent, the request slot remains unresolved and
-unadmitted. Preserve its exact token, child/controller identities, phase,
-candidate, delivery facts, used or unknown allowances, and all earlier filled
-slots. Do not access a body, substitute a working draft or copied payload,
-redispatch, replay, re-emit, create a new collector, inspect inbox, events,
-JSONL, branch/session state, RPC messages, history or agent output, use a local
-echo, external capture, ordinary completion used as an alternate report, later
-snapshot or later native object, replace an actor, nudge for absence, or reset an
-allowance. Terminal, unregistration, hard-abort, or caller-abort settlement
-does not change this frontier. Matching child IDs or content hashes do not prove
-the missing observation kind or phase.
+When no authoritative reply exists, preserve the exact request, actor,
+controller, phase, candidate, failure/pending state, used or unknown
+allowances, and all earlier admitted responses. Do not substitute a working
+draft, copied payload, assistant output, later reply from another request, or
+status wake; do not redispatch, replay, re-emit, replace an actor, nudge for
+silence, or reset an allowance. Explicit abort terminates only the named
+request/actor/run and creates no replacement or semantic continuation.
 
-After the current native object is copied, decode only its complete returned
-body as `text`, then apply exact expected role, pass, candidate identity,
-workflow grammar, authority, semantic, nudge-budget, and one-time
-token-consumption checks. Any writable immutable snapshot hashes the exact
-returned bytes directly and cannot replace native provenance. A correction
-retires the rejected token and uses a fresh one without changing the original
-expectation or resetting its spent allowance. Bootstrap-job expiry does not
-affect a current request; do not recover mutable latest-agent output. Late
-traffic on a retired or consumed token and further malformed,
-changed-category, wrong-role/pass/candidate, duplicate, or wrong-channel
-attempts do not satisfy the request and earn no additional nudge.
+An unsolicited, stale-phase, already-consumed, malformed, wrong-role,
+wrong-pass, wrong-candidate, or non-applicable body cannot satisfy the current
+expectation. A malformed first reply from the exact actor/request follows the
+one-correction rule below. A missing reply, status-only wake, startup failure,
+delivery uncertainty, terminal failure without a reply, or unavailable
+lifecycle capability is not an invalid body and earns no content correction.
+A valid reply remains admitted if its producing turn later fails; that later
+outcome controls reuse and cleanup, not reply authority.
 
-An unsolicited, foreign, stale-request or already-consumed report cannot satisfy
-the current expectation. Leave an unrelated message pending outside admission;
-do not nudge a foreign sender or redispatch the legitimate request. A malformed
-report from the owned child claiming the current expectation (including wrong
-role/pass/candidate) follows the one-nudge rule below. If an owned child sends a
-misbound reply as its observed attempted current return, reject it and use only
-that same allowance; never silently relabel a stale response. Missing required
-native sender/recipient evidence, host rejection/stripping of the token, or an
-actually unavailable channel stops for the transport blocker, not a content
-nudge to recreate host facts or a fallback response field.
+For each original expected readiness or review return, allow at most one
+corrective request total across body format, identity, and applicability
+failures evidenced by that exact request's first reply. The corrected return
+remains part of the original expectation: a changed error category, duplicate,
+or repeated invalid response cannot reset the allowance. Recoverability
+requires the approved run binding, same actor, approved candidate, and
+necessary state to remain intact. A revoked/conflicting binding, terminal or
+lost actor, or unavailable lifecycle seam stops immediately.
 
-An ignored echo, automatic wake relay, ordinary task output, absent
-`details.waited`, or absence of a report is not an observed invalid current
-report: preserve the unresolved request without redispatch or nudge. No
-completion metadata is a gate. A fully valid correlated current report is
-admitted even if its producing turn subsequently fails or is cancelled; it
-proves the report, not terminal turn success. Loss of the retained child still
-triggers the independent lifecycle stop.
-
-For each original expected bootstrap or review return, allow at most one
-corrective nudge total across delivery, format, and identity failures evidenced
-by an attempted current return. The corrected return remains part of that
-original expectation: a changed error category, duplicate, or repeated invalid
-response cannot reset the allowance. Missing `details.waited` or missing host
-capability is not eligible. An observed wrong-channel attempt may receive the
-operation-specific nudge only when native delivery evidence binds that attempt
-to this expectation; absence of an IRC report or ignored local echo alone is
-not such evidence. Recoverability depends on the approved run binding, retained
-child, and required delivery channel remaining intact. A revoked or conflicting
-approved binding, lost child, or actually unavailable required seam stops
-immediately. Failure of a present returned message to satisfy its required
-channel or response contract does not itself establish loss of that authority
-or capability. With those prerequisites intact, correct the invalid return
-under this allowance without admitting its payload. Establish a return failure
-only from observed delivery facts for that expectation, never from its ignored
-local echo.
-
-For a correctable invalid return with its nudge unused, restate the concrete
-violated requirement and prescribed operation or complete response shape. Ask
-the same child, pass, and candidate where applicable for one complete compliant
-return, not a fragment or silently relabeled stale output. Every correction
-inherits the original expected pass's response transport from the protocol,
-not the rejected return's channel. Author and send a fresh correction token,
-retiring the old token without resetting the original allowance. Revalidate
-delivery and the full contract, including reviewer, pass, and candidate identity.
-A valid correction continues with its inherited authority; any further invalid return for that
-expectation stops and cleans up, even if it fails a different requirement.
-Never switch the bound child or required transport, add a review or rethink, unwrap, normalize,
-deduplicate, or select a last block.
+For an eligible invalid return with its correction unused, restate the concrete
+violated requirement and prescribed complete response shape in one new request
+to the same actor, pass, and candidate. Revalidate the complete reply contract.
+A valid correction continues with inherited authority; any further invalid
+return for that expectation stops and cleans up. Never switch actor, add a
+review or rethink, unwrap, normalize, deduplicate, or select a last block.
 
 This allowance governs invalid expected returns only. Valid `REVISE` and
 `BLOCKED` keep their existing handling, including the once-approved-context
-correction; ignored echoes, context-only synchronization, and separately
-authorized repairs remain outside this guard. None consumes a return-contract
-nudge or replenishes one already spent for the same original expectation.
+correction; context-only synchronization and separately authorized repairs
+remain outside this guard. None consumes a return-contract correction or
+replenishes one already spent for the same original expectation.
 
-The return-contract nudge is distinct from the adopted generic machinery policy.
-If the outer invocation of an already-authorized request, correction,
-collection, synchronization, or validator fails for an eligible execution
-cause, the responsible owner may correct that mechanism under the generic
-policy without issuing another semantic request, changing the authored token or
-review pass, refunding a nudge, or resetting either allowance. Supported
-observation of the same pending operation is continuation. A valid `REVISE`,
-`BLOCKED`, semantic stop, missing required owner/provenance, or exhausted nudge
-cannot be relabeled as machinery failure to reopen the protocol.
+The return-contract correction is distinct from adopted generic machinery
+recovery. If an already-authorized lifecycle call, result capture,
+synchronization, or validator invocation fails for an eligible execution
+cause, the responsible owner may correct only that mechanism under the generic
+policy without issuing another semantic request, changing the review pass,
+refunding a correction, replaying child work, or resetting an allowance.
+Supported observation of the same pending request is continuation. A valid
+`REVISE`, `BLOCKED`, semantic stop, missing required owner/provenance, or
+exhausted correction cannot be relabeled as machinery failure.
 
 Accept only the protocol's exact complete response for the expected reviewer,
 pass, and current working identity. A duplicate, malformed, stale, mismatched,
-or non-applicable response is not a verdict and authorizes no edit. The controller never
-normalizes reviewer prose or invents a semantic correction.
+or non-applicable response is not a verdict and authorizes no edit. The
+controller never normalizes reviewer prose or invents a semantic correction.
 
 ## Outer iterations and negotiation
 
@@ -495,25 +452,21 @@ needed. There is no numeric inner-turn cap and no mutation during negotiation.
 
 ## Synchronization, application, and capacity
 
-Before mutation, unchanged success presentation, or a capacity stop, send the
-already-live reviewer who did not issue terminal `VALID` one context-only
-packet under the protocol. It carries the complete terminal working proposal
+Before mutation, unchanged success presentation, or a capacity stop, dispatch
+the already-live reviewer who did not issue terminal `VALID` one context-only
+request under the protocol. It carries the complete terminal working proposal
 or exact readable artifact base plus complete bounded edit set, its six-field
 provenance, the complete terminal response, and the intended disposition. The
-complete terminal response's existing `Candidate:` field is the packet's sole
-dedicated current-candidate identity field. Copy it verbatim from the admitted
-response; do not add another `Candidate:` or current-identity field, or
-concatenate, correct, or supersede its value. Preserve every required
-provenance role identity. On OMP, instruct the receiver that its sole next action
-is the adapter's immediate no-prose controller-bound parking wait with
-`timeoutMs: 0`. Use the existing external time/abort owner established at
-preflight; do not place it in an unbounded enclosing Eval invocation. The
-controller uses only the host's one-way delivery receipt and does not await or
-consume the wait result. Delivery proves neither waiter survival nor disposal;
-a terminal or abort settlement preserves an unresolved synchronization frontier
-and authorizes no replay. Do not request or consume a review, verdict, rethink,
-IRC response, local echo, mutation, dispatch, or other channel use. A failed
-delivery receipt stops before every mutation or terminal presentation.
+complete terminal response is copied verbatim from the admitted request;
+neither it nor the synchronization packet carries an added `Candidate:` or
+other dedicated current-identity field. The connection-owned request, supplied
+complete proposal/artifact inputs and unchanged six-field provenance bind the
+terminal candidate. Preserve every required provenance role identity. Admit
+only the exact `Synchronized` acknowledgment
+from that actor/request. It is receipt evidence, not a review, verdict,
+rethink, mutation, or semantic acceptance. A failed or missing acknowledgment
+stops before every mutation or terminal presentation; do not replay or replace
+the reviewer.
 
 After successful synchronization:
 
@@ -557,28 +510,27 @@ canonical application before starting a new outer iteration.
 ## Terminal cleanup
 
 Keep the same pair live between outer iterations and during an eligible
-identity-preserving repair pause. A counterpart's context wait is synchronization,
-not a request to terminate the run.
+identity-preserving repair pause. Context synchronization is not a request to
+terminate the run.
 
 At actual run termination—unchanged success, `CAP_REACHED`, terminal artifact
-drift, any other non-resumable stop, or abandonment of a repair pause—silently
-stop/release both exact run-owned reviewer IDs before completion. On OMP use the
-loaded adapter's parent-owned native exact-ID disposal seam, including retained
-reviewers whose original jobs have settled; do not substitute job-scoped Eval
-handle cancellation. Do not send a shutdown prompt, request an acknowledgement,
-await another reviewer message, weaken the no-prose context wait, cancel
-unrelated agents, or terminate the controller. The bound controller observes
-disposal and copies each complete original native terminal non-running or
-removal observation into that exact reviewer's distinct disposal-evidence slot
-before final assembly; never route grandchild cleanup through the outer Retrace
-parent. Preserve launch, roster, and all return slots until both cleanup and
-result assembly finish. A cancellation request or receipt, report, turn
-completion, retained snapshot, later roster view, matching child ID/hash, or
-host teardown cannot fill or replace disposal evidence.
+drift, any other non-resumable stop, or abandonment of a repair pause—dispose
+both exact run-owned reviewer actors before completion. A delegated scope uses
+connection-bound `lifecycle_channel.dispose` for each reviewer and waits for
+`disposed` before publishing `scope-result`. A standalone controller uses
+public owner-scoped `dispose` for each reviewer, then `close` for any remaining
+run-owned state. Do not send a shutdown prompt, request an acknowledgment,
+abort unrelated actors, or terminate the controller.
+
+Successful cleanup requires the supervisor's retained process-exit observation
+and exact `disposed`/`closed` result. Preserve `failed-cleanup`, the exact
+unresolved actor/PID and retained state. A request receipt, report, turn
+completion, status wake, later observation, or host teardown cannot replace
+that result.
 
 Missing or failed cleanup blocks success: preserve the pending disposition and
-exact unresolved reviewer IDs and report the cleanup capability failure rather
-than `Final proposal` or a falsely completed capacity stop. Do not replace a
+exact unresolved reviewer actors and report the cleanup failure rather than
+`Final proposal` or a falsely completed capacity stop. Do not replace a
 reviewer to recover cleanup. An eligible repair pause is not completion and
 retains the pair; label it as a paused frontier.
 
@@ -594,10 +546,10 @@ mutation on any of these frontiers:
   an A/B cycle, or a repeated unresolved frontier;
 - persistent `BLOCKED` or required context still unreadable after the one
   allowed approved-context correction;
-- an invalid expected return after its one corrective nudge, or an
+- an invalid expected return after its one corrective request, or an
   uncorrectable malformed or stale response;
-- lost persistent child, same-child follow-up, IRC channel, or required delivery
-  seam;
+- lost persistent actor, same-actor follow-up, connection-bound reply, or
+  required lifecycle seam;
 - failed context synchronization;
 - approved-authority conflict;
 - `CAP_REACHED`; or
@@ -634,7 +586,7 @@ Read and follow [packed-label](../../references/packed-label.md) for every
 user-facing section. Project the full trace into `## Review rounds` using child
 kind `table`. Include each authoritative finalized verdict exactly once, plus
 context-sync, apply, validate, freshness, cleanup, cap, and stop milestones.
-Exclude provisional initial responses and ignored local echoes.
+Exclude provisional initial responses and observation-only status wakes.
 
 ```markdown
 ## Review rounds
