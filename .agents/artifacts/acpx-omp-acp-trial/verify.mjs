@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Independent T2/T3 verifier (spec acpx-omp-acp-trial/spec-v9).
+// Independent T2/T3 verifier (spec acpx-omp-acp-trial/spec-v10, S3 completion follow-up).
 //   node verify.mjs RUN <AC-MAPPING|AC-MECHANICS|AC-TRANSPORT|AC-RESTORE|AC-REQUESTS|AC-DIAGNOSTICS|AC-DEBUGLOOP|AC-PRODUCTION-GATE|T2|ALL>
 //   node verify.mjs RUN <AC-REHEARSAL|AC-CONVERSATION|AC-RETHINK|AC-ARTIFACT|AC-RETRACE|AC-DURATIONS|AC-CLEANUP|AC-REPORT|T3|ALL>
 // ALL selects the criteria of the run's actual task (t2.json or t3.json).
@@ -23,8 +23,8 @@ const T3_IDS = ["AC-REHEARSAL", "AC-CONVERSATION", "AC-RETHINK", "AC-ARTIFACT", 
 const T3_CRITERIA = T3_IDS.slice(0, 7);
 const T3_EVIDENCE_FILES = ["launch.json", "launcher-exit.json", "t3.json", "scenarios.json", "cleanup.json", "accounting.json"];
 const PROFILE_PINS = { tiny: { model: "xai-oauth/grok-4.7", thinking: "low" }, A: { model: "anthropic/claude-opus-5-5", thinking: "medium" }, B: { model: "xai-oauth/grok-4.7", thinking: "medium" } };
-const REHEARSAL = { usd: 1, wallMs: 15 * 60_000 };
-const PRODUCTION = { usd: 20, tokens: 2_000_000, wallMs: 120 * 60_000 };
+const REHEARSAL = { usd: 3, wallMs: 45 * 60_000 };
+const PRODUCTION = { usd: 20, tokens: 8_000_000, wallMs: 240 * 60_000 };
 const MAX_SLOTS = 4;
 const GUARDS = ["KR1", "KR2", "KR3", "KR4", "KR5", "KR6", "KR7", "KR8", "KR9", "KR10", "KR11", "KR12", "KR13", "KR14", "KR15", "KR16", "KT1", "KT2", "KT3", "KT4", "KT5", "KB1", "KS1", "KS2", "KS3", "KS4", "KS5", "KS6", "KS7"];
 const EVIDENCE_FILES = ["launch.json", "launcher-exit.json", "t2.json", "mechanics.json", "soak.json", "guards.json", "cleanup.json", "accounting.json"];
@@ -33,12 +33,12 @@ const TINY = { model: "xai-oauth/grok-4.7", thinking: "low" };
 const OMP = "/Users/kim/.local/bin/omp";
 const SOAK = { sessions: 4, expectations: 10, maxReasks: 3, maxSubmissions: 160, minBytes: 32768, size: ["1:3", "2:3", "3:3"], rewatch: ["1:2", "1:7", "2:2", "3:2", "4:2"], restoreBefore: 6 };
 const POST_CLOSE_MS = 10_000;
-const POOL = { usd: 4.5, wallMs: 20 * 60_000 };
+const POOL = { usd: 6, wallMs: 30 * 60_000 };
 const SECRET = [/\bsk-[A-Za-z0-9_-]{16,}/, /Bearer\s+[A-Za-z0-9._-]{16,}/, /"(access|refresh|id)_token"\s*:/i, /api[_-]?key"\s*:\s*"/i, /-----BEGIN [A-Z ]*PRIVATE KEY-----/, /CANARY-SCRIPTED-OUTPUT-7f3a/, /CANARY-A7-SECRET/];
 const LARGE = { bytes: 2_097_152, sha256: "9c9214717e58d8ceaf581255faab35c026e5d6b408a0a9df56169b7e247cfebf", ipcLimit: 10_485_760 };
 
 const sha = (b) => createHash("sha256").update(b).digest("hex");
-const PLAN_PATH = ".agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md";
+const PLAN_PATH = ".agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md";
 const readJ = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 function diff(expected, observed, at = "") {
@@ -457,7 +457,7 @@ async function checkGate(E) {
   if (verifierCorrection) c.notes.push(`verifier-only correction ${verifierFixes[0].id} accepted; recomputed criteria differ from the report only for ${differing.join(",") || "none"}`);
   if (t3Correction) c.notes.push(`verifier-only correction ${t3Correction.causes.join(",")} from ${t3Correction.run} accepted; recomputed criteria differ from the report only for ${differing.join(",") || "none"}`);
   if (!verifierOnly) c.need(JSON.stringify(results) === JSON.stringify(E.report.criteria), `report criteria ${JSON.stringify(E.report.criteria)} != verified ${JSON.stringify(results)}`);
-  if (E.report.identities?.["authority:spec"] !== "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748") reasons.push("spec identity not spec-v9");
+  if (E.report.identities?.["authority:spec"] !== "d38f487721c78df7b53d41c31d4b5f37a3c31a699f0d196ee88192c1e0c956ba") reasons.push("spec identity not spec-v10");
   if (E.t2?.authority?.ok !== true) reasons.push("authority not ok");
   // Cleanup and safety.
   if (E.cleanup?.privateRootRemovedAfterRetention !== true || E.lexit?.privateRootPresentAfterChild !== false) reasons.push("private root not removed by the child");
@@ -612,8 +612,10 @@ function reconcileTruth(c, E, rec, label, mode, cap) {
   c.notes.push(`${label}: ${r.status}${r.stop ? `/${r.stop.cause}` : ""}; rounds ${(r.rounds ?? []).length}; reviewers ${(r.reviewersCreated ?? []).join(",")}; re-asks ${reasks}`);
 }
 
+// Applies only to a scenario this run actually recorded in production; an
+// unrecorded scenario keeps branch()'s not-planned skip.
 function correctionScoped(c, E, s) {
-  if (E.t3?.corrects) c.need(E.t3.corrects.stage === "production" && E.t3.corrects.scenarios.includes(s) && E.t3.corrects.ok === true, `${s} extra execution without production-origin correction provenance`);
+  if (E.t3?.corrects && scen(E, "production", s)) c.need(E.t3.corrects.stage === "production" && E.t3.corrects.scenarios.includes(s) && E.t3.corrects.ok === true, `${s} extra execution without production-origin correction provenance`);
 }
 
 function checkConversation(E) {

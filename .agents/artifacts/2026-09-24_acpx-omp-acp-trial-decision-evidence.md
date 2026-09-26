@@ -1,16 +1,16 @@
 # acpx + OMP ACP Trial Decision Evidence
 
-**Revision:** `acpx-omp-acp-trial-decisions/v7`  
-**Status:** Human-confirmed planning direction; three execution proposals await approval  
-**Date:** 2026-09-24  
+**Revision:** `acpx-omp-acp-trial-decisions/v8`  
+**Status:** Human-confirmed decisions for the completed spec-v9 trial and its S3 completion follow-up  
+**Date:** 2026-09-26  
 **Requesting owner:** `Main`  
-**Next-owner role:** `dev-specification`
+**Next-owner role:** `Main`
 
 ## Authority and boundary
 
-The current human instruction authorizes Main to integrate unchanged v3, v5 A1–A7, v7 B1–B6, and the final integration corrections into this evidence, spec-v9 and the existing pending trial plan. Later named corrections control conflicts; unnamed rules are preserved without shortening their meaning. The normative implementation contract is consolidated in [spec-v9](./2026-09-24_acpx-omp-acp-trial-spec.md); the review handoffs are provenance, not additional executable rule layers after integration.
+The earlier human instruction authorized Main to integrate unchanged v3, v5 A1–A7, v7 B1–B6, and the final integration corrections into this evidence, spec-v9 and the then-pending trial plan. Later named corrections control conflicts; unnamed rules are preserved without shortening their meaning. The normative implementation contract is consolidated in [spec-v10](./2026-09-24_acpx-omp-acp-trial-spec.md); the review handoffs are provenance, not additional executable rule layers after integration.
 
-This is authority for these three document revisions only. No implementation, install, credential operation, model call, OMP/acpx execution, live configuration edit, Git, shipping, or production adoption is approved now. No v8 or other handoff file is required. The older lean-redesign specification and plan, live skills, rules and ADRs remain unchanged.
+Revision v8 adds the S3 completion decisions below. The one human approval of the follow-up plan approves this revision, spec-v10 and that plan together; this document grants no effect by itself. The older lean-redesign specification and plan, live skills, rules and ADRs remain unchanged.
 
 ## Preserved decisions
 
@@ -78,23 +78,45 @@ Later model-pin decision, 2026-09-25, verbatim:
 
 Interpretation, not user text: reviewer A's profile (second opinion A, including S3 scope evaluators) becomes `anthropic/claude-opus-5-5` at medium; reviewer B stays `xai-oauth/grok-4.7` at medium; tiny, soak and rehearsal follow the current live `tiny` role, `xai-oauth/grok-4.7:low`. This replaces only the earlier `openai-codex/gpt-5.6-sol:medium` choice for profile A. It changes no grid, pool, rerun allowance or other approved decision, and no trial launch uses `xhigh`. The existing execution approval covers this change.
 
+## S3 completion decisions — verbatim
+
+Supplied in the reviewed S3 completion handoff that the human passed to Main on 2026-09-26:
+
+> if the blocker is related to budget limit, whether they are retry limit or token limit, expand. This should not be the limiting factor.
+
+> Finishing up s3 is preferred.
+
+Human instruction to Main, 2026-09-26, after Main stopped because the trial paths were untracked:
+
+> go ahead and commit and proceed.
+
+Main then staged exactly the spec, this decision evidence, the spec-v9 plan and `.agents/artifacts/acpx-omp-acp-trial/` through `bin/dot-add` and committed them as `63d3664`. `node_modules/` is Git-ignored and not in the commit. That commit is the reproducible spec-v9 base.
+
+Interpretation, not user text:
+
+- A budget limit, retry or token, must not be what ends S3. The follow-up raises the limits to the single values in spec-v10 Follow-up limits and runs one new complete T3 execution in its own runs root, so that S3 ends `supported`, `not-supported`, or `inconclusive` for a non-limit cause.
+- The new run is the record for S1–S3. The spec-v9 run stays history and is never combined with it. The spec-v9 plan stays `DONE` and byte-unchanged.
+- "Retry limit" does not raise the two fixes per cause, the three re-asks per expectation or any other semantic allowance. The reviewed handoff kept those unchanged, and no retry limit caused the spec-v9 S3 stop.
+- If the raised production limit still ends S3, Main reports the measured use and asks the user. There is no automatic raise, and a limit stop is not a finished result.
+- The follow-up does not authorize production adoption. Revising the lean redesign specification and plan is a separate, later handoff after the S3 result.
+
 ## Integrated decision meaning
 
 - KB1 is amended only for this trial. A native submission is a candidate, not yet a reply; domain-invalid candidates consume C4. Ordinary output and every excluded generic surface remain excluded, never fallback. The current spec owns the sole complete admission rule.
 - No-result/invalid-candidate re-asks share three per original expectation. Four planned probe expectations and forty soak expectations are not four/forty total submissions. The unchanged size request may be repeated by an eligible semantic re-ask; no bigger payload, padding, continuation, summed attempts or size-only rescue is authorized. Started-but-unfinished delivery remains non-retryable uncertainty. Rehearsal uses the production budget, not the probe/soak pool named by the probe option.
-- The confirmed four-part production loop is a trial-specific semantic-repair allowance, not generic machinery recovery. It uses the offline failing-before/passing-after reproducer and full required checks, target-owner fixes, actual affected complete proof units, and the global loop-end rule in spec-v9. Two **fixes** per cause replace v5's two corrected **native executions** per cause; multiple necessary proof units do not each count as a fix. Extra production executions are only for evidenced bugs that appeared in production, not for a desired semantic result or rehearsal-only discovery.
-- The production USD20 / 2000000 reported-token / 120-minute limit, or recurrence of one evidenced cause after its second fix, ends the debug loop for every cause. The narrower rehearsal and probe/soak pools stop only work charged to them. The selected production limit is not replenished by tasks, causes, profiles, resources or executions.
+- The confirmed four-part production loop is a trial-specific semantic-repair allowance, not generic machinery recovery. It uses the offline failing-before/passing-after reproducer and full required checks, target-owner fixes, actual affected complete proof units, and the global loop-end rule in the spec. Two **fixes** per cause replace v5's two corrected **native executions** per cause; multiple necessary proof units do not each count as a fix. Extra production executions are only for evidenced bugs that appeared in production, not for a desired semantic result or rehearsal-only discovery.
+- The production limit (spec-v10 Follow-up limits), or recurrence of one evidenced cause after its second fix, ends the debug loop for every cause. The narrower rehearsal and probe/soak pools stop only work charged to them. The selected production limit is not replenished by tasks, causes, profiles, resources or executions; the v8 follow-up sets new caps for its own runs root by human decision, not by replenishment.
 - An unfixed bug blocks the affected production entry until the authorized B4 correction passes its reproducer and full checks; entry being closed by that bug is not a circular prohibition on fixing it. Rehearsal-cap exhaustion does not by itself end fixing. Independent final review, verification and reporting still run after the loop ends, but no exhausted two-fix cause can be repaired by those roles. A known unfixed trial-code bug blocks DONE and requires a human decision for CLOSED or new authority. A truthful native not-supported result must not be relabelled as an unfixed code bug.
-- Exhausting the production limit without a known unfixed code bug does not by itself block DONE: the other exact lifecycle, evidence, branch, assurance and cleanup conditions still apply. No further model work is allowed at that limit; required cleanup, review, verification and reporting remain required.
-- Each S1/S2/S3 scenario has one planned production execution. Rehearsal and authorized corrected executions are additional complete executions, never stitched from partial runs. The scripted 2097152-byte fixture is to traverse the public acpx route bound and byte-counted offline in spec-v9; its runtime mechanics evidence remains unrun and is not native OMP/model-size proof.
+- Exhausting the production limit without a known unfixed code bug does not by itself block DONE: the other exact lifecycle, evidence, branch, assurance and cleanup conditions still apply. No further model work is allowed at that limit; required cleanup, review, verification and reporting remain required. For the S3 completion follow-up only, AC-S3-FINISH makes a production-limit stop block DONE until the user decides.
+- Each S1/S2/S3 scenario has one planned production execution. Rehearsal and authorized corrected executions are additional complete executions, never stitched from partial runs. The scripted 2097152-byte fixture traverses the public acpx route bound and byte-counted offline in the spec; its mechanics evidence is scripted and is not native OMP/model-size proof.
 
-## Approval-time proposals — exactly three
+## Approved proposals — 2026-09-25
 
 1. Extend the confirmed production semantic-repair loop to native-evidenced T1/T2 faults. The earlier “Rerun anywhere within budget” permits locations of eligible executions, not this additional repair authority by itself.
-2. Bind the rehearsal subcap at exactly **USD1.00 / 15 minutes** inside the unchanged production pool. The selected question said “about USD1 / 15 min.”
+2. Bind the rehearsal subcap exactly inside the production pool. The selected question said “about USD1 / 15 min”; spec-v9 bound USD1.00 / 15 minutes, and spec-v10 Follow-up limits holds the current value.
 3. Bind the finite PID exit-observation ceiling at **10 seconds after close returns**, not from close invocation and not a timeout on close itself.
 
-These are included transparently in the candidate contract for fresh plan approval, not reported as already approved. No other new approval-time proposal is introduced.
+The human approved all three with the spec-v9 plan on 2026-09-25. No other proposal is introduced.
 
 ## Preserved pins, scope and later authority
 
@@ -110,7 +132,7 @@ Preserve live OAuth-store selection without credential copying/inspection, 120-m
 
 Retained trial code and safe evidence remain under `.agents/artifacts/acpx-omp-acp-trial/`. Native OMP sessions and raw journals stay private temporary material, never retained copies. Rehearsal, fail-fast snapshots, offline replay, typed export, fix-loop accounting and PID sampling remain trial-proof mechanics; they do not become live skill text, ADR clauses or generic workflow rules. The later live-cutover paragraph of v3 still governs any separately authorized live adoption.
 
-Return actual supported/not-supported/inconclusive causes and justified options, without mandatory old-plan routing, automatic reruns or adoption. The sole active derived plan remains `.agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md`, PENDING with execution unapproved.
+Return actual supported/not-supported/inconclusive causes and justified options, without mandatory old-plan routing, automatic reruns or adoption. The spec-v9 plan `.agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md` is `DONE` (commit `63d3664`). The sole active plan is the follow-up `.agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md`.
 
 ## Evidence and next owner
 
@@ -118,4 +140,4 @@ Return actual supported/not-supported/inconclusive causes and justified options,
 - [v3](./2026-09-24_reconcile-retrace-native-result-revision-handoff-v3.md), [v5](./2026-09-24_reconcile-retrace-native-result-revision-handoff-v5.md), and [v7](./2026-09-24_reconcile-retrace-native-result-revision-handoff-v7.md) preserve reviewed provenance and remain unchanged.
 - [Semantic guard baseline](./2026-09-23_reconcile-retrace-lean-redesign-spec.md#keep-unchanged-the-only-hard-guard), [OMP ACP](https://omp.sh/docs/acp), [OMP authentication](https://omp.sh/docs/secrets), and [pinned acpx shared runtime](https://github.com/openclaw/acpx/blob/v0.19.2/docs/shared-sessions.md).
 
-Main consolidates the current technical authority in spec-v9 and projects its exact acceptance and recovery into the existing pending plan, then presents the combined contract for approval. No implementation or execution is approved by this document.
+Main executes the follow-up plan after its one approval, which also approves spec-v10 and this revision. This document grants no effect by itself.

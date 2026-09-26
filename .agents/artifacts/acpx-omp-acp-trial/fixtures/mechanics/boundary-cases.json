@@ -1460,7 +1460,7 @@
      "do": "charge",
      "pool": "probe-soak",
      "amount": {
-      "usd": 4.5,
+      "usd": 6,
       "wallMs": 60000
      }
     },
@@ -1526,7 +1526,7 @@
      "do": "charge",
      "pool": "rehearsal",
      "amount": {
-      "usd": 1.0,
+      "usd": 3.0,
       "wallMs": 1000
      }
     },
@@ -1544,7 +1544,7 @@
      "do": "charge",
      "pool": "production",
      "amount": {
-      "usd": 18.5,
+      "usd": 16.5,
       "tokens": 1000,
       "wallMs": 1000
      }

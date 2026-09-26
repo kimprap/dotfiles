@@ -1,0 +1,20 @@
+{
+  "runId": "t2-soak-20260926T054948Z-2e6ebb",
+  "command": "t2",
+  "launcherPid": 68483,
+  "privateRoot": "/tmp/acpx-t2-51f1cb9c-e42e-4ae0-9bf0-0080d4abfc84",
+  "childEnvKeys": [
+    "HOME",
+    "LANG",
+    "PATH",
+    "PI_CODING_AGENT_DIR",
+    "TMPDIR"
+  ],
+  "childEnvFixed": {
+    "PATH": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin:/usr/bin:/bin",
+    "HOME": "/tmp/acpx-t2-51f1cb9c-e42e-4ae0-9bf0-0080d4abfc84/home",
+    "TMPDIR": "/tmp/acpx-t2-51f1cb9c-e42e-4ae0-9bf0-0080d4abfc84/tmp",
+    "PI_CODING_AGENT_DIR": "/Users/kim/.omp/agent"
+  },
+  "parentEnvKeyCount": 25
+}

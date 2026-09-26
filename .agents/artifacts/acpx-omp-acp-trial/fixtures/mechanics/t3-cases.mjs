@@ -100,62 +100,96 @@ record("T3 selector on passing set", all.code === 0 && all.last === "PASS T3", a
 const cross = verify(RUN, "AC-MAPPING");
 record("T2 criterion refused on a T3 run", cross.code === 1 && cross.fails.some((f) => f.includes("is not a T3 criterion")), cross.fails[0]);
 
-// ------------------------------------------------------------ plan identity
+// ------------------------------------------------------------ correction scope
+// A --corrects run re-executes only its named production scenarios: the
+// correction-provenance requirement binds a scenario only when this run holds
+// a production record for it; an unrecorded scenario stays "not planned".
+const correction = (name, keep) =>
+  mutate(name, ({ J, W }) => {
+    for (const f of ["t3.json", "launch.json"]) {
+      const x = J(f);
+      x.corrects = { stage: "production", scenarios: ["S3"], ok: true };
+      x.plan = [{ stage: "production", scenarios: ["S3"] }];
+      W(f, x);
+    }
+    const sc = J("scenarios.json");
+    const drop = ["S1", "S2"].filter((s) => !keep.includes(s));
+    for (const s of drop) delete sc.stages.production.scenarios[s];
+    sc.actors = sc.actors.filter((a) => !(a.stage === "production" && drop.includes(a.scenario)));
+    W("scenarios.json", sc);
+  });
+const onlyS3 = correction("correction-S3-only", []);
+for (const id of ["AC-CONVERSATION", "AC-ARTIFACT", "AC-RETRACE"]) {
+  const r = verify(onlyS3, id);
+  record(`correction: S3-only rerun passes ${id}`, r.code === 0 && r.last === `PASS ${id}`, r.fails[0] ?? r.last);
+}
+const extraS1 = verify(correction("correction-S3-with-S1", ["S1"]), "AC-CONVERSATION");
+record("correction: S3-only rerun holding an S1 record fails AC-CONVERSATION", extraS1.code === 1 && extraS1.fails.some((f) => f.includes("S1 extra execution without production-origin correction provenance")), extraS1.fails[0] ?? extraS1.last);
 
-const planText = fs.readFileSync(path.join(REPO_ROOT, ".agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md"), "utf8");
+// ------------------------------------------------------------ plan identity
+// Run against the active plan in both T3 lifecycle states, whichever is live.
+
+const planText = fs.readFileSync(path.join(REPO_ROOT, ".agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md"), "utf8");
 const R = (t) => sha(planLifecycleNormalized(t));
 const V = (t) => sha(planIdentityText(t));
-const base = { r: R(planText), v: V(planText) };
-record("plan: recorder and comparator agree on the current plan", base.r === base.v);
-const lines = planText.split("\n");
-const t3 = lines.findIndex((l) => l.startsWith("- [ ] T3."));
-const acOpen = lines.findIndex((l) => /^- \[ \] AC-/.test(l));
-const status = lines.findIndex((l) => l.startsWith("**Status**: "));
-const edit = (fn) => {
-  const c = [...lines];
-  fn(c);
+const T3_LINE = /^- \[[ x]\] T3\./;
+const DONE_LINE = /^ {2}completed \d{4}-\d{2}-\d{2}-\d{4}$/;
+const withT3 = (text, checked) => {
+  const c = text.split("\n");
+  const i = c.findIndex((l) => T3_LINE.test(l));
+  if (i < 0) return null;
+  if (DONE_LINE.test(c[i + 1] ?? "")) c.splice(i + 1, 1);
+  c[i] = `- [${checked ? "x" : " "}] ${c[i].slice(6)}`;
+  if (checked) c.splice(i + 1, 0, "  completed 2026-09-26-1015");
   return c.join("\n");
 };
-const KEEP = {
-  "task checkbox flip": edit((c) => (c[t3] = c[t3].replace("- [ ] ", "- [x] "))),
-  "full completion lifecycle": (() => {
+const states = { "T3 unchecked": withT3(planText, false), "T3 checked": withT3(planText, true) };
+record("plan: active plan has a T3 task line", states["T3 unchecked"] !== null);
+for (const [state, text] of Object.entries(states)) if (text !== null) planCases(state, text);
+record("plan: T3 lifecycle state does not change the identity", states["T3 checked"] !== null && R(states["T3 checked"]) === R(states["T3 unchecked"]) && V(states["T3 checked"]) === V(states["T3 unchecked"]));
+
+function planCases(state, text) {
+  const tag = (name) => `plan (${state}): ${name}`;
+  const base = { r: R(text), v: V(text) };
+  record(tag("recorder and comparator agree"), base.r === base.v);
+  const lines = text.split("\n");
+  const t3 = lines.findIndex((l) => T3_LINE.test(l));
+  const status = lines.findIndex((l) => l.startsWith("**Status**: "));
+  const recovery = lines.indexOf("## Recovery and stops");
+  const word = lines.findIndex((l, i) => i > t3 && /\bexecution\b/.test(l));
+  record(tag("fixture anchors present"), status >= 0 && recovery >= 0 && word >= 0);
+  if (status < 0 || recovery < 0 || word < 0) return;
+  const edit = (fn) => {
     const c = [...lines];
-    c[status] = "**Status**: COMPLETED";
-    c.splice(status + 1, 0, "**Completed At**: 2026-09-26-1015");
-    const i = c.findIndex((l) => l.startsWith("- [ ] T3."));
-    c[i] = c[i].replace("- [ ] ", "- [x] ");
-    c.splice(i + 1, 0, "  completed 2026-09-26-1015");
-    return `${c.map((l) => (/^- \[ \] AC-/.test(l) ? l.replace("- [ ] ", "- [x] ") : l)).join("\n")}\n## Completion Summary\n\n- Outcome: scripted.\n`;
-  })(),
-  // Regression: a lifecycle line between blank lines just before an appended summary.
-  "completed line before an appended summary": `${planText}\n  completed 2026-09-26-1015\n\n## Completion Summary\n\n- Outcome: scripted.\n`,
-};
-for (const [name, text] of Object.entries(KEEP)) record(`plan: ${name} keeps the identity`, R(text) === base.r && V(text) === base.v && text !== planText);
-const word = lines.findIndex((l, i) => i > t3 && /\bexecution\b/.test(l));
-const CHANGE = {
-  "one word edited in a task body": edit((c) => (c[word] = c[word].replace(/\bexecution\b/, "executions"))),
-  "checkbox-looking text inside a line edited": edit((c) => (c[t3] = `${c[t3]} x`)),
-  "non-lifecycle line added": edit((c) => c.splice(t3 + 1, 0, "  note 2026-09-26-1015")),
-  "heading renamed": edit((c) => {
-    const h = c.findIndex((l) => l === "## Recovery and stops");
-    c[h] = "## Recovery and stop";
-  }),
-  "section after an interior Completion Summary edited": (() => {
-    const c = [...lines];
-    const h = c.findIndex((l) => l === "## Recovery and stops");
-    c.splice(h, 0, "## Completion Summary", "", "- x", "");
-    c[h + 5] = `${c[h + 5]} changed`;
+    fn(c);
     return c.join("\n");
-  })(),
-};
-for (const [name, text] of Object.entries(CHANGE)) record(`plan: ${name} changes the identity`, R(text) !== base.r && V(text) !== base.v && R(text) === V(text));
-const interior = (() => {
-  const c = [...lines];
-  const h = c.findIndex((l) => l === "## Recovery and stops");
-  c.splice(h, 0, "## Completion Summary", "", "- interior summary", "");
-  return c.join("\n");
-})();
-record("plan: interior Completion Summary removed identically", R(interior) === base.r && V(interior) === base.v);
+  };
+  const KEEP = {
+    "task checkbox flip": edit((c) => (c[t3] = `- [${c[t3][3] === "x" ? " " : "x"}] ${c[t3].slice(6)}`)),
+    "full completion lifecycle": (() => {
+      const c = withT3(text, true).split("\n");
+      c[status] = "**Status**: DONE";
+      c.splice(status + 1, 0, "**Completed At**: 2026-09-26-1015");
+      return `${c.map((l) => l.replace(/^- \[ \] (T\d+\.|AC-)/, "- [x] $1")).join("\n")}\n## Completion Summary\n\n- Outcome: scripted.\n`;
+    })(),
+    // Regression: a lifecycle line between blank lines just before an appended summary.
+    "completed line before an appended summary": `${text}\n  completed 2026-09-26-1015\n\n## Completion Summary\n\n- Outcome: scripted.\n`,
+  };
+  for (const [name, t] of Object.entries(KEEP)) record(tag(`${name} keeps the identity`), R(t) === base.r && V(t) === base.v && t !== text);
+  const CHANGE = {
+    "one word edited in a task body": edit((c) => (c[word] = c[word].replace(/\bexecution\b/, "executions"))),
+    "checkbox-looking text inside a line edited": edit((c) => (c[t3] = `${c[t3]} x`)),
+    "non-lifecycle line added": edit((c) => c.splice(t3 + 1, 0, "  note 2026-09-26-1015")),
+    "heading renamed": edit((c) => (c[recovery] = "## Recovery and stop")),
+    "section after an interior Completion Summary edited": edit((c) => {
+      c.splice(recovery, 0, "## Completion Summary", "", "- x", "");
+      c[recovery + 5] = `${c[recovery + 5]} changed`;
+    }),
+  };
+  for (const [name, t] of Object.entries(CHANGE)) record(tag(`${name} changes the identity`), R(t) !== base.r && V(t) !== base.v && R(t) === V(t));
+  const interior = edit((c) => c.splice(recovery, 0, "## Completion Summary", "", "- interior summary", ""));
+  record(tag("interior Completion Summary removed identically"), R(interior) === base.r && V(interior) === base.v);
+}
 
 const bad = results.filter((r) => !r.ok);
 console.log(bad.length ? `FAIL t3-cases (${bad.length}/${results.length})` : `PASS t3-cases (${results.length})`);

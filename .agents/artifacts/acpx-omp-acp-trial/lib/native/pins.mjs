@@ -1,4 +1,4 @@
-// Exact pins, profiles and limits bound by spec acpx-omp-acp-trial/spec-v9.
+// Exact pins, profiles and limits bound by spec acpx-omp-acp-trial/spec-v10 (S3 completion follow-up).
 // Everything here is authority-derived constant data; nothing is discovered at runtime.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,14 +9,14 @@ export const REPO_ROOT = path.resolve(BUNDLE_DIR, "..", "..", "..");
 export const AUTHORITY = Object.freeze({
   spec: {
     path: ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md",
-    revision: "acpx-omp-acp-trial/spec-v9",
-    sha256: "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748",
+    revision: "acpx-omp-acp-trial/spec-v10",
+    sha256: "d38f487721c78df7b53d41c31d4b5f37a3c31a699f0d196ee88192c1e0c956ba",
   },
   decisions: {
     path: ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md",
-    revision: "acpx-omp-acp-trial-decisions/v7",
+    revision: "acpx-omp-acp-trial-decisions/v8",
   },
-  plan: { path: ".agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md" },
+  plan: { path: ".agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md" },
 });
 
 export const OMP_PIN = Object.freeze({
@@ -98,9 +98,9 @@ export const RUNTIME = Object.freeze({
   nonInteractivePermissions: "deny",
 });
 
-// USD4.50 / 20 minutes shared by T1 probe and T2 soak (cumulative, never reset);
-// cost cap raised from USD2 by the 2026-09-25 user grant (config/approval.json).
-export const PROBE_SOAK_POOL = Object.freeze({ usd: 4.5, wallMs: 20 * 60_000 });
+// USD6 / 30 minutes shared by the T1 probe record and T2 soak in runs-s3/
+// (cumulative, never reset): spec-v10 Follow-up limits, decisions v8.
+export const PROBE_SOAK_POOL = Object.freeze({ usd: 6, wallMs: 30 * 60_000 });
 export const PROBE = Object.freeze({
   expectations: 4,
   maxReasks: 3,

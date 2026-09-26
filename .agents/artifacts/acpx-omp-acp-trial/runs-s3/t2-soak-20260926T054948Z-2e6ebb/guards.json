@@ -1,0 +1,414 @@
+{
+  "ids": [
+    "KR1",
+    "KR2",
+    "KR3",
+    "KR4",
+    "KR5",
+    "KR6",
+    "KR7",
+    "KR8",
+    "KR9",
+    "KR10",
+    "KR11",
+    "KR12",
+    "KR13",
+    "KR14",
+    "KR15",
+    "KR16",
+    "KT1",
+    "KT2",
+    "KT3",
+    "KT4",
+    "KT5",
+    "KB1",
+    "KS1",
+    "KS2",
+    "KS3",
+    "KS4",
+    "KS5",
+    "KS6",
+    "KS7"
+  ],
+  "mapping": [
+    {
+      "id": "KR1",
+      "responsibility": "coded+llm",
+      "note": "LLM infers the candidate in the preserved order before the runner; the controller validates the exact approved five-field brief and rejects missing/ambiguous approval",
+      "enforcement": [
+        "controller.mjs#validateApproval",
+        "prompts/semantic/reconcile-reviewer.md#bootstrap"
+      ],
+      "proof": [
+        "reconcile:reject-missing-approval",
+        "reconcile:reject-invalid-mode",
+        "reconcile:reject-artifact-with-conversation-fallback"
+      ]
+    },
+    {
+      "id": "KR2",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#validateApproval",
+        "controller.mjs#applyCorrection"
+      ],
+      "proof": [
+        "reconcile:reject-invalid-mode",
+        "reconcile:reject-artifact-with-conversation-fallback",
+        "reconcile:artifact-edit-application-closure"
+      ]
+    },
+    {
+      "id": "KR3",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#validateApproval",
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:reject-cap-zero",
+        "reconcile:reject-cap-string-number",
+        "reconcile:artifact-cap-one-closure-only-stops"
+      ]
+    },
+    {
+      "id": "KR4",
+      "responsibility": "coded+llm",
+      "enforcement": [
+        "controller.mjs#runReconcile",
+        "prompts/semantic/reconcile-reviewer.md#bootstrap"
+      ],
+      "proof": [
+        "reconcile:revise-lazy-b-application-closure",
+        "reconcile:a-first-valid-no-b"
+      ]
+    },
+    {
+      "id": "KR5",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:a-first-valid-no-b",
+        "reconcile:revise-lazy-b-application-closure"
+      ]
+    },
+    {
+      "id": "KR6",
+      "responsibility": "coded+llm",
+      "enforcement": [
+        "controller.mjs#reviewTurn",
+        "controller.mjs#expectResult",
+        "prompts/semantic/reconcile-reviewer.md#rethink"
+      ],
+      "proof": [
+        "reconcile:revise-lazy-b-application-closure",
+        "reconcile:source-need-continues-pass",
+        "reconcile:a-first-valid-no-b"
+      ]
+    },
+    {
+      "id": "KR7",
+      "responsibility": "coded+llm",
+      "enforcement": [
+        "controller.mjs#runReconcile",
+        "lib/semantic/domain.mjs#validateResult",
+        "prompts/semantic/reconcile-reviewer.md#bootstrap"
+      ],
+      "proof": [
+        "reconcile:valid-recommendations-ignored",
+        "reconcile:revise-correction-conflict-reasked",
+        "window:review-valid-with-correction-conflicts"
+      ]
+    },
+    {
+      "id": "KR8",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#applyCorrection",
+        "lib/semantic/domain.mjs#validateResult"
+      ],
+      "proof": [
+        "reconcile:noop-correction-reasked",
+        "reconcile:artifact-nonunique-edit-reasked",
+        "reconcile:artifact-edit-application-closure",
+        "window:review-artifact-edits-shape"
+      ]
+    },
+    {
+      "id": "KR9",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:blocked-retry-then-valid",
+        "reconcile:persistent-blocked-stops",
+        "reconcile:a-first-valid-no-b"
+      ]
+    },
+    {
+      "id": "KR10",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:artifact-edit-application-closure",
+        "reconcile:artifact-cap-one-closure-only-stops",
+        "reconcile:artifact-validation-failure-no-rollback"
+      ]
+    },
+    {
+      "id": "KR11",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:artifact-drift-before-application-stops",
+        "reconcile:artifact-final-reread-drift-stops"
+      ]
+    },
+    {
+      "id": "KR12",
+      "responsibility": "coded",
+      "note": "C4 amendment: shared three re-asks; fourth invalid return stops",
+      "enforcement": [
+        "controller.mjs#expectResult",
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:shared-c4-fourth-invalid-stops",
+        "reconcile:c4-not-reset-by-source-need",
+        "reconcile:c4-third-reask-recovers",
+        "reconcile:repeated-source-request-stops",
+        "reconcile:repeated-revise-pair-stops",
+        "reconcile:delivery-uncertain-no-c4-no-replay"
+      ]
+    },
+    {
+      "id": "KR13",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:artifact-validation-failure-no-rollback",
+        "reconcile:artifact-write-failure-stops",
+        "reconcile:artifact-drift-before-application-stops"
+      ]
+    },
+    {
+      "id": "KR14",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:failed-disposal-blocks-success",
+        "reconcile:a-first-valid-no-b"
+      ]
+    },
+    {
+      "id": "KR15",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#renderReconcile"
+      ],
+      "proof": [
+        "reconcile:render-reviewer-text-verbatim",
+        "reconcile:a-first-valid-no-b"
+      ]
+    },
+    {
+      "id": "KR16",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runReconcile"
+      ],
+      "proof": [
+        "reconcile:reject-report-only-artifact",
+        "retrace:nested-report-only-reconcile-with-owned-reviewers"
+      ]
+    },
+    {
+      "id": "KT1",
+      "responsibility": "coded+llm",
+      "note": "invocation contract, finding eligibility and entry types are the evaluator's pre-run instructions; locator closure is coded",
+      "enforcement": [
+        "controller.mjs#validateScopeTable",
+        "controller.mjs#runRetrace",
+        "prompts/semantic/retrace-scope.md#evaluate"
+      ],
+      "proof": [
+        "retrace:dependency-order-overlap-and-admitted-identity",
+        "retrace:manifest-locator-outside-closure-reasked"
+      ]
+    },
+    {
+      "id": "KT2",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#validateScopeTable"
+      ],
+      "proof": [
+        "retrace:reject-unapproved-or-cyclic-table",
+        "retrace:dependency-order-overlap-and-admitted-identity"
+      ]
+    },
+    {
+      "id": "KT3",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runRetrace"
+      ],
+      "proof": [
+        "retrace:four-actor-slot-limit",
+        "retrace:requires-depth-then-authored-order",
+        "retrace:slot-frees-only-on-observed-disposal"
+      ]
+    },
+    {
+      "id": "KT4",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runRetrace"
+      ],
+      "proof": [
+        "retrace:dependency-order-overlap-and-admitted-identity",
+        "retrace:unresolved-prerequisite-blocks-dependent-preserves-sibling",
+        "retrace:scope-paused-nonterminal-continues",
+        "retrace:repeated-paused-frontier-stops",
+        "retrace:stale-at-acceptance-blocks-dependent",
+        "retrace:blocker-disposition-is-unresolved"
+      ]
+    },
+    {
+      "id": "KT5",
+      "responsibility": "coded+llm",
+      "note": "status/freshness/outcome labels and aggregate columns are coded; report sections, method and readiness text are evaluator instructions",
+      "enforcement": [
+        "controller.mjs#runRetrace",
+        "controller.mjs#aggregateRows",
+        "prompts/semantic/retrace-scope.md#evaluate"
+      ],
+      "proof": [
+        "retrace:final-freshness-invalidates-requires-dependents-only",
+        "retrace:stale-at-acceptance-blocks-dependent",
+        "retrace:blocker-disposition-is-unresolved",
+        "retrace:manifest-locator-outside-closure-reasked"
+      ]
+    },
+    {
+      "id": "KB1",
+      "responsibility": "coded+llm",
+      "note": "trial-only amendment: the only reply source is the admitted native yield candidate of the owning request window",
+      "enforcement": [
+        "lib/semantic/capture.mjs#closeRequest",
+        "lib/native/window.mjs#RequestWindow",
+        "prompts/semantic/reconcile-reviewer.md#bootstrap",
+        "prompts/semantic/retrace-scope.md#evaluate"
+      ],
+      "proof": [
+        "window:ordinary-output-is-not-a-reply",
+        "window:foreign-and-null-owned-candidates-rejected",
+        "window:pre-and-post-window-candidates-rejected",
+        "window:two-terminal-submissions-first-wins",
+        "window:malformed-missing-field"
+      ]
+    },
+    {
+      "id": "KS1",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#admitAtRoot",
+        "lib/native/window.mjs#RequestWindow"
+      ],
+      "proof": [
+        "root-admission:root-admits-scope-owned-result",
+        "root-admission:root-rejects-nested-review-result",
+        "root-admission:root-rejects-foreign-owner",
+        "window:two-terminal-submissions-first-wins"
+      ]
+    },
+    {
+      "id": "KS2",
+      "responsibility": "coded",
+      "enforcement": [
+        "lib/semantic/capture.mjs#closeRequest",
+        "lib/native/adapter.mjs#runRequest"
+      ],
+      "proof": [
+        "window:retained-result-then-turn-failure",
+        "window:failed-turn-without-result",
+        "public:same-id-restore"
+      ]
+    },
+    {
+      "id": "KS3",
+      "responsibility": "coded",
+      "enforcement": [
+        "lib/semantic/capture.mjs#closeRequest",
+        "lib/semantic/capture.mjs#recoverObservation"
+      ],
+      "proof": [
+        "window:missing-completion-at-closed-window",
+        "window:missing-turn-result-window-unavailable",
+        "public:observer-loss-recovered",
+        "reconcile:delivery-uncertain-no-c4-no-replay"
+      ]
+    },
+    {
+      "id": "KS4",
+      "responsibility": "coded",
+      "enforcement": [
+        "lib/native/adapter.mjs#closeAndObserve",
+        "controller.mjs#runRetrace"
+      ],
+      "proof": [
+        "retrace:slot-frees-only-on-observed-disposal",
+        "reconcile:failed-disposal-blocks-success",
+        "public:observed-closes"
+      ]
+    },
+    {
+      "id": "KS5",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runRetrace"
+      ],
+      "proof": [
+        "retrace:dependent-failure-preserves-siblings",
+        "retrace:unresolved-prerequisite-blocks-dependent-preserves-sibling"
+      ]
+    },
+    {
+      "id": "KS6",
+      "responsibility": "coded",
+      "enforcement": [
+        "controller.mjs#runRetrace",
+        "controller.mjs#invariant"
+      ],
+      "proof": [
+        "retrace:undisposed-children-fail-fast-snapshot",
+        "retrace:scope-paused-nonterminal-continues",
+        "retrace:nested-report-only-reconcile-with-owned-reviewers"
+      ]
+    },
+    {
+      "id": "KS7",
+      "responsibility": "coded",
+      "note": "D31 clause 9 verbatim: generic ADR-0002 collection contracts and the generic execution-recovery policy stay unchanged; the trial edits none of them and its custom-controller lifecycle checks are not weakened by their exemptions",
+      "enforcement": [
+        "config/protected-sources.json",
+        "controller.mjs#invariant"
+      ],
+      "proof": [
+        "evidence:/safety/protectedUnchanged",
+        "retrace:undisposed-children-fail-fast-snapshot"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "runId": "t3-run-20260926T055623Z-f0fb97",
+  "command": "t3",
+  "launcherPid": 76293,
+  "privateRoot": "/tmp/acpx-t3-150bb6d2-56c9-4a20-83c8-63eb9b2b50c8",
+  "childEnvKeys": [
+    "HOME",
+    "LANG",
+    "PATH",
+    "PI_CODING_AGENT_DIR",
+    "TMPDIR"
+  ],
+  "childEnvFixed": {
+    "PATH": "/Users/kim/.local/share/mise/installs/node/26.3.1/bin:/usr/bin:/bin",
+    "HOME": "/tmp/acpx-t3-150bb6d2-56c9-4a20-83c8-63eb9b2b50c8/home",
+    "TMPDIR": "/tmp/acpx-t3-150bb6d2-56c9-4a20-83c8-63eb9b2b50c8/tmp",
+    "PI_CODING_AGENT_DIR": "/Users/kim/.omp/agent"
+  },
+  "parentEnvKeyCount": 22,
+  "entry": {
+    "t2Run": "/Users/kim/.dotfiles/.agents/artifacts/acpx-omp-acp-trial/runs-s3/t2-soak-20260926T054948Z-2e6ebb",
+    "verifyExit": 0,
+    "verifyLast": "PASS T2",
+    "results": {
+      "AC-MAPPING": "PASS",
+      "AC-MECHANICS": "PASS",
+      "AC-TRANSPORT": "PASS",
+      "AC-RESTORE": "PASS",
+      "AC-REQUESTS": "PASS",
+      "AC-DIAGNOSTICS": "PASS",
+      "AC-DEBUGLOOP": "PASS",
+      "AC-PRODUCTION-GATE": "PASS"
+    },
+    "derivedLine": "note AC-PRODUCTION-GATE: derived production_allowed=true",
+    "productionAllowed": true,
+    "verifyOutput": [
+      "PASS AC-MAPPING",
+      "note AC-MECHANICS: 99 fixture cases compared (retained and re-run)",
+      "PASS AC-MECHANICS",
+      "note AC-TRANSPORT: first-try valid 40/40; submissions 40; re-asks 0",
+      "PASS AC-TRANSPORT",
+      "note AC-RESTORE: incidental same-ID restores 20; restored-context integrity unproved, max admitted string 48300 chars",
+      "PASS AC-RESTORE",
+      "note AC-REQUESTS: 40 request windows replayed offline",
+      "PASS AC-REQUESTS",
+      "note AC-DIAGNOSTICS: native delivery-uncertain diagnostics: 0",
+      "PASS AC-DIAGNOSTICS",
+      "PASS AC-DEBUGLOOP",
+      "note AC-PRODUCTION-GATE: derived production_allowed=true",
+      "PASS AC-PRODUCTION-GATE",
+      "PASS T2"
+    ],
+    "ok": true
+  },
+  "corrects": null,
+  "plan": [
+    {
+      "stage": "rehearsal",
+      "scenarios": [
+        "S1",
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "stage": "production",
+      "scenarios": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "requiresRehearsalClear": true
+    }
+  ]
+}

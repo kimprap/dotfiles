@@ -622,7 +622,7 @@ function checkNotRun(run, id) {
   if (id !== "ALL") c.req(rep.task === task, `run is ${rep.task}, not ${task}`);
   c.req(rep.schema === "acpx-omp-acp-trial.notrun-report.v1" && rep.branch === "upstream-blocked-not-run", "not an approved upstream-blocked record");
   c.req(rep.implementation_entered === false && rep.model_work === false && rep.native_processes_started === false && rep.production_allowed === false, "not-run record claims work or permission");
-  c.req(rep.authority?.specSha256 === SPEC.sha && rep.authority?.ok === true, "not-run authority binding");
+  c.req(rep.authority?.specSha256 === "d38f487721c78df7b53d41c31d4b5f37a3c31a699f0d196ee88192c1e0c956ba" && rep.authority?.ok === true, "not-run authority binding");
   const ids = rep.task === "T2" ? T2_IDS : T3_IDS;
   const wanted = id === "ALL" || id === rep.task ? ids : [id];
   for (const x of wanted) c.req(rep.criteria?.[x]?.status === "not-run", `${x} is not an explicit not-run`);

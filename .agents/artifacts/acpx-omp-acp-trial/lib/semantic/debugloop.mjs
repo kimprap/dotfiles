@@ -1,11 +1,11 @@
-// B4 native-debugging loop accounting (spec-v9 B4, approved T1/T2 extension).
+// B4 native-debugging loop accounting (spec acpx-omp-acp-trial/spec-v10: B4, approved T1/T2 extension, Follow-up limits).
 // Pure state machine over cause/fix records kept in the discovering
 // execution's existing run evidence; no separate retry ledger is created.
 import { PROBE_SOAK_POOL } from "../native/pins.mjs";
 
 export const FIXES_PER_CAUSE = 2;
-export const PRODUCTION_LIMIT = Object.freeze({ usd: 20, tokens: 2_000_000, wallMs: 120 * 60_000 });
-export const NARROW_POOLS = Object.freeze({ "probe-soak": { usd: PROBE_SOAK_POOL.usd, wallMs: PROBE_SOAK_POOL.wallMs }, rehearsal: { usd: 1, wallMs: 15 * 60_000 } });
+export const PRODUCTION_LIMIT = Object.freeze({ usd: 20, tokens: 8_000_000, wallMs: 240 * 60_000 });
+export const NARROW_POOLS = Object.freeze({ "probe-soak": { usd: PROBE_SOAK_POOL.usd, wallMs: PROBE_SOAK_POOL.wallMs }, rehearsal: { usd: 3, wallMs: 45 * 60_000 } });
 
 const CODE_FAULT = "trial-code";
 const NOT_CODE = new Set(["native-limitation", "delivery-uncertain", "model-behavior", "semantic-stop", "desired-outcome", "unvisited-branch"]);

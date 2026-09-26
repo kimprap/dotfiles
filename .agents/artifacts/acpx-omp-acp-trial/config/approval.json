@@ -3,22 +3,22 @@
   "authority": {
     "spec": {
       "path": ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-spec.md",
-      "revision": "acpx-omp-acp-trial/spec-v9",
-      "sha256": "7fcc011e548813b085f5e38f9e7245f5ce300418d9eac59137797ac54982a748"
+      "revision": "acpx-omp-acp-trial/spec-v10",
+      "sha256": "d38f487721c78df7b53d41c31d4b5f37a3c31a699f0d196ee88192c1e0c956ba"
     },
     "decisions": {
       "path": ".agents/artifacts/2026-09-24_acpx-omp-acp-trial-decision-evidence.md",
-      "revision": "acpx-omp-acp-trial-decisions/v7"
+      "revision": "acpx-omp-acp-trial-decisions/v8"
     },
-    "plan": ".agents/plans/2026-09-24-1115_acpx-omp-acp-reconcile-retrace-trial.md"
+    "plan": ".agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md"
   },
   "execution_approval": {
-    "date": "2026-09-25",
-    "instruction": "continue the work from previous session, with additional notes taken into account. approve and execute the route.",
+    "date": "2026-09-26",
+    "instruction": "The user selected \"Approve\" on Main's single approval question approving spec-v10 (sha256 d38f487721c78df7b53d41c31d4b5f37a3c31a699f0d196ee88192c1e0c956ba), decisions v8 and the follow-up plan .agents/plans/2026-09-26-0220_acpx-omp-acp-s3-completion.md together.",
     "assurance": "standard",
     "approved_proposals": {
       "t1_t2_debug_loop_extension": true,
-      "rehearsal_subcap": { "usd": 1.0, "wall_minutes": 15 },
+      "rehearsal_subcap": { "usd": 3.0, "wall_minutes": 45 },
       "post_close_pid_observation_seconds": 10
     }
   },
@@ -30,17 +30,23 @@
   "fallback_model": null,
   "pools": {
     "probe_soak": {
-      "usd": 4.5,
-      "wall_minutes": 20,
+      "usd": 6.0,
+      "wall_minutes": 30,
       "grant": {
-        "date": "2026-09-25",
-        "old_usd": 2.00,
-        "new_usd": 4.50,
-        "scope": "probe/soak cost cap only; wall cap, production pool and T3 unchanged; any further grant needs the user",
-        "user_words": "i allow grants, if required, especially if it would have to close an entire plan because of it."
+        "date": "2026-09-26",
+        "user_words": [
+          "if the blocker is related to budget limit, whether they are retry limit or token limit, expand. This should not be the limiting factor.",
+          "Finishing up s3 is preferred."
+        ],
+        "caps": {
+          "production": { "usd": 20, "reported_tokens": 8000000, "wall_minutes": 240 },
+          "rehearsal_subcap": { "usd": 3.0, "wall_minutes": 45 },
+          "probe_soak": { "usd": 6.0, "wall_minutes": 30 }
+        },
+        "scope": "caps of runs-s3/ only"
       }
     },
-    "production": { "usd": 20, "reported_tokens": 2000000, "wall_minutes": 120 }
+    "production": { "usd": 20, "reported_tokens": 8000000, "wall_minutes": 240 }
   },
   "effects": [
     "one pinned local npm install inside the bundle",
