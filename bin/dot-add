@@ -45,7 +45,7 @@ resolve_path() {
 for name in "$@"; do
   path="$(resolve_path "$name")"
   target="$REPO/$path"
-  if [[ ! -e "$target" ]]; then
+  if [[ ! -e "$target" ]] && ! git -C "$REPO" ls-files --error-unmatch -- "$path" >/dev/null 2>&1; then
     echo "error: path does not exist: $target" >&2
     exit 1
   fi
