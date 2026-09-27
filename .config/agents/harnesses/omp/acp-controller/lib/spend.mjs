@@ -19,10 +19,11 @@ export class Spend {
   toJSON() {
     return [...this.rows.values()];
   }
-  /** `usage` = `{ totalTokens, costAmount, costCurrency }` (adapter sampleStatus shape). */
-  record(actor, model, usage) {
-    const row = this.rows.get(actor) ?? { actor, model, tokensBase: 0, tokensLast: null, costBase: 0, costLast: null, currency: null };
-    row.model = model;
+  /** `role` = `{ model, thinking }`; `usage` = `{ totalTokens, costAmount, costCurrency }` (adapter sampleStatus shape). */
+  record(actor, role, usage) {
+    const row = this.rows.get(actor) ?? { actor, tokensBase: 0, tokensLast: null, costBase: 0, costLast: null, currency: null };
+    row.model = role.model;
+    row.thinking = role.thinking;
     const carry = (baseKey, lastKey, value) => {
       if (typeof value !== "number") return;
       if (row[lastKey] !== null && value < row[lastKey]) row[baseKey] += row[lastKey];
@@ -56,14 +57,14 @@ function costText(costs) {
 
 /** Renders the `## Spend` section for spend rows (Spend#toJSON shape). */
 export function renderSpend(rows) {
-  const lines = ["## Spend", "", "| Actor | Model | Tokens | Cost |", "|---|---|---|---|"];
+  const lines = ["## Spend", "", "| Actor | Model | Thinking | Tokens | Cost |", "|---|---|---|---|---|"];
   for (const r of rows) {
     const t = tokensOf(r);
     const c = costOf(r);
-    lines.push(`| ${r.actor} | ${r.model} | ${t ?? "unknown"} | ${c ? `${c.amount} ${c.currency}` : "unknown"} |`);
+    lines.push(`| ${r.actor} | ${r.model} | ${r.thinking ?? "unknown"} | ${t ?? "unknown"} | ${c ? `${c.amount} ${c.currency}` : "unknown"} |`);
   }
   const tokens = total(rows.map(tokensOf), (k) => String(k.reduce((s, n) => s + n, 0)));
   const cost = total(rows.map(costOf), costText);
-  lines.push(`| Total | | ${tokens} | ${cost} |`);
+  lines.push(`| Total | | | ${tokens} | ${cost} |`);
   return `${lines.join("\n")}\n`;
 }

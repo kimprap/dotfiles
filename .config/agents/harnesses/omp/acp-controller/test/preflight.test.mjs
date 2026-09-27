@@ -68,7 +68,7 @@ async function run({ version = OMP_VERSION, controllerRoot = CONTROLLER_ROOT, pr
   const omp = fakeOmp(t.dir, version, t.launcher);
   const out = await main({
     argv,
-    stdinText: argv[0] === "dispose" ? "" : REQUEST,
+    stdinText: argv[0] === "dispose" || argv[0] === "roles" ? "" : REQUEST,
     env: { PATH: omp.pathEnv },
     controllerRoot,
     sessionsRoot: t.sessionsRoot,
@@ -160,6 +160,21 @@ test("preflight: exceptRunId does not exempt a live process of that run", async 
   assertNothingLaunched(out);
   assert.match(out.stdout, /process 515151:/);
   assert.ok(!out.stdout.includes("folder `"), "its own folder is not listed");
+});
+
+test("roles: prints only the models note and never loads the controller", async () => {
+  const out = await run({ argv: ["roles"] });
+  assert.equal(out.exitCode, 0);
+  assert.equal(out.stdout, "Models: A `scripted/a` · low, B `scripted/b` · low\n");
+  assert.equal(fs.existsSync(t.log), false, "scripted agent must never start");
+  assert.equal(t.controllerLoaded, false, "controller must never be loaded");
+});
+
+test("roles: an undisposed run refuses before any brief is shown", async () => {
+  fs.mkdirSync(path.join(t.sessionsRoot, `acp-controller-${RUN_X}`));
+  const out = await run({ argv: ["roles"] });
+  assertNothingLaunched(out);
+  assert.match(out.stdout, /undisposed controller run/);
 });
 
 test("A9: a PATH omp reporting omp/18.2.0 refuses before any launch", async () => {

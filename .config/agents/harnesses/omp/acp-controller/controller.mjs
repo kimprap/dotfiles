@@ -434,7 +434,7 @@ async function parkReconcile(ctx, failure) {
   const { rs, run } = ctx;
   const actors = ["A", "B"].map((r) => ctx.reviewers[r]).filter(Boolean);
   addRow(rs, "park", "—", failure.observed, `${failure.step} failed; reviewers parked`);
-  const parked = await parkRun(run, actors, { reconcile: rs, failure, roles: Object.keys(ctx.reviewers) });
+  const parked = await parkRun(run, actors, { reconcile: rs, failure, roles: Object.keys(ctx.reviewers), models: ctx.deps.roles });
   const stop = {
     cause: `${failure.step} failed`,
     detail: failure.error,
@@ -534,18 +534,23 @@ export async function resumeReconcile(runId, request, deps) {
   const { run, state } = opened;
   try {
     const rs = state.reconcile;
-    const ctx = { run, deps, rs, reviewers: {}, reportOnly: false, prefix: "" };
+    // A resumed run keeps the models bound at its first call, never live modelRoles.
+    const ctx = { run, deps: { ...deps, roles: state.models }, rs, reviewers: {}, reportOnly: false, prefix: "" };
     const failure = state.failure;
     if (request.repair.step !== failure.step) {
       const stop = { cause: "repair step mismatch", detail: `the parked failed step is \`${failure.step}\`, not \`${request.repair.step}\``, step: failure.step, pending: rs.pending.accepted, resume: [`run \`${runId}\` stays parked; resume with step \`${failure.step}\` or dispose it`] };
       return { exitCode: EXIT.stopped, markdown: `${renderReconcile({ status: "parked", stop, rs })}\n${run.spend.render()}` };
     }
     addRow(rs, "resume", "—", identity(rs.pending.accepted), `repair authorized (${request.repair.authority}); retry \`${failure.step}\``);
+    if (!state.models?.a || !state.models?.b) {
+      addRow(rs, "stop", "—", identity(rs.pending.accepted), "parked models missing");
+      return await concludeReconcile(ctx, { status: "stopped", stop: { cause: "reviewer identity lost", detail: "the parked run records no reviewer models; no reviewer is restored and nothing is rolled back", step: "resume", pending: rs.pending.accepted, resumeWith: "the human decides how to proceed; the applied bytes stay as observed" } });
+    }
     let lost;
     for (const rec of state.actors) {
       const role = rec.name.slice(-1);
       try {
-        ctx.reviewers[role] = await startActor(run, { name: rec.name, role: deps.roles[role.toLowerCase()], restore: rec });
+        ctx.reviewers[role] = await startActor(run, { name: rec.name, role: ctx.deps.roles[role.toLowerCase()], restore: rec });
       } catch (error) {
         lost = { role, error: error.code ?? error.message };
         break;

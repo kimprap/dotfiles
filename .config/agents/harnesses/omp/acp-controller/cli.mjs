@@ -3,20 +3,23 @@
 //   node cli.mjs reconcile|retrace|normalize < request.json
 //   node cli.mjs resume <runId> < request.json
 //   node cli.mjs dispose <runId>
-// stdout: the rendered Markdown record only; stderr: diagnostics.
+//   node cli.mjs roles
+// stdout: the rendered Markdown record only, except that a successful `roles`
+// prints only the one-line models note; stderr: diagnostics.
 // Exit: 0 final/complete, 1 stopped/partial/blocked/parked, 2 refused before
 // any launch, 3 cleanup failure.
 //
 // Refusals run in this order before anything is launched: request shape,
 // checkVersions, readModelRoles, loadPrompts, findUndisposedRuns. Only then is
-// ./controller.mjs imported and called.
+// ./controller.mjs imported and called. `roles` runs the same checks except
+// request shape, then prints the models note without importing the controller.
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { CONTROLLER_ROOT, OVERLAY_PATH } from "./lib/adapter.mjs";
 import { childEnv, RUN_ID_PATTERN, SESSIONS_ROOT, TMP_ROOT } from "./lib/env.mjs";
-import { readModelRoles as defaultReadModelRoles } from "./lib/models.mjs";
+import { readModelRoles as defaultReadModelRoles, renderModels } from "./lib/models.mjs";
 import { findUndisposedRuns, listProcesses as defaultListProcesses } from "./lib/preflight.mjs";
 import { loadPrompts as defaultLoadPrompts, PROMPT_SOURCES } from "./lib/prompts.mjs";
 import { renderSpend } from "./lib/spend.mjs";
@@ -44,7 +47,7 @@ export function renderRefusal(reason, lines = []) {
 /** Top-level request shape checks (Q1); domain validation belongs to the controller. */
 export function requestProblems(command, request) {
   const p = [];
-  if (command === "dispose") return request === undefined ? p : ["dispose takes no request body"];
+  if (command === "dispose" || command === "roles") return request === undefined ? p : [`${command} takes no request body`];
   if (!isObj(request)) return ["request must be one JSON object on stdin"];
   const approval = () => {
     if (!isObj(request.approval) || !isStr(request.approval.text) || !isStr(request.approval.at)) p.push("approval must be {text, at}");
@@ -118,13 +121,13 @@ export async function main({
   const refuse = (reason, lines) => ({ exitCode: EXIT.refused, stdout: renderRefusal(reason, lines) });
 
   const [command, runId, ...extra] = argv;
-  if (!Object.hasOwn(RUNNERS, command)) return refuse("unknown subcommand", [`usage: cli.mjs reconcile|retrace|normalize | resume <runId> | dispose <runId>; got \`${command ?? ""}\``]);
+  if (command !== "roles" && !Object.hasOwn(RUNNERS, command)) return refuse("unknown subcommand", [`usage: cli.mjs reconcile|retrace|normalize | resume <runId> | dispose <runId> | roles; got \`${command ?? ""}\``]);
   const needsRunId = command === "resume" || command === "dispose";
   if (extra.length || (needsRunId ? !RUN_ID_PATTERN.test(runId ?? "") : runId !== undefined)) {
     return refuse("invalid arguments", [needsRunId ? `\`${command}\` needs one runId matching ${RUN_ID_PATTERN}` : `\`${command}\` takes no positional arguments`]);
   }
 
-  const text = stdinText ?? (command === "dispose" ? "" : await readStdin(stdin));
+  const text = stdinText ?? (command === "dispose" || command === "roles" ? "" : await readStdin(stdin));
   let request;
   if (text.trim() !== "") {
     try {
@@ -159,6 +162,8 @@ export async function main({
       "dispose that run first (`cli.mjs dispose <runId>` or its existing disposal authority)",
     ]);
   }
+
+  if (command === "roles") return { exitCode: EXIT.final, stdout: renderModels(roles.roles) };
 
   const controller = await loadController();
   const deps = {

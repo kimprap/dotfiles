@@ -11,7 +11,7 @@ This record governs the persistent actor sessions used only by the named Retrace
 
 Retrace and Reconcile require stable child identities across multiple semantic turns, owner-only reply visibility, durable pending-state inspection, bounded direct capacity, partial sibling accounting, and cleanup proven by observed process exit. Projecting those guarantees onto launch jobs, roster addressability, caller-owned observation windows, local echoes, or `details.waited` made transport mechanics look like semantic authority and could not prove exact disposal.
 
-The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, obtains brief or scope-table approval, invokes the controller CLI once through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
+The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, runs the controller's read-only `roles` preflight through `bash` before showing each brief or scope table, obtains approval, invokes the controller CLI once per approved binding through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
 
 ## Decision
 

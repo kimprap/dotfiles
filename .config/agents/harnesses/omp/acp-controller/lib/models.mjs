@@ -18,6 +18,12 @@ export function splitModelRole(value) {
   return model && thinking ? { model, thinking } : undefined;
 }
 
+/** The one-line models note shown after a Reconcile brief or Retrace scope table (`cli.mjs roles`). */
+export function renderModels(roles) {
+  const pair = (r) => `\`${r.model}\` · ${r.thinking}`;
+  return `Models: A ${pair(roles.a)}, B ${pair(roles.b)}\n`;
+}
+
 /**
  * Runs `<ompPath> config list --json` under `env` (the §3.3 child environment;
  * `PI_CODING_AGENT_DIR` selects the live agent dir) with cwd `env.HOME`, and

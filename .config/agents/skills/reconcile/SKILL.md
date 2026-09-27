@@ -174,6 +174,16 @@ A correction without approval or a conflicting or ambiguous adjustment renders
 one revised brief and waits. Approval is local to the displayed binding and
 grants no other authority or effect.
 
+Immediately before rendering each brief, including a revised one, run
+`node .config/agents/harnesses/omp/acp-controller/cli.mjs roles` through `bash`
+from the repository root with no request body. It runs step 1's capability
+preflight and launches nothing. On exit `2`, present its refusal verbatim and
+stop. On exit `0`, show its one-line `Models:` stdout verbatim directly after
+the brief's reply line. The line reports reviewer A's and B's model and
+thinking level from live `modelRoles`; it is not a brief field, is not part of
+the approval binding, and no approval changes it. An adjustment naming models
+is a conflicting adjustment under the rule above.
+
 ## Controller invocation
 
 After approval, write the approved binding as one JSON object to a
@@ -202,8 +212,8 @@ repository root as working directory:
 node .config/agents/harnesses/omp/acp-controller/cli.mjs reconcile < {session-local scratch}/reconcile-request.json
 ```
 
-Stdout carries only the rendered record followed by `## Spend`; stderr carries
-diagnostics. Exit `0` is `## Final proposal`; `1` is a stop or a parked repair
+Except for a successful `roles` call, stdout carries only the rendered record
+followed by `## Spend`; stderr carries diagnostics. Exit `0` is `## Final proposal`; `1` is a stop or a parked repair
 pause with `## Reconcile stopped`; `2` is a refusal before any launch; `3`
 means cleanup was not established and the record names the unresolved actor,
 PID, or folder. Run one controller call per approved binding. Never rerun it to
@@ -509,7 +519,10 @@ node .config/agents/harnesses/omp/acp-controller/cli.mjs resume {runId} < {sessi
 
 with the request `{"repair": {"authority": "{the human's authorization words}",
 "step": "{exact failed step}"}}`. Resume restores both reviewer sessions under
-their parked session identities with no fresh-session fallback, then retries
+their parked session identities with no fresh-session fallback, and keeps the
+models and thinking levels bound at the run's first call rather than live
+`modelRoles`; a parked run without recorded models stops as a lost identity.
+It then retries
 only the exact failed application, reread, or validator step. A different step
 keeps the run parked. Application repair does not add a capacity count until
 one changed canonical application commits; validation repair on the unchanged

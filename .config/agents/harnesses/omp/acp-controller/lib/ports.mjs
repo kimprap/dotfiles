@@ -69,7 +69,7 @@ export async function startActor(run, { name, role, restore }) {
   const ledger = restore ? PidLedger.fromJSON(restore.ledger) : new PidLedger();
   const sessionKey = restore?.sessionKey ?? `${run.runId}:${name}`;
   const input = { sessionKey, agent: AGENT_ID, mode: "persistent", cwd: run.dirs.work, ...(restore ? { resumeSessionId: restore.backendSessionId } : {}) };
-  const actor = { name, model: role.model, role, sessionKey, cap, ledger, state: "restoring", requests: restore?.requests ?? 0, cursor: restore?.cursor ?? undefined, known: new Set(restore?.known ?? []) };
+  const actor = { name, role, sessionKey, cap, ledger, state: "restoring", requests: restore?.requests ?? 0, cursor: restore?.cursor ?? undefined, known: new Set(restore?.known ?? []) };
   run.actors.set(name, actor);
   let handle;
   try {
@@ -109,14 +109,14 @@ export async function ask(run, actor, text, validate) {
   const sampled = actor.ledger.samples.filter((s) => s.backendSessionId).at(-1);
   if ((rec.window.rpc?.sessionNew ?? 0) > 0 || (sampled && sampled.backendSessionId !== actor.backendSessionId)) out = { ...out, row: "identity-changed", c4: false };
   const usage = actor.ledger.samples.filter((s) => s.usage).at(-1)?.usage;
-  if (usage) run.spend.record(actor.name, actor.model, usage);
+  if (usage) run.spend.record(actor.name, actor.role, usage);
   return { ...out, requestId, turnResult: rec.turnResult };
 }
 
 /** Supported close plus observed exit; spend from the last pre-close sample. */
 export async function disposeActor(run, actor, reason) {
   const out = await closeAndObserve({ runtime: actor.cap.runtime, handle: actor.handle, ledger: actor.ledger, reason, observePid: run.deps.observePid ?? defaultObservePid });
-  if (out.lastUsage) run.spend.record(actor.name, actor.model, out.lastUsage);
+  if (out.lastUsage) run.spend.record(actor.name, actor.role, out.lastUsage);
   actor.state = out.disposed ? "closed" : "closing";
   actor.disposal = out;
   return out;

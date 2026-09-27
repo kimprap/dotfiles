@@ -370,6 +370,36 @@ test("KR13: a failed validator parks; resume restores the same sessions, retries
   assertCleanedUp();
 });
 
+test("KR13: resume keeps the parked models when live model roles changed", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { parkedAt, runId } = await park(flag);
+  fs.writeFileSync(flag, "");
+  const live = { a: { model: "other/a", thinking: "high" }, b: { model: "other/b", thinking: "high" } };
+  const out = await resumeReconcile(runId, { repair: { authority: "human: validator fixed", step: "validation" } }, deps({ roles: live }));
+  assert.equal(out.exitCode, 0);
+  const after = events().slice(parkedAt);
+  assert.ok(after.length > 0);
+  assert.ok(after.every((e) => e.model === undefined || e.model.startsWith("scripted/")), "no actor starts on the live roles");
+  assert.ok(out.markdown.includes("| A | scripted/a | low |"));
+  assertCleanedUp();
+});
+
+test("KR13: a parked run without recorded models stops instead of restoring on live roles", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { parkedAt, runId } = await park(flag);
+  const stateFile = path.join(t.tmpRoot, `acp-controller-${runId}`, "state.json");
+  const state = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  delete state.models;
+  fs.writeFileSync(stateFile, JSON.stringify(state));
+  fs.writeFileSync(flag, "");
+  const out = await resumeReconcile(runId, { repair: { authority: "human: validator fixed", step: "validation" } }, deps());
+  assert.equal(out.exitCode, 1);
+  assert.match(out.markdown, /- reviewer identity lost: the parked run records no reviewer models/);
+  const after = events().slice(parkedAt);
+  assert.equal(after.filter((e) => e.event === "session-new" || e.event === "session-resume" || e.event === "prompt").length, 0);
+  assertCleanedUp();
+});
+
 test("KR13: when same-session restore fails, resume stops and asks without creating a new session", async () => {
   const flag = path.join(t.dir, "validator-ready");
   const { runId, parkedAt } = await park(flag);
