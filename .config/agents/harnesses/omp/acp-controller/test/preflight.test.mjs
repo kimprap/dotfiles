@@ -10,7 +10,10 @@ import { afterEach, beforeEach, test } from "node:test";
 import { main } from "../cli.mjs";
 import { CONTROLLER_ROOT } from "../lib/adapter.mjs";
 import { findUndisposedRuns } from "../lib/preflight.mjs";
+import { ACP_SDK_VERSION, ACPX_VERSION, OMP_VERSION } from "../lib/versions.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
+
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 
 const TRIAL_PREFIX = "acpx-" + "trial-"; // built so no controller file names the trial bundle
 const RUN_X = "reconcile-20260927T010203Z-abc123";
@@ -61,7 +64,7 @@ afterEach(() => {
  * One CLI run with injected roots and prompts. With `stubRoles: false` the real
  * readModelRoles runs, so reaching it would start the scripted agent via the fake omp.
  */
-async function run({ version = "omp/18.3.0", controllerRoot = CONTROLLER_ROOT, processes = [], stubRoles = true, argv = ["reconcile"] } = {}) {
+async function run({ version = OMP_VERSION, controllerRoot = CONTROLLER_ROOT, processes = [], stubRoles = true, argv = ["reconcile"] } = {}) {
   const omp = fakeOmp(t.dir, version, t.launcher);
   const out = await main({
     argv,
@@ -162,7 +165,7 @@ test("preflight: exceptRunId does not exempt a live process of that run", async 
 test("A9: a PATH omp reporting omp/18.2.0 refuses before any launch", async () => {
   const out = await run({ version: "omp/18.2.0", stubRoles: false });
   assertNothingLaunched(out);
-  assert.match(out.stdout, /omp --version: observed `omp\/18\.2\.0`, expected `omp\/18\.3\.0`/);
+  assert.match(out.stdout, new RegExp(`omp --version: observed \`omp/18\\.2\\.0\`, expected \`${escapeRegExp(OMP_VERSION)}\``));
   assert.deepEqual(out.calls, ["--version"]);
 });
 
@@ -173,14 +176,14 @@ test("A9: a controller root with acpx 0.19.1 refuses before any launch", async (
     fs.writeFileSync(path.join(root, "node_modules", name, "package.json"), JSON.stringify({ name, version }));
   };
   pkg("acpx", "0.19.1");
-  pkg("@agentclientprotocol/sdk", "1.4.0");
+  pkg("@agentclientprotocol/sdk", ACP_SDK_VERSION);
   fs.writeFileSync(
     path.join(root, "package-lock.json"),
-    JSON.stringify({ packages: { "node_modules/acpx": { version: "0.19.1" }, "node_modules/@agentclientprotocol/sdk": { version: "1.4.0" } } }),
+    JSON.stringify({ packages: { "node_modules/acpx": { version: "0.19.1" }, "node_modules/@agentclientprotocol/sdk": { version: ACP_SDK_VERSION } } }),
   );
   const out = await run({ controllerRoot: root, stubRoles: false });
   assertNothingLaunched(out);
-  assert.match(out.stdout, /acpx installed: observed `0\.19\.1`, expected `0\.19\.2`/);
-  assert.match(out.stdout, /acpx locked: observed `0\.19\.1`, expected `0\.19\.2`/);
+  assert.match(out.stdout, new RegExp(`acpx installed: observed \`0\\.19\\.1\`, expected \`${escapeRegExp(ACPX_VERSION)}\``));
+  assert.match(out.stdout, new RegExp(`acpx locked: observed \`0\\.19\\.1\`, expected \`${escapeRegExp(ACPX_VERSION)}\``));
   assert.doesNotMatch(out.stdout, /agentclientprotocol/);
 });

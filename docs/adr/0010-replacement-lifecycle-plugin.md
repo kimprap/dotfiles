@@ -11,7 +11,7 @@ This record governs the persistent actor sessions used only by the named Retrace
 
 Retrace and Reconcile require stable child identities across multiple semantic turns, owner-only reply visibility, durable pending-state inspection, bounded direct capacity, partial sibling accounting, and cleanup proven by observed process exit. Projecting those guarantees onto launch jobs, roster addressability, caller-owned observation windows, local echoes, or `details.waited` made transport mechanics look like semantic authority and could not prove exact disposal.
 
-The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, obtains brief or scope-table approval, invokes the controller CLI once through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx 0.19.2 `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
+The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, obtains brief or scope-table approval, invokes the controller CLI once through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
 
 ## Decision
 
@@ -31,7 +31,7 @@ The controller replaces the earlier in-session OMP extension. The root OMP sessi
 - Retrace and Reconcile share one coded controller over public acpx and native `omp acp`, and keep separate executable semantic contracts.
 - Stable actor, request, owner, first-reply, turn/reuse, pending, abort, and observed-exit disposal states are explicit and cannot be inferred from unrelated host surfaces.
 - Partial batches and failed cleanup retain exact evidence instead of collapsing into a false all-or-nothing result.
-- The controller pins `omp/18.3.0` and acpx `0.19.2`; a different version is refused before any launch until the offline suite and live runs pass on it.
+- The controller pins exact omp and acpx versions in `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`; a different version is refused before any launch until the offline suite and live runs pass on it.
 - The previously pending Tier 1 recorder plan remains closed as historical planning.
 - The eval catalogs are specification fixtures. Their presence is not a claim that the full catalogs were executed; any native or model-backed execution remains separately gated.
 

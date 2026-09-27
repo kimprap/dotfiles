@@ -101,8 +101,9 @@ controller, reviewing, or mutating:
 
 1. Capability preflight belongs to the controller and runs before any launch.
    It refuses with exit `2` and a `## Controller refused` record on an invalid
-   request, `omp --version` other than 18.3.0 or acpx other than exactly
-   0.19.2, a missing or unparsable model role (`modelRoles.second_opinion_a`
+   request, `omp --version` or acpx other than the versions pinned in
+   `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`, a missing
+   or unparsable model role (`modelRoles.second_opinion_a`
    for A and `modelRoles.second_opinion_b` for B, each `<model>:<thinking>`),
    a missing or duplicated reviewer prompt marker, or an undisposed earlier
    controller run. Present a refusal verbatim and stop. Do not patch the host,
