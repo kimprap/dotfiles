@@ -19,7 +19,9 @@ OMP-specific capability gate: an implementation collector with `taskDepth > 0`
 stops `transport-unavailable` before creating any child. Only depth 0 may
 proceed with the other required capabilities and bindings. Do not substitute a
 delegated controller; approved delegated topology remains available on capable
-other hosts. Named lifecycle consumers keep their own contracts.
+other hosts. Reconcile and Retrace run under their acpx controller
+(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
+first replies, pending observation, capacity and observed-exit disposal.
 
 ## Intake
 
@@ -130,9 +132,10 @@ This is an exact role-and-purpose exemption under the current approved route,
 not a blanket recovery or collection exemption. It adds no deadline, observer,
 service, ledger, replay, replacement, unattended-completion promise, or
 authority. Recovery still applies the separate recovery rethink before every
-eligible retry and never receives a second implementation rethink. Reconcile
-and Retrace instead keep their named lifecycle-consumer ownership, first-reply,
-pending observation and abort, capacity, and observed-exit disposal contracts.
+eligible retry and never receives a second implementation rethink. Reconcile and
+Retrace run under their acpx controller (`harnesses/omp/acp-controller/`), which
+owns their reviewer and scope sessions, first replies, pending observation,
+capacity and observed-exit disposal.
 Load the portable return contract and host adapter at this seam. On OMP use
 child-bound wake jobs; use the shared token/message path only on other hosts
 that supply native reply correlation. Neither capability means

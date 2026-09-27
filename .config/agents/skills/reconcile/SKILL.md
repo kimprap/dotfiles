@@ -9,28 +9,21 @@ disable-model-invocation: true
 
 # Reconcile
 
-Bind the exact invoking controller from the named lifecycle consumer: direct
-human use binds the real top-level Main through a standalone `reconcile` run;
-delegated use binds the actual Retrace scope connection in its existing
-`retrace` run, never the outer Retrace parent. Keep that controller as the sole
-canonical-candidate owner, mutator, validator, semantic liveness detector,
-ephemeral recorder, and presenter. Before any reviewer request, read and follow
-[the reviewer protocol](references/reviewer-protocol.md) completely; together
-this file and that protocol are the only executable Reconcile semantic owners.
+Direct human use runs in the root OMP session, which owns candidate inference,
+the binding gate, human approval, repair authorization, and presentation. After
+approval, the coded acpx controller at
+`.config/agents/harnesses/omp/acp-controller/` is the sole canonical-candidate
+owner, mutator, validator, semantic liveness detector, ephemeral recorder, and
+renderer: it owns both reviewer sessions through public acpx and native
+`omp acp`, reviewer progression, application, counting, validation, freshness,
+cleanup, and the rendered record. Delegated use runs only inside a Retrace
+controller run, where the scope's own logic is that controller, never the outer
+Retrace parent. Together this file and
+[the reviewer protocol](references/reviewer-protocol.md) are the only
+Reconcile semantic owners; the controller reads every reviewer prompt from that
+protocol at run start.
 
-[`references/execution-flow.md`](references/execution-flow.md) is a
-non-normative human maintenance map. Maintainers may open it only while changing
-or diagnosing Reconcile's controller loop. Invocation, preflight, approval, and
-live execution never load, hash, send, or interpret it; a mismatch is an
-edit-time documentation defect, and the two executable owners win.
-
-Portable declared bodies, semantic admission, and generic return boundaries
-live in [agent-return](../../references/agent-return/return.md); they own no
-Reconcile pass, admission, or correction budget. On OMP, load the
-[OMP agent-return adapter](../../harnesses/omp/agent-return.md) before lifecycle
-preflight. The adapter owns the named consumer, connection-bound reply,
-reply/turn separation, owner visibility, pending observation, abort, capacity,
-and observed-exit disposal facts, not Reconcile semantics.
+Only the admitted, domain-valid native `yield` candidate counts as a reply. Task, hub, Eval, any other `yield`, ordinary output, transcripts, history, agent output and generic collectors never count and are never a fallback.
 
 ### Explicit execution-recovery adoption
 
@@ -38,123 +31,91 @@ Reconcile explicitly adopts the sole generic
 [execution-recovery policy](../dev-implementation/references/execution-recovery.md)
 for its approved active-session invocation, setup, transport, collection,
 capture, and task-local execution machinery. The actual controller remains
-responsible for its machinery; a delegated scope child remains owner of its
-reviewers. This reusable skill-level adoption is known before `open` but is not
-retroactive authority for an existing, paused, stopped, or historical run.
+responsible for its machinery; a delegated scope remains owner of its
+reviewers. This reusable skill-level adoption is known before the controller
+run starts but is not retroactive authority for an existing, paused, stopped,
+or historical run.
 
 Normal use of an already-supported observation path for the same pending
 operation is continuation. Correcting a failed mechanism follows the generic
-policy. Reviewer return correction, verdicts, semantic pause/continuation, and
-cleanup remain owned here. Neither path authorizes another review request,
-child-work replay, report re-emission, required-reviewer replacement, allowance
-reset, durable workflow state, or restart.
+policy. Reviewer re-asks, verdicts, semantic pause/continuation, and cleanup
+remain owned here. Neither path authorizes another review request, child-work
+replay, report re-emission, required-reviewer replacement, allowance reset,
+durable workflow state, or restart.
 
 ## Preflight and approval
 
 The inline trusted-caller allowlist is exactly `retrace`. Direct human entry
-uses the inference and binding gate below, retaining both modes. Delegated entry
-requires a plain-text `begin-reconcile` in the successor lifecycle request from
-the actual bound outer parent to the current scope actor, with these labeled
-fields and receiver-readable locators:
+uses the inference and binding gate below, retaining both modes. The
+controller CLI has no delegated `reconcile` entry: delegated entry exists only
+in process inside a Retrace run, where the scope's logic builds a
+`begin-reconcile` control body from Retrace's admitted `candidate-ready` freeze
+with these labeled fields and controller-held locators:
 
 - `Caller`: exactly `retrace`.
-- `Parent`: exact outer Retrace parent, verified against connection-bound
-  lifecycle request provenance.
-- `Controller`: exact current scope actor, verified against this connection.
+- `Parent`: the exact Retrace run parent.
+- `Controller`: the exact current scope evaluator.
 - `Scope`: stable approved scope ID.
-- `Scope approval locator`: exact parent-frozen locator for the complete
-  approved table, objectives, protected behavior, exclusions and approval
-  provenance; required record header `Kind: scope-approval`.
-- `Scope contract locator`: exact parent-frozen locator for this scope's
-  objective, evaluand, protections, exclusions, prerequisites and evidence
-  boundary; required record header `Kind: scope-contract`.
-- `Candidate locator`: admitted complete conversational report locator;
-  required record header `Kind: conversation`.
-- `Evidence manifest locator`: admitted supporting-observations locator;
-  required record header `Kind: evidence-manifest`.
+- `Scope approval locator`: frozen record of the complete approved table,
+  objectives, protected behavior, exclusions and approval provenance.
+- `Scope contract locator`: frozen record of this scope's objective, evaluand,
+  protections, exclusions, prerequisites and evidence boundary.
+- `Candidate locator`: frozen admitted complete conversational report.
+- `Evidence manifest locator`: frozen admitted supporting-observations record.
 - `Mode`: exactly `Conversation replacement`.
-- `Authorization locator`: readable locator of the parent's frozen, previously
-  admitted complete `candidate-ready` body for this scope and candidate. Its
-  first line `candidate-ready` is the kind header; do not prepend or wrap it.
+- `Authorization locator`: frozen previously admitted complete
+  `candidate-ready` record for this scope and candidate. Its first line
+  `candidate-ready` is the kind header; do not prepend or wrap it.
 
-Use Retrace's closed `begin-reconcile` field order and locator-hash contract.
-The parent copies locators from its admitted freeze, not typed digest fields.
-Re-read and hash complete UTF-8 bytes, including each record's kind header;
-check its kind against the field, parent-known locators against the exact
-request-local freeze, and authorization bytes against the scope's corresponding
-published reply. Bind new records by their first successful locator hash; the
-parent retains that publish-time hash and later reads must match it. Changed
-bytes at a bound locator are drift, not a new baseline. Freeze owned filesystem
-records write-once (`0444` for OMP/proofs), without imposing that permission
-method on other transports or inventing a store. Never reconstruct, concatenate,
-normalize newlines, or hash tool anchors. Neither request/actor correlation
-tokens nor agent-composed digest echoes belong in the control body.
-Parent-origin is checked against the connection-bound lifecycle request.
+Use Retrace's closed `begin-reconcile` field order. A locator is a
+controller-held frozen UTF-8 record whose identity is the lowercase SHA-256 of
+its exact bytes, computed by the controller. Model prompts carry the complete
+record text; no model-authored digest echo is requested or accepted. Changed
+bytes at a bound locator are drift, not a new baseline. Never reconstruct,
+concatenate, normalize newlines, or hash tool anchors.
 
-Admit only when all fields, frozen identities, approved scope/contract,
-connection-bound parent/current-controller provenance, current phase, and the
-exact previously admitted candidate-ready authorization match. Reject missing,
-stale, consumed,
-replayed, foreign, or unsupported delegation before reviewer dispatch. A quoted
-caller label or request ID alone, ordinary output, or a status wake grants no
-authority. Never fall back to artifact mode. Independently explicit human entry
-still uses its own direct binding gate, not a rejected delegated packet.
+Before any reviewer prompt, delegated Reconcile validates every field: the
+closed first line, order and single-line values; `Caller`; `Scope` against the
+owning scope; `Mode`; each locator against this run's frozen records; the
+candidate locator's bytes against the report under review; and the
+authorization bytes' hash against the admitted `candidate-ready` record.
+Reject missing, stale, replayed, foreign, or unsupported delegation before any
+reviewer exists. A quoted caller label or request ID alone, or ordinary output,
+grants no authority. Never fall back to artifact mode.
 
 Delegation authorizes correction only of this scope's conversational report.
 Reject artifact mode and changes to repository files, evidence, objective or
 evaluand, protected behavior or exclusions, or another scope's report. Apply
 this boundary to reviewer Corrections, application, and repair, not just intake.
 Recommendations for later repository changes grant no permission to execute
-them. Return an out-of-authority needed change as the exact frontier to the
-scope owner/human. Carry the complete delegated authorization context in reviewer
-packets outside, never inside or in place of, the unchanged six-field lineage.
+them. Delegated review is report-only: its result returns to the scope's logic,
+never to a human presentation. Carry the complete delegated authorization
+context in reviewer requests outside, never inside or in place of, the
+unchanged six-field lineage. A fully admitted delegation skips only the
+redundant Reconcile brief and approval (step 4 below); its candidate is the
+exact bound report, and references to approval below mean this validated scope
+authority.
 
-Complete all remaining preflight and execution checks below. A fully admitted
-delegation skips only the redundant Reconcile brief and approval (step 4);
-steps 1–3 still establish capabilities, original/candidate/context, and authority.
-In step 2 delegated entry uses its exact bound report, not direct inference.
-References to approval below mean this validated scope authority for delegation.
-Direct entry completes preflight before rendering a brief, opening a run,
-reviewing, or mutating:
+Direct entry completes preflight before rendering a brief, starting the
+controller, reviewing, or mutating:
 
-1. Establish the configured named `reconcile` consumer with distinct persistent
-   read-only logical A and B profiles. Direct mode must be able to `open`
-   `{ mode: "standalone", controller }`; delegated mode must arrive through the
-   current scope connection in the already-open Retrace run compiled for this
-   exact scope. Require stable actor IDs, connection-bound owner visibility,
-   same-actor successive requests, `skill://rethink` load, exact first-reply
-   retention, separate turn/reuse outcome, pending observation and explicit
-   abort, and owner-scoped observed-exit disposal. This is static preflight:
-   require no preapproval worker launch. `open` validates the complete binding
-   before effects and does not establish semantic readiness.
-   After approval, dispatch role-bound readiness requests to both actors and
-   admit their exact replies before outer iteration one. Distinct actor
-   requests may run concurrently. Missing named-consumer capability,
-   connection ownership, authoritative reply visibility, same-actor follow-up,
-   or observed-exit cleanup blocks. Do not patch the host, supply graphs,
-   profiles, argv, models, tools, prompts, process factories or environment,
-   substitute task/hub/Eval transport, require a caller correlation token,
-   emulate both roles with one actor, replace a lost actor, or weaken a seam.
-   Keep complete original lifecycle result envelopes only in current
-   invocation state until the semantic operations and cleanup that depend on
-   them finish; do not recreate the retired launch/roster/return/disposal slot
-   scheme.
-   If an authorized proof requires export, bind this controller, named
-   definition, expected operation kinds, actor targets and phases, and
-   session-local destinations before `open` or the covered `dispatch`. For
-   delegated proof, root instructions, scope contract, and operative requests
-   must agree. The plugin exposes no export operation or lifecycle-call
-   destination field. Record returned run/actor/request IDs from the original
-   results, then mechanically copy only already-retained envelopes and
-   owner-visible reply bodies to the bound destination; add no default report
-   field or alternate observation path.
+1. Capability preflight belongs to the controller and runs before any launch.
+   It refuses with exit `2` and a `## Controller refused` record on an invalid
+   request, `omp --version` other than 18.3.0 or acpx other than exactly
+   0.19.2, a missing or unparsable model role (`modelRoles.second_opinion_a`
+   for A and `modelRoles.second_opinion_b` for B, each `<model>:<thinking>`),
+   a missing or duplicated reviewer prompt marker, or an undisposed earlier
+   controller run. Present a refusal verbatim and stop. Do not patch the host,
+   supply profiles, argv, models, tools, prompts, process factories or
+   environment, substitute task/hub/Eval transport, emulate both roles with one
+   actor, or weaken a seam.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
    `unresolved`. Bind exact UTF-8 proposal bytes as
    `conversation@sha256:{exact-content-digest}` and exact artifact bytes as
    `{exact-readable-locator}@sha256:{exact-file-digest}`. Digests are lowercase
-   SHA-256. Supply bounded exact content or a child-readable locator, never an
-   opaque cross-session reference.
+   SHA-256. Supply exact content or an absolute readable artifact locator, never
+   an opaque cross-session reference.
 3. Preserve the immutable run-original content and identity. Establish readable
    candidate bytes and essential review authority, scope, targets, mode and
    mutation capability. Classify missing inputs by their role, not merely by
@@ -206,16 +167,53 @@ committed changed canonical applications, not reviewer turns.
 
 For an unresolved candidate, render the Candidate child as
 `unresolved — name one proposal or artifact` and wait; approval alone cannot
-dispatch it. Plain `approve` starts the displayed binding. An unambiguous
+start it. Plain `approve` starts the displayed binding. An unambiguous
 `approve — {adjustments}` updates that binding and starts without another gate.
 A correction without approval or a conflicting or ambiguous adjustment renders
 one revised brief and waits. Approval is local to the displayed binding and
 grants no other authority or effect.
 
+## Controller invocation
+
+After approval, write the approved binding as one JSON object to a
+session-local scratch file; it is the controller's only input channel:
+
+```json
+{
+  "goal": "{Goal}",
+  "candidate": {"identity": "{exact identity}", "text": "{complete proposal}"},
+  "context": ["{each Context child}"],
+  "mode": "conversation",
+  "cap": "none",
+  "approval": {"text": "{the human's exact approval words}", "at": "{ISO-8601 time}"}
+}
+```
+
+`mode` is `conversation` for Conversation replacement and `artifact` for
+Artifact edits only. In Artifact edits, `candidate` is
+`{"identity": "{exact identity}", "artifact": "{absolute artifact path}"}` with
+no `text`, and an optional `"validate": {"argv": [..]}` names the existing
+artifact-native validator. `cap` is `none` or the approved positive integer.
+Then run the controller once, through `bash` with `timeout: 0` and the
+repository root as working directory:
+
+```text
+node .config/agents/harnesses/omp/acp-controller/cli.mjs reconcile < {session-local scratch}/reconcile-request.json
+```
+
+Stdout carries only the rendered record followed by `## Spend`; stderr carries
+diagnostics. Exit `0` is `## Final proposal`; `1` is a stop or a parked repair
+pause with `## Reconcile stopped`; `2` is a refusal before any launch; `3`
+means cleanup was not established and the record names the unresolved actor,
+PID, or folder. Run one controller call per approved binding. Never rerun it to
+retry a stopped run; continue a parked run only under Liveness, failure, and
+repair.
+
 ## Ephemeral state and identities
 
-Keep only the following fresh run state; never persist a counter, ledger,
-reviewer state object, or hidden protocol state:
+The controller keeps only the following fresh run state, and persists it only
+in the private run folder while a run is parked for repair; never persist a
+counter, ledger, reviewer state object, or hidden protocol state elsewhere:
 
 - immutable run original content and identity;
 - current canonical candidate content or artifact identity;
@@ -223,19 +221,15 @@ reviewer state object, or hidden protocol state:
 - immutable outer base content and identity for the current iteration;
 - complete working proposal, exact identity, and origin (`outer-base` or one
   finalized reviewer Correction);
-- the two persistent A/B actor identities and each actor's
+- the two persistent A/B reviewer sessions and each reviewer's
   first-actual-review-completed flag;
-- the current lifecycle run binding, original operation results needed for
-  active semantic handling or cleanup, and each request's stable ID, actor,
-  phase, first reply when present, turn and reuse outcome;
-- each original pending return's expected role/pass/candidate,
-  consumed/pending status, and nonresetting correction-used flag;
-- the exact unresolved lifecycle frontier when an expected reply is missing,
-  without backfilling it from working state, a status wake, or a later body;
+- each request's owner, phase, admitted first reply when present, turn result,
+  and reuse state;
+- each original expectation's re-ask count and whether the one approved-context
+  retry for `BLOCKED` is spent;
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
-- terminal finalized response, counterpart context-sync result, and
-  identity-safe repair state when present;
+- the pending accepted proposal and identity-safe repair state when present;
 - seen working-identity/reviewer pairs and unresolved frontiers; and
 - a full event trace with monotonically increasing `Step` values.
 
@@ -244,166 +238,117 @@ identity, parent proposal identity, author reviewer, author pass, and source
 finalized-response digest. At outer initialization, parent proposal identity is
 the outer-base identity and author reviewer, author pass, and source response
 are `none`. A changed working proposal records the prior working identity as its
-parent and hashes the exact complete finalized response. Do not create or send a
-separate semantic response-history ledger; retain the complete original
-lifecycle results required for current assembly and cleanup.
+parent and hashes the exact complete finalized response. Lineage is
+controller-derived; do not create a separate semantic response-history ledger.
 
 A conversation working identity is the lowercase SHA-256 of its exact complete
 UTF-8 replacement. An unchanged artifact working identity is the canonical
 artifact identity. A changed artifact working identity binds the immutable
 outer-base identity and the exact complete bounded edit set with a lowercase
-SHA-256; retain the exact serialization used for that digest until the outer
-iteration ends. Identity equality, not paraphrase or intent, governs freshness.
+SHA-256. Identity equality, not paraphrase or intent, governs freshness.
 
-Every review-turn packet carries the approved goal, intent, constraints and
-exclusions; exact mode; complete current working proposal or exact readable
-artifact base plus complete current edit set; current working identity and the
-six lineage fields; decision-bearing readable context; this protocol's exact
-locator; expected reviewer and pass; the invoking controller
-identity; and the exact lifecycle target and semantic phase. It carries the
-immutable run-original identity on every turn. It carries the full run-original
-content or approved readable locator only on that actor's first actual
-reviewing turn, or once more to correct an otherwise resolvable `BLOCKED`.
-Large context may use native shared artifact transport only when the intended
-actor can read it.
-The controller retains the protocol locator's publish-time hash and requires
-matching re-reads before subsequent dispatches. Reviewers independently hash
-that same file at bootstrap and before review; they do not echo its digest.
-Current working identity and all six lineage fields remain controller-computed
-from frozen content and retained responses, not reviewer-authored identity
-fields. Bind each response to the candidate in its current connection-owned
-request; an echoed `Candidate:` field is neither required nor allowed.
+Every review request carries the approved goal, candidate, context, exact mode
+and cap; the current outer iteration; the complete unchanged outer base; the
+complete current working proposal; the Correction shape for the mode; the
+delegated authorization record or `none`; and a worked return example. A
+controller header names the phase, expected reviewer, pass, and owner. In outer
+iteration one the outer base is the run original, so each reviewer's first
+actual review carries the full run-original content. Current working identity
+and all six lineage fields remain controller-computed from frozen content and
+admitted responses, not reviewer-authored identity fields. The current request
+binds each response to its candidate; an echoed `Candidate:` field is neither
+required nor allowed.
 
-## Retained reviewer lifecycle
+## Reviewer progression
 
-After approval, direct mode opens one named `reconcile` run with binding
-`{ mode: "standalone", controller }`; delegated mode uses the reviewer pair
-already declared for the exact scope by the outer named `retrace` run. Do not
-open a second delegated run. Retain the returned run and stable reviewer actor
-IDs in current invocation state. `open` declares the pair but neither launches
-workers nor establishes readiness.
+The controller creates reviewer A for the first review and reviewer B only
+when an applicable `REVISE` first needs the counterpart. Each is one
+persistent read-only native session for the whole run, launched with the tools
+`read`, `glob`, `grep`, and `yield`, every permission request denied, and an
+empty private working directory. A fresh session is created only for the first
+creation of a previously unstarted role; restoration is same-session only.
+Never replace, resend to, or emulate a reviewer.
 
-Dispatch separate bootstrap requests to A and B with phase `readiness`; distinct
-actors may start concurrently. Each body binds only logical role, protocol
-locator, and controller identity and requests the reviewer protocol's
-exact readiness line. Admit readiness only from the first owner-visible reply
-for that exact actor/request/phase after validating `Ready: reviewer A` or
-`Ready: reviewer B`. Keep reply, turn, and reuse separate. Startup or delivery
-failure affects only that request; preserve the successful sibling and every
-stable handle. Do not resend, replay, reconstruct, or replace either required
-actor.
+On each reviewer's first actual reviewing turn:
 
-On each actor's first actual reviewing turn, even if it occurs in a later outer
-iteration:
-
-1. Dispatch the full run original or approved readable locator and the current
-   review-turn packet to that actor with phase `initial`. Include no
+1. Send the `initial` request with the full current review packet. Include no
    supplemental-skill loading recipe or path.
 2. Admit its exact first reply as the complete provisional response. Trace it
    as provisional and superseded by its eventual finalized response. It cannot
    change working state or terminate negotiation.
-3. After admitting that provisional response, dispatch one successor request
-   to the same actor. Explicitly instruct it to load `skill://rethink` once,
-   reassess its immediately preceding complete provisional response from first
+3. After admitting that provisional response, send one `rethink` request to the
+   same session. It instructs the reviewer to `read` the absolute path
+   `/Users/kim/.dotfiles/.config/agents/skills/rethink/SKILL.md` once, reassess
+   its immediately preceding complete provisional response from first
    principles, and reply with one complete finalized response with pass
-   `post-rethink` for the same candidate identity. The request states that the
-   outer Reconcile contract supersedes `rethink`'s standalone wrapper and
-   `reject`, `reuse`, `extend`, `test`, and `proceed` vocabulary. Do not infer
-   this invocation from the pass label, a later request, a correction, or
-   context-only synchronization.
-4. Mark that actor's first actual review complete only after admitting the
+   `post-rethink` for the same candidate. The request states that the outer
+   Reconcile contract supersedes `rethink`'s standalone wrapper and `reject`,
+   `reuse`, `extend`, `test`, and `proceed` vocabulary. Do not infer this
+   invocation from the pass label, a later request, or a re-ask.
+4. Mark that reviewer's first actual review complete only after admitting the
    finalized response.
 
-Every later actual review uses pass and phase `later`, sends no run-original
-bytes, and never loads `rethink`. A response-contract correction returns to the
-same actor and inherits the corrected response's pass and authority:
-corrected `initial` stays provisional; corrected `post-rethink` or `later`
-stays finalized. Neither switches reviewer nor adds a rethink. A `BLOCKED`
-response may receive already-approved readable original context once through
-the same actor; persistent `BLOCKED` stops.
+Every later actual review uses pass and phase `later` and never loads
+`rethink`. A `source-need` return continues the same pass: the controller
+supplies each requested readable absolute source in a `source` request, and a
+repeated request for the same sources stops. A re-ask returns to the same
+reviewer and inherits the invalid return's pass and authority: a corrected
+`initial` stays provisional; a corrected `post-rethink` or `later` stays
+finalized. Neither switches reviewer nor adds a rethink. A finalized `BLOCKED`
+receives the one approved-context retry through the same reviewer; persistent
+`BLOCKED` stops.
 
-For every readiness, review, correction, approved-context, or synchronization
-request, bind the exact actor, expected role/pass/candidate, semantic operation
-and phase before dispatch. Direct mode uses public `dispatch` and owner
-`observe`; delegated mode uses connection-bound `lifecycle_channel.request`.
-The request ID and physical connection establish correlation and ownership.
-Do not add a reply token to the body or use task, hub, Eval, yield, ordinary
-completion, transcript, history, agent output, local echo, or another channel
-as response authority.
+Admit, per request, only the first completed, non-error, terminal native
+`yield` with explicit `data` and native success inside that request's journal
+window, excluding incremental `yield` sections. Validate it once against the
+controller schema for the expected phase, then apply the applicability checks
+for the current working proposal. Native success is not a `VALID` verdict. The
+first admitted reply stays authoritative through a later turn failure, process
+exit, or abort; the turn result governs reuse and cleanup, not reply
+authority. A request stays pending until an admitted reply, a concrete terminal
+failure, or an explicit controller abort; no turn timeout applies. After
+observer loss or uncertain delivery the controller re-watches from the last
+consumed cursor for the same request, admits an already captured reply at most
+once, and never resubmits the prompt.
 
-Public `dispatch` returns one stable row immediately. Preserve `pending`,
-`start-failed`, or `delivery-unknown` exactly and account every batched sibling.
-For a pending direct request, use `observe` only on an authorized controller
-turn, including a plugin status wake; create no polling loop, timer, waiter, or
-external supervisor. A delegated connection call returns the owned request
-views when their first replies or terminal failures settle. Elapsed silence
-stays pending until an authoritative reply, concrete terminal failure, or
-explicit owner/user abort. A periodic ID/status-only wake is observation-only
-and never a response.
+Each original expected review return shares one re-ask budget across data
+format and applicability: three re-asks in total, and the fourth invalid
+return stops. An invalid return is a turn that completes without a `yield`,
+`yield` data that fails the review schema, or a `REVISE` Correction that is
+non-applicable to the outer base or leaves the current working proposal
+unchanged. A re-ask restates the concrete defect and the prescribed complete
+response shape in one new `reask` request to the same reviewer, pass, and
+candidate, and revalidates the complete reply. A changed error category,
+duplicate, or repeated invalid response never resets the count. Never switch
+reviewer, add a review or rethink, unwrap, normalize, deduplicate, or select a
+last block.
 
-Admit only an owner-visible `RequestView.reply.body` from the exact request,
-actor and phase. Retain the complete original lifecycle result before decoding
-the body as text and applying exact expected role, pass, candidate identity,
-workflow grammar, authority, semantic, correction budget, and once-only
-request checks. The first accepted reply remains authoritative through later
-turn failure, process exit, or abort. `turn: succeeded` plus `reuse: ready` is
-required before ordinary later reuse; a reserved successor may wait for that
-same actor. `NO_REPLY`, `WORKER_FAILED`, `ACTOR_TERMINAL`,
-`DELIVERY_UNKNOWN`, or another concrete lifecycle failure never supplies or
-reconstructs a body.
+An unfinished `yield`, uncertain delivery, an incomplete turn, a tool outside
+the reviewer's four tools, an evidence fault, or a controller stop is not an
+invalid return and earns no re-ask: it stops the run at that exact request.
+When no admitted reply exists, preserve the exact request, reviewer, phase,
+candidate, failure state, spent re-asks, and all earlier admitted responses.
+Do not substitute a working draft, copied payload, assistant output, or a later
+reply from another request; do not redispatch, replay, re-emit, replace a
+reviewer, or reset an allowance.
 
-When no authoritative reply exists, preserve the exact request, actor,
-controller, phase, candidate, failure/pending state, used or unknown
-allowances, and all earlier admitted responses. Do not substitute a working
-draft, copied payload, assistant output, later reply from another request, or
-status wake; do not redispatch, replay, re-emit, replace an actor, nudge for
-silence, or reset an allowance. Explicit abort terminates only the named
-request/actor/run and creates no replacement or semantic continuation.
+The re-ask budget governs invalid expected returns only. Valid `REVISE` and
+`BLOCKED` keep their own handling, including the one approved-context retry;
+separately authorized repairs remain outside this guard. None consumes or
+replenishes a re-ask.
 
-An unsolicited, stale-phase, already-consumed, malformed, wrong-role,
-wrong-pass, wrong-candidate, or non-applicable body cannot satisfy the current
-expectation. A malformed first reply from the exact actor/request follows the
-one-correction rule below. A missing reply, status-only wake, startup failure,
-delivery uncertainty, terminal failure without a reply, or unavailable
-lifecycle capability is not an invalid body and earns no content correction.
-A valid reply remains admitted if its producing turn later fails; that later
-outcome controls reuse and cleanup, not reply authority.
-
-For each original expected readiness or review return, allow at most one
-corrective request total across body format, identity, and applicability
-failures evidenced by that exact request's first reply. The corrected return
-remains part of the original expectation: a changed error category, duplicate,
-or repeated invalid response cannot reset the allowance. Recoverability
-requires the approved run binding, same actor, approved candidate, and
-necessary state to remain intact. A revoked/conflicting binding, terminal or
-lost actor, or unavailable lifecycle seam stops immediately.
-
-For an eligible invalid return with its correction unused, restate the concrete
-violated requirement and prescribed complete response shape in one new request
-to the same actor, pass, and candidate. Revalidate the complete reply contract.
-A valid correction continues with inherited authority; any further invalid
-return for that expectation stops and cleans up. Never switch actor, add a
-review or rethink, unwrap, normalize, deduplicate, or select a last block.
-
-This allowance governs invalid expected returns only. Valid `REVISE` and
-`BLOCKED` keep their existing handling, including the once-approved-context
-correction; context-only synchronization and separately authorized repairs
-remain outside this guard. None consumes a return-contract correction or
-replenishes one already spent for the same original expectation.
-
-The return-contract correction is distinct from adopted generic machinery
-recovery. If an already-authorized lifecycle call, result capture,
-synchronization, or validator invocation fails for an eligible execution
-cause, the responsible owner may correct only that mechanism under the generic
-policy without issuing another semantic request, changing the review pass,
-refunding a correction, replaying child work, or resetting an allowance.
-Supported observation of the same pending request is continuation. A valid
-`REVISE`, `BLOCKED`, semantic stop, missing required owner/provenance, or
-exhausted correction cannot be relabeled as machinery failure.
+The re-ask is distinct from adopted generic machinery recovery. If an
+already-authorized controller call, result capture, or validator invocation
+fails for an eligible execution cause, the responsible owner may correct only
+that mechanism under the generic policy without issuing another semantic
+request, changing the review pass, refunding a re-ask, replaying child work, or
+resetting an allowance. Supported observation of the same pending request is
+continuation. A valid `REVISE`, `BLOCKED`, semantic stop, missing required
+owner, or exhausted budget cannot be relabeled as machinery failure.
 
 Accept only the protocol's exact complete response for the expected reviewer,
-pass, and current working identity. A duplicate, malformed, stale, mismatched,
-or non-applicable response is not a verdict and authorizes no edit. The
+pass, and current working identity. A malformed, stale, mismatched, or
+non-applicable response is not a verdict and authorizes no edit. The
 controller never normalizes reviewer prose or invents a semantic correction.
 
 ## Outer iterations and negotiation
@@ -435,40 +380,22 @@ Process admitted finalized responses without changing the canonical candidate:
   an edit. A change requires a new `REVISE` identity.
 - Conversation `REVISE` must provide one complete replacement. A changed,
   directly applicable replacement completely supersedes ephemeral working
-  state, records its bounded lineage, and goes to the existing counterpart.
+  state, records its bounded lineage, and goes to the counterpart.
 - Artifact `REVISE` must provide one complete set of exact bounded edits against
   the immutable outer base. A changed, directly applicable set completely
   supersedes every earlier unapplied Correction; it is never layered on another
-  unapplied patch. The canonical artifact remains unchanged until acceptance,
-  synchronization, and application.
-- `BLOCKED` authorizes no mutation. Apply only the one approved-context
-  correction above; if it does not resolve the blocker, stop.
+  unapplied patch. The canonical artifact remains unchanged until acceptance
+  and application.
+- `BLOCKED` authorizes no mutation. Apply only the one approved-context retry
+  above; if it does not resolve the blocker, stop.
 
 After each changed applicable finalized `REVISE`, add the prior working identity
 as the lineage parent, replace the complete working proposal and origin, record
-the new working identity/reviewer pair, and request the existing counterpart.
-Alternate the same A and B children for as many genuinely progressive turns as
-needed. There is no numeric inner-turn cap and no mutation during negotiation.
+the new working identity/reviewer pair, and request the counterpart. Alternate
+the same A and B sessions for as many genuinely progressive turns as needed.
+There is no numeric inner-turn cap and no mutation during negotiation.
 
-## Synchronization, application, and capacity
-
-Before mutation, unchanged success presentation, or a capacity stop, dispatch
-the already-live reviewer who did not issue terminal `VALID` one context-only
-request under the protocol. It carries the complete terminal working proposal
-or exact readable artifact base plus complete bounded edit set, its six-field
-provenance, the complete terminal response, and the intended disposition. The
-complete terminal response is copied verbatim from the admitted request;
-neither it nor the synchronization packet carries an added `Candidate:` or
-other dedicated current-identity field. The connection-owned request, supplied
-complete proposal/artifact inputs and unchanged six-field provenance bind the
-terminal candidate. Preserve every required provenance role identity. Admit
-only the exact `Synchronized` acknowledgment
-from that actor/request. It is receipt evidence, not a review, verdict,
-rethink, mutation, or semantic acceptance. A failed or missing acknowledgment
-stops before every mutation or terminal presentation; do not replay or replace
-the reviewer.
-
-After successful synchronization:
+## Application and capacity
 
 At either terminal branch below (unchanged success or capacity), perform terminal
 cleanup first. Then, in artifact mode only, immediately before reporting, freshly
@@ -480,59 +407,61 @@ success or label the reviewed identity as current. This terminal freshness guard
 does not add disk checks to conversation mode.
 
 1. If accepted working identity equals the outer-base identity, finish with
-   unchanged success only after the terminal cleanup below. This also closes a
+   unchanged success only after terminal cleanup. This also closes a
    closure-only iteration.
 2. If accepted working state differs and the iteration is closure-only, finish
    `CAP_REACHED` before mutation and only after terminal cleanup. Preserve and
    report the freshly confirmed canonical and pending working identities.
 3. If accepted working state differs and the cap is `none` or committed
-   changed-application count is below it, the controller applies the complete accepted
-   working proposal exactly once. Conversation mode replaces the canonical
-   proposal. Artifact mode applies only the complete current Correction against
-   the verified unchanged outer base. Supporting context stays read-only.
+   changed-application count is below it, the controller applies the complete
+   accepted working proposal exactly once. Conversation mode replaces the
+   canonical proposal. Artifact mode first re-reads the artifact and stops
+   without writing if it no longer equals the accepted outer base; otherwise it
+   writes only the complete current Correction applied to that verified outer
+   base. Supporting context stays read-only.
 4. Re-read and re-identify the result. If and only if the observed bytes equal
    the accepted changed working state, record one committed changed canonical
    application and increment the application count exactly once. A later native
    validation failure does not erase that committed application or its count.
-5. Run an existing artifact-native validator when available. A failed validator
-   stops on the unchanged applied identity; an authorized retry of that exact
-   validator cannot increment the application count again.
+5. Run the approved existing artifact-native validator when the request names
+   one; the controller runs its `argv` without a shell in the artifact's
+   directory. A failed validator stops on the unchanged applied identity; an
+   authorized retry of that exact validator cannot increment the application
+   count again.
 6. After validation succeeds, start a new A-led outer iteration from the exact
    applied canonical identity. When the committed-application increment reaches
    a numeric cap, mark this one new iteration as closure-only. It may negotiate
    read-only, but it may not apply another accepted change.
 
-Reviewer turns, provisional responses, rethink, Corrections, synchronization,
-unchanged closure, failed or partial application, validation itself, and
-identity-preserving repair never add a capacity count. The controller performs at most one
-canonical application before starting a new outer iteration.
+Reviewer turns, provisional responses, rethink, Corrections, unchanged
+closure, failed or partial application, validation itself, and
+identity-preserving repair never add a capacity count. The controller performs
+at most one canonical application before starting a new outer iteration.
 
 ## Terminal cleanup
 
-Keep the same pair live between outer iterations and during an eligible
-identity-preserving repair pause. Context synchronization is not a request to
-terminate the run.
+Keep the same pair live between outer iterations, and keep the same pair's
+sessions parked and resumable, never disposed or replaced, during an eligible
+repair pause.
 
 At actual run termination—unchanged success, `CAP_REACHED`, terminal artifact
-drift, any other non-resumable stop, or abandonment of a repair pause—dispose
-both exact run-owned reviewer actors before completion. A delegated scope uses
-connection-bound `lifecycle_channel.dispose` for each reviewer and waits for
-`disposed` before publishing `scope-result`. A standalone controller uses
-public owner-scoped `dispose` for each reviewer, then `close` for any remaining
-run-owned state. Do not send a shutdown prompt, request an acknowledgment,
-abort unrelated actors, or terminate the controller.
+drift, any other non-resumable stop, or abandonment of a repair pause—the
+controller disposes both exact run-owned reviewer sessions before completion.
+Disposal closes each session and then observes every recorded process ID with
+signal 0 under a fixed finite bound; only `ESRCH` for every recorded PID proves
+exit, and an empty PID set proves nothing. The controller never sends a
+termination signal, a shutdown prompt, or an acknowledgment request. After
+observed exit it removes only the run's own session files and private run
+folder. A delegated scope disposes its own two reviewers the same way before
+its scope result is formed.
 
-Successful cleanup requires the supervisor's retained process-exit observation
-and exact `disposed`/`closed` result. Preserve `failed-cleanup`, the exact
-unresolved actor/PID and retained state. A request receipt, report, turn
-completion, status wake, later observation, or host teardown cannot replace
-that result.
-
-Missing or failed cleanup blocks success: preserve the pending disposition and
-exact unresolved reviewer actors and report the cleanup failure rather than
-`Final proposal` or a falsely completed capacity stop. Do not replace a
-reviewer to recover cleanup. An eligible repair pause is not completion and
-retains the pair; label it as a paused frontier.
+Successful cleanup requires that observed exit. A resolved close, a closed
+session record, a report, turn completion, or host teardown cannot replace it.
+Missing or failed cleanup blocks success: the controller exits `3`, keeps the
+pending disposition, names the exact unresolved reviewer, PID, or folder, and
+renders no `Final proposal` or falsely completed capacity stop. Do not replace
+a reviewer to recover cleanup. An eligible repair pause is not completion and
+retains the pair; it is labeled as a paused frontier.
 
 ## Liveness, failure, and repair
 
@@ -545,48 +474,71 @@ mutation on any of these frontiers:
 - a repeated working-identity/reviewer pair without new evidence or authority,
   an A/B cycle, or a repeated unresolved frontier;
 - persistent `BLOCKED` or required context still unreadable after the one
-  allowed approved-context correction;
-- an invalid expected return after its one corrective request, or an
-  uncorrectable malformed or stale response;
-- lost persistent actor, same-actor follow-up, connection-bound reply, or
-  required lifecycle seam;
-- failed context synchronization;
+  approved-context retry;
+- a fourth invalid return for one original expectation;
+- a repeated source request;
+- an unfinished `yield`, uncertain delivery, incomplete turn, forbidden tool,
+  lost reviewer session, or failed same-session restore;
 - approved-authority conflict;
 - `CAP_REACHED`; or
 - failed or partial application or native validation.
 
-On application or validation failure, stop on exact observed bytes. Present the
-accepted outer-base and Correction identities, observed identity, exact failed
-step and error, one exact proposed repair, and an explicit repair-authority
-request. Never auto-rollback.
+On an Artifact-mode application, reread, or validation failure, stop on exact
+observed bytes. The controller parks the run instead of disposing the pair: it
+persists the review state, identities, failed step, and both reviewers'
+session identities in the private run folder, closes both sessions with
+observed exit while keeping them resumable, and exits `1`. Its
+`## Reconcile stopped` record presents the accepted outer-base and Correction
+identities, observed identity, exact failed step and error, one exact proposed
+repair, the required authority, and the resume and abandon commands. Never
+auto-rollback. If observed exit is not established, it exits `3` as a cleanup
+failure.
 
 An admitted `VALID` survives only explicit identity-preserving repair: restore a
 partial write byte-for-byte to the accepted outer base, or repair permission,
 transport, or validator availability without changing the outer base,
-Correction, intended final content, target, mode, scope, authority, child
-bindings, or lineage. Verify those identities, then retry only the exact failed
-synchronization, application, or validator step. Application repair does not
-add a capacity count until one changed canonical application commits;
-validation repair on the unchanged applied identity does not add a second
-count.
+Correction, intended final content, target, mode, scope, authority, reviewer
+sessions, or lineage. The human authorizes that exact repair in the root
+session; the root performs it and then resumes the parked run through `bash`
+with `timeout: 0` from the repository root:
+
+```text
+node .config/agents/harnesses/omp/acp-controller/cli.mjs resume {runId} < {session-local scratch}/resume-request.json
+```
+
+with the request `{"repair": {"authority": "{the human's authorization words}",
+"step": "{exact failed step}"}}`. Resume restores both reviewer sessions under
+their parked session identities with no fresh-session fallback, then retries
+only the exact failed application, reread, or validator step. A different step
+keeps the run parked. Application repair does not add a capacity count until
+one changed canonical application commits; validation repair on the unchanged
+applied identity does not add a second count. If either reviewer's same-session
+restore fails, resume stops and asks: it disposes both sessions, names the lost
+identity, and exits `1`; nothing rolls back and no fresh A or B is created.
+Abandon a parked run with
+`node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
+and no request body.
 
 Within explicitly authorized repair, any changed outer base, Correction, or
 intended final content invalidates `VALID`.
-If target, mode, scope, authority, both persistent children, and lineage
+If target, mode, scope, authority, both persistent reviewers, and lineage
 remain current, bind the observed canonical content and begin a fresh A-led
-outer iteration. A changed target, mode, scope, authority, child binding, or
-lineage requires a revised Reconcile binding. A lost child is never replaced,
-and a different committed canonical identity is never exempted from the cap.
-This repair path does not authorize automatic adoption or re-review after the
-terminal artifact freshness guard detects drift.
+outer iteration. A changed target, mode, scope, authority, reviewer binding, or
+lineage requires a revised Reconcile binding. A lost reviewer is never
+replaced, and a different committed canonical identity is never exempted from
+the cap. This repair path does not authorize automatic adoption or re-review
+after the terminal artifact freshness guard detects drift.
 
 ## Presentation
 
-Read and follow [packed-label](../../references/packed-label.md) for every
-user-facing section. Project the full trace into `## Review rounds` using child
-kind `table`. Include each authoritative finalized verdict exactly once, plus
-context-sync, apply, validate, freshness, cleanup, cap, and stop milestones.
-Exclude provisional initial responses and observation-only status wakes.
+Present the controller's stdout verbatim; it follows
+[packed-label](../../references/packed-label.md) for every user-facing section
+and ends with the `## Spend` table of per-reviewer tokens and cost. Do not
+rewrite, summarize, or reorder it. The controller projects the full trace into
+`## Review rounds` using child kind `table`. It includes each authoritative
+finalized verdict exactly once, plus apply, validate, freshness, cleanup, cap,
+park, resume, and stop milestones, and excludes provisional initial responses.
+Reviewer text is copied byte-for-byte from the admitted `data` strings.
 
 ```markdown
 ## Review rounds

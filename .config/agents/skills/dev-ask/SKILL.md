@@ -64,9 +64,10 @@ execution-recovery operation. Do not re-enter router intake or ask for human
 consent, attendance, supervision, or an abort-capability inventory for those
 three exact role-and-purpose calls. A finite host observation window ending
 does not reopen routing or prove a missing report. This does not widen
-authority, add a recovery or restatement allowance, or alter the named
-Reconcile/Retrace lifecycle-consumer contracts for connection-bound ownership,
-first replies, pending observation and abort, capacity, or observed-exit disposal.
+authority, add a recovery or restatement allowance. Reconcile and Retrace run
+under their acpx controller (`harnesses/omp/acp-controller/`), which owns their
+reviewer and scope sessions, first replies, pending observation, capacity and
+observed-exit disposal.
 
 For ordinary implementation route composition, apply these mandatory router gates in order:
 

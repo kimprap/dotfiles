@@ -47,7 +47,6 @@ mnemopi:
 extensions:
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/key-remaps.js
   - ~/.dotfiles/.config/agents/harnesses/omp/extensions/plan-artifact-sync.js
-  - ~/.dotfiles/.config/agents/harnesses/omp/extensions/lifecycle-plugin.js
 lsp:
   formatOnWrite: true
 setupVersion: 2

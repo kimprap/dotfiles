@@ -3725,7 +3725,7 @@
       "repetition_tier": "hard",
       "rubric": [
         "Require the same child to repair once and the same verifier to own failed and complete unchanged closure aggregates.",
-        "Require OMP taskDepth > 0 to stop before allocation without topology substitution; keep capable other-host topology and named lifecycle consumers unchanged.",
+        "Require OMP taskDepth > 0 to stop before allocation without topology substitution; keep capable other-host topology and the Reconcile/Retrace acpx controller unchanged.",
         "Require native receipt dispatch to stop failed/injected and changed revived identity without waiting; eligible receipts retain same-turn native wait through original-row retention, continuing after ordinary messages and rejecting display-only delivery without polling.",
         "Require exact launch admission followed by first-subsequent child-bound wake-job admission with successful resolution, valid caller schema, original result/row retention before decoding and separate rethink.",
         "Reject relay-only pre-yield failure, rejecting jobs even with structured data, no-job registration failure and busy injection as replies or resend authority; missing rows alone do not prove failed turns.",

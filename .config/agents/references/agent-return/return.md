@@ -48,30 +48,11 @@ Keep these facts separate; none implies a later one.
   report, turn completion, retention record, cancellation request, or echo is
   not disposal.
 
-## Retrace and Reconcile lifecycle runs
+## Retrace and Reconcile
 
-Retrace and Reconcile use their loaded host adapter's named lifecycle consumer,
-not the generic allocation/roster/message mechanics below. The lifecycle
-supervisor owns worker allocation, connection-bound identity, persistent actor
-state, request correlation, first-reply retention, turn/reuse outcome, pending
-observation, abort, and observed-exit disposal. Consuming skills keep only their
-semantic run binding, request IDs and phases, admitted exact reply bodies,
-allowance state, and unresolved frontiers in the current invocation.
-
-Treat each complete original lifecycle result envelope as the observation for
-its exact operation. A successful `open` does not prove semantic readiness; a
-`dispatch` row does not prove a reply; an accepted reply does not prove the
-worker turn succeeded or became reusable; and a disposal or close request does
-not prove cleanup unless its returned state reports successful observed-exit
-completion. A later observation may expose current state, but it cannot
-overwrite the first retained reply, repair a missing operation result, or
-change the semantic phase or allowance attached to a request.
-
-These lifecycle runs impose no named launch-settlement, roster-binding,
-message-return, or disposal-evidence slots on the skill controller. They create
-no registry, ledger, report store, cross-run state, or alternate return source.
-The generic native-return retention and owner-directed-message rules below
-remain unchanged for every consumer that still uses those surfaces.
+Reconcile and Retrace run under their acpx controller
+(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
+first replies, pending observation, capacity and observed-exit disposal.
 
 ## Portable extraction
 
@@ -187,27 +168,6 @@ correlation, relay, grammar, identity, phase, or authority checks. Write-less
 producers continue returning over their authorized native channel;
 receiver-side copying does not change their tools, identity, logical report
 count, or semantic ownership.
-
-## Retrace and Reconcile optional proof export
-
-The loaded host lifecycle plugin owns the source lifecycle results and body
-visibility; it exposes no separate proof-export operation. When an authorized
-proof requires copying those results, bind the responsible owner, named
-consumer, expected operation kinds, actor targets and phases, and session-local
-destination before `open` or the covered `dispatch`. Record returned
-run/actor/request IDs from the original result envelopes before using them as
-copy selectors. Root proof instructions, any delegated scope contract, and the
-operative request must agree before work begins. The responsible owner may then
-mechanically copy only complete original lifecycle result envelopes and
-already-retained authoritative reply bodies to that destination; it cannot
-reconstruct a missing operation, reveal an owner-hidden body, or add authority
-after dispatch.
-
-Proof export adds no default response field, body grammar, evidence authority,
-collector, persistence mechanism, replay, or replacement. An incomplete
-required export blocks that proof without converting a received semantic reply
-into a missing response, failed review, or different workflow outcome. No
-other portable consumer gains a proof-export obligation from this reference.
 
 ## Authority and recovery boundary
 

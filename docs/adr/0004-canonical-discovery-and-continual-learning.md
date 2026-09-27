@@ -36,7 +36,7 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 - **Decision:** `craft-skill` alone owns the optional hybrid append-only `MAINTENANCE.md` convention for skills and prompt bundles. The convention is durable, but each journal is non-runtime, noncanonical provenance. Runtime never loads a journal and no entry or source row can approve work, define behavior, or supersede human authority, executable prose, an approved artifact, or an ADR.
 - **Decision:** Every structured journal entry records identity and kind, superseded IDs, context, decision, applied paths, rejected alternatives, validation, and revisit condition. Every source row records exact URL or stable local URI, access date, `Use: adopted | adapted | caution | rejected | superseded`, `Basis: local evidence | primary source | secondary source | unverified`, applied path, and concise local treatment.
 - **Decision:** Corrections append a later entry with `Supersedes`; they never rewrite history. Optional free-form notes may coexist with structured entries. Raw transcripts, copied articles, provider trivia, and numeric source scores are excluded.
-- **Decision:** A qualifying custom controller may keep its existing skill-local human map under its approved authority. Reconcile's current map remains untouched and does not become generic runtime authority.
+- **Decision:** A qualifying custom controller may keep its existing skill-local human map under its approved authority.
 - **Why:** Human navigation and source provenance help maintenance only when they cannot compete with executable and canonical owners.
 - **Rejected alternatives:** Runtime-loading maps or journals, making source notes canonical, copying articles, rewriting corrections in place, or keeping one global workflow ledger creates duplicated or misleading authority.
 - **Consequences:** A map mismatch is an edit-time defect. Journal maintenance is optional and append-only. The prompt-bundle journal records provenance while `code-rethink.md` and `test-value.md` own runtime behavior.
@@ -49,7 +49,6 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 - `.config/agents/skills/dev-ask/WORKFLOW.md` and `references/execution-flow.md` for non-runtime human projection.
 - `.config/agents/skills/dev-continual-learning/SKILL.md`, portable `continual-learning`, their focused evals, and the implementation assurance order.
 - `.config/agents/skills/craft-skill/SKILL.md`, its focused evals, and `.config/agents/rules/canonical-project-contracts.md` for the optional maintenance-journal convention and provenance boundary.
-- Existing Reconcile files remain separate and unchanged.
 
 ## Evidence / source revisions
 

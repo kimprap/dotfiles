@@ -23,36 +23,69 @@ Ask the whole current human-owned frontier in one round: the objective's intende
 
 An invalid or unreadable root, or contradictory current authorities, produces the stable `blocker` disposition.
 
+### Finding eligibility
+
 Requested desired postconditions authorize findings; protected behavior constrains their evaluation and correction, not a separate cleanup objective. A finding is eligible only when current evidence demonstrates its causal contribution to an approved objective's gap or a necessary consequence of that gap's scoped correction. Readability, shared ownership/loading, or a preexisting conflict with a protection requirement alone is insufficient. Otherwise retain the observation only as an exclusion, boundary, or applicable constraint, not a finding or repair direction. Apply this distinction to the bound objective without narrowing a general harness-refinement request.
 
 An instruction conflict meeting that finding-eligibility rule is a causal candidate, not unresolved authority. Use the blocker only when mutually incompatible current authorities remain after applying the bound human choices.
 
 ### Explicit child entries
 
-This file has three entries: human-invoked parent, parent-bound scope evaluator,
-and optional parent-bound normalizer. Admit a worker entry only from its
-connection-bound named `retrace` request with the matching target, phase, and
-scope authority. A worker never starts another Retrace parent, repeats table
-approval, or impersonates another scope.
+This file has three entries: the human-invoked parent, the controller-owned
+scope evaluator, and the optional controller-owned normalizer. The parent is
+the root OMP session running this skill; it owns intake, human questions,
+normalization, table approval, and presentation. The coded acpx controller at
+`.config/agents/harnesses/omp/acp-controller/` owns every normalizer, scope
+evaluator, and nested Reconcile reviewer session through public acpx and native
+`omp acp`. The parent never launches, prompts, observes, or disposes those
+sessions itself. A worker entry exists only as a controller request rendered
+from `## Scope evaluator prompts`; a worker never starts another Retrace
+parent, repeats table approval, or impersonates another scope.
 
-The parent opens the named `retrace` consumer with one optional normalizer,
-the exact scope IDs and `requires` edges, and `maxDirectActors: 4`. Consumer
-construction binds ordinary read-only task profiles for normalizer and scope
-actors and nested named Reconcile reviewers for every scope; do not supply
-profiles, tools, prompts, models, argv, process factories, environments, or an
-actor graph. Opening declares stable actors but does not launch them or prove
-semantic readiness. A binding changed by normalization or human table edits
-must be closed before any affected scope dispatch and reopened from the newly
-approved complete graph; this is a new approved binding, never replay or
+After approval the parent invokes the controller once for the approved graph,
+through `bash` with `timeout: 0` and the repository root as working directory:
+
+```text
+node .config/agents/harnesses/omp/acp-controller/cli.mjs retrace < {session-local scratch}/retrace-request.json
+```
+
+The request file holds one JSON object, the only input channel:
+
+```json
+{
+  "root": "/absolute/bound/root",
+  "objectives": ["raw human objective, in authored order"],
+  "constraints": ["human-owned constraint"],
+  "exclusions": ["exclusion"],
+  "evidence": [{"locator": "/absolute/locator", "role": "current"}],
+  "table": {"scopes": [{"id": "S1", "name": "Name", "objective": "One observable objective.", "evaluand": "path or surface", "protected": ["protected behavior"], "exclusions": [], "requires": [], "sharedEvidence": [], "potentialConflict": []}]},
+  "approval": {"text": "the human's exact approval words", "at": "ISO-8601 time"}
+}
+```
+
+Exit `0` means aggregate `complete`; `1` means `partial` or `blocked` with a
+rendered record; `2` means the controller refused before any launch (invalid
+request or table, version pin, model role, missing prompt marker, or an
+undisposed earlier run); `3` means cleanup was not established and the record
+names the unresolved actor, PID, or folder. Stdout carries only the rendered
+record followed by `## Spend`; stderr carries diagnostics. Present stdout
+verbatim. Never rerun the controller to retry a stopped or partial scope; a
+fresh attempt needs the changed evidence or authority that Stops requires.
+
+The controller binds its models from live `modelRoles`: reviewer A uses
+`second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope evaluator
+and normalizer use A's pair. Do not supply profiles, tools, prompts, models,
+argv, process factories, environments, or an actor graph. A binding changed by
+normalization or human table edits is a new approved request, never replay or
 replacement of started work.
 
 The optional normalizer receives only its frozen normalization input and
 returns a scope proposal, not findings, evaluation, or Reconcile. The scope
 evaluator applies the complete Evidence boundary, Method, Readiness, and Result
-below to its approved scope, then follows the Scope protocol. It retains
-control of its connection-owned Reconcile reviewers and their disposal; the
-outer parent handles only scope authority, scheduling, return admission,
-freshness, direct-scope disposal, and aggregation.
+below, which its prompt inserts, to its approved scope. The controller's
+scope-owned logic runs that scope's delegated Reconcile, disposes its reviewers,
+forms the scope result, and admits it at the root; the parent handles only
+scope authority, the request, and presentation of the rendered aggregate.
 
 ### Explicit execution-recovery adoption
 
@@ -62,8 +95,9 @@ for its approved active-session invocation, setup, transport, collection,
 capture, and task-local execution machinery. Each responsible execution owner
 assesses and corrects only its own eligible mechanism under that policy: the
 outer parent does not take over a scope child's evaluation or its Reconcile
-reviewers. This reusable skill-level adoption is known before `open` but is not
-retroactive authority for an existing, paused, stopped, or historical run.
+reviewers. This reusable skill-level adoption is known before the controller
+run starts but is not retroactive authority for an existing, paused, stopped,
+or historical run.
 
 Normal use of an already-supported observation path for the same pending
 operation is continuation, not a new evaluation or corrected execution.
@@ -75,128 +109,70 @@ allowance reset, durable workflow state, or restart.
 ## Normalize and approve
 
 1. Bind the root, raw concerns, supplied exact evidence locators, protected behavior, exclusions, and remaining trade-offs. Ask the whole missing human-owned frontier together. Invalid/unreadable root or unresolved contradictory current authority blocks, rather than widening discovery.
-2. Normalize in authored order into stable scope IDs and names. Distinguish requested outcomes from cross-cutting tracing, comparison, and nonduplication instructions; allocate those instructions to every affected scope without inventing another outcome. One raw concern may be covered by multiple scopes. Merge overlapping concerns when one coherent objective/evaluand/invariant/evidence walk covers them; do not make one scope per bullet. Propose synthesis only for a genuinely additional combined decision, not shared source tracing or organization of directions. Handle clear cases in the parent. A genuinely vague or overlapping cluster may use one short normalizer actor with frozen identity-bound input. Dispatch it through the current named run, admit only the first owner-visible matching `scope-proposal`, then dispose that exact normalizer and require `disposed` before releasing its direct permit.
+2. Normalize in authored order into stable scope IDs and names. Distinguish requested outcomes from cross-cutting tracing, comparison, and nonduplication instructions; allocate those instructions to every affected scope without inventing another outcome. One raw concern may be covered by multiple scopes. Merge overlapping concerns when one coherent objective/evaluand/invariant/evidence walk covers them; do not make one scope per bullet. Propose synthesis only for a genuinely additional combined decision, not shared source tracing or organization of directions. Handle clear cases in the parent. A genuinely vague or overlapping cluster may use one short normalizer actor with frozen identity-bound input: run `node .config/agents/harnesses/omp/acp-controller/cli.mjs normalize` the same way with the request `{"root", "concerns": [..], "input": "<frozen normalization input>"}`. The controller admits only the first valid `scope-proposal`, disposes that exact normalizer with observed exit before releasing its direct permit, and prints a `## Scope proposal` record; exit `0` means a proposal was admitted. That record remains a proposal for step 4, never an approved table.
 3. Declare `requires`, `shared-evidence`, and `potential-conflict` separately. Declare `requires` only when the approved objective actually needs a predecessor's report; shared sources or cross-cutting comparison alone do not require one. Do not manufacture that need by rewriting a source walk as consumption of upstream reports. Only `requires` controls readiness, prerequisite depth, and invalidation propagation. Its predecessors must have current resolved results; a reviewed blocker is insufficient. Detect a `requires` cycle before approval and return it to normalization. Merge only under the coherent-scope rule; otherwise expose the exact human-owned coupling decision without dropping an edge or selecting a semantic winner. Shared-evidence and potential-conflict relationships may be cyclic and do not serialize readers.
-4. Present only the complete two-column `Scope | Evaluate` table for approval: each row has its stable ID/name and one observable objective. Human edits replace that scope authority; recompute and re-present the entire table until approved. No scope evaluation begins before approval. Bind the exact complete approved table, human objectives/constraints/exclusions, exact scope contracts, and actual human approval provenance request-locally.
-5. Before fan-out freeze a request-local evidence baseline and each approved scope contract: objective, evaluand, protected behavior, exclusions, prerequisite inputs and their exact report identities when available, and evidence boundary. A newly discovered objective-bound scope, including materially new synthesis, requires an updated complete table gate; independent already-approved work may continue. Rejected additions become explicit exclusions. Never manufacture an unbounded “other improvements” scope or silently change an approved objective, invariant, or evidence authority.
+4. Present only the complete two-column `Scope | Evaluate` table for approval: each row has its stable ID/name and one observable objective. Human edits replace that scope authority; recompute and re-present the entire table until approved. No scope evaluation begins before approval. Bind the exact complete approved table, human objectives/constraints/exclusions, exact scope contracts, and actual human approval provenance in the `retrace` request.
+5. The request fixes the evidence baseline and each approved scope contract: objective, evaluand, protected behavior, exclusions, `requires` prerequisites, and evidence boundary. The controller freezes each contract, prerequisite report identity, and evidence observation itself before and during fan-out. A newly discovered objective-bound scope, including materially new synthesis, requires an updated complete table gate and a new request; independent already-approved work may continue. Rejected additions become explicit exclusions. Never manufacture an unbounded “other improvements” scope or silently change an approved objective, invariant, or evidence authority.
 
 ## Content and return transport
 
-Load [agent-return](../../references/agent-return/return.md) before the first
-requested return. It owns portable declared bodies and semantic admission
-boundaries, not Retrace budgets or Reconcile verdicts. On OMP also load the
-[OMP agent-return adapter](../../harnesses/omp/agent-return.md) for named
-consumer construction, connection-bound reply, reply/turn separation, owner
-visibility, pending observation, abort, capacity, and observed-exit disposal.
-Use the installed shared owners, not guessed skill-relative runtime URIs.
+Only the admitted, domain-valid native `yield` candidate counts as a reply. Task, hub, Eval, any other `yield`, ordinary output, transcripts, history, agent output and generic collectors never count and are never a fallback.
 
-The producer freezes the exact complete UTF-8 bytes of each content record
-before publishing a receiver-readable locator. Every receiver re-reads and
-hashes those bytes before admission; the lowercase SHA-256 it computes is the
-bound identity. Hash bytes directly, including the kind header, never
-reconstructed prose, implicit concatenation, normalized newlines, tool-rendered
-anchors, or line wrappers. An opaque cross-session pointer is not readable
-content. Return and control bodies carry locators, not `kind@sha256:{digest}`
-fields; do not request, accept, or make optional an agent-composed digest echo.
+The controller admits, per request, the first completed, non-error, terminal
+native `yield` result with explicit `data` inside that request's own journal
+window, then validates it against the closed domain schema for the phase the
+controller expects. Native success alone is not a valid result. The controller
+supplies owner, scope, request, and phase bindings in the request header; no
+worker echoes them, and no correlation token belongs in the data. Reply, turn
+result, and reuse are separate facts: an admitted reply stays authoritative
+through a later turn failure, exit, or abort, while reuse needs a completed
+turn.
 
-Each produced content record starts with the exact line `Kind: {kind}`. Match
-the header to the referencing field:
+A request stays pending until an admitted reply, a concrete terminal failure,
+or an explicit controller abort; the controller sets no turn timeout. After
+observer loss or uncertain delivery it re-watches from the last consumed
+cursor for the same request and never resubmits the prompt. An unfinished
+`yield`, uncertain delivery, an incomplete turn, or a tool outside `read`,
+`glob`, `grep`, and `yield` stops that request at its exact frontier without a
+re-ask. Workers run read-only with every permission request denied and
+address sources by absolute path.
 
-| Locator field | Required kind |
-|---|---|
-| Normalization input locator | `normalization-input` |
-| Scope proposal locator | `scope-proposal` |
-| Scope approval locator | `scope-approval` |
-| Scope contract locator | `scope-contract` |
-| Candidate locator, Original candidate locator, Final report locator | `conversation` |
-| Evidence manifest locator | `evidence-manifest` |
-| Result payload locator | `scope-result-payload` |
+The controller freezes the exact complete UTF-8 bytes of each content record
+under a controller-held locator. The record identity is the lowercase SHA-256
+of those exact bytes, computed by the controller; prompts carry the complete
+record text, and no model-authored digest echo is requested or accepted. Hash
+bytes directly, never reconstructed prose, implicit concatenation, normalized
+newlines, or tool-rendered anchors. A changed record at a bound locator is
+drift and stops, never a new baseline. Keep these bindings in the controller
+run, not in a new store. The scope report record starts with the exact line
+`Kind: conversation`; that header is part of the reviewed and hashed bytes.
 
-For parent-known records, including normalization input, scope approval and
-scope contract, require the exact expected locator and hash from the parent's
-request-local freeze. For a newly published record, the parent retains its
-first successfully read complete-byte hash as the publish-time binding; later
-reads must match. A changed record at a bound locator is drift and stops, never
-a new baseline. Keep these bindings request-locally, not in a new store.
-For a filesystem locator in an owned root, freeze write-once; `0444` is the
-OMP/proof method, not a portable permission mandate for every locator.
-
-The governing distinction is correctability: an incorrect locator or
-field-to-record association fails visibly and may use the existing one
-correction; a typed digest mismatch cannot distinguish a transcription error
-from changed content. Correct the reference, never silently adopt changed
-bytes. Actual drift of a publish-time binding is not a correctable locator typo.
-
-The root dispatches each normalizer or scope operation through the open
-`retrace` run with exact `target`, semantic `phase`, and complete body. A worker
-publishes its complete unchanged return exactly once through the injected
-connection-bound `lifecycle_channel.reply`. The request ID and physical
-connection bind actor, owner, operation and phase; do not place a correlation
-token in the body or use task, hub, Eval, yield, ordinary completion, local
-echo, transcript, history, agent output, or another channel as report
-authority.
-
-Before dispatch, bind the expected actor, actual root owner, operation, phase,
-body grammar and current run. Nested Reconcile requests are connection-owned by
-the actual scope actor, never the outer Retrace root; root cannot admit nested
-reviewer bodies and uses only its normalizer/scope request views.
-
-Retain each complete original lifecycle result envelope in current invocation
-state until the semantic operation, aggregate, and cleanup that depend on it
-finish. Keep stable run, actor and request IDs, exact first replies, separate
-turn/reuse outcomes, and unresolved frontiers. Do not recreate the retired
-launch-settlement, roster-binding, message-return, or disposal-evidence slot
-scheme, and create no persistent registry or report store.
-
-If an authorized proof requires lifecycle export, bind its exact owner, named
-definition, expected operation kinds, actor targets and phases, and
-session-local destinations in the root proof instructions and each affected
-scope contract before `open` or the covered `dispatch`. Repeat that binding in
-the operative request; nested reviewer results remain visible only to the
-scope connection. The plugin exposes no export operation or lifecycle-call
-destination field. Record returned run/actor/request IDs from the original
-results, then mechanically copy only already-retained envelopes and
-owner-visible reply bodies to the bound destination. Incomplete export blocks
-the proof, not semantic review, and grants no alternate observation path or
-default return field.
-
-Batch independent ready targets in one `dispatch` when useful. Preserve every
-ordered request row and successful sibling when another target is
-`start-failed` or `delivery-unknown`; neither failure authorizes cancellation,
-resend, replay, or replacement. Public dispatch returns immediately. Use
-`observe` only during an authorized controller turn, including an
-observation-only plugin wake; create no polling loop, waiter, timer, Eval
-choreography, or external supervisor. Elapsed silence remains pending until an
-authoritative reply, concrete terminal failure, or explicit owner/user abort.
-
-Admit only an owner-visible first `RequestView.reply.body` from the exact
-request, actor, operation, and phase after retaining the complete lifecycle
-result. Decode the whole body as text, preserve the stock body bytes, validate
-the closed grammar and semantic contract, then consume that request once. Keep
-`reply`, `turn`, and `reuse` separate: a later worker failure, exit, or abort
-does not erase an admitted reply, while successful later reuse requires
-`turn: succeeded` and `reuse: ready`.
-
-When no authoritative reply exists, preserve the exact run/request/actor,
-phase, pending or failure state, used or unknown correction allowance, and all
-earlier admitted work. A status wake, delivery result, assistant output,
-matching hash, later request, copied payload, or external capture cannot supply
-the body. Do not redispatch, replay, re-emit, replace an actor, nudge for
-silence, or reset an allowance. Continue independent ready work where safe.
-Explicit abort is mechanical termination only and never semantic
-continuation, replay, or replacement.
+Nested Reconcile requests belong to the scope's own logic, never the Retrace
+root. The root admits only scope results, never nested reviewer results, and
+the parent session sees only the rendered aggregate.
 
 ### Closed return bodies
 
-The three return bodies below are LF-delimited plain text. First line is the exact operation; every subsequent `Label: value` appears exactly once in listed order, with nonempty single-line values. No blank, extra, or trailing line is allowed. Content stays in the referenced records, never spliced into a body. Braced terms below are substitutions, not literal values. Lifecycle request and actor IDs are not body fields.
+Workers return `yield` data of these variants; the controller expects exactly
+the listed kinds per phase:
 
-```text
-scope-proposal
-Parent: {actual parent}
-Controller: {normalizer child}
-Normalization input locator: {exact parent-frozen locator}
-Scope proposal locator: {readable locator}
-```
+- Normalization: `scope-proposal` with `scopes` (each `id`, `name`,
+  `objective`, `evaluand`, `requires`, `sharedEvidence`, `potentialConflict`)
+  and `coverage` (each raw `concern` with its `scopes`). It carries the
+  complete proposed scopes, raw-concern coverage, and graph, without
+  evaluation.
+- Scope evaluation: `candidate-ready` with `report` (the complete provisional
+  scope report text), `manifest` (each supporting source's absolute `locator`
+  and role `current` or `historical`), and `disposition` (`proposal`,
+  `no-change`, or `blocker`); `source-need` with absolute `locators` and a
+  `reason`; or `scope-paused` with the exact `frontier`.
+
+From an admitted `candidate-ready` the controller builds closed LF-delimited
+records. The first line is the exact operation; every subsequent
+`Label: value` appears exactly once in listed order, with nonempty single-line
+values. No blank, extra, or trailing line is allowed. Content stays in the
+referenced records, never spliced into a body. Braced terms below are
+substitutions, not literal values.
 
 ```text
 candidate-ready
@@ -226,18 +202,17 @@ Result payload locator: {readable locator}
 ```
 
 `Final report locator` is literal `none` only when no finalized report exists.
-All duplicated locators/statuses must equal the referenced payload; receivers
-derive record identities themselves. Scope-proposal content is the complete
-proposed scopes, raw-concern coverage and graph, without evaluation.
+All duplicated locators/statuses must equal the referenced payload; the root
+derives record identities itself from the frozen bytes.
 
 ### Delegated control body
 
-The parent constructs `begin-reconcile` from the admitted freeze, copying its
-locators unchanged. It freezes the complete admitted `candidate-ready` body
-under a readable authorization locator and retains that body's hash. This
-record's exact first line `candidate-ready` is its kind header: do not prepend
-`Kind:` or wrap, reconstruct, or splice its content into the control body.
-The same closed LF/field/order rules apply:
+The controller constructs `begin-reconcile` in process from the admitted
+freeze, copying its locators unchanged. It freezes the complete admitted
+`candidate-ready` record under a readable authorization locator and retains
+that record's hash. The record's exact first line `candidate-ready` is its kind
+header: do not prepend `Kind:` or wrap, reconstruct, or splice its content into
+the control body. The same closed LF/field/order rules apply:
 
 ```text
 begin-reconcile
@@ -253,133 +228,111 @@ Mode: Conversation replacement
 Authorization locator: {readable locator of the frozen admitted candidate-ready body}
 ```
 
-The scope re-reads and hashes every referenced record, checks each kind and
-exact locator against its approved binding and published candidate, and checks
-the authorization bytes against its corresponding published `candidate-ready`
-reply. Neither a locator nor a matching hash substitutes for connection-bound
-parent authority, current phase, or one-time admission.
+Before any reviewer prompt, the delegated Reconcile validates every field: the
+exact first line, field order and single-line values; `Caller` exactly
+`retrace`; `Scope` equal to the owning scope; `Mode` exactly
+`Conversation replacement`; every locator a frozen record of this run; the
+candidate locator bytes equal to the report under review; and the
+authorization bytes' hash equal to the admitted `candidate-ready` record. A
+rejected body stops that scope before any reviewer exists. Neither a locator
+nor a matching hash substitutes for the in-process parent binding, current
+phase, or one-time admission.
 
 ## Scheduler and scope protocol
 
-Keep only request-local approved scope/graph bindings, exact run/actor/request
-identities, report/evidence identities, direct-capacity occupancy,
-status/frontiers, current return expectations and their correction-used state,
-and results/provenance needed to finish. Retain complete original lifecycle
-results only while the active semantic operation, aggregate, or cleanup needs
-them. Native transient content transport may hold large immutable records; it
-is not a searchable result archive or persistence API.
+The controller keeps only run-local approved scope/graph bindings, exact
+run/actor/request identities, report/evidence identities, direct-capacity
+occupancy, status/frontiers, current return expectations and their re-ask
+counts, and results/provenance needed to finish. It creates no searchable
+result archive or persistence API.
 
-Open the definitive named `retrace` run from the approved graph. Immediately
-batch ready scopes into available direct capacity, ordered by ascending
-`requires` depth then authored scope order. At most four direct
-normalizer/scope actors may be live, including retained paused controllers;
-the consumer enforces this independently of nested reviewers. Nested reviewers
-do not consume direct capacity. A reply, turn completion, failure, status wake,
-or abort acknowledgment never frees a permit. The scope must first dispose its
-reviewers; the root then obtains `disposed` for that exact scope before permit
-release. Free permits remain usable while siblings continue. Four
-paused/undisposed scopes are a quiescent blocked frontier, not permission to
-replace actors or exceed capacity.
+It orders ready scopes by ascending `requires` depth then authored scope order
+and runs them in available direct capacity. At most four direct
+normalizer/scope actors may be live at once; nested reviewers do not consume
+direct capacity. A reply, turn completion, failure, or abort never frees a
+permit: the scope must first dispose its reviewers, and its evaluator must show
+observed exit before the permit is released. Free permits remain usable while
+siblings continue. Undisposed scopes holding every permit are a quiescent
+blocked frontier, not permission to replace actors or exceed capacity. A scope
+whose `requires` predecessor finished without a current resolved result stops
+with that frontier.
 
-1. The scope actor performs the retained single-scope evaluation and freezes
-   its complete provisional report and evidence manifest. It replies once with
-   `candidate-ready` to the evaluation request and remains persistent. This
-   report is provisional and non-authoritative.
-2. The parent admits only the first owner-visible reply from the exact
-   scope/evaluation request and validates controller, scope/approval/contract,
-   readable exact report, Result shape and evidence/authority boundaries,
-   including the Invocation contract's finding eligibility. Reject a mismatch
-   through the existing authorized correction/stop handling; do not redo
-   evaluation, rewrite findings, or add a loop. Freeze the admitted body under
-   its authorization locator and retain the hash computed directly from those
-   bytes, without requesting a digest echo from the child.
-3. Dispatch the `begin-reconcile` control body above in a successor request to
-   that same scope actor with phase `scope-result`. Copy locators from the
-   admitted freeze; `Authorization locator` references that exact admitted
-   body, never a locator-less digest. The scope checks the connection-bound
-   parent, current phase, and exact approved bindings/provisional candidate
-   before entry; a quoted caller or request ID alone grants nothing.
-4. That same scope actor loads current `skill://reconcile` and its reviewer
-   protocol, then invokes delegated Conversation replacement through its
-   connection-owned named reviewer pair. Reconcile admits the complete
-   matching binding and skips only its redundant brief/approval. It alone owns
-   A-first review, natural original first-review same-A `skill://rethink`,
-   demand-driven B turns, original-A closure when negotiation returns to A,
-   response correction, synchronization, application/cap handling, freshness,
-   repair/pause rules, and exact reviewer disposal. The outer parent neither
-   consumes reviewer traffic nor disposes grandchildren.
-5. After review, the scope actor disposes both reviewers and waits for
-   `disposed`, then replies once to the current scope request with the complete
-   `scope-result`. Its immutable payload contains in this exact order: original
-   provisional report locator; ordered authoritative Reconcile events;
-   final report locator or exact stop record; final supporting
-   evidence-manifest locator; finding identities;
-   provisional-to-final changes; review status; evidence freshness; evaluation
-   disposition; blocker/resume information. The parent admits only
-   scope/control replies, never nested reviewer bodies.
-   Referenced record identities are computed from locator reads, not duplicated
-   as producer-authored digest fields in this payload.
-6. Before accepting a final result, the parent checks the exact request and
-   actor, approved boundaries including the same finding eligibility, exact
-   report and payload identities, applicable Reconcile completion/cleanup
-   result, and manifest with actual supporting-source freshness reads. Review
+1. The scope evaluator performs the single-scope evaluation from the
+   `evaluate` prompt and returns `candidate-ready`. This report is provisional
+   and non-authoritative. A `source-need` or `scope-paused` return is answered
+   in the same session by a `continue` request for the same step.
+2. The controller admits only the first valid reply of that exact request and
+   validates the report header, the manifest's absolute locators inside the
+   bound root or approved evidence, and the Result shape. A mismatch follows
+   the re-ask budget below; the controller does not redo evaluation, rewrite
+   findings, or add a loop. It freezes the report, the manifest with each
+   locator's observed identity, the scope approval and contract, and the
+   `candidate-ready` record, retaining the hashes it computed.
+3. It builds the `begin-reconcile` control body above from that freeze and runs
+   the scope's delegated Conversation replacement Reconcile in process.
+4. Delegated Reconcile owns A-first review with a scope-owned reviewer pair,
+   the same-A first-review `rethink`, demand-driven B turns, original-A closure
+   when negotiation returns to A, response re-asks, application of the report
+   replacement, and exact reviewer disposal. It is report-only and never runs
+   Artifact edits. The Retrace root neither consumes reviewer traffic nor
+   disposes reviewers.
+5. After review, the scope's logic disposes both reviewers with observed exit,
+   re-reads the manifest for freshness, and then forms the complete
+   `scope-result`. Its immutable payload contains, in this exact order: original
+   provisional report locator; ordered authoritative Reconcile events; final
+   report locator or exact stop record; final supporting evidence-manifest
+   locator; provisional-to-final changes; review status; evidence freshness;
+   evaluation disposition; blocker/resume information. Referenced record
+   identities are computed from the frozen bytes, not duplicated as
+   producer-authored digest fields in this payload.
+6. The root admits only the first `scope-result` per scope after checking the
+   closed body, the parent and scope bindings, every referenced frozen record,
+   and that duplicated statuses and locators equal the payload. Review
    success, matching identities, and freshness cannot expand approved scope. A
-   mismatch follows the same correction/stop handling, not parent rewriting.
-   A reviewed blocker remains authoritative. After admission, dispose the exact
-   scope actor with `subtree: true`; release its direct permit only after the
-   supervisor reports `disposed`. Preserve independently successful siblings
-   and their handles throughout any other scope's failure or cleanup blocker.
+   mismatch stops that scope rather than being rewritten. A reviewed blocker
+   remains authoritative. After admission the controller disposes the exact
+   scope evaluator and releases its direct permit only on observed exit.
+   Independently successful siblings and their results survive any other
+   scope's failure or cleanup blocker.
 
-### One corrective allowance per original return
+### Re-ask budget per original return
 
-Normalization, `candidate-ready`, and `scope-result` are separate original
-expectations. Each has at most one parent-owned corrective request total across
-body format, locator/record identity, applicability, and eligible actor-turn
-failure. A new request ID, phase wording, error category, or duplicate never
+Normalization and scope evaluation (`candidate-ready`) are separate original
+expectations. Each allows at most three re-asks in total across data format,
+applicability, and boundary defects; the fourth invalid return stops that
+expectation. A new request, phase wording, error category, or duplicate never
 resets or creates another budget.
 
-Eligibility requires a first reply that fails the current closed contract, or a
-concrete lifecycle failure of that exact actor/request, with the same
-nonterminal actor, approved binding, candidate/Reconcile state, and connection
-still available. Pending silence, a status wake, `DELIVERY_UNKNOWN`, a
-controller-side observation failure, or an intermediate tool error while the
-actor is working leaves the expectation pending without correction or
-redispatch. Foreign, stale, and consumed replies cannot be relabeled as the
-attempted current return.
+A return is invalid when the request completes without a `yield`, the `yield`
+data fails the phase schema, or an admitted `candidate-ready` breaks the scope
+boundary: a report that does not start with `Kind: conversation`, or a manifest
+locator that is relative or outside the bound root and approved evidence.
+Tool-policy violations, an unfinished `yield`, uncertain delivery, an
+incomplete turn, or a controller stop are not invalid returns: they stop that
+request at its exact frontier without a re-ask. Foreign, stale, and consumed
+replies cannot be relabeled as the attempted current return.
 
-The parent identifies one concrete authorized correction from lifecycle facts
-and already-approved context, then dispatches it once to the same actor for one
-complete compliant return. Preserve the original expectation and spent
-allowance. Do not restart evaluation, replay completed work, add diagnosis
-loops, reset nested review allowances, replace actors, rewrite findings, change
-evidence, widen scope, or override Reconcile repair/pause rules.
+A re-ask is one new `reask` request to the same actor under the original
+expectation, naming the concrete defect and the complete required shape.
+Preserve the original expectation and its count. Do not restart evaluation,
+replay completed work, reset nested review budgets, replace actors, rewrite
+findings, change evidence, widen scope, or override Reconcile repair rules.
+A `source-need` or `scope-paused` return is not invalid and costs nothing; the
+same step continues. Asking again for the same sources or recording the same
+frontier again stops the scope.
 
-An incorrect or unreadable locator, wrong kind/field association, or wrong
-parent-known locator follows that same eligibility check, not an unconditional
-first-body byte-equality assertion. The correction is one new request to the
-same actor under the original expectation; reserve it while that actor is
-finishing if supported, but deliver only when reusable. Preserve both original
-and corrective first replies. Correct only the named return/presentation
-defect; any corrected record is frozen at a fresh locator with the original
-record retained. Never rewrite a bound locator, adopt drift, rerun evaluation,
-or replenish the allowance. Failed correction or unavailable required state
-stops at that frontier.
+An exhausted budget, a terminal or unavailable actor, or another stop ends
+that scope at its exact frontier while preserving successful siblings and
+continuing independent approved work subject to capacity and cleanup. Do not
+fabricate a return or start a fresh attempt automatically.
 
-No authorized correction, terminal or unavailable actor/run/state, or failed
-correction stops that request at its exact frontier while preserving successful
-siblings and continuing independent approved work subject to capacity and
-cleanup. Missing owner-visible reply or parent-side capture failure earns no
-actor correction or report re-emission. Do not fabricate a body or start a
-fresh attempt automatically.
-
-This return-correction allowance is semantic protocol authority, not generic
-execution recovery. Under Retrace's explicit adoption, the responsible owner
-may correct eligible failed call or capture machinery for the already-
-authorized operation without issuing another semantic request, refunding the
-spent return allowance, or replaying worker work. Supported observation of
-that same still-pending request is continuation. Missing lifecycle provenance,
-an unavailable required owner, a valid blocker or pause, and the terminal stop
-above remain owned here and cannot be relabeled to bypass them.
+This re-ask budget is semantic protocol authority, not generic execution
+recovery. Under Retrace's explicit adoption, the responsible owner may correct
+eligible failed call or capture machinery for the already-authorized operation
+without issuing another semantic request, refunding a spent re-ask, or
+replaying worker work. Supported observation of that same still-pending request
+is continuation. A valid blocker or pause and the terminal stops above remain
+owned here and cannot be relabeled to bypass them.
 
 ### Review, resolution and retention
 
@@ -393,13 +346,14 @@ satisfy `requires`.
 
 An admitted first reply remains authoritative despite later turn failure or
 abort; turn/reuse outcome and cleanup remain separate runtime facts. Valid
-blocker/paused reports are not failures to retry. An eligible paused Reconcile
-run stays provisional under its exact same scope/reviewer frontier and consumes
-direct capacity. Resume only with explicit authorized continuation and a new
-request, preserving review and correction budgets. Terminal stops inherit
-Reconcile cleanup before a final stopped result. Failed cleanup is neither
-success nor a released permit. Scope actors alone dispose reviewers; the outer
-parent disposes exact scope actors.
+blocker/paused reports are not failures to retry. A `scope-paused` frontier is
+answered once in the same session; no further human input exists inside one
+controller run, so the evaluator finishes from the approved evidence and
+states that frontier as a limit or blocker. Resume only with explicit
+authorized continuation in a new approved request, never by rerunning a
+stopped scope. Terminal stops inherit Reconcile cleanup before a final stopped
+result. Failed cleanup is neither success nor a released permit. Scope actors
+alone dispose reviewers; the outer parent disposes exact scope actors.
 
 ## Evidence boundary
 
@@ -496,3 +450,101 @@ Remain a read-only lens. Dispatch only the declared normalization/scope children
 Do not approve human decisions, author plans, implement or repair repository changes, own an engineering handoff/route/lifecycle, run automatically, or add an assurance/completion/shipping tail. Stop above planning; all later handoffs, plans, mutations, routes and delivery effects remain caller-owned.
 
 Resume only after changed evidence, authority, transport, scope or a falsifiable hypothesis with applicable explicit continuation/fresh-attempt authority. Do not ask the same unchanged frontier twice; close the affected scope as blocked for that run. Observation expiry alone is not semantic failure. No Retrace time/round cap or automatic retry is added; inherited Reconcile capacity/liveness and cleanup rules remain in force.
+
+## Scope evaluator prompts
+
+The controller reads each section below, from its marker to the next marker or
+heading, as the one editable copy of a scope, continuation, re-ask, or
+normalizer request. It fills double-brace slots per request and inserts the
+named sections of this file by exact heading at load time, so Finding
+eligibility, Evidence boundary, Method, Readiness, Result, and Normalize and
+approve are never duplicated here. The `reask` template is shared by scope
+evaluation and normalization.
+
+<!-- prompt:evaluate -->
+You evaluate one approved Retrace scope under the bound repository root `{{ROOT}}` in your own native `omp acp` session. You are read-only: use `read`, `glob`, and `grep` on absolute paths only, never edit files or run commands, and reply only through one final `yield`. The Retrace controller owns the approved table, scheduling, this scope's delegated Reconcile review, freshness, admission, and the aggregate; you perform only the single-scope evaluation. Your working directory is an empty scratch directory.
+
+Approved scope:
+
+- Scope: {{SCOPE_ID}} {{SCOPE_NAME}}
+- Objective: {{OBJECTIVE}}
+- Evaluand: {{EVALUAND}}
+- Protected behavior: {{PROTECTED}}
+- Exclusions: {{EXCLUSIONS}}
+- Human objectives in authored order: {{OBJECTIVES}}
+- Human constraints: {{CONSTRAINTS}}
+
+Approved evidence (locator and role):
+
+{{EVIDENCE}}
+
+Prerequisite scope reports (exact admitted identity, then the complete report):
+
+{{PREREQUISITES}}
+
+Apply these sections of the Retrace skill completely to this scope:
+
+{{SECTION:Finding eligibility}}
+
+{{SECTION:Evidence boundary}}
+
+{{SECTION:Method}}
+
+{{SECTION:Readiness}}
+
+{{SECTION:Result}}
+
+Return one of these through one final `yield` with explicit `data`:
+
+- `candidate-ready`: `report` is the complete scope report text under Result, starting with the exact line `Kind: conversation`; `manifest` lists every supporting source you relied on with its absolute `locator` and role `current` or `historical`, each inside the bound root or the approved evidence; `disposition` is `proposal`, `no-change`, or `blocker`.
+- `source-need`: absolute `locators` you need and cannot read yourself, with a `reason`.
+- `scope-paused`: the exact whole `frontier` of a new human-owned uncertainty under Method step 6. It is not terminal; the controller answers in this same session.
+
+Task, hub, Eval, a `yield` that is not your one final result, ordinary output, transcripts, history, and agent output are not a reply. Worked example of the shape only:
+
+```json
+{{EXAMPLE}}
+```
+
+<!-- prompt:continue -->
+{{CONTINUATION}}
+
+Continue the same evaluation of scope {{SCOPE_ID}} under the same sections, evidence boundary, and authority, and return one `candidate-ready`, `source-need`, or `scope-paused` through one final `yield` with explicit `data`. Worked example of the shape only:
+
+```json
+{{EXAMPLE}}
+```
+
+<!-- prompt:reask -->
+Your previous return for this step was not accepted: {{DEFECT}}
+
+Repeat the same step with the same authority and evidence; do not restart completed work or widen scope. The only accepted reply is one final `yield` with explicit `data` of this shape:
+
+```json
+{{EXAMPLE}}
+```
+
+<!-- prompt:normalize -->
+You are the optional Retrace normalizer for the bound repository root `{{ROOT}}` in your own native `omp acp` session. You are read-only: use `read`, `glob`, and `grep` on absolute paths only, never edit files or run commands, and reply only through one final `yield`. Return a scope proposal only: no findings, evaluation, or Reconcile.
+
+Raw concerns in authored order:
+
+````text
+{{CONCERNS}}
+````
+
+Frozen normalization input:
+
+````text
+{{INPUT}}
+````
+
+Apply steps 2 and 3 of this section of the Retrace skill; the parent owns steps 1, 4, and 5:
+
+{{SECTION:Normalize and approve}}
+
+Return one `scope-proposal` through one final `yield` with explicit `data`: `scopes` lists each scope with a stable `id`, `name`, one observable `objective`, `evaluand`, and its `requires`, `sharedEvidence`, and `potentialConflict` scope IDs; `coverage` maps each raw `concern` to the `scopes` covering it. Every link names another proposed scope, and `requires` stays acyclic. Worked example of the shape only:
+
+```json
+{{EXAMPLE}}
+```

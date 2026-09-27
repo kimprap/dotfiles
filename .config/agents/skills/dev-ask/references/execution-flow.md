@@ -71,7 +71,7 @@ The semantic route names `dev-implementation`, while the invoking route agent no
 OMP collectors at `taskDepth > 0` stop `transport-unavailable` before creating
 any child; do not substitute a delegated controller. Only depth 0 with the
 remaining required capabilities may proceed. This host gate does not alter
-capable other-host topology or named lifecycle-consumer semantics.
+capable other-host topology or the Reconcile/Retrace acpx controller.
 
 For the `dev-implementation` controller only, collection begun by a
 host-selected request to the same bound child for an authorized attempt-2
@@ -107,8 +107,9 @@ no token or restatement fallback. Other hosts with native reply correlation
 retain the portable token/message and narrowly recovery-authorized exact-copy
 rules; a host with neither capability stops `transport-unavailable`. Native OMP
 mechanics and active settings live only in its adapter. Reconcile and Retrace
-instead keep their named lifecycle-consumer ownership, first-reply, pending
-observation and abort, capacity, and observed-exit disposal contracts.
+run under their acpx controller (`harnesses/omp/acp-controller/`), which owns
+their reviewer and scope sessions, first replies, pending observation, capacity
+and observed-exit disposal.
 
 
 ## Entry and implementation

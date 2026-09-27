@@ -1,0 +1,24 @@
+memory:
+  backend: off
+autolearn:
+  enabled: false
+  autoContinue: false
+advisor:
+  enabled: false
+mcp:
+  enableProjectConfig: false
+  notifications: false
+retry:
+  modelFallback: false
+tools:
+  xdev: false
+goal:
+  enabled: false
+compaction:
+  autoContinue: false
+  experimentalContextManagement: false
+contextPromotion:
+  enabled: false
+astGrep:
+  enabled: false
+externalThinking: false

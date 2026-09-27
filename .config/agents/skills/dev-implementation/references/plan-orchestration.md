@@ -9,8 +9,11 @@ Use this procedure only for an approved lean implementation plan. It adds no pla
 3. Confirm native child transport has the required capability to preserve every task's bound owner, dependencies, path/effect boundary, attempt number, and concrete controller receiver. Missing required capability is `transport-unavailable`; a concrete failed invocation is assessed under the shared execution-recovery policy before that blocker is escalated. The controller never substitutes itself or a newly minted actor for a required owner.
    On OMP, `taskDepth > 0` stops `transport-unavailable` before any child
    allocation; only depth 0 with all other required capabilities may proceed.
-   Do not substitute a delegated controller. Other capable hosts and named
-   lifecycle consumers retain their own topology and semantics.
+   Do not substitute a delegated controller. Other capable hosts retain their
+   own topology and semantics. Reconcile and Retrace run under their acpx
+   controller (`harnesses/omp/acp-controller/`), which owns their reviewer and
+   scope sessions, first replies, pending observation, capacity and
+   observed-exit disposal.
 4. Immediately before the first implementation-child dispatch, change `PENDING` to `IN_PROGRESS`. Controller activation alone does not change plan state. Plan lifecycle writes record state; they grant no new behavior or effects.
 
 ## Schedule

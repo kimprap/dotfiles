@@ -1,0 +1,20 @@
+{
+  "name": "omp-acp-controller",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reconcile and Retrace controller over public acpx and native omp acp.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "1.4.0",
+    "acpx": "0.19.2"
+  },
+  "overrides": {
+    "@agentclientprotocol/sdk": "1.4.0"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

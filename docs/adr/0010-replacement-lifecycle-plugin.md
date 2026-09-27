@@ -1,39 +1,39 @@
-# ADR-0010 — Replacement lifecycle plugin for Retrace and Reconcile
+# ADR-0010 — acpx controller for Retrace and Reconcile
 
 **Status:** ACTIVE  
 **Date:** 2026-09-18
 
 ## Scope
 
-This record governs the persistent actor lifecycle used only by the named Retrace and Reconcile custom-controller consumers. It does not change generic engineering routing, implementation-child collection, assurance, shipping, model/account authority, or producer report grammar.
+This record governs the persistent actor sessions used only by the named Retrace and Reconcile custom controllers, owned by one Node controller at `.config/agents/harnesses/omp/acp-controller/`. It does not change generic engineering routing, implementation-child collection, assurance, shipping, model/account authority, or producer report grammar.
 
 ## Context
 
 Retrace and Reconcile require stable child identities across multiple semantic turns, owner-only reply visibility, durable pending-state inspection, bounded direct capacity, partial sibling accounting, and cleanup proven by observed process exit. Projecting those guarantees onto launch jobs, roster addressability, caller-owned observation windows, local echoes, or `details.waited` made transport mechanics look like semantic authority and could not prove exact disposal.
 
-The approved replacement introduces one opt-in OMP lifecycle extension and migrates both executable consumers to it. The extension is inert until a named consumer opens a run. Stock OMP worker spawning remains behind the extension through `RpcClientOptions.spawn` and `ptree`; no custom transport or generic workflow policy is added.
+The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, obtains brief or scope-table approval, invokes the controller CLI once through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx 0.19.2 `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
 
 ## Decision
 
-### D31 — Use one named lifecycle supervisor boundary while semantic owners retain admission authority
+### D31 — Use one coded acpx controller while the executable skills retain semantic authority
 
-1. The extension exposes only `open`, `dispatch`, `observe`, `dispose`, `abort`, and `close`, plus its compact human status command. Delegated actors use the connection-bound `lifecycle_channel.request`, `lifecycle_channel.reply`, and `lifecycle_channel.dispose` seam. There is no export operation or destination field.
-2. `open` validates the complete named consumer binding and declares stable actor identities without spawning them. `dispatch` starts or addresses the requested actor, records a stable request identity and semantic phase, and returns durable state. For one actor, delivered turns remain serialized; distinct actors may overlap.
-3. The supervisor retains the first accepted reply separately from turn completion and reuse outcome. Only the physical owner receives the reply body. Ancestors receive redacted identities, states, turn/reuse results, and cleanup blockers. Ordinary assistant output, launch completion, status wakes, and later observations are not semantic replies.
-4. Pending requests remain inspectable and explicitly abortable. Plugin-owned periodic status wakes are observation-only and disclose no body. They create no caller-owned timer, polling loop, semantic retry, replacement actor, or additional allowance.
-5. Retrace direct-capacity accounting and Reconcile reviewer semantics remain owned by their executable skills. Batched dispatch preserves successful siblings when another actor is start-failed or delivery-unknown. A reply, turn completion, abort acknowledgment, signal request, or matching identity does not release capacity.
-6. Successful cleanup requires supervisor-retained process-exit observation and exact `disposed`/`closed` results. Failed cleanup preserves `failed-cleanup`, the unresolved actor/PID, and retained state. Reconcile disposes reviewers before terminal presentation; a delegated Retrace scope disposes its reviewers before publishing `scope-result`, and its parent then disposes the scope actor with subtree ownership.
-7. The plugin owns lifecycle mechanics and result retention. Retrace and Reconcile remain the semantic owners of approval, report grammar, correction budgets, reviewer identity, verdicts, continuation, stops, aggregation, and proof interpretation. They use no task, hub, Eval, yield, transcript, lookup, replay, resend, replacement, or generic collector as a lifecycle fallback.
-8. When proof copying was authorized before `open` or the covered `dispatch`, the bound semantic owner may mechanically copy only the plugin-owned returned envelopes and owner-visible reply bodies selected by returned run, actor, and request identities. A late request is rejected. Copying adds no report field, changes no status, and creates no plugin export API.
-9. The generic collection contracts in ADR-0002 and the generic execution-recovery policy remain unchanged. Their exact implementation-child exemptions do not replace or weaken these named custom-controller lifecycle contracts.
+1. The controller alone owns reviewer, normalizer and scope-evaluator sessions through public acpx and native `omp acp`. Only the admitted, domain-valid native `yield` candidate is a reply; prose, failed or unfinished yields, launch completion and turn results never count and are never a fallback.
+2. The first admitted reply is kept and is visible only to its owning parent. Ancestors receive identities, states, turn/reuse results and cleanup blockers, never another actor's reply body.
+3. Reply, turn result and reuse state stay separate; a failed turn does not discard an admitted reply, and a reply does not imply reuse.
+4. A request stays pending until a reply, a concrete terminal failure or an explicit abort. Uncertain delivery is observed without replay; elapsed time creates no caller-owned timer, polling loop, semantic retry, replacement actor, or additional re-ask.
+5. Retrace runs at most four direct actors at once; a permit frees only on observed disposal. A reply, turn completion, abort acknowledgment, signal request, or matching identity does not release capacity. A failed member keeps its successful siblings.
+6. Disposal counts only on observed process exit, children before parents, and a failed disposal blocks success. Reconcile disposes its reviewers before its final proposal; a delegated Retrace scope disposes its reviewers before publishing `scope-result`, and its parent then disposes the scope actor.
+7. The Retrace and Reconcile skills and the Reconcile reviewer protocol remain the semantic owners of approval, report grammar, re-ask budgets, reviewer identity, verdicts, continuation, stops, aggregation, and proof interpretation. The controller has no fallback reply channel: it uses no task, hub, Eval, transcript, lookup, replay, resend, replacement, or generic collector.
+8. The generic collection contracts in ADR-0002 and the generic execution-recovery policy remain unchanged. Their exact implementation-child exemptions do not replace or weaken these named custom-controller lifecycle contracts.
 
 ## Consequences
 
-- Retrace and Reconcile have one shared mechanical lifecycle seam and separate executable semantic contracts.
+- Retrace and Reconcile share one coded controller over public acpx and native `omp acp`, and keep separate executable semantic contracts.
 - Stable actor, request, owner, first-reply, turn/reuse, pending, abort, and observed-exit disposal states are explicit and cannot be inferred from unrelated host surfaces.
 - Partial batches and failed cleanup retain exact evidence instead of collapsing into a false all-or-nothing result.
-- The previously pending Tier 1 recorder plan is closed as historical planning: superseded before execution by replacement lifecycle plugin.
-- The migrated eval catalogs are specification fixtures. Their presence is not a claim that the full catalogs were executed; any native or model-backed execution remains separately gated.
+- The controller pins `omp/18.3.0` and acpx `0.19.2`; a different version is refused before any launch until the offline suite and live runs pass on it.
+- The previously pending Tier 1 recorder plan remains closed as historical planning.
+- The eval catalogs are specification fixtures. Their presence is not a claim that the full catalogs were executed; any native or model-backed execution remains separately gated.
 
 ## Rejected alternatives
 
@@ -45,23 +45,18 @@ The approved replacement introduces one opt-in OMP lifecycle extension and migra
 
 ## Affected contracts
 
-- `.config/agents/harnesses/omp/extensions/lifecycle-plugin.js`
-- `.config/agents/harnesses/omp/extensions/lifecycle-supervisor.js`
-- `.config/agents/harnesses/omp/extensions/lifecycle-consumers.js`
-- `.config/agents/harnesses/omp/config.yml`
+- `.config/agents/harnesses/omp/acp-controller/`
 - `.config/agents/harnesses/omp/agent-return.md`
-- `.config/agents/harnesses/omp/agents/second-opinion-a.md`
-- `.config/agents/harnesses/omp/agents/second-opinion-b.md`
 - `.config/agents/references/agent-return/return.md`
 - `.config/agents/skills/retrace/SKILL.md`
 - `.config/agents/skills/reconcile/SKILL.md`
 - `.config/agents/skills/reconcile/references/reviewer-protocol.md`
-- the Retrace and Reconcile eval catalogs and Reconcile human execution map
+- the Retrace and Reconcile eval catalogs
 - the custom-controller projections in `dev-ask` and `dev-implementation`
 
 ## Authority and evidence
 
-Human authority is bound to `replacement-lifecycle-plugin/spec-v5`, SHA-256 `e9bbcfb931ecce43729b02be6589a8463d259cbe159aea57e920efe3f844ba7f`, in [the replacement lifecycle plugin specification](../../.agents/artifacts/2026-09-18_replacement-lifecycle-plugin-spec.md) and its [approved implementation plan](../../.agents/plans/2026-09-18-2248_replacement-lifecycle-plugin.md). The executable seam and consumer cutover are established by the admitted T1–T3 lineage. Separately gated post-cutover proof remains outside this decision's execution claim.
+Human authority is bound to `reconcile-retrace-acp-production/spec-v3`, SHA-256 `2c1628c741a2870b584268527dd33fcf26e2483edb53c9d7cf77e3f80692e958`, in [the production cutover specification](../../.agents/artifacts/2026-09-27_reconcile-retrace-acp-production-spec.md) and its [approved implementation plan](../../.agents/plans/2026-09-27-0134_reconcile-retrace-acp-production.md). The original decision was bound to `replacement-lifecycle-plugin/spec-v5`, SHA-256 `e9bbcfb931ecce43729b02be6589a8463d259cbe159aea57e920efe3f844ba7f`, in [the replacement lifecycle plugin specification](../../.agents/artifacts/2026-09-18_replacement-lifecycle-plugin-spec.md); the controller cutover replaces its executable seam.
 
 ## Supersession
 
@@ -69,4 +64,4 @@ D31 supersedes no existing ADR decision ID. It displaces the unexecuted architec
 
 ## Verification expectations
 
-Behavior-changing maintenance updates the extension, both executable consumers, affected semantic fixtures, and human projections together. Standard review and independent verification remain mandatory. Native/model/account execution, fault injection, and catalog-wide execution require their own current authority.
+Behavior-changing maintenance updates the controller and its offline suite (spec-v3 A3), both executable skills, the reviewer protocol, affected semantic fixtures, and human projections together, and keeps the static cutover checks (A5) at zero violations. Live proof (A7) runs from a new OMP session through the skills. Standard review and independent verification remain mandatory. Native/model/account execution, fault injection, and catalog-wide execution require their own current authority.

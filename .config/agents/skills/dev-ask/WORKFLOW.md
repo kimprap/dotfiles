@@ -27,8 +27,9 @@ resolution, valid caller schema and once-only task/attempt/receiver/phase checks
 other hosts with native correlation retain token/message admission. Neither
 capability means `transport-unavailable`. This adds no deadline, observer, replay, replacement, recovery
 or restatement allowance, or unattended-completion promise. Reconcile and
-Retrace instead keep their named lifecycle-consumer ownership, first-reply,
-pending observation and abort, capacity, and observed-exit disposal contracts.
+Retrace run under their acpx controller (`harnesses/omp/acp-controller/`), which
+owns their reviewer and scope sessions, first replies, pending observation,
+capacity and observed-exit disposal.
 
 Specification, planless direct-contract, ticket-graph, and standalone-plan
 authors resolve applicable current sources before drafting and apply the shared
@@ -115,8 +116,8 @@ Each implementation child receives approved intent and acceptance IDs, exact own
 
 Before allocation, OMP collectors with `taskDepth > 0` stop
 `transport-unavailable`; no delegated-controller substitution. Depth 0 still
-requires all other capabilities and bindings. Capable other-host topology and
-named lifecycle consumers remain unchanged.
+requires all other capabilities and bindings. Capable other-host topology
+remains unchanged, and Reconcile and Retrace keep their acpx controller.
 
 Attempt 1 terminal-completes its type-absent candidate before final checks. On OMP every terminal child return is one direct native `yield` tool call, never through eval or another tool bridge: a bridged yield reports `Result submitted.` but registers no launch or wake job, so every launch and follow-up request states this. The controller retains the exact original launch result and row, validates and decodes designated data, then separately requests the same child's code-then-test rethink. At most one correction, every owned check and changed-path smoke precede its lean Handoff. An eligible attempt 2 resumes the same child for a repair candidate without another child or launch job, then separately requests rethink only after candidate admission.
 

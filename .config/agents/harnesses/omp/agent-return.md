@@ -9,10 +9,7 @@ one.
 
 ## Evidence scope
 
-The named lifecycle consumer facts below are grounded in the installed
-[`lifecycle-plugin.js`](extensions/lifecycle-plugin.js),
-[`lifecycle-supervisor.js`](extensions/lifecycle-supervisor.js), and
-[`lifecycle-consumers.js`](extensions/lifecycle-consumers.js). The remaining
+The
 generic implementation-return facts are grounded in OMP v18.3.0 stock source;
 the version pin records evidence and does not enforce the runtime:
 
@@ -25,69 +22,6 @@ Stock OMP exposes original structured completion jobs through the native surface
 listed below. This contract selects no lookup, custom capture or publication
 mechanism, or report store. Static or synthetic fixture walks must be described
 as such, never as native execution.
-
-## Named lifecycle consumer adapter
-
-Retrace and Reconcile use the registered `lifecycle` tool with schema
-`omp-lifecycle-call/v1`. Root controllers call `open`, `dispatch`, `observe`,
-`dispose`, `abort`, and `close`; a delegated Retrace scope uses the injected
-connection-bound `lifecycle_channel` for `request`, `reply`, and owned-child
-`dispose`. Skills supply only the named definition, its semantic binding,
-target, phase, and exact body. They never supply graphs, profiles, argv, models,
-tools, prompts, process factories, or environment overrides.
-
-`open` uses definition `reconcile` with binding
-`{ mode: "standalone", controller }` or
-`{ mode: "delegated", controller, scope }`, or definition `retrace` with
-`{ controller, normalizer?, scopes, maxDirectActors: 4 }`. A Retrace run
-already compiles each scope's delegated Reconcile reviewers; a scope must use
-that connection-bound pair rather than opening another run. Preserve the
-returned `runId` and stable actor IDs for the current invocation only.
-
-`dispatch` returns immediately with one stable request row per call. A
-`pending` row is not a reply; `start-failed` and `delivery-unknown` affect only
-that row and never authorize resend, replay, or actor replacement. Use
-`observe` for root-owned replies and current state. The first accepted
-connection-bound reply body is authoritative and immediately owner-visible.
-Keep its `turn` and `reuse` fields separate: later success, failure, abort, or
-process exit cannot overwrite the reply, and a reply does not make an actor
-reusable until its turn succeeds.
-
-The supervisor owns pending observation and emits compact ID/status-only wakes
-at its fixed interval. A wake is observation-only and never a reply. Elapsed
-silence remains pending until an authoritative reply, concrete terminal
-failure, or explicit owner/user abort; consuming skills do not create polling,
-`hub wait`, Eval, timer, or external-supervision choreography. The owner may
-inspect or abort the exact run/request and must never infer or fabricate a body.
-
-Standalone Reconcile root owns A/B. In delegated Reconcile, the actual scope
-connection owns A/B; the outer Retrace root sees only redacted nested state and
-cannot admit reviewer bodies. Distinct actors may run concurrently. Retrace has
-at most four live direct normalizer/scope actors; nested reviewers do not
-consume that capacity. Partial startup preserves successful siblings and every
-original handle.
-
-A delegated scope calls `lifecycle_channel.dispose` for its exact reviewers and
-requires `data.state === "disposed"` before publishing `scope-result` through
-`lifecycle_channel.reply`. Root then calls `dispose` for that exact scope.
-Successful disposal and `close` require the supervisor's retained process-exit
-observation. These calls can return a success envelope whose `data.state` is
-`failed-cleanup`; callers inspect the state rather than `ok` alone.
-`failed-cleanup` preserves the unresolved actor/PID and capacity and is a
-blocker, not permission to signal unrelated processes, replay work, or replace
-an actor.
-
-Keep each complete original lifecycle result envelope until the semantic
-operation and cleanup that depend on it finish. This is ordinary
-invocation-local retention, not the former launch/roster/return/disposal slot
-scheme. The plugin exposes no proof-export operation or lifecycle-call
-destination field. If an authorized proof requires copying plugin-owned
-results, its prebound contract names the observing owner, definition, expected
-operation kinds, actor targets and phases, and session-local destination before
-`open` or covered `dispatch`. Record the returned run/actor/request IDs from
-each original result, then mechanically copy only already-retained envelopes
-and owner-visible authoritative bodies to that destination. This adds no
-default field, report store, lookup, replay, or alternate observation path.
 
 ## Allocation, addressability, and turns
 
@@ -102,10 +36,11 @@ separate request bound to its operation and phase. Launch output and turn comple
 not readiness; roster presence is necessary for dispatch but proves neither
 semantic readiness, progress, collector survival, nor cleanup.
 
-The generic allocation and addressability facts in this section apply to
-callers that still use task/Eval children. Retrace and Reconcile instead use
-the named lifecycle adapter above; they do not collect launch-settlement or
-roster-binding observations.
+The generic allocation and addressability facts in this section apply to callers
+that still use task/Eval children. Reconcile and Retrace run under their acpx
+controller (`harnesses/omp/acp-controller/`), which owns their reviewer and
+scope sessions, first replies, pending observation, capacity and observed-exit
+disposal.
 
 Keep independent-child concurrency. Operations for distinct owned children may
 run concurrently subject to the owning protocol and host capacity. Completion,
@@ -136,8 +71,10 @@ allocation: OMP v18.3.0 does not expose native `wait` to subagents
 ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
 Do not substitute or spawn a delegated controller to bypass this gate.
 Depth 0 still requires every schema, identity and collection capability below.
-This host restriction does not change capable other-host topology or named
-lifecycle-consumer semantics.
+This host restriction does not change capable other-host topology. Reconcile and
+Retrace run under their acpx controller (`harnesses/omp/acp-controller/`), which
+owns their reviewer and scope sessions, first replies, pending observation,
+capacity and observed-exit disposal.
 
 This is a separate consumer-side adapter surface from the producer `yield`
 extraction above. Before an implementation-child dispatch, require the caller
@@ -285,7 +222,9 @@ unattended-completion authority.
 OMP does not select a token/message, send-and-wait, or exact-body restatement
 branch for implementation returns. Its `agent://` send has no native reply
 correlation field. No text, agent-output, history, transcript, relay or message
-fallback is admissible. Named lifecycle consumers remain governed above.
+fallback is admissible. Reconcile and Retrace run under their acpx controller
+(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
+first replies, pending observation, capacity and observed-exit disposal.
 
 ## Assurance and audit return collection
 
@@ -355,13 +294,6 @@ records `auditor return not observed` as its own adapter record and stops the
 audit read-only, preserving every unresolved file. A narrower scope is a new
 audit, only when the requester names it.
 
-## Retrace and Reconcile optional proof export
-
-For Retrace and Reconcile, use only the named lifecycle adapter's prebound
-proof-export seam above. Generic OMP message observations and task lifecycle
-facts do not become lifecycle-plugin proof slots or an alternate export source.
-No other adapter consumer gains a proof-export obligation.
-
 ## Inbox is not return recovery
 
 Inbox, rendered messages, JSONL, branch/session accessors, RPC message reads,
@@ -372,9 +304,9 @@ an admitted return surface.
 
 ## Supervise indefinite operations externally
 
-Named lifecycle-consumer operations governed by this adapter do not use the
-generic external-supervision requirement because the plugin owns their pending
-observation.
+Reconcile and Retrace run under their acpx controller
+(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
+first replies, pending observation, capacity and observed-exit disposal.
 
 Except for the three exact `dev-implementation` controller collection purposes
 defined above, before using a settings-driven unbounded awaited report
@@ -410,13 +342,9 @@ observed, and unresolved frontier before unrelated handling. Do not replay a
 successfully delivered request.
 
 
-On actual Retrace or Reconcile termination, use the named lifecycle adapter:
-the delegated scope disposes its reviewers before its reply, the root disposes
-each exact completed scope, and the root closes remaining descendants before
-ancestors. Require `disposed` or `closed`; preserve `failed-cleanup` and its
-unresolved actor/PID as a blocker. Generic `hub cancel`, Eval handle
-cancellation, roster removal, a request receipt, report, or turn completion is
-not lifecycle-plugin disposal evidence.
+Reconcile and Retrace run under their acpx controller
+(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
+first replies, pending observation, capacity and observed-exit disposal.
 
 Retrace and Reconcile explicitly adopt the sole generic
 [execution-recovery policy](../../skills/dev-implementation/references/execution-recovery.md)
