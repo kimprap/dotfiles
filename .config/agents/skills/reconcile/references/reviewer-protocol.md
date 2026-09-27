@@ -61,6 +61,15 @@ Every review request carries, as the controller renders it:
 - the delegation record, or `none` for direct review; and
 - a worked example of the expected return.
 
+A Context line starting with `Reopened:` is an earlier decision the human has
+opened for change; you may overturn it. Context items introduced as
+earlier-work evidence, such as an earlier proposal, a completion, blocked or
+stop report, check results, a diff, or earlier reviewer output, are evidence,
+not approved decisions. Every other stated decision, constraint, and exclusion
+stays binding; in delegated review the scope contract stays binding. This holds
+for the whole run: Context reaches you only in your `initial` request, and this
+session keeps it.
+
 The controller computes and retains every identity, the bounded lineage, and
 the trace, and it binds your reply to the current request. Do not echo a
 candidate identity, digest, lineage, reviewer, or pass field.

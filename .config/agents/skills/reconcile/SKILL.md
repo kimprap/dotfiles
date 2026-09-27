@@ -112,7 +112,8 @@ controller, reviewing, or mutating:
    actor, or weaken a seam.
 2. Infer the candidate in this order: an explicitly named proposal or artifact;
    otherwise the latest substantive assistant decision or proposal; otherwise
-   `unresolved`. Bind exact UTF-8 proposal bytes as
+   `unresolved`. A completion, blocked, or stop report is supporting evidence,
+   never the proposal under review. Bind exact UTF-8 proposal bytes as
    `conversation@sha256:{exact-content-digest}` and exact artifact bytes as
    `{exact-readable-locator}@sha256:{exact-file-digest}`. Digests are lowercase
    SHA-256. Supply exact content or an absolute readable artifact locator, never
@@ -165,6 +166,26 @@ constraints, exclusions, and decision-bearing references as separate children
 and must not restate Goal. Mode is exactly `Conversation replacement` or
 `Artifact edits only` and must not repeat Candidate. The maximum field binds
 committed changed canonical applications, not reviewer turns.
+
+When a run follows earlier work in the same session, Context lists separately:
+
+- each decision that still binds, as its own child;
+- `Reopened: {exact earlier decision}` for each decision the review may
+  overturn; and
+- earlier-work evidence, each item introduced as evidence and not as a
+  decision: the earlier final proposal that was carried out; the
+  implementation or blocked report word for word; the check results; the
+  changed paths and diff, saved as `git diff` or `git show` output to a file in
+  the run's temp folder and given by absolute path; and earlier-run blocking
+  issues and not-applied reviewer recommendations that bear on the question.
+
+Quoting the earlier proposal as evidence does not make it binding; restate any
+part of it that must still bind as a binding decision. Reviewers have only
+`read`, `glob`, and `grep`, so anything that exists only in the conversation or
+needs a command to see goes in as text or as a file given by absolute path.
+The brief lists every item so the human can check completeness before
+approving. Delegated Retrace review is unchanged: its `scope contract:` Context
+item stays binding.
 
 For an unresolved candidate, render the Candidate child as
 `unresolved — name one proposal or artifact` and wait; approval alone cannot
