@@ -28,6 +28,30 @@
       ]
     },
     {
+      "id": "DS-PLAN-RETHINK-LIFECYCLE-READINESS",
+      "prompt": "Author a standard-assurance technical specification inline. Implementation owners run their owned acceptance checks before handing off; after all handoffs come one independent review and then one independent verifier that freshly runs the complete acceptance set; the controller schedules and validates only and never edits files. The initial candidate gives one implementation task an expensive end-to-end acceptance item driven by a disposable driver that task creates; the task runs it before handing off, the verifier repeats it with the same driver, and the task's owner removes the driver after verification. During the one planning rethink, cost pressure suggests running the end-to-end item only once in verification and having the controller delete the driver. Apply the installed planning rethink once and return the final specification.",
+      "expected_output": "The final specification keeps the implementation-owned end-to-end run before handoff plus the verifier's fresh repetition, and keeps driver cleanup with the task owner after verification. The verifier-only reduction and the controller cleanup are rejected as lifecycle-invalid, not as generic cost aversion.",
+      "files": [],
+      "assertions": [
+        "No implementation handoff depends on a check that only a later verification role can run",
+        "Cleanup of the task-created driver stays with an owner whose role permits editing and who exists when cleanup is due, not the non-editing controller",
+        "The independent verifier still freshly runs the complete acceptance set",
+        "The rethink makes at most one bounded correction and adds no stage, gate, field, or ledger"
+      ]
+    },
+    {
+      "id": "DS-PLAN-RETHINK-LEGITIMATE-SIMPLIFICATION",
+      "prompt": "Author a standard-assurance technical specification inline whose initial candidate has three simplifiable choices: a task deletes its disposable end-to-end driver before handing off although the verifier needs the same driver; two separate full journeys with identical setup each prove one of two compatible acceptance items; and a separate task only reruns another task's unit suite while owning no acceptance item. Apply the installed planning rethink once and return the final specification.",
+      "expected_output": "The final specification keeps the driver unchanged through handoff, review, and verification with removal by its original owner afterwards; combines the two compatible observations into one journey that records each exact expected result; and removes the task that owns no obligation. Lifecycle checks do not block these simplifications.",
+      "files": [],
+      "assertions": [
+        "A task-created artifact may outlive its creator's handoff when a later role needs it, with removal assigned to its original owner after that role",
+        "One shared scenario may establish several compatible acceptance items when each keeps its exact expected observation",
+        "A task that owns no obligation and only repeats another owner's check is removed without losing any responsibility, independence boundary, or prerequisite",
+        "Verification still freshly runs the complete acceptance set"
+      ]
+    },
+    {
       "id": "DS-PLAN-RETHINK-MECHANICAL-NEAR-MISS",
       "prompt": "The current approved technical specification is supplied byte-for-byte and needs only an unchanged forwarding Handoff to its existing next owner. Make no technical, boundary, proof, authority, or effect decision. Preserve the artifact exactly; do not perform a new planning rethink merely because it is being forwarded.",
       "expected_output": "The unchanged approved specification is forwarded through the existing Handoff procedure without a planning-rethink pass, correction, new approval, or rewritten acceptance.",

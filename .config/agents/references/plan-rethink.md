@@ -22,11 +22,16 @@ do not replace authoritative content with remembered summaries.
    attempt and reliable context fit separately. Reject artificial scaffolding,
    hidden work, conflicting ownership, and unnecessary dependencies.
 3. Apply the shared proof-selection policy to checks this author may select.
-   Preserve every obligation. Challenge redundant expensive execution and
-   incidental implementation constraints; fewer tests is not itself success.
+   Preserve every obligation. Challenge incidental implementation constraints,
+   and expensive execution that policy shows redundant; fewer tests is not
+   itself success.
 4. Check that a fresh owner can act from the candidate: required inputs,
    capabilities, effects, fixtures, observations, and cleanup must be clear.
    Distinguish established facts from unresolved assumptions; invent no proof.
+   Each owner must be able to meet everything that gates its own handoff from
+   what exists by then; a later role's result cannot satisfy it. Every
+   obligation, including cleanup that must wait for a later role, needs an
+   owner whose role permits it and who can complete it when due.
 5. Check authoritative revisions and exact projections. Do not silently change
    inherited acceptance, repartition an approved graph, expand effects, or
    alter assurance. Return an out-of-authority correction to its owner.
