@@ -294,6 +294,37 @@ records `auditor return not observed` as its own adapter record and stops the
 audit read-only, preserving every unresolved file. A narrower scope is a new
 audit, only when the requester names it.
 
+## Child foreground execution
+
+- A task child has no native `wait`
+  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
+  A run that never yields skips the quiescence barrier, so teardown cancels any
+  background job it left running and the turn ends without a return
+  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts#L2251-L2261)).
+  A yield while jobs are pending is only parked until they settle, then a fresh
+  yield is required
+  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts#L1705-L1709));
+  do not rely on that.
+- Before its terminal return, a child starts no background work: no bash
+  `async: true` and no launched service.
+- Bash auto-backgrounds a command still running after
+  `bash.autoBackground.thresholdMs` (default 60 s), even with a longer `timeout`
+  or `timeout: 0`
+  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L3918-L3920),
+  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L4750-L4752),
+  [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts#L16-L21),
+  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/bash.ts#L1017-L1020)).
+  A child runs any command that may exceed that threshold through Eval with an
+  explicit `timeout` (Eval auto-background is off by default:
+  [setting](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L4071-L4073),
+  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/eval.ts#L579-L580)),
+  and gives every Eval cell that may exceed the 30 s default an explicit
+  `timeout`
+  ([default](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/tool-timeouts.ts#L12)).
+- A job backgrounded anyway is cancelled with `write proc://<id>/kill` and rerun
+  once in the foreground through Eval before the return.
+- Every request that states the lean-return rule also states this rule.
+
 ## Inbox is not return recovery
 
 Inbox, rendered messages, JSONL, branch/session accessors, RPC message reads,
