@@ -80,28 +80,23 @@ See `archive/omz/README.md` for details.
 
 ## Working with the repo
 
-Use the `dot` and `dot-add` aliases (defined in `.config/zsh/zshrc`):
+Run Git with `git -C ~/.dotfiles` and stage exact paths only:
 
 ```bash
-dot status
-dot diff
-dot commit -am "update starship prompt"
+git -C ~/.dotfiles status
+git -C ~/.dotfiles diff
+git -C ~/.dotfiles add -- .config/starship
+git -C ~/.dotfiles commit -m "feat(starship): update prompt"
 ```
 
-**Never** run `dot add .config` or `dot add -A`. Only add paths listed in `manifest`:
-
-```bash
-dot-add zsh
-dot-add archive
-```
+**Never** run `git add -A`, `git add .` or `git commit -a`; unrelated local changes are common.
 
 ## Adding a new tool
 
 1. Create `~/.dotfiles/.config/<tool>/` with your config files.
-2. Add `.config/<tool>` to `manifest`.
-3. Symlink: `ln -sfn ~/.dotfiles/.config/<tool> ~/.config/<tool>`
-4. `bin/dot-add <tool>`
-5. `dot commit -m "add <tool> config"`
+2. Symlink: `ln -sfn ~/.dotfiles/.config/<tool> ~/.config/<tool>`
+3. `git -C ~/.dotfiles add -- .config/<tool>`
+4. `git -C ~/.dotfiles commit -m "feat(<tool>): add config"`
 
 ## Notes
 

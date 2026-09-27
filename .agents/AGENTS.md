@@ -28,28 +28,13 @@ Primary areas: Neovim, Zsh, Starship, Ghostty, Yazi, Cursor, helper scripts, and
 - `.config/cursor/` — shared Cursor settings, keybindings, extension list, and installer.
 - `.config/ghostty/` — Ghostty terminal config.
 - `.config/yazi/` — Yazi config, keymaps, and Lua plugin setup.
-- `bin/` — repo helper scripts, especially `dot-add`.
+- `bin/` — repo helper scripts.
 - `archive/` — reference-only snapshots; not live-loaded.
 
-## Dotfiles git workflow
+## Git
 
-Interactive shells define:
-
-| Alias | Definition |
-|---|---|
-| `dot` | `git -C $HOME/.dotfiles` |
-| `dot-add` | `$HOME/.dotfiles/bin/dot-add` |
-
-Staging rules (all contexts):
-
-- Stage only via the `dot-add` script; never raw `git add .`, `git add -A`, `dot add .config`, or other broad staging.
-- The script (or its direct equivalent) only stages paths listed in `manifest`.
-- When aliases are available, use `dot-add <name> [name...]`.
-- Otherwise (non-interactive shells, agents, automation), use the expanded forms:
-  - `git -C ~/.dotfiles` (or `git -C .` when cwd is the repo root)
-  - `~/.dotfiles/bin/dot-add <name>` (or `./bin/dot-add <name>` when cwd is the repo root)
-- Short names map to `.config/<name>`; other directly allowed paths include `bin`, `manifest`, `README.md`, `archive`, and explicit `.config/...`.
-- If the adder rejects a path, update `manifest` first. Do not bypass the allow-list.
+- Follow the generic Git rule (`.config/agents/rules/git.md`). Run Git as `git -C ~/.dotfiles`, or `git -C .` from the repository root.
+- Stage exact intended paths with `git -C ~/.dotfiles add -- <path>...`. Never use `git add -A`, `git add .`, or `git commit -a`; unrelated local edits are common here.
 - Push only when explicitly requested.
 
 ## Code conventions
