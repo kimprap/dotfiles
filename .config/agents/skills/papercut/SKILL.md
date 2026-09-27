@@ -50,15 +50,18 @@ Papercut does not judge changed-code correctness, test value, review sufficiency
 ## Capture and compact return
 
 1. Discover, qualify, redact, and consolidate the complete bounded set before accessing storage.
-2. For each distinct qualifying root cause, derive stable `surface` and root-cause `summary`, plus current `friction`, optional `workaround`, and observation date. Volatile evidence belongs only in the redacted observation, never identity.
+2. For each distinct qualifying root cause, derive stable `surface` and root-cause `summary`, plus current `friction`, `workaround` (the key is required; its value may be `null`), and observation date. Volatile evidence belongs only in the redacted observation, never identity.
 3. If no result qualifies, return exactly `Papercut: none` and do not inspect the ledger.
 4. Determine repository root and write authority only after qualification. If the ledger is absent, malformed, unsafe, or outside authority, keep every result report-only. Automatic capture never initializes or repairs storage.
-5. For an initialized writable ledger, call `list --repo PATH` once, then call `record --repo PATH --input FILE` once for each distinct result in stable order. The helper computes identity, exact deduplication, locking, validation, and atomic writes. Do not retry a failed call. After a write failure, keep that and any unsafe-to-write remaining results report-only rather than dropping them.
+5. For an initialized writable ledger, call `list --repo PATH` once, then call `record --repo PATH --input FILE` once for each distinct result in stable order. The input file holds exactly these keys and no others: `{"surface": "…", "summary": "…", "observed_on": "YYYY-MM-DD", "observation": {"friction": "…", "workaround": "…" or null}}`. The helper computes identity, exact deduplication, locking, validation, and atomic writes. Do not retry a failed call. After a write failure, keep that and any unsafe-to-write remaining results report-only rather than dropping them.
 6. Return one compact line per qualifying root cause in stable order:
 
 ```text
-Papercut: <PC-ID or report-only>; <recorded | updated | reopened | unchanged | report-only> — <surface>: <root-cause summary>
+Papercut: <PC-ID> <recorded | updated | reopened | unchanged>
+Papercut: report-only — <surface>: <root-cause summary>
 ```
+
+A ledger-backed line omits surface and summary because its record holds them (`list --repo PATH --id PC-ID`); a report-only line keeps both because nothing else holds that result.
 
 Every distinct qualifying root cause appears exactly once in the return, including report-only results. Do not sort by `PC-ID`, ledger order, completion time, or severity.
 

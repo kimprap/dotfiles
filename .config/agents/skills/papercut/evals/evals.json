@@ -90,11 +90,11 @@
     },
     {
       "id": "P-COMPACT-COMPLETE-RETURN",
-      "prompt": "Three distinct root causes qualify in authored order. The first records as PC-0001, the second is report-only because authority is narrow, and the third is unchanged as PC-0003. Produce only the compact return lines.",
-      "expected_output": "Papercut: PC-0001; recorded — workflow scheduling: child ownership was ambiguous\nPapercut: report-only; report-only — command boundary: the repository lacked a safe default\nPapercut: PC-0003; unchanged — recovery handoff: repeated symptoms shared one root cause",
+      "prompt": "Three distinct root causes qualify in authored order. The first records as pc-0000000000000001, the second is report-only because authority is narrow, and the third is unchanged as pc-0000000000000003. Produce only the compact return lines.",
+      "expected_output": "Papercut: pc-0000000000000001 recorded\nPapercut: report-only — command boundary: the repository lacked a safe default\nPapercut: pc-0000000000000003 unchanged",
       "assertions": [
         "Every qualifying root cause produces one compact Papercut line",
-        "Recorded and report-only results share the same ordered result shape",
+        "Ledger-backed lines show only ID and status; the report-only line keeps its surface and root-cause summary",
         "All results remain in authored order without sorting or severity ranking",
         "No extra prose, candidate cap, lifecycle state, or learning dispatch appears"
       ]
