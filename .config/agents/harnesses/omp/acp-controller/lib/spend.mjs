@@ -1,8 +1,11 @@
 // Spend accumulation and the `## Spend` section (spec-v3 §5 Q10). No token or
 // USD cap exists. A missing value prints `unknown`; a total with any unknown
-// member prints `≥ <known sum> (unknown members)`.
+// member prints `≥ <known sum> (unknown members)`. Token counts and cost amounts
+// print with thousands separators.
 
 const round = (n) => Number(n.toFixed(6));
+const grouped = new Intl.NumberFormat("en-US", { maximumFractionDigits: 6 });
+const num = (n) => grouped.format(n);
 
 /**
  * Per-actor spend from public status samples. `record` takes the usage of the
@@ -52,7 +55,7 @@ function costText(costs) {
   if (!costs.length) return "0";
   const byCurrency = new Map();
   for (const c of costs) byCurrency.set(c.currency, round((byCurrency.get(c.currency) ?? 0) + c.amount));
-  return [...byCurrency].map(([cur, amount]) => `${amount} ${cur}`).join(" + ");
+  return [...byCurrency].map(([cur, amount]) => `${num(amount)} ${cur}`).join(" + ");
 }
 
 /** Renders the `## Spend` section for spend rows (Spend#toJSON shape). */
@@ -61,9 +64,9 @@ export function renderSpend(rows) {
   for (const r of rows) {
     const t = tokensOf(r);
     const c = costOf(r);
-    lines.push(`| ${r.actor} | ${r.model} | ${r.thinking ?? "unknown"} | ${t ?? "unknown"} | ${c ? `${c.amount} ${c.currency}` : "unknown"} |`);
+    lines.push(`| ${r.actor} | ${r.model} | ${r.thinking ?? "unknown"} | ${t === null ? "unknown" : num(t)} | ${c ? `${num(c.amount)} ${c.currency}` : "unknown"} |`);
   }
-  const tokens = total(rows.map(tokensOf), (k) => String(k.reduce((s, n) => s + n, 0)));
+  const tokens = total(rows.map(tokensOf), (k) => num(k.reduce((s, n) => s + n, 0)));
   const cost = total(rows.map(costOf), costText);
   lines.push(`| Total | | | ${tokens} | ${cost} |`);
   return `${lines.join("\n")}\n`;
