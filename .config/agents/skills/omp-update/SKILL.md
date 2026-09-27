@@ -23,7 +23,6 @@ The single entry point for omp, acpx, and ACP SDK updates. `C` below is `.config
 - The pin commit message is the qualification record. This skill holds no version numbers and no run history.
 - The omp pin lives only in `C/lib/versions.mjs`. acpx and the ACP SDK are also pinned in `C/package.json` and `C/package-lock.json` because npm requires it. Tests import the pins. The Reconcile skill and ADR-0010 name the file, not the numbers. `.config/agents/harnesses/omp/agent-return.md` keeps its source-evidence citations.
 - Frozen artifacts, the trial bundle, closed specs, and eval fixtures keep their own versions and do not move with the pin.
-- R2 has never run its park and resume against real omp. R2 is not bump evidence until a separately approved baseline R2 on the current pin passes; record R2's result with that limit until then.
 
 ## Roles
 
