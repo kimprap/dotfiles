@@ -25,7 +25,7 @@ const ROLES = new Set(["current", "historical"]);
 
 /** Variant -> declared fields. */
 export const VARIANTS = Object.freeze({
-  review: ["kind", "verdict", "blocking_issues", "revision", "correction", "preserve", "recommendations", "blocker", "resume_with"],
+  review: ["kind", "verdict", "summary", "blocking_issues", "revision", "correction", "preserve", "recommendations", "blocker", "resume_with"],
   "source-need": ["kind", "locators", "reason"],
   "candidate-ready": ["kind", "report", "manifest", "disposition"],
   "scope-paused": ["kind", "frontier"],
@@ -78,6 +78,19 @@ function validateCorrection(c, mode, defects) {
   return { replacement: c.replacement };
 }
 
+/** Reviewer-authored `summary`: 1–4 single-line points of 1–100 characters, validated, never trimmed. */
+function validateSummary(v, defects) {
+  if (!Array.isArray(v) || v.length < 1 || v.length > 4 || !v.every((x) => typeof x === "string")) {
+    defects.push("field `summary` must be an array of 1 to 4 strings");
+    return undefined;
+  }
+  if (v.some((x) => x === "" || x !== x.trim() || /[\r\n]/.test(x) || [...x].length > 100)) {
+    defects.push("each `summary` point must be one non-empty line of at most 100 characters without leading or trailing whitespace");
+    return undefined;
+  }
+  return [...v];
+}
+
 function validateReview(data, ctx, value, defects) {
   const verdict = VERDICTS.get(normalizeKeyword(data.verdict) ?? "");
   if (!verdict) {
@@ -85,6 +98,8 @@ function validateReview(data, ctx, value, defects) {
     return;
   }
   value.verdict = verdict;
+  const summary = validateSummary(data.summary, defects);
+  if (summary) value.summary = summary;
   const issues = stringList(data.blocking_issues, "blocking_issues", defects, { required: verdict === "REVISE" });
   const recommendations = stringList(data.recommendations, "recommendations", defects);
   const preserve = stringList(data.preserve, "preserve", defects);
@@ -201,8 +216,8 @@ export function exampleFor(variant, ctx = {}) {
   const ex = {
     review:
       ctx.mode === "artifact"
-        ? { kind: "review", verdict: "REVISE", blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [] }
-        : { kind: "review", verdict: "REVISE", blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [] },
+        ? { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [] }
+        : { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [] },
     "source-need": { kind: "source-need", locators: ["/abs/path/file.md"], reason: "Why it is needed." },
     "candidate-ready": { kind: "candidate-ready", report: "Kind: conversation\n\n## Bound Intake and Scope Model\n...", manifest: [{ locator: "/abs/path/file.md", role: "current" }], disposition: "proposal" },
     "scope-paused": { kind: "scope-paused", frontier: "The exact unresolved question." },

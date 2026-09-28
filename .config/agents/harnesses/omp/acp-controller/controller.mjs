@@ -140,10 +140,9 @@ const CORRECTION_SHAPE = {
   artifact: "`correction.edits`: one complete set of exact `{old, new}` edits against the unchanged outer base; each `old` occurs exactly once",
 };
 
+/** Outcome cell: the verdict word, then the reviewer-authored summary points (never reworded). */
 function verdictText(v) {
-  if (v.verdict === "VALID") return v.recommendations?.length ? `VALID (not applied: ${v.recommendations.join("; ")})` : "VALID";
-  if (v.verdict === "REVISE") return `REVISE: ${v.blocking_issues.join("; ")}`;
-  return `BLOCKED: ${v.blocker}; resume with: ${v.resume_with}`;
+  return [v.verdict, ...v.summary.map((p) => `• ${p}`)].join("\n");
 }
 
 function addRow(rs, actor, pass, ident, outcome) {
@@ -312,14 +311,13 @@ async function reconcileLoop(ctx) {
       addRow(rs, role, res.pass, identity(working), verdictText(v));
       if (v.verdict === "VALID") {
         accepted = working; // recommendations are never applied (KR7)
-        rs.lastRecommendations = v.recommendations;
         rs.validBy.push({ outer: rs.outer, role });
         break;
       }
       if (v.verdict === "BLOCKED") {
         if (rs.blockedRetryUsed) {
           addRow(rs, "stop", "—", identity(working), "persistent BLOCKED");
-          return { status: "stopped", stop: { cause: "persistent BLOCKED", detail: `${role}: ${v.blocker}`, step: `${role} ${res.pass}`, resumeWith: v.resume_with, pending: working } };
+          return { status: "stopped", stop: { cause: "persistent BLOCKED", detail: `${role}: ${v.blocker}`, step: `${role} ${res.pass}`, role, summary: v.summary, pending: working } };
         }
         rs.blockedRetryUsed = true;
         blockedRetry = `Your previous verdict was BLOCKED (${v.blocker}). The approved context is complete as supplied; review once more against it.`;
@@ -681,8 +679,7 @@ export function renderReconcile(result) {
     out.push("## Final proposal", "");
     if (rs.mode === "conversation") out.push("**Proposal**", "", bullet(rs.canonical));
     else {
-      const recs = rs.lastRecommendations ?? [];
-      out.push("**Change summary**", "", `- ${rs.applications} applied change(s): ${identity(rs.runOriginal)} → ${identity(rs.canonical)}`, ...recs.map((r) => `- not applied: ${r}`), "");
+      out.push("**Change summary**", "", `- ${rs.applications} applied change(s): ${identity(rs.runOriginal)} → ${identity(rs.canonical)}`, "");
       out.push("**Artifact**", "", `- ${rs.artifact}`, "", "**Current identity**", "", `- ${identity(rs.canonical)}`);
     }
     return `${out.join("\n")}\n`;
@@ -691,7 +688,7 @@ export function renderReconcile(result) {
   out.push("## Reconcile stopped", "", "**Candidate**", "", `- ${identity(rs.canonical)}`);
   const pendingId = s.observed ?? (s.pending !== undefined ? identity(s.pending) : undefined);
   if (pendingId && pendingId !== identity(rs.canonical)) out.push(`- ${pendingId}`);
-  out.push("", "**Blocker**", "", `- ${s.cause}: ${s.detail} (step: ${s.step})`);
+  out.push("", "**Blocker**", "", `- ${s.cause}: ${s.summary ? `${s.role}: ${s.summary.join("; ")}` : s.detail} (step: ${s.step})`);
   const resume = s.resume ?? [s.resumeWith ? `resume with: ${s.resumeWith}` : "a new approved Reconcile run from the canonical identity above"];
   out.push("", "**Resume from**", "", ...resume.map((r) => `- ${r}`));
   return `${out.join("\n")}\n`;

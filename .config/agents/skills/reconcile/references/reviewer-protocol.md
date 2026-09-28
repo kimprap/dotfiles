@@ -87,6 +87,14 @@ object of kind `review`:
 
 - `kind`: `review`.
 - `verdict`: exactly one of `VALID`, `REVISE`, or `BLOCKED`.
+- `summary`: every verdict; a list of 1–4 short points in plain language,
+  written like a recap. Each point is one line of at most 100 characters with
+  no leading or trailing whitespace, uses no file paths, line numbers, or
+  hashes, and covers one idea. `REVISE` says what is wrong. `VALID` says it
+  accepts, plus a short note for any real recommendation. `BLOCKED` says what
+  is missing and names the exact input that would unblock it. This is the only
+  reviewer text the human sees; the controller copies it unchanged and rejects
+  a malformed `summary` as an invalid return.
 - `blocking_issues`: a list of strings. `REVISE` needs at least one; `VALID`
   and `BLOCKED` leave it empty or omit it.
 - `correction`: `REVISE` only. In Conversation replacement it is
@@ -104,15 +112,15 @@ object of kind `review`:
   or transport, and the exact input needed.
 
 ```json
-{"data": {"kind": "review", "verdict": "VALID", "blocking_issues": [], "revision": "none", "recommendations": []}}
+{"data": {"kind": "review", "verdict": "VALID", "summary": ["Accepts the proposal as written"], "blocking_issues": [], "revision": "none", "recommendations": []}}
 ```
 
 ```json
-{"data": {"kind": "review", "verdict": "REVISE", "blocking_issues": ["Why the change is needed."], "correction": {"replacement": "The complete corrected proposal text."}, "preserve": []}}
+{"data": {"kind": "review", "verdict": "REVISE", "summary": ["Plain statement of what is wrong"], "blocking_issues": ["Why the change is needed."], "correction": {"replacement": "The complete corrected proposal text."}, "preserve": []}}
 ```
 
 ```json
-{"data": {"kind": "review", "verdict": "BLOCKED", "blocker": "The missing evidence, authority, or transport.", "resume_with": "The exact input needed.", "revision": "none"}}
+{"data": {"kind": "review", "verdict": "BLOCKED", "summary": ["What is missing", "The exact input that would unblock the review"], "blocker": "The missing evidence, authority, or transport.", "resume_with": "The exact input needed.", "revision": "none"}}
 ```
 
 `VALID` means the exact current working proposal needs no blocking change. It

@@ -29,7 +29,7 @@ const PROMPTS = {
 const ROLES = { a: { model: "scripted/a", thinking: "low" }, b: { model: "scripted/b", thinking: "low" } };
 const APPROVAL = { text: "Approved scope table.", at: "2026-09-27T01:00:00Z" };
 const y = (data) => `yield:${JSON.stringify(data)}`;
-const VALID = y({ kind: "review", verdict: "VALID", blocking_issues: [], revision: "none", recommendations: [] });
+const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the report"], blocking_issues: [], revision: "none", recommendations: [] });
 
 let t;
 

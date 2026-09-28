@@ -12,6 +12,7 @@ import { resumeReconcile, runReconcile } from "../controller.mjs";
 import { observePid } from "../lib/adapter.mjs";
 import { socketDirFor } from "../lib/env.mjs";
 import { disposeActor, finishRun, leaveRun, openRun, ask, startActor } from "../lib/ports.mjs";
+import { validateResult } from "../lib/schema.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
@@ -28,9 +29,10 @@ const ROLES = { a: { model: "scripted/a", thinking: "low" }, b: { model: "script
 const APPROVAL = { text: "Approved as written.", at: "2026-09-27T01:00:00Z" };
 
 const y = (data) => `yield:${JSON.stringify(data)}`;
-const VALID = y({ kind: "review", verdict: "VALID", blocking_issues: [], revision: "none", recommendations: [] });
-const REVISE = (replacement, issue = "the proposal misses the goal") => y({ kind: "review", verdict: "REVISE", blocking_issues: [issue], correction: { replacement }, preserve: [] });
-const EDITS = (edits) => y({ kind: "review", verdict: "REVISE", blocking_issues: ["wrong word"], correction: { edits }, preserve: [] });
+const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the proposal"], blocking_issues: [], revision: "none", recommendations: [] });
+const REVISE = (replacement, issue = "the proposal misses the goal") => y({ kind: "review", verdict: "REVISE", summary: ["Misses the stated goal"], blocking_issues: [issue], correction: { replacement }, preserve: [] });
+const EDITS = (edits) => y({ kind: "review", verdict: "REVISE", summary: ["One word is spelled in the wrong case"], blocking_issues: ["wrong word"], correction: { edits }, preserve: [] });
+const VALID_REC = y({ kind: "review", verdict: "VALID", summary: ["Accepts the edit", "Wording could be tighter"], blocking_issues: [], revision: "none", recommendations: ["editorial: tighten wording"] });
 const sha = (text) => `sha256:${createHash("sha256").update(text).digest("hex")}`;
 
 let t;
@@ -109,7 +111,7 @@ test("C4: three invalid returns (invalid data, prose-only, failed yield) each ge
       "",
       "**Blocker**",
       "",
-      "- invalid returns exhausted: A initial: 4 invalid returns (field `blocking_issues` needs at least one entry; REVISE requires an object field `correction`) (step: A initial)",
+      "- invalid returns exhausted: A initial: 4 invalid returns (field `summary` must be an array of 1 to 4 strings; field `blocking_issues` needs at least one entry; REVISE requires an object field `correction`) (step: A initial)",
       "",
       "**Resume from**",
       "",
@@ -172,7 +174,7 @@ test("KR8: an edit set applies against the outer base, a later REVISE supersedes
   const file = path.join(t.dir, "words.txt");
   fs.writeFileSync(file, "alpha\nbeta\ngamma\n");
   setPlan({
-    "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), VALID, EDITS([{ old: "alpha", new: "alpha" }]), EDITS([{ old: "zeta", new: "ZETA" }]), VALID],
+    "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), VALID_REC, EDITS([{ old: "alpha", new: "alpha" }]), EDITS([{ old: "zeta", new: "ZETA" }]), VALID],
     "scripted/b": [VALID, EDITS([{ old: "gamma", new: "GAMMA" }])],
   });
   const out = await runReconcile(artifactRequest(file), deps());
@@ -182,13 +184,15 @@ test("KR8: an edit set applies against the outer base, a later REVISE supersedes
   assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "a:later", "a:reask", "a:reask"]);
   assert.match(out.markdown, /\*\*Current identity\*\*\n\n- sha256:[0-9a-f]{64}\n/);
   assert.ok(out.markdown.includes(`- ${sha("alpha\nbeta\nGAMMA\n")}`));
+  // The accepting VALID's recommendation is shown only through its summary, never in the Change summary.
+  assert.match(out.markdown, /\| VALID<br>• Accepts the edit<br>• Wording could be tighter \|/);
+  assert.ok(!out.markdown.includes("tighten wording"), "full recommendation text is absent");
   assertCleanedUp();
 });
 
 test("KR9: first VALID ends negotiation; BLOCKED gets one approved-context retry; VALID recommendations change nothing", async () => {
-  const blocked = y({ kind: "review", verdict: "BLOCKED", blocker: "missing layout spec", resume_with: "the layout spec", revision: "none" });
-  const validRec = y({ kind: "review", verdict: "VALID", blocking_issues: [], revision: "none", recommendations: ["editorial: tighten wording"] });
-  setPlan({ "scripted/a": [VALID, blocked, validRec] });
+  const blocked = y({ kind: "review", verdict: "BLOCKED", summary: ["Cannot judge column count", "Needs the approved page grid"], blocker: "missing layout spec", resume_with: "the layout spec", revision: "none" });
+  setPlan({ "scripted/a": [VALID, blocked, VALID_REC] });
   const text = "Use two columns.";
   const out = await runReconcile(conversation(text), deps());
   assert.equal(out.exitCode, 0);
@@ -201,8 +205,8 @@ test("KR9: first VALID ends negotiation; BLOCKED gets one approved-context retry
       "",
       "| Step | Outer | Actor/event | Pass | Proposal identity | Outcome |",
       "|---|---|---|---|---|---|",
-      `| 1 | 1 | A | post-rethink | ${sha(text)} | BLOCKED: missing layout spec; resume with: the layout spec |`,
-      `| 2 | 1 | A | later | ${sha(text)} | VALID (not applied: editorial: tighten wording) |`,
+      `| 1 | 1 | A | post-rethink | ${sha(text)} | BLOCKED<br>• Cannot judge column count<br>• Needs the approved page grid |`,
+      `| 2 | 1 | A | later | ${sha(text)} | VALID<br>• Accepts the edit<br>• Wording could be tighter |`,
       `| 3 | 1 | closure | — | ${sha(text)} | unchanged proposal VALID |`,
       "| 4 | 1 | cleanup | — | — | A disposed (observed exit) |",
       "",
@@ -218,13 +222,34 @@ test("KR9: first VALID ends negotiation; BLOCKED gets one approved-context retry
 });
 
 test("KR9: a second BLOCKED stops", async () => {
-  const blocked = y({ kind: "review", verdict: "BLOCKED", blocker: "missing layout spec", resume_with: "the layout spec" });
+  const blocked = y({ kind: "review", verdict: "BLOCKED", summary: ["Cannot judge column count", "Needs the approved page grid"], blocker: "missing layout spec", resume_with: "the layout spec" });
   setPlan({ "scripted/a": [VALID, blocked, blocked] });
   const out = await runReconcile(conversation("Use two columns."), deps());
   assert.equal(out.exitCode, 1);
   assert.deepEqual(prompts(), ["a:initial", "a:rethink", "a:later"]);
-  assert.match(out.markdown, /\*\*Blocker\*\*\n\n- persistent BLOCKED: A: missing layout spec \(step: A later\)\n\n\*\*Resume from\*\*\n\n- resume with: the layout spec\n/);
+  assert.match(out.markdown, /\*\*Blocker\*\*\n\n- persistent BLOCKED: A: Cannot judge column count; Needs the approved page grid \(step: A later\)\n\n\*\*Resume from\*\*\n\n- a new approved Reconcile run from the canonical identity above\n/);
+  for (const full of ["missing layout spec", "the layout spec"]) assert.ok(!out.markdown.includes(full), `reviewer text "${full}" is absent`);
   assertCleanedUp();
+});
+
+test("review summary: 1–4 single-line points of at most 100 characters, validated for every verdict and never trimmed", () => {
+  const bases = {
+    VALID: { kind: "review", verdict: "VALID", recommendations: [] },
+    REVISE: { kind: "review", verdict: "REVISE", blocking_issues: ["why"], correction: { replacement: "new text" } },
+    BLOCKED: { kind: "review", verdict: "BLOCKED", blocker: "gap", resume_with: "input" },
+  };
+  const invalid = { missing: undefined, "empty list": [], "five entries": ["a", "b", "c", "d", "e"], "101 characters": ["x".repeat(101)], "line break": ["one\ntwo"], "empty entry": ["ok", ""], "leading space": [" point"], "trailing space": ["point "] };
+  for (const [verdict, base] of Object.entries(bases)) {
+    for (const [name, summary] of Object.entries(invalid)) {
+      const res = validateResult("review", { ...base, summary }, { mode: "conversation" });
+      assert.equal(res.valid, false, `${verdict} ${name} is rejected`);
+      assert.ok(res.defects.some((d) => d.includes("`summary`")), `${verdict} ${name} names the summary defect`);
+    }
+    const summary = ["x".repeat(100), "😀".repeat(100), "c", "d"];
+    const res = validateResult("review", { ...base, summary }, { mode: "conversation" });
+    assert.equal(res.valid, true, `${verdict} valid summary is admitted: ${res.defects}`);
+    assert.deepEqual(res.value.summary, summary);
+  }
 });
 
 test("KR10: one application per outer iteration is reread, counted and validated; with cap 1 the next iteration is closure-only", async () => {
@@ -249,13 +274,13 @@ test("KR10: one application per outer iteration is reread, counted and validated
       "",
       "| Step | Outer | Actor/event | Pass | Proposal identity | Outcome |",
       "|---|---|---|---|---|---|",
-      `| 1 | 1 | A | post-rethink | ${base} | REVISE: wrong word |`,
-      `| 2 | 1 | B | post-rethink | ${applied} | VALID |`,
+      `| 1 | 1 | A | post-rethink | ${base} | REVISE<br>• One word is spelled in the wrong case |`,
+      `| 2 | 1 | B | post-rethink | ${applied} | VALID<br>• Accepts the proposal |`,
       `| 3 | 1 | apply | — | ${applied} | applied, reread matches (count 1) |`,
       `| 4 | 1 | validate | — | ${applied} | passed |`,
       `| 5 | 2 | cap | — | ${applied} | closure-only: cap 1 reached |`,
-      `| 6 | 2 | A | later | ${applied} | REVISE: wrong word |`,
-      `| 7 | 2 | B | later | ${refused} | VALID |`,
+      `| 6 | 2 | A | later | ${applied} | REVISE<br>• One word is spelled in the wrong case |`,
+      `| 7 | 2 | B | later | ${refused} | VALID<br>• Accepts the proposal |`,
       `| 8 | 2 | stop | — | ${refused} | cap 1 reached; accepted change not applied |`,
       "| 9 | 2 | cleanup | — | — | A, B disposed (observed exit) |",
       "",
@@ -301,7 +326,7 @@ test("KR11: an artifact changed between closure VALID and the report stops with 
       "",
       "| Step | Outer | Actor/event | Pass | Proposal identity | Outcome |",
       "|---|---|---|---|---|---|",
-      `| 1 | 1 | A | post-rethink | ${reviewed} | VALID |`,
+      `| 1 | 1 | A | post-rethink | ${reviewed} | VALID<br>• Accepts the proposal |`,
       `| 2 | 1 | closure | — | ${reviewed} | unchanged proposal VALID |`,
       "| 3 | 1 | cleanup | — | — | A disposed (observed exit) |",
       `| 4 | 1 | freshness | — | ${observed} | drift |`,
@@ -469,7 +494,7 @@ test("KR14: an observer reporting a reviewer PID present blocks Final proposal w
       "",
       "| Step | Outer | Actor/event | Pass | Proposal identity | Outcome |",
       "|---|---|---|---|---|---|",
-      `| 1 | 1 | A | post-rethink | ${sha(text)} | VALID |`,
+      `| 1 | 1 | A | post-rethink | ${sha(text)} | VALID<br>• Accepts the proposal |`,
       `| 2 | 1 | closure | — | ${sha(text)} | unchanged proposal VALID |`,
       `| 3 | 1 | cleanup | — | — | disposal not established: ${unexited} |`,
       "",

@@ -183,8 +183,8 @@ When a run follows earlier work in the same session, Context lists separately:
   decision: the earlier final proposal that was carried out; the
   implementation or blocked report word for word; the check results; the
   changed paths and diff, saved as `git diff` or `git show` output to a file in
-  the run's temp folder and given by absolute path; and earlier-run blocking
-  issues and not-applied reviewer recommendations that bear on the question.
+  the run's temp folder and given by absolute path; and earlier-run reviewer
+  summary points that bear on the question.
 
 Quoting the earlier proposal as evidence does not make it binding; restate any
 part of it that must still bind as a binding decision. Reviewers have only
@@ -585,7 +585,12 @@ rewrite, summarize, or reorder it. The controller projects the full trace into
 `## Review rounds` using child kind `table`. It includes each authoritative
 finalized verdict exactly once, plus apply, validate, freshness, cleanup, cap,
 park, resume, and stop milestones, and excludes provisional initial responses.
-Reviewer text is copied byte-for-byte from the admitted `data` strings.
+Each finalized verdict's Outcome shows only the verdict word followed by the
+reviewer-authored `summary` points (return contract in
+[reviewer protocol](references/reviewer-protocol.md)), one `• ` point per line,
+copied byte-for-byte from the admitted `data` strings. Full reviewer text
+(blocking issues, recommendations, blocker, resume input) appears nowhere in
+the output.
 
 ```markdown
 ## Review rounds
@@ -607,8 +612,8 @@ Conversation mode:
 ```
 
 Artifact mode does not duplicate the full artifact. Change summary is the
-committed candidate delta plus leftover nonblocking recommendations, if any; it
-must not recap round verdicts.
+committed candidate delta only; it lists no reviewer recommendations and must
+not recap round verdicts.
 
 ```markdown
 ## Final proposal
@@ -641,9 +646,9 @@ proposed repair and authority needed.
 
 **Blocker**
 
-- {exact blocker and failed step}
+- {exact blocker and failed step; a persistent `BLOCKED` shows the reviewer role and its summary points}
 
 **Resume from**
 
-- {exact resumable frontier, proposed repair, and required authority}
+- {exact resumable frontier, proposed repair, and required authority; a persistent `BLOCKED` resumes from a new approved Reconcile run}
 ```
