@@ -42,3 +42,27 @@ do not replace authoritative content with remembered summaries.
 Keep material rationale and unresolved risks in existing prose. Add no sizing
 fields, rethink ledger, approval gate, or recursive review. Structural validity
 does not establish design quality or runtime success.
+
+## When it runs
+
+Run it once after a substantive specification, plan, ticket-graph, or planless
+direct-contract candidate exists, before final submission, approval, execution
+readiness, child dispatch, or Handoff. A graph that newly selects ownership or
+dependencies is substantive even when acceptance is an exact projection.
+
+- An inline author explicitly reads it as a separate post-candidate step.
+- A delegated author first returns the candidate. The caller then sends this
+  file once as an explicit follow-up to that same author before accepting the
+  final Handoff or execution-ready plan; the author applies it and returns the
+  revised or preserved candidate through its existing procedure.
+- Make at most one bounded correction to decisions the author owns; otherwise
+  preserve the candidate.
+- An exact unchanged projection of an approved contract or graph, a storage
+  copy, a checkbox or lifecycle-only update, and an unchanged approved contract
+  do not trigger another pass.
+- The follow-up adds no route owner, stage, approval gate, or caller authority.
+  If the same author cannot receive it, stop rather than substitute another
+  author.
+- This is a pre-readiness planning-author pass, distinct from implementation
+  code-then-test rethink and execution-recovery rethink, and it never
+  manufactures a repository plan.

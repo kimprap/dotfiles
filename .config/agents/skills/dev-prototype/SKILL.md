@@ -35,6 +35,6 @@ Return:
 - the immutable artifact identity and location;
 - the required disposal or preservation action, expressed without transport assumptions;
 - explicit uncertainty and decisions still owned by a human or lifecycle stage; and
-- one common Handoff with `route-impact: unchanged|changed` to exactly one receiver: the requesting `dev-requirements`, `dev-grilling`, or `dev-specification` owner.
+- one common Handoff with `route-impact: unchanged|changed` per `dev-handoff` to exactly one receiver: the requesting `dev-requirements`, `dev-grilling`, or `dev-specification` owner.
 
-The prototype is decision evidence only. `unchanged` resumes the requesting owner's approved route without router reapproval; `changed` reports the changed facts to that owner for recomputation. The prototype never selects a route, authorizes production continuation, becomes an accepted test seam, implies completion, folds into production, prescribes a branch, or performs the downstream change.
+The prototype is decision evidence only. It never selects a route, authorizes production continuation, becomes an accepted test seam, implies completion, folds into production, prescribes a branch, or performs the downstream change.

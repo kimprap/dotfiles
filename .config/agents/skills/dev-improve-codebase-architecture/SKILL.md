@@ -73,4 +73,4 @@ Use `dev-codebase-design` and its approved design-it-twice contract only to expl
 
 ### 4. Return the selected change
 
-Return the survey evidence, chosen architecture change, settled constraints, open authority decisions, observable acceptance, and exact artifact identities in one common Handoff to `dev-ask`. Include `route-impact: unchanged|changed` and no alternative receiver. `unchanged` preserves an already-approved continuation; `changed` identifies the material route facts for recomputation and possible reapproval. This skill surveys and selects; it never authorizes or starts requirements, specification, ticketing, implementation, destructive effects, or shipping.
+Return the survey evidence, chosen architecture change, settled constraints, open authority decisions, observable acceptance, and exact artifact identities in one common Handoff to `dev-ask`. Include `route-impact: unchanged|changed` per `dev-handoff` and no alternative receiver. This skill surveys and selects; it never authorizes or starts requirements, specification, ticketing, implementation, destructive effects, or shipping.

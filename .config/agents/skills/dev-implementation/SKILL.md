@@ -43,14 +43,8 @@ Read `skill://dev-implementation/references/plan-orchestration.md` for every pla
 
 ## Planless contract authoring
 
-After producing a substantive planless direct-contract candidate, explicitly
-read `~/.agents/references/plan-rethink.md` as a separate inline step and apply
-it once before child dispatch. Make at most one bounded correction to
-direct-contract decisions this role owns; otherwise preserve the candidate.
-This is a pre-readiness planning-author pass, not the implementation
-code-then-test rethink, and it never manufactures a repository plan. An exact
-unchanged projection of an already approved direct contract or task graph does
-not trigger another planning pass.
+After producing a substantive planless direct-contract candidate, apply
+`~/.agents/references/plan-rethink.md` inline once as it directs.
 
 ## Child contract
 

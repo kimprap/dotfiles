@@ -75,6 +75,6 @@ If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](
 
 ## Result, stop, and receiver
 
-Return only the qualified glossary/context-map/ADR delta or an exact no-write/blocker result, its authority revision, destination and before/after identity, changed terms or decisions, rejected alternatives when applicable, and `route-impact: unchanged|changed` in one Common Handoff. Name exactly one receiver: the requesting lifecycle owner when its route remains current, or `dev-ask` when the confirmed domain decision materially changes route facts.
+Return only the qualified glossary/context-map/ADR delta or an exact no-write/blocker result, its authority revision, destination and before/after identity, changed terms or decisions, rejected alternatives when applicable, and `route-impact: unchanged|changed` per `dev-handoff` in one Common Handoff. Name exactly one receiver: the requesting lifecycle owner when its route remains current, or `dev-ask` when the confirmed domain decision materially changes route facts.
 
 Stop without writing for missing or stale authority, an artifact that does not qualify, unresolved terminology or architecture authority, a concurrent destination change that cannot be safely rebound, or any content/destination delta not covered by exact human approval. This discipline never chooses product scope, implementation architecture outside a qualifying confirmed ADR, a route, or a downstream stage.

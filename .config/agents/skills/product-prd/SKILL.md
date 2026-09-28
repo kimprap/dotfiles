@@ -21,7 +21,7 @@ Require:
 - the exact target PRD identity, path, approved revision, and digest, or `new`;
 - complete confirmed product decisions for every blocking PRD section;
 - fixed scope, non-goals, artifact locations, and one requesting owner.
-- optional complete papercut candidate identity and its one immutable originating `PC-ID` from the current Product Handoff, or `none`; this is non-product evidence and grants no PRD authority.
+- optional complete papercut candidate identity and its one immutable originating `PC-ID` from the current Product Handoff, or `none`.
 
 Return unresolved product decisions to `product-grilling`. Stop for stale or conflicting baselines, unconfirmed decisions, unavailable required evidence, or missing human product authority. Do not choose customers, positioning, pricing, priority, scope, success measures, rollout policy, technical architecture, or implementation.
 
@@ -43,7 +43,7 @@ Before replacing an approved PRD revision, prove its exact content is recoverabl
 4. Present the exact candidate revision and digest, proposed identity and destination, target PRD, changed sections, promotion effects, and material trade-offs for human approval. Silence, route approval, or prior interview confirmation is not PRD approval.
 5. On explicit approval, recheck that the baseline, candidate, proposed destination, target PRD, promotion effects, and published registry are unchanged. Any drift makes the candidate stale and requires renewed exact approval.
 6. Publish only the exact approved destination and effects. For a new PRD, create its approved file. For a revision, update only the exact target PRD after proving its baseline is current. Record revision, supersession, approval evidence, source iteration, and digest; update the index only when it exists or now qualifies and its delta was approved.
-7. Emit one Product Handoff. Return to `product-ask`, or to `dev-ask` when the approved route requests engineering handoff. Preserve any originating papercut `PC-ID` unchanged with only an explicit candidate-specific owner result; otherwise return `none`. Never inspect or mutate papercut storage.
+7. Emit one Product Handoff. Return to `product-ask`, or to `dev-ask` when the approved route requests engineering handoff. Pass papercut results through unchanged and never touch the ledger; `product-ask` settles them with `papercut` resolve.
 
 Never overwrite an approved PRD with candidate content before exact approval. Never let two candidates revise the same stale baseline or allocate the same published identity without rebinding.
 
@@ -76,6 +76,6 @@ A handoff to `dev-ask` must name:
 - known downstream artifacts made stale, when evidenced;
 - `route-impact: changed` for new engineering authority;
 - exactly one receiver: `dev-ask`.
-- optional unchanged originating papercut `PC-ID` and explicit candidate-specific owner result, or `none`; this is not part of the approved PRD and grants no engineering authority.
+- optional unchanged originating papercut `PC-ID` and explicit candidate-specific owner result, or `none`.
 
 `dev-ask` decides whether `dev-requirements` or another engineering owner is next. The Product Handoff grants no technical-design, implementation, destructive-effect, delivery, or shipping authority.

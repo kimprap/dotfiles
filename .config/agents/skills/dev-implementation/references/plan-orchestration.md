@@ -33,7 +33,7 @@ custom controllers keep their own obligations.
 
 For attempt 1:
 
-1. Preflight the explicit declared response-object schema, normal non-isolated resumable child transport, and exact controller/child/job/task/attempt-1/receiver/`candidate` bindings. The child implements its task and terminal-completes a type-absent ordinary candidate by direct native `yield` before final smoke or Handoff; incremental publication and parking are not candidate return.
+1. Preflight the explicit declared response-object schema, normal non-isolated resumable child transport, and exact controller/child/job/task/attempt-1/receiver/`candidate` bindings. The child implements its task and returns its candidate by terminal ordinary completion before final smoke or Handoff; incremental publication and parking are not candidate return.
 2. Collect only the exact completed job. Immediately retain the complete original native result and matching job record, apply the loaded adapter's terminal/status/schema/identity checks, and decode only its designated structured data before admitting the candidate. Missing, invalid, mismatched, consumed, or alternate-source output fails closed. Job settlement is neither task completion nor disposal.
 
 For an authorized attempt-2 repair:
@@ -44,7 +44,7 @@ For an authorized attempt-2 repair:
 
 After either candidate is admitted:
 
-1. Bind child/controller/task/attempt/operation/logical-Handoff/phase/schema/invocation and send `~/.agents/references/impl-rethink/impl-rethink.md` once through the selected host seam under the `dev-implementation` owner-directed return-preflight exemption. The child applies code rethink then test rethink, at most one correction, all owned checks and changed-path smoke, and returns one lean Handoff. Send it only after retaining the candidate job; a busy send is an aside, not another wake. Delivery and job settlement are not task completion or disposal. Hosts with native reply correlation use the portable token path.
+1. Bind child/controller/task/attempt/operation/logical-Handoff/phase/schema/invocation and send `~/.agents/references/impl-rethink/impl-rethink.md` once through the selected host seam under the `dev-implementation` owner-directed return-preflight exemption. The child applies code rethink then test rethink, at most one correction, all owned checks and changed-path smoke, and returns one lean Handoff. Send it only after retaining the candidate job. Delivery and job settlement are not task completion or disposal. Hosts with native reply correlation use the portable token path.
 2. Papercut accounting follows the papercut scheduling rule.
 3. The controller mechanically accepts only the admitted logical report with its retained original structured provenance object or objects, declared targets/effects, complete owned check records, exact task/attempt identity, and its own bound receiver identity. If a Handoff escalates an execution-related stop without naming an actual shared-policy stop condition, return the specific eligibility question to the same responsible owner. The controller does not redo semantic judgment, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.
 4. Mark the task complete, add `  completed YYYY-MM-DD-HHMM` immediately after its checked task line, and check each criterion only after its exact check reports the expected result.

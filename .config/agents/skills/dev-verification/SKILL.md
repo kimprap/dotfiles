@@ -60,36 +60,7 @@ A passing subset never yields `VERIFIED`. The aggregate must be newly issued fro
 
 ## Execution recovery
 
-When a concrete invocation, runner, transport, environment, automation, fixture,
-collection, or capture failure prevents a required observation or would
-otherwise be escalated as an execution-related blocker, first read and assess
-`skill://dev-implementation/references/execution-recovery.md`. Assessment grants
-no retry. For an eligible retry, the same verifier remains the execution owner,
-forms the proposal, and explicitly applies
-`~/.agents/references/impl-rethink/recovery-rethink.md` once before execution.
-It may correct only permitted task-local execution machinery while the evaluated
-target, required `Behavior`, `Check`, expected result, ownership, and authorized
-effects stay unchanged. Record the failed observation, concrete cause,
-correction or transient basis, decisive observation, and used allowance. This
-recovery is read-only toward the evaluated target and consumes no semantic
-attempt.
-
-The shared per-cause corrected-execution and finite transient limits apply; a
-lower-level non-success label or first corrected failure is not by itself an
-unconditional stop. An initial execution allocation is not an implicit recovery
-cap, but an explicit total execution cap remains binding. Use the smallest
-complete valid check scenario, preserve frozen failed or inconclusive evidence,
-and never stitch partial runs. After successful recovery, this same verifier may
-issue a fresh complete aggregate from compatible valid observations and
-continues the remaining fixed set. A required verifier is not a disposable
-resource: loss of that verifier stops closure with no substitute or parent
-repair.
-
-Any proposed target, required behavior, check-meaning, expected-result,
-ownership, or effect change returns to its authority instead of recovery.
-Execution recovery never substitutes a check or verifier, reruns review, repairs
-product or code, weakens the complete unchanged fixed-set rerun after semantic
-repair, or overrides a custom protocol's own refusal or limits.
+When an execution failure blocks a required observation, assess and recover under `skill://dev-implementation/references/execution-recovery.md` before escalating. The same verifier owns recovery and stays read-only toward the target; any target, behavior, check-meaning, expected-result, ownership, or effect change returns to its authority.
 
 ## One eligible implementation repair
 

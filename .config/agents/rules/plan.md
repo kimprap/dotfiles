@@ -18,14 +18,7 @@ rule. Once a graph is approved, later estimates alone do not repartition it.
 This base owns identity and lifecycle. Implementation body grammar belongs to `plan-impl-spec`; repository location and harness transport belong to their companion rules.
 
 After a substantive candidate exists, apply
-`~/.agents/references/plan-rethink.md` once before final submission for approval
-or execution readiness. An inline author explicitly reads it as a separate
-post-candidate step. A delegated author first returns the candidate, then
-applies the caller's explicit follow-up in that same author. Make at most one
-bounded correction to decisions the author owns. A newly authored graph is
-substantive even when acceptance is an exact projection; an unchanged approved
-contract, exact projection or storage copy, and checkbox or lifecycle-only
-update do not trigger another pass.
+`~/.agents/references/plan-rethink.md` once as it directs.
 
 Automatic draft persistence may occur before this pass. The pass gates final
 submission or readiness, not initial storage, and changes no publication or

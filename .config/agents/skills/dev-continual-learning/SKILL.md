@@ -39,23 +39,8 @@ Normalize the portable terminal status to exactly one completion check line:
 
 `curated` and `no durable learning` permit completion. An ordinary `blocked <reason>` also permits completion and the same reason is reported as residual risk. Stop completion only when the assessment establishes a current governing-rule conflict that directly makes the settled implementation invalid or unsafe; return that conflict to the governing authority instead of constructing completion input.
 
-After portable learning returns its one terminal status, explicitly load
-`skill://dev-handoff` before composing the adapter return. Compose one lean
-Handoff on the first return: one `# Handoff:` title followed by `## Outcome`,
-`## Changed targets/effects`, `## Checks`, `## Blocker/risk`, and
-`## Next receiver` exactly once and in that order. Put the portable assessment
-evidence and exactly one matching `Learning: curated`,
-`Learning: no durable learning`, or `Learning: blocked <reason>` line inside
-`Checks`; do not invent implementation acceptance IDs. Name the bound concrete
-lifecycle controller as the sole next receiver.
+After portable learning returns its one terminal status, load `skill://dev-handoff` and return one Handoff on the first return, following its envelope. Put the portable assessment evidence and the one matching `Learning:` line in `Checks`, with no invented acceptance IDs. The bound lifecycle controller is the sole next receiver. Check the draft against `dev-handoff` before sending.
 
-Before sending, check the unsent envelope against the loaded canonical Handoff
-contract and fix that draft in place if needed. Do not invoke portable
-`continual-learning` again, ask it to re-emit a report, or create a second
-assessment or Handoff. Include any guidance paths changed by curation,
-candidate-specific papercut dispositions, and the exact residual or governing
-conflict in the canonical fields. The adapter never reads or writes the
-papercut ledger, reruns review or verification, repairs implementation,
-presents completion, or ships.
+Never re-invoke portable `continual-learning`, ask it to re-emit, or create a second assessment or Handoff. Include curated guidance paths, candidate-specific papercut dispositions, and the exact residual or governing conflict. The adapter never reads or writes the papercut ledger, reruns review or verification, repairs, presents completion, or ships.
 
 If curation changed repository material, that completed Handoff is itself a repository-work boundary: load `papercut` once afterward under the generic scheduling rule. That look never triggers another learning assessment.

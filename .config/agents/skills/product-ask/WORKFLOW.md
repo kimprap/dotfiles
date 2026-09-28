@@ -132,7 +132,7 @@ Every product owner returns one compact Product Handoff:
 
 A Handoff projects authority; it does not create it. Link canonical product artifacts instead of copying them. Use exactly one receiver.
 
-Papercut evidence is non-product evidence. Product owners preserve its optional originating `PC-ID` through the existing Handoff but never read or mutate its ledger. The current leaf owner returns any explicit candidate-specific result to `product-ask`; `product-ask` alone validates the unchanged ID and applies one terminal `fixed | rejected | superseded` settlement through the portable papercut seam. Ordinary `completed`, interview confirmation, PRD or P07 approval, broad/unrelated results, and nonterminal outcomes leave it open without a settlement call. Narrow authority makes no helper call; a helper failure after one attempted procedure performs no successful settlement or retry. Papercut processing never changes the product result or adds product decision, stage, approval, PRD field, or publication authority; exact human approval of product strategy, scope, and PRD effects remains unchanged.
+Papercut evidence is non-product evidence: a complete candidate's unchanged originating `PC-ID` travels through the existing Handoff and never changes product authority or the product result, and product leaf owners never read or write its ledger. Pass papercut results through unchanged; `product-ask` settles them with `papercut` resolve.
 
 Before building the completion input, `product-ask` reads [the canonical input contract](../../references/completion-presentation-input.md). Presenter activation remains after the input is built.
 

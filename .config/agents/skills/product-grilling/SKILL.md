@@ -90,7 +90,7 @@ Do not record unconfirmed model proposals as decisions. A confirmed iteration re
 
 ## Product Handoff
 
-Return one Product Handoff that names the route approval, iteration, target PRD and baseline identities, decision-evidence identity, confirmed decisions, unresolved frontier, expected versus observed decision progress, `route-impact: unchanged|changed`, and exactly one receiver. When the intake carried a complete papercut candidate, also return its one originating `PC-ID` unchanged as non-product evidence plus only an explicit candidate-specific owner result; otherwise return `none`. Never inspect or mutate papercut storage.
+Return one Product Handoff that names the route approval, iteration, target PRD and baseline identities, decision-evidence identity, confirmed decisions, unresolved frontier, expected versus observed decision progress, `route-impact: unchanged|changed`, and exactly one receiver. Pass papercut results through unchanged and never touch the ledger; `product-ask` settles them with `papercut` resolve.
 
 Use `product-prd` when the frontier is empty, the user confirmed the shared understanding, and the approved route includes PRD work. Use `product-ask` for a pause, blocker, changed route, abandoned iteration, or a completed interview with no PRD route.
 

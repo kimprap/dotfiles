@@ -42,7 +42,7 @@ Do not interview around that stop or create a substitute PRD.
 4. Separate established evidence from assumptions. Assign every unresolved question an owner and blocking status.
 5. Draft one revision-bound Engineering Requirements Brief when durable coordination needs it. For one-context direct work, the approved Route Overview plus explicit acceptance may remain the contract.
 6. Obtain explicit human confirmation only for requirements the stage synthesized, materially clarified, or changed. A verbatim projection of already approved authority needs no new prompt. A caveat or change creates a new revision; silence is not confirmation.
-7. Hand the current confirmed revision to the concrete route owner with the one next-owner role already named by the approved route: `dev-specification`, or `dev-implementation` for a qualified direct lane. Return with next-owner role `dev-ask` only when route impact changed.
+7. Hand the current confirmed revision to the concrete route owner with the one next-owner role already named by the approved route: `dev-specification`, or `dev-implementation` for a qualified direct lane.
 
 ## Engineering Requirements Brief
 
@@ -75,7 +75,7 @@ Do not create `CONTEXT.md`, `CONTEXT-MAP.md`, or an ADR. A real domain term or q
 
 ## Handoff and continuation
 
-Every exit emits one common Handoff with the exact requirements/authority identity, `route-impact: unchanged|changed`, unresolved blocker if any, and exactly one concrete receiver. `unchanged` preserves the next-owner role in the approved route and continues automatically after any necessary human-owned requirement confirmation; it does not add a router, controller spawn, or artifact-count approval. When that role is `dev-implementation`, the bound route agent activates the controller in place unless the approved topology already names a separate controller. `changed` returns to the same concrete route owner with next-owner role `dev-ask` for recomputation. A stop names the exact product, architecture, or requirements authority owner instead of a menu of receivers. This stage never authorizes specification or implementation by itself.
+Every exit emits one common Handoff with the exact requirements/authority identity, `route-impact: unchanged|changed` per `dev-handoff`, unresolved blocker if any, and exactly one concrete receiver. On `unchanged`, continue automatically after any necessary human-owned requirement confirmation, adding no router, controller spawn, or artifact-count approval. When the next-owner role is `dev-implementation`, the bound route agent activates the controller in place unless the approved topology already names a separate controller. A stop names the exact product, architecture, or requirements authority owner instead of a menu of receivers. This stage never authorizes specification or implementation by itself.
 
 ## Stop conditions
 

@@ -84,16 +84,12 @@ Reapprove only when the product objective, target users, material scope, route, 
 ## Dispatch, iterations, and Handoffs
 
 After route approval, invoke exactly one first owner. `product-grilling` and `product-prd` each return one Product Handoff with exact artifact identities, `route-impact: unchanged|changed`, and one receiver.
-A complete papercut Learning Candidate may accompany current product work only as non-product evidence. Bind its one immutable originating `PC-ID` alongside the approved route and preserve it unchanged through every Product Handoff; an incomplete or mismatched candidate remains evidence-only. This does not add a product stage, route approval, product decision, PRD field, or publication authority. Product leaf owners never access the papercut ledger.
+A complete papercut candidate and its unchanged originating `PC-ID` travel through every Product Handoff only as non-product evidence and never change product authority or the product result; product leaf owners never read or write the ledger.
 
 Each product iteration targets one existing PRD identity and revision or `new`; it may reference other PRDs as dependencies. A new round does not create a new iteration. A candidate revision does not replace an approved PRD revision. Promotion requires explicit human approval of the exact candidate revision and digest, proposed identity and destination, and every publication effect.
 
 When route impact is unchanged, continue to the next owner already named by the approved route. Recompute and request reapproval only for a material route fact above. Never keep a router-owned iteration ledger.
-After the current product-workflow owner returns an explicit candidate-specific papercut outcome to `product-ask`, `product-ask` is the sole settlement owner: validate the unchanged originating `PC-ID` and invoke the portable `papercut` settlement procedure once for terminal `fixed | rejected | superseded`. Product leaf owners never invoke settlement.
-
-Papercut evidence remains `non-product-evidence`; ordinary leaf completion causes no settlement call, and papercut processing leaves existing product authority and the product result unchanged. `completed`, interview confirmation, PRD approval/publication, P07 approval, a broad product result, `paused | blocked | abandoned | authority-change-required`, incomplete evidence, or an unrelated result is `open` and performs no settlement call.
-
-Narrow authority is disclosed report-only/open without a helper call. A helper failure after one attempted procedure is report-only/open, performs no successful settlement or retry, and does not change the product result. Never infer product authority from papercut evidence or settle an unrelated ID.
+Pass papercut results through unchanged; settle them with `papercut` resolve.
 
 ## Evidence stop
 
@@ -110,7 +106,7 @@ Resume condition: <specific evidence or confirmed decision>
 
 ## Completion
 
-Validate product completion only when the latest Product Handoff and every referenced iteration, candidate, and approved PRD identity are current; its outcome is exactly `completed`; product authority, approvals, route impact, and evidence are consistent; no unresolved frontier remains; and the existing papercut settlement boundary has finished. Open evidence causes no settlement call and remains valid presentable accounting. A terminal `fixed | rejected | superseded` result has exactly one successful call; narrow authority or helper failure remains disclosed report-only/open accounting.
+Validate product completion only when the latest Product Handoff and every referenced iteration, candidate, and approved PRD identity are current; its outcome is exactly `completed`; product authority, approvals, route impact, and evidence are consistent; no unresolved frontier remains; and any papercut settlement has finished.
 
 After that validation and settlement, read [the canonical completion input contract](../../references/completion-presentation-input.md) before building the one current five-field input. Follow its schema and validation rules; do not activate the presenter to discover the input grammar. Product-specific content:
 
@@ -126,6 +122,6 @@ Normalize an available learning result to `Learning: curated`, `Learning: no dur
 
 The same `product-ask` agent applies `completion-presentation` directly: it passes the input to the render script `python3 skill://completion-presentation/scripts/render.py` in a tool call and replies with only its five-field output, never the input. The presenter creates no product stage, task, dispatch, approval, iteration state, settlement call, evidence rerun, plan, workflow, Handoff, publication, delivery, or shipping effect. It receives no raw Product Handoff or lifecycle input and does not decide product completion or imply engineering completion.
 
-For `paused | blocked | abandoned | authority-change-required`, missing or stale authority, `PRODUCT EVIDENCE REQUIRED`, conflicting evidence, an unresolved frontier, a governing-rule conflict, or any malformed, reordered, stale, or incomplete five-field input, emit no completed presentation and preserve the applicable product-specific report. Completed open and report-only/open papercut accounting are not stops. Shipping is never inferred from completion or placed in `Next`.
+For `paused | blocked | abandoned | authority-change-required`, missing or stale authority, `PRODUCT EVIDENCE REQUIRED`, conflicting evidence, an unresolved frontier, a governing-rule conflict, or any malformed, reordered, stale, or incomplete five-field input, emit no completed presentation and preserve the applicable product-specific report. Open papercut accounting is not a stop. Shipping is never inferred from completion or placed in `Next`.
 
 Read [WORKFLOW.md](WORKFLOW.md) only when maintaining, auditing, or extending the complete product-development flow.
