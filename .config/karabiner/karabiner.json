@@ -276,7 +276,7 @@
                         ]
                     },
                     {
-                        "description": "ChatGPT - built-in",
+                        "description": "Claude - built-in",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -305,7 +305,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/ChatGPT.app'"
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
                                     }
                                 ],
                                 "type": "basic"
@@ -313,7 +313,7 @@
                         ]
                     },
                     {
-                        "description": "ChatGPT - bluetooth",
+                        "description": "Claude - bluetooth",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -338,7 +338,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Applications/ChatGPT.app'"
+                                        "shell_command": "/Users/kim/.dotfiles/.config/karabiner/open-app '/Users/kim/Applications/Brave Browser Apps.localized/Claude.app'"
                                     }
                                 ],
                                 "type": "basic"
