@@ -10,17 +10,20 @@
 // any launch, 3 cleanup failure.
 //
 // Refusals run in this order before anything is launched: request shape,
-// checkVersions, readModelRoles, loadPrompts, findUndisposedRuns. Only then is
-// ./controller.mjs imported and called. `roles` runs the same checks except
+// checkVersions, readModelRoles, loadPrompts, findAbandonedRuns (new runs and
+// `roles` only; `resume`/`dispose <runId>` judge their named run themselves and
+// are never blocked by other runs), then this process's own start time (every
+// command except `roles`: without it no run claim can be written). Only then
+// is ./controller.mjs imported and called. `roles` runs the same checks except
 // request shape, then prints the models note without importing the controller.
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CONTROLLER_ROOT, OVERLAY_PATH } from "./lib/adapter.mjs";
+import { CONTROLLER_ROOT, observePid as defaultObservePid, OVERLAY_PATH } from "./lib/adapter.mjs";
 import { childEnv, RUN_ID_PATTERN, SESSIONS_ROOT, TMP_ROOT } from "./lib/env.mjs";
 import { readModelRoles as defaultReadModelRoles, renderModels } from "./lib/models.mjs";
-import { findUndisposedRuns, listProcesses as defaultListProcesses } from "./lib/preflight.mjs";
+import { abandonedRunLines, findAbandonedRuns, listProcesses as defaultListProcesses, OWN_START_UNREADABLE, ownStartReason, processStart as defaultProcessStart } from "./lib/preflight.mjs";
 import { loadPrompts as defaultLoadPrompts, PROMPT_SOURCES } from "./lib/prompts.mjs";
 import { renderSpend } from "./lib/spend.mjs";
 import { checkVersions } from "./lib/versions.mjs";
@@ -99,7 +102,7 @@ async function withRolesEnv(env, fn) {
  *   stdinText       request JSON text (default: read `stdin`)
  *   env             source environment (PATH resolves `omp`)
  *   controllerRoot  package root holding node_modules and package-lock.json
- *   sessionsRoot, tmpRoot, listProcesses   preflight inputs (Q5)
+ *   sessionsRoot, tmpRoot, listProcesses, observePid, processStart   preflight and run-claim inputs (Q5)
  *   readModelRoles({ ompPath, env }), loadPrompts(PROMPT_SOURCES)
  *   loadController  () => controller module (default: import("./controller.mjs"))
  *   log             diagnostics line sink (default: stderr)
@@ -113,6 +116,8 @@ export async function main({
   sessionsRoot = SESSIONS_ROOT,
   tmpRoot = TMP_ROOT,
   listProcesses = defaultListProcesses,
+  observePid = defaultObservePid,
+  processStart = defaultProcessStart,
   readModelRoles = defaultReadModelRoles,
   loadPrompts = defaultLoadPrompts,
   loadController = () => import("./controller.mjs"),
@@ -154,16 +159,13 @@ export async function main({
   const loaded = await loadPrompts(PROMPT_SOURCES);
   if (!loaded.ok) return refuse("missing prompt marker", loaded.problems);
 
-  const undisposed = await findUndisposedRuns({ sessionsRoot, tmpRoot, listProcesses, exceptRunId: needsRunId ? runId : undefined });
-  if (undisposed.refuse) {
-    return refuse("undisposed controller run", [
-      ...undisposed.folders.map((f) => `folder \`${f}\``),
-      ...undisposed.processes.map((p) => `process ${p.pid}: \`${p.command}\``),
-      "dispose that run first (`cli.mjs dispose <runId>` or its existing disposal authority)",
-    ]);
+  if (!needsRunId) {
+    const abandoned = await findAbandonedRuns({ sessionsRoot, tmpRoot, listProcesses, observePid, processStart });
+    if (abandoned.refuse) return refuse("abandoned controller run", abandonedRunLines(abandoned.runs));
   }
 
   if (command === "roles") return { exitCode: EXIT.final, stdout: renderModels(roles.roles) };
+  if (!(await processStart(process.pid))) return refuse(OWN_START_UNREADABLE, [ownStartReason(process.pid)]);
 
   const controller = await loadController();
   const deps = {
@@ -177,6 +179,8 @@ export async function main({
     tmpRoot,
     env,
     listProcesses,
+    observePid,
+    processStart,
     log,
   };
   const out = await RUNNERS[command](controller, request, deps, runId);

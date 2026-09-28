@@ -105,8 +105,15 @@ controller, reviewing, or mutating:
    `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`, a missing
    or unparsable model role (`modelRoles.second_opinion_a`
    for A and `modelRoles.second_opinion_b` for B, each `<model>:<thinking>`),
-   a missing or duplicated reviewer prompt marker, or an undisposed earlier
-   controller run. Present a refusal verbatim and stop. Do not patch the host,
+   a missing or duplicated reviewer prompt marker, or an
+   abandoned controller run (owner gone and not parked; live and parked runs of
+   other sessions never refuse). Present a refusal verbatim and stop. After an
+   abandoned-run refusal, ask the human once which listed runs to dispose and
+   run `node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
+   only for runs the human explicitly names; never remove folders or signal
+   processes by hand and never retry the refused run automatically: after
+   disposal the human re-invokes. If a `dispose` exits `3`, present that record
+   verbatim and stop; the human decides. Do not patch the host,
    supply profiles, argv, models, tools, prompts, process factories or
    environment, substitute task/hub/Eval transport, emulate both roles with one
    actor, or weaken a seam.
@@ -550,9 +557,14 @@ one changed canonical application commits; validation repair on the unchanged
 applied identity does not add a second count. If either reviewer's same-session
 restore fails, resume stops and asks: it disposes both sessions, names the lost
 identity, and exits `1`; nothing rolls back and no fresh A or B is created.
-Abandon a parked run with
+Resume claims the run exclusively, refuses while another live controller owns
+it, and restores no reviewer until every recorded or matched reviewer PID shows
+observed exit; a still-present PID exits `3` with the run unchanged, and the
+root presents that record verbatim and stops. A parked run never blocks other
+sessions' runs; a resumed run whose controller then dies is abandoned and can
+only be disposed. Abandon a parked run with
 `node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
-and no request body.
+and no request body, only on the human's explicit instruction.
 
 Within explicitly authorized repair, any changed outer base, Correction, or
 intended final content invalidates `VALID`.

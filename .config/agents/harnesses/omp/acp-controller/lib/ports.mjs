@@ -7,13 +7,14 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { AGENT_ID, buildAgentArgv, closeAndObserve, createRuntime, ensureWithSampling, PidLedger, observePid as defaultObservePid, RUNTIME, runRequest } from "./adapter.mjs";
 import { closeRequest, recoverObservation, withCapture } from "./capture.mjs";
-import { childEnv, cleanupLiveSessionFolders, createPrivateRoot, enterChildEnv, newRunId, privateRootFor, removePrivateRoot, sessionDirFor } from "./env.mjs";
-import { readJsonIfExists, writeJson } from "./io.mjs";
+import { childEnv, cleanupLiveSessionFolders, createPrivateRoot, enterChildEnv, newRunId, privateRootFor, readOwnerClaim, removePrivateRoot, sessionDirFor, writeClaim, writeRunRecord } from "./env.mjs";
+import { writeJson } from "./io.mjs";
+import { OWN_START_UNREADABLE, ownStartReason, OWNER_UNREADABLE, ownerState, selfOwner } from "./preflight.mjs";
 import { Spend } from "./spend.mjs";
 
 const RECOVERY_BOUND_MS = 30_000;
 
-function attachRun({ kind, runId, dirs, deps, spend, sessionIds = [] }) {
+function attachRun({ kind, runId, dirs, deps, spend, sessionIds = [], record }) {
   const restoreEnv = enterChildEnv(childEnv(dirs, deps.env ?? process.env));
   return {
     kind,
@@ -24,26 +25,86 @@ function attachRun({ kind, runId, dirs, deps, spend, sessionIds = [] }) {
     spend,
     runtimes: new Map(),
     actors: new Map(),
-    sessionIds: new Set(sessionIds),
+    sessionIds: new Set([...sessionIds, ...(record?.sessionIds ?? [])]),
+    pids: new Set(record?.pids ?? []),
+    phase: record?.phase ?? "active",
+    recordWrite: Promise.resolve(),
     restoreEnv,
     envRestored: false,
   };
 }
 
-/** Creates the private root and enters the child environment (before any runtime exists). */
+/**
+ * Queues one atomic `run.json` rewrite `{runId, kind, phase, pids, sessionIds}`
+ * from the run's current PID and session-ID sets; returns this write. Each
+ * write carries the full current record, so a failed earlier write never
+ * blocks a later one.
+ */
+function syncRunRecord(run) {
+  const record = { runId: run.runId, kind: run.kind, phase: run.phase, pids: [...run.pids], sessionIds: [...run.sessionIds] };
+  run.recordWrite = run.recordWrite.catch(() => {}).then(() => writeRunRecord(run.dirs, record));
+  run.recordWrite.catch(() => {});
+  return run.recordWrite;
+}
+
+/** Sets the run's recorded phase and waits for the rewrite. */
+export async function setRunPhase(run, phase) {
+  run.phase = phase;
+  await syncRunRecord(run);
+}
+
+/** The claim holder this process writes: `deps.owner` or `{ pid, lstart }` of this process. */
+const ownerFor = (deps) => (deps.owner ? Promise.resolve(deps.owner) : selfOwner(deps.processStart));
+
+/**
+ * Creates the private root (owner claim and `run.json` included) and enters the
+ * child environment (before any runtime exists). Throws before creating
+ * anything when this process's start time cannot be read.
+ */
 export async function openRun(kind, deps) {
+  const owner = await ownerFor(deps);
+  if (!owner.lstart) throw Object.assign(new Error(`${OWN_START_UNREADABLE}: ${ownStartReason(owner.pid)}`), { code: "EOWNSTART" });
   const runId = newRunId(kind);
-  const dirs = await createPrivateRoot(runId, deps.tmpRoot);
+  const dirs = await createPrivateRoot(runId, deps.tmpRoot, { kind, owner });
   return attachRun({ kind, runId, dirs, deps, spend: new Spend() });
 }
 
-/** Re-enters a parked run: same private HOME and session folder. `null` when no parked state exists. */
-export async function reopenRun(runId, deps) {
+/**
+ * One controller per run: refuses when this process's own start time is
+ * unreadable, while the highest `claim-<n>` holder is live, or while that
+ * holder's PID is present with an unreadable start time (it cannot be proven
+ * gone); otherwise publishes `claim-<n+1>` with this process as holder.
+ * Returns `{ claimed: true }`, `{ claimed: false, refusal, reason }` (refusal
+ * title and line), or `{ claimed: false, missingRoot: true }` when the run has
+ * no private root.
+ */
+export async function claimRun(runId, deps) {
+  const owner = await ownerFor(deps);
+  if (!owner.lstart) return { claimed: false, refusal: OWN_START_UNREADABLE, reason: ownStartReason(owner.pid) };
   const dirs = privateRootFor(runId, deps.tmpRoot);
-  const state = await readJsonIfExists(dirs.state);
-  if (!state) return null;
-  const run = attachRun({ kind: state.kind, runId, dirs, deps, spend: Spend.fromJSON(state.spend), sessionIds: state.sessionIds ?? [] });
-  return { run, state };
+  const holder = await readOwnerClaim(dirs.root);
+  const state = await ownerState(holder, { observePid: deps.observePid ?? defaultObservePid, processStart: deps.processStart });
+  if (state === "live") return { claimed: false, refusal: "run claimed by another controller", reason: `run \`${runId}\` is owned by a live controller (PID ${holder.pid})` };
+  if (state === "unknown") {
+    return { claimed: false, refusal: OWNER_UNREADABLE, reason: `run \`${runId}\` owner PID ${holder.pid} is present but its start time cannot be compared, so it cannot be proven gone; nothing was changed` };
+  }
+  try {
+    await writeClaim(dirs.root, (holder?.index ?? -1) + 1, owner);
+  } catch (error) {
+    if (error.code === "EEXIST") return { claimed: false, refusal: "run claimed by another controller", reason: `another controller claimed run \`${runId}\` first` };
+    if (error.code === "ENOENT") return { claimed: false, missingRoot: true };
+    throw error;
+  }
+  return { claimed: true };
+}
+
+/**
+ * Re-enters a run's private HOME and session folder from its `run.json` and,
+ * when parked, its `state.json`. Call only after `claimRun` and observed exit.
+ */
+export function reopenRun(runId, deps, { record, state }) {
+  const dirs = privateRootFor(runId, deps.tmpRoot);
+  return attachRun({ kind: state?.kind ?? record.kind, runId, dirs, deps, spend: state ? Spend.fromJSON(state.spend) : new Spend(), sessionIds: state?.sessionIds ?? [], record });
 }
 
 /** Restores the caller's environment exactly once. */
@@ -63,10 +124,18 @@ function runtimeFor(run, role) {
 /**
  * Creates (or, with `restore`, same-session restores) one persistent actor.
  * A restore that returns another backend session is an identity loss and throws.
+ * Every newly recorded PID and the backend session ID are written to `run.json`.
  */
 export async function startActor(run, { name, role, restore }) {
   const cap = runtimeFor(run, role);
   const ledger = restore ? PidLedger.fromJSON(restore.ledger) : new PidLedger();
+  const known = run.pids.size;
+  for (const pid of ledger.pids.keys()) run.pids.add(pid);
+  if (run.pids.size !== known) syncRunRecord(run);
+  ledger.onPid = (pid) => {
+    run.pids.add(pid);
+    syncRunRecord(run);
+  };
   const sessionKey = restore?.sessionKey ?? `${run.runId}:${name}`;
   const input = { sessionKey, agent: AGENT_ID, mode: "persistent", cwd: run.dirs.work, ...(restore ? { resumeSessionId: restore.backendSessionId } : {}) };
   const actor = { name, role, sessionKey, cap, ledger, state: "restoring", requests: restore?.requests ?? 0, cursor: restore?.cursor ?? undefined, known: new Set(restore?.known ?? []) };
@@ -76,11 +145,16 @@ export async function startActor(run, { name, role, restore }) {
     ({ handle } = await ensureWithSampling(cap.runtime, input, ledger));
   } catch (error) {
     actor.state = "unrestored";
+    await run.recordWrite.catch(() => {});
     throw error;
   }
   actor.handle = handle;
   actor.backendSessionId = handle.backendSessionId;
-  if (actor.backendSessionId) run.sessionIds.add(actor.backendSessionId);
+  if (actor.backendSessionId && !run.sessionIds.has(actor.backendSessionId)) {
+    run.sessionIds.add(actor.backendSessionId);
+    syncRunRecord(run);
+  }
+  await run.recordWrite;
   if (restore && handle.backendSessionId !== restore.backendSessionId) {
     actor.state = "unrestored";
     throw Object.assign(new Error(`restored session ${handle.backendSessionId ?? "none"} differs from parked ${restore.backendSessionId}`), { code: "SESSION_IDENTITY_CHANGED" });
@@ -110,6 +184,7 @@ export async function ask(run, actor, text, validate) {
   if ((rec.window.rpc?.sessionNew ?? 0) > 0 || (sampled && sampled.backendSessionId !== actor.backendSessionId)) out = { ...out, row: "identity-changed", c4: false };
   const usage = actor.ledger.samples.filter((s) => s.usage).at(-1)?.usage;
   if (usage) run.spend.record(actor.name, actor.role, usage);
+  await run.recordWrite;
   return { ...out, requestId, turnResult: rec.turnResult };
 }
 
@@ -148,7 +223,8 @@ async function detachRuntimes(run) {
 /**
  * KR13 park: every live actor is closed with observed exit while its stored
  * session stays resumable (same `resumeSessionId`); `state` is written to the
- * private root; the session folder and private root are kept.
+ * private root, then `run.json` phase becomes `parked`; the session folder and
+ * private root are kept.
  */
 export async function parkRun(run, actors, state) {
   const failures = [];
@@ -158,14 +234,16 @@ export async function parkRun(run, actors, state) {
     if (!d.disposed) failures.push(disposalFailure(a));
   }
   await writeJson(run.dirs.state, { ...state, kind: run.kind, runId: run.runId, sessionIds: [...run.sessionIds], spend: run.spend.toJSON(), actors: actors.map(actorRecord) });
+  await setRunPhase(run, "parked");
   await detachRuntimes(run);
   return { parked: failures.length === 0, failures };
 }
 
 /**
  * A4 run cleanup: runs only when every actor showed observed exit; then the
- * session folder and the private root (with its socket folder) are removed.
- * Returns `{ complete, unresolved }` naming anything kept.
+ * session folders are cleaned, and only when that cleanup completes is the
+ * private root (with `run.json` and its socket folder) removed, so residue
+ * never loses its record. Returns `{ complete, unresolved, keptRecord }` naming anything kept.
  */
 export async function finishRun(run) {
   const unresolved = [];
@@ -188,6 +266,7 @@ export async function finishRun(run) {
     }
   }
   await detachRuntimes(run);
+  await run.recordWrite.catch(() => {});
   if (unresolved.length) return { complete: false, unresolved: [...unresolved, `session folder \`${run.sessionDir}\` and private root \`${run.dirs.root}\` kept`] };
   let realCwd;
   try {
@@ -196,10 +275,28 @@ export async function finishRun(run) {
     realCwd = undefined;
   }
   const cleanup = await cleanupLiveSessionFolders({ sessionDir: run.sessionDir, sessionIds: [...run.sessionIds], realCwd, sessionsRoot: run.deps.sessionsRoot });
+  if (!cleanup.complete) {
+    const kept = [...cleanup.kept.map((name) => `${run.sessionDir}/${name}`), ...cleanup.folders.filter((f) => f.result.startsWith("kept")).map((f) => f.path)];
+    unresolved.push(`session folder cleanup kept: ${kept.map((k) => `\`${k}\``).join(", ")}`, `private root \`${run.dirs.root}\` and its \`run.json\` kept`);
+    return { complete: false, unresolved, keptRecord: true };
+  }
   const removed = await removePrivateRoot(run.dirs);
-  if (!cleanup.complete) unresolved.push(`session folder \`${run.sessionDir}\` kept: ${[...cleanup.kept, ...cleanup.folders.filter((f) => f.result.startsWith("kept")).map((f) => f.path)].join(", ")}`);
   if (!removed.removed) unresolved.push(`private root \`${run.dirs.root}\` or socket folder \`${removed.socketDir}\` kept`);
   return { complete: unresolved.length === 0, unresolved };
+}
+
+/**
+ * Observes the given PIDs with signal 0 under the post-close bound (never
+ * signals). Returns the PIDs not observed as `ESRCH`, as `{ pid, result }`.
+ */
+export async function observeRunPids(deps, pids) {
+  const ledger = new PidLedger([], [...new Set(pids)].map((pid) => ({ pid })));
+  const present = [];
+  for (const pid of ledger.pids.keys()) {
+    const result = await ledger.waitExit(pid, "run-claim", RUNTIME.postCloseObserveMs, RUNTIME.pidPollMs, deps.observePid ?? defaultObservePid);
+    if (result !== "ESRCH") present.push({ pid, result });
+  }
+  return present;
 }
 
 /** Observes every PID recorded for a parked run (never signals). */

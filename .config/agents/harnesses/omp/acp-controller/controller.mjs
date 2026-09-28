@@ -6,8 +6,10 @@
 import { execFile } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { sha256Text } from "./lib/io.mjs";
-import { actorRecord, ask, disposalFailure, disposeActor, finishRun, leaveRun, observeParkedPids, openRun, parkRun, reopenRun, startActor } from "./lib/ports.mjs";
+import { initRootFor, privateRootFor, readOwnerClaim, sessionDirFor } from "./lib/env.mjs";
+import { exists, readJsonIfExists, sha256Text } from "./lib/io.mjs";
+import { actorRecord, ask, claimRun, disposalFailure, disposeActor, finishRun, leaveRun, observeParkedPids, observeRunPids, openRun, parkRun, reopenRun, setRunPhase, startActor } from "./lib/ports.mjs";
+import { listProcesses, OWNER_UNREADABLE, ownerState, processesForRun } from "./lib/preflight.mjs";
 import { renderPrompt } from "./lib/prompts.mjs";
 import { exampleFor, validateResult } from "./lib/schema.mjs";
 import { renderSpend } from "./lib/spend.mjs";
@@ -523,15 +525,48 @@ export async function runReconcile(request, deps, options = {}) {
   }
 }
 
+/** Claim, `run.json`, `state.json`, matched processes and every PID to observe for one named run. */
+async function runFacts(runId, deps) {
+  const dirs = privateRootFor(runId, deps.tmpRoot);
+  const sessionDir = sessionDirFor(runId, deps.sessionsRoot);
+  const record = await readJsonIfExists(dirs.record).catch(() => undefined);
+  const state = await readJsonIfExists(dirs.state).catch(() => undefined);
+  const processes = processesForRun(await (deps.listProcesses ?? listProcesses)(), runId, deps.sessionsRoot);
+  const ledgerPids = (state?.actors ?? []).flatMap((a) => (a.ledger?.pids ?? []).map((p) => p.pid));
+  const pids = [...new Set([...(record?.pids ?? []), ...ledgerPids, ...processes.map((p) => p.pid)])].filter((pid) => Number.isInteger(pid) && pid > 0);
+  return { dirs, sessionDir, record, state, processes, pids };
+}
+
+const presentLines = (present, processes) => {
+  const commands = new Map(processes.map((p) => [p.pid, p.command]));
+  return present.map((p) => `PID ${p.pid} ${p.result}${commands.has(p.pid) ? `: \`${commands.get(p.pid)}\`` : ""}`);
+};
+
+const NO_CLI_PATH = "there is no further CLI path for the kept paths: the run stays abandoned and keeps refusing new runs until the human deals with exactly these paths; the agent never removes them";
+
 /**
- * KR13 resume: same private HOME and session folder, same-session restore of
+ * KR13 resume: claims the run exclusively, requires phase `parked`, and
+ * observes exit of every recorded or matched PID before `run.json` becomes
+ * `active`. Then same private HOME and session folder, same-session restore of
  * each parked reviewer (`resumeSessionId`, no fresh-session fallback), then
  * only the exact failed step is retried before review continues.
  */
 export async function resumeReconcile(runId, request, deps) {
-  const opened = await reopenRun(runId, deps);
-  if (!opened) return { exitCode: EXIT.stopped, markdown: `## Reconcile stopped\n\n**Blocker**\n\n- no parked state for run \`${runId}\`\n\n${renderSpend([])}` };
-  const { run, state } = opened;
+  const claim = await claimRun(runId, deps);
+  if (!claim.claimed && !claim.missingRoot) return { exitCode: EXIT.refused, markdown: renderRefusal(claim.refusal, [claim.reason]) };
+  const facts = await runFacts(runId, deps);
+  if (!facts.state && !facts.record) return { exitCode: EXIT.stopped, markdown: `## Reconcile stopped\n\n**Blocker**\n\n- no parked state for run \`${runId}\`\n\n${renderSpend([])}` };
+  if (facts.record?.phase !== "parked" || !facts.state) {
+    const why = !facts.record ? "no `run.json`" : !facts.state ? "no parked state" : `phase \`${facts.record.phase}\``;
+    return { exitCode: EXIT.refused, markdown: renderRefusal("abandoned run cannot be resumed", [`run \`${runId}\` is not parked (${why})`, `dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``]) };
+  }
+  const present = await observeRunPids(deps, facts.pids);
+  if (present.length) {
+    const lines = [...presentLines(present, facts.processes), `run \`${runId}\` unchanged: no reviewer restored and no process signalled; resume again only after these PIDs exit`];
+    return { exitCode: EXIT.cleanup, markdown: `## Reconcile stopped\n\n**Blocker**\n\n${lines.map((l) => `- ${l}`).join("\n")}\n\n${renderSpend([])}` };
+  }
+  const { state } = facts;
+  const run = reopenRun(runId, deps, facts);
   try {
     const rs = state.reconcile;
     // A resumed run keeps the models bound at its first call, never live modelRoles.
@@ -541,6 +576,7 @@ export async function resumeReconcile(runId, request, deps) {
       const stop = { cause: "repair step mismatch", detail: `the parked failed step is \`${failure.step}\`, not \`${request.repair.step}\``, step: failure.step, pending: rs.pending.accepted, resume: [`run \`${runId}\` stays parked; resume with step \`${failure.step}\` or dispose it`] };
       return { exitCode: EXIT.stopped, markdown: `${renderReconcile({ status: "parked", stop, rs })}\n${run.spend.render()}` };
     }
+    await setRunPhase(run, "active");
     addRow(rs, "resume", "—", identity(rs.pending.accepted), `repair authorized (${request.repair.authority}); retry \`${failure.step}\``);
     if (!state.models?.a || !state.models?.b) {
       addRow(rs, "stop", "—", identity(rs.pending.accepted), "parked models missing");
@@ -569,16 +605,67 @@ export async function resumeReconcile(runId, request, deps) {
   }
 }
 
-/** KR13 abandonment: A4 cleanup of a parked run. */
+const disposeRecord = (title, lines, spend = renderSpend([])) => `## ${title}\n\n**Run**\n\n${lines.map((l) => `- ${l}`).join("\n")}\n\n${spend}`;
+
+/**
+ * Disposal of a setup leftover (only `<tmpRoot>/.acp-controller-<runId>.init`
+ * exists for the run). Claims nothing: removes only that folder once its
+ * `claim-0` owner is gone or reused (or the claim is unreadable) and no
+ * process matches the run. No reviewer can exist, because runtimes are created
+ * only after the root is renamed into place. Never signals.
+ */
+async function disposeSetupLeftover(runId, initRoot, deps) {
+  const holder = await readOwnerClaim(initRoot);
+  const owner = await ownerState(holder, { observePid: deps.observePid, processStart: deps.processStart });
+  if (owner === "live") return { exitCode: EXIT.refused, markdown: renderRefusal("run claimed by another controller", [`run \`${runId}\` is still being set up by a live controller (PID ${holder.pid})`]) };
+  if (owner === "unknown") {
+    return { exitCode: EXIT.refused, markdown: renderRefusal(OWNER_UNREADABLE, [`run \`${runId}\` setup owner PID ${holder.pid} is present but its start time cannot be compared, so it cannot be proven gone; nothing was changed`]) };
+  }
+  const processes = processesForRun(await (deps.listProcesses ?? listProcesses)(), runId, deps.sessionsRoot);
+  if (processes.length) {
+    const lines = [...processes.map((p) => `process ${p.pid}: \`${p.command}\``), `nothing was removed and no process was signalled; setup leftover \`${initRoot}\` stays as it is`];
+    return { exitCode: EXIT.cleanup, markdown: disposeRecord("Dispose incomplete", lines) };
+  }
+  await fs.rm(initRoot, { recursive: true, force: true });
+  return { exitCode: EXIT.final, markdown: disposeRecord("Run disposed", [`setup leftover \`${initRoot}\` removed: setup never finished and its owner is ${owner === "reused" ? "a reused PID" : "gone"}; nothing was claimed`]) };
+}
+
+/**
+ * KR13 abandonment and abandoned-run disposal, only on the human's explicit
+ * instruction: claims the run exclusively, observes exit of every recorded or
+ * matched PID, then A4 cleanup. Never signals. A run without `run.json` is
+ * named and kept. A run with only its `.init` setup leftover goes to
+ * `disposeSetupLeftover`.
+ */
 export async function disposeRun(runId, deps) {
-  const opened = await reopenRun(runId, deps);
-  if (!opened) return { exitCode: EXIT.stopped, markdown: `## Dispose stopped\n\n**Blocker**\n\n- no parked state for run \`${runId}\`\n\n${renderSpend([])}` };
-  const { run, state } = opened;
+  const initRoot = initRootFor(runId, deps.tmpRoot);
+  if ((await exists(initRoot)) && !(await exists(privateRootFor(runId, deps.tmpRoot).root)) && !(await exists(sessionDirFor(runId, deps.sessionsRoot)))) {
+    return disposeSetupLeftover(runId, initRoot, deps);
+  }
+  const claim = await claimRun(runId, deps);
+  if (!claim.claimed && !claim.missingRoot) return { exitCode: EXIT.refused, markdown: renderRefusal(claim.refusal, [claim.reason]) };
+  const facts = await runFacts(runId, deps);
+  if (!facts.record) {
+    const folders = [];
+    for (const f of [facts.sessionDir, facts.dirs.root]) if (await exists(f)) folders.push(f);
+    if (!folders.length && !facts.processes.length) return { exitCode: EXIT.stopped, markdown: `## Dispose stopped\n\n**Blocker**\n\n- no run \`${runId}\`: no folder, \`run.json\` or process\n\n${renderSpend([])}` };
+    const lines = [
+      `run \`${runId}\` has no \`run.json\`: no session file can be attributed, so nothing was removed and no process was signalled`,
+      ...folders.map((f) => `kept folder \`${f}\``),
+      ...facts.processes.map((p) => `process ${p.pid}: \`${p.command}\``),
+      NO_CLI_PATH,
+    ];
+    return { exitCode: EXIT.cleanup, markdown: disposeRecord("Dispose incomplete", lines) };
+  }
+  const present = await observeRunPids(deps, facts.pids);
+  if (present.length) {
+    return { exitCode: EXIT.cleanup, markdown: disposeRecord("Dispose incomplete", [...presentLines(present, facts.processes), `nothing was removed and no process was signalled; run \`${runId}\` stays as it is`]) };
+  }
+  const run = reopenRun(runId, deps, facts);
   try {
-    const present = await observeParkedPids(run, state.actors ?? []);
-    const cleanup = present.length ? { complete: false, unresolved: present } : await finishRun(run);
-    const lines = cleanup.complete ? [`- run \`${runId}\` disposed: every recorded PID exited, session folder and private root removed`] : cleanup.unresolved.map((u) => `- ${u}`);
-    return { exitCode: cleanup.complete ? EXIT.final : EXIT.cleanup, markdown: `## ${cleanup.complete ? "Run disposed" : "Dispose incomplete"}\n\n**Run**\n\n${lines.join("\n")}\n\n${run.spend.render()}` };
+    const cleanup = await finishRun(run);
+    const lines = cleanup.complete ? [`run \`${runId}\` disposed: every recorded PID exited, session folder and private root removed`] : [...cleanup.unresolved, ...(cleanup.keptRecord ? [NO_CLI_PATH] : [])];
+    return { exitCode: cleanup.complete ? EXIT.final : EXIT.cleanup, markdown: disposeRecord(cleanup.complete ? "Run disposed" : "Dispose incomplete", lines, run.spend.render()) };
   } finally {
     leaveRun(run);
   }

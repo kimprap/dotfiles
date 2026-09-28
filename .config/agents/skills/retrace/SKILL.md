@@ -66,12 +66,20 @@ The request file holds one JSON object, the only input channel:
 Exit `0` means aggregate `complete`; `1` means `partial` or `blocked` with a
 rendered record; `2` means the controller refused before any launch (invalid
 request or table, version pin, model role, missing prompt marker, or an
-undisposed earlier run); `3` means cleanup was not established and the record
-names the unresolved actor, PID, or folder. Except for a successful `roles`
-call, stdout carries only the rendered record followed by `## Spend`; stderr
-carries diagnostics. Present stdout
+abandoned controller run: owner gone and not parked; live and parked runs of
+other sessions never refuse); `3` means cleanup was not established and the
+record names the unresolved actor, PID, or folder. Except for a successful
+`roles` call, stdout carries only the rendered record followed by `## Spend`;
+stderr carries diagnostics. Present stdout
 verbatim. Never rerun the controller to retry a stopped or partial scope; a
 fresh attempt needs the changed evidence or authority that Stops requires.
+After an abandoned-run refusal, ask the human once which listed runs to
+dispose and run
+`node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
+only for runs the human explicitly names; never remove folders or signal
+processes by hand and never retry the refused run automatically: after
+disposal the human re-invokes. If a `dispose` exits `3`, present that record
+verbatim and stop; the human decides.
 
 The controller binds its models from live `modelRoles`: reviewer A uses
 `second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope evaluator

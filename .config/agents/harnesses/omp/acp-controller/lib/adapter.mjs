@@ -99,7 +99,8 @@ export function observePid(pid) {
 
 /**
  * Handle-local PID ledger: every positive public pid sample plus signal-0
- * observations. No generation registry or private lease inspection.
+ * observations. No generation registry or private lease inspection. An
+ * optional `onPid(pid)` hook hears each newly recorded PID.
  */
 export class PidLedger {
   constructor(samples = [], pids = []) {
@@ -113,6 +114,7 @@ export class PidLedger {
     this.samples.push(sample);
     if (Number.isInteger(sample.pid) && sample.pid > 0 && !this.pids.has(sample.pid)) {
       this.pids.set(sample.pid, { pid: sample.pid, firstPoint: sample.point, observations: [] });
+      this.onPid?.(sample.pid);
     }
   }
   observe(pid, point, observer = observePid) {

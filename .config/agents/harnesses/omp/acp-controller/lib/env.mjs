@@ -26,17 +26,81 @@ export function sessionDirFor(runId, sessionsRoot = SESSIONS_ROOT) {
   return path.join(sessionsRoot, `${RUN_PREFIX}${runId}`);
 }
 
-/** Private root layout `<tmpRoot>/acp-controller-<runId>/{home,tmp,work,state.json}`. */
+/** Private root layout `<tmpRoot>/acp-controller-<runId>/{home,tmp,work,state.json,run.json,claim-<n>}`. */
 export function privateRootFor(runId, tmpRoot = TMP_ROOT) {
   const root = path.join(tmpRoot, `${RUN_PREFIX}${runId}`);
-  return { root, home: path.join(root, "home"), tmp: path.join(root, "tmp"), work: path.join(root, "work"), state: path.join(root, "state.json") };
+  return { root, home: path.join(root, "home"), tmp: path.join(root, "tmp"), work: path.join(root, "work"), state: path.join(root, "state.json"), record: path.join(root, "run.json") };
 }
 
-/** Creates a fresh owner-only private root; an existing root is an error. */
-export async function createPrivateRoot(runId, tmpRoot = TMP_ROOT) {
+/** Setup folder `<tmpRoot>/.acp-controller-<runId>.init` a private root is built in before it is renamed into place. */
+export function initRootFor(runId, tmpRoot = TMP_ROOT) {
+  return path.join(tmpRoot, `.${RUN_PREFIX}${runId}.init`);
+}
+
+const CLAIM = /^claim-(\d+)$/;
+
+/**
+ * The run's owner: the holder in its highest-numbered `claim-<n>` file, as
+ * `{ index, pid, lstart }` (fields undefined when that claim is unreadable).
+ * `null` when the root or every claim is missing.
+ */
+export async function readOwnerClaim(root) {
+  let names;
+  try {
+    names = await fs.readdir(root);
+  } catch (error) {
+    if (error.code === "ENOENT" || error.code === "ENOTDIR") return null;
+    throw error;
+  }
+  const index = Math.max(-1, ...names.flatMap((n) => (CLAIM.test(n) ? [Number(CLAIM.exec(n)[1])] : [])));
+  if (index < 0) return null;
+  try {
+    const holder = JSON.parse(await fs.readFile(path.join(root, `claim-${index}`), "utf8"));
+    return { index, pid: holder.pid, lstart: holder.lstart };
+  } catch {
+    return { index, pid: undefined, lstart: undefined };
+  }
+}
+
+/**
+ * Publishes `claim-<index>` holding `{ pid, lstart }` whole: written to
+ * `.claim-<index>.<hex>.tmp` (mode 0600), then hard-linked to its name, so no
+ * reader sees a partial claim; the temp file is removed either way. `EEXIST`
+ * means another claimant won.
+ */
+export async function writeClaim(root, index, owner) {
+  const temp = path.join(root, `.claim-${index}.${randomBytes(4).toString("hex")}.tmp`);
+  try {
+    await fs.writeFile(temp, `${JSON.stringify({ pid: owner.pid, lstart: owner.lstart })}\n`, { flag: "wx", mode: 0o600 });
+    await fs.link(temp, path.join(root, `claim-${index}`));
+  } finally {
+    await fs.rm(temp, { force: true });
+  }
+}
+
+/** Atomic `run.json` rewrite: temp file plus rename inside the existing root (never recreates a removed root). */
+export async function writeRunRecord(dirs, record) {
+  const temp = path.join(dirs.root, `.run.json.${randomBytes(4).toString("hex")}.tmp`);
+  await fs.writeFile(temp, `${JSON.stringify(record, null, 2)}\n`, { mode: 0o600 });
+  await fs.rename(temp, dirs.record);
+}
+
+/**
+ * Creates a fresh owner-only private root. It is built as
+ * `<tmpRoot>/.acp-controller-<runId>.init/` with `claim-0` (the owner, written
+ * first) and `run.json` (`phase: "active"`), then renamed into place, so no
+ * preflight sees a root without an owner. An existing root is an error.
+ */
+export async function createPrivateRoot(runId, tmpRoot = TMP_ROOT, { kind, owner }) {
   const dirs = privateRootFor(runId, tmpRoot);
-  await fs.mkdir(dirs.root, { mode: 0o700 });
-  for (const d of [dirs.home, dirs.tmp, dirs.work]) await fs.mkdir(d, { mode: 0o700 });
+  const initRoot = initRootFor(runId, tmpRoot);
+  const init = { root: initRoot, record: path.join(initRoot, "run.json") };
+  await fs.mkdir(initRoot, { mode: 0o700 });
+  await writeClaim(initRoot, 0, owner);
+  for (const d of ["home", "tmp", "work"]) await fs.mkdir(path.join(initRoot, d), { mode: 0o700 });
+  await writeRunRecord(init, { runId, kind, phase: "active", pids: [], sessionIds: [] });
+  if (!(await gone(dirs.root))) throw Object.assign(new Error(`private root ${dirs.root} already exists`), { code: "EEXIST" });
+  await fs.rename(initRoot, dirs.root);
   return dirs;
 }
 

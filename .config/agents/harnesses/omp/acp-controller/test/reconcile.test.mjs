@@ -334,9 +334,12 @@ function parkedScenario(flag) {
   return { file, request: artifactRequest(file, { validate }) };
 }
 
+/** The parking controller as a claim holder whose process is gone (its PID now runs another start time). */
+const EXITED_OWNER = { pid: process.pid, lstart: "Thu Jan  1 00:00:00 1970" };
+
 async function park(flag) {
   const { file, request } = parkedScenario(flag);
-  const out = await runReconcile(request, deps());
+  const out = await runReconcile(request, deps({ owner: EXITED_OWNER }));
   assert.equal(out.exitCode, 1);
   assert.match(out.markdown, /## Reconcile stopped/);
   assert.doesNotMatch(out.markdown, /## Final proposal/);
@@ -347,8 +350,19 @@ async function park(flag) {
   // Parked: every process exited, the session folder and private root are kept.
   for (const e of events().filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH");
   assert.deepEqual(fs.readdirSync(t.sessionsRoot), [`acp-controller-${runId}`]);
-  assert.ok(fs.existsSync(path.join(t.tmpRoot, `acp-controller-${runId}`, "state.json")));
+  const root = path.join(t.tmpRoot, `acp-controller-${runId}`);
+  assert.ok(fs.existsSync(path.join(root, "state.json")));
   const sessions = Object.fromEntries(events().filter((e) => e.event === "session-new").map((e) => [e.model, e.sessionId]));
+  // The run record names its owner and every reviewer PID and session a crash would leave behind.
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root, "claim-0"), "utf8")), EXITED_OWNER);
+  const record = JSON.parse(fs.readFileSync(path.join(root, "run.json"), "utf8"));
+  assert.deepEqual({ ...record, pids: new Set(record.pids), sessionIds: new Set(record.sessionIds) }, {
+    runId,
+    kind: "reconcile",
+    phase: "parked",
+    pids: new Set(events().filter((e) => e.event === "start").map((e) => e.pid)),
+    sessionIds: new Set(Object.values(sessions)),
+  });
   return { file, runId, sessions, parkedAt: events().length };
 }
 
@@ -411,6 +425,31 @@ test("KR13: when same-session restore fails, resume stops and asks without creat
   const after = events().slice(parkedAt);
   assert.equal(after.filter((e) => e.event === "session-new").length, 0, "no fresh session");
   assert.equal(after.filter((e) => e.event === "prompt").length, 0);
+  assertCleanedUp();
+});
+
+test("KR13: resume with a recorded or matched PID still present exits 3, keeps run.json and restores no reviewer", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { runId, parkedAt } = await park(flag);
+  fs.writeFileSync(flag, "");
+  const recordFile = path.join(t.tmpRoot, `acp-controller-${runId}`, "run.json");
+  const before = fs.readFileSync(recordFile, "utf8");
+  const recorded = JSON.parse(before).pids[0];
+  const matched = { pid: 4_000_001, command: `/opt/tools/bin/omp acp --model m --session-dir ${path.join(t.sessionsRoot, `acp-controller-${runId}`)}` };
+  const repair = { repair: { authority: "human: validator fixed", step: "validation" } };
+  const cases = [
+    { extra: { observePid: (pid) => (pid === recorded ? "EPERM" : observePid(pid)) }, line: `- PID ${recorded} EPERM\n` },
+    { extra: { listProcesses: async () => [matched], observePid: (pid) => (pid === matched.pid ? "present" : observePid(pid)) }, line: `- PID ${matched.pid} present: \`${matched.command}\`\n` },
+  ];
+  for (const { extra, line } of cases) {
+    const out = await resumeReconcile(runId, repair, deps({ owner: EXITED_OWNER, ...extra }));
+    assert.equal(out.exitCode, 3);
+    assert.ok(out.markdown.includes(line), out.markdown);
+    assert.equal(fs.readFileSync(recordFile, "utf8"), before, "run.json unchanged");
+    assert.deepEqual(events().slice(parkedAt), [], "no reviewer restored");
+  }
+  const out = await resumeReconcile(runId, repair, deps());
+  assert.equal(out.exitCode, 0, "the refused attempts left the run resumable");
   assertCleanedUp();
 });
 
