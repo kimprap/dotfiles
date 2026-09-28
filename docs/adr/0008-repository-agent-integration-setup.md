@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-12  
-**Updated:** 2026-08-25
+**Updated:** 2026-09-28
 **Decision IDs:** D25  
 **Related authority:** ADR-0001 D02, D12, D15; ADR-0005 P07; ADR-0007 D24
 
@@ -38,7 +38,7 @@ The agent framework supports repository guidance, execution-plan storage, ADR di
 
 ## Evidence / source revisions
 
-- Governing specification: `local://papercut-automation-init-ask-spec.md`, revision `PAPERCUT-AUTOMATION-SPEC-20260812-r1`, SHA-256 `83252a629a21a87281d84a780c687672b8e0112233d0a4b5cc093a439231bd16`.
+- Approved by the owner on 2026-08-12; history in git.
 - Current repository evidence: `.agents/AGENTS.md`, `.agents/plans/`, `docs/adr/INDEX.md`, `.agents/papercuts.json`, installed artifact-owner skills, manifest, and bootstrap mapping.
 
 ## Human authority

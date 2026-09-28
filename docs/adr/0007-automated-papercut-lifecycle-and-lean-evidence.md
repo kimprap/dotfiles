@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-20  
-**Updated:** 2026-09-05  
+**Updated:** 2026-09-28  
 **Decision ID:** D24  
 **Related authority:** ADR-0001 D05, D14; ADR-0004 D07
 
@@ -54,7 +54,7 @@ The workflow owns deterministic observation timing and complete accounting. The 
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
 - The prompt-bundle maintenance journal records advisory source treatments but is non-runtime provenance.
 
 ## Human authority

@@ -52,9 +52,8 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
+- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
 - `.config/agents/references/impl-rethink/MAINTENANCE.md` contains the confirmed 2026-09-04 source inventory and local treatments. It is provenance, not runtime authority.
-- Earlier discovery, learning, and custom-controller records remain historical support where they do not conflict with this revision.
 
 ## Human authority
 

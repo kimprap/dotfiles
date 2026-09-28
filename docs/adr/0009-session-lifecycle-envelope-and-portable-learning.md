@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-21  
-**Updated:** 2026-09-16  
+**Updated:** 2026-09-28  
 **Decision ID:** D27  
 **Related authority:** ADR-0001 D02, D17; ADR-0002 D29; ADR-0004 D07; ADR-0007 D24
 
@@ -69,8 +69,7 @@ A small stable envelope preserves intra-session control while repository artifac
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
-- Earlier completion and session records remain historical support only where consistent with this clean cutover.
+- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
 
 ## Human authority
 

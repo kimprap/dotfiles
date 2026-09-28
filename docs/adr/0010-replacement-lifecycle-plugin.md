@@ -56,7 +56,7 @@ The controller replaces the earlier in-session OMP extension. The root OMP sessi
 
 ## Authority and evidence
 
-Human authority is bound to `reconcile-retrace-acp-production/spec-v3`, SHA-256 `2c1628c741a2870b584268527dd33fcf26e2483edb53c9d7cf77e3f80692e958`, in [the production cutover specification](../../.agents/artifacts/archive/2026-09-27_reconcile-retrace-acp-production-spec.md) and its [approved implementation plan](../../.agents/plans/archive/2026-09-27-0134_reconcile-retrace-acp-production.md). The original decision was bound to `replacement-lifecycle-plugin/spec-v5`, SHA-256 `e9bbcfb931ecce43729b02be6589a8463d259cbe159aea57e920efe3f844ba7f`, in [the replacement lifecycle plugin specification](../../.agents/artifacts/archive/2026-09-18_replacement-lifecycle-plugin-spec.md); the controller cutover replaces its executable seam. The archived spec-v3 and DONE plan still name their pre-archive paths; those citations are historical, and neither file is edited to follow them.
+Approved by the owner on 2026-09-18 and 2026-09-27; history in git. The current contract is the [production cutover specification](../../.agents/artifacts/archive/2026-09-27_reconcile-retrace-acp-production-spec.md) and its [approved implementation plan](../../.agents/plans/archive/2026-09-27-0134_reconcile-retrace-acp-production.md). The original decision is the [replacement lifecycle plugin specification](../../.agents/artifacts/archive/2026-09-18_replacement-lifecycle-plugin-spec.md); the controller cutover replaces its executable seam. The archived production specification and DONE plan still name their pre-archive paths; those citations are historical, and neither file is edited to follow them.
 
 ## Supersession
 
@@ -64,4 +64,4 @@ D31 supersedes no existing ADR decision ID. It displaces the unexecuted architec
 
 ## Verification expectations
 
-Behavior-changing maintenance updates the controller and its offline suite (spec-v3 A3), both executable skills, the reviewer protocol, affected semantic fixtures, and human projections together, and keeps the static cutover checks (A5) at zero violations. Live proof (A7) runs from a new OMP session through the skills. Standard review and independent verification remain mandatory. Native/model/account execution, fault injection, and catalog-wide execution require their own current authority.
+Behavior-changing maintenance updates the controller and its offline suite (A3 of the linked production specification), both executable skills, the reviewer protocol, affected semantic fixtures, and human projections together, and keeps the static cutover checks (A5) at zero violations. Live proof (A7) runs from a new OMP session through the skills. Standard review and independent verification remain mandatory. Native/model/account execution, fault injection, and catalog-wide execution require their own current authority.

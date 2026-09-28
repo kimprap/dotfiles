@@ -86,11 +86,8 @@ Implementation smoke, independent review, and independent verification find diff
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, and `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`.
-- Confirmed `verification-proof-design/v1` and separately approved `verification-policy-implementation/v1`, 2026-09-11, extend the existing shared policy and execution accounting while preserving independent assurance and bounded repair.
-- Confirmed `execution-recovery-policy/v1`, SHA-256 `1b46e0f4c09e800223e49f2dde437510fc7ab4ceb89c369e96ad45815c288256`, and its separately approved implementation route, 2026-09-13, establish portable bounded execution recovery while preserving semantic attempts and assurance.
+- Approved by the owner on 2026-09-04, 2026-09-06, 2026-09-11 and 2026-09-13; history in git.
 - The append-only prompt-bundle maintenance journal records source treatments as provenance; executable rethink and test-value files own behavior.
-- Earlier assurance and test-value records remain historical support only where consistent with this revision.
 
 ## Human authority
 

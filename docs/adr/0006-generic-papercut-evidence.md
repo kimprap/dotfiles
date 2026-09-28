@@ -38,7 +38,7 @@ Executable rule, skill, schema, helper, and eval contracts define current behavi
 
 ## Evidence / source revisions
 
-- Governing authority: `local://self-improving-evaluation-papercuts-plan.md`, Datetime `2026-08-12-0107`, approved revision `b919e29f11e991a1a3594b13c9bcca83c6dc0159494ae4a2985029fb71b9c84f`, especially the human-confirmed papercut interface, qualification, persistence, data, lifecycle, authority, memory-boundary, and rejected-alternative decisions.
+- Approved by the owner on 2026-08-12; history in git.
 - Steve Ruiz, X status [`2075303919664734295`](https://x.com/steveruizok/status/2075303919664734295), first-party post at `2026-07-09T19:39:46.387Z`, and replies [`2075304096328798401`](https://x.com/steveruizok/status/2075304096328798401) at `2026-07-09T19:40:28.507Z` and [`2075329969169850651`](https://x.com/steveruizok/status/2075329969169850651) at `2026-07-09T21:23:17.073Z`, rechecked 2026-08-12: support proactive in-the-moment capture of small friction agents would otherwise push through and later human-requested cleanup.
 - Ruiz first-party media [`HM0NkRFXEAAOLHv`](https://pbs.twimg.com/media/HM0NkRFXEAAOLHv.jpg:large), rechecked 2026-08-12: shows concise activity-to-friction capture, distinguishes papercuts from accomplishments and real tracked bugs, and makes whole-session transcript review explicitly user-triggered rather than unprompted.
 - Ruiz first-party media [`HMz1tvqWoAA6wh2`](https://pbs.twimg.com/media/HMz1tvqWoAA6wh2.png:large), rechecked 2026-08-12: shows example friction entries with timestamps, model/user identity, and task-specific detail. It demonstrates the source behavior but also why this repository deliberately rejects rich provenance in favor of redacted generalized observations.
@@ -46,7 +46,7 @@ Executable rule, skill, schema, helper, and eval contracts define current behavi
 
 ## Human authority
 
-The human owner approved `SELF-IMPROVEMENT-DESIGN-20260812-r1` and the exact executor plan revision above. That authority selects the local activation, qualification, storage, retention, review, routing, and memory boundaries. External sources are advisory evidence only.
+The human owner approved the papercut design and its executor plan. That authority selects the local activation, qualification, storage, retention, review, routing, and memory boundaries. External sources are advisory evidence only.
 
 ## Supersession
 

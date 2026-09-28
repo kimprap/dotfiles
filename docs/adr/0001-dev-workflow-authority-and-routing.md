@@ -156,8 +156,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ## Evidence / source revisions
 
-- Current governing authority: `local://dev-workflow-streamlining-decision-evidence.md`, revision `dev-workflow-streamlining/v3.1`, confirmed 2026-09-04; `local://lean-dev-workflow-spec.md`, revision `lean-dev-workflow-spec/v1`; and the human-approved `local://task-sizing-direct-contract.md`, confirmed 2026-09-06.
-- Earlier approved routing and grilling evidence remains historical support where it does not conflict with the current governing revision.
+- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
 - External sources are advisory and cannot supersede current human authority or executable contracts.
 
 ## Human authority
