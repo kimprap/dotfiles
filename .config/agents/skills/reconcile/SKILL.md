@@ -269,7 +269,8 @@ counter, ledger, reviewer state object, or hidden protocol state elsewhere:
 - committed changed-application count, bound cap, and whether the current outer
   iteration is the one closure-only iteration;
 - the pending accepted proposal and identity-safe repair state when present;
-- seen working-identity/reviewer pairs and unresolved frontiers; and
+- seen working-identity/reviewer pairs, the current outer iteration's disputed
+  proposal pairs and pending dispute, and unresolved frontiers; and
 - a full event trace with monotonically increasing `Step` values.
 
 Bounded lineage contains exactly these six fields: outer iteration, outer-base
@@ -353,14 +354,29 @@ once, and never resubmits the prompt.
 Each original expected review return shares one re-ask budget across data
 format and applicability: three re-asks in total, and the fourth invalid
 return stops. An invalid return is a turn that completes without a `yield`,
-`yield` data that fails the review schema, or a `REVISE` Correction that is
+`yield` data that fails the review schema, a `REVISE` Correction that is
 non-applicable to the outer base or leaves the current working proposal
-unchanged. A re-ask restates the concrete defect and the prescribed complete
-response shape in one new `reask` request to the same reviewer, pass, and
-candidate, and revalidates the complete reply. A changed error category,
-duplicate, or repeated invalid response never resets the count. Never switch
-reviewer, add a review or rethink, unwrap, normalize, deduplicate, or select a
-last block.
+unchanged, or a finalized `REVISE`
+citation whose quote does not match its checkable file. A re-ask restates the
+concrete defect and the prescribed complete response shape in one new `reask`
+request to the same reviewer, pass, and candidate, and revalidates the complete
+reply. A changed error category, duplicate, or repeated invalid response never
+resets the count. Never switch reviewer, add a review or rethink, unwrap,
+normalize, deduplicate, or select a last block.
+
+A finalized `REVISE` may list citations, each an absolute path, a line or
+inclusive line range, and an exact quote. The controller checks only citations
+of checkable files: for direct review, files strictly inside its working
+directory (the repository root) and the Artifact-edits artifact; for delegated
+review, files strictly inside the bound Retrace root and the approved Retrace
+evidence locators; in each case only when the file is readable. Lines are the
+file's bytes split at LF; a citation passes when its quote occurs as one
+contiguous byte sequence within the cited lines, with no trimming, case
+folding, normalization, or line-ending translation. A citation past the file's
+last line or whose quote is not found is a mismatch: the re-ask names every
+failing citation, and no working proposal is created. Uncheckable citations and
+uncited claims are not checked, and neither passes. Provisional `initial`
+responses are never checked.
 
 An unfinished `yield`, uncertain delivery, an incomplete turn, a tool outside
 the reviewer's four tools, an evidence fault, or a controller stop is not an
@@ -433,6 +449,18 @@ as the lineage parent, replace the complete working proposal and origin, record
 the new working identity/reviewer pair, and request the counterpart. Alternate
 the same A and B sessions for as many genuinely progressive turns as needed.
 There is no numeric inner-turn cap and no mutation during negotiation.
+
+A revert is a finalized `REVISE` whose new working identity repeats a pair its
+reviewer already recorded in this outer iteration. A revert with at least one
+passing citation, whose unordered proposal pair (the replaced and the restored
+identity) has had no dispute in this outer iteration, earns one dispute: the
+controller records a `dispute` milestone and requests the counterpart once,
+with the passing citations attached to its `later` request. The dispute ends at
+the counterpart's next finalized `VALID` or `REVISE`; its approved-context
+`BLOCKED` retry carries the same citations. If that `REVISE` restores the
+proposal the revert replaced, the run stops. Every other revert stops as a
+repeated A/B cycle. A different proposal pair earns its own dispute. Disputes
+consume and refund no re-ask and add no turn cap or reviewer replacement.
 
 ## Application and capacity
 
@@ -510,8 +538,10 @@ machinery is not progress. Stop without claiming validity or unauthorized
 mutation on any of these frontiers:
 
 - unchanged or non-applicable finalized `REVISE`;
-- a repeated working-identity/reviewer pair without new evidence or authority,
-  an A/B cycle, or a repeated unresolved frontier;
+- a repeated A/B cycle: a revert without a passing citation; a counterpart
+  that restores the replaced proposal after its one dispute; or a proposal
+  pair repeating after its one dispute in the same outer iteration; or a
+  repeated unresolved frontier;
 - persistent `BLOCKED` or required context still unreadable after the one
   approved-context retry;
 - a fourth invalid return for one original expectation;
@@ -584,7 +614,8 @@ and ends with the `## Spend` table of per-reviewer tokens and cost. Do not
 rewrite, summarize, or reorder it. The controller projects the full trace into
 `## Review rounds` using child kind `table`. It includes each authoritative
 finalized verdict exactly once, plus apply, validate, freshness, cleanup, cap,
-park, resume, and stop milestones, and excludes provisional initial responses.
+park, resume, dispute, and stop milestones, and excludes provisional initial
+responses.
 Each finalized verdict's Outcome shows only the verdict word followed by the
 reviewer-authored `summary` points (return contract in
 [reviewer protocol](references/reviewer-protocol.md)), one `• ` point per line,

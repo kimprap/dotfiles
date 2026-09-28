@@ -118,6 +118,7 @@ Infer intent from the requested rule work and the current failure mode.
 2. Inspect current triggers, recent false positives, recent misses, and neighboring rules before editing.
 3. Tighten scope before adding more prose; the first fix for a noisy rule is usually activation, not more words.
 4. Prefer cuts, narrower surfaces, and clearer examples over stacking more `always`/`never` language.
+5. When a proposal or rule cites a file, cite it by section heading or quoted text, not bare line numbers.
 
 ## Evaluate a rule
 

@@ -19,9 +19,10 @@ const PROMPTS = {
   reviewer: {
     initial: "Goal: {{GOAL}}\nMode: {{MODE}}\nProposal:\n{{PROPOSAL}}\nReturn:\n{{EXAMPLE}}",
     rethink: "Read {{RETHINK_SKILL}} once and rethink.\nProvisional:\n{{PROVISIONAL}}\nProposal:\n{{PROPOSAL}}",
-    later: "Proposal:\n{{PROPOSAL}}\n{{BLOCKED_RETRY}}",
+    later: "Proposal:\n{{PROPOSAL}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
     source: "Sources: {{SOURCE_STATUS}}\n{{SOURCES}}",
     reask: "Not accepted: {{DEFECT}}",
+    dispute: "Dispute from {{AUTHOR}}:\n{{CITATIONS}}",
   },
   scope: { evaluate: "{{OBJECTIVE}}", continue: "{{CONTINUATION}}", reask: "{{DEFECT}}", normalize: "{{CONCERNS}}" },
 };
@@ -544,4 +545,216 @@ test("KS4: disposal counts only on observed ESRCH, never on a resolved close wit
     leaveRun(run);
   }
   for (const e of events().filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH");
+});
+
+const BULLETS = {
+  103: "Separate universal semantic contracts, repository storage companions, and harness transport shims. Never hide a cross-transport content contract behind a path guard.",
+  104: "Use always-apply only for tiny universal invariants that must survive every turn.",
+  105: "Prefer tooling, config, linters, tests, or templates when behavior can be enforced deterministically.",
+};
+const CITED = (replacement, citations) => y({ kind: "review", verdict: "REVISE", summary: ["Misses the stated goal"], blocking_issues: ["the proposal misses the goal"], correction: { replacement }, preserve: [], citations });
+
+/**
+ * The incident: a repository whose `craft-rule/SKILL.md` holds the three
+ * enforcement-surface bullets on lines 103–105, and proposals citing them.
+ */
+function incident() {
+  const repo = path.join(t.dir, "repo");
+  const file = path.join(repo, "craft-rule", "SKILL.md");
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const filler = Array.from({ length: 102 }, (_, i) => `filler line ${i + 1}`);
+  fs.writeFileSync(file, `${[...filler, `- ${BULLETS[103]}`, `- ${BULLETS[104]}`, `- ${BULLETS[105]}`].join("\n")}\n`);
+  const cite = (line, quote = BULLETS[line]) => ({ path: file, line, quote });
+  return {
+    repo,
+    file,
+    cite,
+    P0: `Add an always-apply rule citing ${file}:103 and ${file}:104.`,
+    P1: `Add a scoped rule citing ${file}:103 and ${file}:104.`,
+    P2: `Add a scoped rule citing ${file}:105 and ${file}:106.`,
+    P3: `Add a scoped rule citing ${file}:103 only.`,
+    // The counterpart's dispute request as the test PROMPTS render it.
+    disputeFrom: (author, cites) => `Dispute from ${author}:\n${cites.map((c) => `${c.path}:${c.line}\n\`\`\`text\n${c.quote}\n\`\`\``).join("\n\n")}`,
+  };
+}
+
+const rows = (lines) => ["## Review rounds", "", "| Step | Outer | Actor/event | Pass | Proposal identity | Outcome |", "|---|---|---|---|---|---|", ...lines.map((l, i) => `| ${i + 1} | ${l} |`), ""];
+const stopped = (candidates, blocker) => ["## Reconcile stopped", "", "**Candidate**", "", ...candidates.map((c) => `- ${sha(c)}`), "", "**Blocker**", "", blocker, "", "**Resume from**", "", "- a new approved Reconcile run from the canonical identity above", ""];
+const REVISED = "REVISE<br>• Misses the stated goal";
+const ACCEPTED = "VALID<br>• Accepts the proposal";
+
+test("citations: REVISE-only, with an absolute path, a positive line range and an exact non-empty quote", () => {
+  const ctx = { mode: "conversation" };
+  const revise = { kind: "review", verdict: "REVISE", summary: ["Misses the goal"], blocking_issues: ["why"], correction: { replacement: "new text" } };
+  const good = { path: "/r/a.md", line: 3, quote: "  exact  " };
+  const ok = validateResult("review", { ...revise, citations: [good, { path: "/r/b.md", line: 2, end_line: 4, quote: "x" }] }, ctx);
+  assert.equal(ok.valid, true, ok.defects.join("; "));
+  assert.deepEqual(ok.value.citations, [{ ...good, end_line: 3 }, { path: "/r/b.md", line: 2, end_line: 4, quote: "x" }], "end_line defaults to line; the quote is never trimmed");
+  assert.deepEqual(validateResult("review", { ...revise, citations: null }, ctx).value.citations, []);
+
+  const shape = "citations[1] needs an absolute `path`, a positive integer `line`, an optional integer `end_line` not below `line`, and a non-empty `quote`";
+  const invalid = {
+    "relative path": { ...good, path: "r/a.md" },
+    "line 0": { ...good, line: 0 },
+    "numeric-string line": { ...good, line: "3" },
+    "end_line below line": { ...good, end_line: 2 },
+    "fractional end_line": { ...good, end_line: 3.5 },
+    "blank quote": { ...good, quote: " \n" },
+    "string entry": "/r/a.md:3",
+  };
+  for (const [name, bad] of Object.entries(invalid)) {
+    const res = validateResult("review", { ...revise, citations: [good, bad] }, ctx);
+    assert.deepEqual(res.defects, [shape], name);
+  }
+  assert.deepEqual(validateResult("review", { ...revise, citations: "/r/a.md:3" }, ctx).defects, ["field `citations` must be an array of citation objects"]);
+
+  const others = {
+    VALID: { kind: "review", verdict: "VALID", summary: ["Accepts"], recommendations: [] },
+    BLOCKED: { kind: "review", verdict: "BLOCKED", summary: ["Needs the spec"], blocker: "gap", resume_with: "input" },
+  };
+  for (const [verdict, base] of Object.entries(others)) {
+    assert.deepEqual(validateResult("review", { ...base, citations: [good] }, ctx).defects, [`verdict ${verdict} carries no citations`]);
+    const empty = validateResult("review", { ...base, citations: [] }, ctx);
+    assert.equal(empty.valid, true, `${verdict} with an empty list is accepted`);
+    assert.equal(empty.value.citations, undefined, `${verdict} carries no citations`);
+  }
+});
+
+test("citations: a mismatched quote in a checkable file is re-asked by name and never becomes a working version; an outside citation is unchecked", async () => {
+  const { repo, file, cite, P0, P1 } = incident();
+  const outside = path.join(t.dir, "outside.md");
+  fs.writeFileSync(outside, "unrelated\n");
+  // Reply order: the outside citation first, so a defect naming it would precede the others and miss `when`.
+  const wrong = [{ path: outside, line: 1, quote: "not in the file" }, cite(103, BULLETS[104]), { path: file, line: 104, end_line: 200, quote: BULLETS[104] }];
+  const defect = `Not accepted: citation mismatch: ${file}:103: quote not found in the cited line(s); citation mismatch: ${file}:104-200: the file has 105 line(s)`;
+  setPlan({ "scripted/a": [VALID, CITED(P1, wrong), { when: defect, then: VALID }] });
+  const out = await runReconcile(conversation(P0), deps({ repoRoot: repo }));
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "a:reask"]);
+  assert.ok(out.markdown.includes(`## Final proposal\n\n**Proposal**\n\n- ${P0}\n`));
+  assert.ok(!out.markdown.includes(sha(P1)), "the mismatched Correction's identity appears nowhere");
+  assertCleanedUp();
+});
+
+test("dispute: incident replay, counterpart accepts the cited revert and the run ends with it", async () => {
+  const { repo, cite, P0, P1, P2, disputeFrom } = incident();
+  const cites = [cite(103), cite(104)];
+  setPlan({
+    "scripted/a": [VALID, REVISE(P1), CITED(P1, cites), VALID],
+    "scripted/b": [REVISE(P2), REVISE(P2), { when: disputeFrom("A", cites), then: VALID }],
+  });
+  const out = await runReconcile(conversation(P0), deps({ repoRoot: repo }));
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later", "a:later"]);
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(P0)} | ${REVISED}`,
+        `1 | B | post-rethink | ${sha(P1)} | ${REVISED}`,
+        `1 | A | later | ${sha(P2)} | ${REVISED}`,
+        `1 | dispute | — | ${sha(P1)} | A restored a replaced proposal with 2 checked citation(s); B reviews it once`,
+        `1 | B | later | ${sha(P1)} | ${ACCEPTED}`,
+        `1 | apply | — | ${sha(P1)} | applied (count 1)`,
+        `2 | A | later | ${sha(P1)} | ${ACCEPTED}`,
+        `2 | closure | — | ${sha(P1)} | unchanged proposal VALID`,
+        "2 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      "## Final proposal",
+      "",
+      "**Proposal**",
+      "",
+      `- ${P1}`,
+      "",
+    ].join("\n"),
+  );
+  assertCleanedUp();
+});
+
+test("dispute: incident replay, counterpart reapplies its edit and the run stops after the one dispute", async () => {
+  const { repo, cite, P0, P1, P2, disputeFrom } = incident();
+  const cites = [cite(103), cite(104)];
+  setPlan({
+    "scripted/a": [VALID, REVISE(P1), CITED(P1, cites)],
+    "scripted/b": [REVISE(P2), REVISE(P2), { when: disputeFrom("A", cites), then: REVISE(P2) }],
+  });
+  const out = await runReconcile(conversation(P0), deps({ repoRoot: repo }));
+  assert.equal(out.exitCode, 1);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later"]);
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(P0)} | ${REVISED}`,
+        `1 | B | post-rethink | ${sha(P1)} | ${REVISED}`,
+        `1 | A | later | ${sha(P2)} | ${REVISED}`,
+        `1 | dispute | — | ${sha(P1)} | A restored a replaced proposal with 2 checked citation(s); B reviews it once`,
+        `1 | B | later | ${sha(P1)} | ${REVISED}`,
+        `1 | stop | — | ${sha(P2)} | repeated A/B cycle`,
+        "1 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      ...stopped([P0, P2], "- repeated A/B cycle: after its one dispute, B restored the proposal A replaced (step: B later)"),
+    ].join("\n"),
+  );
+  assertCleanedUp();
+});
+
+test("dispute: a revert without a passing citation stops as a repeated A/B cycle with no counterpart turn", async () => {
+  const { repo, P0, P1, P2 } = incident();
+  // The quote matches, but the file lies outside the repository root, so it is unchecked and never passes.
+  const outside = path.join(t.dir, "outside.md");
+  fs.writeFileSync(outside, `- ${BULLETS[103]}\n`);
+  setPlan({
+    "scripted/a": [VALID, REVISE(P1), CITED(P1, [{ path: outside, line: 1, quote: BULLETS[103] }])],
+    "scripted/b": [REVISE(P2), REVISE(P2), VALID],
+  });
+  const out = await runReconcile(conversation(P0), deps({ repoRoot: repo }));
+  assert.equal(out.exitCode, 1);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later"]);
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(P0)} | ${REVISED}`,
+        `1 | B | post-rethink | ${sha(P1)} | ${REVISED}`,
+        `1 | A | later | ${sha(P2)} | ${REVISED}`,
+        `1 | stop | — | ${sha(P1)} | repeated A/B cycle`,
+        "1 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      ...stopped([P0, P1], "- repeated A/B cycle: the same proposal returned to the same reviewer (step: A later)"),
+    ].join("\n"),
+  );
+  assertCleanedUp();
+});
+
+test("dispute: one dispute per proposal pair in an outer iteration; a new pair gets its own, a repeated pair stops", async () => {
+  const { repo, cite, P0, P1, P2, P3, disputeFrom } = incident();
+  const cites = [cite(103), cite(104)];
+  setPlan({
+    "scripted/a": [VALID, REVISE(P1), CITED(P1, cites), CITED(P1, cites)],
+    "scripted/b": [REVISE(P2), REVISE(P2), { when: disputeFrom("A", cites), then: REVISE(P3) }, { when: disputeFrom("A", cites), then: CITED(P2, [cite(105)]) }],
+  });
+  const out = await runReconcile(conversation(P0), deps({ repoRoot: repo }));
+  assert.equal(out.exitCode, 1);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later", "a:later", "b:later"]);
+  const disputeRow = `1 | dispute | — | ${sha(P1)} | A restored a replaced proposal with 2 checked citation(s); B reviews it once`;
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(P0)} | ${REVISED}`,
+        `1 | B | post-rethink | ${sha(P1)} | ${REVISED}`,
+        `1 | A | later | ${sha(P2)} | ${REVISED}`,
+        disputeRow,
+        `1 | B | later | ${sha(P1)} | ${REVISED}`,
+        `1 | A | later | ${sha(P3)} | ${REVISED}`,
+        disputeRow,
+        `1 | B | later | ${sha(P1)} | ${REVISED}`,
+        `1 | stop | — | ${sha(P2)} | repeated A/B cycle`,
+        "1 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      ...stopped([P0, P2], "- repeated A/B cycle: the same proposal pair repeated after its one dispute (step: B later)"),
+    ].join("\n"),
+  );
+  assertCleanedUp();
 });

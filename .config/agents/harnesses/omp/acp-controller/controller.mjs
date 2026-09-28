@@ -53,6 +53,15 @@ function runValidator(argv, cwd) {
   });
 }
 
+/** A backtick fence longer than any backtick run in `text`, and at least three long. */
+const fenceFor = (text) => "`".repeat(Math.max(3, ...[...text.matchAll(/`+/g)].map((m) => m[0].length + 1)));
+
+/** Lexical containment: `p` lies strictly inside `root` (no symlink resolution). */
+function insideRoot(root, p) {
+  const rel = path.relative(root, p);
+  return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
+}
+
 /** Supplies requested sources inside `inBoundary`; the rest are named as refused or unreadable. */
 async function supplySources(locators, inBoundary) {
   const status = [];
@@ -68,7 +77,7 @@ async function supplySources(locators, inBoundary) {
       continue;
     }
     status.push(`${loc}: supplied`);
-    const fence = "`".repeat(Math.max(3, ...[...text.matchAll(/`+/g)].map((m) => m[0].length + 1)));
+    const fence = fenceFor(text);
     bodies.push(`${loc}\n${fence}text\n${text}\n${fence}`);
   }
   return { SOURCE_STATUS: status.join("; "), LOCATORS: locators.join(", "), SOURCES: bodies.join("\n\n") || "none" };
@@ -132,6 +141,65 @@ export function applyCorrection(mode, base, working, correction) {
   return r;
 }
 
+const rangeLabel = (c) => (c.end_line === c.line ? `${c.line}` : `${c.line}-${c.end_line}`);
+
+/**
+ * The exact bytes of lines `line`..`endLine` of `buf`, without the last line's
+ * terminating LF. Lines are LF-separated byte segments; a CR stays in its line.
+ * Returns `{ region }`, or `{ reason }` when the file is shorter.
+ */
+function citedRegion(buf, line, endLine) {
+  let start = line === 1 ? 0 : -1;
+  let lfs = 0;
+  let at = 0;
+  for (let lf = buf.indexOf(0x0a); lf >= 0; lf = buf.indexOf(0x0a, at)) {
+    lfs++;
+    if (lfs === line - 1) start = lf + 1;
+    if (lfs === endLine) return { region: buf.subarray(start, lf) };
+    at = lf + 1;
+  }
+  // Only an unterminated, non-empty last line remains.
+  const lines = lfs + (at < buf.length ? 1 : 0);
+  if (endLine === lines && at < buf.length) return { region: buf.subarray(start, buf.length) };
+  return { reason: `the file has ${lines} line(s)` };
+}
+
+/**
+ * Checks each citation of an applicable `REVISE` against file bytes. Only a
+ * citation in `rs.citationScope` (strictly inside its root, or exactly an
+ * evidence locator) whose file reads is checked; the rest are neither
+ * mismatches nor passing. Returns `{ passing, defects }` in reply order.
+ */
+async function checkCitations(rs, citations) {
+  const { root, evidence } = rs.citationScope;
+  const passing = [];
+  const defects = [];
+  for (const c of citations) {
+    if (!((root && insideRoot(root, c.path)) || evidence.includes(c.path))) continue;
+    let buf;
+    try {
+      buf = await fs.readFile(c.path);
+    } catch {
+      continue;
+    }
+    const cited = citedRegion(buf, c.line, c.end_line);
+    const reason = cited.reason ?? (cited.region.indexOf(Buffer.from(c.quote, "utf8")) >= 0 ? null : "quote not found in the cited line(s)");
+    if (reason) defects.push(`citation mismatch: ${c.path}:${rangeLabel(c)}: ${reason}`);
+    else passing.push(c);
+  }
+  return { passing, defects };
+}
+
+/** The dispute request's citation block: `<path>:<range>`, then the quote in a `text` fence. */
+function renderCitations(citations) {
+  return citations
+    .map((c) => {
+      const fence = fenceFor(c.quote);
+      return `${c.path}:${rangeLabel(c)}\n${fence}text\n${c.quote}\n${fence}`;
+    })
+    .join("\n\n");
+}
+
 // ------------------------------------------------------------------ Reconcile
 
 const MODE_LABEL = { conversation: "Conversation replacement", artifact: "Artifact edits" };
@@ -166,6 +234,7 @@ function reviewerPrompt(ctx, role, kind, pass, values) {
     EXAMPLE: exampleFor("review", { mode: rs.mode }),
     PROVISIONAL: "none",
     BLOCKED_RETRY: "",
+    DISPUTE: "",
     SOURCE_STATUS: "none",
     LOCATORS: "none",
     SOURCES: "none",
@@ -204,7 +273,7 @@ async function expectReview(ctx, reviewer, role, { kind, pass, values }, applica
         requestKind = "source";
         continue;
       }
-      const check = applicable ? applicable(v) : { ok: true };
+      const check = applicable ? await applicable(v) : { ok: true };
       if (check.ok) return { ok: true, value: v, derived: check };
       defects = [check.defect];
     } else if (!out.c4) {
@@ -281,7 +350,14 @@ async function applyAccepted(ctx, from = "application") {
   return { ok: true };
 }
 
-/** Outer iterations (KR5, KR9, KR10). Returns `{ status: "final" | "stopped" | "park", ... }`. */
+/**
+ * Outer iterations (KR5, KR9, KR10). Returns `{ status: "final" | "stopped" | "park", ... }`.
+ * A revert (a finalized `REVISE` repeating its reviewer's earlier working
+ * identity in this outer iteration) with a passing citation earns its unordered
+ * proposal pair one dispute: the counterpart reviews once with those citations.
+ * Every other revert, a restore of the undone proposal after the dispute, or
+ * the pair repeating after it stops as a repeated A/B cycle.
+ */
 async function reconcileLoop(ctx) {
   const { rs } = ctx;
   for (;;) {
@@ -292,16 +368,20 @@ async function reconcileLoop(ctx) {
     if (closureOnly) addRow(rs, "cap", "—", identity(base), `closure-only: cap ${rs.cap} reached`);
     let role = "A"; // KR5: A starts every outer iteration, including closure
     const seen = new Set();
+    const disputed = new Set();
+    let dispute = null;
     let blockedRetry = "";
     let accepted;
     for (;;) {
-      const applicable = (v) => {
+      const applicable = async (v) => {
         if (v.kind !== "review") return { ok: false, defect: "expected a review verdict" };
         if (v.verdict !== "REVISE") return { ok: true };
         const r = applyCorrection(rs.mode, base, working, v.correction);
-        return r.ok ? r : { ok: false, defect: `correction not applicable: ${r.defect}` };
+        const cited = await checkCitations(rs, v.citations);
+        const defects = [...(r.ok ? [] : [`correction not applicable: ${r.defect}`]), ...cited.defects];
+        return defects.length ? { ok: false, defect: defects.join("; ") } : { ok: true, bytes: r.bytes, passing: cited.passing };
       };
-      const res = await reviewTurn(ctx, role, { PROPOSAL: working, OUTER_BASE: base, BLOCKED_RETRY: blockedRetry }, applicable);
+      const res = await reviewTurn(ctx, role, { PROPOSAL: working, OUTER_BASE: base, BLOCKED_RETRY: blockedRetry, DISPUTE: dispute?.to === role ? dispute.prompt : "" }, applicable);
       blockedRetry = "";
       if (!res.ok) {
         addRow(rs, "stop", "—", identity(working), res.stop.cause);
@@ -310,6 +390,7 @@ async function reconcileLoop(ctx) {
       const v = res.value;
       addRow(rs, role, res.pass, identity(working), verdictText(v));
       if (v.verdict === "VALID") {
+        dispute = null;
         accepted = working; // recommendations are never applied (KR7)
         rs.validBy.push({ outer: rs.outer, role });
         break;
@@ -323,14 +404,29 @@ async function reconcileLoop(ctx) {
         blockedRetry = `Your previous verdict was BLOCKED (${v.blocker}). The approved context is complete as supplied; review once more against it.`;
         continue;
       }
+      const prior = working;
       working = res.derived.bytes;
+      const counterpart = role === "A" ? "B" : "A";
+      const cycleStop = (detail) => {
+        addRow(rs, "stop", "—", identity(working), "repeated A/B cycle");
+        return { status: "stopped", stop: { cause: "repeated A/B cycle", detail, step: `${role} ${res.pass}`, pending: working } };
+      };
+      if (dispute) {
+        const d = dispute;
+        dispute = null;
+        if (identity(working) === d.undone) return cycleStop(`after its one dispute, ${role} restored the proposal ${counterpart} replaced`);
+      }
       const key = `${role}:${identity(working)}`;
       if (seen.has(key)) {
-        addRow(rs, "stop", "—", identity(working), "repeated A/B cycle");
-        return { status: "stopped", stop: { cause: "repeated A/B cycle", detail: "the same proposal returned to the same reviewer", step: `${role} ${res.pass}`, pending: working } };
-      }
-      seen.add(key);
-      role = role === "A" ? "B" : "A";
+        const passing = res.derived.passing;
+        if (!passing.length) return cycleStop("the same proposal returned to the same reviewer");
+        const pair = [identity(prior), identity(working)].sort().join(" ");
+        if (disputed.has(pair)) return cycleStop("the same proposal pair repeated after its one dispute");
+        disputed.add(pair);
+        addRow(rs, "dispute", "—", identity(working), `${role} restored a replaced proposal with ${passing.length} checked citation(s); ${counterpart} reviews it once`);
+        dispute = { to: counterpart, undone: identity(prior), prompt: renderPrompt(ctx.deps.prompts.reviewer.dispute, { AUTHOR: role, CITATIONS: renderCitations(passing) }) };
+      } else seen.add(key);
+      role = counterpart;
     }
     if (accepted === rs.canonical) {
       addRow(rs, "closure", "—", identity(accepted), "unchanged proposal VALID");
@@ -377,7 +473,7 @@ async function finalReread(ctx) {
   return { cause: "artifact changed after review", detail: `reviewed ${identity(rs.canonical)}, observed ${identity(now)}`, step: "final reread", pending: typeof now === "string" ? now : undefined, observed: identity(now) };
 }
 
-function newReviewState(request, { ownerScope = "root", delegation } = {}) {
+function newReviewState(request, { ownerScope = "root", delegation, citationScope } = {}) {
   return {
     goal: request.goal,
     candidateIdentity: request.candidate.identity,
@@ -399,6 +495,8 @@ function newReviewState(request, { ownerScope = "root", delegation } = {}) {
     blockedRetryUsed: false,
     pending: null,
     reviewers: {},
+    // Fixed at run start and kept through park/resume: the files whose citations are checked.
+    citationScope,
   };
 }
 
@@ -506,7 +604,9 @@ export async function runReconcile(request, deps, options = {}) {
   const problems = [...approval.problems];
   if (reportOnly && approval.ok) problems.push(...validateBeginReconcile(request, options));
   if (problems.length) return reportOnly ? { status: "rejected", problems } : refused(problems);
-  const rs = newReviewState(request, { ownerScope: reportOnly ? options.ownerScope : "root", delegation: reportOnly ? options.beginReconcile : undefined });
+  // Checkable citation files: a delegated run's Retrace boundary; a direct run's repository root and artifact.
+  const citationScope = reportOnly ? options.citationScope : { root: deps.repoRoot ?? null, evidence: request.mode === "artifact" ? [request.candidate.artifact] : [] };
+  const rs = newReviewState(request, { ownerScope: reportOnly ? options.ownerScope : "root", delegation: reportOnly ? options.beginReconcile : undefined, citationScope });
   if (rs.mode === "artifact") {
     const text = await readText(rs.artifact);
     if (typeof text !== "string") return refused([`artifact \`${rs.artifact}\` is unreadable (${text.error})`]);
@@ -773,8 +873,7 @@ function scopePrompt(ctx, sc, kind, values) {
 }
 
 function inBoundary(ctx, locator) {
-  const rel = path.relative(ctx.request.root, locator);
-  return (rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel)) || ctx.request.evidence.some((e) => e.locator === locator);
+  return insideRoot(ctx.request.root, locator) || ctx.request.evidence.some((e) => e.locator === locator);
 }
 
 /** Checks an admitted candidate-ready value against the scope's approved boundary. */
@@ -893,7 +992,7 @@ async function runScope(ctx, sc) {
       const review = await runReconcile(
         { goal: `Retrace scope ${s.id} (${s.name}): ${s.objective}`, candidate: { identity: originalLocator, text: v.report }, context: [`scope contract: ${JSON.stringify(s)}`, `evidence manifest: ${JSON.stringify(v.manifest)}`], mode: "conversation", cap: "none", approval: ctx.request.approval },
         ctx.deps,
-        { reportOnly: true, ownerScope: s.id, run: ctx.run, beginReconcile: begin, records: ctx.records, authorizationSha256: sha256Text(readyBody) },
+        { reportOnly: true, ownerScope: s.id, run: ctx.run, beginReconcile: begin, records: ctx.records, authorizationSha256: sha256Text(readyBody), citationScope: { root: ctx.request.root, evidence: ctx.request.evidence.map((e) => e.locator) } },
       );
       if (review.status === "rejected") {
         sc.review = "stopped";
@@ -1037,7 +1136,7 @@ export async function runRetrace(request, deps) {
 }
 
 function fenced(text) {
-  const fence = "`".repeat(Math.max(3, ...[...text.matchAll(/`+/g)].map((m) => m[0].length + 1)));
+  const fence = fenceFor(text);
   return [`${fence}text`, text, fence];
 }
 

@@ -174,6 +174,7 @@ export async function main({
     prompts: loaded.prompts,
     promptSources: loaded.sources,
     controllerRoot,
+    repoRoot: process.cwd(),
     overlayPath: OVERLAY_PATH,
     sessionsRoot,
     tmpRoot,

@@ -105,6 +105,14 @@ object of kind `review`:
   overlap.
 - `preserve`: `REVISE` only; a list of approved decisions or rejected overreach
   that must survive, possibly empty.
+- `citations`: `REVISE` only; optional. A list of
+  `{"path": "<absolute path>", "line": <first line>, "end_line": <last line>, "quote": "<exact text>"}`
+  objects: `line` is a positive integer, `end_line` is optional and never below
+  `line`, and `quote` is non-empty and copied exactly. Cite the source lines
+  that support a factual claim your Correction relies on. The controller checks
+  each quote byte for byte against the cited lines of a checkable file (see the
+  Reconcile skill's "Reviewer progression"); a quote not found there is an
+  invalid return. Other citations are not checked.
 - `recommendations`: `VALID` only; a list whose entries each start exactly with
   `editorial:` or `semantic:`, possibly empty.
 - `revision`: omitted or `none` for `VALID` and `BLOCKED`.
@@ -116,7 +124,7 @@ object of kind `review`:
 ```
 
 ```json
-{"data": {"kind": "review", "verdict": "REVISE", "summary": ["Plain statement of what is wrong"], "blocking_issues": ["Why the change is needed."], "correction": {"replacement": "The complete corrected proposal text."}, "preserve": []}}
+{"data": {"kind": "review", "verdict": "REVISE", "summary": ["Plain statement of what is wrong"], "blocking_issues": ["Why the change is needed."], "correction": {"replacement": "The complete corrected proposal text."}, "preserve": [], "citations": [{"path": "/abs/path/file.md", "line": 12, "quote": "Exact text on line 12."}]}}
 ```
 
 ```json
@@ -142,8 +150,9 @@ for the same sources stops the review.
 A missing or conflicting field, a verdict outside the three, a raw `rethink`
 verdict such as `extend`, a recommendation without its prefix, a `REVISE`
 Correction that does not apply to the outer base or leaves the current working
-proposal unchanged, or a turn that ends without a final `yield` is an invalid
-return. The controller then re-asks the same step. Do not ask the controller to
+proposal unchanged, a citation whose quote the controller does not find in its
+cited lines, or a turn that ends without a final `yield` is an invalid return.
+The controller then re-asks the same step. Do not ask the controller to
 normalize prose or invent a semantic edit.
 
 ## Review passes and yield return
@@ -179,6 +188,12 @@ A later request may carry the controller's single approved-context retry after
 a finalized `BLOCKED`: review once more against the approved context as
 supplied. A persistent `BLOCKED` stops the run. Do not infer a rethink from a
 pass label, a correction, or a later request.
+
+A `later` request may also carry a disputed revert: the other reviewer
+restored a proposal you replaced and supported it with citations the
+controller checked. Weigh those citations and review the current working
+proposal once. Restoring the proposal it replaced stops the run as a repeated
+cycle.
 
 The complete finalized response is sufficient bounded evidence. Create no
 separate artifact, response registry, or full-history transcript. The
@@ -260,6 +275,8 @@ Reassess it from first principles against the same brief, outer base, and curren
 <!-- prompt:later -->
 Review the current working proposal for outer iteration {{ITERATION}}, pass `{{PASS}}`, under the same approved brief and this protocol. Do not load `rethink`. {{BLOCKED_RETRY}}
 
+{{DISPUTE}}
+
 Goal: {{GOAL}}
 
 Mode: {{MODE}}
@@ -283,6 +300,11 @@ Return your complete finalized response through one final `yield`. Worked exampl
 ```json
 {{EXAMPLE}}
 ```
+
+<!-- prompt:dispute -->
+Disputed revert: reviewer {{AUTHOR}} restored the proposal you replaced and cited the sources below. The controller found each quote in its cited lines. This is your one dispute turn for these two proposals; if you restore the proposal {{AUTHOR}} replaced, the run stops as a repeated cycle.
+
+{{CITATIONS}}
 
 <!-- prompt:source -->
 The controller answered your source request for {{LOCATORS}} ({{SOURCE_STATUS}}):

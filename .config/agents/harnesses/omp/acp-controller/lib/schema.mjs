@@ -5,6 +5,8 @@
 // fields are ignored (counted); missing or conflicting required fields are
 // rejected. Identifiers, paths and payload text are never case-folded or trimmed.
 
+import path from "node:path";
+
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 const typeOf = (v) => (v === null ? "null" : Array.isArray(v) ? "array" : typeof v);
 const nonEmpty = (v) => typeof v === "string" && v.trim() !== "";
@@ -25,7 +27,7 @@ const ROLES = new Set(["current", "historical"]);
 
 /** Variant -> declared fields. */
 export const VARIANTS = Object.freeze({
-  review: ["kind", "verdict", "summary", "blocking_issues", "revision", "correction", "preserve", "recommendations", "blocker", "resume_with"],
+  review: ["kind", "verdict", "summary", "blocking_issues", "revision", "correction", "preserve", "citations", "recommendations", "blocker", "resume_with"],
   "source-need": ["kind", "locators", "reason"],
   "candidate-ready": ["kind", "report", "manifest", "disposition"],
   "scope-paused": ["kind", "frontier"],
@@ -91,6 +93,36 @@ function validateSummary(v, defects) {
   return [...v];
 }
 
+/**
+ * `REVISE` citations: `[{path, line, end_line?, quote}]` with an absolute path,
+ * a positive integer line, an optional integer end line not below it and a
+ * quote with visible text (kept untrimmed). Returns the normalized list, or
+ * undefined after recording defects.
+ */
+function validateCitations(v, defects) {
+  if (v === undefined || v === null) return [];
+  if (!Array.isArray(v)) {
+    defects.push("field `citations` must be an array of citation objects");
+    return undefined;
+  }
+  const out = [];
+  v.forEach((c, i) => {
+    const endLine = isObj(c) ? c.end_line ?? c.line : undefined;
+    const ok =
+      isObj(c) &&
+      nonEmpty(c.path) &&
+      path.isAbsolute(c.path) &&
+      Number.isInteger(c.line) &&
+      c.line >= 1 &&
+      Number.isInteger(endLine) &&
+      endLine >= c.line &&
+      nonEmpty(c.quote);
+    if (ok) out.push({ path: c.path, line: c.line, end_line: endLine, quote: c.quote });
+    else defects.push(`citations[${i}] needs an absolute \`path\`, a positive integer \`line\`, an optional integer \`end_line\` not below \`line\`, and a non-empty \`quote\``);
+  });
+  return out.length === v.length ? out : undefined;
+}
+
 function validateReview(data, ctx, value, defects) {
   const verdict = VERDICTS.get(normalizeKeyword(data.verdict) ?? "");
   if (!verdict) {
@@ -108,10 +140,13 @@ function validateReview(data, ctx, value, defects) {
     value.preserve = preserve ?? [];
     const c = validateCorrection(data.correction, ctx.mode, defects);
     if (c) value.correction = c;
+    const citations = validateCitations(data.citations, defects);
+    if (citations) value.citations = citations;
   } else {
     if (data.correction !== undefined && data.correction !== null) defects.push(`verdict ${verdict} conflicts with a present \`correction\``);
     if (issues?.length) defects.push(`verdict ${verdict} conflicts with non-empty \`blocking_issues\``);
     if (data.revision !== undefined && data.revision !== null && normalizeKeyword(String(data.revision)) !== "none") defects.push(`verdict ${verdict} requires \`revision\` none`);
+    if (data.citations !== undefined && data.citations !== null && !(Array.isArray(data.citations) && data.citations.length === 0)) defects.push(`verdict ${verdict} carries no citations`);
   }
   if (verdict === "VALID") {
     // Recommendations are carried for the record and never applied (KR7).
@@ -216,8 +251,8 @@ export function exampleFor(variant, ctx = {}) {
   const ex = {
     review:
       ctx.mode === "artifact"
-        ? { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [] }
-        : { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [] },
+        ? { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }] }
+        : { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }] },
     "source-need": { kind: "source-need", locators: ["/abs/path/file.md"], reason: "Why it is needed." },
     "candidate-ready": { kind: "candidate-ready", report: "Kind: conversation\n\n## Bound Intake and Scope Model\n...", manifest: [{ locator: "/abs/path/file.md", role: "current" }], disposition: "proposal" },
     "scope-paused": { kind: "scope-paused", frontier: "The exact unresolved question." },

@@ -15,9 +15,10 @@ const PROMPTS = {
   reviewer: {
     initial: "Goal: {{GOAL}}\nProposal:\n{{PROPOSAL}}",
     rethink: "Read {{RETHINK_SKILL}} once and rethink.\n{{PROPOSAL}}",
-    later: "{{PROPOSAL}}\n{{BLOCKED_RETRY}}",
+    later: "{{PROPOSAL}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
     source: "{{SOURCE_STATUS}}\n{{SOURCES}}",
     reask: "Not accepted: {{DEFECT}}",
+    dispute: "Dispute from {{AUTHOR}}:\n{{CITATIONS}}",
   },
   scope: {
     evaluate: "Evaluate {{SCOPE_NAME}}: {{OBJECTIVE}}\nPrerequisites:\n{{PREREQUISITES}}\nReturn:\n{{EXAMPLE}}",
@@ -280,4 +281,36 @@ test("KS6: a delegated reviewer whose exit is not observed stops its scope, bloc
   assert.ok(events1.includes("- scope-result admitted"));
   assert.ok(events1.some((e) => e.startsWith("- reviewer disposal not established: S1/A: PID ")));
   for (const e of log.filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH", "children really exited");
+});
+
+test("citations and dispute: delegated review resolves a cited revert against the Retrace boundary", async () => {
+  const evidence = path.join(t.root, "S1.md");
+  fs.writeFileSync(evidence, "notes for S1\nS1 keeps the constant NAME.\nS1 has one caller.\n");
+  const outside = path.join(t.dir, "outside.md");
+  fs.writeFileSync(outside, "unrelated\n");
+  const report = (point) => `Kind: conversation\n\n**Aggregate summary**\n\n- ${point}`;
+  const revise = (point, citations) => y({ kind: "review", verdict: "REVISE", summary: ["The report misstates S1"], blocking_issues: ["wrong claim"], correction: { replacement: report(point) }, preserve: [], ...(citations && { citations }) });
+  const cited = { path: evidence, line: 2, quote: "S1 keeps the constant NAME." };
+  // Reply order: the outside citation first, so a defect naming it would precede the root one and miss `when`.
+  const mismatch = [{ path: outside, line: 1, quote: "not in the file" }, { ...cited, quote: "S1 has one caller." }];
+  setPlan({
+    "scripted/a": [
+      { when: "Phase: evaluate\nScope: S1\n", then: y({ kind: "candidate-ready", report: report("S1 holds"), manifest: [{ locator: evidence, role: "current" }], disposition: "proposal" }) },
+      { when: "Owner: S1\n", then: VALID },
+      { when: "Owner: S1\n", then: revise("S1 keeps the constant NAME.", mismatch) },
+      { when: `Owner: S1\n\nNot accepted: citation mismatch: ${evidence}:2: quote not found in the cited line(s)`, then: revise("S1 keeps the constant NAME.") },
+      { when: "Owner: S1\n", then: revise("S1 keeps the constant NAME.", [cited]) },
+      { when: "Owner: S1\n", then: VALID },
+    ],
+    "scripted/b": [revise("S1 renames the constant."), revise("S1 renames the constant."), { when: `Dispute from A:\n${evidence}:2\n\`\`\`text\nS1 keeps the constant NAME.\n\`\`\``, then: VALID }],
+  });
+  const out = await runRetrace({ ...request([scope("S1")]), evidence: [{ locator: evidence, role: "current" }] }, deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.match(out.markdown, /^## Result\n\n\*\*Aggregate\*\*\n\n- complete\n- resolved scopes: 1 of 1\n/);
+  assert.ok(out.markdown.includes("\n| S1 Area S1 | proposal | 2 | 1 | 1: B; 2: A |\n"), out.markdown);
+  assert.doesNotMatch(out.markdown, /\*\*Frontier\*\*/);
+  const passes = (model) => events().filter((e) => e.event === "prompt" && e.model === model && e.passMarker !== "evaluate").map((e) => e.passMarker);
+  assert.deepEqual(passes("scripted/a"), ["initial", "rethink", "reask", "later", "later"]);
+  assert.deepEqual(passes("scripted/b"), ["initial", "rethink", "later"]);
+  assertCleanedUp();
 });

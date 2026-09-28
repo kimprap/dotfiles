@@ -21,7 +21,7 @@ export const PROMPT_SOURCES = Object.freeze({
   retraceSkillPath: path.join(AGENTS_ROOT, "skills", "retrace", "SKILL.md"),
 });
 export const REQUIRED_MARKERS = Object.freeze({
-  reviewer: Object.freeze(["initial", "rethink", "later", "source", "reask"]),
+  reviewer: Object.freeze(["initial", "rethink", "later", "source", "reask", "dispute"]),
   scope: Object.freeze(["evaluate", "continue", "reask", "normalize"]),
 });
 
@@ -111,7 +111,7 @@ async function loadFile(file, required, problems) {
 
 /**
  * Reads both prompt files at run start. Returns
- * `{ ok: true, prompts: { reviewer: {initial, rethink, later, source, reask},
+ * `{ ok: true, prompts: { reviewer: {initial, rethink, later, source, reask, dispute},
  *   scope: {evaluate, continue, reask, normalize} }, sources }` or
  * `{ ok: false, problems }` when a required marker is missing or duplicated,
  * a file is unreadable, or a `{{SECTION:…}}` heading is missing or ambiguous.
