@@ -9,7 +9,8 @@ Resolve the applicable current sources:
 - skill://dev-implementation/references/test-value.md for new proof choices;
 - rule://plan and rule://plan-impl-spec for execution-plan artifacts;
 - the bound specification and applicable canonical project contracts;
-- storage and the actual harness companion only when publishing a plan.
+- the actual host's draft adapter that rule://plan names, only when publishing
+  a plan.
 
 Reuse current material already loaded. Retrieve missing or stale sources;
 do not replace authoritative content with remembered summaries.

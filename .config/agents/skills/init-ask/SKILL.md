@@ -37,7 +37,7 @@ Report all nine rows in this order. Use only `integrated | proposed | on-demand 
 | Integration | Conventional seam | Current owner | Status rule |
 |---|---|---|---|
 | Repository guidance | repository-declared guidance, otherwise `.agents/AGENTS.md` | human repository owner and current guidance convention | `integrated` when usable guidance exists; `proposed` only for concrete repository-specific bytes that can be created or merged without replacing current guidance; otherwise `on-demand` or `blocked` |
-| Dev plan storage | `.agents/plans/` plus current plan transport/storage rules | `plan` and its repository/harness transport rules | `integrated` when declared and usable; otherwise `on-demand`; never create an empty directory |
+| Dev plan storage | `.agents/plans/` plus the host plan adapters `plan` names | `plan` and the host plan adapters it names | `integrated` when declared and usable; otherwise `on-demand`; never create an empty directory |
 | ADR registry | `docs/adr/INDEX.md` | `dev-domain-modeling` | `integrated` when a current registry exists; otherwise `on-demand`; malformed or conflicting authority is `blocked` |
 | Papercuts | `.agents/papercuts.json` plus installed `papercut` skill | `papercut` | `integrated` when current validation succeeds; `proposed` when absent and exact repository opt-in can call `papercut init`; invalid or unsafe storage is `blocked` |
 | Domain context and ADRs | repository-declared context, otherwise `CONTEXT.md`, `CONTEXT-MAP.md`, and `docs/adr/` | `dev-domain-modeling` | `integrated` when current semantic artifacts exist; otherwise `on-demand`; never invent domain content |

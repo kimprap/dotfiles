@@ -95,7 +95,7 @@ No mode keyword → standard plan. `direct` or `no-plan` suppresses plan creatio
 - Plans are for review/execution. Do not auto-apply them.
 - If `direct`/`no-plan` conflicts with `deep`, ask once before doing broad direct edits.
 
-Always read `skill://improve/references/plan-template.md`, `rule://plan`, `rule://plan-repo-storage`, and `rule://plan-impl-spec` before writing any plan (standard or deep).
+Always read `skill://improve/references/plan-template.md`, `rule://plan`, and `rule://plan-impl-spec` before writing any plan (standard or deep).
 
 This skill is mode-aware: quick is fast/direct; direct/no-plan is standard-depth direct; standard/deep yield proportional structured plans.
 

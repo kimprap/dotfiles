@@ -1,6 +1,6 @@
 # Improvement plan template
 
-For `/improve standard` and `/improve deep`, first read `rule://plan`, `rule://plan-repo-storage`, and `rule://plan-impl-spec`. Write the complete pending plan directly to `.agents/plans/YYYY-MM-DD-HHMM_improve-<variant>.md`, using `date +%Y-%m-%d-%H%M` for the prefix and one lowercase kebab-case variant. Emit only the portable lean plan bytes below.
+For `/improve standard` and `/improve deep`, first read `rule://plan` and `rule://plan-impl-spec`. Write the complete pending plan directly to `.agents/plans/YYYY-MM-DD-HHMM_improve-<variant>.md`, using `date +%Y-%m-%d-%H%M` for the prefix and one lowercase kebab-case variant. Emit only the portable lean plan bytes below.
 
 ```markdown
 # <imperative title of what will be true>

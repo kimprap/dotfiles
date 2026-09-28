@@ -10,7 +10,7 @@ Before drafting, resolve the current authority, bound specification and
 applicable canonical project contracts; read the task-sizing source for new
 boundaries and the proof-selection source for checks this author may select.
 Reuse current material already loaded and retrieve missing or stale sources.
-Load repository storage and the actual harness companion only when publishing.
+Load `plan.md`'s repository storage and the host draft adapter it names only when publishing.
 A specification or ordinary design note is not itself an execution plan.
 
 ## Authoring and linked specifications
@@ -41,9 +41,9 @@ A specification or ordinary design note is not itself an execution plan.
   missing or conflicting authority stops rather than being silently adopted.
   Use `plan.md`'s existing approval and drift rules, without a new approval gate
   merely because a specification or link exists.
-- Use `plan-repo-storage.md` and the applicable harness companion for publication
-  and active-path authority. Local drafts are copies, not alternate execution
-  sources. This guidance adds no parser fields, workflow stage, or runtime state.
+- Use `plan.md`'s repository storage and the host draft adapter it names for
+  publication and active-path authority. Local drafts are copies, not alternate
+  execution sources. This guidance adds no parser fields, workflow stage, or runtime state.
 - `plan.md` owns the single post-candidate planning rethink and its inline or
   delegated same-author timing. Apply it once before final approval or execution
   readiness; do not repeat it for publication, exact projection, or lifecycle

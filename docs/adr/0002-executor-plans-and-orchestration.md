@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-28  
+**Updated:** 2026-09-29  
 **Decision IDs:** D06, D08, D09, D21, D29, D30
 
 ## Scope
@@ -93,7 +93,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 ## Affected contracts
 
-- `.config/agents/rules/plan.md`, `plan-impl-spec.md`, `plan-repo-storage.md`, `plan-omp-transport.md`, and `plan-grok-transport.md`.
+- `.config/agents/rules/plan.md`, `.config/agents/rules/plan-impl-spec.md`, `.config/agents/harnesses/omp/plan-transport.md`, and `.config/agents/harnesses/grok/plan-transport.md`.
 - `.config/agents/skills/dev-ticketing/references/task-sizing.md`; `.config/agents/skills/dev-implementation/SKILL.md`, `references/plan-orchestration.md`, `references/test-value.md`, and `scripts/executor_plan.py` with its existing tests and fixtures.
 - `.config/agents/references/impl-rethink/**`, `dev-handoff`, the plan copy helper and OMP extension, and human workflow projections.
 

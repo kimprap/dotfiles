@@ -16,8 +16,8 @@ Use this skill only when work genuinely needs multiple owners, dependencies, fan
 Before drafting a new graph, resolve the current bound specification and read
 `skill://dev-ticketing/references/task-sizing.md`, the single owner of the
 sizing heuristic. If the graph is authored as an execution plan, also read
-`rule://plan` and `rule://plan-impl-spec`; load storage and the actual harness
-companion only when publishing. Reuse current sources already loaded and
+`rule://plan` and `rule://plan-impl-spec`; load the actual host's draft adapter
+that `rule://plan` names only when publishing. Reuse current sources already loaded and
 retrieve missing or stale sources. Apply sizing to each proposed task and
 explain any material boundary choice in existing surrounding plan prose; never
 add sizing fields or manufacture a graph for one cohesive direct task.
