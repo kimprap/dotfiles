@@ -105,6 +105,31 @@
         "Each source receives an allowed Use and Basis value plus applied path and concise treatment",
         "No source row becomes runtime or canonical authority"
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "Our `pr-review` skill at ~/.config/agents/skills/pr-review keeps missing security issues, so tighten it up. It has evals/evals.json with an assertion 'the response mentions the changed files', which passed in every run I did last week, with and without the skill. Improve the skill and show me it actually got better.",
+      "expected_output": "The existing skill is copied outside its directory before any edit and used as the baseline; run transcripts are inspected alongside outputs; the non-discriminating assertion is flagged for removal or rewrite.",
+      "files": [],
+      "assertions": [
+        "A snapshot of the existing skill is taken outside the skill directory before the first edit",
+        "The old snapshot is run as the baseline against the edited skill",
+        "Run transcripts, not only final outputs, are read to find wasted steps or repeated work",
+        "The 'mentions the changed files' assertion is flagged as passing regardless of the skill and dropped or rewritten"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "The `db-migrate` skill barely ever fires. Build me a trigger-query set to tune its description, something like 10 should-trigger and 10 should-not-trigger. For the negatives you could just use stuff like 'what's the weather' or 'write a haiku', that's quicker.",
+      "expected_output": "A set of realistic, substantive positive queries and near-miss negatives sharing keywords or competing with sibling skills, each run several times, with trigger rate measured on the positives; obviously unrelated negatives are declined.",
+      "files": [],
+      "assertions": [
+        "Positive queries are realistic, detailed multi-step requests with paths or context rather than one-line commands",
+        "Negative queries are near-misses that share keywords with db-migrate or belong to a competing sibling skill",
+        "Obviously unrelated negatives such as weather or haiku requests are not used to pad the set",
+        "Each query is planned to run several times, and the trigger rate on positive queries is reported",
+        "Under-triggering fixes name concrete contexts in the description rather than broadening it"
+      ]
     }
   ]
 }

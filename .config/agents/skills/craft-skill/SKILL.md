@@ -63,24 +63,9 @@ Modifiers like `scripts` or `references` narrow review scope. They do not force 
 
 ## Optional maintenance journal convention
 
-`craft-skill` alone owns the optional hybrid `MAINTENANCE.md` convention for skills and prompt bundles. Do not create a journal merely because a skill exists or changes. Use one only when durable decision or source provenance will materially help later maintenance.
+`craft-skill` alone owns the optional hybrid `MAINTENANCE.md` convention for skills and prompt bundles. Do not create a journal unless durable decision or source provenance will materially help later maintenance.
 
-A conforming journal is append-only, non-runtime, and noncanonical. Structured entries and source rows may coexist with optional free-form maintenance notes. Executable skill or rule prose, approved artifacts, and active ADRs remain authoritative; discovery, invocation, and runtime execution never load or interpret the journal.
-
-Every structured entry records:
-
-- a stable identity and kind;
-- `Supersedes: none` or the exact superseded entry IDs;
-- context;
-- decision;
-- applied paths;
-- rejected alternatives;
-- validation; and
-- a revisit condition.
-
-Every source row records the exact source URL or stable local URI, access date, `Use: adopted | adapted | caution | rejected | superseded`, `Basis: local evidence | primary source | secondary source | unverified`, applied path, and concise local treatment. A source row records provenance; it does not import an article or create runtime policy.
-
-Later corrections append a new entry with `Supersedes`; never rewrite or delete earlier history. Do not store raw transcripts, copied articles, provider trivia, or numeric source scores. Preserve every existing journal entry byte-for-byte unless the explicit task is to append a conforming correction.
+When creating, appending, or reviewing a `MAINTENANCE.md`, read [references/maintenance-journal.md](references/maintenance-journal.md) for required entry fields, source-row vocabulary, and exclusions.
 
 ## Activation and transport
 
@@ -110,7 +95,6 @@ Later corrections append a new entry with `Supersedes`; never rewrite or delete 
 4. Review candidates before writing them. Deny `scripts/` or `references/` creation when the pattern is one-off, too environment-specific, cheaper inline, or not durable.
 5. Make targeted edits: tighten descriptions, remove unused instructions, add missing gotchas, move bulky conditional detail to references, or bundle repeated deterministic work as a script.
 6. Prefer cuts and clarifications over more rules. Exact sequences belong only where order is fragile.
-7. If improving quality, compare against the old behavior or a prior snapshot when practical.
 
 ## Evaluate a skill
 
@@ -120,11 +104,12 @@ Start small, then scale only when evidence warrants it.
 2. Test discoverability and invocation timing for each supported transport, such as natural-language matching, explicit user/slash invocation, or a parent wrapper.
 3. Verify execution behavior and output after loading separately from discovery.
 4. Include at least one positive and one near-miss transport case.
-5. Compare a new skill with no skill, or an updated skill with a saved baseline, when practical.
-6. Grade objective behavior from files, outputs, or traces; avoid exact-prose assertions.
-7. Generalize from failures rather than overfitting descriptions or bodies to eval wording.
+5. Compare a new skill with no skill, or an updated skill with its old version: before the first edit, snapshot the skill outside its directory so the baseline still runs. To judge whether the new version is better, have a separate grader compare outputs blind to which version produced which.
+6. Read run transcripts, not just final outputs. Cut instructions that cause wasted steps; if independent runs each build the same helper, bundle it as a script.
+7. Grade objective behavior from files, outputs, or traces; avoid exact-prose assertions. Keep only discriminating assertions: drop or rewrite any that pass equally with and without the skill. Script mechanically checkable assertions, rerun high-variance cases before trusting them, and review subjective output qualitatively instead of forcing assertions. Weigh token and time cost against pass-rate gains.
+8. Generalize from failures rather than overfitting descriptions or bodies to eval wording.
 
-For description tuning, keep the best description by observed discovery behavior, not filesystem presence or train-set fit.
+For description tuning, write realistic, detailed trigger queries (paths, context, casual phrasing) substantive enough that an agent would consult a skill; simple one-step requests do not trigger skills whatever the description says. Make negatives near-misses that share keywords or compete with a sibling skill; obviously unrelated negatives prove nothing. Run each query several times and measure the trigger rate on positives; fix under-triggering by naming concrete contexts in the description, not by broadening it. Keep the description that performs best on held-out queries by observed discovery behavior, not filesystem presence or train-set fit.
 
 ## Clean up skills
 
@@ -134,6 +119,7 @@ For description tuning, keep the best description by observed discovery behavior
 4. Preserve trigger nouns when compacting descriptions.
 5. Suggest cleanup before applying it unless the user explicitly asked for edits.
 6. Do not delete ignored, untracked, or private skill dirs without a named destination or confirmation that they are disposable.
+7. Treat size as a smell, not a rule to split: a `SKILL.md` body over about 500 lines, or a reference over about 300 lines without a table of contents, is a signal to look for cuts or moves.
 
 ## Authoring rules
 
