@@ -99,7 +99,9 @@ equality or novelty never binds a follow-up. The child terminal-yields
 type-absent data with exactly one string `response` field through one direct
 native `yield` tool call, never through eval or another tool bridge: a bridged
 yield reports `Result submitted.` but registers no launch or wake job, and every
-launch and follow-up request states this. Reject old, duplicate, foreign,
+launch and follow-up request states every request rule the
+[OMP adapter](../../../harnesses/omp/agent-return.md#implementation-candidate-job-collection)
+lists, including this one. Reject old, duplicate, foreign,
 text-only, failed/rejected and relay-only results. Delivery is not a reply;
 failed delivery, changed revived identity, observed no-job registration failure
 or the no-job wait stop ends that request without resend or replacement. OMP has

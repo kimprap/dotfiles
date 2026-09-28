@@ -144,7 +144,7 @@ that supply native reply correlation. Neither capability means
 ## Attempt 1: implement, rethink, smoke
 
 1. Preflight the explicit declared response-object schema, resumable same-child transport, and exact controller/child/job/task/attempt/`candidate` bindings, then dispatch. For a planned route, set `IN_PROGRESS` before this first implementation-child dispatch; controller activation alone does not change plan state.
-2. The child implements the contract and returns a candidate report by terminal type-absent ordinary completion before final smoke or Handoff. It does not publish the candidate incrementally or park for rethink. On OMP every terminal return, launch or follow-up, is one direct native `yield` tool call, never through eval, `tool.yield`, `getattr(tool, 'yield')`, a prelude helper or another tool bridge: a bridged yield reports `Result submitted.` but registers no launch or wake job. Every controller request to the child states this rule.
+2. The child implements the contract and returns a candidate report by terminal type-absent ordinary completion before final smoke or Handoff. It does not publish the candidate incrementally or park for rethink. On OMP every terminal return, launch or follow-up, is one direct native `yield` tool call, never through eval, `tool.yield`, `getattr(tool, 'yield')`, a prelude helper or another tool bridge: a bridged yield reports `Result submitted.` but registers no launch or wake job. Every controller request to the child states every request rule the [OMP adapter](../../harnesses/omp/agent-return.md#implementation-candidate-job-collection) lists, including this one.
 3. Collect only that exact completed job. Immediately retain the complete original native result and matching job record before decoding or unrelated work. Apply the loaded adapter's successful-terminal, structured-valid, schema-data, and exact-identity checks; decode only its designated data as the declared response object, then require exact task, attempt, receiver, and `candidate` phase. A missing, invalid, mismatched, consumed, or alternate-source payload is unadmitted. Job settlement is not semantic task completion or child disposal.
 4. After candidate admission, bind the exact child, receiving controller, task, attempt, operation, logical Handoff identity, phase, declared response schema and active invocation, then send `~/.agents/references/impl-rethink/impl-rethink.md` through the host-selected request seam. This exact collection uses the role-and-purpose exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check plus the changed path, and returns one logical lean `dev-handoff` report to the controller.
    OMP receipt dispatch is mandatory before step 5: read
@@ -181,7 +181,10 @@ repair-candidate request with unchanged intent, owned acceptance, affected
 targets, finding evidence and direct closure checks.
 
 On OMP this is a wake request and a terminal type-absent response-object yield,
-made as one direct native `yield` tool call that the request instructs, and
+made as one direct native `yield` tool call that the request instructs (the
+request states every request rule the
+[OMP adapter](../../harnesses/omp/agent-return.md#implementation-candidate-job-collection)
+lists), and
 admitted through the child/request-order, immediate original-result retention,
 successful-resolution, caller-schema, no-job wait stop and once-only rules
 above. It is not an IRC message, incremental publication or Handoff. Other

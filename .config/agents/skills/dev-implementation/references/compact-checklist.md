@@ -14,7 +14,9 @@ Apply every item before accepting compact completion:
    native `yield` tool call, never through eval, `tool.yield`,
    `getattr(tool, 'yield')`, a prelude helper or another tool bridge: a bridged
    yield reports `Result submitted.` but registers no launch or wake job. Every
-   controller request to the child states this rule. Keep native wait active
+   controller request to the child states every request rule the
+   [OMP adapter](../../../harnesses/omp/agent-return.md#implementation-candidate-job-collection)
+   lists, including this one. Keep native wait active
    in the same controller turn from the launch or eligible follow-up receipt
    until the original matching result and row are retained; ordinary wait
    messages, including `wakeRelay` notices, do not finish collection. Do not

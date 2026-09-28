@@ -92,8 +92,9 @@ result and row before decoding only the designated data as `response_object`.
 The child terminal-yields exactly `{"response":"<complete report>"}` without
 `type` through one direct native `yield` tool call, never through eval or any
 other tool bridge: a bridged yield reports `Result submitted.` but registers no
-launch or wake job. Every launch and follow-up request states this. The launch
-schema is inherited. A text-only resolve, rejected job (even with structured
+launch or wake job. Every launch and follow-up request states this and every
+other request rule the loaded host adapter lists. The launch schema is
+inherited. A text-only resolve, rejected job (even with structured
 data), old/foreign/duplicate row or relay is not a reply.
 Absence of a row alone proves nothing; only the adapter's positive native no-job
 `wait` observation after an eligible receipt stops that request as a missing
