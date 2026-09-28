@@ -47,6 +47,30 @@
         "The response does not treat broader or narrower regex as the primary fix",
         "The response verifies availability timing separately from behavior after activation"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Tighten the wording of an existing description-only OMP rule that tells agents to prefer small commits; users say it adds ceremony. Show the edit helps.",
+      "expected_output": "A plan that snapshots the current rule outside the rules directory before editing, runs old and new versions on the same prompts, and also runs the key prompts without the rule; if agents already behave correctly without it, the rule is proposed for cleanup instead of rewording.",
+      "files": [],
+      "assertions": [
+        "The response snapshots the existing rule before the first edit so the old version still runs as a baseline",
+        "The response compares old and new versions on the same prompts",
+        "The response runs key prompts with and without the rule",
+        "The response treats a rule the agent already follows without it as a cleanup candidate"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Evaluate two OMP rules: a TTSR rule with condition \"TODO\\b\" and scope tool:write(*.ts), and a description-only rule that should load when agents draft database migrations.",
+      "expected_output": "One throwaway script runs the TTSR condition and scope once over realistic positive and near-miss samples; the description-only rule is checked with realistic, substantive prompts run several times each, counting the load rate on positives.",
+      "files": [],
+      "assertions": [
+        "The response checks the condition and scope matcher with a throwaway script over positive and near-miss samples",
+        "The response does not repeat runs for the deterministic matcher",
+        "The response uses realistic, substantive prompts run several times for description-based loading",
+        "The response measures the load rate on positive prompts to catch misses"
+      ]
     }
   ]
 }

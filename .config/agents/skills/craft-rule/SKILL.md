@@ -59,12 +59,13 @@ Infer intent from the requested rule work and the current failure mode.
 - Mixed: preserve rule identity first; verify kept-copy precedence before cleanup deletion.
 
 ## Rule-type router
-- Base contract rule — stable repo-wide policy like `plan.md`.
-- Companion overlay — specialized body/quality rule like `plan-impl-spec.md`.
-- Harness shim — OMP/local transport behavior only.
+- Base contract rule — stable, generic repo-wide policy like `plan.md`.
+- Companion overlay — specialized quality bar like `plan-impl-spec.md`.
+- Harness shim — OMP/local transport/runtime behavior only.
 - TTSR interrupt/reminder — only when stream-time correction is useful.
 - Rulebook rule — description-only guidance the model should read when relevant.
 - Always-apply rule — only for tiny universal guidance.
+- Do not duplicate an entire base rule inside every companion; reference the base rule and repeat only activation-critical constraints.
 
 ## OMP TTSR best practices
 - A rule with `condition` or `astCondition` is bucketed into TTSR before rulebook/always-apply.
@@ -73,12 +74,6 @@ Infer intent from the requested rule work and the current failure mode.
 - The `write` matcher sees file content, not the destination path, so path-sensitive rules should use scope/path globs rather than regexing the write body.
 - Prefer `interruptMode: "tool-only"` for tool-argument correction; avoid interrupting normal prose unless the rule truly belongs there.
 - Broad regexes like `plans?\b` need positive and negative trigger checks because they can fire on incidental prose.
-
-## Thin orchestrator principle for rules
-- Base rules stay generic.
-- Companion rules add specialized quality bars.
-- Harness-specific rules/shims should only encode transport/runtime behavior.
-- Do not duplicate an entire base rule inside every companion; reference the base rule and repeat only activation-critical constraints.
 
 ## What belongs in a rule
 - Put only high-leverage instructions that materially change agent behavior: security boundaries, architectural decisions, testing philosophy, and git/workflow guardrails.
@@ -91,10 +86,6 @@ Infer intent from the requested rule work and the current failure mode.
 - Bad rule: giant pasted style guide, vague advice like `be careful`, duplicated base policy, or instructions better enforced by config, tests, or code review.
 - Bad rule: transient task notes, migration scratchpads, or user-specific wishes that do not belong in a durable shared policy.
 
-## Keep core context small
-- Keep the always-read core file lightweight; move specialized guidance into referenced companion rules so the default footprint stays small.
-- If a harness silently compacts or rebuilds context, keep only the durable universal contract in the core rule and make heavier guidance load on demand.
-
 ## Choose the enforcement surface
 - Identify the target harness and required injection time before choosing its syntax. Keep semantic policy portable; add only verified provider metadata or transport adapters.
 - Use a relevance-loaded rulebook rule when guidance must shape reasoning or drafting before any tool call. In OMP, keep that portable base description-only.
@@ -102,6 +93,7 @@ Infer intent from the requested rule work and the current failure mode.
 - Adding `condition` or `astCondition` changes the OMP rule bucket and injection timing. If guidance is needed pre-draft, remove that trigger metadata rather than tuning regex or using `alwaysApply` as a workaround.
 - Separate universal semantic contracts, repository storage companions, and harness transport shims. Never hide a cross-transport content contract behind a path guard.
 - Use always-apply only for tiny universal invariants that must survive every turn.
+- Keep the always-read core small and universal; move heavier guidance into companion rules loaded on demand, especially where a harness silently compacts or rebuilds context.
 - Prefer tooling, config, linters, tests, or templates when behavior can be enforced deterministically.
 
 ## Create a rule
@@ -109,7 +101,7 @@ Infer intent from the requested rule work and the current failure mode.
 1. Start from the failure mode: what went wrong, what should have happened, and why an existing rule/tool/test did not already prevent it.
 2. Choose the smallest layer that works: base contract, companion overlay, harness shim, TTSR, rulebook, or always-apply.
 3. Pick the trigger surface deliberately: prose intent, tool arguments, destination path, AST shape, or file content.
-4. Write the minimum instruction that fixes the failure without dragging unrelated context into every turn.
+4. Write the minimum instruction that fixes the failure without dragging unrelated context into every turn; name the prevented failure mode in one clause so the model can apply the rule at the edges instead of matching words.
 5. Verify the frontmatter matches the chosen rule type before adding extra metadata.
 
 ## Update / refine a rule
@@ -129,12 +121,16 @@ Infer intent from the requested rule work and the current failure mode.
 5. Treat filesystem or provider presence as inventory evidence, not proof that the rule loaded or won precedence; inspect live inventory or traces when available.
 6. For TTSR, require scope to do most of the narrowing; regex should refine rather than carry the filter.
 7. For core or always-apply rules, justify their always-present context cost.
+8. Before editing an existing rule, snapshot it outside the rules directory so the old version still runs as the baseline; check old and new on the same prompts.
+9. Run the key prompts with and without the rule; if the agent already behaves correctly without it, the rule only costs context and is a Cleanup candidate.
+10. Script deterministic `condition`/`astCondition`/`scope` matching: one throwaway script over realistic positive and near-miss samples, run once. Description-based loading is a model decision: use realistic, substantive prompts, run each several times, and count the load rate on positives to catch misses.
+11. Read run transcripts, not just outcomes; cut wording that causes ceremony, repeated steps, or application outside the rule's seam.
 
 ## Cleanup
 
 1. Verify kept-copy/provider precedence before deleting or disabling duplicates.
 2. Collapse copy-pasted overlap into a shared base-plus-companion shape when multiple harnesses need the same policy.
-3. Delete stale rules whose behavior is now enforced elsewhere; dead policy adds context cost and contradiction risk.
+3. Delete stale rules whose behavior is now enforced elsewhere or that the model already follows without them (Evaluate step 9); dead policy adds context cost and contradiction risk.
 4. Suggest cleanup before destructive edits unless the user explicitly asked you to apply them.
 
 ## Done criteria
