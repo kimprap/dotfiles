@@ -16,7 +16,7 @@ Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-st
 - Author and revise the complete portable plan directly at `.agents/plans/<Datetime>_<slug>.md` using ordinary repository tools for every lifecycle state, including `DONE` and `CLOSED`.
 - Run `executor_plan.py validate PLAN` against that exact active file before publication and readiness. Execution, continuation, and completion use the same current repository file.
 - Other harnesses without an OMP local-draft adapter follow this same direct repository path.
-- Never move a plan to an archive automatically or remove its active path because of lifecycle state. Existing historical archive identities are read-only conflict surfaces governed by `plan-repo-storage.md`.
+- Never move a plan to an archive automatically or remove its active path because of lifecycle state. Existing historical archive identities are read-only conflict surfaces governed by `plan-repo-storage.md`, which also governs archiving on explicit human request.
 - Direct persistence supplies no approval, runtime transition, or completion evidence.
 
 Harness-specific identity presentation, model, role, tools, and recovery stay in the adapter and out of the portable artifact. Disclose actual mechanics without promising transport equivalence.

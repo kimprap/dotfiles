@@ -210,4 +210,4 @@ requires the same verifier's complete unchanged check set.
 | Original A returns `NOT CLOSED` or `INCONCLUSIVE` | Stop without new findings, repair authority, a substitute auditor, or another mutation batch |
 | Missing authority, failed direct check, terminal review/verification failure, unsafe partial effect, or governing-rule conflict | Stop, preserve completed work, and name the exact receiver or recovery condition |
 
-A completed plan remains `DONE` at its active repository path. Completion does not require an archive, manifest, digest, receipt, model grader, second reviewer, or review rerun.
+A completed plan remains `DONE` at its active repository path; a `DONE` or `CLOSED` plan may afterward be archived on explicit human request under `plan-repo-storage.md`. Completion does not require an archive, manifest, digest, receipt, model grader, second reviewer, or review rerun.

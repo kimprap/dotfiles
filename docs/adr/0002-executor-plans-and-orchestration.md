@@ -74,10 +74,11 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 
 - **Decision:** Use exactly `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED`. Set `IN_PROGRESS` before the first implementation dispatch. `DONE` requires every task and acceptance item checked, every task completion record present, assurance settled, `Completed At`, and a nonempty final Completion Summary. `CLOSED` requires explicit stop authority and has neither `Completed At` nor Completion Summary.
 - **Decision:** `.agents/plans/<Datetime>_<slug>.md` is the sole execution, update, continuation, and completion source for every lifecycle state. OMP and other local-draft adapters validate and copy exact bytes atomically to that active path for all four states.
-- **Decision:** Completion leaves the plan `DONE` at the active path. Automatic archive creation, active-path removal, archive receipts, and archive postconditions are absent. Existing identity-matching archives are read-only conflict surfaces; storage preserves them and stops rather than overwriting.
+- **Decision:** Completion leaves the plan `DONE` at the active path and cites that path. Automatic or lifecycle-triggered archive creation, active-path removal as part of completion, and archive completion gates are absent. Existing identity-matching archives are read-only conflict surfaces; storage preserves them and stops rather than overwriting.
+- **Decision:** A `DONE` or `CLOSED` plan that validates, is committed without local edits, and has no same-name archive may be archived only on explicit human request, any time after the plan reaches `DONE` or `CLOSED`, including right after the completion report. The plan and the authority chain it names move with `git mv` to `.agents/plans/archive/` and `.agents/artifacts/archive/` with exact bytes; a document still cited by a non-archived plan stays in place, and an uncited standalone artifact may be archived on request. Live links in ADRs, skills, rules, and docs follow the move; archived bytes are never edited.
 - **Why:** One stable locator simplifies execution and recovery while keeping storage separate from semantic completion.
 - **Rejected alternatives:** Lifecycle-triggered moves and archive-only recovery split the authoritative path and make storage a completion gate.
-- **Consequences:** Presentation cites the current active `DONE` plan. Historical archives remain untouched and readable but never become current execution input.
+- **Consequences:** Presentation cites the current active `DONE` plan; a later on-request archive does not change the completion report. Historical archives remain untouched and readable but never become current execution input.
 - **Reopen when:** Repository-plan identity, lifecycle, exact-byte storage, or active-path ownership changes.
 
 ### D30 — Same-author planning rethink
@@ -105,6 +106,7 @@ Cross-owner work needs enough durable structure for dependency scheduling, exact
 - Confirmed `verification-proof-design/v1` and separately approved `verification-policy-implementation/v1`, 2026-09-11, extend proof selection at existing authoring and rethink seams without altering plan lifecycle, storage, transport, or task sizing.
 - Confirmed `execution-recovery-policy/v1`, SHA-256 `1b46e0f4c09e800223e49f2dde437510fc7ab4ceb89c369e96ad45815c288256`, and its separately approved implementation route, 2026-09-13, distinguish same-owner pre-retry recovery rethink from the single implementation candidate rethink without changing plan lifecycle or controller ownership.
 - Confirmed `planning-authoring-rethink/v1`, SHA-256 `cd1aaef359290a93f271039a272cd865210c41f052ac0ffc0cdf838267a7616b`, plus the later human-approved immediate-installation decision, 2026-09-14, authorize this planning extension; the earlier evaluation-before-installation restriction is superseded, not the approved core or authoring boundaries.
+- The human-approved on-request archive route, 2026-09-27, and its direct contract `local://archive-direct-contract.md`, SHA-256 `18f43c4a67541a8ee5ab9a4f3b39c3189a84744c269d096cb5e1682dbcb70870`, authorize D29's on-request archive decision; completion still cites the active `DONE` path.
 - Earlier plan and transport records remain historical support where consistent with this clean cutover.
 - The prompt-bundle `MAINTENANCE.md` is provenance only; executable prompt files own rethink behavior.
 
@@ -114,7 +116,7 @@ The human-approved lean workflow, ticket graph and planning-rethink installation
 
 ## Supersession
 
-This record remains ACTIVE until a newer focused ADR explicitly supersedes it and updates the index. D29's current active-path decision replaces its former terminal archival behavior without creating a new decision ID.
+This record remains ACTIVE until a newer focused ADR explicitly supersedes it and updates the index. D29's current active-path decision replaces its former terminal archival behavior without creating a new decision ID; its on-request archive decision was later added in place the same way.
 
 D30 adds planning-authoring behavior and supersedes no existing ADR decision.
 
@@ -125,5 +127,5 @@ D30 adds planning-authoring behavior and supersedes no existing ADR decision.
 - Substantive planning authors load applicable current sources before drafting and perform one same-author post-candidate rethink before submission or readiness; mechanical operations remain excluded.
 - Concrete-check authoring selects representative adequate proof before approval; linked acceptance remains exact, including compatible shared observations and necessary separate outcomes.
 - Every code-changing task is child-owned and receives one same-child code-then-test rethink before direct checks and Handoff.
-- `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal.
+- `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal; only an explicit human request archives an eligible `DONE` or `CLOSED` plan with exact-byte `git mv`.
 - Human maps, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, D29, and D30.

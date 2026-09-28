@@ -73,7 +73,7 @@ Set `IN_PROGRESS` before the first implementation dispatch. When a task complete
 
 Check an acceptance item only after its exact direct check observes the expected result. Never mark evidence optimistically, rewrite earlier completion records, or infer completion from broad suite status.
 
-`## Completion Summary` appears only for `DONE` and is the final H2 section. Completed plans remain `DONE` at the same active path. Storage companions may copy exact bytes but grant no authority.
+`## Completion Summary` appears only for `DONE` and is the final H2 section. Completion leaves the plan `DONE` at its active path and cites that path. A `DONE` or `CLOSED` plan may afterward be archived only on explicit human request, including right after the completion report; `plan-repo-storage.md` owns the mechanics. Completion never requires, performs, or waits on an archive. Storage companions may copy exact bytes but grant no authority.
 
 ## Stops
 

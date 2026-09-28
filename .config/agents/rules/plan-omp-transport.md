@@ -15,7 +15,7 @@ Apply `plan.md`, `plan-impl-spec.md` for implementation plans, and `plan-repo-st
 
 The helper copies valid `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` bytes exactly to `.agents/plans/<Datetime>_<slug>.md`. Execution, continuation, and completion read and edit that active repository file, never the session-local draft. Validate the current active file through `executor_plan.py validate PLAN` before readiness. The draft-copy adapter supplies no approval or alternate ready transition.
 
-The adapter never creates, replaces, or deletes a historical archive, never removes the active plan because of lifecycle state, and has no archive result or archive completion condition. Existing `.agents/plans/archive/<Datetime>_<slug>.md` files are read-only conflict surfaces governed by `plan-repo-storage.md`.
+The adapter never creates, replaces, or deletes a historical archive, never removes the active plan because of lifecycle state, and has no archive result or archive completion condition. Existing `.agents/plans/archive/<Datetime>_<slug>.md` files are read-only conflict surfaces governed by `plan-repo-storage.md`, which also governs archiving on explicit human request.
 
 Copy success grants no approval, execution state, specialty completion, Handoff, or presentation eligibility. Storage failure remains a visible redacted warning while the successful local mutation remains successful.
 
