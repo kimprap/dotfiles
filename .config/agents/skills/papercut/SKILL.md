@@ -9,12 +9,7 @@ Papercut is a portable repository-friction module. It is never a task, route or 
 
 ## Automatic boundary look
 
-The generic papercut rule schedules exactly one `capture` look after every completed repository-work boundary:
-
-- workflow work: after the owner emits its completed lean Handoff, the same child loads this skill; the parent falls back only when that child is unavailable;
-- direct non-workflow implementation: after verification and before completion, the direct owner loads this skill.
-
-The rule decides only when and who. This skill owns discovery, qualification, redaction, consolidation, persistence, and the compact result. Load it even when the completed boundary reports no candidate; in that case return `Papercut: none` without ledger access. A workflow boundary is complete when its final lean Handoff is emitted, including a Handoff that preserves repository work and reports a blocker. Read-only work and work abandoned before a repository-work Handoff are not boundaries.
+The papercut scheduling rule decides when, and by whom, one `capture` look runs. This skill owns discovery, qualification, redaction, consolidation, persistence, and the compact result. Load it even when the completed boundary reports no candidate; in that case return `Papercut: none` without ledger access.
 
 ## Modes
 

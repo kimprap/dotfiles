@@ -48,12 +48,6 @@ Keep these facts separate; none implies a later one.
   report, turn completion, retention record, cancellation request, or echo is
   not disposal.
 
-## Retrace and Reconcile
-
-Reconcile and Retrace run under their acpx controller
-(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
-first replies, pending observation, capacity and observed-exit disposal.
-
 ## Portable extraction
 
 Decode host serialization only at the seam documented by the loaded host
@@ -72,41 +66,20 @@ from owner-directed report authority unless the owning workflow selected it.
 ### Host-selected implementation follow-ups
 
 Select the loaded host's supported return seam before requesting an
-implementation follow-up. OMP uses durable child-bound completion jobs for the
-authorized attempt-2 candidate, implementation-rethink Handoff, and
-already-authorized same-child recovery return. The attempt-1 candidate remains
-the exact allocated launch job. Bind child, controller/receiver, task, attempt,
-operation/report identity, phase and declared response schema before sending.
-Apply the host adapter's capability gate before allocation and its receipt
-dispatch before collection. On OMP, keep native wait active in the same
-controller turn from each eligible receipt until the original matching result
-and row are retained or the adapter's no-job wait stop ends that request; do
-not end that turn. Ordinary wait messages, including `wakeRelay` notices, do
-not finish collection. Display-only auto-delivery without the retained original
-structured object is not a reply, and grants no alternate-source recovery.
-Keep one outstanding request per child and retain all earlier jobs before the
-next request. Admit only the first task-job row for that child after its request
-receipt, with native child identity, successful resolution and caller-schema
-validity, never job-ID equality or novelty. Immediately retain the original
-result and row before decoding only the designated data as `response_object`.
-The child terminal-yields exactly `{"response":"<complete report>"}` without
-`type` through one direct native `yield` tool call, never through eval or any
-other tool bridge: a bridged yield reports `Result submitted.` but registers no
-launch or wake job. Every launch and follow-up request states this and every
-other request rule the loaded host adapter lists. The launch schema is
-inherited. A text-only resolve, rejected job (even with structured
-data), old/foreign/duplicate row or relay is not a reply.
-Absence of a row alone proves nothing; only the adapter's positive native no-job
-`wait` observation after an eligible receipt stops that request as a missing
-reply, without admission, resend, replacement or reset. The host adapter owns
-delivery outcomes, registration failures, that stop and job-ID reuse.
-Job settlement is neither task completion nor disposal.
+implementation follow-up: the authorized attempt-2 candidate, the
+implementation-rethink Handoff, or an already-authorized same-child recovery
+return. Bind child, controller/receiver, task, attempt, operation/report
+identity, phase and declared response schema before sending. The loaded host
+adapter owns the capability gate, delivery-outcome dispatch, collection,
+registration failures, the missing-reply stop and identity binding. Job
+settlement is neither task completion nor disposal.
 
 For other hosts that actually expose native reply correlation, use the
 token/message path below, including its narrowly authorized restatement.
-Neither that path nor restatement is an OMP fallback. A host with neither
-native reply correlation nor durable completion jobs stops
-`transport-unavailable`; never invent a message or alternate-source return.
+Neither that path nor restatement is a fallback for a host that uses
+completion jobs. A host with neither native reply correlation nor durable
+completion jobs stops `transport-unavailable`; never invent a message or
+alternate-source return.
 
 ### Owner-directed messages
 

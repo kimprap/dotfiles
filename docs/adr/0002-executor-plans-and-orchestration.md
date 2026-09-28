@@ -128,4 +128,4 @@ D30 adds planning-authoring behavior and supersedes no existing ADR decision.
 - Concrete-check authoring selects representative adequate proof before approval; linked acceptance remains exact, including compatible shared observations and necessary separate outcomes.
 - Every code-changing task is child-owned and receives one same-child code-then-test rethink before direct checks and Handoff.
 - `PENDING`, `IN_PROGRESS`, `DONE`, and `CLOSED` persist exact bytes at the active identity path without archive creation or active-path removal; only an explicit human request archives an eligible `DONE` or `CLOSED` plan with exact-byte `git mv`.
-- Human maps, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, D29, and D30.
+- The human map, active skills, rules, focused evals, and callers agree with D06, D08, D09, D21, D29, and D30.

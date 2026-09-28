@@ -2,12 +2,12 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-14  
+**Updated:** 2026-09-28  
 **Decision IDs:** D03, D04, D22, D28
 
 ## Scope
 
-This record governs semantic attempts, portable execution recovery, direct checks, compact and noncompact assurance, one-shot code review, verifier-owned closure, neutral fan-in, common proof selection, and permanent-test value including the explicit manual audit. It applies to the existing concrete-check authors, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, `dev-tdd`, `dev-handoff`, and their focused evals. Assurance and audit roles remain read-only toward evaluated targets and gain no semantic mutation, delivery, or shipping authority.
+This record governs semantic attempts, portable execution recovery, direct checks, compact and noncompact assurance, one-shot code review, verifier-owned closure, neutral fan-in, common proof selection, and permanent-test value including the explicit manual audit. It applies to the existing concrete-check authors, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, `dev-handoff`, and their focused evals. Assurance and audit roles remain read-only toward evaluated targets and gain no semantic mutation, delivery, or shipping authority.
 
 ## Context / problem
 
@@ -69,7 +69,7 @@ Implementation smoke, independent review, and independent verification find diff
 - **Decision:** Tests listed in a proposal or other pre-plan decision are coverage intent, not required permanent tests, unless the human explicitly required a specific permanent test; the specification, plan, or direct-contract author selects the checks, and implementation settles permanent placement under the permanent-only criteria.
 - **Decision:** Keep a permanent test only when it protects an uncovered observable contract, regression, or invariant. Reuse or extend the closest existing test file before creating another; test at the lowest level that captures the behavior; keep tests deterministic and isolated.
 - **Decision:** Prefer a stable public seam, an oracle independent from production logic, and a named plausible bug that fails while correct behavior passes. Merge or remove duplicate, subsumed, tautological, incidental-snapshot, implementation-detail, coverage-only, or production-logic-oracle cases when their unique value is absent.
-- **Decision:** `.config/agents/skills/dev-implementation/references/test-value.md` is the sole repository policy owner. Runtime rethink, review, TDD, and audit references resolve through the installed skill root rather than copying it.
+- **Decision:** `.config/agents/skills/dev-implementation/references/test-value.md` is the sole repository policy owner. Runtime rethink, review, and audit references resolve through the installed skill root rather than copying it.
 - **Decision:** `dev-test-audit` is explicit and read-only. Before its initial Route Overview approval, show the exact requested scope or entire permanent suite and the ordered list of every file; launch no auditor. After approval, persistent A accounts for every file, then receives test rethink only after its first return. If A has no findings after rethink, stop without B. Otherwise persistent B receives the same boundary and A's revised proposal, then receives rethink only after B's first return. Later turns exchange proposals only.
 - **Decision:** Every audit proposal gives each file compact `reviewed` or `skipped: reason` accounting and a `keep | merge | remove | unknown` disposition. Detailed evidence, closest coverage, stable seam, independent oracle, plausible bug or concrete absence, uncertainty, and destination appear only for findings or unknown-value tests. Agreement accepts; stop on unchanged/repeated proposals, non-applicable revision, persistent blockage, lost reviewer during proposal exchange, or authority conflict.
 - **Decision:** Accepted changes require one separately approved direct or planned mutation batch, adjustable only by the human. Original A performs one read-only closure after the batch and before normal final assurance. If original A is unavailable only for closure, omit and report closure unavailable, do not substitute or claim closure, and continue normal assurance without opening another batch.
@@ -81,8 +81,8 @@ Implementation smoke, independent review, and independent verification find diff
 ## Affected contracts
 
 - `dev-implementation` and its `test-value.md` reference.
-- `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, both persistent audit opinion wrappers, `dev-tdd`, and `dev-handoff`.
-- `dev-ask`, its human maps, focused evals, and stale-contract scanner.
+- `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, both persistent audit opinion wrappers, and `dev-handoff`.
+- `dev-ask`, its human map, and focused evals.
 
 ## Evidence / source revisions
 

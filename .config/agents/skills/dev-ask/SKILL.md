@@ -56,24 +56,16 @@ rethink, or persist cause and allowance state. Eligible recovery preserves the
 approved route; a proposed authority, acceptance, ownership, target, effect, or
 other material change uses the existing return and reapproval rules.
 
-The approved implementation route also covers the `dev-implementation`
-controller's provenance-bound collection, begun by an awaited request, of the
-same child's authorized attempt-2 repair candidate, implementation-rethink
-Handoff in attempt 1 or 2, and return from an already-authorized same-child
-execution-recovery operation. Do not re-enter router intake or ask for human
-consent, attendance, supervision, or an abort-capability inventory for those
-three exact role-and-purpose calls. A finite host observation window ending
-does not reopen routing or prove a missing report. This does not widen
-authority, add a recovery or restatement allowance. Reconcile and Retrace run
-under their acpx controller (`harnesses/omp/acp-controller/`), which owns their
-reviewer and scope sessions, first replies, pending observation, capacity and
-observed-exit disposal.
+The approved implementation route also covers the collections that
+`dev-implementation` exempts in its owner-directed return preflight, so do not
+re-enter router intake or seek further human consent for them. A finite host
+observation window ending does not reopen routing or prove a missing report.
 
 For ordinary implementation route composition, apply these mandatory router gates in order:
 
 1. Classify safety and whether current evidence already answers the request.
 2. If an existing catalog intake predicate is true, prepend that exact owner and do not compose ordinary compact.
-3. If any existing compact disqualifier is true, select standard or high and keep one independent review, one independent verification, and one learning assessment in that order.
+3. If any existing compact disqualifier is true, select standard or high.
 4. Otherwise select compact. First owner is `dev-implementation`. The prospective route ends with the non-dispatchable terminal marker `completion-presentation`.
 5. Implementation sizing, duration, or solution-rung choice alone does not prepend a catalog skill or raise assurance.
 6. Present one owner per numbered Route line and start only the first owner after approval. Dispatch a delegated first owner; when that owner is `dev-implementation`, activate it in the route-owning agent by default.
@@ -126,7 +118,7 @@ Choose only from:
 - **Direct implementation lane** when current authority, architecture, named acceptance, and direct checks are settled and durable plan recovery is unnecessary. The route-owning agent activates `dev-implementation` in place by default; standalone invocation likewise uses the invoking agent as controller. Attempt 1 includes the implementation child's one code-then-test rethink and direct checks. Eligible execution-machinery recovery stays with the same owner under `skill://dev-implementation/references/execution-recovery.md` and neither creates a route stage nor replenishes semantic attempts. Only a required finding from the one review or the verifier may admit attempt 2; review never reruns, and the same verifier owns eligible repair closure. A disjoint outcome-relevant blocker returns `authority-change-required`; wording-only advisory cleanup requested after terminal completion is a fresh maintenance outcome.
 - **Specification/ticket lane** only when its corresponding authority is missing. Start with `dev-specification` when durable technical decisions are unresolved; start with `dev-ticketing` when a complete current specification has known implementation seams but still lacks necessary task or dependency ownership. Reuse a complete specification or graph rather than regenerating it for task sizing. Faithful specifications and ticket graphs continue automatically under the current approved Route Overview unless they introduce a new human-owned decision, material trigger, or separately gated effect. Ticketing authors ordinary fan-in as a child-owned `dev-implementation` task; assembly completes before the assembled target's one final review and verification.
 - **Wayfinder lane** only when the route itself is not specifiable. A resolved map returns for route recomputation and never authorizes implementation.
-- **Validated direct-stage lane** for an explicit request to verify, integrate, review, audit permanent-test value, ship, curate, use TDD, or maintain domain authority. Validate that leaf's exact intake and human gates. Shipping always requires separate delivery authority.
+- **Validated direct-stage lane** for an explicit request to verify, integrate, review, audit permanent-test value, ship, curate, or maintain domain authority. Validate that leaf's exact intake and human gates. Shipping always requires separate delivery authority.
 - **Completion normalization** only from current backend and stage terminal evidence. When the approved route names the `completion-presentation` marker and material facts remain current, validate success, all completed-boundary papercut results, the one applicable learning result, residual risks, and authorized continuation. For planned work, require the current active repository plan to be `DONE`. Pass exactly one current five-field input to the render script in a tool call and apply the presenter directly in the same agent without separate approval. The completed report is terminal and schedules no audit.
 - **Explicit read-only portfolio audit** only when a user explicitly requests `dev-test-audit` against an enumerable repository or named-subsystem permanent-test scope. Before the initial Route Overview approval, show the exact scope and ordered list of every in-scope test file; launch no auditor. After approval, the manual audit uses its installed A-first protocol and grants no mutation authority. Accepted fixes require a fresh direct or planned mutation approval.
 
@@ -250,7 +242,7 @@ No other stage return, Handoff, artifact count, audit, review, unchanged evidenc
 
 ## Completion and stops
 
-Present completion only when terminal evidence proves current authority and approvals; every task and acceptance item complete; implementer direct checks pass; every completed repository-work boundary has exactly one papercut look with its complete result set; and the selected assurance path is settled. Compact has no independent review, verifier, or learning and records `Learning: skipped for compact`. Standard and high require the one review before the one verifier and then exactly one learning assessment. An ordinary blocked learning assessment is a residual risk; only a current governing-rule conflict that makes the implementation invalid or unsafe stops completion. No unresolved authority conflict, required finding, failed dependency, or required check may remain.
+Present completion only when terminal evidence proves current authority and approvals; every task and acceptance item complete; implementer direct checks pass; every completed repository-work boundary has exactly one papercut look with its complete result set; and the selected assurance path is settled (per `dev-implementation` Assurance; compact records `Learning: skipped for compact`). An ordinary blocked learning assessment is a residual risk; only a current governing-rule conflict that makes the implementation invalid or unsafe stops completion. No unresolved authority conflict, required finding, failed dependency, or required check may remain.
 
 For planned work, require the current active repository plan to contain its completed task and acceptance records, nonempty Completion Summary, `Completed At`, and `Status: DONE`. Keep and cite that active plan. Do not require or create an archive, manifest, digest, receipt, or archive-only locator. Direct work uses its lean Handoffs and current terminal evidence without manufacturing a plan.
 
@@ -266,5 +258,3 @@ Missing, stale, duplicate, malformed, reordered, unknown, empty, placeholder, or
 Stop before dispatchable or executable work when overview approval is missing or stale. Stop during execution for unresolved human authority, material scope/route change, destructive approval, broken shared contract, irreconcilable authority conflict, unavailable non-equivalent capability, unsafe or ambiguous partial effects, an evidence-backed blocker, or a disjoint outcome-relevant review defect returned as `authority-change-required`. Do not infer success from a worker Handoff, passing build alone, partial output, or unintegrated lineage. Do not restart verification, dispatch learning, approve, or complete after that authority return. Do not reopen a terminal parent for advisory cleanup; classify the explicit cleanup request as a fresh maintenance outcome.
 
 Read [WORKFLOW.md](WORKFLOW.md) only when understanding, auditing, maintaining, or extending the complete engineering flow; do not load it for ordinary routing.
-
-Read [references/execution-flow.md](references/execution-flow.md) only to explain the flow to a human. It is non-runtime and subordinate to this skill and the executable stage skills.

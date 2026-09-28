@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-19  
+**Updated:** 2026-09-28  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -89,7 +89,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ### D15 — Semantic ownership and source roles
 
-- **Decision:** Current human and approved product or engineering artifacts own intent within their scopes. Executable skills and rules own live procedure. Lean plans and Handoffs project and transfer authority but do not create it. Active ADRs own durable rationale. `dev-ask/WORKFLOW.md` and `dev-ask/references/execution-flow.md` are non-runtime human projections.
+- **Decision:** Current human and approved product or engineering artifacts own intent within their scopes. Executable skills and rules own live procedure. Lean plans and Handoffs project and transfer authority but do not create it. Active ADRs own durable rationale. `dev-ask/WORKFLOW.md` is the non-runtime human map.
 - **Decision:** Retrace is an explicit-only, read-only custom controller for repository agent-harness configuration, not a generic engineering route. Human approval binds its complete scope table and constraints. Each approved scope delegates report-only conversational Reconcile to that same scope child, which owns its nested reviewers; delegation grants correction of that conversational report only. This seam grants no generic routing, implementation, assurance, repository/evidence mutation, or shipping authority and preserves D13's separate authorization for Reconcile changes. Executable Retrace and Reconcile contracts own the custom mechanics; this decision and discovery maps do not execute them.
 - **Decision:** External sources and skill-local maintenance journals are provenance only. ADR-0004 D23 owns the human-map and maintenance-journal authority relationship.
 - **Why:** One semantic owner per concern prevents stale projections from controlling execution.
@@ -150,7 +150,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ## Affected contracts
 
-- `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, and `references/execution-flow.md`.
+- `.config/agents/skills/dev-ask/SKILL.md` and `WORKFLOW.md`.
 - `dev-specification`, `dev-ticketing` and its `references/task-sizing.md`, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-continual-learning`, `dev-test-audit`, `dev-handoff`, `papercut`, and `completion-presentation` at their owned seams.
 - The base plan rule, generic completion callers, focused evals, `.agents/AGENTS.md`, and `docs/adr/INDEX.md`.
 

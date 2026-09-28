@@ -50,7 +50,7 @@ The workflow owns deterministic observation timing and complete accounting. The 
 
 - `.config/agents/skills/papercut/SKILL.md` and its focused evals.
 - `.config/agents/skills/dev-implementation/SKILL.md`, direct engineering guidance, `dev-handoff`, terminal completion, learning curation, and shipping delivery orchestration.
-- `.config/agents/skills/dev-ask/WORKFLOW.md`, `references/execution-flow.md`, and caller projections.
+- `.config/agents/skills/dev-ask/WORKFLOW.md` and caller projections.
 
 ## Evidence / source revisions
 

@@ -2,13 +2,13 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-17  
+**Updated:** 2026-09-28  
 **Decision IDs:** D07, D23  
 **Related authority:** ADR-0001 D01, D15
 
 ## Scope
 
-This record governs conditional discovery of current workflow contracts, the single terminal engineering learning assessment, the human execution map, and the authority relationship of append-only maintenance journals. It applies to `.agents/AGENTS.md`, `docs/adr/INDEX.md`, active workflow ADRs, `dev-continual-learning`, portable `continual-learning`, `dev-ask/WORKFLOW.md`, `dev-ask/references/execution-flow.md`, and the `craft-skill` journal convention. It creates no runtime state, background learning, product authority, memory record, or permission to mutate user-level guidance.
+This record governs conditional discovery of current workflow contracts, the single terminal engineering learning assessment, the human execution map, and the authority relationship of append-only maintenance journals. It applies to `.agents/AGENTS.md`, `docs/adr/INDEX.md`, active workflow ADRs, `dev-continual-learning`, portable `continual-learning`, `dev-ask/WORKFLOW.md`, and the `craft-skill` journal convention. It creates no runtime state, background learning, product authority, memory record, or permission to mutate user-level guidance.
 
 ## Context / problem
 
@@ -31,8 +31,8 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 
 ### D23 — Human map and maintenance provenance
 
-- **Decision:** Keep `dev-ask/WORKFLOW.md` as the concise current human projection and `dev-ask/references/execution-flow.md` as the human-only Mermaid and transition-table map. Executable `dev-ask`, `dev-implementation`, and stage skills remain authoritative. Neither projection runs work, stores state, or wins a conflict.
-- **Decision:** Keep focused durable choices in the narrowest active ADR and expose their IDs, scope, status, and supersession through `docs/adr/INDEX.md`. Superseded history stays in ADRs and archives, not executable skills or the human maps.
+- **Decision:** Keep `dev-ask/WORKFLOW.md` as the single concise, non-runtime human map. Executable `dev-ask`, `dev-implementation`, and stage skills remain authoritative. The map runs no work, stores no state, and wins no conflict.
+- **Decision:** Keep focused durable choices in the narrowest active ADR and expose their IDs, scope, status, and supersession through `docs/adr/INDEX.md`. Superseded history stays in ADRs and archives, not executable skills or the human map.
 - **Decision:** `craft-skill` alone owns the optional hybrid append-only `MAINTENANCE.md` convention for skills and prompt bundles. The convention is durable, but each journal is non-runtime, noncanonical provenance. Runtime never loads a journal and no entry or source row can approve work, define behavior, or supersede human authority, executable prose, an approved artifact, or an ADR.
 - **Decision:** Every structured journal entry records identity and kind, superseded IDs, context, decision, applied paths, rejected alternatives, validation, and revisit condition. Every source row records exact URL or stable local URI, access date, `Use: adopted | adapted | caution | rejected | superseded`, `Basis: local evidence | primary source | secondary source | unverified`, applied path, and concise local treatment.
 - **Decision:** Corrections append a later entry with `Supersedes`; they never rewrite history. Optional free-form notes may coexist with structured entries. Raw transcripts, copied articles, provider trivia, and numeric source scores are excluded.
@@ -46,7 +46,7 @@ Repository-local rules can be injected automatically, while ADRs and human refer
 
 - Repository-local `.agents/AGENTS.md` for the conditional generic-workflow pointer.
 - `docs/adr/INDEX.md` and active focused workflow ADRs for decision discovery.
-- `.config/agents/skills/dev-ask/WORKFLOW.md` and `references/execution-flow.md` for non-runtime human projection.
+- `.config/agents/skills/dev-ask/WORKFLOW.md` for the non-runtime human map.
 - `.config/agents/skills/dev-continual-learning/SKILL.md`, portable `continual-learning`, their focused evals, and the implementation assurance order.
 - `.config/agents/skills/craft-skill/SKILL.md`, its focused evals, and `.config/agents/rules/canonical-project-contracts.md` for the optional maintenance-journal convention and provenance boundary.
 

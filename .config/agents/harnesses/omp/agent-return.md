@@ -132,10 +132,7 @@ allocation: OMP v18.3.0 does not expose native `wait` to subagents
 ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
 Do not substitute or spawn a delegated controller to bypass this gate.
 Depth 0 still requires every schema, identity and collection capability below.
-This host restriction does not change capable other-host topology. Reconcile and
-Retrace run under their acpx controller (`harnesses/omp/acp-controller/`), which
-owns their reviewer and scope sessions, first replies, pending observation,
-capacity and observed-exit disposal.
+This host restriction does not change capable other-host topology.
 
 This is a separate consumer-side adapter surface from the producer `yield`
 extraction above. Before an implementation-child dispatch, require the caller
@@ -275,17 +272,13 @@ stays bounded only by native wait limits. This adds no polling rule.
 After candidate admission send the one implementation rethink as a separate
 request to that same child. It applies code rethink then test rethink, at most
 one correction, and the owned checks, then terminal-yields its lean Handoff by
-direct native `yield` in the same response object. The three implementation
-collection purposes above retain their exact role-and-purpose preflight
-exemption; they add no recovery, replay, observer, deadline or
-unattended-completion authority.
+direct native `yield` in the same response object. These collections use the
+`dev-implementation` owner-directed return-preflight exemption unchanged.
 
 OMP does not select a token/message, send-and-wait, or exact-body restatement
 branch for implementation returns. Its `agent://` send has no native reply
 correlation field. No text, agent-output, history, transcript, relay or message
-fallback is admissible. Reconcile and Retrace run under their acpx controller
-(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
-first replies, pending observation, capacity and observed-exit disposal.
+fallback is admissible.
 
 ## Assurance and audit return collection
 
@@ -398,12 +391,9 @@ an admitted return surface.
 
 ## Supervise indefinite operations externally
 
-Reconcile and Retrace run under their acpx controller
-(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
-first replies, pending observation, capacity and observed-exit disposal.
-
-Except for the three exact `dev-implementation` controller collection purposes
-defined above and same-cell collection of review, verification, learning,
+Except for the collections that `dev-implementation` exempts in its
+owner-directed return preflight and same-cell collection of review,
+verification, learning,
 test-audit auditor A and B, and implementation launch returns under
 [Same-cell structured return collection](#same-cell-structured-return-collection),
 before using a settings-driven unbounded awaited report
@@ -441,11 +431,6 @@ Preserve the bound operation/request identity, delivery facts, exact owner/child
 or unknown semantic and recovery allowances, original native returns already
 observed, and unresolved frontier before unrelated handling. Do not replay a
 successfully delivered request.
-
-
-Reconcile and Retrace run under their acpx controller
-(`harnesses/omp/acp-controller/`), which owns their reviewer and scope sessions,
-first replies, pending observation, capacity and observed-exit disposal.
 
 Retrace and Reconcile explicitly adopt the sole generic
 [execution-recovery policy](../../skills/dev-implementation/references/execution-recovery.md)

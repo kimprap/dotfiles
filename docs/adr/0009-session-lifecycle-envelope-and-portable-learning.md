@@ -62,10 +62,10 @@ A small stable envelope preserves intra-session control while repository artifac
 
 ## Affected contracts
 
-- `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, `references/execution-flow.md`, and focused evals.
+- `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, and focused evals.
 - `.config/agents/skills/product-ask/SKILL.md`, `WORKFLOW.md`, and focused evals.
 - `.config/agents/skills/dev-handoff/SKILL.md`, `completion-presentation/SKILL.md`, implementation terminal behavior, plan lifecycle, papercut, and learning.
-- Stale-contract scans and ADR discovery.
+- ADR discovery.
 
 ## Evidence / source revisions
 

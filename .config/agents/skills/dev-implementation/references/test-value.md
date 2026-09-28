@@ -1,6 +1,6 @@
 # Proof selection and permanent test value
 
-This file is the sole shared proof-selection and permanent-test policy. Authoring, implementation, rethink, TDD, review, verification, and audit callers read it at their existing boundary; they must not copy or fork its criteria.
+This file is the sole shared proof-selection and permanent-test policy. Authoring, implementation, rethink, review, verification, and audit callers read it at their existing boundary; they must not copy or fork its criteria.
 
 ## Common proof selection
 

@@ -36,7 +36,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | When does permanent-test audit run? | ADR-0003 D28 | `dev-test-audit` and its protocol for exact transport |
 | When does papercut observation occur? | ADR-0007 D24 | Portable `papercut` for qualification and storage approval |
 | When does engineering learning run, what does its first return contain, and can failure block completion? | ADR-0004 D07 | `dev-continual-learning`, canonical `dev-handoff`, and portable `continual-learning` for executable behavior |
-| Where is the human execution map, and can it override runtime? | ADR-0004 D23 | `dev-ask/WORKFLOW.md` and `references/execution-flow.md`; maps never override runtime |
+| Where is the human execution map, and can it override runtime? | ADR-0004 D23 | `dev-ask/WORKFLOW.md`; the map never overrides runtime |
 | Who owns an optional skill or prompt maintenance journal, and what authority does it have? | ADR-0004 D23 | `craft-skill` for the append-only convention; the journal is provenance only |
 | What exactly is successful completion and when is a Handoff real? | ADR-0009 D27 | `dev-handoff` for concrete receivers and `completion-presentation` for rendering only |
 | What is the current completion plan locator? | ADR-0002 D29; ADR-0009 D27 | The current active `DONE` path; no archive lookup is part of completion |
