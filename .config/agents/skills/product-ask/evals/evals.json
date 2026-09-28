@@ -3,13 +3,14 @@
   "evals": [
     {
       "id": "P-FIVE-FIELD-COMPLETION",
-      "prompt": "/skill:product-ask. Read-only terminal projection. The latest Product Handoff is current and completed, the exact approved PRD and iteration identities are current, human promotion approval is exact, no frontier remains, no papercut candidate exists, no learning assessment was eligible, and the Handoff receiver is dev-ask. Construct the one valid completion-presentation-input and describe only its field contract and same-agent presentation effect.",
-      "expected_output": "One current fence has exactly Outcome, Changes, Checks, Risks, and Next in that order. Checks contains the current Product Handoff and human approval checks, Papercut: none, and Learning: no durable learning. Risks is nonempty, Next sends the approved PRD to dev-ask, and the same product-ask agent applies the presenter without another stage or Handoff.",
+      "prompt": "/skill:product-ask. Read-only terminal projection. The latest Product Handoff is current and completed, the exact approved PRD and iteration identities are current, human promotion approval is exact, no frontier remains, no papercut candidate exists, no learning assessment was eligible, and the Handoff receiver is dev-ask. Describe the one valid five-field completion input, how it reaches the render script, and the same-agent presentation effect.",
+      "expected_output": "One current input has exactly Outcome, Changes, Checks, Risks, and Next in that order. Checks contains the current Product Handoff and human approval checks, Papercut: none, and Learning: no durable learning. Risks is nonempty, Next sends the approved PRD to dev-ask, and the same product-ask agent passes the input to the render script in a tool call and replies with only the script output, without another stage or Handoff.",
       "assertions": [
         "The completion input has exactly the five ordered fields Outcome, Changes, Checks, Risks, and Next",
         "Checks includes Product Handoff and human approval evidence plus Papercut: none and Learning: no durable learning",
         "Changes contains the material product delta and current durable product artifact paths",
         "The same product-ask agent applies completion-presentation without dispatch, publication, delivery, or shipping",
+        "The input goes to the render script in a tool call and never appears in the reply",
         "No additional completion field or alternate result envelope is introduced"
       ]
     },

@@ -2462,11 +2462,11 @@
         "approval-request",
         "tracker-mutation",
         "receiver:missing",
-        "completion-input:fenced-same-turn"
+        "completion-input:render-script-call"
       ],
       "id": "R-TRIAGE-WONTFIX",
       "inputs": {
-        "request": "A previously dispatched raw external intake returns a current read-only triage result with exactly one category, state wontfix, evidence, external effects none, and route-impact unchanged. Consume it according to the current triage return contract and present the terminal result. Do not redispatch triage or implementation, request another approval, mutate the tracker, or omit the lean Handoff receiver. This is a registry-only negative control: construct no completion-presentation-input fence, record no completion-input:fenced-same-turn event, and preserve the current specialty result. The legacy completion-presented event name, if already required, does not authorize the generic presenter.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nhandoff-check\nreceiver:dev-ask\nterminal-evidence-check\ncompletion-presented"
+        "request": "A previously dispatched raw external intake returns a current read-only triage result with exactly one category, state wontfix, evidence, external effects none, and route-impact unchanged. Consume it according to the current triage return contract and present the terminal result. Do not redispatch triage or implementation, request another approval, mutate the tracker, or omit the lean Handoff receiver. This is a registry-only negative control: make no completion render-script call, record no completion-input:render-script-call event, and preserve the current specialty result. The legacy completion-presented event name, if already required, does not authorize the generic presenter.\n\nThis no-tool evaluation observer is self-contained. Treat the required observable events as authoritative; do not read a skill, call a tool, render the human report, or infer alternative wording. Return only these event tokens, one per line, byte-for-byte and in this order:\nhandoff-check\nreceiver:dev-ask\nterminal-evidence-check\ncompletion-presented"
       },
       "layer": "router",
       "proof": "Fresh read-only evaluation of the wontfix state return and lean Handoff receiver.",
@@ -2484,7 +2484,7 @@
         "Require the wontfix result to retain exactly one lean Handoff receiver: dev-ask for terminal presentation.",
         "Treat wontfix as terminal without redispatch, renewed approval, tracker mutation, implementation, or a missing receiver.",
         "Reject mutation, persistence, shipping, authority invention, or other effects not authorized by the scenario.",
-        "Forbid the fenced completed input and completion-input:fenced-same-turn; preserve the existing specialty stop or terminal report without generic presentation."
+        "Forbid the completion render-script call and completion-input:render-script-call; preserve the existing specialty stop or terminal report without generic presentation."
       ],
       "scripted_replies": []
     },

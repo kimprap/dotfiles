@@ -188,7 +188,7 @@ Standard and high invoke `dev-continual-learning` once after review and verifica
 
 ### Five-field presentation
 
-After terminal success, the specialty reads [the canonical completion input contract](../../references/completion-presentation-input.md) before constructing its current fence. The reference owns the schema and validation rules; presenter activation remains after construction.
+After terminal success, the specialty reads [the canonical completion input contract](../../references/completion-presentation-input.md) before building its current input, then passes that input to the render script in a tool call, never in the reply. The reference owns the schema and validation rules; presenter activation remains after the input is built.
 
 `Checks` includes the terminal checks, every material papercut line in authored-task order or `Papercut: none`, and exactly one normalized Learning line. Planned completion also names the current active plan and `DONE` state. The in-place controller consumes accepted child and assurance returns, its own conclusions, and current plan evidence directly before terminal validation; it emits no Handoff to itself or merely to `dev-ask`. A genuinely delegated controller returns once across its real boundary to the concrete route owner. The same agent that validates success applies `completion-presentation` directly and emits only the five corresponding H2 sections. The presenter is not dispatched and does not verify, repair, settle, archive, create a Handoff, or ship.
 

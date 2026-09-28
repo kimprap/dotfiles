@@ -2,18 +2,19 @@
   "evals": [
     {
       "id": "CP-FIVE-FIELD-COMPACT",
-      "prompt": "The compact specialty has settled success and built exactly one current input. Apply completion-presentation directly and emit only the report.\n\n```completion-presentation-input\n{\n  \"Outcome\": \"Ghostty's Cmd-K binding clears the terminal as intended.\",\n  \"Changes\": [\n    \"Updated the Ghostty Cmd-K binding.\"\n  ],\n  \"Checks\": [\n    \"Ghostty config load and Cmd-K smoke: PASS\",\n    \"Papercut: none\",\n    \"Learning: skipped for compact\"\n  ],\n  \"Risks\": [\n    \"none\"\n  ],\n  \"Next\": \"none\"\n}\n```",
+      "prompt": "The compact specialty has settled success and built exactly one current input, shown below. Apply completion-presentation directly: pass the input to the render script in a tool call and reply with only the script output.\n\n```json\n{\n  \"Outcome\": \"Ghostty's Cmd-K binding clears the terminal as intended.\",\n  \"Changes\": [\n    \"Updated the Ghostty Cmd-K binding.\"\n  ],\n  \"Checks\": [\n    \"Ghostty config load and Cmd-K smoke: PASS\",\n    \"Papercut: none\",\n    \"Learning: skipped for compact\"\n  ],\n  \"Risks\": [\n    \"none\"\n  ],\n  \"Next\": \"none\"\n}\n```",
       "expected_output": "## Outcome\n\n- Ghostty's Cmd-K binding clears the terminal as intended.\n\n## Changes\n\n- Updated the Ghostty Cmd-K binding.\n\n## Checks\n\n- Ghostty config load and Cmd-K smoke: PASS\n- Papercut: none\n- Learning: skipped for compact\n\n## Risks\n\n- none\n\n## Next\n\n- none",
       "assertions": [
+        "The input is passed to render.py in exactly one tool call and the input JSON never appears in the reply",
         "Output is byte-equal to the expected five-section report",
         "Outcome, Changes, Checks, Risks, and Next are the only H2 headings and appear in that order",
         "Papercut and Learning remain consecutive Checks items",
-        "No status, evidence, continuation, manifest, digest, archive, Handoff, preface, epilogue, or fence appears"
+        "No status, evidence, continuation, manifest, digest, archive, Handoff, preface, epilogue, or code fence appears in the rendered output"
       ]
     },
     {
       "id": "CP-FIVE-FIELD-PLANNED-STANDARD",
-      "prompt": "The standard specialty has settled success after one review, one verification, and one learning assessment. The plan remains DONE at its active path. Apply the presenter to this only current input.\n\n```completion-presentation-input\n{\n  \"Outcome\": \"The lean workflow migration is complete.\",\n  \"Changes\": [\n    \"Simplified routing, terminal hooks, and human completion.\",\n    \"Updated focused semantic evals.\"\n  ],\n  \"Checks\": [\n    \"AC-5 through AC-9: VERIFIED\",\n    \"Plan: .agents/plans/2026-09-05-0049_lean-dev-workflow.md — DONE\",\n    \"Papercut: pc-0000000000000100 recorded\",\n    \"Papercut: report-only — workflow boundary: a distinct repository-owned root cause remains visible\",\n    \"Learning: curated\"\n  ],\n  \"Risks\": [\n    \"none\"\n  ],\n  \"Next\": \"none\"\n}\n```",
+      "prompt": "The standard specialty has settled success after one review, one verification, and one learning assessment. The plan remains DONE at its active path. Apply the presenter to this only current input by passing it to the render script in a tool call.\n\n```json\n{\n  \"Outcome\": \"The lean workflow migration is complete.\",\n  \"Changes\": [\n    \"Simplified routing, terminal hooks, and human completion.\",\n    \"Updated focused semantic evals.\"\n  ],\n  \"Checks\": [\n    \"AC-5 through AC-9: VERIFIED\",\n    \"Plan: .agents/plans/2026-09-05-0049_lean-dev-workflow.md — DONE\",\n    \"Papercut: pc-0000000000000100 recorded\",\n    \"Papercut: report-only — workflow boundary: a distinct repository-owned root cause remains visible\",\n    \"Learning: curated\"\n  ],\n  \"Risks\": [\n    \"none\"\n  ],\n  \"Next\": \"none\"\n}\n```",
       "expected_output": "## Outcome\n\n- The lean workflow migration is complete.\n\n## Changes\n\n- Simplified routing, terminal hooks, and human completion.\n- Updated focused semantic evals.\n\n## Checks\n\n- AC-5 through AC-9: VERIFIED\n- Plan: .agents/plans/2026-09-05-0049_lean-dev-workflow.md — DONE\n- Papercut: pc-0000000000000100 recorded\n- Papercut: report-only — workflow boundary: a distinct repository-owned root cause remains visible\n- Learning: curated\n\n## Risks\n\n- none\n\n## Next\n\n- none",
       "assertions": [
         "The report has exactly five ordered fields",
@@ -24,7 +25,7 @@
     },
     {
       "id": "CP-ORDINARY-LEARNING-BLOCKED",
-      "prompt": "The high-assurance specialty has settled implementation success. Its only learning attempt could not read an optional adjacent fixture; this is not a governing-rule conflict. Render the one current input.\n\n```completion-presentation-input\n{\n  \"Outcome\": \"The verified configuration migration is complete.\",\n  \"Changes\": [\n    \"Migrated the active configuration.\"\n  ],\n  \"Checks\": [\n    \"Final verification: VERIFIED\",\n    \"Papercut: none\",\n    \"Learning: blocked adjacent fixture unavailable\"\n  ],\n  \"Risks\": [\n    \"Learning assessment could not use the adjacent fixture.\"\n  ],\n  \"Next\": \"none\"\n}\n```",
+      "prompt": "The high-assurance specialty has settled implementation success. Its only learning attempt could not read an optional adjacent fixture; this is not a governing-rule conflict. Render the one current input by passing it to the render script in a tool call.\n\n```json\n{\n  \"Outcome\": \"The verified configuration migration is complete.\",\n  \"Changes\": [\n    \"Migrated the active configuration.\"\n  ],\n  \"Checks\": [\n    \"Final verification: VERIFIED\",\n    \"Papercut: none\",\n    \"Learning: blocked adjacent fixture unavailable\"\n  ],\n  \"Risks\": [\n    \"Learning assessment could not use the adjacent fixture.\"\n  ],\n  \"Next\": \"none\"\n}\n```",
       "expected_output": "## Outcome\n\n- The verified configuration migration is complete.\n\n## Changes\n\n- Migrated the active configuration.\n\n## Checks\n\n- Final verification: VERIFIED\n- Papercut: none\n- Learning: blocked adjacent fixture unavailable\n\n## Risks\n\n- Learning assessment could not use the adjacent fixture.\n\n## Next\n\n- none",
       "assertions": [
         "Ordinary blocked learning remains a Learning check and a residual risk",
@@ -35,22 +36,23 @@
     },
     {
       "id": "CP-INVALID-INPUTS",
-      "prompt": "Apply completion-presentation separately to these near misses and return a compact rejection matrix: absent fence; two fences; malformed JSON; lowercase or reordered keys; legacy twelve-field input; unknown, duplicate, missing, empty, placeholder, nested, or multiline value; scalar Changes; empty Checks; missing Papercut line; Papercut none mixed with material Papercut lines; missing or duplicate Learning line; invalid Learning wording; planned work with only an archive plan path; and a success fence built despite a current governing-rule conflict that makes the implementation unsafe.",
+      "prompt": "Apply completion-presentation separately to these near misses and return a compact rejection matrix: absent input; duplicate input; malformed JSON; lowercase or reordered keys; legacy twelve-field input; unknown, duplicate, missing, empty, placeholder, nested, or multiline value; scalar Changes; empty Checks; missing Papercut line; Papercut none mixed with material Papercut lines; missing or duplicate Learning line; invalid Learning wording; planned work with only an archive plan path; and a success input built despite a current governing-rule conflict that makes the implementation unsafe.",
       "expected_output": "Every case is rejected before generic presentation and preserves the calling specialty's report. No case emits an Outcome heading or performs lifecycle work.",
       "assertions": [
         "Only exactly ordered Outcome, Changes, Checks, Risks, and Next are accepted",
         "Legacy status, manifest, digest, Handoff, Completion Summary, archive, and twelve-field shapes are rejected",
         "Checks requires complete Papercut accounting and exactly one allowed Learning line",
-        "A current governing-rule conflict that invalidates or makes implementation unsafe is non-success and cannot be presented"
+        "A current governing-rule conflict that invalidates or makes implementation unsafe is non-success and cannot be presented",
+        "The governing-rule-conflict case makes no render-script call, and no case writes the input in the reply or retries with altered input"
       ]
     },
     {
       "id": "CP-PRESENTER-BOUNDARY",
       "prompt": "A caller asks completion-presentation to dispatch review, run verification, repair a missing field, settle papercuts, invoke learning, create a Handoff, archive a DONE plan, and then render. State the permitted action.",
-      "expected_output": "Reject the request. The presenter only validates and mechanically renders one already-complete current success input; it performs none of the requested lifecycle, evidence, settlement, persistence, or repair actions.",
+      "expected_output": "Reject the request. The presenter only checks the input format and mechanically renders one already-complete current success input; it performs none of the requested lifecycle, evidence, settlement, persistence, or repair actions.",
       "assertions": [
         "The presenter never dispatches, repairs, verifies, settles, learns, creates a Handoff, archives, stages, ships, or decides completion",
-        "A missing or invalid fence returns to the calling specialty rather than being repaired",
+        "A missing or invalid input, or a non-zero render-script exit, returns to the calling specialty rather than being repaired",
         "The calling specialty remains the success and evidence authority",
         "No non-success input is rendered"
       ]

@@ -34,8 +34,8 @@ Specialty workflows need enough typed transport to preserve ownership and recove
 - **Decision:** `Checks` contains executed checks with exact outcomes, all papercut result lines in boundary and authored-task order or `Papercut: none`, and the normalized learning line. Compact uses `Learning: skipped for compact`. Standard/high uses `Learning: curated`, `Learning: no durable learning`, or `Learning: blocked <reason>`.
 - **Decision:** For implementation completion, `Changes` or `Checks` identifies the current active `DONE` plan path when a plan existed. Completion does not require, create, move to, or cite an archive. It carries no plan digest, result manifest, generation map, receipt, repair grant, or model grade.
 - **Decision:** Ordinary learning failure remains a `Risk` and still permits presentation. A current governing-rule conflict that directly invalidates or makes the settled implementation unsafe blocks successful completion. Other incomplete required stages use the owning workflow's typed blocked or stopped report rather than the success payload.
-- **Decision:** The same agent that validated terminal success invokes `completion-presentation` only as a deterministic renderer of the already-complete five-field payload. The renderer performs no validation, routing, state transition, Handoff, artifact publication, delivery, or shipping.
-- **Decision:** The schema and input validation rules live only in [the canonical completion input contract](../../.config/agents/references/completion-presentation-input.md). Callers read it before constructing the fence; the presenter references it after the fence exists. Reading the contract does not activate presentation.
+- **Decision:** The same agent that validated terminal success invokes `completion-presentation` only as a deterministic renderer of the already-complete five-field payload. The renderer checks only the input format and performs no success validation, routing, state transition, Handoff, artifact publication, delivery, or shipping.
+- **Decision:** The schema and input validation rules live only in [the canonical completion input contract](../../.config/agents/references/completion-presentation-input.md). Callers read it before building the input, then pass the input to the render script in a tool call, never in the reply; the reply is the script output. Reading the contract does not activate presentation.
 - **Decision:** Generic and product callers share the five-field shape but keep their own authority. `product-ask` reports Product Handoff, approved PRD or iteration, human decision, papercut, learning, risks, and next product owner without implying engineering implementation or shipping.
 
 ## Why
@@ -85,5 +85,5 @@ This record remains ACTIVE until a newer focused ADR explicitly supersedes D27 a
 - Generic and product fixtures require exactly `Outcome`, `Changes`, `Checks`, `Risks`, and `Next` in order.
 - Checks include papercut and learning dispositions; compact and standard/high behavior differ exactly as specified.
 - Planned completion cites the current active `DONE` path and does not create or require an archive.
-- Same-agent presenter calls render only a complete success payload and never route, validate, dispatch, publish, deliver, or ship.
+- Same-agent presenter calls check only the input format, render only a complete success payload, and never route, validate success or evidence, dispatch, publish, deliver, or ship.
 - Blocked and stopped workflows do not emit a misleading success payload.
