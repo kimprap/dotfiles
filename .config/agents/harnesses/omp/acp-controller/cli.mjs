@@ -5,7 +5,7 @@
 //   node cli.mjs dispose <runId>
 //   node cli.mjs roles
 // stdout: the rendered Markdown record only, except that a successful `roles`
-// prints only the one-line models note; stderr: diagnostics.
+// prints only the models note; stderr: diagnostics.
 // Exit: 0 final/complete, 1 stopped/partial/blocked/parked, 2 refused before
 // any launch, 3 cleanup failure.
 //

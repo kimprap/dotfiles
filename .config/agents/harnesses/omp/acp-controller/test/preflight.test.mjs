@@ -274,7 +274,7 @@ test("processStart: one process reads as the same start time whatever the caller
 test("roles: prints only the models note and never loads the controller", async () => {
   const out = await run({ argv: ["roles"] });
   assert.equal(out.exitCode, 0);
-  assert.equal(out.stdout, "Models: A `scripted/a` · low, B `scripted/b` · low\n");
+  assert.equal(out.stdout, "Models:\n\n- A `scripted/a` · low\n- B `scripted/b` · low\n");
   assert.equal(fs.existsSync(t.log), false, "scripted agent must never start");
   assert.equal(t.controllerLoaded, false, "controller must never be loaded");
 });

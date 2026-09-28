@@ -18,10 +18,10 @@ export function splitModelRole(value) {
   return model && thinking ? { model, thinking } : undefined;
 }
 
-/** The one-line models note shown after a Reconcile brief or Retrace scope table (`cli.mjs roles`). */
+/** The models note (a two-item list) shown after a Reconcile brief or Retrace scope table (`cli.mjs roles`). */
 export function renderModels(roles) {
   const pair = (r) => `\`${r.model}\` · ${r.thinking}`;
-  return `Models: A ${pair(roles.a)}, B ${pair(roles.b)}\n`;
+  return `Models:\n\n- A ${pair(roles.a)}\n- B ${pair(roles.b)}\n`;
 }
 
 /**

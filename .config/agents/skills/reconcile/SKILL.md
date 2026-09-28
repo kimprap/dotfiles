@@ -206,8 +206,8 @@ Immediately before rendering each brief, including a revised one, run
 `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles` through `bash`
 from the repository root with no request body. It runs step 1's capability
 preflight and launches nothing. On exit `2`, present its refusal verbatim and
-stop. On exit `0`, show its one-line `Models:` stdout verbatim directly after
-the brief's reply line. The line reports reviewer A's and B's model and
+stop. On exit `0`, show its `Models:` list stdout verbatim directly after
+the brief's reply line. The list reports reviewer A's and B's model and
 thinking level from live `modelRoles`; it is not a brief field, is not part of
 the approval binding, and no approval changes it. An adjustment naming models
 is a conflicting adjustment under the rule above.
