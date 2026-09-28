@@ -73,7 +73,7 @@ providers:
 github:
   enabled: true
 modelRoles:
-  default: anthropic/claude-opus-5-5:high
+  default: anthropic/claude-opus-5-5:medium
   slow: anthropic/claude-opus-5-5:xhigh
   task: anthropic/claude-opus-5-5:medium
   plan: anthropic/claude-opus-5-5:xhigh
@@ -81,9 +81,9 @@ modelRoles:
   tiny: xai-oauth/grok-4.7:low
   advisor: anthropic/claude-opus-5-5:medium
   test_audit_opinion_a: anthropic/claude-opus-5-5:medium
-  test_audit_opinion_b: xai-oauth/grok-4.7:medium
-  second_opinion_a: anthropic/claude-opus-5-5:medium
-  second_opinion_b: xai-oauth/grok-4.7:medium
+  test_audit_opinion_b: anthropic/claude-fable-5-1:medium
+  second_opinion_a: anthropic/claude-opus-5-5:xhigh
+  second_opinion_b: anthropic/claude-fable-5-1:xhigh
 vault:
   enabled: true
 browser:

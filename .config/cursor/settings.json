@@ -4,8 +4,8 @@
     // =============================================================================
     // "window.zoomLevel": 1.0,
     // "window.zoomLevel": -0.5,
-    "window.zoomLevel": -0.75,
-    // "window.zoomLevel": -1.0,
+    // "window.zoomLevel": -0.75,
+    "window.zoomLevel": -1.0,
     // "window.zoomLevel": -1.25,
     // "window.zoomLevel": -1.75,
 
@@ -140,7 +140,6 @@
     "workbench.editor.tabSizing": "shrink",
     "workbench.editor.empty.hint": "hidden",
     "workbench.editor.highlightModifiedTabs": true,
-    "workbench.editor.enablePreview": false,
     "workbench.layoutControl.enabled": false,
     "workbench.activityBar.orientation": "horizontal",
     // "workbench.activityBar.orientation": "vertical",
