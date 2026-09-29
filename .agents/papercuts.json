@@ -137,15 +137,14 @@
     "pc-a556fa1f9529ba9a": {
       "first_seen": "2026-08-26",
       "last_seen": "2026-08-26",
-      "observations": [
-        {
-          "date": "2026-08-26",
-          "friction": "When existing baseline cases were revised, keep-check rejected eight of them even though they were already classified in ADDED_IDS, because baseline keep exclusion consults REWRITE_IDS separately. Maintainers must know when one case ID belongs in both sets.",
-          "workaround": "Run the pinned keep-check after every registry edit and duplicate each changed baseline-present ID into REWRITE_IDS."
-        }
-      ],
+      "observations": [],
       "occurrence_count": 1,
-      "resolution": null,
+      "resolution": {
+        "kind": "superseded",
+        "reference": "b7b80c4 feat(agents): simplify development workflow lifecycle",
+        "resolved_on": "2026-09-29",
+        "summary": "compare_trace.py with its ADDED_IDS/REWRITE_IDS keep-check was removed in the workflow simplification; the dev-ask evals are now v2 tables without a pinned-baseline comparator, so the overlapping manual ID sets no longer exist."
+      },
       "summary": "Make changed-case classification follow the pinned baseline without overlapping manual ID sets.",
       "surface": ".config/agents/skills/dev-ask/evals/compare_trace.py keep-check ID lifecycle"
     },
@@ -196,15 +195,14 @@
     "pc-cb1b8cb02f18d49b": {
       "first_seen": "2026-09-14",
       "last_seen": "2026-09-14",
-      "observations": [
-        {
-          "date": "2026-09-14",
-          "friction": "Six new execution-recovery projection requirements were reported missing even though their source clauses were present, blocking AC-REC-4 until diagnosis showed that normalize() retains commas while the alternatives omitted them.",
-          "workaround": "Copy each source snippet's normalized punctuation exactly into REQUIRED_PROJECTIONS alternatives."
-        }
-      ],
+      "observations": [],
       "occurrence_count": 1,
-      "resolution": null,
+      "resolution": {
+        "kind": "superseded",
+        "reference": "7eec949 refactor(agents): lean down workflow skills and move omp mechanics",
+        "resolved_on": "2026-09-29",
+        "summary": "scan_stale_contracts.py and its REQUIRED_PROJECTIONS matching were deleted with the dev-ask eval fixtures in lean-down batch 1; the v2 evals tables have no projection scanner, so the punctuation-sensitive matching no longer exists."
+      },
       "summary": "Required-projection matching preserves punctuation while projection authors can assume punctuation-insensitive normalization.",
       "surface": ".config/agents/skills/dev-ask/evals/scan_stale_contracts.py required projections"
     },
