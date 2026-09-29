@@ -42,51 +42,7 @@ sessions itself. A worker entry exists only as a controller request rendered
 from `## Scope evaluator prompts`; a worker never starts another Retrace
 parent, repeats table approval, or impersonates another scope.
 
-After approval the parent invokes the controller once for the approved graph,
-through `bash` with `timeout: 0` and the repository root as working directory:
-
-```text
-node .config/agents/harnesses/omp/acp-controller/cli.mjs retrace < {session-local scratch}/retrace-request.json
-```
-
-The request file holds one JSON object, the only input channel:
-
-```json
-{
-  "root": "/absolute/bound/root",
-  "objectives": ["raw human objective, in authored order"],
-  "constraints": ["human-owned constraint"],
-  "exclusions": ["exclusion"],
-  "evidence": [{"locator": "/absolute/locator", "role": "current"}],
-  "table": {"scopes": [{"id": "S1", "name": "Name", "objective": "One observable objective.", "evaluand": "path or surface", "protected": ["protected behavior"], "exclusions": [], "requires": [], "sharedEvidence": [], "potentialConflict": []}]},
-  "approval": {"text": "the human's exact approval words", "at": "ISO-8601 time"}
-}
-```
-
-Exit `0` means aggregate `complete`; `1` means `partial` or `blocked` with a
-rendered record; `2` means the controller refused before any launch (invalid
-request or table, version pin, model role, missing prompt marker, or an
-abandoned controller run: owner gone and not parked; live and parked runs of
-other sessions never refuse); `3` means cleanup was not established and the
-record names the unresolved actor, PID, or folder. Except for a successful
-`roles` call, stdout carries only the rendered record followed by `## Spend`;
-stderr carries diagnostics. Present stdout
-verbatim. Never rerun the controller to retry a stopped or partial scope; a
-fresh attempt needs the changed evidence or authority that Stops requires.
-After an abandoned-run refusal, ask the human once which listed runs to
-dispose and run
-`node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
-only for runs the human explicitly names; never remove folders or signal
-processes by hand and never retry the refused run automatically: after
-disposal the human re-invokes. If a `dispose` exits `3`, present that record
-verbatim and stop; the human decides.
-
-The controller binds its models from live `modelRoles`: reviewer A uses
-`second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope evaluator
-and normalizer use A's pair. Do not supply profiles, tools, prompts, models,
-argv, process factories, environments, or an actor graph. A binding changed by
-normalization or human table edits is a new approved request, never replay or
-replacement of started work.
+After approval, invoke the controller, handle its exit codes, and bind its models as the "Retrace" section of [the driver](../../harnesses/omp/acp-controller/driver.md) says.
 
 The optional normalizer receives only its frozen normalization input and
 returns a scope proposal, not findings, evaluation, or Reconcile. The scope
