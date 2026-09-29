@@ -1,9 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "The user explicitly asks to stress-test a one-context design decision. Route first to dev-grilling and return immutable decision evidence plus a route-impact Handoff to dev-ask. Ask each complete current decision frontier as one numbered round, wait for the answers, and continue until the frontier is empty or a named resumable stop applies. User confirmation completes the evidence artifact, not a second router gate; reapprove the recomputed route only if named material route facts changed."
-  },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
-}

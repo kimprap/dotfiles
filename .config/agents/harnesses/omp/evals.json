@@ -1,0 +1,242 @@
+{
+  "schema": "lean-dev-workflow-evals/v2",
+  "expansion": "Each case with variants yields one record per variant; a case without variants is one record. A record starts from defaults, then applies the case, then the variant: inputs and expected merge by key, rubric appends, and every other field replaces. {name} placeholders take the variant's vars. The record's rubric is the shared rubric lines named in shared_rubric, then its own lines. Ids starting with G- name groups, never records.",
+  "rubric": {
+    "native-yield": "Require every child request to specify one direct native yield. On the scripted bridged-yield follow-up, stop as a missing reply at the native no-job wait result with no admission, further wait, resend, replacement or reset; relays and ordinary messages only continue collection."
+  },
+  "defaults": {
+    "layer": "backend",
+    "repetition_tier": "hard",
+    "required_capabilities": [],
+    "absent_capabilities": [],
+    "scripted_replies": [],
+    "files": {},
+    "shared_rubric": [
+      "native-yield"
+    ]
+  },
+  "cases": [
+    {
+      "id": "B-LEAN-REVIEW-REPAIR",
+      "criterion": "Same-child review repair uses OMP child-bound wake-job returns despite held or reused job IDs; original launch admission, one review and complete independent verification remain unchanged.",
+      "proof": "Fresh full backend trace over one eligible review repair with actor identity and parentage observations.",
+      "inputs": {
+        "request": "Execute standard OMP work in place at collector taskDepth 0 with one resumable non-isolated child and explicit caller response-object schema. As an independent capability counterfactual, taskDepth > 0 must stop transport-unavailable before any child allocation without delegated-controller substitution; capable other-host topology and named lifecycle semantics remain unchanged. Retain the exact attempt-1 launch candidate, then separately request rethink and its wake-job Handoff. Review returns one material finding with a fixed closure check. Resume the same child for attempt 2 through write agent://<child>, binding task/attempt/owner/receiver/candidate, operation/report identity, invocation and schema. Keep one outstanding request with all earlier child jobs retained. Read details.message.receipts[].outcome: failed and injected stop without waiting for a new row; changed-identity revived stops; only woken or same-identity revived enters collection. From launch or eligible follow-up receipt keep native wait active in the same controller turn until the original matching result and row are retained. Ordinary wait messages do not finish collection; never end that turn or admit display-only auto-delivery without its retained original structured object. The first subsequent task-job row has job id childId-2, native agentUrlId equal to childId, successful resolution and valid caller-schema data with exactly one string response. Retain original result and row before response_object decoding and admit once. Immediately send separate rethink and collect its eligible wake reply; do not wait out holds. Independently reject an old launch row, duplicate admitted row, foreign agentUrlId, text-only successful resolve and rejected job carrying structured data. Admit a later eligible request's reused plain childId only by its own receipt/order/phase binding, not ID novelty. Verify original checks and closure. Reject resend, replacement, reset, new polling, OMP token/restatement, output/history/relay fallback, duplicate admission, review rerun or controller repair. Independent scripted follow-up after an eligible woken receipt on the same bound child: the request states that the terminal return is one direct native yield tool call, never eval, tool.yield, getattr(tool, 'yield'), a prelude helper or any tool bridge, because a bridged yield reports Result submitted. but registers no launch or wake job. The child's reply turn nevertheless ends with a bridged yield, no task-job row is registered, and the controller's next native wait, issued after reading the receipt, returns text No running background jobs to wait for. with details.jobs []. Stop that request as a missing reply and assess it under the shared execution-recovery policy: no admission, further wait, resend, replacement or reset. A wakeRelay or ordinary message received before that result only continues collection; relay, text, agent output and history are never admitted."
+      },
+      "expected": {
+        "artifacts": [
+          "attempt-1 lean Handoff to concrete controller",
+          "required independent review finding",
+          "same-child attempt-2 lean Handoff",
+          "aggregate verification",
+          "learning disposition"
+        ],
+        "first_owner": "in-place-controller",
+        "gates": [
+          "review finding material",
+          "attempt 2 unused",
+          "closure check fixed before verification"
+        ],
+        "mode": "one owner",
+        "outcome": "review repair verified",
+        "owners": [
+          "in-place-controller",
+          "implementation-child",
+          "dev-code-review",
+          "same implementation-child",
+          "dev-verification",
+          "dev-continual-learning"
+        ],
+        "route": "in-place-controller → implementation-child → dev-code-review → same implementation-child → dev-verification → dev-continual-learning"
+      },
+      "required_events": [
+        "activate:dev-implementation-in-place",
+        "dispatch:implementation-child",
+        "candidate-job:attempt-1-original-retained",
+        "handoff:attempt-1",
+        "papercut:attempt-1",
+        "review:repair-required",
+        "candidate-request:attempt-2-same-child-wake",
+        "candidate-return:attempt-2-terminal-response-object",
+        "candidate-native-return:retained-before-decode",
+        "candidate-schema:caller-valid",
+        "candidate:attempt-2-admitted",
+        "candidate-provenance:complete",
+        "candidate-logical-report:admitted-once",
+        "wake-held-id:admitted-by-child-order",
+        "omp-nested-collector:stop-before-allocation",
+        "native-wait:same-turn-through-retention",
+        "ordinary-wait-message:continue-collection",
+        "display-only-auto-delivery:unadmitted",
+        "receipt-failed-injected:stop-without-wait",
+        "receipt-revived-changed-id:stop",
+        "wake-reused-id:admitted-by-child-order",
+        "wake-old-duplicate-foreign:rejected",
+        "wake-text-only-rejected-job:unadmitted",
+        "rethink-request:attempt-2-separate-wake",
+        "rethink:code",
+        "rethink:tests",
+        "direct-checks:pass",
+        "handoff:attempt-2-to-same-controller",
+        "papercut:attempt-2",
+        "verification:original-checks",
+        "verification:review-closure",
+        "verification:verified",
+        "learning:once",
+        "child-instruction:direct-native-yield",
+        "no-job-wait:missing-reply-stop",
+        "no-job-wait:unadmitted",
+        "no-job-wait:execution-recovery-assessed"
+      ],
+      "forbidden_events": [
+        "replacement:implementation-child",
+        "launch-job:attempt-2",
+        "omp-token-message:candidate",
+        "omp-restatement:requested",
+        "job-id:equality-or-novelty-binding",
+        "alternate-source:attempt-2-candidate",
+        "candidate-logical-report:duplicate-admission",
+        "wake-rejected-job:admitted",
+        "wake-text-only:admitted",
+        "held-id:waited-for-expiry",
+        "omp-nested-collector:allocated-child",
+        "controller-turn:ended-before-retention",
+        "display-only-auto-delivery:admitted",
+        "receipt-injected:await-new-row",
+        "idle-polling:added",
+        "dispatch:dev-implementation-controller",
+        "handoff:controller-to-self",
+        "review:second-pass",
+        "review:closure-execution",
+        "attempt:3",
+        "learning:retry",
+        "parent-mutation",
+        "child-instruction:bridged-yield-permitted",
+        "no-job-wait:looped",
+        "no-job-wait:resend-or-replacement",
+        "no-job-wait:relay-text-history-admitted"
+      ],
+      "rubric": [
+        "Require one material finding, same-child bounded repair, one independent review and complete original-plus-closure verification.",
+        "Require OMP taskDepth > 0 to stop before allocation without topology substitution; depth 0 still needs all bindings. Preserve other-host and named-lifecycle semantics.",
+        "Read native receipt outcomes; failed/injected and changed revived identity stop without wait. Eligible receipts keep native wait in the same controller turn through original-row retention despite ordinary messages; reject display-only delivery and new polling.",
+        "Require exact launch-job admission, then the first task-job row for the bound child after each receipt with every earlier job retained; preserve original result and row before successful-resolution, caller-schema and exact identity/phase admission.",
+        "Admit suffixed held and evicted reused IDs by child/request order, never ID equality or novelty. Reject old, duplicate, foreign, text-only and rejecting observations independently.",
+        "Reject replacement, new launch jobs, OMP token/restatement, alternate-source recovery, duplicate admission, waiting out holds, controller self-Handoff/repair, review rerun or third attempt."
+      ]
+    },
+    {
+      "id": "B-LEAN-VERIFIER-REPAIR",
+      "criterion": "Same-child verifier repair uses OMP wake jobs; no-job pre-yield failure, relay notices and rejecting jobs remain unadmitted, other-host native token rules survive, and the same verifier closes the complete fixed check set.",
+      "proof": "Fresh full backend trace over eligible verifier-owned closure with actor identity and parentage observations.",
+      "inputs": {
+        "request": "Execute standard OMP work in place at collector taskDepth 0 with one resumable child and explicit caller response-object schema. Independently classify taskDepth > 0 as transport-unavailable before any allocation, with no delegated-controller substitution and no change to capable other-host topology or named lifecycle semantics. Retain the exact launch candidate and its separately requested rethink wake-job Handoff. Review approves; the verifier proves one defect. Resume the same child for attempt 2 via write agent:// with one outstanding request and exact task/attempt/owner/receiver/candidate, operation/report identity, invocation and schema. Read details.message.receipts[].outcome: failed and injected stop immediately without waiting for a new row; changed-identity revived stops; only woken or same-identity revived enters collection. From launch or eligible follow-up receipt keep native wait active in the same controller turn through original matching result/row retention. Ordinary wait messages do not finish collection; do not end that turn or admit display-only auto-delivery without its original structured object. With earlier jobs retained, admit only the first subsequent child row with matching agentUrlId, successful resolution, valid inherited caller schema and exact identity; retain before response_object decoding. Separately request rethink after candidate admission, then the same verifier closes the unchanged full set. Independently classify counterfactuals without retries: before-yield failure with authoritative no-job turn-ending observation and wakeRelay; accepted yield then rejecting job with valid structured data; no-job registration failure from shutdown/running limit; busy-child injected receipt. None is a reply or resend/replacement/reset authority; injection stops without native wait or new polling. Missing row alone does not prove failure. Another host with actual native correlation retains exact sender/receiver/token/phase/body checks, wrong-token ordinary traffic and only recovery-authorized byte-exact restatement with once-only admission, never as OMP fallback. Neither capability means transport-unavailable. Reject alternate-source, relay/text-only admission, controller repair, replacement or delta-only verification. Independent scripted follow-up after an eligible woken receipt on the same bound child: the request states that the terminal return is one direct native yield tool call, never eval, tool.yield, getattr(tool, 'yield'), a prelude helper or any tool bridge, because a bridged yield reports Result submitted. but registers no launch or wake job. The child's reply turn nevertheless ends with a bridged yield, no task-job row is registered, and the controller's next native wait, issued after reading the receipt, returns text No running background jobs to wait for. with details.jobs []. Stop that request as a missing reply and assess it under the shared execution-recovery policy: no admission, further wait, resend, replacement or reset. A wakeRelay or ordinary message received before that result only continues collection; relay, text, agent output and history are never admitted."
+      },
+      "expected": {
+        "artifacts": [
+          "attempt-1 lean Handoff to concrete controller",
+          "approved independent review",
+          "failed aggregate from bound verifier",
+          "same-child attempt-2 lean Handoff",
+          "same-verifier closure aggregate",
+          "learning disposition"
+        ],
+        "first_owner": "in-place-controller",
+        "gates": [
+          "attempt 2 unused",
+          "verifier directly proved code defect",
+          "same verifier available"
+        ],
+        "mode": "one owner",
+        "outcome": "verifier repair closed",
+        "owners": [
+          "in-place-controller",
+          "implementation-child",
+          "dev-code-review",
+          "dev-verification",
+          "same implementation-child",
+          "same dev-verification",
+          "dev-continual-learning"
+        ],
+        "route": "in-place-controller → implementation-child → dev-code-review → dev-verification → same implementation-child → same dev-verification → dev-continual-learning"
+      },
+      "required_events": [
+        "activate:dev-implementation-in-place",
+        "dispatch:implementation-child",
+        "candidate-job:attempt-1-original-retained",
+        "handoff:attempt-1",
+        "review:approved",
+        "verification:not-verified",
+        "candidate-request:attempt-2-same-child-wake",
+        "candidate-return:attempt-2-terminal-response-object",
+        "candidate-native-return:retained-before-decode",
+        "candidate-schema:caller-valid",
+        "candidate:attempt-2-admitted",
+        "candidate-provenance:complete",
+        "wake-preyield-no-job:relay-unadmitted",
+        "wake-rejection-registration-failure:unadmitted",
+        "wake-busy-injection:not-new-request",
+        "other-host:token-path-preserved",
+        "omp-nested-collector:stop-before-allocation",
+        "native-wait:same-turn-through-retention",
+        "ordinary-wait-message:continue-collection",
+        "display-only-auto-delivery:unadmitted",
+        "receipt-failed-injected:stop-without-wait",
+        "receipt-revived-changed-id:stop",
+        "unsupported-host:transport-unavailable",
+        "candidate-logical-report:admitted-once",
+        "rethink-request:attempt-2-separate-wake",
+        "rethink:code",
+        "rethink:tests",
+        "direct-checks:pass",
+        "handoff:attempt-2-to-same-controller",
+        "papercut:attempt-2",
+        "verification:same-owner",
+        "verification:complete-fixed-set",
+        "verification:verified",
+        "learning:once",
+        "child-instruction:direct-native-yield",
+        "no-job-wait:missing-reply-stop",
+        "no-job-wait:unadmitted",
+        "no-job-wait:execution-recovery-assessed"
+      ],
+      "forbidden_events": [
+        "replacement:implementation-child",
+        "launch-job:attempt-2",
+        "omp-token-message:candidate",
+        "wake-relay:admitted",
+        "wake-failure:resend-or-replacement",
+        "alternate-source:attempt-2-candidate",
+        "dispatch:dev-implementation-controller",
+        "omp-restatement:requested",
+        "no-row:inferred-turn-failure",
+        "busy-injection:new-wake",
+        "omp-nested-collector:allocated-child",
+        "controller-turn:ended-before-retention",
+        "display-only-auto-delivery:admitted",
+        "receipt-injected:await-new-row",
+        "idle-polling:added",
+        "candidate-logical-report:duplicate-admission",
+        "handoff:controller-to-self",
+        "review:second-pass",
+        "verifier:replacement",
+        "verification:delta-only",
+        "attempt:3",
+        "learning:retry",
+        "child-instruction:bridged-yield-permitted",
+        "no-job-wait:looped",
+        "no-job-wait:resend-or-replacement",
+        "no-job-wait:relay-text-history-admitted"
+      ],
+      "rubric": [
+        "Require the same child to repair once and the same verifier to own failed and complete unchanged closure aggregates.",
+        "Require OMP taskDepth > 0 to stop before allocation without topology substitution; keep capable other-host topology and the Reconcile/Retrace acpx controller unchanged.",
+        "Require native receipt dispatch to stop failed/injected and changed revived identity without waiting; eligible receipts retain same-turn native wait through original-row retention, continuing after ordinary messages and rejecting display-only delivery without polling.",
+        "Require exact launch admission followed by first-subsequent child-bound wake-job admission with successful resolution, valid caller schema, original result/row retention before decoding and separate rethink.",
+        "Reject relay-only pre-yield failure, rejecting jobs even with structured data, no-job registration failure and busy injection as replies or resend authority; missing rows alone do not prove failed turns.",
+        "Preserve other-host actual native token correlation, wrong-token handling and narrowly authorized exact-copy restatement. Neither capability means transport-unavailable.",
+        "Reject replacement, new launch jobs, OMP token/restatement, alternate-source admission, duplicate admission, controller self-Handoff/repair, review rerun, replacement verifier, delta-only proof or third attempt."
+      ]
+    }
+  ]
+}

@@ -1,7 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "Starting from repository guidance, identify the current human workflow map and ADR index; report active generic ADR owners through D29, separate product and setup authority, superseded ADR-0006, D23 ownership of the human map and journal relationship, and craft-skill ownership of the optional append-only journal convention. Do not load every ADR body or any maintenance journal as runtime."
-  },
-  "scripted_replies": []
-}

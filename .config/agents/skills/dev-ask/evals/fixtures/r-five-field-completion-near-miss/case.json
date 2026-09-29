@@ -1,7 +1,0 @@
-{
-  "inputs": {
-    "request": "Try to present a purported success input that omits Risks, places Next before Checks, and has an empty Checks list."
-  },
-  "scripted_replies": [],
-  "additional_files": []
-}

@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": "P-FIVE-FIELD-COMPLETION",
-      "prompt": "/skill:product-ask. Read-only terminal projection. The latest Product Handoff is current and completed, the exact approved PRD and iteration identities are current, human promotion approval is exact, no frontier remains, no papercut candidate exists, no learning assessment was eligible, and the Handoff receiver is dev-ask. Describe the one valid five-field completion input, how it reaches the render script, and the same-agent presentation effect.",
+      "prompt": "Invoke `product-ask`. Read-only terminal projection. The latest Product Handoff is current and completed, the exact approved PRD and iteration identities are current, human promotion approval is exact, no frontier remains, no papercut candidate exists, no learning assessment was eligible, and the Handoff receiver is dev-ask. Describe the one valid five-field completion input, how it reaches the render script, and the same-agent presentation effect.",
       "expected_output": "One current input has exactly Outcome, Changes, Checks, Risks, and Next in that order. Checks contains the current Product Handoff and human approval checks, Papercut: none, and Learning: no durable learning. Risks is nonempty, Next sends the approved PRD to dev-ask, and the same product-ask agent passes the input to the render script in a tool call and replies with only the script output, without another stage or Handoff.",
       "assertions": [
         "The completion input has exactly the five ordered fields Outcome, Changes, Checks, Risks, and Next",
@@ -16,7 +16,7 @@
     },
     {
       "id": "P-PAPERCUT-SETTLEMENT-FIVE-FIELD",
-      "prompt": "/skill:product-ask. The current completed Product Handoff carries papercut pc-2222222222222222 and an explicit candidate-specific fixed result. Product-ask validates the unchanged ID and performs the one authorized settlement. A learning assessment is curated. Project the settled product completion without changing product authority or repeating capture.",
+      "prompt": "Invoke `product-ask`. The current completed Product Handoff carries papercut pc-2222222222222222 and an explicit candidate-specific fixed result. Product-ask validates the unchanged ID and performs the one authorized settlement. A learning assessment is curated. Project the settled product completion without changing product authority or repeating capture.",
       "expected_output": "Product-ask settles only pc-2222222222222222 once, preserves product authority, then builds the exact five-field input. Checks contains one Papercut line with that ID and its unchanged capture/fixed settlement, plus Learning: curated. The presenter receives no raw lifecycle or settlement work.",
       "assertions": [
         "Only product-ask performs the one terminal settlement for the unchanged originating PC-ID",
@@ -28,7 +28,7 @@
     },
     {
       "id": "P-COMPLETION-STOPS",
-      "prompt": "/skill:product-ask. Compare three read-only terminal inputs: A is completed but learning is blocked by an ordinary unavailable optional evidence source; B is completed but a current governing rule proves the approved product result unsafe; C has Product Handoff outcome blocked. State whether the generic five-field completion input may be constructed and what product-specific result remains.",
+      "prompt": "Invoke `product-ask`. Compare three read-only terminal inputs: A is completed but learning is blocked by an ordinary unavailable optional evidence source; B is completed but a current governing rule proves the approved product result unsafe; C has Product Handoff outcome blocked. State whether the generic five-field completion input may be constructed and what product-specific result remains.",
       "expected_output": "A may complete with Learning: blocked <reason> under Checks and the same reason under Risks. B emits no completion input and returns the governing conflict to its authority owner. C emits no completion input and preserves the blocked Product Handoff report. None implies shipping.",
       "assertions": [
         "Ordinary learning failure is a residual risk rather than a completion blocker",

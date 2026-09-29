@@ -1,9 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "A bounded shared-interface migration has settled approved product authority but missing compatibility and failure acceptance. The resulting Requirements Brief requires confirmation because it synthesizes human-owned behavior. The specification/ticket lane is mandatory; faithful technical derivation and graph projection then continue automatically through implementation, code review, verification, learning, and completion without artifact-count approvals or an intermediate dev-ask owner. Dispatch only dev-requirements first."
-  },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
-}

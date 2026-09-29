@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": "INIT-EMPTY-PROPOSAL",
-      "prompt": "/skill:init-ask. Read-only phase-1 simulation in an empty temporary repository. The portable owner skills are installed, no repository-specific guidance facts are established, and no repository artifacts exist. Emit only the skill's complete fixed nine-row catalog in order, proposed effects, and approval gate. Do not write or invent content.",
+      "prompt": "Invoke `init-ask`. Read-only phase-1 simulation in an empty temporary repository. The portable owner skills are installed, no repository-specific guidance facts are established, and no repository artifacts exist. Emit only the skill's complete fixed nine-row catalog in order, proposed effects, and approval gate. Do not write or invent content.",
       "expected_output": "All nine catalog rows appear in fixed order. Papercuts is the sole proposed safe opt-in with exact absent `.agents/papercuts.json` baseline and `papercut init` effect; lazy semantic artifacts are on-demand, agent memory is planned, and no bytes change before exact approval.",
       "assertions": [
         "The inventory uses only integrated, proposed, on-demand, blocked, and planned",

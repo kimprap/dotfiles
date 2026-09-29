@@ -1,7 +1,0 @@
-{
-  "inputs": {
-    "request": "Evaluate three isolated approved entry topologies. Router entry and standalone entry each use the invoking agent as dev-implementation controller with one distinct child and no self-Handoff. An explicitly approved delegated topology uses outer route agent to separate controller to child, with the controller alone scheduling its child and returning one real Handoff to the concrete outer receiver. Also inspect an unapproved nested-controller request and reject it without spawning or replacing any bound identity."
-  },
-  "scripted_replies": [],
-  "additional_files": []
-}

@@ -1,9 +1,0 @@
-{
-  "additional_files": [],
-  "inputs": {
-    "request": "Repository-local rules can be automatically injected into agent and subagent sessions, but ADRs, `ARCHITECTURE.md`, and similar contracts are not. I propose using repository-local `.agents/AGENTS.md` for discovery, with only the ADR index rather than every ADR. Give me a refined approach."
-  },
-  "scripted_replies": [
-    "APPROVE the current Route Overview"
-  ]
-}
