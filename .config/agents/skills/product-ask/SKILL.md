@@ -89,7 +89,7 @@ A complete papercut candidate and its unchanged originating `PC-ID` travel throu
 Each product iteration targets one existing PRD identity and revision or `new`; it may reference other PRDs as dependencies. A new round does not create a new iteration. A candidate revision does not replace an approved PRD revision. Promotion requires explicit human approval of the exact candidate revision and digest, proposed identity and destination, and every publication effect.
 
 When route impact is unchanged, continue to the next owner already named by the approved route. Recompute and request reapproval only for a material route fact above. Never keep a router-owned iteration ledger.
-Pass papercut results through unchanged; settle them with `papercut` resolve.
+Pass papercut results through unchanged; settle them with `papercut` resolve. Product completion, interview confirmation, PRD approval or publication, and P07 approval are not candidate-specific results and leave the record open.
 
 ## Evidence stop
 

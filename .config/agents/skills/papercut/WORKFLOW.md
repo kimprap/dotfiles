@@ -2,7 +2,7 @@
 
 ## Human overview
 
-The papercut scheduling rule decides when, and by whom, one `capture` look runs. Read-only work and work abandoned before a repository-work Handoff create no boundary. The skill is loaded even when no candidate is expected; no qualifying result returns `Papercut: none` without ledger access.
+The papercut scheduling rule decides when, and by whom, one `capture` look runs. The skill is loaded even when no candidate is expected; no qualifying result returns `Papercut: none` without ledger access.
 
 Discovery stays within the completed work and the bounded structured evidence it directly carries. Every distinct qualifying root cause is returned in authored-task order, then first qualifying observation order within each task; direct work uses observation order. There is no receipt escalation or numeric result cap. Equivalent symptoms consolidate before recording and return. Repository persistence remains opt-in through explicit `papercut init` or an exact approved `init-ask` effect; an initialized writable repository may record results automatically, while absent, unsafe, malformed, or unauthorized storage leaves every result report-only. Papercut creates no stage, second Handoff, eager ledger access, learning dispatch, or presenter-side invocation.
 

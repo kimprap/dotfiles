@@ -48,12 +48,12 @@ Then take the first matching row:
 | Current executable authority and named acceptance are complete, and a named criterion is unmet | `dev-implementation` (outcome-first continuation). |
 | Explicit user or external-scheduler portfolio-audit request with an eligible exact target and complete repository or named-subsystem permanent-test suite intake | `dev-test-audit`: read-only; see the audit intake rule under the Route Overview. |
 | Explicit request to verify, review, ship, curate, or maintain domain authority | Validated direct stage: check its exact intake and human gates; shipping needs separate delivery authority. |
-| Technical authority, architecture, named acceptance, direct checks, and task ownership are settled | `dev-implementation` directly. |
-| Durable technical decisions are unresolved | `dev-specification`, then the standard suffix; reuse a complete specification rather than regenerating it for task sizing. |
-| A complete current specification has known seams but lacks necessary task or dependency ownership | `dev-ticketing`, then the standard suffix; reuse a complete graph rather than regenerating it. |
 | Requirements, grilling, or specification needs runnable or visible fidelity | `dev-prototype`: disposable decision evidence returned to that exact owner; never folds into production. |
 | Explicitly requested broad survey whose selected change is not settled | `dev-improve-codebase-architecture`: returns the selected candidate and constraints for recomputation; starts no refactor. |
 | Exact-name request only | `recap`: manual response-rewrite fallback, never an automatic workflow route. |
+| Technical authority, architecture, named acceptance, direct checks, and task ownership are settled | `dev-implementation` directly. |
+| Durable technical decisions are unresolved | `dev-specification`, then the standard suffix; reuse a complete specification rather than regenerating it for task sizing. |
+| A complete current specification has known seams but lacks necessary task or dependency ownership | `dev-ticketing`, then the standard suffix; reuse a complete graph rather than regenerating it. |
 
 A user-named stage is a strong preference, not a gate bypass: validate prerequisites and add only the smallest missing prerequisite path.
 Project-authored tickets, repository plans, and current implementation graphs are already qualified and skip triage.

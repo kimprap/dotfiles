@@ -39,7 +39,7 @@ Normalize the portable terminal status to exactly one completion check line:
 
 `curated` and `no durable learning` permit completion. An ordinary `blocked <reason>` also permits completion and the same reason is reported as residual risk. Stop completion only when the assessment establishes a current governing-rule conflict that directly makes the settled implementation invalid or unsafe; return that conflict to the governing authority instead of constructing completion input.
 
-After portable learning returns its one terminal status, load `skill://dev-handoff` and return one Handoff on the first return, following its envelope. Put the portable assessment evidence and the one matching `Learning:` line in `Checks`, with no invented acceptance IDs. The bound lifecycle controller is the sole next receiver. Check the draft against `dev-handoff` before sending.
+After portable learning returns its one terminal status, load `skill://dev-handoff` and return one Handoff on the first return, following its envelope. Put the portable assessment evidence and the one matching `Learning:` line in `Checks`, with no invented acceptance IDs. The bound lifecycle controller is the sole next receiver. Check the draft against `dev-handoff` before sending and fix that draft in place.
 
 Never re-invoke portable `continual-learning`, ask it to re-emit, or create a second assessment or Handoff. Include curated guidance paths, candidate-specific papercut dispositions, and the exact residual or governing conflict. The adapter never reads or writes the papercut ledger, reruns review or verification, repairs, presents completion, or ships.
 
