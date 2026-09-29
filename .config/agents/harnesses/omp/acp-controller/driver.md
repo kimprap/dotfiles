@@ -8,7 +8,8 @@
    `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`, a missing
    or unparsable model role (`modelRoles.second_opinion_a`
    for A and `modelRoles.second_opinion_b` for B, each `<model>:<thinking>`),
-   a missing or duplicated reviewer prompt marker, or an
+   an invalid per-run `models` override (`model override`), a missing or
+   duplicated reviewer prompt marker, or an
    abandoned controller run (owner gone and not parked; live and parked runs of
    other sessions never refuse). Present a refusal verbatim and stop. After an
    abandoned-run refusal, ask the human once which listed runs to dispose and
@@ -17,7 +18,8 @@
    processes by hand and never retry the refused run automatically: after
    disposal the human re-invokes. If a `dispose` exits `3`, present that record
    verbatim and stop; the human decides. Do not patch the host,
-   supply profiles, argv, models, tools, prompts, process factories or
+   supply profiles, argv, models (except the request's `models` field under
+   "Per-run model change"), tools, prompts, process factories or
    environment, substitute task/hub/Eval transport, emulate both roles with one
    actor, or weaken a seam.
 
@@ -25,13 +27,56 @@
 
 Immediately before rendering each brief, including a revised one, run
 `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles` through `bash`
-from the repository root with no request body. It runs the Reconcile capability
-preflight above and launches nothing. On exit `2`, present its refusal verbatim and
-stop. On exit `0`, show its `Models:` list stdout verbatim directly after
-the brief's reply line. The list reports reviewer A's and B's model and
-thinking level from live `modelRoles`; it is not a brief field, is not part of
-the approval binding, and no approval changes it. An adjustment naming models
-is a conflicting adjustment under the Reconcile brief adjustment rule.
+from the repository root. With no pending model change it takes no request
+body; plain `roles` returns at once because it reads stdin only when stdin is
+not a TTY, and the OMP `bash` tool gives it an empty stdin. It runs the
+Reconcile capability preflight above and launches nothing. On exit `2`, present
+its refusal verbatim and stop, except a `model choice` refusal under "Per-run
+model change". On exit `0`, show its `Models:` list stdout verbatim directly
+after the brief's reply line. The list reports reviewer A's and B's model and
+thinking level: the live `modelRoles`, or a pending per-run model change with
+each changed line naming its live default. It is not a brief field.
+
+### Per-run model change
+
+This applies to Reconcile and Retrace. A human change of a reviewer's model or
+thinking level is a valid per-run adjustment, including inside
+`approve — {adjustments}`. It is carried only by the controller calls below:
+never edit `.config/agents/harnesses/omp/config.yml` or any other `modelRoles`
+source for a model change.
+
+1. Pass the human's words unresolved as the `roles` body; never pre-resolve a
+   name or level yourself. Write
+   `{"models": {"a": {"model": "{human's name}", "thinking": "{human's level}"}, "b": {...}}}`,
+   with only the roles and fields the human named, to a session-local scratch
+   file and run
+   `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles < {session-local scratch}/roles-body.json`
+   through `bash` from the repository root. The file redirect always closes
+   stdin, so the call cannot wait on an open stream. A role or field left out
+   keeps its live value. The controller resolves each value against
+   `omp models --json`: a name searches only the reviewer's current provider,
+   skips dated snapshots and takes the newest version; `provider/name` or an
+   exact selector overrides that scope; a level is an exact supported level or
+   the one supported level it starts. A kept live level must be supported by a
+   changed model.
+2. On exit `2` with **Reason** `model choice`, ask the human once, listing the
+   candidates each refusal line names, and do not guess; run `roles` again with
+   the human's answer. Any other refusal is presented verbatim and stops.
+3. On exit `0`, render the skill's short `models changed` gate with the stdout
+   verbatim and wait, even when the change came inside `approve — …`. A plain
+   `approve` then starts the run with the override.
+4. The approved request carries the exact pair from the shown note for each
+   changed role, `"models": {"a": "{selector}:{level}", "b": "{selector}:{level}"}`,
+   omitting unchanged roles. The controller checks that each selector is in
+   `omp models --json` and supports the level, does no loose resolution, and
+   otherwise refuses with exit `2`, **Reason** `model override`, and nothing
+   launched. Reviewers A and B use the pairs, Retrace scope evaluators use A's
+   pair, a parked Reconcile run keeps them at resume, and `## Spend` shows
+   them. `normalize` always uses the live roles and refuses `models`.
+5. The override applies to every gate re-presented for the same pending run;
+   rerun `roles` with the same body before each. It ends when that run's
+   controller call is made; a later brief or table goes back to the live
+   defaults and a plain `roles` call.
 
 ### Controller invocation
 
@@ -54,6 +99,7 @@ Artifact edits only. In Artifact edits, `candidate` is
 `{"identity": "{exact identity}", "artifact": "{absolute artifact path}"}` with
 no `text`, and an optional `"validate": {"argv": [..]}` names the existing
 artifact-native validator. `cap` is `none` or the approved positive integer.
+An approved per-run model change adds `models` as "Per-run model change" says.
 Then run the controller once, through `bash` with `timeout: 0` and the
 repository root as working directory:
 
@@ -168,9 +214,10 @@ The request file holds one JSON object, the only input channel:
 
 Exit `0` means aggregate `complete`; `1` means `partial` or `blocked` with a
 rendered record; `2` means the controller refused before any launch (invalid
-request or table, version pin, model role, missing prompt marker, or an
-abandoned controller run: owner gone and not parked; live and parked runs of
-other sessions never refuse); `3` means cleanup was not established and the
+request or table, version pin, model role, model override, missing prompt
+marker, or an abandoned controller run: owner gone and not parked; live and
+parked runs of other sessions never refuse); `3` means cleanup was not
+established and the
 record names the unresolved actor, PID, or folder. Except for a successful
 `roles` call, stdout carries only the rendered record, laid out as Retrace's
 "Freshness and aggregate" section describes, followed by `## Spend`;
@@ -185,9 +232,11 @@ processes by hand and never retry the refused run automatically: after
 disposal the human re-invokes. If a `dispose` exits `3`, present that record
 verbatim and stop; the human decides.
 
-The controller binds its models from live `modelRoles`: reviewer A uses
-`second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope evaluator
-and normalizer use A's pair. Do not supply profiles, tools, prompts, models,
+By default the controller binds its models from live `modelRoles`: reviewer A
+uses `second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope
+evaluator and normalizer use A's pair. An approved request's `models` field
+replaces them for that run only, as "Per-run model change" says; the
+normalizer always uses the live pair. Do not supply profiles, tools, prompts,
 argv, process factories, environments, or an actor graph. A binding changed by
 normalization or human table edits is a new approved request, never replay or
 replacement of started work.

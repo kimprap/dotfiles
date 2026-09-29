@@ -180,12 +180,46 @@ item stays binding.
 For an unresolved candidate, render the Candidate child as
 `unresolved — name one proposal or artifact` and wait; approval alone cannot
 start it. Plain `approve` starts the displayed binding. An unambiguous
-`approve — {adjustments}` updates that binding and starts without another gate.
+`approve — {adjustments}` updates that binding and starts without another gate,
+unless it changes a reviewer model or thinking level.
 A correction without approval or a conflicting or ambiguous adjustment renders
 one revised brief and waits. Approval is local to the displayed binding and
 grants no other authority or effect.
 
 Immediately before rendering each brief, including a revised one, run the roles check under "Roles check before each brief" in [the driver](../../harnesses/omp/acp-controller/driver.md).
+
+A human change of a reviewer's model or thinking level is a valid per-run
+adjustment; follow "Per-run model change" in
+[the driver](../../harnesses/omp/acp-controller/driver.md). Pass the human's
+words as the `roles` body, never pre-resolving them, and never edit
+`config.yml` or any other `modelRoles` source. On a `model choice` exit `2`, ask
+the human once, listing the named candidates, and do not guess. On exit `0`,
+any model change, even inside `approve — …`, renders this short gate instead of
+the whole brief and waits; a plain `approve` then starts the run, and the
+approved request carries the exact `{selector}:{level}` pairs from the shown
+note in `models`:
+
+```markdown
+## Reconcile brief — models changed
+
+**Candidate**
+
+- `{exact identity}` — rest of the brief unchanged
+
+**Changed**
+
+- {Field}: {new value}
+
+Reply **approve** to start, or **approve — {adjustments}**.
+
+{roles stdout verbatim}
+```
+
+Emit **Changed** only when unambiguous non-model brief adjustments come with
+the model change. An ambiguous or conflicting non-model adjustment still
+renders the full revised brief, with the override note after it. The override
+applies to every gate re-presented for the same pending run and ends when that
+run's controller call is made; a later brief goes back to the live defaults.
 
 After approval, invoke the controller as "Controller invocation" in [the driver](../../harnesses/omp/acp-controller/driver.md) says.
 

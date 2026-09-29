@@ -8,11 +8,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
+import { main } from "../cli.mjs";
 import { resumeReconcile, runReconcile } from "../controller.mjs";
 import { observePid } from "../lib/adapter.mjs";
 import { socketDirFor } from "../lib/env.mjs";
 import { disposeActor, finishRun, leaveRun, openRun, ask, startActor } from "../lib/ports.mjs";
 import { validateResult } from "../lib/schema.mjs";
+import { OMP_VERSION } from "../lib/versions.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
@@ -88,6 +90,27 @@ function recordOf(markdown) {
   return markdown.slice(0, i);
 }
 
+/**
+ * One `reconcile` through the CLI entry: a fake `omp` on PATH answers `--version` and otherwise
+ * runs the scripted agent; live roles are ROLES and the model catalog lists `catalog` selectors.
+ */
+async function viaCli(request, catalog) {
+  const bin = path.join(t.dir, "bin");
+  fs.mkdirSync(bin, { recursive: true });
+  fs.writeFileSync(path.join(bin, "omp"), `#!/bin/sh\nif [ "$1" = "--version" ]; then echo '${OMP_VERSION}'; exit 0; fi\nexec '${t.launcher}' "$@"\n`, { mode: 0o755 });
+  return main({
+    argv: ["reconcile"],
+    stdinText: JSON.stringify(request),
+    env: { PATH: `${bin}:${process.env.PATH}` },
+    sessionsRoot: t.sessionsRoot,
+    tmpRoot: t.tmpRoot,
+    readModelRoles: async () => ({ ok: true, roles: ROLES }),
+    readModelCatalog: async () => ({ ok: true, models: catalog.map(([selector, thinking]) => ({ provider: "scripted", id: selector.slice("scripted/".length), selector, thinking })) }),
+    loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
+    log: () => {},
+  });
+}
+
 test("C4: three invalid returns (invalid data, prose-only, failed yield) each get one re-ask; the fourth stops", async () => {
   setPlan({ "scripted/a": ['invalid:{"kind":"review","verdict":"MAYBE"}', "prose", "failed-yield", 'invalid:{"kind":"review","verdict":"REVISE"}'] });
   const out = await runReconcile(conversation("Use two columns."), deps());
@@ -152,6 +175,16 @@ test("KR5: A starts every outer iteration including closure; B is prompted only 
   const revise = log.findIndex((e) => e.event === "prompt" && e.response.includes("REVISE"));
   assert.ok(firstB > revise, "B is created only after A's applicable REVISE");
   assert.match(out.markdown, /\| cleanup \| — \| — \| A, B disposed \(observed exit\) \|\n\n## Final proposal\n\n\*\*Proposal\*\*\n\n- Use one column\.\n/);
+  assertCleanedUp();
+});
+
+test("models override: an exact request `models` value launches that reviewer on it; an unset role keeps its live pair", async () => {
+  setPlan({ "scripted/c": [VALID, REVISE("Use one column."), VALID], "scripted/b": [VALID, VALID] });
+  const out = await viaCli(conversation("Use two columns.", { models: { a: "scripted/c:high" } }), [["scripted/c", ["low", "high"]], ["scripted/b", ["low"]]]);
+  assert.equal(out.exitCode, 0, out.stdout);
+  assert.deepEqual([...new Set(events().filter((e) => e.event === "start").map((e) => e.model))].sort(), ["scripted/b", "scripted/c"]);
+  assert.ok(out.stdout.includes("| A | scripted/c | high |"), out.stdout);
+  assert.ok(out.stdout.includes("| B | scripted/b | low |"), out.stdout);
   assertCleanedUp();
 });
 

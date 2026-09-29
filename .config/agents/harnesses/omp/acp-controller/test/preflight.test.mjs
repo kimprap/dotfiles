@@ -37,6 +37,25 @@ const REQUEST = JSON.stringify({
   approval: { text: "go", at: "2026-09-27T01:00:00Z" },
 });
 
+const STUB_ROLES = { a: { model: "scripted/a", thinking: "low" }, b: { model: "scripted/b", thinking: "low" } };
+
+// An `omp models --json` catalog slice: `openai/claude-opus-9-9` proves the provider scope, the
+// dated `claude-opus-4-5-20251101` would outrank `claude-opus-4-5` if snapshots were not skipped.
+const LEVELS = ["low", "medium", "high", "xhigh", "max"];
+const entry = (provider, id, thinking = LEVELS) => ({ provider, id, selector: `${provider}/${id}`, thinking });
+const CATALOG = [
+  entry("anthropic", "claude-opus-4-5", ["minimal", "low", "medium", "high", "xhigh"]),
+  entry("anthropic", "claude-opus-4-5-20251101"),
+  entry("anthropic", "claude-opus-5-5"),
+  entry("anthropic", "claude-fable-5"),
+  entry("anthropic", "claude-fable-5-1"),
+  entry("anthropic", "claude-3-haiku-20240307", null),
+  entry("anthropic", "claude-haiku-4-5", null),
+  entry("openai", "claude-opus-9-9"),
+];
+const LIVE = { a: { model: "anthropic/claude-opus-5-5", thinking: "medium" }, b: { model: "anthropic/claude-fable-5-1", thinking: "medium" } };
+const roles = (models) => JSON.stringify({ models });
+
 let t; // per-test fixture
 
 /** Fake `omp`: prints `version` for `--version`, invocations logged; anything else execs the scripted agent. */
@@ -77,19 +96,21 @@ const world = () => ({ observePid: observe, processStart: start, listProcesses: 
 /**
  * One CLI run with injected roots, prompts and process world. With `stubRoles: false` the real
  * readModelRoles runs, so reaching it would start the scripted agent via the fake omp.
- * `realController` loads ./controller.mjs instead of the stub.
+ * `realController` loads ./controller.mjs instead of the stub. `body` is the `roles` stdin;
+ * `live` replaces the stubbed live roles and `catalog` is the injected `omp models --json` list.
  */
-async function run({ version = OMP_VERSION, controllerRoot = CONTROLLER_ROOT, stubRoles = true, argv = ["reconcile"], realController = false, request = REQUEST } = {}) {
+async function run({ version = OMP_VERSION, controllerRoot = CONTROLLER_ROOT, stubRoles = true, argv = ["reconcile"], realController = false, request = REQUEST, body = "", live = STUB_ROLES, catalog } = {}) {
   const omp = fakeOmp(t.dir, version, t.launcher);
   const out = await main({
     argv,
-    stdinText: argv[0] === "dispose" || argv[0] === "roles" ? "" : request,
+    stdinText: argv[0] === "dispose" ? "" : argv[0] === "roles" ? body : request,
     env: { PATH: omp.pathEnv },
     controllerRoot,
     sessionsRoot: t.sessionsRoot,
     tmpRoot: t.tmpRoot,
     ...world(),
-    ...(stubRoles ? { readModelRoles: async () => ({ ok: true, roles: { a: { model: "scripted/a", thinking: "low" }, b: { model: "scripted/b", thinking: "low" } } }) } : {}),
+    ...(stubRoles ? { readModelRoles: async () => ({ ok: true, roles: live }) } : {}),
+    ...(catalog ? { readModelCatalog: async () => ({ ok: true, models: catalog }) } : {}),
     loadPrompts: async () => ({ ok: true, prompts: { reviewer: {}, scope: {} }, sources: {} }),
     loadController: async () => {
       t.controllerLoaded = true;
@@ -277,6 +298,59 @@ test("roles: prints only the models note and never loads the controller", async 
   assert.equal(out.stdout, "Models:\n\n- A `scripted/a` · low\n- B `scripted/b` · low\n");
   assert.equal(fs.existsSync(t.log), false, "scripted agent must never start");
   assert.equal(t.controllerLoaded, false, "controller must never be loaded");
+});
+
+test("roles: a body resolves loose names and levels in the live provider and marks changed lines with the live default", async () => {
+  const out = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body: roles({ a: { thinking: "hi" }, b: { model: "opus", thinking: "xh" } }) });
+  assert.equal(out.exitCode, 0, out.stdout);
+  assert.equal(out.stdout, "Models:\n\n- A `anthropic/claude-opus-5-5` · high (default: medium)\n- B `anthropic/claude-opus-5-5` · xhigh (default: `anthropic/claude-fable-5-1` · medium)\n");
+
+  // A choice equal to the live pair has no suffix; a model-only change keeps the live level; snapshots are skipped.
+  const kept = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body: roles({ a: { model: "opus", thinking: "medium" }, b: { model: "opus-4-5" } }) });
+  assert.equal(kept.exitCode, 0, kept.stdout);
+  assert.equal(kept.stdout, "Models:\n\n- A `anthropic/claude-opus-5-5` · medium\n- B `anthropic/claude-opus-4-5` · medium (default: `anthropic/claude-fable-5-1` · medium)\n");
+
+  // A provider prefix overrides the live provider's scope.
+  const scoped = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body: roles({ a: { model: "openai/opus" } }) });
+  assert.equal(scoped.stdout, "Models:\n\n- A `openai/claude-opus-9-9` · medium (default: `anthropic/claude-opus-5-5` · medium)\n- B `anthropic/claude-fable-5-1` · medium\n");
+  assert.equal(t.controllerLoaded, false, "controller must never be loaded");
+});
+
+test("roles: ambiguous, unmatched or unsupported choices refuse as model choice and name the candidates", async () => {
+  const tied = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body: roles({ a: { model: "claude" }, b: { thinking: "m" } }) });
+  assertNothingLaunched(tied);
+  assert.ok(tied.stdout.includes("**Reason:** model choice\n"), tied.stdout);
+  const a = tied.stdout.split("\n").find((l) => l.startsWith("- A model `claude`: ambiguous"));
+  for (const c of ["anthropic/claude-opus-5-5", "anthropic/claude-fable-5-1", "anthropic/claude-haiku-4-5"]) assert.ok(a?.includes(`\`${c}\``), `${c} named: ${a}`);
+  assert.ok(!a.includes("openai/") && !a.includes("2025"), `no other provider or snapshot: ${a}`);
+  assert.ok(tied.stdout.includes("- B thinking `m` for `anthropic/claude-fable-5-1`: ambiguous; candidates: `medium`, `max`\n"), tied.stdout);
+
+  const none = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body: roles({ a: { model: "haiku" }, b: { model: "gpt" } }) });
+  assertNothingLaunched(none);
+  assert.ok(none.stdout.includes("**Reason:** model choice\n"), none.stdout);
+  assert.ok(none.stdout.includes("- A model `haiku` → `anthropic/claude-haiku-4-5` does not support the live level `medium`; the model supports no thinking level\n"), none.stdout);
+  assert.ok(none.stdout.includes("- B model `gpt`: no model in provider `anthropic` matches\n"), none.stdout);
+});
+
+test("roles: a malformed body is an invalid request", async () => {
+  for (const body of ["[]", roles({ c: { model: "opus" } }), roles({ a: { model: "" } }), JSON.stringify({ models: {}, extra: 1 })]) {
+    const out = await run({ argv: ["roles"], live: LIVE, catalog: CATALOG, body });
+    assertNothingLaunched(out);
+    assert.ok(out.stdout.includes("**Reason:** invalid request\n"), `${body}: ${out.stdout}`);
+  }
+});
+
+test("models override: an inexact or unsupported request value refuses as model override, and normalize refuses models", async () => {
+  const request = (models) => JSON.stringify({ ...JSON.parse(REQUEST), models });
+  const out = await run({ live: LIVE, catalog: CATALOG, request: request({ a: "opus:high", b: "anthropic/claude-fable-5-1:minimal" }) });
+  assertNothingLaunched(out);
+  assert.ok(out.stdout.includes("**Reason:** model override\n"), out.stdout);
+  assert.ok(out.stdout.includes("- A `opus:high`: `opus` is not an exact selector in the model catalog\n"), out.stdout);
+  assert.ok(out.stdout.includes("- B `anthropic/claude-fable-5-1:minimal`: level `minimal` is not supported; allowed: `low`, `medium`, `high`, `xhigh`, `max`\n"), out.stdout);
+
+  const normalize = await run({ argv: ["normalize"], live: LIVE, catalog: CATALOG, request: JSON.stringify({ root: "/tmp", concerns: [], input: "x", models: { a: "anthropic/claude-opus-5-5:high" } }) });
+  assertNothingLaunched(normalize);
+  assert.ok(normalize.stdout.includes("**Reason:** invalid request\n\n- normalize takes no models; it uses the live model roles\n"), normalize.stdout);
 });
 
 // ------------------------------------------------------------ run claim

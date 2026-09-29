@@ -7,9 +7,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
+import { main } from "../cli.mjs";
 import { runReconcile, runRetrace } from "../controller.mjs";
 import { observePid } from "../lib/adapter.mjs";
 import { socketDirFor } from "../lib/env.mjs";
+import { OMP_VERSION } from "../lib/versions.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
@@ -118,6 +120,32 @@ test("KT3: at most four scope evaluators are live at once; a fifth starts only a
   const firstExit = Math.min(...ids.map((id) => at("exit", id)));
   assert.ok(starts[4] > firstExit, "the fifth evaluator starts after an evaluator exit");
   assert.ok(at("start", "S6") > at("exit", "S1"), "S6 starts after its prerequisite's evaluator exited");
+  assertCleanedUp();
+});
+
+test("models override: an exact A override binds the scope evaluator and the delegated reviewer A", async () => {
+  const bin = path.join(t.dir, "bin");
+  fs.mkdirSync(bin);
+  fs.writeFileSync(path.join(bin, "omp"), `#!/bin/sh\nif [ "$1" = "--version" ]; then echo '${OMP_VERSION}'; exit 0; fi\nexec '${t.launcher}' "$@"\n`, { mode: 0o755 });
+  setPlan({ "scripted/c": scopeEntries("S1", [candidate("S1")]) });
+  const out = await main({
+    argv: ["retrace"],
+    stdinText: JSON.stringify({ ...request([scope("S1")]), models: { a: "scripted/c:high" } }),
+    env: { PATH: `${bin}:${process.env.PATH}` },
+    sessionsRoot: t.sessionsRoot,
+    tmpRoot: t.tmpRoot,
+    readModelRoles: async () => ({ ok: true, roles: ROLES }),
+    readModelCatalog: async () => ({ ok: true, models: [{ provider: "scripted", id: "c", selector: "scripted/c", thinking: ["low", "high"] }] }),
+    loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
+    log: () => {},
+  });
+  assert.equal(out.exitCode, 0, out.stdout);
+  const starts = events().filter((e) => e.event === "start");
+  assert.ok(starts.length >= 2, "evaluator and reviewer A started");
+  assert.ok(starts.every((e) => e.model === "scripted/c"), `every actor on the override: ${starts.map((e) => e.model)}`);
+  const spend = out.stdout.slice(out.stdout.indexOf("\n## Spend\n"));
+  const rows = spend.split("\n").filter((l) => l.startsWith("| S1/"));
+  assert.ok(rows.length >= 2 && rows.every((r) => r.includes(" | scripted/c | high | ")), spend);
   assertCleanedUp();
 });
 

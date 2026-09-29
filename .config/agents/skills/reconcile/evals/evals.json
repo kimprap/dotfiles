@@ -200,6 +200,20 @@
         "A Correction whose text departs from P1's wording is not rejected merely because P1 appears in Context as evidence, while the still-binding step 3 decision keeps the CLI output format unchanged, so the branch that changes it is not applied",
         "The Correction that overturns the reopened step 2 and departs from P1's wording causes no `approved-authority conflict` stop; the branch that changes the CLI output format conflicts with still-binding step 3 and stops for the approved-authority conflict"
       ]
+    },
+    {
+      "id": "REC-MODEL-OVERRIDE",
+      "prompt": "Simulate the supplied facts under the current Reconcile skill and its controller driver. This is a stateless fixture, not a live invocation; do not use tools or repository facts. Live `modelRoles` are A `anthropic/claude-opus-5-5:medium` and B `anthropic/claude-fable-5-1:medium`. The root has shown the complete Reconcile brief for Conversation replacement of the exact candidate `layout v1` (Goal: choose the page layout; cap none) with the plain `roles` note listing both live pairs. Turn 1: the human replies `approve — thinking hi`. The `roles` call with body `{\"models\":{\"a\":{\"thinking\":\"hi\"}}}` exits 0 with stdout exactly:\n\nModels:\n\n- A `anthropic/claude-opus-5-5` · high (default: medium)\n- B `anthropic/claude-fable-5-1` · medium\n\nTurn 2 (separate branch from turn 1): the human instead replies `approve — use claude for B`. The `roles` call with body `{\"models\":{\"b\":{\"model\":\"claude\"}}}` exits 2 with `## Controller refused`, **Reason:** model choice, and the line `B model `claude`: ambiguous; candidates: `anthropic/claude-opus-5-5`, `anthropic/claude-fable-5-1`, `anthropic/claude-haiku-4-5``. Turn 3 (continuing turn 1): the human replies `approve`. For each turn state the controller calls with their bodies or request fields, what the root renders or asks, and whether any file changes.",
+      "expected_output": "`approve — thinking hi` does not start the run: the root passes the human's words unresolved as the `roles` body, edits no `config.yml` or other `modelRoles` source, and shows only the short `## Reconcile brief — models changed` gate with the exact candidate identity and the roles stdout verbatim, then waits. The ambiguous `claude` asks the human once, listing the three named candidates, without guessing or starting. Plain `approve` then runs one `reconcile` call whose request carries `\"models\": {\"a\": \"anthropic/claude-opus-5-5:high\"}` with B left live.",
+      "files": [
+        ".config/agents/references/packed-label.md"
+      ],
+      "assertions": [
+        "After `approve — thinking hi` the root runs `roles` with the body `{\"models\":{\"a\":{\"thinking\":\"hi\"}}}` (the human's words, not a pre-resolved level), launches no `reconcile` call, and renders the short `## Reconcile brief — models changed` gate: the `layout v1` candidate child with `rest of the brief unchanged`, no **Changed** section, the reply line, and the roles stdout verbatim showing A `anthropic/claude-opus-5-5` · high (default: medium); it does not repeat the whole brief",
+        "No turn edits `.config/agents/harnesses/omp/config.yml` or any other `modelRoles` source",
+        "On the `model choice` refusal for `claude` the root asks the human once which model B should use, listing `anthropic/claude-opus-5-5`, `anthropic/claude-fable-5-1` and `anthropic/claude-haiku-4-5`, and neither picks one itself nor starts a run",
+        "Plain `approve` after the short gate makes exactly one `reconcile` call whose request carries `models` with the exact value `anthropic/claude-opus-5-5:high` for A and no B entry (B keeps its live pair)"
+      ]
     }
   ]
 }

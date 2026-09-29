@@ -3,26 +3,30 @@
 //   node cli.mjs reconcile|retrace|normalize < request.json
 //   node cli.mjs resume <runId> < request.json
 //   node cli.mjs dispose <runId>
-//   node cli.mjs roles
+//   node cli.mjs roles [< {"models": {"a"?: {"model"?, "thinking"?}, "b"?: {...}}}]
 // stdout: the rendered Markdown record only, except that a successful `roles`
 // prints only the models note; stderr: diagnostics.
 // Exit: 0 final/complete, 1 stopped/partial/blocked/parked, 2 refused before
 // any launch, 3 cleanup failure.
 //
 // Refusals run in this order before anything is launched: request shape,
-// checkVersions, readModelRoles, loadPrompts, findAbandonedRuns (new runs and
+// checkVersions, readModelRoles, then (only for a `roles` body or a
+// `reconcile`/`retrace` request with `models`) readModelCatalog and the model
+// choice/override, loadPrompts, findAbandonedRuns (new runs and
 // `roles` only; `resume`/`dispose <runId>` judge their named run themselves and
 // are never blocked by other runs), then this process's own start time (every
 // command except `roles`: without it no run claim can be written). Only then
 // is ./controller.mjs imported and called. `roles` runs the same checks except
 // request shape, then prints the models note without importing the controller.
+// `roles` reads stdin only when it is not a TTY; its optional body holds loose
+// per-run model choices that are resolved against `omp models --json`.
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { CONTROLLER_ROOT, observePid as defaultObservePid, OVERLAY_PATH } from "./lib/adapter.mjs";
 import { childEnv, RUN_ID_PATTERN, SESSIONS_ROOT, TMP_ROOT } from "./lib/env.mjs";
-import { readModelRoles as defaultReadModelRoles, renderModels } from "./lib/models.mjs";
+import { applyModelOverride, readModelCatalog as defaultReadModelCatalog, readModelRoles as defaultReadModelRoles, renderModels, resolveModelChoice } from "./lib/models.mjs";
 import { abandonedRunLines, findAbandonedRuns, listProcesses as defaultListProcesses, OWN_START_UNREADABLE, ownStartReason, processStart as defaultProcessStart } from "./lib/preflight.mjs";
 import { loadPrompts as defaultLoadPrompts, PROMPT_SOURCES } from "./lib/prompts.mjs";
 import { renderSpend } from "./lib/spend.mjs";
@@ -47,11 +51,25 @@ export function renderRefusal(reason, lines = []) {
   return `## Controller refused\n\n**Reason:** ${reason}\n${list}\nNothing was launched.\n\n${renderSpend([])}`;
 }
 
+const onlyKeys = (o, keys) => Object.keys(o).every((k) => keys.includes(k));
+
 /** Top-level request shape checks (Q1); domain validation belongs to the controller. */
 export function requestProblems(command, request) {
   const p = [];
-  if (command === "dispose" || command === "roles") return request === undefined ? p : [`${command} takes no request body`];
+  if (command === "dispose") return request === undefined ? p : [`${command} takes no request body`];
+  if (command === "roles") {
+    if (request === undefined) return p;
+    const m = isObj(request) && onlyKeys(request, ["models"]) ? request.models : undefined;
+    const choice = (c) => isObj(c) && onlyKeys(c, ["model", "thinking"]) && ["model", "thinking"].every((k) => c[k] === undefined || isStr(c[k]));
+    const ok = isObj(m) && onlyKeys(m, ["a", "b"]) && Object.values(m).every(choice);
+    return ok ? p : ['roles body must be {"models": {"a"?: {"model"?, "thinking"?}, "b"?: {...}}} with non-empty strings'];
+  }
   if (!isObj(request)) return ["request must be one JSON object on stdin"];
+  const models = () => {
+    if (request.models !== undefined && !(isObj(request.models) && onlyKeys(request.models, ["a", "b"]) && Object.values(request.models).every(isStr))) {
+      p.push('models must be {"a"?: "<selector>:<level>", "b"?: "<selector>:<level>"}');
+    }
+  };
   const approval = () => {
     if (!isObj(request.approval) || !isStr(request.approval.text) || !isStr(request.approval.at)) p.push("approval must be {text, at}");
   };
@@ -64,15 +82,18 @@ export function requestProblems(command, request) {
     if (request.cap !== "none" && !(Number.isInteger(request.cap) && request.cap > 0)) p.push("cap must be \"none\" or a positive integer");
     if (request.validate !== undefined && !(isObj(request.validate) && Array.isArray(request.validate.argv) && request.validate.argv.length > 0 && request.validate.argv.every(isStr))) p.push("validate must be {argv: [non-empty strings]}");
     approval();
+    models();
   } else if (command === "retrace") {
     if (!isStr(request.root)) p.push("root must be a non-empty string");
     for (const k of ["objectives", "constraints", "exclusions"]) if (request[k] === undefined) p.push(`${k} is required`);
     if (!Array.isArray(request.evidence) || !request.evidence.every((e) => isObj(e) && isStr(e.locator) && isStr(e.role))) p.push("evidence must be [{locator, role}]");
     if (!isObj(request.table) || !Array.isArray(request.table.scopes) || request.table.scopes.length === 0) p.push("table.scopes must be a non-empty array");
     approval();
+    models();
   } else if (command === "normalize") {
     if (!isStr(request.root)) p.push("root must be a non-empty string");
     for (const k of ["concerns", "input"]) if (request[k] === undefined) p.push(`${k} is required`);
+    if (request.models !== undefined) p.push("normalize takes no models; it uses the live model roles");
   } else if (command === "resume") {
     if (!isObj(request.repair) || !isStr(request.repair.authority) || !isStr(request.repair.step)) p.push("repair must be {authority, step}");
   }
@@ -85,7 +106,7 @@ async function readStdin(stream) {
   return text;
 }
 
-/** Environment for `omp config list --json`: the §3.3 child env over a throwaway HOME/TMPDIR. */
+/** Environment for `omp config list --json` and `omp models --json`: the §3.3 child env over a throwaway HOME/TMPDIR. */
 async function withRolesEnv(env, fn) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "acp-roles-"));
   try {
@@ -103,7 +124,7 @@ async function withRolesEnv(env, fn) {
  *   env             source environment (PATH resolves `omp`)
  *   controllerRoot  package root holding node_modules and package-lock.json
  *   sessionsRoot, tmpRoot, listProcesses, observePid, processStart   preflight and run-claim inputs (Q5)
- *   readModelRoles({ ompPath, env }), loadPrompts(PROMPT_SOURCES)
+ *   readModelRoles({ ompPath, env }), readModelCatalog({ ompPath, env }), loadPrompts(PROMPT_SOURCES)
  *   loadController  () => controller module (default: import("./controller.mjs"))
  *   log             diagnostics line sink (default: stderr)
  */
@@ -119,6 +140,7 @@ export async function main({
   observePid = defaultObservePid,
   processStart = defaultProcessStart,
   readModelRoles = defaultReadModelRoles,
+  readModelCatalog = defaultReadModelCatalog,
   loadPrompts = defaultLoadPrompts,
   loadController = () => import("./controller.mjs"),
   log = (line) => process.stderr.write(`${line}\n`),
@@ -132,7 +154,8 @@ export async function main({
     return refuse("invalid arguments", [needsRunId ? `\`${command}\` needs one runId matching ${RUN_ID_PATTERN}` : `\`${command}\` takes no positional arguments`]);
   }
 
-  const text = stdinText ?? (command === "dispose" || command === "roles" ? "" : await readStdin(stdin));
+  const readBody = command === "roles" ? !stdin.isTTY : command !== "dispose";
+  const text = stdinText ?? (readBody ? await readStdin(stdin) : "");
   let request;
   if (text.trim() !== "") {
     try {
@@ -153,8 +176,22 @@ export async function main({
   }
   const ompPath = versions.ompPath;
 
-  const roles = await withRolesEnv(env, (rolesEnv) => readModelRoles({ ompPath, env: rolesEnv }));
+  // The catalog is read only when a per-run model change is asked for.
+  const choosing = command === "roles" ? request !== undefined : (command === "reconcile" || command === "retrace") && request.models !== undefined;
+  const read = await withRolesEnv(env, async (rolesEnv) => {
+    const roles = await readModelRoles({ ompPath, env: rolesEnv });
+    return { roles, catalog: roles.ok && choosing ? await readModelCatalog({ ompPath, env: rolesEnv }) : undefined };
+  });
+  const { roles } = read;
   if (!roles.ok) return refuse("model role", [roles.reason]);
+  let models = roles.roles;
+  if (choosing) {
+    const reason = command === "roles" ? "model choice" : "model override";
+    if (!read.catalog.ok) return refuse(reason, [read.catalog.reason]);
+    const chosen = command === "roles" ? resolveModelChoice(request.models, roles.roles, read.catalog.models) : applyModelOverride(request.models, roles.roles, read.catalog.models);
+    if (!chosen.ok) return refuse(reason, chosen.problems);
+    models = chosen.roles;
+  }
 
   const loaded = await loadPrompts(PROMPT_SOURCES);
   if (!loaded.ok) return refuse("missing prompt marker", loaded.problems);
@@ -164,13 +201,13 @@ export async function main({
     if (abandoned.refuse) return refuse("abandoned controller run", abandonedRunLines(abandoned.runs));
   }
 
-  if (command === "roles") return { exitCode: EXIT.final, stdout: renderModels(roles.roles) };
+  if (command === "roles") return { exitCode: EXIT.final, stdout: renderModels(models, roles.roles) };
   if (!(await processStart(process.pid))) return refuse(OWN_START_UNREADABLE, [ownStartReason(process.pid)]);
 
   const controller = await loadController();
   const deps = {
     ompPath,
-    roles: roles.roles,
+    roles: models,
     prompts: loaded.prompts,
     promptSources: loaded.sources,
     controllerRoot,

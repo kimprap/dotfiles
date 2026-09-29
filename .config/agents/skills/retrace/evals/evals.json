@@ -313,6 +313,17 @@
         "The parent never reruns the controller to retry stopped S3; a fresh attempt needs changed evidence, authority or scope in a new approved request, and changed evidence alone never resumes a stopped scope",
         "All remaining blockers are collected once at quiescence with review, disposition and freshness kept distinct, and the parent recommends the smallest applicable action"
       ]
+    },
+    {
+      "id": "RETRACE-MODEL-OVERRIDE",
+      "prompt": "Simulate the supplied facts under the current Retrace skill and its controller driver. This is a stateless fixture, not a live invocation; do not use tools or repository facts. Live `modelRoles` are A `anthropic/claude-opus-5-5:medium` and B `anthropic/claude-fable-5-1:medium`. The root has presented the complete approval table with scopes S1 and S2 for bound root `/repo`, followed by the plain `roles` note listing both live pairs. Turn 1: the human replies `approve — thinking hi` and changes no table row. The `roles` call with body `{\"models\":{\"a\":{\"thinking\":\"hi\"}}}` exits 0 with stdout exactly:\n\nModels:\n\n- A `anthropic/claude-opus-5-5` · high (default: medium)\n- B `anthropic/claude-fable-5-1` · medium\n\nTurn 2 (separate branch from turn 1): the human instead replies `approve — use claude for A`. The `roles` call with body `{\"models\":{\"a\":{\"model\":\"claude\"}}}` exits 2 with `## Controller refused`, **Reason:** model choice, and the line `A model `claude`: ambiguous; candidates: `anthropic/claude-opus-5-5`, `anthropic/claude-fable-5-1`, `anthropic/claude-haiku-4-5``. Turn 3 (continuing turn 1): the human replies `approve`. For each turn state the controller calls with their bodies or request fields, what the root renders or asks, which actors use which model, and whether any file changes.",
+      "expected_output": "`approve — thinking hi` with no table edit does not start the run: the root passes the human's words as the `roles` body, edits no `config.yml` or other `modelRoles` source, and shows only the short `## Retrace scope table — models changed` gate listing S1 and S2 with the roles stdout verbatim, then waits. The ambiguous `claude` asks the human once, listing the three named candidates, without guessing. Plain `approve` then runs one `retrace` call whose request carries `\"models\": {\"a\": \"anthropic/claude-opus-5-5:high\"}`, so reviewer A and every scope evaluator run on that pair while B stays live.",
+      "assertions": [
+        "After `approve — thinking hi` the root runs `roles` with the body `{\"models\":{\"a\":{\"thinking\":\"hi\"}}}` (the human's words, not a pre-resolved level), launches no `retrace` call, and renders the short `## Retrace scope table — models changed` gate with a **Scopes** child naming S1 and S2 and `table otherwise unchanged`, followed by the roles stdout verbatim; it does not re-present the whole table",
+        "No turn edits `.config/agents/harnesses/omp/config.yml` or any other `modelRoles` source",
+        "On the `model choice` refusal for `claude` the root asks the human once which model A should use, listing `anthropic/claude-opus-5-5`, `anthropic/claude-fable-5-1` and `anthropic/claude-haiku-4-5`, and neither picks one itself nor starts a run",
+        "Plain `approve` after the short gate makes exactly one `retrace` call whose request carries `models` with the exact value `anthropic/claude-opus-5-5:high` for A and no B entry; reviewer A and the scope evaluators use that pair and B keeps its live pair"
+      ]
     }
   ]
 }
