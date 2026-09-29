@@ -1141,25 +1141,78 @@ function fenced(text) {
 }
 
 /**
- * The scope-authored **Aggregate summary** of a report as Markdown list lines,
- * or null. The Retrace skill fixes only the bold label, so both
+ * The scope-authored **Aggregate summary** block of a report as its nonblank,
+ * right-trimmed lines, or null. The Retrace skill fixes the bold label, so both
  * `**Aggregate summary**` and `**Aggregate summary:** <text>` open it; text on
- * the label line is its first entry. It ends at the next heading or bold label.
+ * the label line is its first line. It ends at the next heading or bold label.
  */
-function aggregateSummary(report) {
+function summaryBlock(report) {
   const lines = report.split("\n");
   const label = /^\*\*Aggregate summary(?::\*\*|\*\*:?)\s*(.*)$/;
   const i = lines.findIndex((l) => label.test(l.trim()));
   if (i < 0) return null;
   const inline = label.exec(lines[i].trim())[1];
-  const out = inline ? [`- ${inline}`] : [];
+  const out = inline ? [inline] : [];
   for (const l of lines.slice(i + 1)) {
     if (/^#{1,6} /.test(l) || /^\*\*[^*]+\*\*$/.test(l.trim())) break;
-    if (l.trim() === "") continue;
-    // Keep nested list items nested; every other line becomes a top-level item.
-    out.push(/^\s+- /.test(l) ? l.trimEnd() : `- ${l.trim().replace(/^- /, "")}`);
+    if (l.trim() !== "") out.push(l.trimEnd());
   }
   return out.length ? out : null;
+}
+
+/** Prose fallback: every block line as a Markdown list line, nested items kept nested. */
+function proseLines(block) {
+  return block.map((l) => (/^\s+- /.test(l) ? l : `- ${l.trim().replace(/^- /, "")}`));
+}
+
+const SUMMARY_FIELD = /^- (?:\*\*(Identity|Finding|Direction|Validation):\*\*|\*\*(Identity|Finding|Direction|Validation)\*\*:|(Identity|Finding|Direction|Validation):)\s+(\S.*)$/;
+
+/**
+ * The labelled findings `[{ identity?, finding, direction, validation }]` of a
+ * summary block, or null when any line breaks the fixed bullet form: each
+ * finding is an optional Identity, then exactly Finding, Direction, Validation.
+ */
+function labelledFindings(block) {
+  const fields = [];
+  for (const l of block) {
+    const m = SUMMARY_FIELD.exec(l);
+    if (!m) return null;
+    fields.push([m[1] ?? m[2] ?? m[3], m[4]]);
+  }
+  const groups = [];
+  let i = 0;
+  while (i < fields.length) {
+    const g = {};
+    if (fields[i][0] === "Identity") g.identity = fields[i++][1];
+    for (const name of ["Finding", "Direction", "Validation"]) {
+      if (fields[i]?.[0] !== name) return null;
+      g[name.toLowerCase()] = fields[i++][1];
+    }
+    groups.push(g);
+  }
+  return groups.length ? groups : null;
+}
+
+/**
+ * The `## Findings and Directions` display of one reviewed report: fixed
+ * finding bullets for a labelled summary, otherwise the authored prose.
+ */
+function findingLines(report) {
+  const block = summaryBlock(report);
+  const groups = block && labelledFindings(block);
+  if (!groups) {
+    const prose = block ? proseLines(block) : ["- the reviewed report carries no scope-authored Aggregate summary; its complete text is under Evidence and Limits"];
+    return ["**Finding and direction**", "", ...prose];
+  }
+  return groups.flatMap((g, n) => [
+    ...(n ? [""] : []),
+    `**Finding ${n + 1}**`,
+    "",
+    ...(g.identity !== undefined ? [`- Identity: ${g.identity}`] : []),
+    `- Finding: ${g.finding}`,
+    `- Direction: ${g.direction}`,
+    `- Validation: ${g.validation}`,
+  ]);
 }
 
 /** KT5: the four aggregate sections in order. */
@@ -1182,21 +1235,19 @@ function renderRetrace({ request, scopes, aggregate, cleanupFailures }) {
     if (sc.frontier) out.push("", "**Frontier**", "", `- ${sc.frontier}`);
   }
   out.push("", "## Findings and Directions");
-  for (const sc of scopes) {
-    if (sc.report === undefined) continue;
-    const summary = aggregateSummary(sc.report);
-    out.push("", `### ${sc.scope.id} ${sc.scope.name}`, "", "**Finding and direction**", "", ...(summary ?? ["- the reviewed report carries no scope-authored Aggregate summary; its complete text is under Evidence and Limits"]));
-  }
-  if (!scopes.some((sc) => sc.report !== undefined)) out.push("", "**Findings**", "", "- no reviewed report exists");
+  const reviewed = scopes.filter((sc) => sc.report !== undefined);
+  for (const sc of reviewed) out.push("", `### ${sc.scope.id} ${sc.scope.name}`, "", ...findingLines(sc.report));
+  if (!reviewed.length) out.push("", "**Findings**", "", "- no reviewed report exists");
   out.push("", "## Evidence and Limits", "", "**Approved table**", "", "| Scope | Evaluate |", "|---|---|");
   for (const s of request.table.scopes) out.push(`| ${s.id} ${cell(s.name)} | ${cell(s.objective)} |`);
   out.push("", "**Approval**", "", `- ${request.approval.text} (${request.approval.at})`);
   for (const sc of scopes) {
-    out.push("", `### ${sc.scope.id} ${sc.scope.name}`, "", "**Events**", "", ...sc.events.map((e) => `- ${e}`));
+    out.push("", `### ${sc.scope.id} ${sc.scope.name}`, "", "**Events**", "", `- ${sc.events.join(" → ") || "none"}`);
     if (sc.manifest) out.push("", "**Manifest**", "", ...sc.manifest.map((m) => `- ${m.locator} (${m.role}) ${m.observed}`));
     if (sc.original !== undefined) out.push("", "**Provisional-to-final**", "", `- ${sc.report !== undefined && sc.report !== sc.original ? `report replaced: ${identity(sc.original)} → ${identity(sc.report)}` : `unchanged ${identity(sc.original)}`}`);
-    if (sc.report !== undefined) out.push("", "**Reviewed report**", "", ...fenced(sc.report));
   }
+  if (reviewed.length) out.push("", "### Reviewed reports");
+  for (const sc of reviewed) out.push("", `**${sc.scope.id} ${sc.scope.name}**`, "", ...fenced(sc.report));
   return `${out.join("\n")}\n`;
 }
 

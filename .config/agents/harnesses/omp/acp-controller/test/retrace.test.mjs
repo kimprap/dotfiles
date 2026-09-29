@@ -2,6 +2,7 @@
 // evaluators and their delegated Reconcile reviewers against the scripted ACP
 // agent child. Concurrency and order are read from the scripted agent's log.
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -120,11 +121,12 @@ test("KT3: at most four scope evaluators are live at once; a fifth starts only a
   assertCleanedUp();
 });
 
-/** The `**Events**` list of scope `id` under Evidence and Limits. */
+/** The event names on the one arrow line under scope `id`'s `**Events**` in Evidence and Limits. */
 function scopeEvents(markdown, id) {
   const limits = markdown.slice(markdown.indexOf("## Evidence and Limits"));
-  const block = limits.slice(limits.indexOf(`### ${id} Area ${id}\n\n**Events**\n\n`));
-  return block.split("\n\n")[2].split("\n");
+  const m = new RegExp(`\\n### ${id} Area ${id}\\n\\n\\*\\*Events\\*\\*\\n\\n- (.*)\\n`).exec(limits);
+  assert.ok(m, `scope ${id} has an Events line`);
+  return m[1].split(" → ");
 }
 
 test("KT4: depth then authored order; source-need and scope-paused return to the same evaluation step in one session", async () => {
@@ -162,10 +164,10 @@ test("KT4: depth then authored order; source-need and scope-paused return to the
     assert.deepEqual(turns.map((e) => e.passMarker), ["evaluate", "continue"]);
     assert.equal(new Set(turns.map((e) => e.sessionId)).size, 1);
   }
-  const tail = ["candidate-ready admitted", "begin-reconcile", "reviewers disposed", "scope-result", "scope-result admitted", "evaluator disposed"].map((e) => `- ${e}`);
-  assert.deepEqual(scopeEvents(out.markdown, "S1"), ["- evaluate", `- source-need ${note}`, "- continue", ...tail]);
-  assert.deepEqual(scopeEvents(out.markdown, "S2"), ["- evaluate", "- scope-paused: which release is current?", "- continue", ...tail]);
-  assert.deepEqual(scopeEvents(out.markdown, "S3"), ["- evaluate", ...tail]);
+  const tail = ["candidate-ready admitted", "begin-reconcile", "reviewers disposed", "scope-result", "scope-result admitted", "evaluator disposed"];
+  assert.deepEqual(scopeEvents(out.markdown, "S1"), ["evaluate", `source-need ${note}`, "continue", ...tail]);
+  assert.deepEqual(scopeEvents(out.markdown, "S2"), ["evaluate", "scope-paused: which release is current?", "continue", ...tail]);
+  assert.deepEqual(scopeEvents(out.markdown, "S3"), ["evaluate", ...tail]);
   assertCleanedUp();
 });
 
@@ -186,25 +188,7 @@ test("KT4: a delegated review in Artifact mode is rejected before any actor star
 
 test("KS5: a scope that exhausts its invalid returns stops alone; its sibling resolves and the aggregate is partial", async () => {
   const bad = 'invalid:{"kind":"candidate-ready","report":"no kind line","manifest":[],"disposition":"proposal"}';
-  // S2's report carries its Aggregate summary in the inline form scopes author live.
-  const report = [
-    "Kind: conversation",
-    "",
-    "## Refinement Direction, No Change, or Blocker",
-    "",
-    "Total cost of the chosen direction: none.",
-    "",
-    "**Aggregate summary:** Scope S2 is `proposal`.",
-    "",
-    "- `S2.md` needs one constant renamed.",
-    "- The frontier:",
-    "   - Whether callers outside the root use it.",
-    "",
-    "## Canonical Impact and Transfer",
-    "",
-    "- none",
-  ].join("\n");
-  setPlan({ "scripted/a": [...scopeEntries("S1", [bad, bad, bad, bad]), ...scopeEntries("S2", [candidate("S2", report)])] });
+  setPlan({ "scripted/a": [...scopeEntries("S1", [bad, bad, bad, bad]), ...scopeEntries("S2", [candidate("S2")])] });
   const out = await runRetrace(request([scope("S1"), scope("S2")]), deps());
   assert.equal(out.exitCode, 1);
   const log = events();
@@ -230,24 +214,6 @@ test("KS5: a scope that exhausts its invalid returns stops alone; its sibling re
       "|---|---|---|---|---|",
       "| S1 Area S1 | none | 0 | 0 | none |",
       "| S2 Area S2 | proposal | 1 | 0 | 1: A |",
-      "",
-    ].join("\n"),
-  );
-  const findings = out.markdown.slice(out.markdown.indexOf("## Findings and Directions"), out.markdown.indexOf("## Evidence and Limits"));
-  assert.equal(
-    findings,
-    [
-      "## Findings and Directions",
-      "",
-      "### S2 Area S2",
-      "",
-      "**Finding and direction**",
-      "",
-      "- Scope S2 is `proposal`.",
-      "- `S2.md` needs one constant renamed.",
-      "- The frontier:",
-      "   - Whether callers outside the root use it.",
-      "",
       "",
     ].join("\n"),
   );
@@ -278,9 +244,137 @@ test("KS6: a delegated reviewer whose exit is not observed stops its scope, bloc
   assert.match(out.markdown, /### S2 Area S2\n\n\*\*Review status\*\*\n\n- stopped\n\n\*\*Evidence freshness\*\*\n\n- unreadable\n\n\*\*Frontier\*\*\n\n- prerequisite S1 has no current resolved result\n/);
   // The admitted scope-result carried `Review status: stopped` (admission requires it to equal the rendered status).
   const events1 = scopeEvents(out.markdown, "S1");
-  assert.ok(events1.includes("- scope-result admitted"));
-  assert.ok(events1.some((e) => e.startsWith("- reviewer disposal not established: S1/A: PID ")));
+  assert.ok(events1.includes("scope-result admitted"));
+  assert.ok(events1.some((e) => e.startsWith("reviewer disposal not established: S1/A: PID ")));
   for (const e of log.filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH", "children really exited");
+});
+
+test("KT5: labelled summaries render as fixed finding bullets, other summaries as authored prose, reviewed reports last", async () => {
+  const reports = {
+    // Two labelled findings; the second authors no Identity and uses both bold label forms.
+    S1: [
+      "Kind: conversation",
+      "",
+      "## Refinement Direction, No Change, or Blocker",
+      "",
+      "See the report body.",
+      "",
+      "**Aggregate summary**",
+      "",
+      "- Identity: lock coverage · preflight owner · missing lock comparison · S1.md",
+      "- Finding: `S1.md` compares the installed version only, so a lock drift passes.",
+      "- Direction: compare the locked version in `S1.md`.",
+      "- Validation: npm test with a drifted lock refuses with exit 2.   ",
+      "",
+      "- **Finding:** `S1.md` never reads the SDK version.",
+      "- **Direction**: add the SDK comparison to `S1.md`.",
+      "- Validation: npm test with a drifted SDK refuses with exit 2.",
+      "",
+      "## Canonical Impact and Transfer",
+      "",
+      "- none",
+    ].join("\n"),
+    // The inline form scopes author live, with a nested item.
+    S2: [
+      "Kind: conversation",
+      "",
+      "**Aggregate summary:** Scope S2 is `proposal`.",
+      "",
+      "- `S2.md` needs one constant renamed.",
+      "- The frontier:",
+      "   - Whether callers outside the root use it.",
+      "",
+      "## Canonical Impact and Transfer",
+      "",
+      "- none",
+    ].join("\n"),
+    // Labelled lines without Direction: not the fixed form, so rendered as authored.
+    S3: ["Kind: conversation", "", "**Aggregate summary**", "", "- Identity: none", "- Finding: no-change: `S3.md` holds; frontier: none.", "- Validation: none"].join("\n"),
+    // No summary; a fenced block forces a longer reviewed-report fence.
+    S4: ["Kind: conversation", "", "The evidence reads:", "", "```text", "notes for S4", "```"].join("\n"),
+  };
+  const ids = ["S1", "S2", "S3", "S4"];
+  setPlan({ "scripted/a": ids.flatMap((id) => scopeEntries(id, [candidate(id, reports[id])])) });
+  const out = await runRetrace(request(ids.map((id) => scope(id))), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const section = (from, to) => out.markdown.slice(out.markdown.indexOf(from), out.markdown.indexOf(to));
+  assert.equal(
+    section("## Findings and Directions", "## Evidence and Limits"),
+    [
+      "## Findings and Directions",
+      "",
+      "### S1 Area S1",
+      "",
+      "**Finding 1**",
+      "",
+      "- Identity: lock coverage · preflight owner · missing lock comparison · S1.md",
+      "- Finding: `S1.md` compares the installed version only, so a lock drift passes.",
+      "- Direction: compare the locked version in `S1.md`.",
+      "- Validation: npm test with a drifted lock refuses with exit 2.",
+      "",
+      "**Finding 2**",
+      "",
+      "- Finding: `S1.md` never reads the SDK version.",
+      "- Direction: add the SDK comparison to `S1.md`.",
+      "- Validation: npm test with a drifted SDK refuses with exit 2.",
+      "",
+      "### S2 Area S2",
+      "",
+      "**Finding and direction**",
+      "",
+      "- Scope S2 is `proposal`.",
+      "- `S2.md` needs one constant renamed.",
+      "- The frontier:",
+      "   - Whether callers outside the root use it.",
+      "",
+      "### S3 Area S3",
+      "",
+      "**Finding and direction**",
+      "",
+      "- Identity: none",
+      "- Finding: no-change: `S3.md` holds; frontier: none.",
+      "- Validation: none",
+      "",
+      "### S4 Area S4",
+      "",
+      "**Finding and direction**",
+      "",
+      "- the reviewed report carries no scope-authored Aggregate summary; its complete text is under Evidence and Limits",
+      "",
+      "",
+    ].join("\n"),
+  );
+  const limits = section("## Evidence and Limits", "\n## Spend\n");
+  const s1 = limits.slice(limits.indexOf("### S1 Area S1\n"), limits.indexOf("\n\n**Provisional-to-final**"));
+  const sha = crypto.createHash("sha256").update("notes for S1\n").digest("hex");
+  assert.equal(
+    s1,
+    [
+      "### S1 Area S1",
+      "",
+      "**Events**",
+      "",
+      "- evaluate → candidate-ready admitted → begin-reconcile → reviewers disposed → scope-result → scope-result admitted → evaluator disposed",
+      "",
+      "**Manifest**",
+      "",
+      `- ${path.join(t.root, "S1.md")} (current) sha256:${sha}`,
+    ].join("\n"),
+  );
+  const reviewed = limits.slice(limits.indexOf("### Reviewed reports\n"));
+  assert.equal(limits.lastIndexOf("\n### "), limits.indexOf("\n### Reviewed reports\n"), "Reviewed reports is the last H3");
+  assert.equal(
+    reviewed,
+    [
+      "### Reviewed reports",
+      ...ids.flatMap((id) => {
+        const fence = id === "S4" ? "````" : "```";
+        return ["", `**${id} Area ${id}**`, "", `${fence}text`, reports[id], fence];
+      }),
+      "",
+    ].join("\n"),
+  );
+  assertCleanedUp();
 });
 
 test("citations and dispute: delegated review resolves a cited revert against the Retrace boundary", async () => {

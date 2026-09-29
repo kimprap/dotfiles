@@ -98,6 +98,51 @@ and no request body, only on the human's explicit instruction.
 
 ## Retrace
 
+### Approval surface
+
+Render each table that step 4 of Retrace's "Normalize and approve" presents,
+including a re-presented one, in this layout. Step 4 alone owns the table, its
+approval and re-presentation rules, and the `roles` check with its `Models:`
+list; this layout only adds labelled context lines before the table.
+
+```markdown
+## Retrace scope table
+
+**Root**
+
+- {bound absolute root}
+
+**Objective**
+
+- {each raw human objective, in authored order}
+
+**Evidence**
+
+- {each exact evidence locator} ({current | historical})
+
+**Protected behavior**
+
+- {each protected behavior}
+
+**Exclusions**
+
+- {each exclusion}
+
+**Links**
+
+- {each edge as `{ID} requires {ID}`, `{ID} shares evidence with {ID}`, or `{ID} may conflict with {ID}`}
+
+**Scopes**
+
+| Scope | Evaluate |
+|---|---|
+| {ID} {name} | {one observable objective} |
+```
+
+Give each item its own child line; an item bound to only some scopes starts
+with their IDs and a colon. A field with no item has the one child `- none`.
+The labelled lines add no binding: the request binds what step 4 names.
+
 ### Invoke the controller
 
 After approval the parent invokes the controller once for the approved graph,
@@ -127,7 +172,8 @@ request or table, version pin, model role, missing prompt marker, or an
 abandoned controller run: owner gone and not parked; live and parked runs of
 other sessions never refuse); `3` means cleanup was not established and the
 record names the unresolved actor, PID, or folder. Except for a successful
-`roles` call, stdout carries only the rendered record followed by `## Spend`;
+`roles` call, stdout carries only the rendered record, laid out as Retrace's
+"Freshness and aggregate" section describes, followed by `## Spend`;
 stderr carries diagnostics. Present stdout
 verbatim. Never rerun the controller to retry a stopped or partial scope; a
 fresh attempt needs the changed evidence or authority that Retrace's Stops section requires.
