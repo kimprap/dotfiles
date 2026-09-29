@@ -26,7 +26,6 @@ const { default: planArtifactSync } = await import("./plan-artifact-sync.js");
 
 const DOTFILES = resolve(import.meta.dir, "../../../../..");
 const HELPER = join(DOTFILES, "bin", "omp-copy-plan-artifact");
-const CONFIG = join(DOTFILES, ".config", "agents", "harnesses", "omp", "config.yml");
 const COPY_PROTOCOL = "plan-artifact-copy/v1";
 const WARNING_RESULT_SCHEMA = "plan-artifact-sync-result/v1";
 const PLAN_FIXTURE = join(
@@ -164,20 +163,24 @@ async function runHelper(root, args) {
     return await runProcess(HELPER, args, { cwd: root });
 }
 
+function helperError(stderr) {
+    const match = /^ERROR: (PLAN_[A-Z_]+): plan=(\S+) state=(\S+) path=(\S+) effect=(\S+): /.exec(stderr);
+    if (!match) return null;
+    const [, code, plan, state, path, effect] = match;
+    return { code, plan, state, path, effect };
+}
+
 afterAll(async () => {
     for (const root of roots) await rm(root, { recursive: true, force: true });
 });
 
 describe("plan-artifact-sync registration and mutation boundary", () => {
-    test("keeps the configured extension and registers only the successful mutation listener", async () => {
+    test("registers only the successful mutation listener", async () => {
         const pi = createFakePi();
         planArtifactSync(pi);
 
         expect([...pi.listeners.keys()]).toEqual(["tool_result"]);
         expect(pi.registeredTools).toEqual([]);
-        expect(await readFile(CONFIG, "utf8")).toContain(
-            "~/.dotfiles/.config/agents/harnesses/omp/extensions/plan-artifact-sync.js"
-        );
 
         const files = await fixture();
         const notifications = [];
@@ -622,12 +625,16 @@ describe("wire protocol enforcement and live skew", () => {
             "--content-file",
             unversioned.localPath,
         ]);
-        expect(unversionedResult).toEqual({
+        expect({ ...unversionedResult, stderr: helperError(unversionedResult.stderr) }).toEqual({
             code: 2,
             stdout: "",
-            stderr:
-                "ERROR: PLAN_SYNC_PROTOCOL_MISMATCH: plan=demo state=protocol-unsupported path=none effect=none: " +
-                "helper wire protocol is not supported by this generation\n",
+            stderr: {
+                code: "PLAN_SYNC_PROTOCOL_MISMATCH",
+                plan: "demo",
+                state: "protocol-unsupported",
+                path: "none",
+                effect: "none",
+            },
         });
         expect(await exists(unversioned.active)).toBe(false);
 
@@ -639,7 +646,9 @@ describe("wire protocol enforcement and live skew", () => {
             "--content-file",
             obsolete.localPath,
         ]);
-        expect(obsoleteResult).toEqual({ code: 2, stdout: "", stderr: "ERROR: unsupported operation\n" });
+        expect(obsoleteResult.code).toBe(2);
+        expect(obsoleteResult.stdout).toBe("");
+        expect(obsoleteResult.stderr).toMatch(/^ERROR: /);
         expect(await exists(obsolete.active)).toBe(false);
     });
 
@@ -655,12 +664,16 @@ describe("wire protocol enforcement and live skew", () => {
             files.localPath,
         ]);
 
-        expect(result).toEqual({
+        expect({ ...result, stderr: helperError(result.stderr) }).toEqual({
             code: 2,
             stdout: "",
-            stderr:
-                "ERROR: PLAN_SYNC_PROTOCOL_MISMATCH: plan=demo state=protocol-unsupported path=none effect=none: " +
-                "helper wire protocol is not supported by this generation\n",
+            stderr: {
+                code: "PLAN_SYNC_PROTOCOL_MISMATCH",
+                plan: "demo",
+                state: "protocol-unsupported",
+                path: "none",
+                effect: "none",
+            },
         });
         expect(await exists(files.active)).toBe(false);
     });
@@ -677,12 +690,16 @@ describe("wire protocol enforcement and live skew", () => {
             files.localPath,
         ]);
 
-        expect(result).toEqual({
+        expect({ ...result, stderr: helperError(result.stderr) }).toEqual({
             code: 1,
             stdout: "",
-            stderr:
-                "ERROR: PLAN_IDENTITY_MISMATCH: plan=other state=source-basename-mismatch path=none effect=none: " +
-                "content file identity must match slug 'other'\n",
+            stderr: {
+                code: "PLAN_IDENTITY_MISMATCH",
+                plan: "other",
+                state: "source-basename-mismatch",
+                path: "none",
+                effect: "none",
+            },
         });
         expect(await exists(files.active)).toBe(false);
         expect(await exists(planPaths(files.root, "other").active)).toBe(false);

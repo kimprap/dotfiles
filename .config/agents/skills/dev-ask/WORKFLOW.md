@@ -13,8 +13,8 @@ A request takes the smallest route that settles its outcome:
 - one bounded factual gap → `dev-research`, then back to `dev-ask`;
 - raw issue or pull-request intake → `dev-triage`;
 - incomplete behavior, acceptance, scope, or constraints → `dev-requirements`;
-- a candidate plan, hypothesis, or design to refine → `grill-with-docs` when
-  repository evidence matters, otherwise `grill-me`;
+- a candidate plan, hypothesis, or design to refine → `dev-grilling`, reading
+  repository evidence when it bears on the decision;
 - a hard unexplained defect or regression → `dev-diagnosing-bugs`;
 - missing durable technical authority → `dev-specification`; complete
   authority that still needs a dependency graph → `dev-ticketing`;

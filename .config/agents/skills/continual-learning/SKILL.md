@@ -72,6 +72,6 @@ Every invocation is terminal. Do not retry, resume, reinvoke, or add another cur
 
 ## Portability and boundaries
 
-Run this body without repository ADRs, workflow documents, transcripts, JSONL history, scores, evaluation or learning ledgers, long-term memory, or host adapters. OMP and Grok may invoke it differently, but mode eligibility, qualification, curation, statuses, and stops are the same.
+Run this body without repository ADRs, workflow documents, transcripts, JSONL history, scores, evaluation or learning ledgers, long-term memory, or host adapters. Hosts may invoke it differently, but mode eligibility, qualification, curation, statuses, and stops are the same.
 
 Do not create a task or Handoff, dispatch another owner, repair implementation, settle a papercut record, infer completion, present output, or ship. Return the assessment to the invoking adapter or direct caller; that owner handles its existing lifecycle and completion.

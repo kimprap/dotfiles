@@ -44,10 +44,10 @@ Then take the first matching row:
 | Unresolved customers, market, positioning, pricing, business model, roadmap, launch, growth, product scope, or product success | `product-ask` only when the user explicitly asks to establish or refine product authority; otherwise stop with `PRODUCT AUTHORITY REQUIRED`. |
 | Product authority suffices, but observable behavior, acceptance, scope, constraints, or owned engineering questions are incomplete, with no candidate approach under decision | `dev-requirements`: asks the user only about synthesized or materially clarified human-owned requirements. |
 | Hard unexplained reproducible bug or performance regression; expected behavior settled | `dev-diagnosing-bugs`: a valid fix contract continues through implementation under the stable route; a known cause or routine failure skips diagnosis for bounded `dev-implementation` repair. |
-| The user presents a candidate approach, hypothesis, plan, or design direction to refine, challenge, stress-test, compare, validate, or choose | `grill-with-docs` when repository evidence bears on the decision, else `grill-me`; breadth alone never triggers it. |
+| The user presents a candidate approach, hypothesis, plan, or design direction to refine, challenge, stress-test, compare, validate, or choose | `dev-grilling`: read repository evidence when it bears on the decision; breadth alone never triggers it. |
 | Current executable authority and named acceptance are complete, and a named criterion is unmet | `dev-implementation` (outcome-first continuation). |
 | Explicit user or external-scheduler portfolio-audit request with an eligible exact target and complete repository or named-subsystem permanent-test suite intake | `dev-test-audit`: read-only; see the audit intake rule under the Route Overview. |
-| Explicit request to verify, integrate, review, ship, curate, or maintain domain authority | Validated direct stage: check its exact intake and human gates; shipping needs separate delivery authority; `dev-integration` only here, for independently verified lineages, never on the ordinary route. |
+| Explicit request to verify, review, ship, curate, or maintain domain authority | Validated direct stage: check its exact intake and human gates; shipping needs separate delivery authority. |
 | Technical authority, architecture, named acceptance, direct checks, and task ownership are settled | `dev-implementation` directly. |
 | Durable technical decisions are unresolved | `dev-specification`, then the standard suffix; reuse a complete specification rather than regenerating it for task sizing. |
 | A complete current specification has known seams but lacks necessary task or dependency ownership | `dev-ticketing`, then the standard suffix; reuse a complete graph rather than regenerating it. |
@@ -197,7 +197,7 @@ Reapprove only when current evidence changes authority, scope, acceptance, route
 After valid approval, start exactly one first owner; never dispatch a batch of prospective stage owners from the router.
 Dispatch a delegated specialty, but activate `dev-implementation` in the route-owning agent by default; the in-place role change creates no self-Handoff.
 
-After a delegated `dev-specification`, `dev-ticketing`, or standalone execution-plan author returns its first substantive candidate, send `~/.agents/references/plan-rethink.md` once to that same author as it directs.
+After a delegated `dev-specification`, `dev-ticketing`, or standalone execution-plan author returns its first substantive candidate, send [`plan-rethink.md`](../../references/plan-rethink.md) once to that same author as it directs.
 
 The approved Route Overview delegates downstream derivation while preserving human authority:
 

@@ -61,7 +61,7 @@ Infer intent from the requested rule work and the current failure mode.
 ## Rule-type router
 - Base contract rule — stable, generic repo-wide policy like `plan.md`.
 - Companion overlay — specialized quality bar like `plan-impl-spec.md`.
-- Harness shim — OMP/local transport/runtime behavior only.
+- Harness shim — host transport/runtime behavior only, kept in a host adapter file (here `harnesses/<host>/`) that the owning rule links; not a rule.
 - TTSR interrupt/reminder — only when stream-time correction is useful.
 - Rulebook rule — description-only guidance the model should read when relevant.
 - Always-apply rule — only for tiny universal guidance.
@@ -91,7 +91,7 @@ Infer intent from the requested rule work and the current failure mode.
 - Use a relevance-loaded rulebook rule when guidance must shape reasoning or drafting before any tool call. In OMP, keep that portable base description-only.
 - Use TTSR only when prompt or tool arguments expose enough evidence, late interruption is safe, and stream-time correction is the requirement.
 - Adding `condition` or `astCondition` changes the OMP rule bucket and injection timing. If guidance is needed pre-draft, remove that trigger metadata rather than tuning regex or using `alwaysApply` as a workaround.
-- Separate universal semantic contracts, repository storage companions, and harness transport shims. Never hide a cross-transport content contract behind a path guard.
+- Keep one portable rule for each semantic contract, including the repository storage it governs; put host transport in host adapter files (here `harnesses/<host>/`) that the rule links. Never hide a cross-transport content contract behind a path guard.
 - Use always-apply only for tiny universal invariants that must survive every turn.
 - Keep the always-read core small and universal; move heavier guidance into companion rules loaded on demand, especially where a harness silently compacts or rebuilds context.
 - Prefer tooling, config, linters, tests, or templates when behavior can be enforced deterministically.

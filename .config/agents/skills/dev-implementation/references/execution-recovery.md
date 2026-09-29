@@ -52,7 +52,7 @@ the retry procedure below. Neither authorizes replay of child work.
 
 1. Retain the failed observation and establish one concrete cause from evidence. When the cause or prior effects are uncertain, perform only a safe non-repeating diagnostic or report the exact blocker.
 2. Form the smallest recovery proposal: a targeted execution correction or an eligible transient retry under unchanged acceptance and effects. Include safe cleanup and directly coupled failure paths.
-3. Before executing the proposal, the same execution owner explicitly reads `~/.agents/references/impl-rethink/recovery-rethink.md` and applies it once. This is required before corrected and unchanged retries. The rethink may correct the proposal once; it is not an independent opinion, another implementation rethink, an assurance pass, or recursive permission to rethink again.
+3. Before executing the proposal, the same execution owner explicitly reads [`recovery-rethink.md`](../../../references/impl-rethink/recovery-rethink.md) and applies it once. This is required before corrected and unchanged retries. The rethink may correct the proposal once; it is not an independent opinion, another implementation rethink, an assurance pass, or recursive permission to rethink again.
 4. Execute the smallest complete valid scenario that can establish the required observation. A frozen failed or inconclusive result stays failed or inconclusive. Do not reconstruct missing authority or stitch incompatible partial runs into a pass.
 
 ## Recurrence and transient limits

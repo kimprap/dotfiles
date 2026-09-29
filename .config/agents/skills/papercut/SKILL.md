@@ -18,7 +18,7 @@ The papercut scheduling rule decides when, and by whom, one `capture` look runs.
 - `review`: explicit proposal-only maintenance.
 - `resolve`: explicit maintenance or exact-record settlement authorized by a completed learning result.
 
-An explicit invocation without a mode returns these modes without reading storage. OMP `/skill:papercut` and Grok `/papercut` use this same body.
+An explicit invocation without a mode returns these modes without reading storage. Every host's invocation runs this same body.
 
 ## Bounded discovery and order
 

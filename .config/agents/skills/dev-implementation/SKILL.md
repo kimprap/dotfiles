@@ -44,7 +44,7 @@ Read `skill://dev-implementation/references/plan-orchestration.md` for every pla
 ## Planless contract authoring
 
 After producing a substantive planless direct-contract candidate, apply
-`~/.agents/references/plan-rethink.md` inline once as it directs.
+[`plan-rethink.md`](../../references/plan-rethink.md) inline once as it directs.
 
 ## Child contract
 
@@ -92,7 +92,7 @@ first read and assess
 alone owns eligibility, same-cause accounting, finite transient fallback, and
 stops. Assessment grants no retry authority. For an eligible retry, the same
 owner forms the proposal and explicitly applies
-`~/.agents/references/impl-rethink/recovery-rethink.md` once before execution.
+[`recovery-rethink.md`](../../references/impl-rethink/recovery-rethink.md) once before execution.
 Preserve its cause, allowance, effects, and observation evidence through the
 existing Handoff rather than router or scheduler state. This recovery rethink
 is separate from the one implementation code-then-test rethink and adds no
@@ -121,7 +121,7 @@ eligible retry and never receives a second implementation rethink.
 1. Preflight the explicit declared response-object schema, resumable same-child transport, and exact controller/child/job/task/attempt/`candidate` bindings, then dispatch. For a planned route, set `IN_PROGRESS` before this first implementation-child dispatch; controller activation alone does not change plan state.
 2. The child implements the contract and returns a candidate report by terminal type-absent ordinary completion before final smoke or Handoff. It does not publish the candidate incrementally or park for rethink.
 3. Collect only that exact completed job. Immediately retain the complete original native result and matching job record before decoding or unrelated work. Apply the loaded adapter's successful-terminal, structured-valid, schema-data, and exact-identity checks; decode only its designated data as the declared response object, then require exact task, attempt, receiver, and `candidate` phase. A missing, invalid, mismatched, consumed, or alternate-source payload is unadmitted. Job settlement is not semantic task completion or child disposal.
-4. After candidate admission, bind the exact child, receiving controller, task, attempt, operation, logical Handoff identity, phase, declared response schema and active invocation, then send `~/.agents/references/impl-rethink/impl-rethink.md` through the host-selected request seam. This exact collection uses the role-and-purpose exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check plus the changed path, and returns one logical lean `dev-handoff` report to the controller.
+4. After candidate admission, bind the exact child, receiving controller, task, attempt, operation, logical Handoff identity, phase, declared response schema and active invocation, then send [`impl-rethink.md`](../../references/impl-rethink/impl-rethink.md) through the host-selected request seam. This exact collection uses the role-and-purpose exemption above. The child applies code rethink, then test rethink, makes at most one correction pass, runs every owned direct check plus the changed path, and returns one logical lean `dev-handoff` report to the controller.
 5. Collect each follow-up through the loaded host adapter's collection rules, then admit exact task/attempt/owner/receiver/phase once. Job settlement implies neither task completion nor disposal.
 6. Hosts with native reply correlation use the token/message path and recovery-authorized byte-exact restatement in the portable return contract.
 7. Accept the Handoff only when task/attempt/receiver and declared targets/effects match and every owned check records its expected result. For an execution-related stop, confirm it identifies an actual shared-policy stop; otherwise return the specific eligibility question to the same responsible owner. The controller does not reinterpret or rerun semantic work, repair machinery, manufacture eligibility, replace a required owner, or repeatedly challenge a settled blocker.

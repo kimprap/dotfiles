@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-28  
+**Updated:** 2026-09-29  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -56,7 +56,7 @@ The workflow needs one current route and one durable explanation of its boundari
 - **Decision:** Keep lifecycle depth, assurance, and execution topology independent. Compact is the default when no compact disqualifier applies; otherwise use standard or high assurance from consequence evidence. Size or duration alone changes none of these dimensions.
 - **Decision:** New implementation boundaries consult the shared read-only policy at `.config/agents/skills/dev-ticketing/references/task-sizing.md`, which alone owns the sizing heuristic. Record a material boundary rationale in existing Route Overview, specification, direct-contract, or plan prose; reading the policy invokes no stage.
 - **Decision:** A cohesive one-owner result that fits one reliable fresh context uses a planless direct contract. Necessary multiple owners or dependencies, fan-in, ordered effects or migration, or cross-context recovery at known safe seams require a lean repository plan. Specification remains conditional on missing technical authority; ticketing remains conditional on missing task or dependency ownership; complete specifications and graphs are reused.
-- **Decision:** Ordinary planned fan-in is an authored child-owned implementation task. It assembles all task inputs before the complete target's single final review and verification; it does not route through pre-fan-in lineage verification or standalone `dev-integration`.
+- **Decision:** Ordinary planned fan-in is an authored child-owned implementation task. It assembles all task inputs before the complete target's single final review and verification; it does not route through pre-fan-in lineage verification or a standalone integration stage.
 - **Why:** Consequence, design depth, context fit, and graph execution are different facts.
 - **Rejected alternatives:** Letting file count or a rough estimate choose assurance, requiring sizing metadata or runtime quotas, letting task count grant parent semantic work, or imposing standalone verified-lineage integration on ordinary planned assembly couples unrelated decisions.
 - **Consequences:** Every code-changing task remains child-owned, planned or direct. A later estimate alone does not authorize an implementation parent to repartition an approved graph.

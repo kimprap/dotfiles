@@ -24,7 +24,7 @@ Use the complete proposal, accounting, finding, incomplete-proposal, applicable 
 Use the native persistent opinion agents named by the harness wrappers.
 
 1. After the current Route Overview approval, start persistent auditor A with the bound scope, installed policy reference, and current request. Do not start B. Include no deferred wrapper path or scheduling recipe in that initial packet. A's first outer-loop return must be one complete proposal as defined in the opinion-agent contract.
-2. After validating A's complete first return, send `~/.agents/references/impl-rethink/test-rethink.md` to that same A exactly once as an explicit follow-up that asks A to read it once and return a complete revised proposal. Do not rely on an advance recipe in A's initial packet.
+2. After validating A's complete first return, send [`test-rethink.md`](../../../references/impl-rethink/test-rethink.md) to that same A exactly once as an explicit follow-up that asks A to read it once and return a complete revised proposal. Do not rely on an advance recipe in A's initial packet.
 3. If A's revised proposal has no findings, accept it immediately. Do not create B.
 4. If findings remain, start persistent auditor B with the identical bound scope, the same policy reference, A's complete revised proposal, and the current request. Include no deferred wrapper path or scheduling recipe in B's initial packet. B's first outer-loop return must be one complete applicable proposal.
 5. After validating B's complete first return, send the same test rethink file to that same B exactly once as an explicit follow-up that asks B to read it once and return a complete revised proposal.

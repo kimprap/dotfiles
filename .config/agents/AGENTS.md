@@ -10,7 +10,7 @@ Direct user or architect instructions override this file within higher-authority
 
 ## Reporting
 
-Use the simplest precise language that preserves accuracy, necessary technical terms, and the requested level of detail. Prefer active voice, use one term per concept, define unfamiliar abbreviations on first use, and use lists when they improve scanning.
+Use the simplest precise language that preserves accuracy, necessary technical terms, and the requested level of detail on human-facing surfaces: replies, questions, approval screens, completions, and artifacts marked human-only. Never simplify internal plans, IDs, schemas, code, tool output, or agent transport; they keep their exact technical language. Prefer active voice, use one term per concept, define unfamiliar abbreviations on first use, and use lists when they improve scanning.
 
 Use headings that fit the work, not a fixed template. Common useful headings include `Changes`, `Effect`, `Verification`, `Decisions`, `Findings`, and `Risks / Next`. Omit headings that add no signal.
 

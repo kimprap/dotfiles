@@ -1,6 +1,5 @@
 ---
 description: Governs durable engineering plan identity, approval, lifecycle, completion, repository storage and host draft adapters under .agents/plans, and on-request archiving.
-paths: [".agents/plans/**"]
 ---
 
 # Plan
@@ -19,7 +18,7 @@ rule. Once a graph is approved, later estimates alone do not repartition it.
 This rule owns plan identity, approval, lifecycle, completion, repository storage, and on-request archiving. Implementation body grammar belongs to `plan-impl-spec`; a host draft adapter owns only its own copy mechanics.
 
 After a substantive candidate exists, apply
-`~/.agents/references/plan-rethink.md` once as it directs.
+[`plan-rethink.md`](../references/plan-rethink.md) once as it directs.
 
 Automatic draft persistence may occur before this pass. The pass gates final
 submission or readiness, not initial storage, and changes no publication or
@@ -73,7 +72,7 @@ Check an acceptance item only after its exact direct check observes the expected
 
 - The active path `.agents/plans/<Datetime>_<slug>.md` is the only execution, update, continuation, and completion source for every lifecycle state. A host-local file may supply draft bytes to its adapter, never an execution source.
 - Hosts without a local-draft adapter create and revise the complete portable plan directly at the active path with ordinary repository tools for every lifecycle state, including `DONE` and `CLOSED`.
-- Host adapters: OMP drafts locally and copies through `~/.agents/harnesses/omp/plan-transport.md`; Grok has no local-draft adapter and uses the direct path (discovery note: `~/.agents/harnesses/grok/plan-transport.md`). Every other host uses the direct path. Load the actual host's adapter only when publishing.
+- Host adapters: OMP drafts locally and copies through [`harnesses/omp/plan-transport.md`](../harnesses/omp/plan-transport.md); Grok has no local-draft adapter and uses the direct path (discovery note: [`harnesses/grok/plan-transport.md`](../harnesses/grok/plan-transport.md)). Every other host uses the direct path. Load the actual host's adapter only when publishing.
 - Validate the exact active file, or the adapter's exact snapshot, with `executor_plan.py validate PLAN` before publication and readiness.
 - Inspect only the two exact identity paths: the active path and `.agents/plans/archive/<Datetime>_<slug>.md`. Both present is a visible storage conflict; preserve both and stop. An archive identity without an active identity is also a visible conflict for materialization; preserve it and stop. An existing archive identity is a read-only conflict surface; resolve it deliberately, outside automatic storage behavior. Reserve both directories for deliberate plan files.
 - Persistence, whether a direct edit or an adapter copy of exact bytes, grants no approval, alternate ready or runtime transition, execution state, completion, Handoff, or presentation eligibility. A storage error remains visible but does not replace specialty completion evidence.

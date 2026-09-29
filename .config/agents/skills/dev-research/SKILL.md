@@ -31,15 +31,9 @@ Reject open-ended product discovery, market/customer/positioning/pricing/launch/
 4. Reconcile contradictions and report gaps. Do not force consensus where the sources differ.
 5. Return concise cited evidence and one common Handoff to the concrete named requesting owner. State what the evidence supports, what it does not establish, the smallest remaining question, and `route-impact: unchanged|changed` per `dev-handoff`.
 
-## Optional Atlas capability
+## Optional research store
 
-Use Atlas only when the current workspace or user configuration exposes a qualified live capability. Filesystem presence or advertised intent is not proof.
-
-- A `current` topic may answer through its source-artifact identities and citations.
-- A `dirty`, `refreshing`, or `blocked` topic stops with the freshness state, affected sources, and the explicit refresh action required. Never silently serve stale evidence.
-- A missing or insufficient topic falls back to direct portable research.
-- Persist into Atlas only for Atlas-scoped work or explicit durable-capture opt-in.
-- Scheduling, daily acquisition, topic refresh, credentials, and transport remain Atlas or adapter responsibilities; do not claim or implement them here.
+Use a durable research store only when the current workspace or user configuration exposes a qualified live capability. Filesystem presence or advertised intent is not proof. Never silently serve stale evidence: stored evidence the store reports as not current stops with its freshness state, affected sources, and the refresh action it requires. A missing or insufficient stored answer falls back to direct portable research. Persist only for store-scoped work or explicit durable-capture opt-in; scheduling, refresh, credentials, and transport stay with the store or its adapter.
 
 ## Research Evidence
 
@@ -59,7 +53,7 @@ Use Atlas only when the current workspace or user configuration exposes a qualif
 - What the evidence supports
 - What it does not decide
 ## Freshness and capture
-- Current/dirty/refreshing/blocked/not applicable
+- Stored-evidence freshness state, or `not applicable`
 - Durable capture location or `none`
 ## Next owner
 - The one exact requesting lifecycle owner
@@ -71,4 +65,4 @@ The Handoff binds the Research Evidence identity, reports any broken assumption 
 
 ## Stop conditions
 
-Stop for an unbounded question, missing requesting owner, conflicting authority, unavailable required primary evidence, or an Atlas topic whose required freshness is `dirty`, `refreshing`, or `blocked`. Return the evidence gap and exact next owner; do not fill it with an authority decision.
+Stop for an unbounded question, missing requesting owner, conflicting authority, unavailable required primary evidence, or stored evidence whose required freshness is not current. Return the evidence gap and exact next owner; do not fill it with an authority decision.

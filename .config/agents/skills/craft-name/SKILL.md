@@ -22,21 +22,9 @@ Generate names that fit meaning, sound, and future range. Stay directional, not 
 
 Ask only when different naming families would lead to materially different outputs and the conversation does not already supply enough signal.
 
-## Default bias for this user
+## User preferences
 
-Unless the user asks otherwise, bias toward:
-
-- short, clean, preferably single-word names; use compounds only when clarity is worth the cost
-- elegant, premium-minimal tone
-- symbolic roots from mythology, cartography, geometry, navigation, or adjacent vocabularies
-- implied function rather than explicit technical spelling
-- softened, coined, or trimmed forms rather than bulky compounds
-
-Brief evidence from prior discussion:
-
-- roots like `Kairos`, `Talaria`, and `Portolan` matched the intended semantic direction
-- the chosen outcome was `Kaira`
-- this implies a preference for names that keep the symbolic anchor but become cleaner, softer, and less literal
+Apply the user's known naming preferences, from rules, memory, or prior reactions, before these generic moves.
 
 ## Naming moves
 
@@ -65,11 +53,3 @@ If you do offer a focused family pass, keep it short and say that it is intentio
   - more technical or more explicit
   - closer to one chosen root
   - different root families with the same vibe
-
-## Example transformations
-
-Use examples as pattern, not template:
-
-- `Kairos` -> `Kaira`: retain the timing/root association, drop weight, improve softness
-- `Talaria` -> `Talora`: keep the motion or messenger feel, reduce ornament
-- `Azimuth` -> `Azira`: keep the navigational undertone, lose the technical edge

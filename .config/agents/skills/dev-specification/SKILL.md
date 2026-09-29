@@ -38,7 +38,7 @@ never substitute remembered summaries.
 6. Define test seams that let implementation exercise each behavior without exposing private production machinery. Apply the referenced policy's permanent-only requirements when proposing retained tests; do not copy that policy.
 7. Record material assumptions, known risks, explicit stops, and recovery boundaries. Continue through engineering details inside authority; request human confirmation for changed product behavior, destructive/external effects, materially different architecture, or shipping.
 8. After producing a substantive specification candidate, apply
-   `~/.agents/references/plan-rethink.md` once as it directs.
+   [`plan-rethink.md`](../../references/plan-rethink.md) once as it directs.
 
 ## Specification shape
 

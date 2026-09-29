@@ -103,4 +103,4 @@ Never create empty `CONTEXT.md`, `CONTEXT-MAP.md`, `docs/adr/`, `docs/product/`,
 
 ## Portability
 
-OMP `/skill:init-ask` and Grok `/init-ask` use this same body. Invocation syntax changes no catalog, status, approval, owner, or effect semantics.
+Every host's invocation runs this same body. Invocation syntax changes no catalog, status, approval, owner, or effect semantics.

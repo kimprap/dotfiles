@@ -129,7 +129,7 @@ payload or rebuilding, and do not request a shorter rewrite.
 Before creating any implementation child, require the OMP collector's
 `taskDepth` to be 0. At `taskDepth > 0`, stop `transport-unavailable` before
 allocation: OMP v18.3.0 does not expose native `wait` to subagents
-([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
+([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts)).
 Do not substitute or spawn a delegated controller to bypass this gate.
 Depth 0 still requires every schema, identity and collection capability below.
 This host restriction does not change capable other-host topology.
@@ -353,30 +353,30 @@ audit, only when the requester names it.
 ## Child foreground execution
 
 - A task child has no native `wait`
-  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts#L711-L714)).
+  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts)).
   A run that never yields skips the quiescence barrier, so teardown cancels any
   background job it left running and the turn ends without a return
-  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts#L2251-L2261)).
+  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts)).
   A yield while jobs are pending is only parked until they settle, then a fresh
   yield is required
-  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts#L1705-L1709));
+  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts));
   do not rely on that.
 - Before its terminal return, a child starts no background work: no bash
   `async: true` and no launched service.
 - Bash auto-backgrounds a command still running after
   `bash.autoBackground.thresholdMs` (default 60 s), even with a longer `timeout`
   or `timeout: 0`
-  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L3918-L3920),
-  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L4750-L4752),
-  [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts#L16-L21),
-  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/bash.ts#L1017-L1020)).
+  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
+  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
+  [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts),
+  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/bash.ts)).
   A child runs any command that may exceed that threshold through Eval with an
   explicit `timeout` (Eval auto-background is off by default:
-  [setting](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts#L4071-L4073),
-  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/eval.ts#L579-L580)),
+  [setting](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
+  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/eval.ts)),
   and gives every Eval cell that may exceed the 30 s default an explicit
   `timeout`
-  ([default](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/tool-timeouts.ts#L12)).
+  ([default](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/tool-timeouts.ts)).
 - A job backgrounded anyway is cancelled with `write proc://<id>/kill` and rerun
   once in the foreground through Eval before the return.
 - Every request that states the lean-return rule also states this rule.

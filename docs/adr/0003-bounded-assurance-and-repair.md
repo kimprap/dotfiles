@@ -2,12 +2,12 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-28  
+**Updated:** 2026-09-29  
 **Decision IDs:** D03, D04, D22, D28
 
 ## Scope
 
-This record governs semantic attempts, portable execution recovery, direct checks, compact and noncompact assurance, one-shot code review, verifier-owned closure, neutral fan-in, common proof selection, and permanent-test value including the explicit manual audit. It applies to the existing concrete-check authors, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, `dev-handoff`, and their focused evals. Assurance and audit roles remain read-only toward evaluated targets and gain no semantic mutation, delivery, or shipping authority.
+This record governs semantic attempts, portable execution recovery, direct checks, compact and noncompact assurance, one-shot code review, verifier-owned closure, ordinary planned fan-in, common proof selection, and permanent-test value including the explicit manual audit. It applies to the existing concrete-check authors, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-test-audit`, `dev-handoff`, and their focused evals. Assurance and audit roles remain read-only toward evaluated targets and gain no semantic mutation, delivery, or shipping authority.
 
 ## Context / problem
 
@@ -37,11 +37,11 @@ Implementation smoke, independent review, and independent verification find diff
 - **Decision:** Verification executes every original acceptance check in governing order followed by every required review closure check in finding order. It emits one fresh aggregate over the complete fixed set. A passing subset cannot verify the target.
 - **Decision:** Within one fresh pass, an approved shared scenario can establish multiple exact observations on the same target under compatible conditions without repetition solely for each criterion. Execute at its first required occurrence and retain ordered per-item accounting. Command text alone does not establish equivalence; incompatible conditions remain separate. A prevented observation is unproved, not filled from another role's result; continue required checks when safe. Sharing never weakens complete unchanged same-verifier closure after code repair.
 - **Decision:** If review repair consumed attempt 2, verification is final for semantic repair. If attempt 2 remains and verification directly proves a code defect, the responsible child may repair once; the same persistent verifier reruns the complete unchanged fixed check set. For an execution-mechanism failure, that verifier first assesses the shared policy before escalation, stays read-only toward the evaluated target, and corrects only permitted task-local machinery. Only an eligible retry receives recovery rethink and uses the existing per-cause or transient allowance without consuming a semantic attempt. Successful recovery preserves failed history, continues the remaining fixed set, and permits a fresh complete aggregate from compatible valid observations. Loss of the required verifier, an explicit exhausted cap, or another shared-policy stop remains terminal; no second verifier or parent repair substitutes. Semantic repair still requires the complete unchanged fixed set, and review does not reopen.
-- **Decision:** Ordinary planned fan-in is an authored child-owned implementation task completed before the assembled target's one final review and verification. Standalone neutral `dev-integration` remains only for independently verified lineages, chooses no semantic winner, and is followed by verification of its new combined target. Manual permanent-test audit is separate explicit intake and never follows normal completion automatically.
+- **Decision:** Ordinary planned fan-in is an authored child-owned implementation task completed before the assembled target's one final review and verification. No standalone integration stage exists; combining separately produced work is likewise an authored child-owned implementation task. Manual permanent-test audit is separate explicit intake and never follows normal completion automatically.
 - **Why:** Tests-first review provides one independent discovery pass; verifier-owned fixed checks provide terminal truth without review loops.
 - **Rejected alternatives:** Review after verification, review reruns after repair, assurance roles repairing in place, and final-only proof of unverified isolated inputs weaken independence or add nondeterministic loops.
 - **Consequences:** Standard/high order is review → verification → learning. Compact remains lean. Exhausted attempt 2 is terminal for further deliverable repair while eligible machinery correction remains governed by its separate existing allowance.
-- **Reopen when:** Assurance order, compact eligibility, verifier closure, semantic-versus-machinery finality, or fan-in neutrality changes.
+- **Reopen when:** Assurance order, compact eligibility, verifier closure, semantic-versus-machinery finality, or fan-in ownership changes.
 
 ### D22 — Tests-first one-shot review
 
@@ -81,7 +81,7 @@ Implementation smoke, independent review, and independent verification find diff
 ## Affected contracts
 
 - `dev-implementation` and its `test-value.md` reference.
-- `dev-code-review`, `dev-verification`, `dev-integration`, `dev-test-audit`, both persistent audit opinion wrappers, and `dev-handoff`.
+- `dev-code-review`, `dev-verification`, `dev-test-audit`, both persistent audit opinion wrappers, and `dev-handoff`.
 - `dev-ask`, its human map, and focused evals.
 
 ## Evidence / source revisions

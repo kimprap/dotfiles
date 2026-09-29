@@ -4,11 +4,11 @@
     {
       "id": 1,
       "prompt": "Design rules for one durable execution-plan content contract that must shape drafting in both repository files and harness- or session-local plan artifacts, while repository naming and archival apply only under .agents/plans/.",
-      "expected_output": "A portable description-only semantic base that is available before drafting, plus a repository-storage companion; the cross-transport contract is not hidden behind TTSR or a path guard.",
+      "expected_output": "One portable description-only rule that is available before drafting and also owns .agents/plans naming and archival, with host transport in linked host adapter files; the cross-transport contract is not hidden behind TTSR or a path guard.",
       "files": [],
       "assertions": [
         "The response chooses a description-only relevance-loaded base for the portable semantic contract",
-        "The response isolates .agents/plans naming and archival in a repository-storage companion",
+        "The response keeps .agents/plans naming and archival in that one portable rule rather than a second storage rule, and puts host transport in host adapter files",
         "The response rejects putting the cross-transport contract behind TTSR or a path guard",
         "The response validates repository, harness-local, and neighboring non-plan surfaces"
       ]

@@ -9,7 +9,7 @@ Use the configured model to improve current changes or audit a scope. Quick and 
 
 Works in any repository, clean or dirty. Respects direct execution vs plan modes.
 
-Before any state capture, read, plan, or edit, reject a scope that names `/Users/kim/.agents/AGENTS.md` or its repository-backed target `/Users/kim/.dotfiles/.config/agents/AGENTS.md`: that user-level policy file is outside this skill's authority. Never create, edit, append, merge, deduplicate, reformat, or delete either path.
+Before any state capture, read, plan, or edit, reject a scope that names the user-level [`AGENTS.md`](../../AGENTS.md) at the installed agents root or any path that resolves to it, including its repository-backed source: that user-level policy file is outside this skill's authority. Never create, edit, append, merge, deduplicate, reformat, or delete it.
 
 ## Invocation variants
 

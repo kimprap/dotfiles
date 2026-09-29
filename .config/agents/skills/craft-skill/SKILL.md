@@ -70,7 +70,7 @@ When creating, appending, or reviewing a `MAINTENANCE.md`, read [references/main
 ## Activation and transport
 
 - Keep the portable process in the skill body. Slash commands, wrappers, globs, and harness metadata are discovery or invocation transports.
-- Prefer each host's native skill invocation over a new wrapper; verify syntax from live inventory. Current verified forms are OMP `/skill:<name>` and Grok CLI `/<name>`; other hosts adapt only this seam.
+- Prefer each host's native skill invocation over a new wrapper; verify syntax from live inventory. Hosts differ only at this seam.
 - If natural-language work must be shaped before action, keep the skill model-discoverable or have an already-loaded parent explicitly load it.
 - Keep genuinely manual skills manual; do not compensate with `alwaysApply` or a duplicated body.
 

@@ -5,7 +5,7 @@ retention rules only. Load this file before the first requested return and apply
 it for every requested return. It is not a skill stage, broker, transport
 implementation, lifecycle controller, or recovery policy.
 
-Installed root: `~/.agents/references/agent-return/return.md`. The decoder is
+The decoder is
 `decode.py` beside this file. A runtime caller also loads its host adapter at the
 return seam; on OMP use the [OMP agent-return adapter](../../harnesses/omp/agent-return.md).
 Workflow owners keep semantic readiness, pass selection, admission state,
