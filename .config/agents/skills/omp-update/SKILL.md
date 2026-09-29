@@ -21,7 +21,7 @@ The single entry point for omp, acpx, and ACP SDK updates. `C` below is `.config
 - A failed check stops the procedure. Rerun a live run only with a named cause and a changed input.
 - Overlay additions for new side-effect settings belong to the bump. Any controller, skill, or protocol code change is a separate change, not part of the bump.
 - The pin commit message is the qualification record. This skill holds no version numbers and no run history.
-- The omp pin lives only in `C/lib/versions.mjs`. acpx and the ACP SDK are also pinned in `C/package.json` and `C/package-lock.json` because npm requires it. Tests import the pins. The Reconcile skill and ADR-0010 name the file, not the numbers. `.config/agents/harnesses/omp/agent-return.md` keeps its source-evidence citations.
+- The omp pin lives only in `C/lib/versions.mjs`. acpx and the ACP SDK are also pinned in `C/package.json` and `C/package-lock.json` because npm requires it. Tests import the pins. The Reconcile driver (`.config/agents/harnesses/omp/acp-controller/driver.md`) and ADR-0010 name the file, not the numbers. `.config/agents/harnesses/omp/agent-return.md` keeps its source-evidence citations.
 - Frozen artifacts, the trial bundle, closed specs, and eval fixtures keep their own versions and do not move with the pin.
 
 ## Roles
@@ -52,7 +52,7 @@ e. **Move the pin** in `C/lib/versions.mjs`. For an acpx or SDK bump, also edit 
 f. **Offline suite:** `npm test` in `C`. Done when every test passes.
 
 g. **Live runs** R1, R2, R3, one at a time.
-   - Agent, before each run: record `shasum -a 256` of `.config/agents/skills/reconcile/SKILL.md`, `.config/agents/skills/retrace/SKILL.md`, `.config/agents/skills/reconcile/references/reviewer-protocol.md`, `.config/agents/harnesses/omp/config.yml`, and every evidence file that run reads (R2: `<dir>/truth.txt` and `<dir>/notes.txt`; R3: `C/lib/versions.mjs` and `C/cli.mjs`). For R2, do its setup first.
+   - Agent, before each run: record `shasum -a 256` of `.config/agents/skills/reconcile/SKILL.md`, `.config/agents/skills/retrace/SKILL.md`, `.config/agents/skills/reconcile/references/reviewer-protocol.md`, `.config/agents/harnesses/omp/acp-controller/driver.md`, `.config/agents/harnesses/omp/config.yml`, and every evidence file that run reads (R2: `<dir>/truth.txt` and `<dir>/notes.txt`; R3: `C/lib/versions.mjs` and `C/cli.mjs`). For R2, do its setup first.
    - Agent: give the user the run's prompt, with R2's `<dir>` filled in.
    - User: run it in a new OMP session through the skill. Approve a brief or scope table only when every field matches the prompt; otherwise reply with the exact correction in the same session and approve the revised one that matches. Report back.
    - Agent, after each run: check the pass conditions. Repeat the hashes; all must be unchanged except R2's `<dir>/notes.txt`.
