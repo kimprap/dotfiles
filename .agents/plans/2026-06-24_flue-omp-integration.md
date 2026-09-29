@@ -3,7 +3,7 @@
 **Datetime**: 2026-06-24-1720
 **Scope**: Cloudflare-targeted Flue coding harness primitives, OMP hashline safety, shadcn-style recipe distribution, and optional docs previews.
 **Summary**: Build a Flue-native safe file-editing lane by vendoring OMP `packages/hashline`, adding Cloudflare/Flue adapters and OMP-style `read/search/find/write/edit` sandbox tools, then distribute higher-level agents as shadcn-compatible source recipes. Keep full OMP runtime features as an external coarse-grained job backend, not as Worker-native tool-by-tool ports.
-**Status**: PENDING
+**Status**: CLOSED
 
 ## Context
 
