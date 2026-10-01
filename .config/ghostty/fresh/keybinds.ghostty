@@ -41,3 +41,5 @@ keybind = super+ctrl+-=unbind
 keybind = super+slash=unbind
 keybind = super+/=unbind
 keybind = super+arrow_left=unbind
+# Shift+click reaches Fresh to extend its selection; global, as this file is included by the main config.
+mouse-shift-capture = true

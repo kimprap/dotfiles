@@ -78,6 +78,55 @@ export function lineEdits(editor: EditorAPI): void {
     }
   }
 
+  // Native toggle_comment edits only the primary cursor's lines; with several
+  // cursors, toggle every covered line with its rules: a selection ending at a
+  // line start excludes that line, and all lines uncomment only when all are
+  // commented. The host shifts every caret and selection with the edits.
+  async function toggleCommentAllCursors(id: number): Promise<void> {
+    const language = editor.getBufferInfo(id)?.language;
+    const config = editor.getConfig() as {
+      languages?: Record<string, { comment_prefix?: string | null } | undefined>;
+    } | null;
+    const configured = language ? config?.languages?.[language]?.comment_prefix : null;
+    if (!configured) return;
+    const prefix = configured.endsWith(" ") ? configured : configured + " ";
+    const mark = prefix.trim();
+    const text = await editor.getBufferText(id);
+    const starts = utf8LineStarts(text);
+    const length = editor.utf8ByteLength(text);
+    const covered = new Set<number>();
+    for (const c of editor.getAllCursors()) {
+      const from = c.selection ? c.selection.start : c.position;
+      const to = c.selection ? c.selection.end : c.position;
+      let line = utf8LineIndex(starts, from);
+      covered.add(line);
+      while (line + 1 < starts.length && starts[line + 1] < to && starts[line + 1] < length) {
+        covered.add(++line);
+      }
+    }
+    const lines = text.split("\n");
+    const edits = [...covered]
+      .sort((a, b) => b - a)
+      .map((line) => {
+        const indent = /^[^\S\n]*/.exec(lines[line])?.[0] ?? "";
+        return {
+          lineStart: starts[line],
+          markStart: starts[line] + editor.utf8ByteLength(indent),
+          rest: lines[line].slice(indent.length),
+        };
+      });
+    const uncomment = edits.every((e) => e.rest.startsWith(mark));
+    for (const e of edits) {
+      if (!uncomment) {
+        editor.insertText(id, e.lineStart, prefix);
+        continue;
+      }
+      const removed = editor.utf8ByteLength(e.rest.startsWith(prefix) ? prefix : mark);
+      editor.deleteRange(id, e.markStart, e.markStart + removed);
+    }
+    await editor.flush();
+  }
+
   async function toggleCommentPreserveCursor(): Promise<void> {
     const id = editor.getActiveBufferId();
     const primary = editor.getPrimaryCursor();
@@ -86,8 +135,7 @@ export function lineEdits(editor: EditorAPI): void {
       return;
     }
     if (editor.getAllCursors().length > 1) {
-      editor.executeAction("toggle_comment");
-      await editor.flush();
+      await toggleCommentAllCursors(id);
       return;
     }
     const sel = primary.selection;
@@ -118,9 +166,16 @@ export function lineEdits(editor: EditorAPI): void {
     }
   }
 
-  registerHandler("toggleCommentPreserveCursor", () =>
-    unlessClosed(editor.getActiveBufferId(), toggleCommentPreserveCursor()),
-  );
+  // Commands run one at a time: a second Cmd+/ before the first restored its
+  // selection would act on a partial selection.
+  let commentQueue: Promise<void> = Promise.resolve();
+  registerHandler("toggleCommentPreserveCursor", () => {
+    const run = commentQueue.then(() =>
+      unlessClosed(editor.getActiveBufferId(), toggleCommentPreserveCursor()),
+    );
+    commentQueue = run.catch(() => undefined);
+    return run;
+  });
   editor.registerCommand(
     "Toggle Comment (preserve cursor)",
     "Toggle comments while keeping the caret on the same source character",

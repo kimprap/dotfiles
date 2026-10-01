@@ -1,4 +1,5 @@
-"""comment-json-save: toggling a comment round-trips while keeping the caret and selection,
+"""comment-json-save: toggling a comment round-trips while keeping the caret and selection, even
+when toggled twice in quick succession,
 saving JSON formats it with Prettier and keeps configured `//` comments, and whitespace and
 final-newline preferences survive save."""
 import json
@@ -9,6 +10,7 @@ REQUIRES = ("prettier", "node")
 TIMEOUT = 120
 
 PY = "    value = 1\n    café = 2\n"   # byte offsets: "value" at 4, "é" at bytes 21-22
+LONG = "".join(f"    line_{i:02} = {i:02}\n" for i in range(8))   # 17-byte lines
 JSON_IN = '{\n"a":1,\n"b":2\n}\n'
 TXT_IN = "keep  \ntrail\t\nlast"
 
@@ -37,6 +39,8 @@ def _comment_roundtrip(s):
         ("forward selection", 8, ("shift+right",) * 3, (11, _sel(8, 11)), (13, _sel(10, 13))),
         ("backward selection", 11, ("shift+left",) * 3, (8, _sel(8, 11)), (10, _sel(10, 13))),
         ("two-line selection", 8, ("shift+down",), (23, _sel(8, 23)), (27, _sel(10, 27))),
+        ("selection from a line start to the next line start", 0, ("shift+down",), (14, _sel(0, 14)),
+         (16, _sel(2, 16))),
     ]
     for label, start, keys, before, commented in variants:
         s.set_cursor(start)
@@ -54,9 +58,24 @@ def _comment_roundtrip(s):
         s.wait_state(lambda st: st["text"] == PY and _caret(st) == before,
                      what=f"{label}: uncomment restores the text and caret/selection {before}")
 
+    # A second Cmd+/ that arrives while the first still restores a long selection.
+    s.open("long.py")
+    s.action("focus_editor")
+    s.wait_state(lambda st: st["text"] == LONG, what="long.py active")
+    s.set_cursor(4)
+    s.keys(*("shift+down",) * 5)
+    s.wait_state(lambda st: _caret(st) == (89, _sel(4, 89)), what="quick toggles: six-line selection")
+    s.keys("super+/")
+    s.wait_state(lambda st: st["text"] != LONG, what="quick toggles: the first Cmd+/ comments")
+    s.sleep(0.2)  # let the first command start restoring the selection
+    s.keys("super+/")
+    s.wait_state(lambda st: st["text"] == LONG and _caret(st) == (89, _sel(4, 89)),
+                 timeout=15, what="quick toggles: the second Cmd+/ restores the text and the six-line selection")
+
 
 def run(s):
     s.write("code.py", PY)
+    s.write("long.py", LONG)
     s.write("data.json", JSON_IN)
     s.write("notes.txt", TXT_IN)
     s.launch("code.py")
