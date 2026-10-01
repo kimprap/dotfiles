@@ -14,8 +14,8 @@ let previousColumn = 1;
 registerHandler("refreshCursorStatus", async () => {
   if (refreshing) return;
   refreshing = true;
+  const bufferId = editor.getActiveBufferId();
   try {
-    const bufferId = editor.getActiveBufferId();
     const splitId = editor.getActiveSplitId();
     const info = editor.getBufferInfo(bufferId);
     const cursor = editor.getPrimaryCursor();
@@ -53,6 +53,9 @@ registerHandler("refreshCursorStatus", async () => {
       previousBuffer = bufferId;
       previousValue = value;
     }
+  } catch (error) {
+    // The buffer or split can close while a read is in flight; skip that frame.
+    if (editor.getBufferInfo(bufferId)) throw error;
   } finally {
     refreshing = false;
   }
