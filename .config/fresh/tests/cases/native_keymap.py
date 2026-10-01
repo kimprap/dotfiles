@@ -48,9 +48,14 @@ def _tab_order(s):
     return sorted(NAMES, key=row.find)
 
 
+def _live_grep(screen):
+    """The Live Grep dialog (v0.5.2+): its titled border and its Search field."""
+    return "\u250cLive grep" in screen and "\u2502  Search " in screen
+
+
 def _close_prompt(s):
     s.keys("escape")
-    s.wait_screen(lambda sc: _prompt(sc) is None and "Live grep:" not in sc, what="Escape to close the prompt")
+    s.wait_screen(lambda sc: _prompt(sc) is None and "\u250cLive grep" not in sc, what="Escape to close the prompt")
 
 
 def _pickers(s):
@@ -63,7 +68,7 @@ def _pickers(s):
             s.check(all(n in screen for n in NAMES), "file picker does not list the workspace files")
         _close_prompt(s)
     s.keys("super+shift+f")
-    s.wait_text("Live grep:")
+    s.wait_screen(_live_grep, what="Cmd+Shift+F to open the Live grep dialog")
     _close_prompt(s)
 
 

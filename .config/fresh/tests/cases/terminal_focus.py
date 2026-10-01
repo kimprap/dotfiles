@@ -4,7 +4,8 @@ With no terminal, Cmd+J leaves the layout, buffers and file text unchanged. With
 dock terminal opened (Cmd+Shift+C) and focus back in the editor, Cmd+J focuses
 the terminal: a shell command typed next writes a proof file, and the editor text
 is untouched. In the terminal, the doubled Cmd+Ctrl+Shift letters (terminal resize
-keys) do not act as the editor tab-move chord: every pane keeps its buffer.
+keys) resize the terminal split, L and J in opposite directions, and do not act as
+the editor tab-move chord: every pane keeps its buffer and focus stays in the terminal.
 """
 import shlex
 
@@ -16,6 +17,11 @@ def _active(state):
     panes = [p for p in state["panes"] if p["active"]]
     assert len(panes) == 1, f"expected one active pane: {state['panes']}"
     return panes[0]
+
+
+def _terminal_size(state):
+    pane = next(p for p in state["panes"] if p["kind"] == "terminal")
+    return pane["width"] + pane["height"]
 
 
 def _membership(state):
@@ -51,9 +57,20 @@ def run(s):
     s.wait(lambda: proof.exists() and proof.read_text() == "terminal-ok", timeout=10,
            what="the focused terminal's shell to write terminal-proof.txt")
 
-    layout = _membership(s.state())
+    start = s.state()
+    layout = _membership(start)
+    size = _terminal_size(start)
+    grew = None
     for letter in ("l", "j"):
         s.keys(f"ctrl+shift+super+{letter}", f"ctrl+shift+super+{letter}")
+        if grew is None:
+            now = s.wait_state(lambda st: _terminal_size(st) != size,
+                               what=f"Cmd+Ctrl+Shift+{letter.upper()} to resize the terminal split")
+            grew = _terminal_size(now) > size
+        else:
+            now = s.wait_state(lambda st: _terminal_size(st) != size and (_terminal_size(st) < size) == grew,
+                               what=f"Cmd+Ctrl+Shift+{letter.upper()} to resize the terminal split back")
+        size = _terminal_size(now)
         s.sleep(0.3)  # the tab-move chord must not fire; nothing to wait for
         now = s.state()
         s.check(_membership(now) == layout,

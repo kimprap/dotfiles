@@ -61,7 +61,7 @@ def _tab_order(s):
 
 def _add_focus_targets(s):
     """Setup: file panel, one review comment and the comments rail, so focus has three targets."""
-    if "[ ▸ File ]" in s.screen():
+    if "FILES" not in s.screen():
         s.keys("F")
     s.wait_screen(lambda sc: "FILES" in sc and "UNTRACKED" in sc, what="review file panel")
     if "COMMENTS" not in s.screen():

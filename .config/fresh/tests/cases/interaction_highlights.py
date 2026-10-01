@@ -117,7 +117,7 @@ def _select_theme(s, name):
     s.type("select theme")
     s.wait_text("Choose a color theme")
     s.keys("enter")
-    s.wait_text("cursor-dark.json")
+    s.wait_screen(lambda sc: sc.lines[-1].startswith("Select theme:"), what="the theme picker prompt")
     s.type(name)
     s.wait_screen(lambda sc: any(line.lstrip("\u2502 ").startswith(name + " ") for line in sc.lines),
                   what=f"theme {name} in the picker")
