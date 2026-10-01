@@ -206,6 +206,21 @@
       "summary": "Required-projection matching preserves punctuation while projection authors can assume punctuation-insensitive normalization.",
       "surface": ".config/agents/skills/dev-ask/evals/scan_stale_contracts.py required projections"
     },
+    "pc-ddb862c52c84e10f": {
+      "first_seen": "2026-10-01",
+      "last_seen": "2026-10-01",
+      "observations": [
+        {
+          "date": "2026-10-01",
+          "friction": "First bump-fresh run: run.py live printed 43 shadowed USER-LAYER lines; SKILL.md says Config drift lists the LIVE and USER-LAYER lines, while the proposal style asks for simple high-level bullets, so the controller had to rule on the form.",
+          "workaround": "List LIVE lines verbatim and summarize USER-LAYER lines in one bullet with their count."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "The proposal field map requires listing every USER-LAYER line, conflicting with the simple high-level bullet style when the live user layer is large.",
+      "surface": ".config/agents/skills/bump-fresh proposal Config drift field"
+    },
     "pc-e1c8b1660bfd1b81": {
       "first_seen": "2026-08-13",
       "last_seen": "2026-08-13",
