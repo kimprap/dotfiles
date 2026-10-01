@@ -1,5 +1,5 @@
 ---
-name: omp-update
+name: bump-omp
 description: >
   Qualify a new omp, acpx, or ACP SDK version for the Reconcile and Retrace
   acp controller: save the old omp binary, review upstream changes, install,
@@ -9,7 +9,7 @@ description: >
   or skill changes, and other tool upgrades.
 ---
 
-# omp-update
+# bump-omp
 
 The single entry point for omp, acpx, and ACP SDK updates. `C` below is `.config/agents/harnesses/omp/acp-controller`; paths are relative to `~/.dotfiles`.
 
