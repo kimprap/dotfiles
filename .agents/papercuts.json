@@ -235,6 +235,21 @@
       "resolution": null,
       "summary": "planner validator accepts obsolete Execution gate",
       "surface": "executor_plan.py planner validation"
+    },
+    "pc-f83f491fa66928b4": {
+      "first_seen": "2026-10-02",
+      "last_seen": "2026-10-02",
+      "observations": [
+        {
+          "date": "2026-10-02",
+          "friction": "A read-only pipeline of git diff -- <paths> | grep, git diff --stat and git ls-files was interrupted by the git-state-change gate; an earlier run interrupted after gh release view.",
+          "workaround": "Acknowledge the interrupt and continue; the commands were read-only."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "The git state-change gate fires on read-only commands, so inspection pipelines are interrupted as if they changed Git state.",
+      "surface": ".config/agents/rules/git-state-change.md trigger"
     }
   },
   "version": 2
