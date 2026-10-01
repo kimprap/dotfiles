@@ -18,7 +18,7 @@ Primary areas: Neovim, Zsh, Starship, Ghostty, Yazi, Cursor, helper scripts, and
 - Preserve backup-before-overwrite behavior in bootstrap/setup scripts.
 - Target macOS on Apple Silicon; prefer Homebrew paths under `/opt/homebrew`.
 - When changing or diagnosing the generic engineering workflow, read `.config/agents/skills/dev-ask/WORKFLOW.md` and `docs/adr/INDEX.md`, which names the ACTIVE workflow ADRs. Ordinary tasks read only the applicable skill/rule and active ADRs named in their Task Contract.
-- When maintaining, auditing, or extending the papercut framework, read `.config/agents/skills/papercut/WORKFLOW.md` and the active ADR-0007 and ADR-0008 projections in `docs/adr/INDEX.md`; ordinary papercut capture reads only the applicable rule and `papercut` skill.
+- When maintaining, auditing, or extending the papercut framework, read `.config/agents/skills/papercut/WORKFLOW.md` and ADR-0007 through `docs/adr/INDEX.md`; ordinary papercut capture reads only the applicable rule and `papercut` skill.
 
 ## Key directories
 

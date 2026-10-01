@@ -2,8 +2,8 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-21  
-**Updated:** 2026-09-28  
-**Decision ID:** D27  
+**Updated:** 2026-10-02  
+**Decision IDs:** D27  
 **Related authority:** ADR-0001 D02, D17; ADR-0002 D29; ADR-0004 D07; ADR-0007 D24
 
 ## Scope
@@ -18,8 +18,8 @@ Specialty workflows need enough typed transport to preserve ownership and recove
 
 ### D27 — Stateless envelope and five-field completion
 
-- **Decision:** Treat one active conversation as one workflow session. Bind a `Session Envelope` with session ID, route, mode, current phase, active artifact ID or path when one exists, current owner, last accepted Handoff, next owner, last completed transition, and pending gates. This envelope is typed transport, not durable state. A route-owning agent may change from router to controller role in place without changing physical identity or creating a self-Handoff.
-- **Decision:** Use the current workflow sequence `intake → classify → work specialty → Handoff at a real ownership or context boundary → papercut → assurance and learning when eligible → present`. A boundary-crossing completed stage emits one lean Handoff containing outcome, affected paths and revisions, checks and exact results, blockers or risks, remaining work, and one concrete bound receiver. Semantic next-owner roles such as `dev-implementation` and `dev-ask` remain distinct from that physical receiver identity. An in-place controller consumes child and assurance returns, controller conclusions, and current plan evidence without a Handoff to itself; an approved delegated controller returns one Handoff to the concrete route owner.
+- **Decision:** Treat one active conversation as one workflow session. The route owner holds its route state as in-memory transport, never durable state, and may change from router to controller role in place without changing physical identity or creating a self-Handoff.
+- **Decision:** `dev-implementation` owns stage order and `.config/agents/rules/papercut.md` owns papercut timing. A boundary-crossing completed stage emits one lean `dev-handoff` Handoff with exactly one concrete bound receiver. Semantic next-owner roles such as `dev-implementation` and `dev-ask` remain distinct from that physical receiver identity. An in-place controller consumes child and assurance returns, controller conclusions, and current plan evidence without a Handoff to itself; an approved delegated controller returns one Handoff to the concrete route owner.
 - **Decision:** Missing or malformed required transport stops the next transition. Required owner identities are reused or resumed rather than replaced. A fresh or resumed session re-reads current repository artifacts and governing contracts; it does not trust hidden process state or a continuation receipt.
 - **Decision:** A successful generic terminal payload has exactly these five top-level fields in this order:
 
@@ -31,8 +31,7 @@ Specialty workflows need enough typed transport to preserve ownership and recove
   Next
   ```
 
-- **Decision:** `Checks` contains executed checks with exact outcomes, all papercut result lines in boundary and authored-task order or `Papercut: none`, and the normalized learning line. Compact uses `Learning: skipped for compact`. Standard/high uses `Learning: curated`, `Learning: no durable learning`, or `Learning: blocked <reason>`.
-- **Decision:** For implementation completion, `Changes` or `Checks` identifies the current active `DONE` plan path when a plan existed. Completion does not require, create, move to, or cite an archive. It carries no plan digest, result manifest, generation map, receipt, repair grant, or model grade.
+- **Decision:** `Checks` carries executed checks with exact outcomes, the papercut results or `Papercut: none`, and exactly one Learning line; planned implementation completion cites the current active `DONE` plan and never requires, creates, or cites an archive, digest, manifest, receipt, generation map, repair grant, or model grade.
 - **Decision:** Ordinary learning failure remains a `Risk` and still permits presentation. A current governing-rule conflict that directly invalidates or makes the settled implementation unsafe blocks successful completion. Other incomplete required stages use the owning workflow's typed blocked or stopped report rather than the success payload.
 - **Decision:** The same agent that validated terminal success invokes `completion-presentation` only as a deterministic renderer of the already-complete five-field payload. The renderer checks only the input format and performs no success validation, routing, state transition, Handoff, artifact publication, delivery, or shipping.
 - **Decision:** The schema and input validation rules live only in [the canonical completion input contract](../../.config/agents/references/completion-presentation-input.md). Callers read it before building the input, then pass the input to the render script in a tool call, never in the reply; the reply is the script output. Reading the contract does not activate presentation.
@@ -53,8 +52,8 @@ A small stable envelope preserves intra-session control while repository artifac
 
 ## Consequences
 
-- Hosts may transport the envelope in memory, task context, or an equivalent native structure; no common background-job substrate is required.
-- Handoffs stay lean and revision-aware enough for one concrete bound receiver to continue; in-place role changes create no ceremonial self-Handoff.
+- Hosts may carry the route state in memory, task context, or an equivalent native structure; no common background-job substrate is required.
+- Handoffs stay lean and carry only what one concrete bound receiver needs to continue; in-place role changes create no ceremonial self-Handoff.
 - Successful output is always recognizable by its exact five top-level fields.
 - Papercut and Learning are visible under `Checks`, and ordinary learning failure remains visible under `Risks`.
 - Planned completion references the active `DONE` plan and leaves historical archives untouched.
@@ -64,12 +63,12 @@ A small stable envelope preserves intra-session control while repository artifac
 
 - `.config/agents/skills/dev-ask/SKILL.md`, `WORKFLOW.md`, and focused evals.
 - `.config/agents/skills/product-ask/SKILL.md`, `WORKFLOW.md`, and focused evals.
-- `.config/agents/skills/dev-handoff/SKILL.md`, `completion-presentation/SKILL.md`, implementation terminal behavior, plan lifecycle, papercut, and learning.
+- `.config/agents/skills/dev-handoff/SKILL.md`, `.config/agents/skills/completion-presentation/SKILL.md`, `.config/agents/rules/papercut.md`, implementation terminal behavior, plan lifecycle, papercut, and learning.
 - ADR discovery.
 
 ## Evidence / source revisions
 
-- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
+- Approved by the owner on 2026-09-04, 2026-09-06 and 2026-10-02; history in git.
 
 ## Human authority
 

@@ -1,7 +1,8 @@
-# ADR-0010 — acpx controller for Retrace and Reconcile
+# acpx controller for Retrace and Reconcile
 
 **Status:** ACTIVE  
-**Date:** 2026-09-18
+**Date:** 2026-09-18  
+**Decision IDs:** D31
 
 ## Scope
 
@@ -11,7 +12,7 @@ This record governs the persistent actor sessions used only by the named Retrace
 
 Retrace and Reconcile require stable child identities across multiple semantic turns, owner-only reply visibility, durable pending-state inspection, bounded direct capacity, partial sibling accounting, and cleanup proven by observed process exit. Projecting those guarantees onto launch jobs, roster addressability, caller-owned observation windows, local echoes, or `details.waited` made transport mechanics look like semantic authority and could not prove exact disposal.
 
-The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill, runs the controller's read-only `roles` preflight through `bash` before showing each brief or scope table, obtains approval, invokes the controller CLI once per approved binding through `bash`, and presents its record. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx `createSharedAcpRuntime` and native `omp acp`, pins both versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
+The controller replaces the earlier in-session OMP extension. The root OMP session runs the skill through the OMP driver, which preflights, obtains approval, and invokes the controller. The controller owns every reviewer, normalizer and scope-evaluator session through public acpx `createSharedAcpRuntime` and native `omp acp`, pins its toolchain versions before any launch, and adds no custom transport, supervisor, mailbox, private acpx import, or generic workflow policy.
 
 ## Decision
 
@@ -31,7 +32,7 @@ The controller replaces the earlier in-session OMP extension. The root OMP sessi
 - Retrace and Reconcile share one coded controller over public acpx and native `omp acp`, and keep separate executable semantic contracts.
 - Stable actor, request, owner, first-reply, turn/reuse, pending, abort, and observed-exit disposal states are explicit and cannot be inferred from unrelated host surfaces.
 - Partial batches and failed cleanup retain exact evidence instead of collapsing into a false all-or-nothing result.
-- The controller pins exact omp and acpx versions in `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`; a different version is refused before any launch until the offline suite and live runs pass on it.
+- The controller pins exact omp, acpx and ACP SDK versions in `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`; a different version is refused before any launch until the offline suite and live runs pass on it.
 - The previously pending Tier 1 recorder plan remains closed as historical planning.
 - The eval catalogs are specification fixtures. Their presence is not a claim that the full catalogs were executed; any native or model-backed execution remains separately gated.
 
@@ -41,22 +42,23 @@ The controller replaces the earlier in-session OMP extension. The root OMP sessi
 - **Caller-owned timers or external supervisors:** rejected because elapsed time is not semantic failure and callers must not poll or manufacture completion.
 - **Generic collection fallback:** rejected because these custom controllers have stricter owner visibility, capacity, and disposal semantics.
 - **Recorder-only corroboration:** rejected because passive records do not provide the active persistent-actor lifecycle boundary.
-- **Proof-export API:** rejected because export is not a lifecycle concern; prebound owners can copy retained returned results without widening the plugin interface.
+- **Proof-export API:** rejected because export is not a lifecycle concern; prebound owners can copy retained returned results without widening the controller interface.
 
 ## Affected contracts
 
 - `.config/agents/harnesses/omp/acp-controller/`
+- `.config/agents/harnesses/omp/acp-controller/driver.md`
+- `.config/agents/skills/bump-omp/SKILL.md`
 - `.config/agents/harnesses/omp/agent-return.md`
 - `.config/agents/references/agent-return/return.md`
 - `.config/agents/skills/retrace/SKILL.md`
 - `.config/agents/skills/reconcile/SKILL.md`
 - `.config/agents/skills/reconcile/references/reviewer-protocol.md`
 - the Retrace and Reconcile eval catalogs
-- the custom-controller projections in `dev-ask` and `dev-implementation`
 
 ## Authority and evidence
 
-Approved by the owner on 2026-09-18 and 2026-09-27; history in git. The current contract is the [production cutover specification](../../.agents/artifacts/archive/2026-09-27_reconcile-retrace-acp-production-spec.md) and its [approved implementation plan](../../.agents/plans/archive/2026-09-27-0134_reconcile-retrace-acp-production.md). The original decision is the [replacement lifecycle plugin specification](../../.agents/artifacts/archive/2026-09-18_replacement-lifecycle-plugin-spec.md); the controller cutover replaces its executable seam. The archived production specification and DONE plan still name their pre-archive paths; those citations are historical, and neither file is edited to follow them.
+Approved by the owner on 2026-09-18, 2026-09-27 and 2026-10-02; history in git. The current contract is the [production cutover specification](../../.agents/artifacts/archive/2026-09-27_reconcile-retrace-acp-production-spec.md) and its [approved implementation plan](../../.agents/plans/archive/2026-09-27-0134_reconcile-retrace-acp-production.md). The original decision is the [replacement lifecycle plugin specification](../../.agents/artifacts/archive/2026-09-18_replacement-lifecycle-plugin-spec.md); the controller cutover replaces its executable seam. The archived production specification and DONE plan still name their pre-archive paths; those citations are historical, and neither file is edited to follow them.
 
 ## Supersession
 

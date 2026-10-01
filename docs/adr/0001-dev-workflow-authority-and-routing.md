@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-09  
-**Updated:** 2026-09-29  
+**Updated:** 2026-10-02  
 **Decision IDs:** D01, D02, D05, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19, D20, D26
 
 ## Scope
@@ -27,7 +27,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 - **Decision:** Present one compact prospective Route Overview and obtain one approval before routed or executable effects, including dispatch of bounded `dev-research`. Reapprove only when authority, route, material scope, acceptance, topology or independence, destructive or external effects, shipping, a shared assumption, or equivalent capability changes.
 - **Decision:** Requirements request targeted confirmation only when they synthesize or materially clarify human-owned behavior. Faithful research return, specification, ticket, stage, Handoff, review, verification, learning, and presentation continuations need no additional approval.
-- **Decision:** The approved route covers the `dev-implementation` controller's provenance-bound collection, begun by an awaited request, of the same implementation child's authorized attempt-2 repair candidate, rethink Handoff in either semantic attempt, and return from an already-authorized same-child execution-recovery operation. Those three exact continuations require no repeated consent, attendance, external-supervisor, or abort-capability gate. A finite host observation window ending does not reopen approval or prove a missing report. This is not a blanket recovery or restatement allowance or a custom-controller exemption; Reconcile, Retrace, and other collectors retain their own preflight and report-count rules.
+- **Decision:** The approved route covers the `dev-implementation` controller's exact same-child collections that ADR-0002 D21 exempts; they need no repeated consent. A finite host observation window ending does not reopen approval or prove a missing report. This is not a blanket recovery or restatement allowance; custom controllers keep their own preflight and report-count rules (ADR-0010 D31).
 - **Why:** Approval should track human decisions and effects, not artifact count or phase transitions.
 - **Rejected alternatives:** Reapproving every return adds waiting without changing authority; letting the first approval cover later consequential changes infers authority the human did not grant.
 - **Consequences:** Byte drift triggers semantic comparison. Unrelated or non-material drift does not reopen the route.
@@ -43,8 +43,8 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ### D10 — Sole thin, stateless router
 
-- **Decision:** `dev-ask` is the sole generic engineering router. While acting in that role, the route-owning agent classifies, presents one route approval, starts only the first owner, handles material reapproval, validates terminal success, builds the five-field completion input, and applies the presenter in the same agent by passing that input to the render script in a tool call, never in the reply. Delegated first owners are dispatched; when implementation is reached, the route-owning agent activates `dev-implementation` in place by default, including after unchanged prerequisite continuation. Standalone implementation likewise uses the invoking agent as controller.
-- **Decision:** The router role owns no execution state, implementation, semantic repair, audit opinion, learning policy, rendering policy, or workflow ledger. In-place controller activation is a role change under approved authority, not router-owned stage work, and creates no self-Handoff. A separate implementation controller is valid only when the current approved topology explicitly binds it.
+- **Decision:** `dev-ask` is the sole generic engineering router. While acting in that role, the route-owning agent classifies, presents one route approval, starts only the first owner, handles material reapproval, validates terminal success, and builds the five-field completion input that D18 presents. Delegated first owners are dispatched; implementation controller entry follows ADR-0002 D06.
+- **Decision:** The router role owns no execution state, implementation, semantic repair, audit opinion, learning policy, rendering policy, or workflow ledger.
 - **Decision:** `dev-test-audit` is a separate explicit read-only route. Before its initial Route Overview approval, show the exact scope and ordered list of every in-scope test file and launch no auditor. Normal completion never schedules it. Accepted audit fixes return for one fresh direct or planned mutation approval.
 - **Why:** One thin router prevents competing lifecycle authority while keeping specialist procedure in specialist skills; in-place controller activation avoids a ceremonial controller hop without moving controller procedure into the router.
 - **Rejected alternatives:** A second router, an unconditionally spawned implementation controller, hidden scheduler, automatic completion-tail audit, or router-owned state store duplicates existing owners. Letting an in-place controller spawn another controller recursively weakens approved topology and double-schedules work.
@@ -73,7 +73,7 @@ The workflow needs one current route and one durable explanation of its boundari
 ### D13 — Clean cutover
 
 - **Decision:** Migrate every active caller, skill, rule, focused eval, workflow projection, and active ADR together when a generic contract changes. Remove obsolete files and behavior rather than keeping aliases or compatibility readers.
-- **Decision:** The lean cutover has no active proof-recipe, surface-adapter, worker-closure, generation-map, repair-token, continuation-receipt, repeated-review, model-grader, twelve-field-completion, or automatic-plan-archive path. Negative prohibition text and historical records may name replaced behavior without reviving it.
+- **Decision:** Replaced workflow machinery has no active path. Negative prohibition text and historical records may name replaced behavior without reviving it.
 - **Why:** Dual behavior makes authoritative selection impossible.
 - **Rejected alternatives:** Compatibility schemas and silent legacy fallbacks preserve contradictory contracts.
 - **Consequences:** A remaining active legacy caller is a release blocker; Reconcile and historical archives remain outside this cutover unless separately authorized.
@@ -89,8 +89,8 @@ The workflow needs one current route and one durable explanation of its boundari
 
 ### D15 — Semantic ownership and source roles
 
-- **Decision:** Current human and approved product or engineering artifacts own intent within their scopes. Executable skills and rules own live procedure. Lean plans and Handoffs project and transfer authority but do not create it. Active ADRs own durable rationale. `dev-ask/WORKFLOW.md` is the non-runtime human map.
-- **Decision:** Retrace is an explicit-only, read-only custom controller for repository agent-harness configuration, not a generic engineering route. Human approval binds its complete scope table and constraints. Each approved scope delegates report-only conversational Reconcile to that same scope child, which owns its nested reviewers; delegation grants correction of that conversational report only. This seam grants no generic routing, implementation, assurance, repository/evidence mutation, or shipping authority and preserves D13's separate authorization for Reconcile changes. Executable Retrace and Reconcile contracts own the custom mechanics; this decision and discovery maps do not execute them.
+- **Decision:** Current human and approved product or engineering artifacts own intent within their scopes. Executable skills and rules own live procedure. Lean plans and Handoffs project and transfer authority but do not create it. Active ADRs own durable rationale.
+- **Decision:** Retrace is an explicit-only, read-only custom controller for repository agent-harness configuration, not a generic engineering route. Human approval binds its complete scope table and constraints. It grants no generic routing, implementation, assurance, repository/evidence mutation, or shipping authority, and D13's separate authorization for Reconcile changes still applies. ADR-0010 D31 and the executable Retrace and Reconcile contracts own their mechanics; this decision and discovery maps do not execute them.
 - **Decision:** External sources and skill-local maintenance journals are provenance only. ADR-0004 D23 owns the human-map and maintenance-journal authority relationship.
 - **Why:** One semantic owner per concern prevents stale projections from controlling execution.
 - **Rejected alternatives:** Runtime-loading maps or journals, or treating plans and Handoffs as independent authority, creates competing owners.
@@ -142,7 +142,7 @@ The workflow needs one current route and one durable explanation of its boundari
 
 - **Decision:** Eligible compact work uses `dev-implementation → completion-presentation`. Attempt 1 includes the implementation child's one code-then-test rethink, direct checks, one lean Handoff, and one papercut look. Compact dispatches no independent review, verifier, learning, or audit and records `Learning: skipped for compact`.
 - **Decision:** Compact may be planless when one child owns the cohesive result. An authored plan still uses child ownership and the same lean task contract but adds no assurance tail.
-- **Decision:** Ordinary planned standard/high work uses `dev-specification → dev-ticketing → dev-implementation → dev-code-review → dev-verification → dev-continual-learning → completion-presentation`; an authored implementation task owns any fan-in before final assurance.
+- **Decision:** Standard/high work uses the suffix `dev-implementation → dev-code-review → dev-verification → dev-continual-learning → completion-presentation`, preceded by `dev-specification` or `dev-ticketing` only under D11's conditions; an authored implementation task owns any fan-in before final assurance.
 - **Why:** Bounded direct work should avoid graph and assurance ceremony while preserving a real changed-path check, and ordinary planned work should assemble once before final assurance.
 - **Rejected alternatives:** Requiring a plan or independent assurance for every small reversible change adds cost without a disqualifying consequence; pre-fan-in verification and ordinary standalone integration duplicate the authored implementation task.
 - **Consequences:** Direct work never manufactures a plan; planned compact work remains work-only.
@@ -151,17 +151,18 @@ The workflow needs one current route and one durable explanation of its boundari
 ## Affected contracts
 
 - `.config/agents/skills/dev-ask/SKILL.md` and `WORKFLOW.md`.
-- `dev-specification`, `dev-ticketing` and its `references/task-sizing.md`, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-continual-learning`, `dev-test-audit`, `dev-handoff`, `papercut`, and `completion-presentation` at their owned seams.
+- `dev-specification`, `dev-ticketing` and its `.config/agents/skills/dev-ticketing/references/task-sizing.md`, `dev-implementation`, `dev-code-review`, `dev-verification`, `dev-continual-learning`, `dev-test-audit`, `dev-handoff`, `papercut`, and `completion-presentation` at their owned seams.
 - The base plan rule, generic completion callers, focused evals, `.agents/AGENTS.md`, and `docs/adr/INDEX.md`.
+- ADR-0010 D31 at the Retrace and Reconcile custom-controller seam.
 
 ## Evidence / source revisions
 
-- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
+- Approved by the owner on 2026-09-04, 2026-09-06 and 2026-10-02; history in git.
 - External sources are advisory and cannot supersede current human authority or executable contracts.
 
 ## Human authority
 
-The human-approved lean workflow route authorizes this projection. It does not authorize product decisions, mutation outside the approved target map, delivery, shipping, or changes to Reconcile.
+The human-approved lean workflow route authorizes this projection. It does not authorize product decisions, mutation outside the approved target map, delivery, shipping, or changes to the Retrace or Reconcile custom controllers (ADR-0010).
 
 ## Supersession
 

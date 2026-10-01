@@ -2,13 +2,13 @@
 
 **Status:** ACTIVE  
 **Date:** 2026-08-20  
-**Updated:** 2026-09-28  
-**Decision ID:** D24  
+**Updated:** 2026-10-02  
+**Decision IDs:** D24  
 **Related authority:** ADR-0001 D05, D14; ADR-0004 D07
 
 ## Scope
 
-This record governs when repository-owned reusable-friction evidence is observed and how complete repository-work outcomes are presented to portable `papercut`. It applies to `dev-implementation`, direct engineering work, learning-curation repository work, `dev-shipping` delivery stages that change repository state, `dev-handoff`, the portable `papercut` skill, and workflow projections. It does not broaden qualification, storage, or mutation authority.
+This record governs when repository-owned reusable-friction evidence is observed and how complete repository-work outcomes are presented to portable `papercut`. It applies to the papercut scheduling rule, `dev-implementation`, direct engineering work, learning-curation repository work, `dev-shipping` delivery stages that change repository state, the portable `papercut` skill, and workflow projections. It does not broaden qualification, storage, or mutation authority.
 
 ## Context / problem
 
@@ -22,7 +22,7 @@ Papercut observation is most useful immediately after a repository-work boundary
 - **Decision:** Separately executed learning curation and shipping or delivery repository mutations create their own completed boundaries and therefore their own one look. A completed Handoff that preserves repository work while reporting a blocker is a boundary. Read-only work and repository work abandoned before such a Handoff are not boundaries.
 - **Decision:** Pass the affected path boundary and direct execution evidence. Portable `papercut` alone qualifies root causes and returns one result for every distinct qualifying cause in stable authored-task order. Consolidate equivalent same-cause evidence before presentation; never select only the easiest or most important result.
 - **Decision:** Exclude ordinary code defects, requests for more tests or debugging, external-provider or environment failures outside repository control, missing product or engineering authority, deliberate safety boundaries, already-fixed friction with no reusable residue, and content-only one-off work. A source suggestion or external essay cannot qualify a papercut by itself.
-- **Decision:** Preserve portable `papercut`'s opt-in persistence. Repository initialization requires the skill's existing human approval gate; after that opt-in, automatic capture may record each qualifying cause in an initialized writable ledger. Absent, malformed, unsafe, or unauthorized storage leaves every cause report-only, and review stays proposal-only. Invocation creates no automatic issue, plan, learning item, initialization, or unrelated file.
+- **Decision:** Preserve portable `papercut`'s opt-in persistence: only an initialized writable ledger, after the skill's explicit human-approved `init`, records qualifying causes. Invocation never initializes storage and creates no automatic issue, plan, learning item, or unrelated file; `.config/agents/skills/papercut/SKILL.md` owns storage states and proposal-only review.
 - **Decision:** There is no numeric result cap, severity threshold, model score, review-policy import, or terminal retry. If papercut cannot run, record the unavailable boundary once and continue unless a separate governing rule makes completion unsafe.
 
 ## Why
@@ -48,13 +48,14 @@ The workflow owns deterministic observation timing and complete accounting. The 
 
 ## Affected contracts
 
+- `.config/agents/rules/papercut.md` for boundary timing and ownership.
 - `.config/agents/skills/papercut/SKILL.md` and its focused evals.
-- `.config/agents/skills/dev-implementation/SKILL.md`, direct engineering guidance, `dev-handoff`, terminal completion, learning curation, and shipping delivery orchestration.
+- `.config/agents/skills/dev-implementation/SKILL.md`, direct engineering guidance, terminal completion, learning curation, and shipping delivery orchestration.
 - `.config/agents/skills/dev-ask/WORKFLOW.md` and caller projections.
 
 ## Evidence / source revisions
 
-- Approved by the owner on 2026-09-04 and 2026-09-06; history in git.
+- Approved by the owner on 2026-09-04, 2026-09-06 and 2026-10-02; history in git.
 - The prompt-bundle maintenance journal records advisory source treatments but is non-runtime provenance.
 
 ## Human authority
