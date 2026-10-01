@@ -171,7 +171,7 @@ export async function main({
   if (!versions.ok) {
     return refuse("version pin", [
       ...versions.mismatches.map((m) => `${m.name}: observed \`${m.observed}\`, expected \`${m.expected}\``),
-      "procedure: .config/agents/skills/omp-update/SKILL.md",
+      "procedure: .config/agents/skills/bump-omp/SKILL.md",
     ]);
   }
   const ompPath = versions.ompPath;

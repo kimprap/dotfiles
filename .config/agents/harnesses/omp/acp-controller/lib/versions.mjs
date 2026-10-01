@@ -1,6 +1,6 @@
 // Exact toolchain pins (spec-v3 §5 Q4, decision 3). A new version first needs
-// the offline suite and the live runs to pass on it. Follow the omp-update
-// skill, `.config/agents/skills/omp-update/SKILL.md`, to move these pins.
+// the offline suite and the live runs to pass on it. Follow the bump-omp
+// skill, `.config/agents/skills/bump-omp/SKILL.md`, to move these pins.
 import { execFile } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
