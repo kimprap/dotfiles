@@ -10,13 +10,13 @@ one.
 ## Evidence scope
 
 The
-generic implementation-return facts are grounded in OMP v18.3.0 stock source;
+generic implementation-return facts are grounded in OMP v18.4.9 stock source;
 the version pin records evidence and does not enforce the runtime:
 
-- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts)
-- [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/index.ts)
-- [`async/job-manager.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/job-manager.ts)
-- [`internal-urls/agent-protocol.ts`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/internal-urls/agent-protocol.ts)
+- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/task/executor.ts)
+- [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/task/index.ts)
+- [`async/job-manager.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/async/job-manager.ts)
+- [`internal-urls/agent-protocol.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/internal-urls/agent-protocol.ts)
 
 Stock OMP exposes original structured completion jobs through the native surfaces
 listed below. This contract selects no lookup, custom capture or publication
@@ -66,7 +66,7 @@ output is not this payload.
 ## Same-cell structured return collection
 
 OMP cuts a child's visible task result to a `<preview …>` above
-`FULL_OUTPUT_THRESHOLD`, a hard-coded 5,000 characters in OMP v18.3.0
+`FULL_OUTPUT_THRESHOLD`, a hard-coded 5,000 characters in OMP v18.4.9
 (`result-summary.ts`). The complete reply stays in the `structured` object of
 the settled job row that native `wait` returns. Review, verification, learning,
 test-audit auditor A and B, and implementation returns, at launch and on
@@ -93,8 +93,12 @@ Native `wait` returns the first settled job or peer message and consumes what it
 returns; a dequeued message is otherwise unrecoverable. Every result that is
 not the bound row, such as a peer message, another job or a `wakeRelay`, is
 kept in kernel state and printed in full in that cell, and the loop continues.
-Each `wait` call is bounded by `WAIT_MAX_MS` (30 min) and then returns a
-still-running snapshot, so the loop waits again. The controller never ends its
+A `wait` call with an owned running job is bounded by `WAIT_MAX_MS` (30 min)
+and then returns a still-running snapshot. With no owned running job or live
+owned service it returns `No message within …` after a short message window
+(5 s rising to 300 s on repeated waits) in OMP v18.4.9
+([message window](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/wait.ts)).
+The cell keeps either result and the loop waits again. The controller never ends its
 turn to wait for the row.
 
 Rows carry `id`, `type`, `status`, `agentUrlId`, `resultText` and
@@ -128,8 +132,9 @@ payload or rebuilding, and do not request a shorter rewrite.
 
 Before creating any implementation child, require the OMP collector's
 `taskDepth` to be 0. At `taskDepth > 0`, stop `transport-unavailable` before
-allocation: OMP v18.3.0 does not expose native `wait` to subagents
-([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts)).
+allocation. This is adapter policy: OMP v18.4.9 exposes native `wait` to
+subagents when async, IRC or launch is enabled
+([native gate](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/index.ts)).
 Do not substitute or spawn a delegated controller to bypass this gate.
 Depth 0 still requires every schema, identity and collection capability below.
 This host restriction does not change capable other-host topology.
@@ -267,7 +272,11 @@ running state in microtasks queued before the receipt returns, so only an
 earlier `wait` could observe the pre-start state. A `wakeRelay` or other
 ordinary message remains nonauthoritative and does not end collection. While an
 unrelated peer or owned service runs this result cannot occur, and collection
-stays bounded only by native wait limits. This adds no polling rule.
+stays bounded only by native wait limits. A `wait` result with empty
+`details.jobs` and any other text, such as `No message within …` after the
+OMP v18.4.9 message window elapses while no owner job runs
+([message window](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/wait.ts)),
+is not this stop. This adds no polling rule.
 
 After candidate admission send the one implementation rethink as a separate
 request to that same child. It applies code rethink then test rethink, at most
@@ -352,31 +361,34 @@ audit, only when the requester names it.
 
 ## Child foreground execution
 
-- A task child has no native `wait`
-  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/index.ts)).
-  A run that never yields skips the quiescence barrier, so teardown cancels any
-  background job it left running and the turn ends without a return
-  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts)).
+- A task child may have native `wait`
+  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/index.ts));
+  the rules below still apply. A run that never yields first has its pending
+  background jobs settled and is prompted again to yield. A budget stop, a
+  terminal model error, or an exhausted reminder ladder with no pending work
+  skips the quiescence barrier, so teardown cancels any background job it left
+  running and the turn ends without a return
+  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/task/executor.ts)).
   A yield while jobs are pending is only parked until they settle, then a fresh
   yield is required
-  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/task/executor.ts));
+  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/task/executor.ts));
   do not rely on that.
 - Before its terminal return, a child starts no background work: no bash
   `async: true` and no launched service.
 - Bash auto-backgrounds a command still running after
   `bash.autoBackground.thresholdMs` (default 60 s), even with a longer `timeout`
   or `timeout: 0`
-  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
-  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
+  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
+  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
   [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts),
-  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/bash.ts)).
+  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/bash.ts)).
   A child runs any command that may exceed that threshold through Eval with an
   explicit `timeout` (Eval auto-background is off by default:
-  [setting](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/config/settings-schema.ts),
-  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/eval.ts)),
+  [setting](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/eval/settings.ts),
+  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/eval.ts)),
   and gives every Eval cell that may exceed the 30 s default an explicit
   `timeout`
-  ([default](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/tools/tool-timeouts.ts)).
+  ([default](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/tool-timeouts.ts)).
 - A job backgrounded anyway is cancelled with `write proc://<id>/kill` and rerun
   once in the foreground through Eval before the return.
 - Every request that states the lean-return rule also states this rule.

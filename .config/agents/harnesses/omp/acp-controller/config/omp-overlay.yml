@@ -22,3 +22,9 @@ contextPromotion:
 astGrep:
   enabled: false
 externalThinking: false
+providers:
+  cacheWarming: "off"
+ida:
+  enabled: false
+telemetry:
+  otlpExportEnabled: false
