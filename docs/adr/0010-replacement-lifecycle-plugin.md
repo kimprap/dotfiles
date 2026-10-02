@@ -32,7 +32,7 @@ The controller replaces the earlier in-session OMP extension. The root OMP sessi
 - Retrace and Reconcile share one coded controller over public acpx and native `omp acp`, and keep separate executable semantic contracts.
 - Stable actor, request, owner, first-reply, turn/reuse, pending, abort, and observed-exit disposal states are explicit and cannot be inferred from unrelated host surfaces.
 - Partial batches and failed cleanup retain exact evidence instead of collapsing into a false all-or-nothing result.
-- The controller pins exact omp, acpx and ACP SDK versions in `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`; a different version is refused before any launch until the offline suite and live runs pass on it.
+- The controller pins exact omp, acpx and ACP SDK versions in `.config/agents/harnesses/omp/acp-controller/lib/versions.mjs`; a different version is refused before any launch until the offline suite and the live runs the bump-omp skill selects pass on it.
 - The previously pending Tier 1 recorder plan remains closed as historical planning.
 - The eval catalogs are specification fixtures. Their presence is not a claim that the full catalogs were executed; any native or model-backed execution remains separately gated.
 

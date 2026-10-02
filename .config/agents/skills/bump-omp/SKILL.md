@@ -2,23 +2,26 @@
 name: bump-omp
 description: >
   Qualify a new omp, acpx, or ACP SDK version for the Reconcile and Retrace
-  acp controller: save the old omp binary, review upstream changes, install,
-  move the pin, run the offline suite, and hand the user three live runs.
-  Use only when the user explicitly asks to update, upgrade, or bump omp,
-  acpx, or the ACP SDK. Skip ordinary omp use or configuration, controller
-  or skill changes, and other tool upgrades.
+  acp controller: save the old omp binary, triage upstream changes, install,
+  move the pin, run the offline suite, and hand the user only the live runs
+  the changes need. Use only when the user explicitly asks to update,
+  upgrade, or bump omp, acpx, or the ACP SDK. Skip ordinary omp use or
+  configuration, controller or skill changes, and other tool upgrades.
 ---
 
 # bump-omp
 
 The single entry point for omp, acpx, and ACP SDK updates. `C` below is `.config/agents/harnesses/omp/acp-controller`; paths are relative to `~/.dotfiles`.
 
+A request that names no component bumps omp, acpx, and the ACP SDK to their latest releases together; do not ask which to update. A request that names components bumps only those, plus a partner the coupling below requires.
+
 ## Policy
 
-- Every omp, acpx, or ACP SDK bump runs the offline suite and all three live runs before the new pin is committed (spec-v3 decision 3). No early return, no skip ladder.
-- Order: save the old binary, install, qualify. Reconcile and Retrace refuse with exit 2 until the pin matches the installed versions.
-- The pin edit stays uncommitted until every check passes. Revert it on failure.
+- Every bump runs the offline suite before the new pin is committed. Live runs are the agent's call from the step b triage: a patch bump with no flagged touchpoint may skip all three; otherwise run R1 first, add R2 or R3 only for flagged session-lifecycle or Retrace surfaces, and stop once the selected runs pass. An unneeded run is an acceptable false positive.
+- Order: save the old binary, install, move the pin, qualify. Reconcile and Retrace refuse with exit 2 until the pin matches the installed versions.
+- The pin edit stays uncommitted until every selected check passes. Revert it on failure.
 - A failed check stops the procedure. Rerun a live run only with a named cause and a changed input.
+- acpx and the ACP SDK move as one pair: set the SDK to a version inside the new acpx's SDK range. If triage finds the pair needs controller code, keep the pair at its pin, bump omp alone, and report the hold-back and its reason instead of asking. When omp itself needs controller code, the fix stays the user's decision.
 - Overlay additions for new side-effect settings belong to the bump. Any controller, skill, or protocol code change is a separate change, not part of the bump.
 - The pin commit message is the qualification record. This skill holds no version numbers and no run history.
 - The omp pin lives only in `C/lib/versions.mjs`. acpx and the ACP SDK are also pinned in `C/package.json` and `C/package-lock.json` because npm requires it. Tests import the pins. The Reconcile driver (`.config/agents/harnesses/omp/acp-controller/driver.md`) and ADR-0010 name the file, not the numbers. `.config/agents/harnesses/omp/agent-return.md` keeps its source-evidence citations.
@@ -26,41 +29,43 @@ The single entry point for omp, acpx, and ACP SDK updates. `C` below is `.config
 
 ## Roles
 
-- Agent: steps a–f and h, plus each live run's setup and checks.
-- User: R1–R3, each in a new OMP session with the user's own approvals, including R2's repair. The user reports back each run's approved brief or scope table, the controller stdout, and the `controller-exit=<n>` line, but not the prompt: a pasted prompt's first line would invoke a skill in the agent's session.
-- The agent never runs R1–R3 itself, never pastes a run prompt into its own session, and never approves on the user's behalf.
+- Agent: steps a–f and h, the live-run decision, plus each live run's setup and checks.
+- User: the startup check and the selected live runs, each in a new OMP session with the user's own approvals, including R2's repair. The user reports back each run's approved brief or scope table, the controller stdout, and the `controller-exit=<n>` line, but not the prompt: a pasted prompt's first line would invoke a skill in the agent's session.
+- The agent never runs live runs itself, never pastes a run prompt into its own session, and never approves on the user's behalf.
 - Step i happens only on a later explicit request.
 
 ## Procedure
 
-Each step must pass before the next starts.
+Steps follow their dependencies, not their letters: a before d; d before e; e before the user's first new OMP session, because Reconcile and Retrace refuse until the pin matches; f and the selected live runs before i. Step h only needs to finish before i. A failed check stops the bump.
 
 Every repository edit here must change only its intended lines. OMP formats files on write (`lsp.formatOnWrite` is on), which can reindent a whole file. If `git -C ~/.dotfiles diff -- <file>` shows lines you did not change, restore that file to its HEAD bytes and reapply only your change through `bash`.
 
 a. **Save the old binary.** Confirm `~/.local/bin/omp` is a regular file, not a symlink; if a future install is a symlink, save the target's bytes instead. `<old version>` is exactly what `omp --version` prints. It contains a slash, so create `~/.local/share/omp-maintenance/<old version>/` with `mkdir -p` and do not reject the slash. Copy the binary's bytes there and write its `shasum -a 256` beside it. Done when the saved copy's hash equals the installed file's.
 
-b. **Review upstream changes** between the two tags, limited to: `omp acp` and its flags; session create, load, and resume; the `yield` tool and the tool set; `omp config list --json`; the settings schema; and the files cited in `agent-return.md`. Done when expected breakage is written down.
+b. **Triage upstream changes** between the two tags. Read the release notes or changelog and the tag-compare file list, filtered to the controller's touchpoints: `omp acp` and its flags; session create, load, and resume, and the session-file layout; the `yield` tool and the tool set; `omp config list --json` and the settings schema; the files cited in `agent-return.md`; and, when acpx or the SDK moves, the acpx API that `C/lib/adapter.mjs` imports. Dig deeper only into flagged touchpoints. Done when a rough change summary, the flagged touchpoints, and the live-run decision are written down.
 
 c. **Diff settings defaults.** Compare the new version's settings-schema defaults against `C/config/omp-overlay.yml`. Add to the overlay every new setting whose default adds context or side effects.
 
 d. **Install** the new binary at `~/.local/bin/omp`. The agent's own session runs from that file: write the new binary beside it and `mv` it into place; never copy onto the existing file. Do not add an installer. Record the exact install command and download source for the commit message.
-   - User: start one new OMP session, note any startup errors, including extensions and custom agents, and exit without sending a prompt.
-   - Agent, immediately before installing: record `git -C ~/.dotfiles status --short --untracked-files=all -- .config/agents/harnesses/omp/` and `git -C ~/.dotfiles diff -- .config/agents/harnesses/omp/ | shasum -a 256`. After the user's session, repeat both. Done when the user reports no startup error and both outputs are unchanged.
 
 e. **Move the pin** in `C/lib/versions.mjs`. For an acpx or SDK bump, also edit `C/package.json` and `C/package-lock.json`, then run `npm ci` in `C`.
 
-f. **Offline suite:** `npm test` in `C`. Done when every test passes.
+f. **Offline suite:** `npm test` in `C`, started in the background before the step g hand-off so it overlaps the user's session. Done when every test passes; a failure stops the bump before commit.
 
-g. **Live runs** R1, R2, R3, one at a time.
+g. **User session and selected live runs.**
+   - Agent, immediately before the first hand-off and after the pin edit: record `git -C ~/.dotfiles status --short --untracked-files=all -- .config/agents/harnesses/omp/` and `git -C ~/.dotfiles diff -- .config/agents/harnesses/omp/ | shasum -a 256`.
+   - No live run selected: the user starts one new OMP session, notes any startup errors, including extensions and custom agents, and exits without sending a prompt.
+   - Live runs selected: run them one at a time; the first run's session doubles as the startup check, and the user notes any startup errors with the run's report.
    - Agent, before each run: record `shasum -a 256` of `.config/agents/skills/reconcile/SKILL.md`, `.config/agents/skills/retrace/SKILL.md`, `.config/agents/skills/reconcile/references/reviewer-protocol.md`, `.config/agents/harnesses/omp/acp-controller/driver.md`, `.config/agents/harnesses/omp/config.yml`, and every evidence file that run reads (R2: `<dir>/truth.txt` and `<dir>/notes.txt`; R3: `C/lib/versions.mjs` and `C/cli.mjs`). For R2, do its setup first.
    - Agent: give the user the run's prompt, with R2's `<dir>` filled in.
    - User: run it in a new OMP session through the skill. Approve a brief or scope table only when every field matches the prompt; otherwise reply with the exact correction in the same session and approve the revised one that matches. Report back.
    - Agent, after each run: check the pass conditions. Repeat the hashes; all must be unchanged except R2's `<dir>/notes.txt`.
    - Agent, after the run's final controller call (for R2, after the resume; its parked first call keeps its folders by design): no `~/.omp/agent/sessions/acp-controller-*` directory, no `/tmp/acp-controller-*` directory, and `pgrep -fl '[o]mp acp'` prints nothing. If pgrep finds a process, stop and report it. Do not kill it.
+   - Done when the user reports no startup error, the selected runs pass, and the repeated status and diff hash are unchanged.
 
 h. **Citations.** For each file cited in `agent-return.md` that changed between the tags, re-verify the claim and retarget its links. Leave citations whose files did not change. Do not strip the source-pin version from that file.
 
-i. **Commit**, only on a later explicit request: the pin with any overlay and citation changes. The message states old to new, the install command and source, each check's result, each run's exit and spend, and known limits. If a request asks to stage, stage exact paths with `git -C ~/.dotfiles add -- <path>...` per `.agents/AGENTS.md` `## Git`; never `git add -A`, `git add .`, or `git commit -a`.
+i. **Commit**, only on a later explicit request: the pin with any overlay and citation changes. The message states old to new, the install command and source, each check's result, the live-run decision with which runs ran or were skipped and why, each run's exit and spend, any held-back component and why, and known limits. If a request asks to stage, stage exact paths with `git -C ~/.dotfiles add -- <path>...` per `.agents/AGENTS.md` `## Git`; never `git add -A`, `git add .`, or `git commit -a`.
 
 ## Failure
 
