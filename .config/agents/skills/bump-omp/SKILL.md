@@ -36,13 +36,13 @@ A request that names no component bumps omp, acpx, and the ACP SDK to their late
 
 ## Procedure
 
-Steps follow their dependencies, not their letters: a before d; d before e; e before the user's first new OMP session, because Reconcile and Retrace refuse until the pin matches; f and the selected live runs before i. Step h only needs to finish before i. A failed check stops the bump.
+Steps follow their dependencies, not their letters: a before d; d before e; e before the user's first new OMP session, because Reconcile and Retrace refuse until the pin matches; f and the selected live runs before i. Start step h in a background subagent right after b; it needs only b's source and must finish before i. A failed check stops the bump.
 
 Every repository edit here must change only its intended lines. OMP formats files on write (`lsp.formatOnWrite` is on), which can reindent a whole file. If `git -C ~/.dotfiles diff -- <file>` shows lines you did not change, restore that file to its HEAD bytes and reapply only your change through `bash`.
 
 a. **Save the old binary.** Confirm `~/.local/bin/omp` is a regular file, not a symlink; if a future install is a symlink, save the target's bytes instead. `<old version>` is exactly what `omp --version` prints. It contains a slash, so create `~/.local/share/omp-maintenance/<old version>/` with `mkdir -p` and do not reject the slash. Copy the binary's bytes there and write its `shasum -a 256` beside it. Done when the saved copy's hash equals the installed file's.
 
-b. **Triage upstream changes** between the two tags. Read the release notes or changelog and the tag-compare file list, filtered to the controller's touchpoints: `omp acp` and its flags; session create, load, and resume, and the session-file layout; the `yield` tool and the tool set; `omp config list --json` and the settings schema; the files cited in `agent-return.md`; and, when acpx or the SDK moves, the acpx API that `C/lib/adapter.mjs` imports. Dig deeper only into flagged touchpoints. Done when a rough change summary, the flagged touchpoints, and the live-run decision are written down.
+b. **Triage upstream changes** between the two tags. Fetch the source as two full tag trees, not a blobless clone, so `git grep` and `git diff` stay local: in a scratch directory run `git init`, add the upstream remote, then `git fetch --depth 1 --no-tags origin tag <old tag> tag <new tag>`. Read the release notes or changelog and the tag-compare file list, filtered to the controller's touchpoints: `omp acp` and its flags; session create, load, and resume, and the session-file layout; the `yield` tool and the tool set; `omp config list --json` and the settings schema; the files cited in `agent-return.md`; and, when acpx or the SDK moves, the acpx API that `C/lib/adapter.mjs` imports. Dig deeper only into flagged touchpoints. Done when a rough change summary, the flagged touchpoints, and the live-run decision are written down.
 
 c. **Diff settings defaults.** Compare the new version's settings-schema defaults against `C/config/omp-overlay.yml`. Add to the overlay every new setting whose default adds context or side effects.
 
@@ -63,7 +63,7 @@ g. **User session and selected live runs.**
    - Agent, after the run's final controller call (for R2, after the resume; its parked first call keeps its folders by design): no `~/.omp/agent/sessions/acp-controller-*` directory, no `/tmp/acp-controller-*` directory, and `pgrep -fl '[o]mp acp'` prints nothing. If pgrep finds a process, stop and report it. Do not kill it.
    - Done when the user reports no startup error, the selected runs pass, and the repeated status and diff hash are unchanged.
 
-h. **Citations.** For each file cited in `agent-return.md` that changed between the tags, re-verify the claim and retarget its links. Leave citations whose files did not change. Do not strip the source-pin version from that file.
+h. **Citations.** Start from `git diff <old tag> <new tag> -- <file>` for each file cited in `agent-return.md`. Re-verify only claims whose cited code that diff touches, starting with the claims b flagged, and retarget the links of every cited file that changed. Leave citations whose files did not change. Do not strip the source-pin version from that file.
 
 i. **Commit**, only on a later explicit request: the pin with any overlay and citation changes. The message states old to new, the install command and source, each check's result, the live-run decision with which runs ran or were skipped and why, each run's exit and spend, any held-back component and why, and known limits. If a request asks to stage, stage exact paths with `git -C ~/.dotfiles add -- <path>...` per `.agents/AGENTS.md` `## Git`; never `git add -A`, `git add .`, or `git commit -a`.
 
