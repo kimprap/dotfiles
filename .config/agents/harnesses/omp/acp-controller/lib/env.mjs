@@ -172,13 +172,17 @@ async function rmdirIfPresent(dir) {
   }
 }
 
+/** OMP's empty per-session lock markers: the publish lock and the ownership lease. */
+const SESSION_LOCK_SUFFIXES = Object.freeze([".jsonl.lock.os", ".jsonl.owner.lock"]);
+
 /**
  * Runs only after every published PID showed ESRCH and never reads file
  * contents: (1) delete `<ts>_<id>.jsonl` per recorded session ID and its exact
- * lock `.<ts>_<id>.jsonl.lock.os` only when that is an empty regular file,
- * (2) recursively delete only its same-name `<ts>_<id>/` folder, (3) rmdir the
- * run folder and then the run's cwd-named folder, (4) keep and report anything
- * else. `complete` is true only when nothing was kept.
+ * locks `.<ts>_<id>.jsonl.lock.os` and `.<ts>_<id>.jsonl.owner.lock` only when
+ * each is an empty regular file, (2) recursively delete only its same-name
+ * `<ts>_<id>/` folder, (3) rmdir the run folder and then the run's cwd-named
+ * folder, (4) keep and report anything else. `complete` is true only when
+ * nothing was kept.
  */
 export async function cleanupLiveSessionFolders({ sessionDir, sessionIds, realCwd, sessionsRoot = SESSIONS_ROOT }) {
   const out = { sessionDir, sessionIds: [...sessionIds], deleted: [], kept: [], folders: [] };
@@ -188,13 +192,14 @@ export async function cleanupLiveSessionFolders({ sessionDir, sessionIds, realCw
   const names = await fs.readdir(sessionDir).catch((error) => (error.code === "ENOENT" ? [] : Promise.reject(error)));
   for (const name of names) {
     const full = path.join(sessionDir, name);
-    const id = sessionIds.find((sid) => name.endsWith(`_${sid}.jsonl`) || name.endsWith(`_${sid}`) || (name.startsWith(".") && name.endsWith(`_${sid}.jsonl.lock.os`)));
+    const lock = name.startsWith(".") && SESSION_LOCK_SUFFIXES.find((suffix) => name.endsWith(suffix));
+    const id = sessionIds.find((sid) => name.endsWith(`_${sid}.jsonl`) || name.endsWith(`_${sid}`) || (lock && name.endsWith(`_${sid}${lock}`)));
     if (!id) {
       out.kept.push(name);
       continue;
     }
     const st = await fs.lstat(full);
-    if (name.endsWith(".jsonl.lock.os")) {
+    if (lock) {
       if (!(st.isFile() && st.size === 0)) {
         out.kept.push(name);
         continue;

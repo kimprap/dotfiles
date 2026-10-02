@@ -423,7 +423,7 @@ test("claim: resume of a run that crashed after an earlier resume refuses, names
 
 test("dispose: one abandoned run is disposed through the CLI while another abandoned run exists; only its folders go", async () => {
   const cwdFolderOf = (root) => liveCwdFolderFor(fs.realpathSync(path.join(root, "work")), t.sessionsRoot);
-  const x = fixtureRun(RUN_X, { record: { phase: "active", pids: [REVIEWER], sessionIds: ["s1"] }, sessionFiles: ["2026_s1.jsonl", ".2026_s1.jsonl.lock.os", "2026_s1/"] });
+  const x = fixtureRun(RUN_X, { record: { phase: "active", pids: [REVIEWER], sessionIds: ["s1"] }, sessionFiles: ["2026_s1.jsonl", ".2026_s1.jsonl.lock.os", ".2026_s1.jsonl.owner.lock", "2026_s1/"] });
   const xCwd = cwdFolderOf(x.root);
   fs.mkdirSync(xCwd);
   const y = fixtureRun(RUN_Y, { record: { phase: "active", pids: [], sessionIds: ["s2"] }, sessionFiles: ["2026_s2.jsonl"] });
