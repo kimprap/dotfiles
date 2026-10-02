@@ -217,6 +217,44 @@ function addRow(rs, actor, pass, ident, outcome) {
   rs.rows.push({ outer: rs.outer || "—", actor, pass, identity: ident, outcome });
 }
 
+/**
+ * Records one finalized `VALID` or `REVISE` as unsent to the other reviewer:
+ * every field but the Correction (already the working proposal), labelled with
+ * its role, verdict, outer iteration and the working identity it reviewed.
+ */
+function recordUnsent(rs, role, reviewed, v) {
+  const { kind, verdict, correction, extraKeyCount, ...fields } = v;
+  rs.unsent.push({ role, verdict, outer: rs.outer, identity: identity(reviewed), response: fields });
+}
+
+/**
+ * The `COUNTERPART` slot for `role`: every unsent finalized response of the
+ * other reviewer, oldest first, or `none`. Taking them marks them sent, so no
+ * response is carried twice.
+ */
+function takeCounterpart(rs, role) {
+  const send = rs.unsent.filter((e) => e.role !== role);
+  rs.unsent = rs.unsent.filter((e) => e.role === role);
+  if (!send.length) return "none";
+  return send
+    .map((e) => {
+      const json = JSON.stringify(e.response, null, 2);
+      const fence = fenceFor(json);
+      return `Reviewer ${e.role} · ${e.verdict} · outer iteration ${e.outer} · reviewed ${e.identity}\n${fence}json\n${json}\n${fence}`;
+    })
+    .join("\n\n");
+}
+
+/** Notes in finalized responses the other reviewer was never sent, in order, with their author role. */
+function openNotes(rs) {
+  return rs.unsent.flatMap((e) => (e.response.notes ?? []).map((note) => ({ role: e.role, note })));
+}
+
+/** The `**Open notes**` field (one `- {role}: {note}` child per note), or nothing when there are none. */
+function openNotesField(notes) {
+  return notes.length ? ["", "**Open notes**", "", ...notes.map((n) => bullet(`${n.role}: ${n.note}`))] : [];
+}
+
 function reviewerPrompt(ctx, role, kind, pass, values) {
   const { rs } = ctx;
   const all = {
@@ -233,6 +271,7 @@ function reviewerPrompt(ctx, role, kind, pass, values) {
     CORRECTION_SHAPE: CORRECTION_SHAPE[rs.mode],
     EXAMPLE: exampleFor("review", { mode: rs.mode }),
     PROVISIONAL: "none",
+    COUNTERPART: "none",
     BLOCKED_RETRY: "",
     DISPUTE: "",
     SOURCE_STATUS: "none",
@@ -287,7 +326,7 @@ async function expectReview(ctx, reviewer, role, { kind, pass, values }, applica
   }
 }
 
-/** Lazily creates a scope-owned reviewer; B exists only after an applicable REVISE (KR5). */
+/** Lazily creates a scope-owned reviewer; B exists only once A's finalized REVISE or VALID with notes needs it (KR5). */
 async function getReviewer(ctx, role) {
   const { rs } = ctx;
   if (!ctx.reviewers[role]) {
@@ -297,19 +336,23 @@ async function getReviewer(ctx, role) {
   return ctx.reviewers[role];
 }
 
-/** KR6: a reviewer's first review is initial → same-session rethink → post-rethink; later reviews are `later`. */
+/**
+ * KR6: a reviewer's first review is initial → same-session rethink → post-rethink; later reviews are `later`.
+ * Only the `initial` and `later` requests carry the other reviewer's unsent finalized responses.
+ */
 async function reviewTurn(ctx, role, values, applicable) {
   const reviewer = await getReviewer(ctx, role);
   const flags = ctx.rs.reviewers[role];
+  const carried = { ...values, COUNTERPART: takeCounterpart(ctx.rs, role) };
   if (!flags.firstActualReviewComplete) {
-    const initial = await expectReview(ctx, reviewer, role, { kind: "initial", pass: "initial", values }, null);
+    const initial = await expectReview(ctx, reviewer, role, { kind: "initial", pass: "initial", values: carried }, null);
     if (!initial.ok) return initial;
     // The initial response is provisional and never acted on.
     const post = await expectReview(ctx, reviewer, role, { kind: "rethink", pass: "post-rethink", values: { ...values, PROVISIONAL: JSON.stringify(initial.value, null, 2) } }, applicable);
     if (post.ok) flags.firstActualReviewComplete = true;
     return { ...post, pass: "post-rethink" };
   }
-  return { ...(await expectReview(ctx, reviewer, role, { kind: "later", pass: "later", values }, applicable)), pass: "later" };
+  return { ...(await expectReview(ctx, reviewer, role, { kind: "later", pass: "later", values: carried }, applicable)), pass: "later" };
 }
 
 /**
@@ -351,7 +394,25 @@ async function applyAccepted(ctx, from = "application") {
 }
 
 /**
+ * S3: whether a finalized `VALID` by `role` on working identity `id` ends the
+ * round. A `VALID` without notes ends it, and so does any `VALID` on an
+ * identity whose one forward is spent. Otherwise it goes to the counterpart:
+ * the reviewer's first `VALID` with notes on `id` is recorded, and its second
+ * spends the identity's one forward.
+ */
+function validEndsRound(round, role, id, hasNotes) {
+  if (!hasNotes || round.forwarded.includes(id)) return true;
+  if (round.accepted[role].includes(id)) round.forwarded.push(id);
+  else round.accepted[role].push(id);
+  return false;
+}
+
+/**
  * Outer iterations (KR5, KR9, KR10). Returns `{ status: "final" | "stopped" | "park", ... }`.
+ * Every finalized `VALID` or `REVISE` waits in `rs.unsent` until the other
+ * reviewer's next `initial` or `later` request carries it; a `VALID` with notes
+ * continues the round (validEndsRound). The accepted identities and spent
+ * forwards reset with every outer iteration.
  * A revert (a finalized `REVISE` repeating its reviewer's earlier working
  * identity in this outer iteration) with a passing citation earns its unordered
  * proposal pair one dispute: the counterpart reviews once with those citations.
@@ -371,6 +432,7 @@ async function reconcileLoop(ctx) {
     const disputed = new Set();
     let dispute = null;
     let blockedRetry = "";
+    const round = { accepted: { A: [], B: [] }, forwarded: [] };
     let accepted;
     for (;;) {
       const applicable = async (v) => {
@@ -388,12 +450,18 @@ async function reconcileLoop(ctx) {
         return { status: "stopped", stop: { ...res.stop, pending: working } };
       }
       const v = res.value;
+      const counterpart = role === "A" ? "B" : "A";
       addRow(rs, role, res.pass, identity(working), verdictText(v));
+      if (v.verdict !== "BLOCKED") recordUnsent(rs, role, working, v);
       if (v.verdict === "VALID") {
         dispute = null;
-        accepted = working; // recommendations are never applied (KR7)
-        rs.validBy.push({ outer: rs.outer, role });
-        break;
+        if (validEndsRound(round, role, identity(working), v.notes.length > 0)) {
+          accepted = working; // notes are never applied: a change needs a new REVISE identity
+          rs.validBy.push({ outer: rs.outer, role });
+          break;
+        }
+        role = counterpart;
+        continue;
       }
       if (v.verdict === "BLOCKED") {
         if (rs.blockedRetryUsed) {
@@ -406,7 +474,6 @@ async function reconcileLoop(ctx) {
       }
       const prior = working;
       working = res.derived.bytes;
-      const counterpart = role === "A" ? "B" : "A";
       const cycleStop = (detail) => {
         addRow(rs, "stop", "—", identity(working), "repeated A/B cycle");
         return { status: "stopped", stop: { cause: "repeated A/B cycle", detail, step: `${role} ${res.pass}`, pending: working } };
@@ -491,6 +558,8 @@ function newReviewState(request, { ownerScope = "root", delegation, citationScop
     outer: 0,
     rows: [],
     validBy: [],
+    // Finalized responses the other reviewer has not been sent yet; kept through park/resume.
+    unsent: [],
     invalidReturns: 0,
     blockedRetryUsed: false,
     pending: null,
@@ -782,6 +851,7 @@ export function renderReconcile(result) {
       out.push("**Change summary**", "", `- ${rs.applications} applied change(s): ${identity(rs.runOriginal)} → ${identity(rs.canonical)}`, "");
       out.push("**Artifact**", "", `- ${rs.artifact}`, "", "**Current identity**", "", `- ${identity(rs.canonical)}`);
     }
+    out.push(...openNotesField(openNotes(rs)));
     return `${out.join("\n")}\n`;
   }
   const s = result.stop;
@@ -790,7 +860,7 @@ export function renderReconcile(result) {
   if (pendingId && pendingId !== identity(rs.canonical)) out.push(`- ${pendingId}`);
   out.push("", "**Blocker**", "", `- ${s.cause}: ${s.summary ? `${s.role}: ${s.summary.join("; ")}` : s.detail} (step: ${s.step})`);
   const resume = s.resume ?? [s.resumeWith ? `resume with: ${s.resumeWith}` : "a new approved Reconcile run from the canonical identity above"];
-  out.push("", "**Resume from**", "", ...resume.map((r) => `- ${r}`));
+  out.push("", "**Resume from**", "", ...resume.map((r) => `- ${r}`), ...openNotesField(openNotes(rs)));
   return `${out.join("\n")}\n`;
 }
 
@@ -1002,6 +1072,7 @@ async function runScope(ctx, sc) {
         sc.outerRounds = rs.outer;
         sc.reportUpdates = rs.applications;
         sc.validBy = rs.validBy;
+        sc.openNotes = openNotes(rs);
         sc.reviewRows = rs.rows;
         sc.original = v.report;
         if (review.cleanupFailures.length) sc.cleanup.push(...review.cleanupFailures);
@@ -1079,7 +1150,7 @@ export async function runRetrace(request, deps) {
   const records = new Map();
   const ctx = { run, deps, request, records, parent: `retrace:${run.runId}`, root: null };
   ctx.root = { parent: ctx.parent, records, admitted: new Map() };
-  const scopes = new Map(order.map((s) => [s.id, { scope: s, depth: table.depth.get(s.id), state: "pending", events: [], cleanup: [], validBy: [], outerRounds: 0, reportUpdates: 0 }]));
+  const scopes = new Map(order.map((s) => [s.id, { scope: s, depth: table.depth.get(s.id), state: "pending", events: [], cleanup: [], validBy: [], openNotes: [], outerRounds: 0, reportUpdates: 0 }]));
   try {
     let active = 0;
     const running = new Map();
@@ -1245,6 +1316,7 @@ function renderRetrace({ request, scopes, aggregate, cleanupFailures }) {
     out.push("", `### ${sc.scope.id} ${sc.scope.name}`, "", "**Events**", "", `- ${sc.events.join(" → ") || "none"}`);
     if (sc.manifest) out.push("", "**Manifest**", "", ...sc.manifest.map((m) => `- ${m.locator} (${m.role}) ${m.observed}`));
     if (sc.original !== undefined) out.push("", "**Provisional-to-final**", "", `- ${sc.report !== undefined && sc.report !== sc.original ? `report replaced: ${identity(sc.original)} → ${identity(sc.report)}` : `unchanged ${identity(sc.original)}`}`);
+    out.push(...openNotesField(sc.openNotes));
   }
   if (reviewed.length) out.push("", "### Reviewed reports");
   for (const sc of reviewed) out.push("", `**${sc.scope.id} ${sc.scope.name}**`, "", ...fenced(sc.report));

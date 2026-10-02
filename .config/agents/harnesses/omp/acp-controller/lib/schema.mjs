@@ -2,8 +2,10 @@
 // (spec-v3 §2.3 item 4, §4). One schema with variants for Reconcile review,
 // Retrace scope evaluation and normalization. Tolerant: unambiguous syntactic
 // variants of declared control keywords are accepted and irrelevant extra
-// fields are ignored (counted); missing or conflicting required fields are
-// rejected. Identifiers, paths and payload text are never case-folded or trimmed.
+// fields are ignored (counted), except that a review rejects any undeclared
+// list field, because every non-blocking point belongs in `notes`; missing or
+// conflicting required fields are rejected. Identifiers, paths and payload
+// text are never case-folded or trimmed.
 
 import path from "node:path";
 
@@ -27,7 +29,7 @@ const ROLES = new Set(["current", "historical"]);
 
 /** Variant -> declared fields. */
 export const VARIANTS = Object.freeze({
-  review: ["kind", "verdict", "summary", "blocking_issues", "revision", "correction", "preserve", "citations", "recommendations", "blocker", "resume_with"],
+  review: ["kind", "verdict", "summary", "blocking_issues", "revision", "correction", "preserve", "citations", "notes", "replies", "blocker", "resume_with"],
   "source-need": ["kind", "locators", "reason"],
   "candidate-ready": ["kind", "report", "manifest", "disposition"],
   "scope-paused": ["kind", "frontier"],
@@ -123,6 +125,20 @@ function validateCitations(v, defects) {
   return out.length === v.length ? out : undefined;
 }
 
+/**
+ * `notes` / `replies` on `VALID` and `REVISE`: an optional list of strings with
+ * visible text, copied byte-for-byte (never trimmed or prefixed). Absent,
+ * `null` or `[]` is no entries. Returns the list, or undefined after a defect.
+ */
+function textList(v, field, defects) {
+  if (v === undefined || v === null) return [];
+  if (!Array.isArray(v) || !v.every(nonEmpty)) {
+    defects.push(`field \`${field}\` must be an array of non-empty strings`);
+    return undefined;
+  }
+  return [...v];
+}
+
 function validateReview(data, ctx, value, defects) {
   const verdict = VERDICTS.get(normalizeKeyword(data.verdict) ?? "");
   if (!verdict) {
@@ -133,7 +149,8 @@ function validateReview(data, ctx, value, defects) {
   const summary = validateSummary(data.summary, defects);
   if (summary) value.summary = summary;
   const issues = stringList(data.blocking_issues, "blocking_issues", defects, { required: verdict === "REVISE" });
-  const recommendations = stringList(data.recommendations, "recommendations", defects);
+  // Every non-blocking point goes in `notes`; a list under any other field would be silently lost.
+  for (const field of Object.keys(data)) if (!VARIANTS.review.includes(field) && Array.isArray(data[field])) defects.push(`field \`${field}\` is not a review field; put every non-blocking point in \`notes\``);
   const preserve = stringList(data.preserve, "preserve", defects);
   if (verdict === "REVISE") {
     value.blocking_issues = issues;
@@ -148,16 +165,18 @@ function validateReview(data, ctx, value, defects) {
     if (data.revision !== undefined && data.revision !== null && normalizeKeyword(String(data.revision)) !== "none") defects.push(`verdict ${verdict} requires \`revision\` none`);
     if (data.citations !== undefined && data.citations !== null && !(Array.isArray(data.citations) && data.citations.length === 0)) defects.push(`verdict ${verdict} carries no citations`);
   }
-  if (verdict === "VALID") {
-    // Recommendations are carried for the record and never applied (KR7).
-    value.recommendations = recommendations ?? [];
-    for (const r of value.recommendations) if (!/^(editorial|semantic):/.test(r)) defects.push("each recommendation must start with `editorial:` or `semantic:`");
-  } else if (recommendations?.length) defects.push(`verdict ${verdict} carries no recommendations`);
   if (verdict === "BLOCKED") {
+    for (const field of ["notes", "replies"]) if (data[field] !== undefined && data[field] !== null && !(Array.isArray(data[field]) && data[field].length === 0)) defects.push(`verdict BLOCKED carries no \`${field}\``);
     if (!nonEmpty(data.blocker)) defects.push("BLOCKED requires a non-empty string `blocker`");
     else value.blocker = data.blocker;
     if (!nonEmpty(data.resume_with)) defects.push("BLOCKED requires a non-empty string `resume_with`");
     else value.resume_with = data.resume_with;
+  } else {
+    // Notes and replies go to the other reviewer and are never applied.
+    const notes = textList(data.notes, "notes", defects);
+    if (notes) value.notes = notes;
+    const replies = textList(data.replies, "replies", defects);
+    if (replies) value.replies = replies;
   }
 }
 
@@ -251,8 +270,8 @@ export function exampleFor(variant, ctx = {}) {
   const ex = {
     review:
       ctx.mode === "artifact"
-        ? { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }] }
-        : { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }] },
+        ? { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { edits: [{ old: "exact old text", new: "exact new text" }] }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }], notes: ["Optional non-blocking point for the other reviewer."], replies: ["adopted: the other reviewer's note this Correction takes up"] }
+        : { kind: "review", verdict: "REVISE", summary: ["Plain statement of what is wrong"], blocking_issues: ["Why the change is needed."], correction: { replacement: "The complete corrected proposal text." }, preserve: [], citations: [{ path: "/abs/path/file.md", line: 12, quote: "Exact text on line 12." }], notes: ["Optional non-blocking point for the other reviewer."], replies: ["adopted: the other reviewer's note this Correction takes up"] },
     "source-need": { kind: "source-need", locators: ["/abs/path/file.md"], reason: "Why it is needed." },
     "candidate-ready": { kind: "candidate-ready", report: "Kind: conversation\n\n## Bound Intake and Scope Model\n...", manifest: [{ locator: "/abs/path/file.md", role: "current" }], disposition: "proposal" },
     "scope-paused": { kind: "scope-paused", frontier: "The exact unresolved question." },

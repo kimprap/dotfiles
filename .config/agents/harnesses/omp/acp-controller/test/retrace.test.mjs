@@ -33,7 +33,7 @@ const PROMPTS = {
 const ROLES = { a: { model: "scripted/a", thinking: "low" }, b: { model: "scripted/b", thinking: "low" } };
 const APPROVAL = { text: "Approved scope table.", at: "2026-09-27T01:00:00Z" };
 const y = (data) => `yield:${JSON.stringify(data)}`;
-const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the report"], blocking_issues: [], revision: "none", recommendations: [] });
+const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the report"], blocking_issues: [], revision: "none" });
 
 let t;
 
@@ -434,5 +434,32 @@ test("citations and dispute: delegated review resolves a cited revert against th
   const passes = (model) => events().filter((e) => e.event === "prompt" && e.model === model && e.passMarker !== "evaluate").map((e) => e.passMarker);
   assert.deepEqual(passes("scripted/a"), ["initial", "rethink", "reask", "later", "later"]);
   assert.deepEqual(passes("scripted/b"), ["initial", "rethink", "later"]);
+  assertCleanedUp();
+});
+
+test("NOTES6: a delegated review's open note is listed with its role under the scope's Evidence and Limits only", async () => {
+  const note = "S1 could also cite its one caller.";
+  const notes = (n) => y({ kind: "review", verdict: "VALID", summary: ["Accepts the report"], blocking_issues: [], revision: "none", notes: [n] });
+  // A: provisional VALID, then a VALID with notes (B is created), then a second VALID with notes (forwarded once).
+  setPlan({
+    "scripted/a": [
+      { when: "Phase: evaluate\nScope: S1\n", then: candidate("S1") },
+      { when: "Owner: S1\n", then: VALID },
+      { when: "Owner: S1\n", then: notes("A first point.") },
+      { when: "Owner: S1\n", then: notes("A second point.") },
+    ],
+    "scripted/b": [VALID, notes("B first point."), notes(note)],
+  });
+  const out = await runRetrace(request([scope("S1")]), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const passes = (model) => events().filter((e) => e.event === "prompt" && e.model === model && e.passMarker !== "evaluate").map((e) => e.passMarker);
+  assert.deepEqual(passes("scripted/a"), ["initial", "rethink", "later"]);
+  assert.deepEqual(passes("scripted/b"), ["initial", "rethink", "later"]);
+  // B's answer to A's forwarded second VALID ends the round, so B names round 1.
+  assert.ok(out.markdown.includes("\n| S1 Area S1 | proposal | 1 | 0 | 1: B |\n"), out.markdown);
+  const at = (heading) => out.markdown.indexOf(heading);
+  const limits = out.markdown.slice(at("## Evidence and Limits"), at("### Reviewed reports"));
+  assert.ok(limits.endsWith(`\n\n**Open notes**\n\n- B: ${note}\n\n`), limits);
+  assert.equal(out.markdown.slice(0, at("## Evidence and Limits")).includes(note), false, "Result, Scope Results and Findings carry no open note");
   assertCleanedUp();
 });

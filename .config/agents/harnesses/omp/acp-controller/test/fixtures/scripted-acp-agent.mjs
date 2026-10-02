@@ -18,14 +18,15 @@
 // Every event is appended as one JSON line to env SCRIPTED_ACP_LOG:
 //   {event:"start"|"exit", model, pid, at}
 //   {event:"session-new"|"session-resume", model, sessionId, ok, pid, at}
-//   {event:"prompt", model, sessionId, passMarker, promptSha, response, pid, at}
-// `passMarker` is the value of the prompt's first `Pass:` or `Phase:` line, or null.
+//   {event:"prompt", model, sessionId, passMarker, text, response, pid, at}
+// `passMarker` is the value of the prompt's first `Pass:` or `Phase:` line, or null;
+// `text` is the complete received prompt text.
 // Each prompt adds 100 tokens and 0.01 USD to its session's cumulative usage.
 //
 // Imported as a module it exports createScriptedLauncher(), which writes an
 // executable launcher that sets the plan/log environment (the controller runs
 // agents under a sanitized environment) and execs this agent.
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { Readable, Writable } from "node:stream";
@@ -126,7 +127,7 @@ async function runAgent() {
       log("prompt", {
         sessionId,
         passMarker: /^(?:Pass|Phase):\s*(.+?)\s*$/m.exec(text)?.[1] ?? null,
-        promptSha: createHash("sha256").update(text).digest("hex"),
+        text,
         response: response ?? null,
       });
       if (response === undefined) throw new Error(`scripted plan has no entry for ${model}`);

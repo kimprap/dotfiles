@@ -19,9 +19,9 @@ import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
   reviewer: {
-    initial: "Goal: {{GOAL}}\nMode: {{MODE}}\nProposal:\n{{PROPOSAL}}\nReturn:\n{{EXAMPLE}}",
+    initial: "Goal: {{GOAL}}\nMode: {{MODE}}\nProposal:\n{{PROPOSAL}}\nCounterpart:\n{{COUNTERPART}}\nReturn:\n{{EXAMPLE}}",
     rethink: "Read {{RETHINK_SKILL}} once and rethink.\nProvisional:\n{{PROVISIONAL}}\nProposal:\n{{PROPOSAL}}",
-    later: "Proposal:\n{{PROPOSAL}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
+    later: "Proposal:\n{{PROPOSAL}}\nCounterpart:\n{{COUNTERPART}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
     source: "Sources: {{SOURCE_STATUS}}\n{{SOURCES}}",
     reask: "Not accepted: {{DEFECT}}",
     dispute: "Dispute from {{AUTHOR}}:\n{{CITATIONS}}",
@@ -32,10 +32,12 @@ const ROLES = { a: { model: "scripted/a", thinking: "low" }, b: { model: "script
 const APPROVAL = { text: "Approved as written.", at: "2026-09-27T01:00:00Z" };
 
 const y = (data) => `yield:${JSON.stringify(data)}`;
-const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the proposal"], blocking_issues: [], revision: "none", recommendations: [] });
-const REVISE = (replacement, issue = "the proposal misses the goal") => y({ kind: "review", verdict: "REVISE", summary: ["Misses the stated goal"], blocking_issues: [issue], correction: { replacement }, preserve: [] });
+const VALID = y({ kind: "review", verdict: "VALID", summary: ["Accepts the proposal"], blocking_issues: [], revision: "none" });
+const REVISE = (replacement, issue = "the proposal misses the goal", extra = {}) => y({ kind: "review", verdict: "REVISE", summary: ["Misses the stated goal"], blocking_issues: [issue], correction: { replacement }, preserve: [], ...extra });
 const EDITS = (edits) => y({ kind: "review", verdict: "REVISE", summary: ["One word is spelled in the wrong case"], blocking_issues: ["wrong word"], correction: { edits }, preserve: [] });
-const VALID_REC = y({ kind: "review", verdict: "VALID", summary: ["Accepts the edit", "Wording could be tighter"], blocking_issues: [], revision: "none", recommendations: ["editorial: tighten wording"] });
+const VALID_EDIT = y({ kind: "review", verdict: "VALID", summary: ["Accepts the edit", "Wording could be tighter"], blocking_issues: [], revision: "none" });
+/** A finalized-shape VALID carrying `notes`. */
+const VALID_NOTES = (notes, summary = ["Accepts the proposal"]) => y({ kind: "review", verdict: "VALID", summary, blocking_issues: [], revision: "none", notes });
 const sha = (text) => `sha256:${createHash("sha256").update(text).digest("hex")}`;
 
 let t;
@@ -208,7 +210,7 @@ test("KR8: an edit set applies against the outer base, a later REVISE supersedes
   const file = path.join(t.dir, "words.txt");
   fs.writeFileSync(file, "alpha\nbeta\ngamma\n");
   setPlan({
-    "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), VALID_REC, EDITS([{ old: "alpha", new: "alpha" }]), EDITS([{ old: "zeta", new: "ZETA" }]), VALID],
+    "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), VALID_EDIT, EDITS([{ old: "alpha", new: "alpha" }]), EDITS([{ old: "zeta", new: "ZETA" }]), VALID],
     "scripted/b": [VALID, EDITS([{ old: "gamma", new: "GAMMA" }])],
   });
   const out = await runReconcile(artifactRequest(file), deps());
@@ -218,15 +220,14 @@ test("KR8: an edit set applies against the outer base, a later REVISE supersedes
   assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "a:later", "a:reask", "a:reask"]);
   assert.match(out.markdown, /\*\*Current identity\*\*\n\n- sha256:[0-9a-f]{64}\n/);
   assert.ok(out.markdown.includes(`- ${sha("alpha\nbeta\nGAMMA\n")}`));
-  // The accepting VALID's recommendation is shown only through its summary, never in the Change summary.
+  // The accepting VALID shows only its summary, never in the Change summary.
   assert.match(out.markdown, /\| VALID<br>• Accepts the edit<br>• Wording could be tighter \|/);
-  assert.ok(!out.markdown.includes("tighten wording"), "full recommendation text is absent");
   assertCleanedUp();
 });
 
-test("KR9: first VALID ends negotiation; BLOCKED gets one approved-context retry; VALID recommendations change nothing", async () => {
+test("KR9: a VALID without notes ends negotiation; BLOCKED gets one approved-context retry", async () => {
   const blocked = y({ kind: "review", verdict: "BLOCKED", summary: ["Cannot judge column count", "Needs the approved page grid"], blocker: "missing layout spec", resume_with: "the layout spec", revision: "none" });
-  setPlan({ "scripted/a": [VALID, blocked, VALID_REC] });
+  setPlan({ "scripted/a": [VALID, blocked, VALID_EDIT] });
   const text = "Use two columns.";
   const out = await runReconcile(conversation(text), deps());
   assert.equal(out.exitCode, 0);
@@ -268,7 +269,7 @@ test("KR9: a second BLOCKED stops", async () => {
 
 test("review summary: 1–4 single-line points of at most 100 characters, validated for every verdict and never trimmed", () => {
   const bases = {
-    VALID: { kind: "review", verdict: "VALID", recommendations: [] },
+    VALID: { kind: "review", verdict: "VALID" },
     REVISE: { kind: "review", verdict: "REVISE", blocking_issues: ["why"], correction: { replacement: "new text" } },
     BLOCKED: { kind: "review", verdict: "BLOCKED", blocker: "gap", resume_with: "input" },
   };
@@ -642,7 +643,7 @@ test("citations: REVISE-only, with an absolute path, a positive line range and a
   assert.deepEqual(validateResult("review", { ...revise, citations: "/r/a.md:3" }, ctx).defects, ["field `citations` must be an array of citation objects"]);
 
   const others = {
-    VALID: { kind: "review", verdict: "VALID", summary: ["Accepts"], recommendations: [] },
+    VALID: { kind: "review", verdict: "VALID", summary: ["Accepts"] },
     BLOCKED: { kind: "review", verdict: "BLOCKED", summary: ["Needs the spec"], blocker: "gap", resume_with: "input" },
   };
   for (const [verdict, base] of Object.entries(others)) {
@@ -789,5 +790,246 @@ test("dispute: one dispute per proposal pair in an outer iteration; a new pair g
       ...stopped([P0, P2], "- repeated A/B cycle: the same proposal pair repeated after its one dispute (step: B later)"),
     ].join("\n"),
   );
+  assertCleanedUp();
+});
+
+/** Every prompt text the scripted `model` received, in order. */
+const promptTexts = (model) => events().filter((e) => e.event === "prompt" && e.model === model).map((e) => e.text);
+/** The COUNTERPART slot of a test `initial` or `later` prompt, through the end of the prompt. */
+const counterpartOf = (text) => text.slice(text.indexOf("\nCounterpart:\n") + "\nCounterpart:\n".length);
+const count = (text, part) => text.split(part).length - 1;
+
+test("NOTES1: notes and replies are optional text lists on VALID and REVISE; `recommendations` and BLOCKED notes are invalid returns", () => {
+  const ctx = { mode: "conversation" };
+  const bases = {
+    VALID: { kind: "review", verdict: "VALID", summary: ["Accepts"] },
+    REVISE: { kind: "review", verdict: "REVISE", summary: ["Misses the goal"], blocking_issues: ["why"], correction: { replacement: "new text" } },
+  };
+  const notes = ["Mention the phone width.", "  Keep it short\nand plain.  "];
+  const replies = ["adopted: keep the header", "declined: drop the footer — the footer holds the legal text"];
+  for (const [verdict, base] of Object.entries(bases)) {
+    const ok = validateResult("review", { ...base, notes, replies }, ctx);
+    assert.equal(ok.valid, true, `${verdict}: ${ok.defects}`);
+    assert.deepEqual([ok.value.notes, ok.value.replies], [notes, replies], `${verdict} keeps notes and replies byte-for-byte`);
+    const none = validateResult("review", base, ctx);
+    assert.deepEqual([none.value.notes, none.value.replies], [[], []], `${verdict} without notes or replies has none`);
+    for (const field of ["notes", "replies"]) {
+      for (const bad of ["one note", [""], [" \n"], [3]]) {
+        assert.deepEqual(validateResult("review", { ...base, [field]: bad }, ctx).defects, [`field \`${field}\` must be an array of non-empty strings`], `${verdict} ${field} ${JSON.stringify(bad)}`);
+      }
+    }
+    for (const recommendations of [[], ["editorial: tighten wording"]]) {
+      const res = validateResult("review", { ...base, recommendations }, ctx);
+      assert.deepEqual(res.defects, ["field `recommendations` is not a review field; put every non-blocking point in `notes`"], `${verdict} recommendations ${JSON.stringify(recommendations)}`);
+    }
+  }
+  const blocked = { kind: "review", verdict: "BLOCKED", summary: ["Needs the spec"], blocker: "gap", resume_with: "input" };
+  for (const field of ["notes", "replies"]) {
+    assert.deepEqual(validateResult("review", { ...blocked, [field]: ["a point"] }, ctx).defects, [`verdict BLOCKED carries no \`${field}\``]);
+  }
+  assert.deepEqual(validateResult("review", { ...blocked, recommendations: ["semantic: x"] }, ctx).defects, ["field `recommendations` is not a review field; put every non-blocking point in `notes`"]);
+});
+
+test("NOTES2: B's first request carries A's finalized REVISE with its note; A's first carries none; A's next carries B's note once", async () => {
+  const X = "Use one column.";
+  const Y = "Use one column with a fixed header.";
+  setPlan({
+    "scripted/a": [VALID, REVISE(X, "the page needs one column on phones", { notes: ["Mention the phone width."] }), VALID, VALID],
+    "scripted/b": [VALID, REVISE(Y, "the header scrolls away", { notes: ["Keep the header fixed."] })],
+  });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "a:later"]);
+  const [aInitial, , aLater] = promptTexts("scripted/a");
+  const [bInitial, bRethink] = promptTexts("scripted/b");
+  assert.ok(counterpartOf(aInitial).startsWith("none\n"), "A's first request has nothing to carry");
+  const fromA = counterpartOf(bInitial);
+  assert.ok(fromA.startsWith(`Reviewer A · REVISE · outer iteration 1 · reviewed ${sha("Use two columns.")}\n`), fromA);
+  for (const part of ["the page needs one column on phones", "Mention the phone width."]) assert.equal(count(fromA, part), 1, part);
+  assert.ok(!fromA.includes(X), "the Correction is not forwarded");
+  assert.ok(!bRethink.includes("Mention the phone width."), "rethink carries no counterpart responses");
+  const fromB = counterpartOf(aLater);
+  assert.ok(fromB.startsWith(`Reviewer B · REVISE · outer iteration 1 · reviewed ${sha(X)}\n`), fromB);
+  assert.equal(count(aLater, "Keep the header fixed."), 1);
+  assert.equal(count(aLater, "Mention the phone width."), 0, "A is never sent its own note");
+  assertCleanedUp();
+});
+
+test("NOTES3: the three-round example — VALIDs with notes travel between reviewers and only the forwarded answer ends round 1", async () => {
+  const T0 = "Use two columns.";
+  const X = "Use one column.";
+  const Y = "Use one wide column.";
+  setPlan({
+    "scripted/a": [VALID, REVISE(X, "the page needs one column", { notes: ["a1: name the breakpoint"] }), VALID_NOTES(["a2: shorten the title"]), VALID_NOTES(["a3: widen the margin"]), VALID_NOTES(["a4: make it wide"]), VALID, VALID],
+    "scripted/b": [VALID, VALID_NOTES(["b1: keep the header"]), VALID_NOTES(["b2: check the footer"]), REVISE(Y, "the column is too narrow", { replies: ["adopted: a4: make it wide", "declined: a3: widen the margin — the margin is fixed"] })],
+  });
+  const out = await runReconcile(conversation(T0), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later", "a:later", "a:later", "b:later", "a:later", "a:later"]);
+  const a = promptTexts("scripted/a").map(counterpartOf);
+  const b = promptTexts("scripted/b").map(counterpartOf);
+  // Round 1: each VALID with notes goes to the counterpart; B's second VALID is forwarded once.
+  assert.ok(b[0].startsWith(`Reviewer A · REVISE · outer iteration 1 · reviewed ${sha(T0)}\n`) && b[0].includes("a1: name the breakpoint"), b[0]);
+  assert.ok(a[2].startsWith(`Reviewer B · VALID · outer iteration 1 · reviewed ${sha(X)}\n`) && a[2].includes("b1: keep the header"), a[2]);
+  assert.ok(b[2].startsWith(`Reviewer A · VALID · outer iteration 1 · reviewed ${sha(X)}\n`) && b[2].includes("a2: shorten the title"), b[2]);
+  assert.ok(a[3].startsWith(`Reviewer B · VALID · outer iteration 1 · reviewed ${sha(X)}\n`) && a[3].includes("b2: check the footer"), a[3]);
+  // Round 2: A's first request has nothing unsent; B receives A's unsent round-1 answer, then the new VALID.
+  assert.ok(a[4].startsWith("none\n"), a[4]);
+  const r1 = b[3].indexOf(`Reviewer A · VALID · outer iteration 1 · reviewed ${sha(X)}\n`);
+  const r2 = b[3].indexOf(`Reviewer A · VALID · outer iteration 2 · reviewed ${sha(X)}\n`);
+  assert.ok(r1 >= 0 && r2 > r1 && b[3].indexOf("a3: widen the margin") > r1 && b[3].indexOf("a4: make it wide") > r2, b[3]);
+  assert.ok(a[5].startsWith(`Reviewer B · REVISE · outer iteration 2 · reviewed ${sha(X)}\n`) && a[5].includes("declined: a3: widen the margin — the margin is fixed"), a[5]);
+  assert.ok(a[6].startsWith("none\n"), a[6]);
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(T0)} | ${REVISED}`,
+        `1 | B | post-rethink | ${sha(X)} | ${ACCEPTED}`,
+        `1 | A | later | ${sha(X)} | ${ACCEPTED}`,
+        `1 | B | later | ${sha(X)} | ${ACCEPTED}`,
+        `1 | A | later | ${sha(X)} | ${ACCEPTED}`,
+        `1 | apply | — | ${sha(X)} | applied (count 1)`,
+        `2 | A | later | ${sha(X)} | ${ACCEPTED}`,
+        `2 | B | later | ${sha(X)} | ${REVISED}`,
+        `2 | A | later | ${sha(Y)} | ${ACCEPTED}`,
+        `2 | apply | — | ${sha(Y)} | applied (count 2)`,
+        `3 | A | later | ${sha(Y)} | ${ACCEPTED}`,
+        `3 | closure | — | ${sha(Y)} | unchanged proposal VALID`,
+        "3 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      "## Final proposal",
+      "",
+      "**Proposal**",
+      "",
+      `- ${Y}`,
+      "",
+    ].join("\n"),
+  );
+  assertCleanedUp();
+});
+
+test("NOTES4: a note the other reviewer was never sent ends the Final proposal as an open note, byte-for-byte", async () => {
+  const text = "Use two columns.";
+  setPlan({
+    "scripted/a": [VALID, VALID_NOTES(["Shorten the title."]), VALID_NOTES(["Shorten the title."])],
+    "scripted/b": [VALID, VALID_NOTES(["Check the footer."]), VALID_NOTES(["Line one of the note.\nLine two of the note."])],
+  });
+  const out = await runReconcile(conversation(text), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later"]);
+  assert.ok(
+    recordOf(out.markdown).endsWith(
+      [
+        `| 4 | 1 | B | later | ${sha(text)} | ${ACCEPTED} |`,
+        `| 5 | 1 | closure | — | ${sha(text)} | unchanged proposal VALID |`,
+        "| 6 | 1 | cleanup | — | — | A, B disposed (observed exit) |",
+        "",
+        "## Final proposal",
+        "",
+        "**Proposal**",
+        "",
+        `- ${text}`,
+        "",
+        "**Open notes**",
+        "",
+        "- B: Line one of the note.",
+        "  Line two of the note.",
+        "",
+      ].join("\n"),
+    ),
+    out.markdown,
+  );
+  assertCleanedUp();
+});
+
+test("NOTES4: a stop lists the unsent note after Resume from", async () => {
+  const [P0, P1, P2] = ["Use two columns.", "Use one column.", "Use three columns."];
+  setPlan({
+    "scripted/a": [VALID, REVISE(P1), REVISE(P1, "the page needs one column", { notes: ["Phones are narrow."] })],
+    "scripted/b": [REVISE(P2), REVISE(P2, "the page needs three columns", { notes: ["Desktop matters too."] })],
+  });
+  const out = await runReconcile(conversation(P0), deps());
+  assert.equal(out.exitCode, 1);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later"]);
+  assert.ok(
+    recordOf(out.markdown).endsWith(
+      [
+        ...stopped([P0, P1], "- repeated A/B cycle: the same proposal returned to the same reviewer (step: A later)"),
+        "**Open notes**",
+        "",
+        "- A: Phones are narrow.",
+        "",
+      ].join("\n"),
+    ),
+    out.markdown,
+  );
+  assertCleanedUp();
+});
+
+test("NOTES4: a run whose notes all reached the other reviewer has no open notes", async () => {
+  setPlan({
+    "scripted/a": [VALID, REVISE("Use one column.", "the page needs one column", { notes: ["Phones are narrow."] }), VALID],
+    "scripted/b": [VALID, VALID],
+  });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.ok(recordOf(out.markdown).endsWith("## Final proposal\n\n**Proposal**\n\n- Use one column.\n"), out.markdown);
+  assertCleanedUp();
+});
+
+test("NOTES5: a VALID without notes ends the round even after VALIDs with notes", async () => {
+  setPlan({
+    "scripted/a": [VALID, VALID_NOTES(["Shorten the title."]), VALID],
+    "scripted/b": [VALID, VALID_NOTES(["Check the footer."])],
+  });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later"]);
+  assert.match(out.markdown, /\| 3 \| 1 \| A \| later \| sha256:[0-9a-f]{64} \| VALID<br>• Accepts the proposal \|\n\| 4 \| 1 \| closure \|/);
+  assertCleanedUp();
+});
+
+test("NOTES5: a REVISE answering a forwarded second VALID continues as a normal change", async () => {
+  const [T0, Y] = ["Use two columns.", "Use one column."];
+  setPlan({
+    "scripted/a": [VALID, VALID_NOTES(["Shorten the title."]), VALID_NOTES(["Use one column."]), VALID, VALID],
+    "scripted/b": [VALID, VALID_NOTES(["Check the footer."]), REVISE(Y, "the page needs one column", { replies: ["adopted: Use one column."] })],
+  });
+  const out = await runReconcile(conversation(T0), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink", "b:initial", "b:rethink", "a:later", "b:later", "a:later", "a:later"]);
+  assert.equal(
+    recordOf(out.markdown),
+    [
+      ...rows([
+        `1 | A | post-rethink | ${sha(T0)} | ${ACCEPTED}`,
+        `1 | B | post-rethink | ${sha(T0)} | ${ACCEPTED}`,
+        `1 | A | later | ${sha(T0)} | ${ACCEPTED}`,
+        `1 | B | later | ${sha(T0)} | ${REVISED}`,
+        `1 | A | later | ${sha(Y)} | ${ACCEPTED}`,
+        `1 | apply | — | ${sha(Y)} | applied (count 1)`,
+        `2 | A | later | ${sha(Y)} | ${ACCEPTED}`,
+        `2 | closure | — | ${sha(Y)} | unchanged proposal VALID`,
+        "2 | cleanup | — | — | A, B disposed (observed exit)",
+      ]),
+      "## Final proposal",
+      "",
+      "**Proposal**",
+      "",
+      `- ${Y}`,
+      "",
+    ].join("\n"),
+  );
+  assertCleanedUp();
+});
+
+test("NOTES5: A's VALID without notes never creates B", async () => {
+  setPlan({ "scripted/a": [VALID_NOTES(["Provisional notes are never forwarded."]), VALID] });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  assert.deepEqual(prompts(), ["a:initial", "a:rethink"]);
+  assert.equal(events().some((e) => e.model === "scripted/b"), false, "B never starts");
+  assert.ok(!out.markdown.includes("**Open notes**"), "a provisional response's notes are never open notes");
   assertCleanedUp();
 });

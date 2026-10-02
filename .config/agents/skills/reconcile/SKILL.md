@@ -87,14 +87,14 @@ Delegation authorizes correction only of this scope's conversational report.
 Reject artifact mode and changes to repository files, evidence, objective or
 evaluand, protected behavior or exclusions, or another scope's report. Apply
 this boundary to reviewer Corrections, application, and repair, not just intake.
-Recommendations for later repository changes grant no permission to execute
-them. Delegated review is report-only: its result returns to the scope's logic,
-never to a human presentation. Carry the complete delegated authorization
-context in reviewer requests outside, never inside or in place of, the
-unchanged six-field lineage. A fully admitted delegation skips only the
-redundant Reconcile brief and approval (step 4 below); its candidate is the
-exact bound report, and references to approval below mean this validated scope
-authority.
+Reviewer notes, including notes that propose later repository changes, grant no
+permission to execute them. Delegated review is report-only: its result returns
+to the scope's logic, never to a human presentation. Carry the complete
+delegated authorization context in reviewer requests outside, never inside or
+in place of, the unchanged six-field lineage. A fully admitted delegation skips
+only the redundant Reconcile brief and approval (step 4 below); its candidate
+is the exact bound report, and references to approval below mean this
+validated scope authority.
 
 Direct entry completes preflight before rendering a brief, starting the
 controller, reviewing, or mutating:
@@ -245,7 +245,14 @@ counter, ledger, reviewer state object, or hidden protocol state elsewhere:
   iteration is the one closure-only iteration;
 - the pending accepted proposal and identity-safe repair state when present;
 - seen working-identity/reviewer pairs, the current outer iteration's disputed
-  proposal pairs and pending dispute, and unresolved frontiers; and
+  proposal pairs and pending dispute, and unresolved frontiers;
+- each reviewer's unsent responses: its finalized `VALID` and `REVISE`
+  responses that no submitted request to the other reviewer has carried yet,
+  in order;
+- for the current outer iteration only, the working identities each reviewer
+  has accepted with a finalized `VALID` carrying notes, and the identities
+  whose one forward of a second `VALID` is spent (the one-forward mark); both
+  reset at the start of every outer iteration; and
 - a full event trace with monotonically increasing `Step` values.
 
 Bounded lineage contains exactly these six fields: outer iteration, outer-base
@@ -274,15 +281,30 @@ admitted responses, not reviewer-authored identity fields. The current request
 binds each response to its candidate; an echoed `Candidate:` field is neither
 required nor allowed.
 
+The `initial` request and every `later` request also carry the counterpart
+responses: every unsent finalized `VALID` or `REVISE` response of the other
+reviewer, oldest first, each complete except its Correction (summary, blocking
+issues, preserve list, citations, notes, and replies) and labelled with the
+author role, verdict, outer iteration, and the working identity it reviewed;
+`none` when nothing is unsent. A response counts as sent once a submitted
+request carried it and is never sent twice. Provisional `initial` responses
+and `BLOCKED` responses are never sent. `rethink`, `source`, and `reask`
+requests carry no counterpart responses. Forwarding crosses outer iterations:
+A's first request in an iteration carries B's responses still unsent from the
+previous one, and a request can carry more than one response. Reviewers never
+inspect each other's sessions; the controller hands the responses over.
+
 ## Reviewer progression
 
 The controller creates reviewer A for the first review and reviewer B only
-when an applicable `REVISE` first needs the counterpart. Each is one
-persistent read-only native session for the whole run, launched with the tools
-`read`, `glob`, `grep`, and `yield`, every permission request denied, and an
-empty private working directory. A fresh session is created only for the first
-creation of a previously unstarted role; restoration is same-session only.
-Never replace, resend to, or emulate a reviewer.
+when A's finalized `REVISE`, or A's finalized `VALID` with notes, first needs
+the counterpart. A finalized `VALID` from A without notes never creates B.
+B's first actual review still runs `initial`, `rethink`, and `post-rethink`.
+Each is one persistent read-only native session for the whole run, launched
+with the tools `read`, `glob`, `grep`, and `yield`, every permission request
+denied, and an empty private working directory. A fresh session is created
+only for the first creation of a previously unstarted role; restoration is
+same-session only. Never replace, resend to, or emulate a reviewer.
 
 On each reviewer's first actual reviewing turn:
 
@@ -404,10 +426,10 @@ documented A-first framing bias.
 
 Process admitted finalized responses without changing the canonical candidate:
 
-- `VALID` is pure acceptance of the exact current working identity. The first
-  admitted finalized `VALID` from either reviewer ends inner negotiation.
-  Ignore every `VALID` recommendation; neither editorial nor semantic advice is
-  an edit. A change requires a new `REVISE` identity.
+- `VALID` is pure acceptance of the exact current working identity. The
+  controller applies none of its notes: a change requires a new `REVISE`
+  identity. Whether a finalized `VALID` ends inner negotiation follows the
+  round-end rule below.
 - Conversation `REVISE` must provide one complete replacement. A changed,
   directly applicable replacement completely supersedes ephemeral working
   state, records its bounded lineage, and goes to the counterpart.
@@ -424,6 +446,32 @@ as the lineage parent, replace the complete working proposal and origin, record
 the new working identity/reviewer pair, and request the counterpart. Alternate
 the same A and B sessions for as many genuinely progressive turns as needed.
 There is no numeric inner-turn cap and no mutation during negotiation.
+
+Notes are every non-blocking point a reviewer returns in `notes` on a
+finalized `VALID` or `REVISE`; absent or empty `notes` is no notes, and a point
+only in `summary` is not a note. A finalized `VALID` ends inner negotiation
+under this round-end rule:
+
+- A `VALID` without notes ends the round.
+- A `VALID` with notes, on an identity this reviewer has not yet accepted in
+  this outer iteration, does not end the round: the controller records the
+  identity as accepted by this reviewer and requests the counterpart, whose
+  request carries that response. The counterpart adopts notes with a `REVISE`,
+  which continues as a normal change, or answers.
+- A second or later `VALID` by the same reviewer on the same working identity
+  in this outer iteration ends the round when it has no notes. With notes it is
+  forwarded once: the controller sets that identity's one-forward mark and
+  requests the counterpart. The counterpart's finalized answer ends the round
+  when it is a `VALID`, which leaves the identity unchanged, even with notes; a
+  `REVISE` answer continues as a normal change. Re-asks do not consume the
+  forward.
+- After that one forward, any later finalized `VALID` on that identity in this
+  outer iteration ends the round, even with notes.
+
+Notes in a finalized response that ends the round are not sent before the
+round ends; they go out with the other reviewer's next request, or become open
+notes if the run ends first. `VALID` exchanges on an unchanged identity are
+bounded by this rule and are not a liveness stop.
 
 A revert is a finalized `REVISE` whose new working identity repeats a pair its
 reviewer already recorded in this outer iteration. A revert with at least one
@@ -473,7 +521,8 @@ does not add disk checks to conversation mode.
 6. After validation succeeds, start a new A-led outer iteration from the exact
    applied canonical identity. When the committed-application increment reaches
    a numeric cap, mark this one new iteration as closure-only. It may negotiate
-   read-only, but it may not apply another accepted change.
+   read-only, but it may not apply another accepted change, including one from
+   a `REVISE` that answers a forwarded second `VALID`.
 
 Reviewer turns, provisional responses, rethink, Corrections, unchanged
 closure, failed or partial application, validation itself, and
@@ -509,8 +558,9 @@ retains the pair; it is labeled as a paused frontier.
 
 Progress is one named approved issue or blocker resolved with changed evidence.
 Another opinion, repeated wording, elapsed time, an unchanged proposal, or more
-machinery is not progress. Stop without claiming validity or unauthorized
-mutation on any of these frontiers:
+machinery is not progress. The bounded `VALID` exchange on an unchanged
+identity under the round-end rule is not a liveness stop. Stop without claiming
+validity or unauthorized mutation on any of these frontiers:
 
 - unchanged or non-applicable finalized `REVISE`;
 - a repeated A/B cycle: a revert without a passing citation; a counterpart
@@ -529,8 +579,9 @@ mutation on any of these frontiers:
 
 On an Artifact-mode application, reread, or validation failure, stop on exact
 observed bytes. The controller parks the run instead of disposing the pair: it
-persists the review state, identities, failed step, and both reviewers'
-session identities in the private run folder, closes both sessions with
+persists the review state, identities, unsent responses, failed step, and both
+reviewers' session identities in the private run folder; resume restores the
+unsent responses with that state. It closes both sessions with
 observed exit while keeping them resumable, and exits `1`. Its
 `## Reconcile stopped` record presents the accepted outer-base and Correction
 identities, observed identity, exact failed step and error, one exact proposed
@@ -572,8 +623,13 @@ Each finalized verdict's Outcome shows only the verdict word followed by the
 reviewer-authored `summary` points (return contract in
 [reviewer protocol](references/reviewer-protocol.md)), one `• ` point per line,
 copied byte-for-byte from the admitted `data` strings. Full reviewer text
-(blocking issues, recommendations, blocker, resume input) appears nowhere in
-the output.
+(blocking issues, blocker, resume input) appears nowhere in the output. The
+one exception is open notes: when the run ends, every note in a finalized
+response the other reviewer was never sent is an open note, rendered as the
+`**Open notes**` field below with one `- {A|B}: {note}` child per note, in
+order, copied byte-for-byte; a multi-line note continues with the same
+continuation indentation as the proposal child. Omit the field when there are
+no open notes. The Outcome cell stays the verdict and summary points.
 
 ```markdown
 ## Review rounds
@@ -592,10 +648,14 @@ Conversation mode:
 **Proposal**
 
 - {complete final proposal}
+
+**Open notes**
+
+- {A|B}: {note}
 ```
 
 Artifact mode does not duplicate the full artifact. Change summary is the
-committed candidate delta only; it lists no reviewer recommendations and must
+committed candidate delta only; it lists no reviewer notes and must
 not recap round verdicts.
 
 ```markdown
@@ -612,12 +672,17 @@ not recap round verdicts.
 **Current identity**
 
 - {exact identity}
+
+**Open notes**
+
+- {A|B}: {note}
 ```
 
 On any stop, follow the rounds section with `## Reconcile stopped`. Do not
 render `## Final proposal` or claim validity. Report the exact canonical and
 pending identities when they differ; for a repairable failure include the exact
-proposed repair and authority needed.
+proposed repair and authority needed. Every stop, including `CAP_REACHED` and
+a parked repair pause, lists open notes after **Resume from**.
 
 ```markdown
 ## Reconcile stopped
@@ -634,4 +699,8 @@ proposed repair and authority needed.
 **Resume from**
 
 - {exact resumable frontier, proposed repair, and required authority; a persistent `BLOCKED` resumes from a new approved Reconcile run}
+
+**Open notes**
+
+- {A|B}: {note}
 ```
