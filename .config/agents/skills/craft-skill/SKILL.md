@@ -53,6 +53,8 @@ Infer intent from the invocation and current conversation.
 
 Modifiers like `scripts` or `references` narrow review scope. They do not force creation.
 
+When the human explicitly asks to create or maintain a verification skill, read [references/verification-skill.md](references/verification-skill.md) for the reuse check, required sections, feature map, maintenance pass, and end states.
+
 ## Thin orchestrator principle
 
 - A user-invoked skill that mostly runs another skill with context should be a thin orchestrator.
