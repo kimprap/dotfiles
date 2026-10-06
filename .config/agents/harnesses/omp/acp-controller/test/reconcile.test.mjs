@@ -19,7 +19,7 @@ import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
   reviewer: {
-    initial: "Goal: {{GOAL}}\nMode: {{MODE}}\nProposal:\n{{PROPOSAL}}\nCounterpart:\n{{COUNTERPART}}\nReturn:\n{{EXAMPLE}}",
+    initial: "Goal: {{GOAL}}\nIntent:\n{{INTENT}}\nContext:\n{{CONTEXT}}\nMode: {{MODE}}\nProposal:\n{{PROPOSAL}}\nCounterpart:\n{{COUNTERPART}}\nReturn:\n{{EXAMPLE}}",
     rethink: "Read {{RETHINK_SKILL}} once and rethink.\nProvisional:\n{{PROVISIONAL}}\nProposal:\n{{PROPOSAL}}",
     later: "Proposal:\n{{PROPOSAL}}\nCounterpart:\n{{COUNTERPART}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
     source: "Sources: {{SOURCE_STATUS}}\n{{SOURCES}}",
@@ -66,10 +66,10 @@ function deps(extra = {}) {
   return { ompPath: t.launcher, roles: ROLES, prompts: PROMPTS, sessionsRoot: t.sessionsRoot, tmpRoot: t.tmpRoot, env: { PATH: process.env.PATH }, log: () => {}, ...extra };
 }
 
-const conversation = (text, extra = {}) => ({ goal: "Choose the page layout", candidate: { identity: "layout v1", text }, context: ["The page is read on phones."], mode: "conversation", cap: "none", approval: APPROVAL, ...extra });
+const conversation = (text, extra = {}) => ({ goal: "Choose the page layout", candidate: { identity: "layout v1", text }, intent: ["The human wants a layout that works on phones."], context: ["The page is read on phones."], mode: "conversation", cap: "none", approval: APPROVAL, ...extra });
 
 function artifactRequest(file, extra = {}) {
-  return { goal: "Fix the word list", candidate: { identity: "words.txt v1", artifact: file }, context: [], mode: "artifact", cap: "none", approval: APPROVAL, ...extra };
+  return { goal: "Fix the word list", candidate: { identity: "words.txt v1", artifact: file }, intent: ["The human wants the word list fixed."], context: [], mode: "artifact", cap: "none", approval: APPROVAL, ...extra };
 }
 
 function events() {
@@ -798,6 +798,30 @@ const promptTexts = (model) => events().filter((e) => e.event === "prompt" && e.
 /** The COUNTERPART slot of a test `initial` or `later` prompt, through the end of the prompt. */
 const counterpartOf = (text) => text.slice(text.indexOf("\nCounterpart:\n") + "\nCounterpart:\n".length);
 const count = (text, part) => text.split(part).length - 1;
+
+test("INTENT1: the reviewer receives Intent and Context as separate blocks, each multi-line item intact", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const intent = ["Fit phones first.\nKeep the print layout.", "Exclude the header."];
+  const context = ["Interview record:\n- human: \"phones first\"\n\n- human: \"print matters\"", "Earlier diff: /tmp/run/earlier.diff"];
+  const out = await runReconcile(conversation("Use two columns.", { intent, context }), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const [initial] = promptTexts("scripted/a");
+  const blocks = [
+    "Intent:",
+    "- Fit phones first.",
+    "  Keep the print layout.",
+    "- Exclude the header.",
+    "Context:",
+    "- Interview record:",
+    '  - human: "phones first"',
+    "  ",
+    '  - human: "print matters"',
+    "- Earlier diff: /tmp/run/earlier.diff",
+    "Mode: ",
+  ].join("\n");
+  assert.ok(initial.includes(`\n${blocks}`), initial);
+  assertCleanedUp();
+});
 
 test("NOTES1: notes and replies are optional text lists on VALID and REVISE; `recommendations` and BLOCKED notes are invalid returns", () => {
   const ctx = { mode: "conversation" };

@@ -27,6 +27,8 @@ const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
 const nonEmpty = (v) => typeof v === "string" && v.trim() !== "";
 const cell = (s) => String(s).replaceAll("|", "\\|").replaceAll("\r\n", "<br>").replaceAll("\n", "<br>");
 const bullet = (text) => `- ${String(text).split("\n").join("\n  ")}`;
+/** Brief Intent or Context items, one bullet each so a multi-line item keeps its boundary; `none` when empty. */
+const briefItems = (items) => (items.length ? items.map((c) => bullet(typeof c === "string" ? c : JSON.stringify(c))).join("\n") : "none");
 
 function renderRefusal(reason, lines) {
   const list = lines.length ? `\n${lines.map((l) => `- ${l}`).join("\n")}\n` : "";
@@ -95,6 +97,7 @@ export function validateApproval(request, { reportOnly = false } = {}) {
   if (!nonEmpty(request.goal)) problems.push("goal must be a non-empty string");
   const c = request.candidate;
   if (!isObj(c) || !nonEmpty(c.identity)) problems.push("candidate.identity must be a non-empty string");
+  if (!Array.isArray(request.intent) || !request.intent.every(nonEmpty)) problems.push("intent must be an array of non-empty strings");
   if (!Array.isArray(request.context)) problems.push("context must be an array");
   const mode = request.mode;
   if (mode !== "conversation" && mode !== "artifact") problems.push("mode must be conversation or artifact");
@@ -262,7 +265,8 @@ function reviewerPrompt(ctx, role, kind, pass, values) {
     PASS: pass,
     GOAL: rs.goal,
     CANDIDATE_REF: rs.mode === "artifact" ? `${rs.artifact} (${rs.candidateIdentity})` : rs.candidateIdentity,
-    CONTEXT: rs.context.length ? rs.context.map((c) => (typeof c === "string" ? c : JSON.stringify(c))).join("\n") : "none",
+    INTENT: briefItems(rs.intent),
+    CONTEXT: briefItems(rs.context),
     MODE: MODE_LABEL[rs.mode],
     CAP: String(rs.cap),
     ITERATION: String(rs.outer),
@@ -545,6 +549,7 @@ function newReviewState(request, { ownerScope = "root", delegation, citationScop
     goal: request.goal,
     candidateIdentity: request.candidate.identity,
     artifact: request.candidate.artifact,
+    intent: request.intent,
     context: request.context,
     mode: request.mode,
     cap: request.cap,
@@ -1051,16 +1056,20 @@ async function runScope(ctx, sc) {
       const originalLocator = freeze(ctx, sc, "candidate", v.report);
       sc.manifest = [];
       for (const m of v.manifest) sc.manifest.push({ ...m, observed: await observe(m.locator) });
-      const manifestLocator = freeze(ctx, sc, "manifest", JSON.stringify(sc.manifest, null, 2));
-      const approvalLocator = freeze(ctx, sc, "approval", JSON.stringify(ctx.request.approval));
-      const contractLocator = freeze(ctx, sc, "contract", JSON.stringify(s, null, 2));
+      const manifestText = JSON.stringify(sc.manifest, null, 2);
+      const manifestLocator = freeze(ctx, sc, "manifest", manifestText);
+      const r = ctx.request;
+      const approvalText = JSON.stringify({ table: r.table, objectives: r.objectives, constraints: r.constraints, exclusions: r.exclusions, approval: r.approval }, null, 2);
+      const approvalLocator = freeze(ctx, sc, "approval", approvalText);
+      const contractText = JSON.stringify(s, null, 2);
+      const contractLocator = freeze(ctx, sc, "contract", contractText);
       const readyBody = ["candidate-ready", `Parent: ${ctx.parent}`, `Controller: ${s.id}/evaluator`, `Scope: ${s.id}`, `Scope approval locator: ${approvalLocator}`, `Scope contract locator: ${contractLocator}`, `Candidate locator: ${originalLocator}`, `Evidence manifest locator: ${manifestLocator}`].join("\n");
       const authLocator = freeze(ctx, sc, "authorization", readyBody);
       sc.events.push("candidate-ready admitted");
       const begin = ["begin-reconcile", "Caller: retrace", `Parent: ${ctx.parent}`, `Controller: ${s.id}/evaluator`, `Scope: ${s.id}`, `Scope approval locator: ${approvalLocator}`, `Scope contract locator: ${contractLocator}`, `Candidate locator: ${originalLocator}`, `Evidence manifest locator: ${manifestLocator}`, "Mode: Conversation replacement", `Authorization locator: ${authLocator}`].join("\n");
       sc.events.push("begin-reconcile");
       const review = await runReconcile(
-        { goal: `Retrace scope ${s.id} (${s.name}): ${s.objective}`, candidate: { identity: originalLocator, text: v.report }, context: [`scope contract: ${JSON.stringify(s)}`, `evidence manifest: ${JSON.stringify(v.manifest)}`], mode: "conversation", cap: "none", approval: ctx.request.approval },
+        { goal: `Retrace scope ${s.id} (${s.name}): ${s.objective}`, candidate: { identity: originalLocator, text: v.report }, intent: [`scope approval record:\n${approvalText}`, `scope contract:\n${contractText}`], context: [`evidence manifest:\n${manifestText}`], mode: "conversation", cap: "none", approval: r.approval },
         ctx.deps,
         { reportOnly: true, ownerScope: s.id, run: ctx.run, beginReconcile: begin, records: ctx.records, authorizationSha256: sha256Text(readyBody), citationScope: { root: ctx.request.root, evidence: ctx.request.evidence.map((e) => e.locator) } },
       );

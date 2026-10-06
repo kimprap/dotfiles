@@ -16,7 +16,7 @@ import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
 
 const PROMPTS = {
   reviewer: {
-    initial: "Goal: {{GOAL}}\nProposal:\n{{PROPOSAL}}",
+    initial: "Goal: {{GOAL}}\nIntent:\n{{INTENT}}\nContext:\n{{CONTEXT}}\nProposal:\n{{PROPOSAL}}",
     rethink: "Read {{RETHINK_SKILL}} once and rethink.\n{{PROPOSAL}}",
     later: "{{PROPOSAL}}\n{{BLOCKED_RETRY}}\n{{DISPUTE}}",
     source: "{{SOURCE_STATUS}}\n{{SOURCES}}",
@@ -199,12 +199,37 @@ test("KT4: depth then authored order; source-need and scope-paused return to the
   assertCleanedUp();
 });
 
+/** The items of one rendered Intent or Context block: each `- ` bullet with its two-space continuation indent removed. */
+const blockItems = (block) => block.split(/\n(?=- )/).map((item) => item.slice(2).replaceAll("\n  ", "\n"));
+
+test("KS6 intent: delegated reviewers get the full Scope approval record and the scope contract as Intent, and the evidence manifest as Context", async () => {
+  const s1 = { ...scope("S1"), protected: ["the S1 notes stay unchanged"], exclusions: ["S2's area"] };
+  const req = { ...request([s1]), objectives: ["find defects", "keep the report short"], constraints: ["read-only repository"], exclusions: ["implementation"] };
+  setPlan({ "scripted/a": scopeEntries("S1", [candidate("S1")]) });
+  const out = await runRetrace(req, deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const initial = events().find((e) => e.event === "prompt" && e.passMarker === "initial").text;
+  const intent = blockItems(initial.slice(initial.indexOf("\nIntent:\n") + "\nIntent:\n".length, initial.indexOf("\nContext:\n")));
+  const context = blockItems(initial.slice(initial.indexOf("\nContext:\n") + "\nContext:\n".length, initial.indexOf("\nProposal:\n")));
+  const record = (item, label) => {
+    assert.ok(item.startsWith(`${label}:\n`), item);
+    return JSON.parse(item.slice(label.length + 2));
+  };
+  assert.equal(intent.length, 2, intent.join("\n---\n"));
+  assert.deepEqual(record(intent[0], "scope approval record"), { table: req.table, objectives: req.objectives, constraints: req.constraints, exclusions: req.exclusions, approval: req.approval });
+  assert.deepEqual(record(intent[1], "scope contract"), s1);
+  const file = path.join(t.root, "S1.md");
+  assert.equal(context.length, 1, context.join("\n---\n"));
+  assert.deepEqual(record(context[0], "evidence manifest"), [{ locator: file, role: "current", observed: `sha256:${crypto.createHash("sha256").update("notes for S1\n").digest("hex")}` }]);
+  assertCleanedUp();
+});
+
 test("KT4: a delegated review in Artifact mode is rejected before any actor starts", async () => {
   const file = path.join(t.root, "S1.md");
   fs.writeFileSync(file, "notes\n");
   const begin = ["begin-reconcile", "Caller: retrace", "Parent: retrace:x", "Controller: S1/evaluator", "Scope: S1", "Scope approval locator: frozen:x/S1/approval", "Scope contract locator: frozen:x/S1/contract", "Candidate locator: frozen:x/S1/candidate", "Evidence manifest locator: frozen:x/S1/manifest", "Mode: Artifact edits", "Authorization locator: frozen:x/S1/authorization"].join("\n");
   const out = await runReconcile(
-    { goal: "Retrace scope S1", candidate: { identity: "frozen:x/S1/candidate", artifact: file }, context: [], mode: "artifact", cap: "none", approval: APPROVAL },
+    { goal: "Retrace scope S1", candidate: { identity: "frozen:x/S1/candidate", artifact: file }, intent: ["Judge area S1"], context: [], mode: "artifact", cap: "none", approval: APPROVAL },
     deps(),
     { reportOnly: true, ownerScope: "S1", beginReconcile: begin, records: new Map(), authorizationSha256: "0".repeat(64) },
   );

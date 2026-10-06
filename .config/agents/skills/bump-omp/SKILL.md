@@ -101,7 +101,8 @@ First call: write `<dir>/reconcile-request.json`, where `<notes digest>` is the 
 {
   "goal": "Make the notes file's path sentence match the first line of the truth file",
   "candidate": {"identity": "<dir>/notes.txt@sha256:<notes digest>", "artifact": "<dir>/notes.txt"},
-  "context": ["The truth file <dir>/truth.txt is read-only. Change only the false path sentence."],
+  "intent": ["The truth file <dir>/truth.txt is read-only. Change only the false path sentence."],
+  "context": ["Source of the true path: <dir>/truth.txt"],
   "mode": "artifact",
   "cap": 1,
   "validate": {"argv": ["/bin/test", "-f", "<dir>/validator-ready"]},

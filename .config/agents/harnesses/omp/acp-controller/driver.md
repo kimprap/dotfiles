@@ -78,6 +78,21 @@ source for a model change.
    controller call is made; a later brief or table goes back to the live
    defaults and a plain `roles` call.
 
+### Session journal recovery
+
+When the skill sends Main to the session journal to rebuild Intent:
+
+1. Open the current session's journal: the newest `.jsonl` file in
+   `~/.omp/agent/sessions/` under the folder named after the working directory
+   (`-.dotfiles` for `~/.dotfiles`) whose first `"type":"session"` line has
+   that directory as `cwd`. Compaction does not shorten it; earlier entries
+   stay in the file.
+2. `grep` it for `"role":"user"` (human messages) and
+   `"attribution":"user"` (also skill invocations, whose `details.args` hold the
+   human's request), then `read` the matching lines and the assistant
+   questions just before them.
+3. Treat `"type":"compaction"` summaries as Main's words, never the human's.
+
 ### Controller invocation
 
 After approval, write the approved binding as one JSON object to a
@@ -87,6 +102,7 @@ session-local scratch file; it is the controller's only input channel:
 {
   "goal": "{Goal}",
   "candidate": {"identity": "{exact identity}", "text": "{complete proposal}"},
+  "intent": ["{each Intent child}"],
   "context": ["{each Context child}"],
   "mode": "conversation",
   "cap": "none",
@@ -98,8 +114,10 @@ session-local scratch file; it is the controller's only input channel:
 Artifact edits only. In Artifact edits, `candidate` is
 `{"identity": "{exact identity}", "artifact": "{absolute artifact path}"}` with
 no `text`, and an optional `"validate": {"argv": [..]}` names the existing
-artifact-native validator. `cap` is `none` or the approved positive integer.
-An approved per-run model change adds `models` as "Per-run model change" says.
+artifact-native validator. `intent` is required and holds each Intent child as
+a non-empty string; a request without it is refused with exit `2` before any
+launch. `cap` is `none` or the approved positive integer. An approved per-run
+model change adds `models` as "Per-run model change" says.
 Then run the controller once, through `bash` with `timeout: 0` and the
 repository root as working directory:
 

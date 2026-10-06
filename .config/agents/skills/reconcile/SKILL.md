@@ -57,7 +57,8 @@ with these labeled fields and controller-held locators:
 - `Controller`: the exact current scope evaluator.
 - `Scope`: stable approved scope ID.
 - `Scope approval locator`: frozen record of the complete approved table,
-  objectives, protected behavior, exclusions and approval provenance.
+  objectives, protected behavior, exclusions, constraints and approval
+  provenance.
 - `Scope contract locator`: frozen record of this scope's objective, evaluand,
   protections, exclusions, prerequisites and evidence boundary.
 - `Candidate locator`: frozen admitted complete conversational report.
@@ -135,9 +136,13 @@ controller, reviewing, or mutating:
 
 - {exact identity}
 
+**Intent**
+
+- {Main's restatement of what the human wants, one item per child}
+
 **Context**
 
-- {approved intent, constraints, exclusions, and decision-bearing references}
+- {sources and evidence}
 
 **Mode**
 
@@ -150,32 +155,49 @@ controller, reviewing, or mutating:
 Reply **approve** to start, or **approve — {adjustments}**.
 ```
 
-Goal is the review job only and must not restate Context. Candidate is the exact
-identity; an optional short name may be a second child. Context holds intent,
-constraints, exclusions, and decision-bearing references as separate children
-and must not restate Goal. Mode is exactly `Conversation replacement` or
-`Artifact edits only` and must not repeat Candidate. The maximum field binds
-committed changed canonical applications, not reviewer turns.
+Goal is the review job only and must not restate Intent or Context. Candidate
+is the exact identity; an optional short name may be a second child. Mode is
+exactly `Conversation replacement` or `Artifact edits only` and must not repeat
+Candidate. The maximum field binds committed changed canonical applications,
+not reviewer turns.
 
-When a run follows earlier work in the same session, Context lists separately:
+Intent is Main's restatement of what the human wants, built from everything
+before the candidate: the goal, the human's explicit answers and approvals,
+constraints, exclusions, and applicable project rules given by absolute path,
+each as its own child. Quote load-bearing wording briefly and restate vague
+discussion. In Artifact edits, Intent restates the human's Reconcile request
+plus the approved authority the artifact names. Main's own choices are
+candidate content and never go in Intent. Approving the brief confirms the
+restatement; how Intent binds is the reviewer protocol's rule. After compaction
+or a handoff, Main recovers what Intent needs first from an existing file such
+as a handoff, interview record or plan, then from the session journal as
+"Session journal recovery" in
+[the driver](../../harnesses/omp/acp-controller/driver.md) says, and otherwise
+labels the restatement and names what it could not recover; reviewers never
+read the journal.
 
-- each decision that still binds, as its own child;
-- `Reopened: {exact earlier decision}` for each decision the review may
-  overturn; and
-- earlier-work evidence, each item introduced as evidence and not as a
-  decision: the earlier final proposal that was carried out; the
-  implementation or blocked report word for word; the check results; the
-  changed paths and diff, saved as `git diff` or `git show` output to a file in
-  the run's temp folder and given by absolute path; and earlier-run reviewer
-  summary points that bear on the question.
+Context holds only sources and evidence, each as its own child, and never
+binds. Reviewers have only `read`, `glob`, and `grep`, so anything that exists
+only in the conversation or needs a command to see goes in as text or as a
+file given by absolute path: short quotes inline, long material in a file in
+the run's temp folder. Files the human pointed to stay where they are. The
+brief lists every item so the human can check completeness before approving.
 
-Quoting the earlier proposal as evidence does not make it binding; restate any
-part of it that must still bind as a binding decision. Reviewers have only
-`read`, `glob`, and `grep`, so anything that exists only in the conversation or
-needs a command to see goes in as text or as a file given by absolute path.
-The brief lists every item so the human can check completeness before
-approving. Delegated Retrace review is unchanged: its `scope contract:` Context
-item stays binding.
+When a run follows earlier work in the same session, Intent lists each earlier
+decision that still binds as its own child and
+`Reopened: {exact earlier decision}` for each decision the review may
+overturn. Context lists the earlier-work evidence, each item introduced as
+evidence and not as a decision: the earlier final proposal that was carried
+out; the implementation or blocked report word for word; the check results;
+the changed paths and diff, saved as `git diff` or `git show` output to a file
+in the run's temp folder and given by absolute path; and earlier-run reviewer
+summary points that bear on the question. Quoting the earlier proposal as
+evidence does not make it binding; restate in Intent any part of it that must
+still bind.
+
+Delegated Retrace review has no brief: the controller sends the frozen Scope
+approval record and the scope contract as Intent and the evidence manifest as
+Context.
 
 For an unresolved candidate, render the Candidate child as
 `unresolved — name one proposal or artifact` and wait; approval alone cannot
@@ -269,17 +291,13 @@ artifact identity. A changed artifact working identity binds the immutable
 outer-base identity and the exact complete bounded edit set with a lowercase
 SHA-256. Identity equality, not paraphrase or intent, governs freshness.
 
-Every review request carries the approved goal, candidate, context, exact mode
-and cap; the current outer iteration; the complete unchanged outer base; the
-complete current working proposal; the Correction shape for the mode; the
-delegated authorization record or `none`; and a worked return example. A
-controller header names the phase, expected reviewer, pass, and owner. In outer
-iteration one the outer base is the run original, so each reviewer's first
-actual review carries the full run-original content. Current working identity
-and all six lineage fields remain controller-computed from frozen content and
-admitted responses, not reviewer-authored identity fields. The current request
-binds each response to its candidate; an echoed `Candidate:` field is neither
-required nor allowed.
+Every review request carries the contents listed under "Review-turn packet" in
+[the reviewer protocol](references/reviewer-protocol.md), including Intent,
+under a controller header naming the phase, expected reviewer, pass, and owner.
+Current working identity and all six lineage fields remain controller-computed
+from frozen content and admitted responses, not reviewer-authored identity
+fields. The current request binds each response to its candidate; an echoed
+`Candidate:` field is neither required nor allowed.
 
 The `initial` request and every `later` request also carry the counterpart
 responses: every unsent finalized `VALID` or `REVISE` response of the other

@@ -76,6 +76,7 @@ export function requestProblems(command, request) {
   if (command === "reconcile") {
     if (!isStr(request.goal)) p.push("goal must be a non-empty string");
     if (!isObj(request.candidate) || !isStr(request.candidate.identity)) p.push("candidate.identity must be a non-empty string");
+    if (!Array.isArray(request.intent) || !request.intent.every(isStr)) p.push("intent must be an array of non-empty strings");
     if (!Array.isArray(request.context)) p.push("context must be an array");
     if (request.mode !== "conversation" && request.mode !== "artifact") p.push("mode must be conversation or artifact");
     if (request.mode === "artifact" && !(isStr(request.candidate?.artifact) && path.isAbsolute(request.candidate.artifact))) p.push("artifact mode needs an absolute candidate.artifact");

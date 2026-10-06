@@ -31,6 +31,7 @@ const REVIEWER = 160001;
 const REQUEST = JSON.stringify({
   goal: "Decide the layout",
   candidate: { identity: "layout v1", text: "Use two columns." },
+  intent: ["The human wants a layout that works on phones."],
   context: [],
   mode: "conversation",
   cap: "none",
@@ -351,6 +352,18 @@ test("models override: an inexact or unsupported request value refuses as model 
   const normalize = await run({ argv: ["normalize"], live: LIVE, catalog: CATALOG, request: JSON.stringify({ root: "/tmp", concerns: [], input: "x", models: { a: "anthropic/claude-opus-5-5:high" } }) });
   assertNothingLaunched(normalize);
   assert.ok(normalize.stdout.includes("**Reason:** invalid request\n\n- normalize takes no models; it uses the live model roles\n"), normalize.stdout);
+});
+
+test("request: a reconcile request without an `intent` array of strings refuses before any launch; with one it passes", async () => {
+  const { intent, ...rest } = JSON.parse(REQUEST);
+  for (const bad of [rest, { ...rest, intent: "phones first" }, { ...rest, intent: ["phones first", ""] }]) {
+    const out = await run({ request: JSON.stringify(bad) });
+    assertNothingLaunched(out);
+    assert.ok(out.stdout.includes("**Reason:** invalid request\n\n- intent must be an array of non-empty strings\n"), out.stdout);
+  }
+  const ok = await run({ request: JSON.stringify({ ...rest, intent }) });
+  assert.equal(ok.exitCode, 0, ok.stdout);
+  assert.equal(t.controllerLoaded, true);
 });
 
 // ------------------------------------------------------------ run claim
