@@ -1,28 +1,32 @@
 // Controller ports: binds the semantic controller to the public acpx adapter
 // (spec-v3 §3, §4). Owns the run's private root and child environment, one
 // shared runtime per launch argv, actor creation/restoration, one request per
-// call with A1 closure, disposal with observed exit, parking, and A4 cleanup.
+// call with A1 closure, disposal with observed exit, parking, A4 cleanup, the
+// run's ending record in its folder, and the run's view of a `stop` request.
 // No semantic decisions are made here.
 import { randomUUID } from "node:crypto";
+import { watch } from "node:fs";
 import fs from "node:fs/promises";
 import { AGENT_ID, buildAgentArgv, closeAndObserve, createRuntime, ensureWithSampling, PidLedger, observePid as defaultObservePid, RUNTIME, runRequest } from "./adapter.mjs";
 import { closeRequest, recoverObservation, withCapture } from "./capture.mjs";
-import { childEnv, cleanupLiveSessionFolders, createPrivateRoot, enterChildEnv, newRunId, privateRootFor, readOwnerClaim, removePrivateRoot, sessionDirFor, writeClaim, writeRunRecord } from "./env.mjs";
+import { childEnv, cleanupLiveSessionFolders, createPrivateRoot, enterChildEnv, hasStopRequest, newRunId, privateRootFor, readOwnerClaim, removeRunResult, removeSocketDir, removeStopRequest, sessionDirFor, writeClaim, writeRunRecord, writeRunResult } from "./env.mjs";
 import { writeJson } from "./io.mjs";
-import { OWN_START_UNREADABLE, ownStartReason, OWNER_UNREADABLE, ownerState, selfOwner } from "./preflight.mjs";
+import { OWN_START_UNREADABLE, ownStartReason, OWNER_UNREADABLE, ownerState, requestIdentity, requestTarget, selfOwner } from "./preflight.mjs";
 import { Spend } from "./spend.mjs";
 
 const RECOVERY_BOUND_MS = 30_000;
 
 function attachRun({ kind, runId, dirs, deps, spend, sessionIds = [], record }) {
   const restoreEnv = enterChildEnv(childEnv(dirs, deps.env ?? process.env));
-  return {
+  const run = {
     kind,
     runId,
     dirs,
     deps,
     sessionDir: sessionDirFor(runId, deps.sessionsRoot),
     spend,
+    target: record?.target,
+    identities: [...(record?.identities ?? [])],
     runtimes: new Map(),
     actors: new Map(),
     sessionIds: new Set([...sessionIds, ...(record?.sessionIds ?? [])]),
@@ -31,17 +35,41 @@ function attachRun({ kind, runId, dirs, deps, spend, sessionIds = [], record }) 
     recordWrite: Promise.resolve(),
     restoreEnv,
     envRestored: false,
+    // Aborted once a `stop` request is seen; pending requests are cancelled through it.
+    stop: new AbortController(),
   };
+  // A filesystem notification on the run folder; the step-boundary reads in stopRequested are the other way.
+  try {
+    run.stopWatch = watch(dirs.root, () => {
+      stopRequested(run).catch(() => {});
+    });
+    run.stopWatch.on("error", () => run.stopWatch.close());
+  } catch {
+    run.stopWatch = undefined;
+  }
+  return run;
 }
 
 /**
- * Queues one atomic `run.json` rewrite `{runId, kind, phase, pids, sessionIds}`
- * from the run's current PID and session-ID sets; returns this write. Each
- * write carries the full current record, so a failed earlier write never
- * blocks a later one.
+ * Whether the human asked to stop this run (`cli.mjs stop`): reads the run
+ * folder's stop request and, once seen, aborts `run.stop` so every pending
+ * request is cancelled. Called at every step boundary; never time-based.
+ */
+export async function stopRequested(run) {
+  if (run.stop.signal.aborted) return true;
+  if (!(await hasStopRequest(run.dirs))) return false;
+  run.stop.abort();
+  return true;
+}
+
+/**
+ * Queues one atomic `run.json` rewrite `{runId, kind, phase, target,
+ * identities, pids, sessionIds, spend}` from the run's current sets and spend so
+ * far; returns this write. Each write carries the full current record, so a
+ * failed earlier write never blocks a later one.
  */
 function syncRunRecord(run) {
-  const record = { runId: run.runId, kind: run.kind, phase: run.phase, pids: [...run.pids], sessionIds: [...run.sessionIds] };
+  const record = { runId: run.runId, kind: run.kind, phase: run.phase, target: run.target, identities: [...run.identities], pids: [...run.pids], sessionIds: [...run.sessionIds], spend: run.spend.toJSON() };
   run.recordWrite = run.recordWrite.catch(() => {}).then(() => writeRunRecord(run.dirs, record));
   run.recordWrite.catch(() => {});
   return run.recordWrite;
@@ -57,16 +85,20 @@ export async function setRunPhase(run, phase) {
 const ownerFor = (deps) => (deps.owner ? Promise.resolve(deps.owner) : selfOwner(deps.processStart));
 
 /**
- * Creates the private root (owner claim and `run.json` included) and enters the
- * child environment (before any runtime exists). Throws before creating
- * anything when this process's start time cannot be read.
+ * Creates the private root (owner claim and `run.json` with the request's
+ * target, its identity and an empty spend so far) and enters the child
+ * environment (before any runtime exists). The runId is the caller's
+ * (`deps.runId`) when it chose one. Throws before creating anything when this
+ * process's start time cannot be read.
  */
-export async function openRun(kind, deps) {
+export async function openRun(kind, deps, request) {
   const owner = await ownerFor(deps);
   if (!owner.lstart) throw Object.assign(new Error(`${OWN_START_UNREADABLE}: ${ownStartReason(owner.pid)}`), { code: "EOWNSTART" });
-  const runId = newRunId(kind);
-  const dirs = await createPrivateRoot(runId, deps.tmpRoot, { kind, owner });
-  return attachRun({ kind, runId, dirs, deps, spend: new Spend() });
+  const runId = deps.runId ?? newRunId(kind);
+  const target = requestTarget(kind, request);
+  const identity = requestIdentity(kind, request);
+  const dirs = await createPrivateRoot(runId, deps.tmpRoot, { kind, owner, target, identity });
+  return attachRun({ kind, runId, dirs, deps, spend: new Spend(), record: { target, identities: [identity] } });
 }
 
 /**
@@ -99,18 +131,55 @@ export async function claimRun(runId, deps) {
 }
 
 /**
- * Re-enters a run's private HOME and session folder from its `run.json` and,
- * when parked, its `state.json`. Call only after `claimRun` and observed exit.
+ * Re-enters a run's private HOME and session folder from its `run.json` (spend
+ * so far included) and, when parked, its `state.json`. Call only after
+ * `claimRun` and observed exit.
  */
 export function reopenRun(runId, deps, { record, state }) {
   const dirs = privateRootFor(runId, deps.tmpRoot);
-  return attachRun({ kind: state?.kind ?? record.kind, runId, dirs, deps, spend: state ? Spend.fromJSON(state.spend) : new Spend(), sessionIds: state?.sessionIds ?? [], record });
+  return attachRun({ kind: state?.kind ?? record.kind, runId, dirs, deps, spend: Spend.fromJSON(record?.spend ?? state?.spend), sessionIds: state?.sessionIds ?? [], record });
 }
 
-/** Restores the caller's environment exactly once. */
+/**
+ * A resume that starts, after its claim and before any actor: removes the
+ * parked record and any stop request aimed at an earlier worker, then records
+ * the resume identity and phase in `run.json`. In that order a crash in
+ * between never leaves a waiting record beside a non-parked phase (which would
+ * read as finished); it leaves an abandoned run.
+ */
+export async function acceptResume(run, identity) {
+  await removeRunResult(run.dirs);
+  await removeStopRequest(run.dirs);
+  run.stop = new AbortController();
+  run.identities.push(identity);
+  await syncRunRecord(run);
+}
+
+/**
+ * Writes the run's ending record and exit code into its folder (after cleanup
+ * of everything but the folder, or at a park before phase `parked`). An exit 3
+ * record gains a `## Dispose` section before its `## Spend`: the folder stays
+ * and the run stays abandoned until `dispose`. Returns the written record
+ * naming the printed run.
+ */
+export async function recordRun(run, out) {
+  const record = out.exitCode === 3 ? { ...out, markdown: withDispose(out.markdown, run.runId) } : out;
+  await run.recordWrite.catch(() => {});
+  await writeRunResult(run.dirs, record);
+  return { ...record, printedRun: run.runId };
+}
+
+function withDispose(markdown, runId) {
+  const section = `## Dispose\n\n- cleanup was not established, so run \`${runId}\` keeps its folder and stays abandoned; dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\`\n`;
+  const at = markdown.lastIndexOf("## Spend\n");
+  return at < 0 ? `${markdown}\n${section}` : `${markdown.slice(0, at)}${section}\n${markdown.slice(at)}`;
+}
+
+/** Restores the caller's environment and stops watching for a stop request, exactly once. */
 export function leaveRun(run) {
   if (run.envRestored) return;
   run.envRestored = true;
+  run.stopWatch?.close();
   run.restoreEnv();
 }
 
@@ -166,34 +235,42 @@ export async function startActor(run, { name, role, restore }) {
 /**
  * Submits one request once and closes it (A1). Returns the closeRequest row
  * plus `requestId`. A fresh session inside the window or a changed backend
- * session is reported as row `identity-changed`.
+ * session is reported as row `identity-changed`. After a stop request it
+ * submits nothing, and a request it cancels for the stop closes as row
+ * `stopped` (`stopped: true`): its reply is never awaited or resent.
  */
 export async function ask(run, actor, text, validate) {
+  if (await stopRequested(run)) return { row: "stopped", c4: false, stopped: true, requestId: null };
   const requestId = `${actor.name}:${randomUUID()}`;
-  const rec = await runRequest({ runtime: actor.cap.runtime, handle: actor.handle, ledger: actor.ledger, requestId, text, cursor: actor.cursor, knownRequestIds: actor.known });
+  const rec = await runRequest({ runtime: actor.cap.runtime, handle: actor.handle, ledger: actor.ledger, requestId, text, cursor: actor.cursor, knownRequestIds: actor.known, signal: run.stop.signal });
   const close = () => closeRequest({ win: rec.win, control: rec.control, data: actor.cap.captured.get(rec.win.firstCandidate?.cursor), validate });
-  let out = close();
-  if (out.row === "window-unavailable") {
-    const recovery = await recoverObservation({ cap: actor.cap, handle: actor.handle, rec, ledger: actor.ledger, boundMs: RECOVERY_BOUND_MS });
-    out = { ...close(), recovery };
+  let out;
+  if (rec.control.cancelled) out = { row: "stopped", c4: false, stopped: true };
+  else {
+    out = close();
+    if (out.row === "window-unavailable") {
+      const recovery = await recoverObservation({ cap: actor.cap, handle: actor.handle, rec, ledger: actor.ledger, boundMs: RECOVERY_BOUND_MS });
+      out = { ...close(), recovery };
+    }
   }
   actor.known.add(requestId);
   actor.requests++;
   if (rec.win.state === "closed" && rec.win.endCursor) actor.cursor = rec.win.endCursor;
   const sampled = actor.ledger.samples.filter((s) => s.backendSessionId).at(-1);
-  if ((rec.window.rpc?.sessionNew ?? 0) > 0 || (sampled && sampled.backendSessionId !== actor.backendSessionId)) out = { ...out, row: "identity-changed", c4: false };
+  if (!out.stopped && ((rec.window.rpc?.sessionNew ?? 0) > 0 || (sampled && sampled.backendSessionId !== actor.backendSessionId))) out = { ...out, row: "identity-changed", c4: false };
   const usage = actor.ledger.samples.filter((s) => s.usage).at(-1)?.usage;
   if (usage) run.spend.record(actor.name, actor.role, usage);
-  await run.recordWrite;
+  await syncRunRecord(run);
   return { ...out, requestId, turnResult: rec.turnResult };
 }
 
-/** Supported close plus observed exit; spend from the last pre-close sample. */
+/** Supported close plus observed exit; spend from the last pre-close sample, synced into `run.json`. */
 export async function disposeActor(run, actor, reason) {
   const out = await closeAndObserve({ runtime: actor.cap.runtime, handle: actor.handle, ledger: actor.ledger, reason, observePid: run.deps.observePid ?? defaultObservePid });
   if (out.lastUsage) run.spend.record(actor.name, actor.role, out.lastUsage);
   actor.state = out.disposed ? "closed" : "closing";
   actor.disposal = out;
+  await syncRunRecord(run).catch(() => {});
   return out;
 }
 
@@ -223,10 +300,12 @@ async function detachRuntimes(run) {
 /**
  * KR13 park: every live actor is closed with observed exit while its stored
  * session stays resumable (same `resumeSessionId`); `state` is written to the
- * private root, then `run.json` phase becomes `parked`; the session folder and
- * private root are kept.
+ * private root, then the record `render({ parked, failures })` returns is
+ * written into the run folder, and only then does `run.json` phase become
+ * `parked`; the session folder and private root are kept. Returns the record
+ * naming the printed run.
  */
-export async function parkRun(run, actors, state) {
+export async function parkRun(run, actors, state, render) {
   const failures = [];
   for (const a of actors) {
     if (a.state === "closed") continue;
@@ -234,16 +313,18 @@ export async function parkRun(run, actors, state) {
     if (!d.disposed) failures.push(disposalFailure(a));
   }
   await writeJson(run.dirs.state, { ...state, kind: run.kind, runId: run.runId, sessionIds: [...run.sessionIds], spend: run.spend.toJSON(), actors: actors.map(actorRecord) });
+  const out = await recordRun(run, render({ parked: failures.length === 0, failures }));
   await setRunPhase(run, "parked");
   await detachRuntimes(run);
-  return { parked: failures.length === 0, failures };
+  return out;
 }
 
 /**
  * A4 run cleanup: runs only when every actor showed observed exit; then the
- * session folders are cleaned, and only when that cleanup completes is the
- * private root (with `run.json` and its socket folder) removed, so residue
- * never loses its record. Returns `{ complete, unresolved, keptRecord }` naming anything kept.
+ * session folders and the run's socket folder are cleaned. The private root
+ * (with `run.json`) stays: the run's record is written into it next, and the
+ * caller removes it only after printing a finished run's record. Returns
+ * `{ complete, unresolved, keptRecord }` naming anything kept.
  */
 export async function finishRun(run) {
   const unresolved = [];
@@ -280,8 +361,8 @@ export async function finishRun(run) {
     unresolved.push(`session folder cleanup kept: ${kept.map((k) => `\`${k}\``).join(", ")}`, `private root \`${run.dirs.root}\` and its \`run.json\` kept`);
     return { complete: false, unresolved, keptRecord: true };
   }
-  const removed = await removePrivateRoot(run.dirs);
-  if (!removed.removed) unresolved.push(`private root \`${run.dirs.root}\` or socket folder \`${removed.socketDir}\` kept`);
+  const socket = await removeSocketDir(run.dirs);
+  if (!socket.removed) unresolved.push(`socket folder \`${socket.socketDir}\` kept`);
   return { complete: unresolved.length === 0, unresolved };
 }
 

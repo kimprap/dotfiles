@@ -15,7 +15,7 @@ This index is the canonical discovery surface for durable repository decisions. 
 | [ADR-0007 — Deterministic papercut observation](0007-automated-papercut-lifecycle-and-lean-evidence.md) | ACTIVE | One look after every completed repository-work boundary; complete stable-order root-cause accounting; strict exclusions; opt-in persistence | D24 |
 | [ADR-0008 — Repository agent integration setup](0008-repository-agent-integration-setup.md) | ACTIVE | Approval-gated inspection and initialization of supported repository integrations | D25 |
 | [ADR-0009 — Terminal envelope and lean completion protocol](0009-session-lifecycle-envelope-and-portable-learning.md) | ACTIVE | Stateless session transport; real-boundary Handoffs with concrete receivers; in-place role continuity; exact Outcome/Changes/Checks/Risks/Next completion; same-agent rendering | D27 |
-| [ADR-0010 — acpx controller for Retrace and Reconcile](0010-replacement-lifecycle-plugin.md) | ACTIVE | One Node controller over public acpx and native omp acp owns Retrace/Reconcile sessions, yield-only admission, capacity and observed-exit disposal | D31 |
+| [ADR-0010 — acpx controller for Retrace and Reconcile](0010-replacement-lifecycle-plugin.md) | ACTIVE | One Node controller over public acpx and native omp acp owns Retrace/Reconcile sessions, yield-only admission, capacity and observed-exit disposal; each run executes in a detached worker that a killed call leaves running and a rerun attaches to | D31 |
 
 ## Authority and precedence
 

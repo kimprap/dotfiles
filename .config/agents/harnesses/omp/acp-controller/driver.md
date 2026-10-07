@@ -10,14 +10,20 @@
    for A and `modelRoles.second_opinion_b` for B, each `<model>:<thinking>`),
    an invalid per-run `models` override (`model override`), a missing or
    duplicated reviewer prompt marker, or an
-   abandoned controller run (owner gone and not parked; live and parked runs of
-   other sessions never refuse). Present a refusal verbatim and stop. After an
-   abandoned-run refusal, ask the human once which listed runs to dispose and
+   abandoned controller run (owner gone without a parked or finished record, a
+   record with exit `3`, or a recorded process still present; live, parked and
+   finished runs never refuse a run for another target). A request that matches
+   an existing run is judged by that run first, as "Call ended without a
+   record" says, so an unrelated abandoned run never blocks it. Present a
+   refusal verbatim and stop. After an
+   abandoned-run refusal, which lists each run's spend so far, ask the human
+   once which listed runs to dispose and
    run `node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
    only for runs the human explicitly names; never remove folders or signal
    processes by hand and never retry the refused run automatically: after
    disposal the human re-invokes. If a `dispose` exits `3`, present that record
-   verbatim and stop; the human decides. Do not patch the host,
+   verbatim and stop; the human decides. Never dispose or relaunch a live run;
+   end one only with "Stop". Do not patch the host,
    supply profiles, argv, models (except the request's `models` field under
    "Per-run model change"), tools, prompts, process factories or
    environment, substitute task/hub/Eval transport, emulate both roles with one
@@ -32,10 +38,14 @@ body; plain `roles` returns at once because it reads stdin only when stdin is
 not a TTY, and the OMP `bash` tool gives it an empty stdin. It runs the
 Reconcile capability preflight above and launches nothing. On exit `2`, present
 its refusal verbatim and stop, except a `model choice` refusal under "Per-run
-model change". On exit `0`, show its `Models:` list stdout verbatim directly
-after the brief's reply line. The list reports reviewer A's and B's model and
-thinking level: the live `modelRoles`, or a pending per-run model change with
-each changed line naming its live default. It is not a brief field.
+model change". On exit `0`, show its stdout verbatim directly after the brief's
+reply line: the `Models:` list and, when any run is live, parked or finished,
+the `Controller runs` list after it. `Models:` reports reviewer A's and B's
+model and thinking level: the live `modelRoles`, or a pending per-run model
+change with each changed line naming its live default. `Controller runs` gives
+each run's runId, kind, class, target, start time, worker PID while live and
+spend so far, so the human sees a run still spending before approving another.
+Neither list is a brief field.
 
 ### Per-run model change
 
@@ -48,9 +58,9 @@ source for a model change.
 1. Pass the human's words unresolved as the `roles` body; never pre-resolve a
    name or level yourself. Write
    `{"models": {"a": {"model": "{human's name}", "thinking": "{human's level}"}, "b": {...}}}`,
-   with only the roles and fields the human named, to a session-local scratch
-   file and run
-   `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles < {session-local scratch}/roles-body.json`
+   with only the roles and fields the human named, to a real file under `/tmp`
+   as "Controller invocation" describes and run
+   `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles < {absolute request directory}/roles-body.json`
    through `bash` from the repository root. The file redirect always closes
    stdin, so the call cannot wait on an open stream. A role or field left out
    keeps its live value. The controller resolves each value against
@@ -95,8 +105,9 @@ When the skill sends Main to the session journal to rebuild Intent:
 
 ### Controller invocation
 
-After approval, write the approved binding as one JSON object to a
-session-local scratch file; it is the controller's only input channel:
+After approval, write the approved binding as one JSON object to a new real
+request file under `/tmp`, in a directory whose name does not start with
+`acp-controller-`, never `local://`; it is the controller's only input channel:
 
 ```json
 {
@@ -119,46 +130,124 @@ a non-empty string; a request without it is refused with exit `2` before any
 launch. `cap` is `none` or the approved positive integer. An approved per-run
 model change adds `models` as "Per-run model change" says.
 Then run the controller once, through `bash` with `timeout: 0` and the
-repository root as working directory:
+repository root as working directory, naming the request file by its absolute
+path written out in the command:
 
 ```text
-node .config/agents/harnesses/omp/acp-controller/cli.mjs reconcile < {session-local scratch}/reconcile-request.json
+node .config/agents/harnesses/omp/acp-controller/cli.mjs reconcile < {absolute request directory}/reconcile-request.json
 ```
 
-Except for a successful `roles` call, stdout carries only the rendered record
-followed by `## Spend`; stderr carries diagnostics. Exit `0` is `## Final proposal`; `1` is a stop or a parked repair
-pause with `## Reconcile stopped`; `2` is a refusal before any launch; `3`
-means cleanup was not established and the record names the unresolved actor,
-PID, or folder. Run one controller call per approved binding. Never rerun it to
-retry a stopped run; continue a parked run only under the Reconcile skill's Liveness, failure, and
-repair.
+Run controller calls only this way: through `bash`, never through Eval, and
+never with the path held in a shell variable, so the last controller command
+in the transcript is a complete recovery. `timeout: 0` stays the normal path
+because it needs the fewest calls; a call that still ends without a record
+follows "Call ended without a record".
+
+The call hands the run to a detached worker and writes a three-line notice to
+stderr, each line starting with `acp-controller:`: the runId, worker PID and
+target; "If this call ends without a record, run this same command again; it
+attaches to this run and starts nothing."; and the `stop` command for the run.
+It then waits with no deadline for the record. Except for a successful `roles`
+call, stdout carries only the rendered record followed by `## Spend`; stderr
+carries the notice and diagnostics. Exit `0` is `## Final proposal`; `1` is a
+stop or a parked repair pause with `## Reconcile stopped`, or the short
+`## Controller run printed elsewhere` record; `2` is a refusal before any
+launch; `3` means cleanup was not established or the run was abandoned, and the
+record names the unresolved actor, PID, or folder and `dispose`. Run one
+controller call per approved binding. Once a record has been printed, never
+rerun the call to retry a stopped run; continue a parked run only under the
+Reconcile skill's Liveness, failure, and repair.
 
 ### Resume and abandon a parked run
 
 ```text
-node .config/agents/harnesses/omp/acp-controller/cli.mjs resume {runId} < {session-local scratch}/resume-request.json
+node .config/agents/harnesses/omp/acp-controller/cli.mjs resume {runId} < {absolute request directory}/resume-request.json
 ```
 
-with the request `{"repair": {"authority": "{the human's authorization words}",
-"step": "{exact failed step}"}}`. Resume restores both reviewer sessions under
+run like any controller call, with the request
+`{"repair": {"authority": "{the human's exact authorization words} (given {ISO-8601 time they were given})", "step": "{exact failed step}"}}`.
+`repair.authority` quotes the human's authorization words with the time they
+were given. Each new repair gets a new request file; rerunning the same resume
+command is the same request again. Resume restores both reviewer sessions under
 their parked session identities with no fresh-session fallback, and keeps the
 models and thinking levels bound at the run's first call rather than live
 `modelRoles`; a parked run without recorded models stops as a lost identity.
 It then retries
-only the exact failed application, reread, or validator step. A different step
-keeps the run parked. Application repair does not add a capacity count until
+only the exact failed application, reread, or validator step. A repair for a
+different step exits `1`, launches nothing and leaves the run parked.
+Application repair does not add a capacity count until
 one changed canonical application commits; validation repair on the unchanged
 applied identity does not add a second count. If either reviewer's same-session
 restore fails, resume stops and asks: it disposes both sessions, names the lost
 identity, and exits `1`; nothing rolls back and no fresh A or B is created.
-Resume claims the run exclusively, refuses while another live controller owns
-it, and restores no reviewer until every recorded or matched reviewer PID shows
-observed exit; a still-present PID exits `3` with the run unchanged, and the
-root presents that record verbatim and stops. A parked run never blocks other
-sessions' runs; a resumed run whose controller then dies is abandoned and can
-only be disposed. Abandon a parked run with
+Resume runs in its own worker and claims the run exclusively. A new repair sent
+while a resume is live exits `2` and names that run. Resume restores no
+reviewer until every recorded or matched reviewer PID shows observed exit; a
+still-present PID exits `3` with the run still parked, and the root presents
+that record verbatim and stops. A resume of a finished run exits `2` and names
+both ways to print its record; a resume of a run that is neither parked nor
+finished exits `2` and names `dispose`. A parked run keeps its folder and
+record until a resume that starts or `dispose`, and never blocks other runs; a
+resumed run whose worker then dies without a record is abandoned and can only
+be disposed. Abandon a parked run with
 `node .config/agents/harnesses/omp/acp-controller/cli.mjs dispose {runId}`
-and no request body, only on the human's explicit instruction.
+and no request body, only on the human's explicit instruction. `dispose`
+reports the run's spend so far and refuses a live run with exit `2`.
+
+### Stop
+
+This applies to Reconcile and Retrace. Cancelling, timing out or killing a
+controller call never stops its run: the worker keeps running and spending
+until it ends or is stopped. Use `stop` only on the human's explicit
+instruction, as `dispose`, and run it like any controller call:
+
+```text
+node .config/agents/harnesses/omp/acp-controller/cli.mjs stop {runId}
+```
+
+The runId is in the notice, in the `roles` `Controller runs` list and in the
+run-folder name. When it is not at hand, use the request form: the launch
+command with `stop` before its subcommand and the same request file, for
+example `node .config/agents/harnesses/omp/acp-controller/cli.mjs stop reconcile < {absolute request directory}/reconcile-request.json`
+(also `stop retrace`, `stop normalize` and `stop resume {runId}`). Never
+dispose a run, signal any process or start another run to find a runId.
+
+On a live run, `stop` waits with no deadline for the worker to cancel its
+pending reviewer requests, dispose its actors with observed exit and write a
+stopped record, then prints it with exit `1`. A stop during an artifact
+application, reread or validation step takes effect after that step ends, and
+the run does not park. On a parked or finished run it prints that run's record
+and stops nothing; on an abandoned run it prints the exit `3` record or reports
+the run abandoned, names `dispose` and removes nothing; with no matching run it
+exits `2`. Present the record verbatim. Never dispose or relaunch a live run;
+end one only with `stop`.
+
+### Call ended without a record
+
+This applies to Reconcile and Retrace. When a controller call ends without a
+record (timed out, cancelled or killed), its run keeps working in its worker.
+Run the same command again, the last controller command in the transcript with
+the same request file, through `bash`, preferably with `timeout: 0`. It
+attaches to the same run and launches nothing: it waits on a live run and
+prints its ending record (or exits `3` naming the abandoned run if the worker
+dies without one), prints a parked or finished record, or refuses an
+abandoned run naming `dispose`. Only when the earlier attempt died before the
+worker published an identity does it start the run, because nothing was
+launched. This rerun is the skills' already-supported observation path for the
+same pending operation, which they count as continuation; it uses no recovery
+attempt and has no attempt limit, because it launches nothing.
+
+Never rebuild a request to recover; reuse the request file. A rebuilt request
+for the same target is refused with exit `2` naming the run; present the
+refusal and stop, and the human decides.
+
+Once a record has been printed, the "never rerun to retry a stopped run" rule
+applies. A rerun of a parked run prints its parked record again and starts
+nothing. The short `## Controller run printed elsewhere` record means another
+call already printed the run's record; it is not a stopped run to retry and not
+a reason to dispose. An exit `3` record is not a reason to launch again while
+that run's folder remains: follow the abandoned-run handling under "Capability
+preflight".
 
 ## Retrace
 
@@ -210,10 +299,13 @@ The labelled lines add no binding: the request binds what step 4 names.
 ### Invoke the controller
 
 After approval the parent invokes the controller once for the approved graph,
-through `bash` with `timeout: 0` and the repository root as working directory:
+exactly as "Controller invocation" under Reconcile says: through `bash` with
+`timeout: 0`, never Eval, the repository root as working directory, and the
+request file named by its absolute path in the command. `normalize` runs the
+same way.
 
 ```text
-node .config/agents/harnesses/omp/acp-controller/cli.mjs retrace < {session-local scratch}/retrace-request.json
+node .config/agents/harnesses/omp/acp-controller/cli.mjs retrace < {absolute request directory}/retrace-request.json
 ```
 
 The request file holds one JSON object, the only input channel:
@@ -231,16 +323,19 @@ The request file holds one JSON object, the only input channel:
 ```
 
 Exit `0` means aggregate `complete`; `1` means `partial` or `blocked` with a
-rendered record; `2` means the controller refused before any launch (invalid
-request or table, version pin, model role, model override, missing prompt
-marker, or an abandoned controller run: owner gone and not parked; live and
-parked runs of other sessions never refuse); `3` means cleanup was not
-established and the
-record names the unresolved actor, PID, or folder. Except for a successful
+rendered record, or the short `## Controller run printed elsewhere` record; `2`
+means the controller refused before any launch (invalid request or table,
+version pin, model role, model override, missing prompt marker, a different
+request for the target of a live, parked or finished run, or an abandoned
+controller run as "Capability preflight" defines it); `3` means cleanup was not
+established or the run was abandoned, and the record names the unresolved
+actor, PID, or folder and `dispose`. The notice, "Stop" and "Call ended without
+a record" under Reconcile apply unchanged. Except for a successful
 `roles` call, stdout carries only the rendered record, laid out as Retrace's
 "Freshness and aggregate" section describes, followed by `## Spend`;
-stderr carries diagnostics. Present stdout
-verbatim. Never rerun the controller to retry a stopped or partial scope; a
+stderr carries the notice and diagnostics. Present stdout
+verbatim. Once a record has been printed, never rerun the controller to retry a
+stopped or partial scope; a
 fresh attempt needs the changed evidence or authority that Retrace's Stops section requires.
 After an abandoned-run refusal, ask the human once which listed runs to
 dispose and run
@@ -248,7 +343,7 @@ dispose and run
 only for runs the human explicitly names; never remove folders or signal
 processes by hand and never retry the refused run automatically: after
 disposal the human re-invokes. If a `dispose` exits `3`, present that record
-verbatim and stop; the human decides.
+verbatim and stop; the human decides. Never dispose or relaunch a live run.
 
 By default the controller binds its models from live `modelRoles`: reviewer A
 uses `second_opinion_a`, reviewer B uses `second_opinion_b`, and the scope

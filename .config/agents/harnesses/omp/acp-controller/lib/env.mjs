@@ -26,10 +26,14 @@ export function sessionDirFor(runId, sessionsRoot = SESSIONS_ROOT) {
   return path.join(sessionsRoot, `${RUN_PREFIX}${runId}`);
 }
 
-/** Private root layout `<tmpRoot>/acp-controller-<runId>/{home,tmp,work,state.json,run.json,claim-<n>}`. */
+/**
+ * Private root layout `<tmpRoot>/acp-controller-<runId>/{home,tmp,work,state.json,run.json,record.json,stop.json,claim-<n>}`:
+ * `record` is `run.json` (owner-side run facts), `result` is `record.json` (the run's ending record and exit code),
+ * `stop` is `stop.json` (a `stop` call's request to the run's worker).
+ */
 export function privateRootFor(runId, tmpRoot = TMP_ROOT) {
   const root = path.join(tmpRoot, `${RUN_PREFIX}${runId}`);
-  return { root, home: path.join(root, "home"), tmp: path.join(root, "tmp"), work: path.join(root, "work"), state: path.join(root, "state.json"), record: path.join(root, "run.json") };
+  return { root, home: path.join(root, "home"), tmp: path.join(root, "tmp"), work: path.join(root, "work"), state: path.join(root, "state.json"), record: path.join(root, "run.json"), result: path.join(root, "record.json"), stop: path.join(root, "stop.json") };
 }
 
 /** Setup folder `<tmpRoot>/.acp-controller-<runId>.init` a private root is built in before it is renamed into place. */
@@ -78,27 +82,88 @@ export async function writeClaim(root, index, owner) {
   }
 }
 
-/** Atomic `run.json` rewrite: temp file plus rename inside the existing root (never recreates a removed root). */
+/** Atomic write inside the existing root: temp file plus rename (never recreates a removed root). */
+async function writeAtomic(dirs, file, text) {
+  const temp = path.join(dirs.root, `.${path.basename(file)}.${randomBytes(4).toString("hex")}.tmp`);
+  await fs.writeFile(temp, text, { mode: 0o600 });
+  await fs.rename(temp, file);
+}
+
+/** Atomic `run.json` rewrite `{runId, kind, phase, target, identities, pids, sessionIds, spend}`. */
 export async function writeRunRecord(dirs, record) {
-  const temp = path.join(dirs.root, `.run.json.${randomBytes(4).toString("hex")}.tmp`);
-  await fs.writeFile(temp, `${JSON.stringify(record, null, 2)}\n`, { mode: 0o600 });
-  await fs.rename(temp, dirs.record);
+  await writeAtomic(dirs, dirs.record, `${JSON.stringify(record, null, 2)}\n`);
+}
+
+/** Atomic `record.json` write: the run's ending record and its exit code together. */
+export async function writeRunResult(dirs, { exitCode, markdown }) {
+  await writeAtomic(dirs, dirs.result, `${JSON.stringify({ exitCode, markdown })}\n`);
+}
+
+/**
+ * The run's ending record `{ exitCode, markdown }`; `undefined` when there is
+ * none and `null` when it exists but is not a complete record.
+ */
+export async function readRunResult(dirs) {
+  let text;
+  try {
+    text = await fs.readFile(dirs.result, "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT" || error.code === "ENOTDIR") return undefined;
+    return null;
+  }
+  try {
+    const r = JSON.parse(text);
+    return Number.isInteger(r?.exitCode) && typeof r.markdown === "string" ? { exitCode: r.exitCode, markdown: r.markdown } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Removes the run's ending record (a resume that starts takes the run out of its parked record). */
+export async function removeRunResult(dirs) {
+  await fs.rm(dirs.result, { force: true });
+}
+
+/**
+ * Writes the stop request into an existing run folder; never creates the folder.
+ * Returns `written`, `exists` (already requested) or `missing` (no run folder).
+ */
+export async function writeStopRequest(dirs, at = new Date()) {
+  try {
+    await fs.writeFile(dirs.stop, `${JSON.stringify({ at: at.toISOString() })}\n`, { flag: "wx", mode: 0o600 });
+    return "written";
+  } catch (error) {
+    if (error.code === "EEXIST") return "exists";
+    if (error.code === "ENOENT" || error.code === "ENOTDIR") return "missing";
+    throw error;
+  }
+}
+
+/** Whether a stop request waits in the run folder. */
+export async function hasStopRequest(dirs) {
+  return !(await gone(dirs.stop));
+}
+
+/** Removes a stop request aimed at an earlier worker of the run (a resume that starts). */
+export async function removeStopRequest(dirs) {
+  await fs.rm(dirs.stop, { force: true });
 }
 
 /**
  * Creates a fresh owner-only private root. It is built as
  * `<tmpRoot>/.acp-controller-<runId>.init/` with `claim-0` (the owner, written
- * first) and `run.json` (`phase: "active"`), then renamed into place, so no
- * preflight sees a root without an owner. An existing root is an error.
+ * first) and `run.json` (`phase: "active"`, the request's target and identity
+ * and an empty spend so far), then renamed into place, so no preflight sees a
+ * root without an owner, target or identity. An existing root is an error.
  */
-export async function createPrivateRoot(runId, tmpRoot = TMP_ROOT, { kind, owner }) {
+export async function createPrivateRoot(runId, tmpRoot = TMP_ROOT, { kind, owner, target, identity }) {
   const dirs = privateRootFor(runId, tmpRoot);
   const initRoot = initRootFor(runId, tmpRoot);
   const init = { root: initRoot, record: path.join(initRoot, "run.json") };
   await fs.mkdir(initRoot, { mode: 0o700 });
   await writeClaim(initRoot, 0, owner);
   for (const d of ["home", "tmp", "work"]) await fs.mkdir(path.join(initRoot, d), { mode: 0o700 });
-  await writeRunRecord(init, { runId, kind, phase: "active", pids: [], sessionIds: [] });
+  await writeRunRecord(init, { runId, kind, phase: "active", target, identities: [identity], pids: [], sessionIds: [], spend: [] });
   if (!(await gone(dirs.root))) throw Object.assign(new Error(`private root ${dirs.root} already exists`), { code: "EEXIST" });
   await fs.rename(initRoot, dirs.root);
   return dirs;
@@ -146,13 +211,19 @@ const gone = async (p) => {
   }
 };
 
+/** Removes the run's HOME-derived acpx socket folder. */
+export async function removeSocketDir(dirs) {
+  const socketDir = socketDirFor(dirs.home);
+  await fs.rm(socketDir, { recursive: true, force: true });
+  return { removed: await gone(socketDir), socketDir };
+}
+
 /** Removes the private root and its HOME-derived acpx socket folder. */
 export async function removePrivateRoot(dirs) {
   if (!path.basename(dirs.root).startsWith(RUN_PREFIX)) throw new Error(`refusing to remove non-controller root ${dirs.root}`);
   await fs.rm(dirs.root, { recursive: true, force: true });
-  const socketDir = socketDirFor(dirs.home);
-  await fs.rm(socketDir, { recursive: true, force: true });
-  return { removed: (await gone(dirs.root)) && (await gone(socketDir)), root: dirs.root, socketDir };
+  const socket = await removeSocketDir(dirs);
+  return { removed: (await gone(dirs.root)) && socket.removed, root: dirs.root, socketDir: socket.socketDir };
 }
 
 /** OMP's cwd-derived session folder name for a real (symlink-resolved) cwd. */

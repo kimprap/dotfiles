@@ -3,19 +3,23 @@
 // order is asserted from the scripted agent's log; rendered records are
 // compared with expected text authored here.
 import assert from "node:assert/strict";
+import { execFileSync, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
+import { fileURLToPath } from "node:url";
 import { main } from "../cli.mjs";
-import { resumeReconcile, runReconcile } from "../controller.mjs";
+import { resumeReconcile, runReconcile, STOPPED_CAUSE } from "../controller.mjs";
 import { observePid } from "../lib/adapter.mjs";
-import { socketDirFor } from "../lib/env.mjs";
+import { privateRootFor, socketDirFor, writeStopRequest } from "../lib/env.mjs";
 import { disposeActor, finishRun, leaveRun, openRun, ask, startActor } from "../lib/ports.mjs";
 import { validateResult } from "../lib/schema.mjs";
+import { processStart } from "../lib/preflight.mjs";
 import { OMP_VERSION } from "../lib/versions.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
+import { runWorker } from "../worker.mjs";
 
 const PROMPTS = {
   reviewer: {
@@ -78,11 +82,20 @@ function events() {
 
 const prompts = (log = events()) => log.filter((e) => e.event === "prompt").map((e) => `${e.model.slice(-1)}:${e.passMarker}`);
 
-/** Every process the scripted agent started has exited, and the run left no folder behind. */
+/**
+ * Every process the scripted agent started has exited, no session folder or socket folder is
+ * left, and a run folder is left only holding a finished record (exit 0 or 1, not parked) that
+ * waits for its print.
+ */
 function assertCleanedUp() {
   for (const e of events().filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH", `pid ${e.pid} exited`);
   assert.deepEqual(fs.readdirSync(t.sessionsRoot), []);
-  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+  for (const name of fs.readdirSync(t.tmpRoot)) {
+    const root = path.join(t.tmpRoot, name);
+    assert.ok([0, 1].includes(JSON.parse(fs.readFileSync(path.join(root, "record.json"), "utf8")).exitCode), `${name} holds a finished record`);
+    assert.notEqual(JSON.parse(fs.readFileSync(path.join(root, "run.json"), "utf8")).phase, "parked");
+    assert.equal(fs.existsSync(socketDirFor(path.join(root, "home"))), false, `${name} socket folder removed`);
+  }
 }
 
 /** The rendered record without its trailing `## Spend` section. */
@@ -92,26 +105,62 @@ function recordOf(markdown) {
   return markdown.slice(0, i);
 }
 
-/**
- * One `reconcile` through the CLI entry: a fake `omp` on PATH answers `--version` and otherwise
- * runs the scripted agent; live roles are ROLES and the model catalog lists `catalog` selectors.
- */
-async function viaCli(request, catalog) {
+/** Writes the fake `omp` (`--version` answers the pin, anything else runs the scripted agent); returns its PATH. */
+function fakeOmpPath() {
   const bin = path.join(t.dir, "bin");
   fs.mkdirSync(bin, { recursive: true });
   fs.writeFileSync(path.join(bin, "omp"), `#!/bin/sh\nif [ "$1" = "--version" ]; then echo '${OMP_VERSION}'; exit 0; fi\nexec '${t.launcher}' "$@"\n`, { mode: 0o755 });
-  return main({
-    argv: ["reconcile"],
-    stdinText: JSON.stringify(request),
-    env: { PATH: `${bin}:${process.env.PATH}` },
-    sessionsRoot: t.sessionsRoot,
-    tmpRoot: t.tmpRoot,
-    readModelRoles: async () => ({ ok: true, roles: ROLES }),
-    readModelCatalog: async () => ({ ok: true, models: catalog.map(([selector, thinking]) => ({ provider: "scripted", id: selector.slice("scripted/".length), selector, thinking })) }),
-    loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
-    log: () => {},
-  });
+  return `${bin}:${process.env.PATH}`;
 }
+
+/** `main` options of one CLI call in this suite; `extra` overrides them. */
+const cliOptions = (catalog, extra) => ({
+  argv: ["reconcile"],
+  env: { PATH: fakeOmpPath() },
+  sessionsRoot: t.sessionsRoot,
+  tmpRoot: t.tmpRoot,
+  readModelRoles: async () => ({ ok: true, roles: ROLES }),
+  readModelCatalog: async () => ({ ok: true, models: catalog.map(([selector, thinking]) => ({ provider: "scripted", id: selector.slice("scripted/".length), selector, thinking })) }),
+  loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
+  log: () => {},
+  launchWorker: inProcessWorker,
+  ...extra,
+});
+
+/**
+ * One `reconcile` through the CLI entry: a fake `omp` on PATH answers `--version` and otherwise
+ * runs the scripted agent; live roles are ROLES and the model catalog lists `catalog` selectors.
+ * The worker runs in this process on the JSON hand-off payload with the injected process world,
+ * and its call returns once the record is written. Like the CLI process, it settles the printed
+ * run (removing a finished run's folder) after the print.
+ */
+async function viaCli(request, catalog = [], extra = {}) {
+  const out = await main(cliOptions(catalog, { stdinText: JSON.stringify(request), ...extra }));
+  await out.settle?.();
+  return out;
+}
+
+/** The detached worker, run here to its end: this process's PID, which the caller observes as gone. */
+async function inProcessWorker(payload, injected) {
+  await runWorker(JSON.parse(JSON.stringify(payload)), injected);
+  return { pid: process.pid };
+}
+
+let callCount = 0;
+/**
+ * One CLI call as its own process: this PID with a start time of its own, so the claim of an
+ * earlier call reads as a gone owner whose PID was reused. `body` is the request object (none: empty stdin).
+ */
+function command(argv, body, extra = {}) {
+  const me = `call ${++callCount}`;
+  return viaCli(undefined, [], { argv, stdinText: body === undefined ? "" : JSON.stringify(body), processStart: async (pid) => (pid === process.pid ? me : processStart(pid)), ...extra });
+}
+
+const rootOf = (runId) => path.join(t.tmpRoot, `acp-controller-${runId}`);
+const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
+const hex = (text) => createHash("sha256").update(text).digest("hex");
+/** Every path under `dir`, relative and sorted. */
+const tree = (dir) => fs.readdirSync(dir, { recursive: true }).map(String).sort();
 
 test("C4: three invalid returns (invalid data, prose-only, failed yield) each get one re-ask; the fourth stops", async () => {
   setPlan({ "scripted/a": ['invalid:{"kind":"review","verdict":"MAYBE"}', "prose", "failed-yield", 'invalid:{"kind":"review","verdict":"REVISE"}'] });
@@ -413,16 +462,22 @@ async function park(flag) {
   const root = path.join(t.tmpRoot, `acp-controller-${runId}`);
   assert.ok(fs.existsSync(path.join(root, "state.json")));
   const sessions = Object.fromEntries(events().filter((e) => e.event === "session-new").map((e) => [e.model, e.sessionId]));
-  // The run record names its owner and every reviewer PID and session a crash would leave behind.
+  // The run record names its owner, target, accepted identity, spend so far and every reviewer PID and session a crash would leave behind.
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root, "claim-0"), "utf8")), EXITED_OWNER);
   const record = JSON.parse(fs.readFileSync(path.join(root, "run.json"), "utf8"));
-  assert.deepEqual({ ...record, pids: new Set(record.pids), sessionIds: new Set(record.sessionIds) }, {
+  assert.match(record.identities?.[0] ?? "", /^[0-9a-f]{64}$/);
+  assert.deepEqual({ ...record, identities: record.identities.length, spend: record.spend.map((r) => r.actor).sort(), pids: new Set(record.pids), sessionIds: new Set(record.sessionIds) }, {
     runId,
     kind: "reconcile",
     phase: "parked",
+    target: "words.txt v1",
+    identities: 1,
+    spend: ["A", "B"],
     pids: new Set(events().filter((e) => e.event === "start").map((e) => e.pid)),
     sessionIds: new Set(Object.values(sessions)),
   });
+  // The parked record waits in the folder word for word, with exit 1.
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root, "record.json"), "utf8")), { exitCode: 1, markdown: out.markdown });
   return { file, runId, sessions, parkedAt: events().length };
 }
 
@@ -513,6 +568,584 @@ test("KR13: resume with a recorded or matched PID still present exits 3, keeps r
   assertCleanedUp();
 });
 
+/** A parked run through the CLI: the validator fails until `flag` exists. */
+async function parkViaCli(flag) {
+  const { file, request } = parkedScenario(flag);
+  const parked = await command(["reconcile"], request);
+  assert.equal(parked.exitCode, 1, parked.stdout);
+  const runId = /cli\.mjs resume ([\w-]+)/.exec(parked.stdout)[1];
+  const sessions = new Set(events().filter((e) => e.event === "session-new").map((e) => e.sessionId));
+  return { file, request, parked, runId, sessions };
+}
+
+const repairAt = (at) => ({ repair: { authority: `human: validator fixed at ${at}`, step: "validation" } });
+
+test("RS3 identity: run.json holds the target and the accepted identity before any actor starts; a resume adds its runId-prefixed identity", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { file, request, runId } = await parkViaCli(flag);
+  // The request's canonical JSON without `approval`, written out by hand.
+  const canonical = `{"candidate":{"artifact":${JSON.stringify(file)},"identity":"words.txt v1"},"cap":"none","context":[],"goal":"Fix the word list","intent":["The human wants the word list fixed."],"mode":"artifact","validate":{"argv":${JSON.stringify(request.validate.argv)}}}`;
+  const first = hex(`reconcile\0${canonical}`);
+  const starts = events().filter((e) => e.event === "start");
+  assert.ok(starts.length > 0);
+  for (const s of starts) assert.deepEqual([s.run?.target, s.run?.identities], ["words.txt v1", [first]], "seen by the actor as it starts");
+  fs.writeFileSync(flag, "");
+  const at = events().length;
+  const resumed = await command(["resume", runId], repairAt("2026-10-07T05:00:00Z"));
+  assert.equal(resumed.exitCode, 0, resumed.stdout);
+  const second = hex(`resume\0${runId}\0{"repair":{"authority":"human: validator fixed at 2026-10-07T05:00:00Z","step":"validation"}}`);
+  const restarts = events().slice(at).filter((e) => e.event === "start");
+  assert.ok(restarts.length > 0);
+  for (const s of restarts) assert.deepEqual(s.run?.identities, [first, second], "the resume identity is accepted before any actor starts");
+});
+
+test("RS6: cleanup not established writes an exit 3 record the call prints; the folder stays, other runs and roles refuse, the same command starts nothing, dispose works", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const request = conversation("Use two columns.");
+  const failed = await command(["reconcile"], request, { observePid: () => "present" });
+  assert.equal(failed.exitCode, 3, failed.stdout);
+  const runId = fs.readdirSync(t.tmpRoot)[0].replace("acp-controller-", "");
+  assert.ok(failed.stdout.includes(`dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``), failed.stdout);
+  assert.deepEqual(readJson(path.join(rootOf(runId), "record.json")), { exitCode: 3, markdown: failed.stdout });
+  const started = events().length;
+  const other = await command(["reconcile"], conversation("Use one column.", { candidate: { identity: "layout v2", text: "Use one column." } }));
+  const roles = await command(["roles"]);
+  const same = await command(["reconcile"], request);
+  for (const out of [other, roles, same]) {
+    assert.equal(out.exitCode, 2, out.stdout);
+    assert.ok(out.stdout.includes(`**Reason:** abandoned controller run\n\n- run \`${runId}\`\n`), out.stdout);
+    assert.ok(out.stdout.includes(`\`cli.mjs dispose ${runId}\``), out.stdout);
+  }
+  assert.equal(events().length, started, "no second run started");
+  const disposed = await command(["dispose", runId]);
+  assert.equal(disposed.exitCode, 0, disposed.stdout);
+  assert.match(disposed.stdout, /^## Run disposed\n/);
+  assert.deepEqual([fs.readdirSync(t.tmpRoot), fs.readdirSync(t.sessionsRoot)], [[], []]);
+});
+
+test("RS7 spend: run.json holds each actor's spend so far after every reviewer turn and every disposal", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const tokens = (rows, actor) => rows.filter((r) => r.actor === actor).map((r) => r.tokensBase + r.tokensLast);
+  // Each prompt event carries run.json as the actor saw it: the turns before it are counted.
+  const seen = events().filter((e) => e.event === "prompt").map((e) => tokens(e.run.spend, "A"));
+  assert.deepEqual(seen, [[], [100]]);
+  const runId = fs.readdirSync(t.tmpRoot)[0].replace("acp-controller-", "");
+  const record = readJson(path.join(rootOf(runId), "run.json"));
+  assert.deepEqual(tokens(record.spend, "A"), [200], "after disposal");
+  assert.ok(out.markdown.endsWith("| Total | | | 200 | 0.02 USD |\n"), "the record's Spend stays the account");
+  assertCleanedUp();
+});
+
+test("RS9: a parked record prints with exit 1 and stays; rerunning the original command prints the same parked record and starts nothing", async () => {
+  const { request, parked, runId } = await parkViaCli(path.join(t.dir, "validator-ready"));
+  const root = rootOf(runId);
+  assert.deepEqual(readJson(path.join(root, "record.json")), { exitCode: 1, markdown: parked.stdout });
+  assert.ok(fs.existsSync(path.join(root, "state.json")));
+  const at = events().length;
+  const again = await command(["reconcile"], request);
+  assert.equal(again.exitCode, 1);
+  assert.equal(again.stdout, parked.stdout);
+  assert.equal(events().length, at, "nothing started");
+  assert.ok(fs.existsSync(path.join(root, "record.json")) && fs.existsSync(path.join(root, "state.json")));
+});
+
+test("RS9: resume continues with the same reviewers; after a re-park the same resume prints the new parked record and resumes nothing, while a new repair resumes it", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { parked, runId, sessions } = await parkViaCli(flag);
+  const resumedSessions = (from) => events().slice(from).filter((e) => e.event === "session-resume" && e.ok).map((e) => e.sessionId);
+  const first = repairAt("2026-10-07T05:00:00Z");
+  const at1 = events().length;
+  const reparked = await command(["resume", runId], first);
+  assert.equal(reparked.exitCode, 1, reparked.stdout);
+  assert.notEqual(reparked.stdout, parked.stdout);
+  assert.deepEqual(new Set(resumedSessions(at1)), sessions, "the same reviewers");
+  assert.deepEqual(readJson(path.join(rootOf(runId), "record.json")), { exitCode: 1, markdown: reparked.stdout });
+  const at2 = events().length;
+  const again = await command(["resume", runId], first);
+  assert.equal(again.exitCode, 1);
+  assert.equal(again.stdout, reparked.stdout);
+  assert.equal(events().length, at2, "never resumes twice");
+  fs.writeFileSync(flag, "");
+  const done = await command(["resume", runId], repairAt("2026-10-07T06:00:00Z"));
+  assert.equal(done.exitCode, 0, done.stdout);
+  assert.match(done.stdout, /## Final proposal/);
+  assert.deepEqual(new Set(resumedSessions(at2)), sessions);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "the printed finished run's folder is removed");
+});
+
+test("RS9: the caller's resume checks refuse a step mismatch, a present PID and a run that is not parked, changing nothing", async () => {
+  const { runId } = await parkViaCli(path.join(t.dir, "validator-ready"));
+  const root = rootOf(runId);
+  const recordFile = path.join(root, "run.json");
+  const recorded = readJson(recordFile).pids[0];
+  const present = { observePid: (pid) => (pid === recorded ? "present" : observePid(pid)) };
+  const at = events().length;
+  const unchanged = () => [tree(root), fs.readFileSync(recordFile, "utf8"), fs.readFileSync(path.join(root, "record.json"), "utf8")];
+  let before = unchanged();
+
+  const mismatch = await command(["resume", runId], { repair: { authority: "human: retry the review at 2026-10-07T05:00:00Z", step: "A later" } });
+  assert.equal(mismatch.exitCode, 1, mismatch.stdout);
+  assert.ok(mismatch.stdout.includes("the parked failed step is `validation`, not `A later`"), mismatch.stdout);
+  assert.ok(mismatch.stdout.includes(`run \`${runId}\` stays parked`), mismatch.stdout);
+  assert.deepEqual(unchanged(), before, "no claim, no identity, nothing removed");
+
+  const pid = await command(["resume", runId], repairAt("2026-10-07T05:00:00Z"), present);
+  assert.equal(pid.exitCode, 3, pid.stdout);
+  assert.ok(pid.stdout.includes(`- PID ${recorded} present\n`) && pid.stdout.includes("resume again only after these PIDs exit"), pid.stdout);
+  assert.deepEqual(unchanged(), before, "the phase stays `parked`");
+
+  fs.writeFileSync(recordFile, JSON.stringify({ ...readJson(recordFile), phase: "active" }));
+  before = unchanged();
+  const notParked = await command(["resume", runId], repairAt("2026-10-07T05:00:00Z"), present);
+  assert.equal(notParked.exitCode, 2, notParked.stdout);
+  assert.ok(notParked.stdout.includes(`- run \`${runId}\` is not parked (phase \`active\`)\n- dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\`\n`), notParked.stdout);
+  assert.deepEqual(unchanged(), before, "no exit 2 record; the class is unchanged");
+  assert.equal(events().length, at, "nothing launched");
+});
+
+test("RS9: a resume of a finished run exits 2 naming both ways to print its record, launches nothing and does not dispose it", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const out = await runReconcile(conversation("Use two columns."), deps());
+  assert.equal(out.exitCode, 0, out.markdown);
+  const runId = fs.readdirSync(t.tmpRoot)[0].replace("acp-controller-", "");
+  const at = events().length;
+  const refused = await command(["resume", runId], repairAt("2026-10-07T05:00:00Z"));
+  assert.equal(refused.exitCode, 2, refused.stdout);
+  assert.ok(refused.stdout.includes(`- run \`${runId}\` has finished; its record waits in its folder\n- print its record: rerun the original request, or \`cli.mjs stop ${runId}\`\n`), refused.stdout);
+  assert.equal(events().length, at);
+  assert.deepEqual(readJson(path.join(rootOf(runId), "record.json")), { exitCode: 0, markdown: out.markdown });
+});
+
+test("RS9: a rerun of an accepted resume whose run is abandoned exits 2 naming dispose without an exit 3 record; a new repair while a resume is live exits 2 naming the run", async () => {
+  const { runId } = await parkViaCli(path.join(t.dir, "validator-ready"));
+  const accepted = repairAt("2026-10-07T05:00:00Z");
+  assert.equal((await command(["resume", runId], accepted)).exitCode, 1, "re-parked");
+  const root = rootOf(runId);
+  const recorded = readJson(path.join(root, "run.json")).pids[0];
+  const at = events().length;
+  const abandoned = await command(["resume", runId], accepted, { observePid: (pid) => (pid === recorded ? "present" : observePid(pid)) });
+  assert.equal(abandoned.exitCode, 2, abandoned.stdout);
+  assert.ok(abandoned.stdout.includes(`\`cli.mjs dispose ${runId}\``), abandoned.stdout);
+  assert.doesNotMatch(abandoned.stdout, /resume again only after/);
+  // The last resume's worker is still running: its claim names a live PID other than this caller.
+  const last = fs.readdirSync(root).filter((n) => /^claim-\d+$/.test(n)).sort((a, b) => Number(a.slice(6)) - Number(b.slice(6))).at(-1);
+  const worker = { pid: 4_000_003, lstart: "resume worker start" };
+  fs.writeFileSync(path.join(root, last), JSON.stringify(worker));
+  const live = await command(["resume", runId], repairAt("2026-10-07T06:00:00Z"), {
+    observePid: (pid) => (pid === worker.pid ? "present" : observePid(pid)),
+    processStart: async (pid) => (pid === worker.pid ? worker.lstart : processStart(pid)),
+  });
+  assert.equal(live.exitCode, 2, live.stdout);
+  assert.ok(live.stdout.includes(`- run \`${runId}\` is owned by a live controller (PID ${worker.pid})\n`), live.stdout);
+  assert.equal(events().length, at, "nothing launched");
+});
+
+test("RS10 parked/resume: a resume with a new identity and the parked failed step resumes the parked run", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { runId, sessions } = await parkViaCli(flag);
+  fs.writeFileSync(flag, "");
+  const at = events().length;
+  const out = await command(["resume", runId], repairAt("2026-10-07T05:00:00Z"));
+  assert.equal(out.exitCode, 0, out.stdout);
+  assert.match(out.stdout, /## Final proposal/);
+  assert.deepEqual(new Set(events().slice(at).filter((e) => e.event === "session-resume" && e.ok).map((e) => e.sessionId)), sessions);
+  assert.deepEqual(prompts(events().slice(at)), ["a:later"]);
+  assertCleanedUp();
+});
+
+// ------------------------------------------------------------ run survival: real caller and worker processes
+
+const CLI_URL = new URL("../cli.mjs", import.meta.url).href;
+const CLI_PATH = fileURLToPath(CLI_URL);
+const WORKER_PATH = fileURLToPath(new URL("../worker.mjs", import.meta.url));
+/**
+ * One CLI call as its own process: `main` with this suite's roots, roles and prompts and the real
+ * detached worker; `c.hold`, when set, is carried across the hand-off as the payload's test-only hold.
+ */
+const CALLER = [
+  "const c = JSON.parse(process.env.CALLER_CONFIG);",
+  "const { main } = await import(c.cli);",
+  "const w = await import(c.worker);",
+  "const launchWorker = (payload) => w.launchWorker(c.hold ? { ...payload, hold: c.hold } : payload);",
+  "const out = await main({ argv: c.argv, env: { PATH: c.path }, sessionsRoot: c.sessionsRoot, tmpRoot: c.tmpRoot, readModelRoles: async () => ({ ok: true, roles: c.roles }), loadPrompts: async () => ({ ok: true, prompts: c.prompts, sources: {} }), launchWorker });",
+  "await new Promise((resolve) => process.stdout.write(out.stdout, resolve));",
+  "process.exitCode = out.exitCode;",
+  "await out.settle?.();",
+].join("\n");
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Polls `probe` until it returns a truthy value, which it returns; the cap only keeps a broken run from hanging the suite. */
+async function until(probe, what, ms = 60_000) {
+  const end = Date.now() + ms;
+  for (;;) {
+    const value = await probe();
+    if (value) return value;
+    if (Date.now() > end) throw new Error(`timed out waiting for ${what}`);
+    await sleep(20);
+  }
+}
+
+const exited = (pid) => until(() => observePid(pid) === "ESRCH", `PID ${pid} to exit`);
+const starts = (log = events()) => log.filter((e) => e.event === "start");
+
+/**
+ * One CLI call as a real process in its own process group, the way OMP's bash runs a command;
+ * `body` is its stdin. `call.exit` resolves `{ code, signal }` once its output is read.
+ */
+function spawnCaller(argv, body, hold) {
+  const config = { cli: CLI_URL, worker: new URL("../worker.mjs", import.meta.url).href, argv, path: fakeOmpPath(), sessionsRoot: t.sessionsRoot, tmpRoot: t.tmpRoot, roles: ROLES, prompts: PROMPTS, hold };
+  const child = spawn(process.execPath, ["--input-type=module", "-e", CALLER], { detached: true, stdio: ["pipe", "pipe", "pipe"], env: { ...process.env, CALLER_CONFIG: JSON.stringify(config) } });
+  const call = { child, stdout: "", stderr: "" };
+  child.stdout.setEncoding("utf8").on("data", (chunk) => {
+    call.stdout += chunk;
+  });
+  child.stderr.setEncoding("utf8").on("data", (chunk) => {
+    call.stderr += chunk;
+  });
+  call.exit = new Promise((resolve) => child.on("close", (code, signal) => resolve({ code, signal })));
+  child.stdin.end(JSON.stringify(body));
+  return call;
+}
+
+/** The runId and worker PID from the call's hand-off notice. */
+async function noticeOf(call) {
+  const m = await until(() => /acp-controller: run (\S+) runs in worker PID (\d+);/.exec(call.stderr), "the hand-off notice");
+  return { runId: m[1], worker: Number(m[2]) };
+}
+
+/** The process table: `{ pid, ppid, command }`. */
+function processTable() {
+  return execFileSync("ps", ["-ww", "-A", "-o", "pid=,ppid=,command="], { encoding: "utf8" })
+    .trim()
+    .split("\n")
+    .map((line) => /^\s*(\d+)\s+(\d+)\s(.*)$/.exec(line))
+    .map((m) => ({ pid: Number(m[1]), ppid: Number(m[2]), command: m[3] }));
+}
+
+/** Every process below `root`, found by a ppid walk. */
+function descendants(root) {
+  const table = processTable();
+  const found = [];
+  for (let queue = [root]; queue.length; ) {
+    const parent = queue.shift();
+    for (const p of table) if (p.ppid === parent) found.push(p) && queue.push(p.pid);
+  }
+  return found;
+}
+
+/**
+ * Kills `call` the way OMP kills a bash call: SIGTERM, SIGKILL after 75 ms and SIGKILL again
+ * after 150 ms, each to the call's process group and to every descendant a ppid walk finds then.
+ * Returns every descendant PID it signalled.
+ */
+async function ompKill(call) {
+  const signalled = new Set();
+  const send = (target, signal) => {
+    try {
+      process.kill(target, signal);
+    } catch {}
+  };
+  const wave = (signal) => {
+    const below = descendants(call.child.pid);
+    send(-call.child.pid, signal);
+    for (const p of below) {
+      send(p.pid, signal);
+      signalled.add(p.pid);
+    }
+  };
+  wave("SIGTERM");
+  await sleep(75);
+  wave("SIGKILL");
+  await sleep(150);
+  wave("SIGKILL");
+  return [...signalled];
+}
+
+/** One CLI call through `main` that launches no worker and is not yet settled: the test settles it after every print. */
+function unsettled(argv, stdinText, lines) {
+  const me = `call ${++callCount}`;
+  return main(cliOptions([], { argv, stdinText, processStart: async (pid) => (pid === process.pid ? me : processStart(pid)), log: (line) => lines.push(line), launchWorker: () => assert.fail("this call launches no worker") }));
+}
+
+/** The three notice lines for a run in `worker` on target `layout v1` (run survival §4). */
+const noticeLines = (runId, worker, target = "layout v1") => [
+  `acp-controller: run ${runId} runs in worker PID ${worker}; target: ${target}`,
+  "acp-controller: If this call ends without a record, run this same command again; it attaches to this run and starts nothing.",
+  `acp-controller: Stop it only on the human's instruction: \`node ${CLI_PATH} stop ${runId}\`.`,
+];
+
+test("RS1: a caller killed the way OMP kills a call leaves its worker running; the same command again prints the identical record once, and one run with one set of actors existed", async () => {
+  setPlan({ "scripted/a": [`slow:1500:${VALID}`, VALID] });
+  const request = conversation("Use two columns.");
+  const first = spawnCaller(["reconcile"], request);
+  const { runId, worker } = await noticeOf(first);
+  await until(() => prompts().length === 1, "the first reviewer turn");
+  const signalled = await ompKill(first);
+  assert.notEqual((await first.exit).signal, null, "the call was killed");
+  for (const pid of signalled) await exited(pid);
+  assert.equal(observePid(worker), "present", "the kill never reached the worker");
+  const recordFile = path.join(rootOf(runId), "record.json");
+  await until(() => fs.existsSync(recordFile), "the worker's record");
+  await exited(worker);
+  const record = readJson(recordFile);
+  assert.equal(record.exitCode, 0, record.markdown);
+  const again = spawnCaller(["reconcile"], request);
+  assert.equal((await again.exit).code, record.exitCode);
+  assert.equal(again.stdout, record.markdown, "the identical record, printed once");
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "the printed finished run's folder is removed");
+  assert.ok(starts().length > 0 && starts().every((s) => s.run?.runId === runId), "every actor belongs to the one run");
+  assert.equal(events().filter((e) => e.event === "session-new").length, new Set(starts().map((s) => s.model)).size, "one session per actor: no second set");
+  assert.equal(prompts().length, 2, "no turn ran twice");
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+});
+
+/** A test-only hand-off hold at `at` (worker.mjs `hold`); `release` lets a held worker go on. */
+function handOffHold(at) {
+  const hold = { at, ready: path.join(t.dir, `hold-${at}-ready`), release: path.join(t.dir, `hold-${at}-release`) };
+  return { hold, reached: () => until(() => fs.existsSync(hold.ready), `the ${at} hold`), release: () => fs.writeFileSync(hold.release, "") };
+}
+
+test("RS2: a kill while the helper still parents its worker ends the worker before it publishes anything; no folder, claim or identity is left and the next launch runs", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const request = conversation("Use two columns.");
+  const { hold, reached } = handOffHold("helper");
+  const first = spawnCaller(["reconcile"], request, hold);
+  await reached();
+  const below = descendants(first.child.pid);
+  const signalled = await ompKill(first);
+  await first.exit;
+  for (const pid of signalled) await exited(pid);
+  assert.deepEqual(below.map((p) => p.command.slice(p.command.indexOf(WORKER_PATH) + WORKER_PATH.length + 1).split(" ")[0]).sort(), ["helper", "worker"], "the walk found the helper and its worker, both now exited");
+  assert.deepEqual([fs.readdirSync(t.tmpRoot), fs.readdirSync(t.sessionsRoot)], [[], []], "no folder, setup folder, claim or identity");
+  assert.deepEqual(events(), [], "no actor started");
+  const next = await command(["reconcile"], request);
+  assert.equal(next.exitCode, 0, next.stdout);
+  assert.equal(new Set(starts().map((s) => s.run?.runId)).size, 1, "one run");
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "no abandoned run is left");
+});
+
+test("RS2: a kill after the helper exited leaves the waiting worker running; it publishes one identity and a rerun attaches; no abandoned or second run", async () => {
+  setPlan({ "scripted/a": [VALID, VALID] });
+  const request = conversation("Use two columns.");
+  const { hold, reached, release } = handOffHold("worker");
+  const first = spawnCaller(["reconcile"], request, hold);
+  const { runId, worker } = await noticeOf(first);
+  await reached();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "nothing is published before the kill");
+  for (const pid of await ompKill(first)) await exited(pid);
+  assert.equal(observePid(worker), "present", "the kill never reached the worker");
+  release();
+  const runFile = path.join(rootOf(runId), "run.json");
+  await until(() => fs.existsSync(runFile), "the worker's run");
+  assert.equal(readJson(runFile).identities.length, 1);
+  const lines = [];
+  const again = await command(["reconcile"], request, { log: (line) => lines.push(line), launchWorker: () => assert.fail("an attaching call launches no worker") });
+  assert.equal(again.exitCode, 0, again.stdout);
+  assert.deepEqual(lines, noticeLines(runId, worker));
+  await exited(worker);
+  assert.ok(starts().every((s) => s.run?.runId === runId), "one run");
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "no abandoned run is left");
+});
+
+test("RS3 live: the same command and a reordered, reformatted copy with a new approval time attach to the live run, wait and print its record; nothing else starts", async () => {
+  setPlan({ "scripted/a": [`slow:2000:${VALID}`, VALID] });
+  const request = conversation("Use two columns.");
+  const first = spawnCaller(["reconcile"], request);
+  const { runId, worker } = await noticeOf(first);
+  await until(() => prompts().length === 1, "the first reviewer turn");
+  for (const pid of await ompKill(first)) await exited(pid);
+  const { approval, candidate, ...rest } = request;
+  const copy = `{\n  "approval": {"at": "2026-10-07T09:00:00Z", "text": "approved again"},\n${Object.entries(rest).reverse().map(([k, v]) => `  ${JSON.stringify(k)} :  ${JSON.stringify(v)}`).join(",\n")},\n  "candidate": {"text": ${JSON.stringify(candidate.text)}, "identity": ${JSON.stringify(candidate.identity)}}\n}\n`;
+  const lines = [[], []];
+  const [same, reordered] = await Promise.all([unsettled(["reconcile"], JSON.stringify(request), lines[0]), unsettled(["reconcile"], copy, lines[1])]);
+  const record = readJson(path.join(rootOf(runId), "record.json"));
+  for (const out of [same, reordered]) assert.deepEqual({ exitCode: out.exitCode, markdown: out.stdout }, record);
+  for (const notice of lines) assert.deepEqual(notice, noticeLines(runId, worker));
+  await Promise.all([same.settle(), reordered.settle()]);
+  assert.ok(starts().every((s) => s.run?.runId === runId && s.run.target === "layout v1" && s.run.identities.length === 1), "one run; its identity and target were in the folder before each actor started");
+  assert.equal(prompts().length, 2);
+  await exited(worker);
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+});
+
+test("RS7 kill: SIGKILL of the worker mid-run makes the waiting call exit 3 naming the abandoned run and its spend; the same command exits 2 naming dispose and starts nothing; dispose works as today and reports the spend recorded before the kill", async () => {
+  setPlan({ "scripted/a": [VALID, `slow:60000:${VALID}`] });
+  const request = conversation("Use two columns.");
+  const call = spawnCaller(["reconcile"], request);
+  const { runId, worker } = await noticeOf(call);
+  await until(() => prompts().length === 2, "the second reviewer turn");
+  const spend = readJson(path.join(rootOf(runId), "run.json")).spend;
+  assert.deepEqual(spend.map((r) => r.tokensBase + r.tokensLast), [100], "the first turn's spend is recorded");
+  process.kill(worker, "SIGKILL");
+  assert.equal((await call.exit).code, 3, call.stdout);
+  assert.match(call.stdout, /^## Controller run abandoned\n/);
+  for (const line of [`run \`${runId}\``, "spend so far: 100 tokens, 0.01 USD", `\`cli.mjs dispose ${runId}\``]) assert.ok(call.stdout.includes(line), call.stdout);
+  const at = events().length;
+  const again = await command(["reconcile"], request);
+  assert.equal(again.exitCode, 2, again.stdout);
+  assert.ok(again.stdout.includes(`\`cli.mjs dispose ${runId}\``), again.stdout);
+  assert.equal(events().length, at, "no second run started");
+  // The actors outlive their worker under their acpx queue owners (no idle expiry): dispose finds them present and removes nothing, as today.
+  const actors = starts().map((s) => s.pid).filter((pid) => observePid(pid) === "present");
+  assert.ok(actors.length > 0);
+  const blocked = await command(["dispose", runId]);
+  assert.equal(blocked.exitCode, 3, blocked.stdout);
+  for (const pid of actors) assert.ok(blocked.stdout.includes(`PID ${pid}`), blocked.stdout);
+  // This test started those queue owners (through its call's worker), so it ends them; each actor then exits.
+  const owners = processTable().filter((p) => actors.includes(p.pid)).map((p) => processTable().find((q) => q.pid === p.ppid && q.command.includes("__queue-owner"))?.pid);
+  for (const pid of owners) if (pid) process.kill(pid, "SIGTERM");
+  for (const pid of [...actors, ...owners.filter(Boolean)]) await exited(pid);
+  const disposed = await command(["dispose", runId]);
+  assert.equal(disposed.exitCode, 0, disposed.stdout);
+  assert.ok(disposed.stdout.endsWith("| Total | | | 100 | 0.01 USD |\n"), disposed.stdout);
+  assert.deepEqual([fs.readdirSync(t.tmpRoot), fs.readdirSync(t.sessionsRoot)], [[], []]);
+});
+
+test("RS8: stop <runId> during a pending reviewer turn cancels it without its reply and resends nothing; it prints the stopped record (exit 1) after every actor's observed exit and the folder goes after the print", async () => {
+  setPlan({ "scripted/a": [`slow:60000:${VALID}`, VALID] });
+  const first = spawnCaller(["reconcile"], conversation("Use two columns."));
+  const { runId, worker } = await noticeOf(first);
+  await until(() => prompts().length === 1, "the pending reviewer turn");
+  for (const pid of await ompKill(first)) await exited(pid);
+  const began = Date.now();
+  const out = await unsettled(["stop", runId], "", []);
+  assert.ok(Date.now() - began < 30_000, "the pending reply was not awaited");
+  assert.equal(out.exitCode, 1, out.stdout);
+  assert.ok(out.stdout.includes(STOPPED_CAUSE), out.stdout);
+  assert.deepEqual(readJson(path.join(rootOf(runId), "record.json")), { exitCode: 1, markdown: out.stdout }, "nothing is removed before the print");
+  for (const s of starts()) assert.equal(observePid(s.pid), "ESRCH", `actor ${s.pid} exited before the record`);
+  assert.deepEqual(events().filter((e) => e.event === "cancel").length, 1);
+  assert.deepEqual(events().filter((e) => e.event === "prompt-end").map((e) => e.stopReason), ["cancelled"]);
+  assert.equal(prompts().length, 1, "nothing resent");
+  await out.settle();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "the folder is removed after the print");
+  await exited(worker);
+  assertCleanedUp();
+});
+
+test("RS8: the request form `stop reconcile` with a rebuilt request that changed one word stops the run of its target", async () => {
+  setPlan({ "scripted/a": [`slow:60000:${VALID}`, VALID] });
+  const first = spawnCaller(["reconcile"], conversation("Use two columns."));
+  const { runId, worker } = await noticeOf(first);
+  await until(() => prompts().length === 1, "the pending reviewer turn");
+  for (const pid of await ompKill(first)) await exited(pid);
+  const rebuilt = conversation("Use two columns.", { intent: ["The human wants a layout that works on tablets."] });
+  const out = await unsettled(["stop", "reconcile"], JSON.stringify(rebuilt), []);
+  assert.equal(out.exitCode, 1, out.stdout);
+  assert.deepEqual(readJson(path.join(rootOf(runId), "record.json")), { exitCode: 1, markdown: out.stdout });
+  assert.ok(out.stdout.includes(STOPPED_CAUSE), out.stdout);
+  await out.settle();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+  await exited(worker);
+  assertCleanedUp();
+});
+
+test("RS8: a stop sent during the validation step takes effect only after that step ends and does not park", async () => {
+  const [started, ended] = ["validator-started", "validator-ended"].map((n) => path.join(t.dir, n));
+  const file = path.join(t.dir, "words.txt");
+  fs.writeFileSync(file, "alpha\nbeta\n");
+  setPlan({ "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), VALID], "scripted/b": [VALID, VALID] });
+  // A failing validator: without the stop this run parks.
+  const script = `const fs = require("fs"); fs.writeFileSync(${JSON.stringify(started)}, ""); setTimeout(() => { fs.writeFileSync(${JSON.stringify(ended)}, ""); process.exit(1); }, 1000);`;
+  const running = runReconcile(artifactRequest(file, { validate: { argv: [process.execPath, "-e", script] } }), deps());
+  await until(() => fs.existsSync(started), "the validation step");
+  const [folder] = fs.readdirSync(t.tmpRoot);
+  assert.equal(await writeStopRequest(privateRootFor(folder.slice("acp-controller-".length), t.tmpRoot), new Date()), "written");
+  const out = await running;
+  assert.ok(fs.existsSync(ended), "the step ran to its end");
+  assert.equal(out.exitCode, 1, out.markdown);
+  assert.ok(out.markdown.includes(STOPPED_CAUSE), out.markdown);
+  assert.doesNotMatch(out.markdown, /cli\.mjs resume/);
+  const root = path.join(t.tmpRoot, folder);
+  assert.equal(fs.existsSync(path.join(root, "state.json")), false, "not parked");
+  assert.notEqual(readJson(path.join(root, "run.json")).phase, "parked");
+  assertCleanedUp();
+});
+
+test("RS9 worker: resume runs in a worker on the same reviewers; the original request and the same resume, run while it is live, wait and print the resumed run's record", async () => {
+  const flag = path.join(t.dir, "validator-ready");
+  const { request, runId, sessions } = await parkViaCli(flag);
+  setPlan({ "scripted/a": [VALID, EDITS([{ old: "beta", new: "BETA" }]), `slow:1500:${VALID}`], "scripted/b": [VALID, VALID] });
+  fs.writeFileSync(flag, "");
+  const repair = repairAt("2026-10-07T05:00:00Z");
+  const at = events().length;
+  const resume = spawnCaller(["resume", runId], repair);
+  const { worker } = await noticeOf(resume);
+  await until(() => prompts(events().slice(at)).length === 1, "the resumed reviewer turn");
+  for (const pid of await ompKill(resume)) await exited(pid);
+  const lines = [[], []];
+  const [original, again] = await Promise.all([unsettled(["reconcile"], JSON.stringify(request), lines[0]), unsettled(["resume", runId], JSON.stringify(repair), lines[1])]);
+  const record = readJson(path.join(rootOf(runId), "record.json"));
+  assert.equal(record.exitCode, 0, record.markdown);
+  assert.match(record.markdown, /## Final proposal/);
+  for (const out of [original, again]) assert.deepEqual({ exitCode: out.exitCode, markdown: out.stdout }, record);
+  for (const notice of lines) assert.deepEqual(notice, noticeLines(runId, worker, "words.txt v1"));
+  await Promise.all([original.settle(), again.settle()]);
+  const after = events().slice(at);
+  assert.deepEqual(new Set(after.filter((e) => e.event === "session-resume" && e.ok).map((e) => e.sessionId)), sessions, "the same reviewers");
+  assert.equal(after.filter((e) => e.event === "session-new").length, 0);
+  assert.deepEqual(prompts(after), ["a:later"], "resumed once");
+  await exited(worker);
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+});
+
+test("RS9 worker: a new repair whose worker started and then finds another identity's resume holding the run live exits 2, names the run and never prints that resume's record", async () => {
+  const { runId } = await parkViaCli(path.join(t.dir, "validator-ready"));
+  const root = rootOf(runId);
+  const other = { pid: 4_000_004, lstart: "other resume worker" };
+  const at = events().length;
+  const me = `call ${++callCount}`;
+  const out = await viaCli(undefined, [], {
+    argv: ["resume", runId],
+    stdinText: JSON.stringify(repairAt("2026-10-07T06:00:00Z")),
+    observePid: (pid) => (pid === other.pid ? "present" : observePid(pid)),
+    processStart: async (pid) => (pid === process.pid ? me : pid === other.pid ? other.lstart : processStart(pid)),
+    // Once this worker has started, another resume takes claim n+1, accepts its identity and writes its record.
+    launchWorker: async (payload, injected) => {
+      const next = fs.readdirSync(root).filter((n) => /^claim-\d+$/.test(n)).length;
+      fs.writeFileSync(path.join(root, `claim-${next}`), JSON.stringify(other));
+      const record = readJson(path.join(root, "run.json"));
+      fs.writeFileSync(path.join(root, "run.json"), JSON.stringify({ ...record, identities: [...record.identities, hex("another resume")] }));
+      fs.writeFileSync(path.join(root, "record.json"), JSON.stringify({ exitCode: 0, markdown: "## Final proposal\n\nthe other resume\n" }));
+      return inProcessWorker(payload, injected);
+    },
+  });
+  assert.equal(out.exitCode, 2, out.stdout);
+  assert.ok(out.stdout.includes(`- run \`${runId}\` is owned by a live controller (PID ${other.pid})\n`), out.stdout);
+  assert.doesNotMatch(out.stdout, /the other resume/);
+  assert.equal(events().length, at, "no actor started");
+});
+
+test("RS11: right after the hand-off stderr holds the three-line notice while the run works; stdout holds only the record", async () => {
+  setPlan({ "scripted/a": [`slow:1000:${VALID}`, VALID] });
+  const call = spawnCaller(["reconcile"], conversation("Use two columns."));
+  const { runId, worker } = await noticeOf(call);
+  await until(() => call.stderr.split("\n").length > 3, "the whole notice");
+  assert.equal(fs.existsSync(path.join(rootOf(runId), "record.json")), false, "the run is still working");
+  assert.equal(call.stderr, `${noticeLines(runId, worker).join("\n")}\n`);
+  assert.equal(call.stdout, "");
+  assert.equal((await call.exit).code, 0, call.stdout);
+  assert.match(call.stdout, /^## Review rounds\n[\s\S]*\n## Spend\n[\s\S]*\| Total \| \| \| 200 \| 0\.02 USD \|\n$/);
+  assert.equal(call.stderr, `${noticeLines(runId, worker).join("\n")}\n`, "nothing else on stderr");
+  await exited(worker);
+  for (const s of starts()) await exited(s.pid);
+  assertCleanedUp();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+});
+
 test("KR14: an observer reporting a reviewer PID present blocks Final proposal with a cleanup failure", async () => {
   setPlan({ "scripted/a": [VALID, VALID] });
   const text = "Use two columns.";
@@ -547,6 +1180,10 @@ test("KR14: an observer reporting a reviewer PID present blocks Final proposal w
       "",
       "- a new approved Reconcile run from the canonical identity above",
       "",
+      "## Dispose",
+      "",
+      `- cleanup was not established, so run \`${runId}\` keeps its folder and stays abandoned; dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``,
+      "",
     ].join("\n"),
   );
 });
@@ -554,7 +1191,7 @@ test("KR14: an observer reporting a reviewer PID present blocks Final proposal w
 test("KS4: disposal counts only on observed ESRCH, never on a resolved close with a closed record alone", async () => {
   setPlan({ "scripted/a": [VALID, VALID] });
   let observer = observePid;
-  const run = await openRun("reconcile", deps({ observePid: (pid) => observer(pid) }));
+  const run = await openRun("reconcile", deps({ observePid: (pid) => observer(pid) }), conversation("probe"));
   try {
     const validate = () => ({ valid: true, defects: [], value: {} });
     const real = await startActor(run, { name: "A", role: ROLES.a });

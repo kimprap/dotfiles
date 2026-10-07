@@ -43,6 +43,26 @@ remain owned here. Neither path authorizes another review request, child-work
 replay, report re-emission, required-reviewer replacement, allowance reset,
 durable workflow state, or restart.
 
+A controller call that ends without a record (timed out, cancelled or killed)
+leaves its run working in a detached worker. Running the same command again,
+with the same request file, preferably with `timeout: 0`, is the
+already-supported observation path for that same pending operation, as "Call
+ended without a record" in
+[the driver](../../harnesses/omp/acp-controller/driver.md) says: it attaches to
+the same run and launches nothing, unless the earlier attempt died before the
+worker published an identity. It is continuation; it uses no recovery attempt
+and has no attempt limit. Never rebuild a request to recover; a rebuilt request
+refused as the same target is presented and stops, and the human decides. Run
+controller calls only through `bash` with the request file named by absolute
+path in the command, never through Eval or a path held in a variable;
+`timeout: 0` stays the normal path. Once a record has been printed, never rerun
+to retry a stopped run: a rerun of a parked run prints its parked record again
+and starts nothing, the short already-printed record is neither a stopped run
+to retry nor a reason to dispose, and an exit `3` record is no reason to launch
+again while that run's folder remains. Never dispose or relaunch a live run;
+use `stop`, only on the human's explicit instruction, as "Stop" in the driver
+says, with the request form when the runId is not at hand.
+
 ## Preflight and approval
 
 The inline trusted-caller allowlist is exactly `retrace`. Direct human entry
@@ -208,7 +228,7 @@ A correction without approval or a conflicting or ambiguous adjustment renders
 one revised brief and waits. Approval is local to the displayed binding and
 grants no other authority or effect.
 
-Immediately before rendering each brief, including a revised one, run the roles check under "Roles check before each brief" in [the driver](../../harnesses/omp/acp-controller/driver.md).
+Immediately before rendering each brief, including a revised one, run the roles check under "Roles check before each brief" in [the driver](../../harnesses/omp/acp-controller/driver.md), and show its stdout verbatim, including its `Controller runs` list.
 
 A human change of a reviewer's model or thinking level is a valid per-run
 adjustment; follow "Per-run model change" in
@@ -613,7 +633,9 @@ transport, or validator availability without changing the outer base,
 Correction, intended final content, target, mode, scope, authority, reviewer
 sessions, or lineage. The human authorizes that exact repair in the root
 session; the root performs it and then resumes the parked run through `bash`
-with `timeout: 0` from the repository root:
+with `timeout: 0` from the repository root, with a new request file whose
+`repair.authority` quotes the human's authorization words with the time they
+were given:
 
 the resume command under "Resume and abandon a parked run" in [the driver](../../harnesses/omp/acp-controller/driver.md), which also gives the abandon command.
 

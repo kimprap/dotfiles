@@ -6,13 +6,13 @@
 import { execFile } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { initRootFor, privateRootFor, readOwnerClaim, sessionDirFor } from "./lib/env.mjs";
+import { initRootFor, privateRootFor, readOwnerClaim, removePrivateRoot, sessionDirFor } from "./lib/env.mjs";
 import { exists, readJsonIfExists, sha256Text } from "./lib/io.mjs";
-import { actorRecord, ask, claimRun, disposalFailure, disposeActor, finishRun, leaveRun, observeParkedPids, observeRunPids, openRun, parkRun, reopenRun, setRunPhase, startActor } from "./lib/ports.mjs";
-import { listProcesses, OWNER_UNREADABLE, ownerState, processesForRun } from "./lib/preflight.mjs";
+import { acceptResume, actorRecord, ask, claimRun, disposalFailure, disposeActor, finishRun, leaveRun, observeParkedPids, observeRunPids, openRun, parkRun, recordRun, reopenRun, startActor, stopRequested } from "./lib/ports.mjs";
+import { classifyRun, listProcesses, OWNER_UNREADABLE, ownerState, printWays, processesForRun, requestIdentity } from "./lib/preflight.mjs";
 import { renderPrompt } from "./lib/prompts.mjs";
 import { exampleFor, validateResult } from "./lib/schema.mjs";
-import { renderSpend } from "./lib/spend.mjs";
+import { renderSpend, Spend } from "./lib/spend.mjs";
 
 /** Re-asks per original expectation, shared across C4 categories (KR12). */
 export const C4_MAX_REASKS = 3;
@@ -21,6 +21,17 @@ export const MAX_DIRECT_ACTORS = 4;
 export const RETHINK_SKILL_PATH = "/Users/kim/.dotfiles/.config/agents/skills/rethink/SKILL.md";
 const EXIT = Object.freeze({ final: 0, stopped: 1, refused: 2, cleanup: 3 });
 const PARKABLE_STEPS = ["application", "reread", "validation"];
+
+/**
+ * Returned by a runner called with `deps.preflight` (the calling process,
+ * run survival §1) once every check passed: hand the run to the worker. A
+ * preflight call creates and claims nothing.
+ */
+export const HAND_OFF = Object.freeze({ handOff: true });
+
+/** The blocker of a run the human stopped with `cli.mjs stop` (run survival §9). */
+export const STOPPED_CAUSE = "stopped on the human's instruction";
+const STOPPED_DETAIL = "`cli.mjs stop` asked this run to stop; pending reviewer requests were cancelled and nothing was resent";
 
 const identity = (text) => (typeof text === "string" ? `sha256:${sha256Text(text)}` : "unreadable");
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -305,6 +316,7 @@ async function expectReview(ctx, reviewer, role, { kind, pass, values }, applica
   let extra = {};
   for (;;) {
     const out = await ask(run, reviewer, reviewerPrompt(ctx, role, requestKind, pass, { ...values, ...extra }), validate);
+    if (out.stopped) return { ok: false, stop: stoppedStop(`${role} ${pass}`) };
     let defects = out.defects ?? [];
     if (out.row === "candidate-valid") {
       const v = out.value;
@@ -330,6 +342,20 @@ async function expectReview(ctx, reviewer, role, { kind, pass, values }, applica
   }
 }
 
+/** The stop of a run the human stopped, at `step`. */
+const stoppedStop = (step) => ({ cause: STOPPED_CAUSE, detail: STOPPED_DETAIL, step });
+
+/**
+ * After an artifact application, reread or validation step ends: a stop
+ * request seen now ends the run as stopped, never parked (run survival §9).
+ * Returns the loop result, or null without a stop request.
+ */
+async function stopAfterStep(ctx, step, pending) {
+  if (!(await stopRequested(ctx.run))) return null;
+  addRow(ctx.rs, "stop", "—", identity(ctx.rs.canonical), STOPPED_CAUSE);
+  return { status: "stopped", stop: { ...stoppedStop(step), pending } };
+}
+
 /** Lazily creates a scope-owned reviewer; B exists only once A's finalized REVISE or VALID with notes needs it (KR5). */
 async function getReviewer(ctx, role) {
   const { rs } = ctx;
@@ -345,6 +371,8 @@ async function getReviewer(ctx, role) {
  * Only the `initial` and `later` requests carry the other reviewer's unsent finalized responses.
  */
 async function reviewTurn(ctx, role, values, applicable) {
+  // A stop request is read before a reviewer is started (run survival §9).
+  if (!ctx.reviewers[role] && (await stopRequested(ctx.run))) return { ok: false, stop: stoppedStop(`${role} start`) };
   const reviewer = await getReviewer(ctx, role);
   const flags = ctx.rs.reviewers[role];
   const carried = { ...values, COUNTERPART: takeCounterpart(ctx.rs, role) };
@@ -509,6 +537,10 @@ async function reconcileLoop(ctx) {
     }
     rs.pending = { base, accepted };
     const applied = await applyAccepted(ctx);
+    if (applied.ok || applied.park) {
+      const stopped = await stopAfterStep(ctx, applied.park?.step ?? "artifact application", accepted);
+      if (stopped) return stopped;
+    }
     if (applied.park) return { status: "park", failure: applied.park };
     if (!applied.ok) {
       addRow(rs, "stop", "—", applied.stop.observed, applied.stop.cause);
@@ -592,7 +624,7 @@ async function concludeReconcile(ctx, loop) {
     result.cleanupFailures = cleanup.unresolved;
   }
   const exitCode = !cleanup.complete ? EXIT.cleanup : result.status === "final" ? EXIT.final : EXIT.stopped;
-  return { exitCode, markdown: `${renderReconcile(result)}\n${ctx.run.spend.render()}` };
+  return recordRun(ctx.run, { exitCode, markdown: `${renderReconcile(result)}\n${ctx.run.spend.render()}` });
 }
 
 const REPAIR = {
@@ -601,12 +633,11 @@ const REPAIR = {
   validation: () => "repair the validator or its availability without changing the applied bytes, then retry validation",
 };
 
-/** KR13 park: keep both reviewer sessions resumable; persist state; stop with an exact resume frontier. */
+/** KR13 park: keep both reviewer sessions resumable; persist state; record the stop with an exact resume frontier before phase `parked`. */
 async function parkReconcile(ctx, failure) {
   const { rs, run } = ctx;
   const actors = ["A", "B"].map((r) => ctx.reviewers[r]).filter(Boolean);
   addRow(rs, "park", "—", failure.observed, `${failure.step} failed; reviewers parked`);
-  const parked = await parkRun(run, actors, { reconcile: rs, failure, roles: Object.keys(ctx.reviewers), models: ctx.deps.roles });
   const stop = {
     cause: `${failure.step} failed`,
     detail: failure.error,
@@ -623,12 +654,11 @@ async function parkReconcile(ctx, failure) {
       `resume: \`cli.mjs resume ${run.runId}\` with {"repair": {"authority": "<human words>", "step": "${failure.step}"}}; abandon: \`cli.mjs dispose ${run.runId}\``,
     ],
   };
-  const result = { status: "parked", stop, rs, cleanupFailures: parked.failures };
-  if (!parked.parked) {
-    stop.resume.unshift(`reviewer exit not observed: ${parked.failures.join("; ")}`);
-    return { exitCode: EXIT.cleanup, markdown: `${renderReconcile(result)}\n${run.spend.render()}` };
-  }
-  return { exitCode: EXIT.stopped, markdown: `${renderReconcile(result)}\n${run.spend.render()}` };
+  return parkRun(run, actors, { reconcile: rs, failure, roles: Object.keys(ctx.reviewers), models: ctx.deps.roles }, ({ parked, failures }) => {
+    const result = { status: "parked", stop, rs, cleanupFailures: failures };
+    if (!parked) stop.resume.unshift(`reviewer exit not observed: ${failures.join("; ")}`);
+    return { exitCode: parked ? EXIT.stopped : EXIT.cleanup, markdown: `${renderReconcile(result)}\n${run.spend.render()}` };
+  });
 }
 
 const BEGIN_FIELDS = ["Caller", "Parent", "Controller", "Scope", "Scope approval locator", "Scope contract locator", "Candidate locator", "Evidence manifest locator", "Mode", "Authorization locator"];
@@ -687,7 +717,8 @@ export async function runReconcile(request, deps, options = {}) {
     rs.canonical = text;
   } else rs.canonical = request.candidate.text;
   rs.runOriginal = rs.canonical;
-  const run = reportOnly ? options.run : await openRun("reconcile", deps);
+  if (!reportOnly && deps.preflight) return HAND_OFF;
+  const run = reportOnly ? options.run : await openRun("reconcile", deps, request);
   const ctx = { run, deps, rs, reviewers: {}, reportOnly, prefix: reportOnly ? `${options.ownerScope}/` : "" };
   try {
     const loop = await reconcileLoop(ctx);
@@ -716,39 +747,68 @@ const presentLines = (present, processes) => {
 
 const NO_CLI_PATH = "there is no further CLI path for the kept paths: the run stays abandoned and keeps refusing new runs until the human deals with exactly these paths; the agent never removes them";
 
+/** Exit 2 for a run whose owner is live or cannot be proven gone: names the run, never `dispose`. */
+function ownerRefusal(runId, verdict) {
+  if (verdict.owner === "live") return { exitCode: EXIT.refused, markdown: renderRefusal("run claimed by another controller", [`run \`${runId}\` is owned by a live controller (PID ${verdict.holder.pid})`]) };
+  return { exitCode: EXIT.refused, markdown: renderRefusal(OWNER_UNREADABLE, [`run \`${runId}\` owner PID ${verdict.holder.pid} is present but its start time cannot be compared, so it cannot be proven gone; nothing was changed`]) };
+}
+
+/** Exit 2 for a resume of a run whose phase is not `parked`: names the run and both print ways when finished, otherwise `dispose`. */
+function notParkedRefusal(runId, facts, verdict) {
+  if (verdict.class === "finished") return { exitCode: EXIT.refused, markdown: renderRefusal("finished run cannot be resumed", [`run \`${runId}\` has finished; its record waits in its folder`, ...printWays(runId)]) };
+  const why = !facts.record ? "no `run.json`" : !facts.state ? "no parked state" : `phase \`${facts.record.phase}\``;
+  return { exitCode: EXIT.refused, markdown: renderRefusal("abandoned run cannot be resumed", [`run \`${runId}\` is not parked (${why})`, `dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``]) };
+}
+
 /**
- * KR13 resume: claims the run exclusively, requires phase `parked`, and
- * observes exit of every recorded or matched PID before `run.json` becomes
- * `active`. Then same private HOME and session folder, same-session restore of
- * each parked reviewer (`resumeSessionId`, no fresh-session fallback), then
- * only the exact failed step is retried before review continues.
+ * KR13 resume. Checks in order (run survival §1), launching nothing and
+ * changing nothing unless all pass: no run → exit 1; this resume's identity
+ * already accepted → attach to the live run (`{ attach: { runId, pid } }`) or
+ * print the parked or finished record (exit 2 naming `dispose` when
+ * abandoned); live or unreadable owner → exit 2 naming the run; phase not
+ * `parked` → exit 2; a recorded or matched PID present → exit 3; repair step
+ * mismatch → exit 1 record, not written to the folder. The calling process
+ * (`deps.preflight`) stops there with HAND_OFF; the worker runs the same
+ * checks again (its recheck) and writes nothing when one fails. Then it takes
+ * claim n+1 (a lost claim writes nothing either), adds the resume identity
+ * and removes the parked record before any actor: same private HOME and
+ * session folder, same-session restore of each parked reviewer
+ * (`resumeSessionId`, no fresh-session fallback), then only the exact failed
+ * step is retried before review continues.
  */
 export async function resumeReconcile(runId, request, deps) {
-  const claim = await claimRun(runId, deps);
-  if (!claim.claimed && !claim.missingRoot) return { exitCode: EXIT.refused, markdown: renderRefusal(claim.refusal, [claim.reason]) };
   const facts = await runFacts(runId, deps);
   if (!facts.state && !facts.record) return { exitCode: EXIT.stopped, markdown: `## Reconcile stopped\n\n**Blocker**\n\n- no parked state for run \`${runId}\`\n\n${renderSpend([])}` };
-  if (facts.record?.phase !== "parked" || !facts.state) {
-    const why = !facts.record ? "no `run.json`" : !facts.state ? "no parked state" : `phase \`${facts.record.phase}\``;
-    return { exitCode: EXIT.refused, markdown: renderRefusal("abandoned run cannot be resumed", [`run \`${runId}\` is not parked (${why})`, `dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``]) };
+  const verdict = await classifyRun({ runId, tmpRoot: deps.tmpRoot, processes: facts.processes, observePid: deps.observePid, processStart: deps.processStart });
+  const resumeIdentity = requestIdentity("resume", request, runId);
+  if (facts.record?.identities?.includes(resumeIdentity)) {
+    if (verdict.class === "live") return { attach: { runId, pid: verdict.holder.pid, target: facts.record.target } };
+    if (verdict.class === "parked" || verdict.class === "finished") return { ...verdict.result, printedRun: runId };
+    return { exitCode: EXIT.refused, markdown: renderRefusal("abandoned run", [`run \`${runId}\` already accepted this resume and is abandoned (${verdict.reason})`, `dispose it only on the human's explicit instruction: \`cli.mjs dispose ${runId}\``]) };
   }
+  if (verdict.owner === "live" || verdict.owner === "unknown") return ownerRefusal(runId, verdict);
+  if (facts.record?.phase !== "parked" || !facts.state) return notParkedRefusal(runId, facts, verdict);
   const present = await observeRunPids(deps, facts.pids);
   if (present.length) {
     const lines = [...presentLines(present, facts.processes), `run \`${runId}\` unchanged: no reviewer restored and no process signalled; resume again only after these PIDs exit`];
     return { exitCode: EXIT.cleanup, markdown: `## Reconcile stopped\n\n**Blocker**\n\n${lines.map((l) => `- ${l}`).join("\n")}\n\n${renderSpend([])}` };
   }
   const { state } = facts;
+  const rs = state.reconcile;
+  const failure = state.failure;
+  if (request.repair.step !== failure.step) {
+    const stop = { cause: "repair step mismatch", detail: `the parked failed step is \`${failure.step}\`, not \`${request.repair.step}\``, step: failure.step, pending: rs.pending.accepted, resume: [`run \`${runId}\` stays parked; resume with step \`${failure.step}\` or dispose it`] };
+    return { exitCode: EXIT.stopped, markdown: `${renderReconcile({ status: "parked", stop, rs })}\n${Spend.fromJSON(facts.record?.spend ?? state.spend).render()}` };
+  }
+  if (deps.preflight) return HAND_OFF;
+  const claim = await claimRun(runId, deps);
+  if (!claim.claimed) return { exitCode: EXIT.refused, markdown: renderRefusal(claim.refusal ?? "run claimed by another controller", [claim.reason ?? `run \`${runId}\` has no private root`]) };
   const run = reopenRun(runId, deps, facts);
   try {
-    const rs = state.reconcile;
     // A resumed run keeps the models bound at its first call, never live modelRoles.
     const ctx = { run, deps: { ...deps, roles: state.models }, rs, reviewers: {}, reportOnly: false, prefix: "" };
-    const failure = state.failure;
-    if (request.repair.step !== failure.step) {
-      const stop = { cause: "repair step mismatch", detail: `the parked failed step is \`${failure.step}\`, not \`${request.repair.step}\``, step: failure.step, pending: rs.pending.accepted, resume: [`run \`${runId}\` stays parked; resume with step \`${failure.step}\` or dispose it`] };
-      return { exitCode: EXIT.stopped, markdown: `${renderReconcile({ status: "parked", stop, rs })}\n${run.spend.render()}` };
-    }
-    await setRunPhase(run, "active");
+    run.phase = "active";
+    await acceptResume(run, resumeIdentity);
     addRow(rs, "resume", "—", identity(rs.pending.accepted), `repair authorized (${request.repair.authority}); retry \`${failure.step}\``);
     if (!state.models?.a || !state.models?.b) {
       addRow(rs, "stop", "—", identity(rs.pending.accepted), "parked models missing");
@@ -769,6 +829,10 @@ export async function resumeReconcile(runId, request, deps) {
       return await concludeReconcile(ctx, { status: "stopped", stop: { cause: "reviewer identity lost", detail: `reviewer ${lost.role} session \`${state.actors.find((a) => a.name.endsWith(lost.role)).backendSessionId}\` could not be restored (${lost.error}); no fresh reviewer is created and nothing is rolled back`, step: "resume", pending: rs.pending.accepted, resumeWith: "the human decides how to proceed; the applied bytes stay as observed" } });
     }
     const retried = await applyAccepted(ctx, failure.step);
+    if (retried.ok || retried.park) {
+      const stopped = await stopAfterStep(ctx, retried.park?.step ?? failure.step, rs.pending?.accepted ?? rs.canonical);
+      if (stopped) return await concludeReconcile(ctx, stopped);
+    }
     if (retried.park) return await concludeReconcile(ctx, { status: "park", failure: retried.park });
     if (!retried.ok) return await concludeReconcile(ctx, { status: "stopped", stop: { ...retried.stop, pending: rs.pending?.accepted } });
     return await concludeReconcile(ctx, await reconcileLoop(ctx));
@@ -836,6 +900,10 @@ export async function disposeRun(runId, deps) {
   const run = reopenRun(runId, deps, facts);
   try {
     const cleanup = await finishRun(run);
+    if (cleanup.complete) {
+      const removed = await removePrivateRoot(run.dirs);
+      if (!removed.removed) Object.assign(cleanup, { complete: false, unresolved: [`private root \`${run.dirs.root}\` or socket folder \`${removed.socketDir}\` kept`] });
+    }
     const lines = cleanup.complete ? [`run \`${runId}\` disposed: every recorded PID exited, session folder and private root removed`] : [...cleanup.unresolved, ...(cleanup.keptRecord ? [NO_CLI_PATH] : [])];
     return { exitCode: cleanup.complete ? EXIT.final : EXIT.cleanup, markdown: disposeRecord(cleanup.complete ? "Run disposed" : "Dispose incomplete", lines, run.spend.render()) };
   } finally {
@@ -993,7 +1061,7 @@ async function expectCandidate(ctx, sc, actor) {
       defects = candidateProblems(ctx, v);
       if (!defects.length) return { ok: true, value: v };
     } else if (!out.c4) {
-      return { ok: false, stop: { review: "stopped", frontier: `evaluation request closed as ${out.row}` } };
+      return { ok: false, stop: { review: "stopped", frontier: out.stopped ? STOPPED_CAUSE : `evaluation request closed as ${out.row}` } };
     }
     invalid++;
     if (invalid > C4_MAX_REASKS) return { ok: false, stop: { review: "stopped", frontier: `${invalid} invalid returns (${defects.join("; ") || out.row})` } };
@@ -1155,7 +1223,8 @@ export async function runRetrace(request, deps) {
   if (!isObj(request.approval) || !nonEmpty(request.approval.text) || !nonEmpty(request.approval.at)) problems.push("approval must be {text, at} from the human");
   if (problems.length) return refused(problems);
   const order = request.table.scopes.map((s, i) => ({ s, i })).sort((a, b) => table.depth.get(a.s.id) - table.depth.get(b.s.id) || a.i - b.i).map((x) => x.s);
-  const run = await openRun("retrace", deps);
+  if (deps.preflight) return HAND_OFF;
+  const run = await openRun("retrace", deps, request);
   const records = new Map();
   const ctx = { run, deps, request, records, parent: `retrace:${run.runId}`, root: null };
   ctx.root = { parent: ctx.parent, records, admitted: new Map() };
@@ -1164,6 +1233,8 @@ export async function runRetrace(request, deps) {
     let active = 0;
     const running = new Map();
     for (;;) {
+      // A stop request starts no further scope; running scopes see their requests cancelled.
+      if (await stopRequested(run)) for (const sc of scopes.values()) if (sc.state === "pending") Object.assign(sc, { state: "done", review: "stopped", frontier: STOPPED_CAUSE });
       for (const sc of scopes.values()) {
         if (sc.state !== "pending") continue;
         const reqs = sc.scope.requires ?? [];
@@ -1209,7 +1280,7 @@ export async function runRetrace(request, deps) {
     const resolved = [...scopes.values()].filter(RESOLVED).length;
     const aggregate = resolved === scopes.size && !cleanupFailures.length ? "complete" : resolved > 0 ? "partial" : "blocked";
     const markdown = `${renderRetrace({ request, scopes: [...scopes.values()], aggregate, cleanupFailures })}\n${run.spend.render()}`;
-    return { exitCode: cleanupFailures.length ? EXIT.cleanup : aggregate === "complete" ? EXIT.final : EXIT.stopped, markdown };
+    return await recordRun(run, { exitCode: cleanupFailures.length ? EXIT.cleanup : aggregate === "complete" ? EXIT.final : EXIT.stopped, markdown });
   } finally {
     leaveRun(run);
   }
@@ -1337,12 +1408,15 @@ function renderRetrace({ request, scopes, aggregate, cleanupFailures }) {
 /** KT1 optional normalizer: one `scope-proposal` for human approval. */
 export async function runNormalize(request, deps) {
   if (!nonEmpty(request.root) || !path.isAbsolute(request.root)) return refused(["root must be an absolute path"]);
-  const run = await openRun("normalize", deps);
+  if (deps.preflight) return HAND_OFF;
+  const run = await openRun("normalize", deps, request);
   try {
     let result;
     let stop;
     try {
-      const actor = await startActor(run, { name: "normalizer", role: deps.roles.a });
+      // A stop request seen before the normalizer starts starts no actor.
+      if (await stopRequested(run)) stop = STOPPED_CAUSE;
+      const actor = stop ? undefined : await startActor(run, { name: "normalizer", role: deps.roles.a });
       const validate = (data) => {
         const v = validateResult("normalize", data);
         if (!v.valid) return v;
@@ -1352,7 +1426,7 @@ export async function runNormalize(request, deps) {
       let invalid = 0;
       let kind = "normalize";
       let extra = {};
-      for (;;) {
+      while (actor) {
         const values = { ROOT: request.root, CONCERNS: JSON.stringify(request.concerns, null, 2), INPUT: typeof request.input === "string" ? request.input : JSON.stringify(request.input, null, 2), EXAMPLE: exampleFor("scope-proposal"), DEFECT: "none", ...extra };
         const out = await ask(run, actor, `Phase: ${kind}\n\n${renderPrompt(deps.prompts.scope[kind], values)}`, validate);
         if (out.row === "candidate-valid") {
@@ -1360,7 +1434,7 @@ export async function runNormalize(request, deps) {
           break;
         }
         if (!out.c4) {
-          stop = `normalization request closed as ${out.row}`;
+          stop = out.stopped ? STOPPED_CAUSE : `normalization request closed as ${out.row}`;
           break;
         }
         invalid++;
@@ -1382,7 +1456,7 @@ export async function runNormalize(request, deps) {
       out.push(...(edges.length ? edges : ["- no edges"]), "", "**Coverage**", "", ...result.coverage.map((c) => `- ${c.concern} → ${c.scopes.join(", ")}`));
     } else out.push("## Normalization stopped", "", "**Blocker**", "", `- ${stop}`);
     if (!cleanup.complete) out.push("", "**Cleanup**", "", ...cleanup.unresolved.map((u) => `- ${u}`));
-    return { exitCode: !cleanup.complete ? EXIT.cleanup : result && !stop ? EXIT.final : EXIT.stopped, markdown: `${out.join("\n")}\n\n${run.spend.render()}` };
+    return await recordRun(run, { exitCode: !cleanup.complete ? EXIT.cleanup : result && !stop ? EXIT.final : EXIT.stopped, markdown: `${out.join("\n")}\n\n${run.spend.render()}` });
   } finally {
     leaveRun(run);
   }

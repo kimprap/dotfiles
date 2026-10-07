@@ -14,14 +14,22 @@
 //   unfinished-yield           `yield` start without a terminal update
 //   failed-yield               `yield` start, then a failed terminal update
 //   forbidden-tool[:<data>]    a completed `execute` tool call (then optional yield)
+//   slow:<ms>:<response>       waits <ms> before answering with <response>; an
+//                              ACP cancel during the wait ends the turn at once
+//                              with stopReason `cancelled` and no answer
 // A prompt with no matching entry fails the turn with an ACP error.
 // Every event is appended as one JSON line to env SCRIPTED_ACP_LOG:
 //   {event:"start"|"exit", model, pid, at}
 //   {event:"session-new"|"session-resume", model, sessionId, ok, pid, at}
 //   {event:"prompt", model, sessionId, passMarker, text, response, pid, at}
+//   {event:"cancel", model, sessionId, pid, at}
+//   {event:"prompt-end", model, sessionId, stopReason, pid, at}
 // `passMarker` is the value of the prompt's first `Pass:` or `Phase:` line, or null;
-// `text` is the complete received prompt text.
+// `text` is the complete received prompt text. `start` and `prompt` events also
+// carry `run`: the controller run's `run.json` as observed then (the run's
+// private root is the parent of the agent's HOME), or null.
 // Each prompt adds 100 tokens and 0.01 USD to its session's cumulative usage.
+// The agent exits when its stdin ends (its client is gone).
 //
 // Imported as a module it exports createScriptedLauncher(), which writes an
 // executable launcher that sets the plan/log environment (the controller runs
@@ -62,6 +70,14 @@ async function runAgent() {
   const log = (event, fields = {}) => {
     if (logFile) fs.appendFileSync(logFile, `${JSON.stringify({ event, model, ...fields, pid: process.pid, at: Date.now() })}\n`);
   };
+  /** The run's `run.json` now, or null. */
+  const runJson = () => {
+    try {
+      return JSON.parse(fs.readFileSync(path.join(process.env.HOME ?? "", "..", "run.json"), "utf8"));
+    } catch {
+      return null;
+    }
+  };
 
   /** Claims the first unclaimed plan entry for this model that matches the prompt. */
   const claim = (text) => {
@@ -96,6 +112,8 @@ async function runAgent() {
   class ScriptedAgent {
     constructor(conn) {
       this.conn = conn;
+      // sessionId -> ends the pending slow wait as cancelled
+      this.pending = new Map();
     }
     async initialize() {
       return { protocolVersion: 1, agentCapabilities: { sessionCapabilities: { resume: {} } } };
@@ -118,7 +136,10 @@ async function runAgent() {
     async authenticate() {
       return {};
     }
-    async cancel() {}
+    async cancel(params) {
+      log("cancel", { sessionId: params.sessionId });
+      this.pending.get(params.sessionId)?.();
+    }
     async prompt(params) {
       const text = params.prompt.map((b) => (b.type === "text" ? b.text : "")).join("");
       const sessionId = params.sessionId;
@@ -129,6 +150,7 @@ async function runAgent() {
         passMarker: /^(?:Pass|Phase):\s*(.+?)\s*$/m.exec(text)?.[1] ?? null,
         text,
         response: response ?? null,
+        run: runJson(),
       });
       if (response === undefined) throw new Error(`scripted plan has no entry for ${model}`);
       const u = usage.get(sessionId) ?? { tokens: 0, cost: 0 };
@@ -137,7 +159,26 @@ async function runAgent() {
       usage.set(sessionId, u);
       await send({ sessionUpdate: "agent_message_chunk", content: { type: "text", text: "working" } });
       const sep = response.indexOf(":");
-      const [mode, arg] = sep < 0 ? [response, undefined] : [response.slice(0, sep), response.slice(sep + 1)];
+      let [mode, arg] = sep < 0 ? [response, undefined] : [response.slice(0, sep), response.slice(sep + 1)];
+      if (mode === "slow") {
+        const at = arg.indexOf(":");
+        const ms = Number(arg.slice(0, at));
+        const inner = arg.slice(at + 1);
+        const cancelled = await new Promise((resolve) => {
+          const timer = setTimeout(() => resolve(false), ms);
+          this.pending.set(sessionId, () => {
+            clearTimeout(timer);
+            resolve(true);
+          });
+        });
+        this.pending.delete(sessionId);
+        if (cancelled) {
+          log("prompt-end", { sessionId, stopReason: "cancelled" });
+          return { stopReason: "cancelled" };
+        }
+        const innerSep = inner.indexOf(":");
+        [mode, arg] = innerSep < 0 ? [inner, undefined] : [inner.slice(0, innerSep), inner.slice(innerSep + 1)];
+      }
       if (mode === "yield" || mode === "invalid") {
         for (const x of yieldUpdates(`yield-${randomUUID()}`, JSON.parse(arg), "success")) await send(x);
       } else if (mode === "unfinished-yield") {
@@ -153,12 +194,14 @@ async function runAgent() {
         await send({ sessionUpdate: "agent_message_chunk", content: { type: "text", text: "prose only" } });
       } else throw new Error(`unknown scripted response ${response}`);
       await send({ sessionUpdate: "usage_update", used: u.tokens, size: 200_000, cost: { amount: u.cost, currency: "USD" } });
+      log("prompt-end", { sessionId, stopReason: "end_turn" });
       return { stopReason: "end_turn", usage: { inputTokens: u.tokens / 2, outputTokens: u.tokens / 2, totalTokens: u.tokens } };
     }
   }
 
-  log("start");
+  log("start", { run: runJson() });
   process.on("exit", () => log("exit"));
+  process.stdin.on("end", () => process.exit(0));
   const stream = ndJsonStream(Writable.toWeb(process.stdout), Readable.toWeb(process.stdin));
   new AgentSideConnection((conn) => new ScriptedAgent(conn), stream);
 }

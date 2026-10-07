@@ -1,12 +1,14 @@
-// Abandoned-run preflight (spec-v3 §5 Q5). Groups controller residue per run
-// and refuses only on abandoned runs; live-owner and parked runs of other
-// sessions are ignored. Never signals (beyond signal-0 observation) or deletes.
+// Run classes and request matching (spec-v3 §5 Q5; run survival §2–§3). One
+// classifier gives every run folder one class (live, parked, finished,
+// abandoned); a request matches runs by identity, then by target. Never
+// signals (beyond signal-0 observation) or deletes.
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { observePid as defaultObservePid } from "./adapter.mjs";
-import { initRootFor, privateRootFor, readOwnerClaim, RUN_PREFIX, sessionDirFor, SESSIONS_ROOT, TMP_ROOT } from "./env.mjs";
+import { initRootFor, privateRootFor, readOwnerClaim, readRunResult, RUN_PREFIX, sessionDirFor, SESSIONS_ROOT, TMP_ROOT } from "./env.mjs";
 import { exists, readJsonIfExists } from "./io.mjs";
 
 const execFileP = promisify(execFile);
@@ -86,44 +88,92 @@ async function dirNames(root) {
   }
   return entries.filter((e) => e.isDirectory()).map((e) => e.name);
 }
-
 const runIdsOf = (names) => names.filter((n) => n.startsWith(RUN_PREFIX)).map((n) => n.slice(RUN_PREFIX.length));
 const SETUP_DIR = new RegExp(`^\\.${RUN_PREFIX}(.+)\\.init$`);
 
-/**
- * Classifies one run from its highest claim, `run.json`, `state.json`, recorded
- * PIDs and matched processes. Returns `{ class: "live" | "parked" | "abandoned", reason, presentPids }`.
- */
-async function classifyRun({ runId, tmpRoot = TMP_ROOT, processes = [], observePid = defaultObservePid, processStart: start = processStart }) {
-  const dirs = privateRootFor(runId, tmpRoot);
-  const claim = await readOwnerClaim(dirs.root);
-  const owner = await ownerState(claim, { observePid, processStart: start });
-  if (owner === "live") return { class: "live", reason: "owner live", presentPids: [] };
-  const record = await readJsonIfExists(dirs.record).catch(() => undefined);
-  const recorded = Array.isArray(record?.pids) ? record.pids.filter((pid) => Number.isInteger(pid) && pid > 0) : [];
-  const presentPids = [...new Set([...recorded.filter((pid) => observePid(pid) !== "ESRCH"), ...processes.map((p) => p.pid)])];
-  if (owner === "unknown") return { class: "abandoned", reason: OWNER_UNREADABLE, presentPids };
-  const ownerReason = owner === "reused" ? "owner PID reused" : "owner gone";
-  if (!claim || !record) return { class: "abandoned", reason: `${ownerReason}; missing claim or \`run.json\``, presentPids };
-  if (record.phase === "parked") {
-    if (!(await exists(dirs.state))) return { class: "abandoned", reason: `${ownerReason}; no parked state`, presentPids };
-    if (presentPids.length) return { class: "abandoned", reason: `${ownerReason}; live process without owner`, presentPids };
-    return { class: "parked", reason: "parked", presentPids };
+/** Canonical JSON: object keys sorted at every level, no whitespace, arrays and strings exact. */
+export function canonicalJson(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value !== null && typeof value === "object") {
+    return `{${Object.keys(value)
+      .sort()
+      .filter((k) => value[k] !== undefined)
+      .map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`)
+      .join(",")}}`;
   }
-  return { class: "abandoned", reason: `${ownerReason}; ${claim.index > 0 ? "crashed after resume" : "no parked state"}`, presentPids };
+  return JSON.stringify(value);
 }
 
 /**
- * Abandoned controller runs for a new run's preflight. Residue is grouped by
- * runId: `<sessionsRoot>/acp-controller-<runId>` and `<tmpRoot>/acp-controller-<runId>`
- * folders and live processes whose command line contains ` acp ` and
- * `--session-dir <sessionsRoot>/acp-controller-<runId>`. Live-owner and parked
- * runs are not listed. A `<tmpRoot>/.acp-controller-<runId>.init` setup
- * leftover is listed on its own (`setup incomplete`, or `owner start time
- * unreadable`) unless its `claim-0` owner is live, i.e. still setting it up.
- * Returns `{ refuse, runs: [{ runId, reason, folders, processes, presentPids, dispose }] }`.
+ * Request identity: lowercase sha256 of the command kind, a NUL and the
+ * request's canonical JSON without `approval`; for `resume` the runId and a
+ * NUL come before the canonical JSON.
  */
-export async function findAbandonedRuns({ sessionsRoot = SESSIONS_ROOT, tmpRoot = TMP_ROOT, listProcesses: list = listProcesses, observePid = defaultObservePid, processStart: start = processStart } = {}) {
+export function requestIdentity(kind, request, runId) {
+  const { approval, ...meaning } = request;
+  const prefix = kind === "resume" ? `${kind}\0${runId}\0` : `${kind}\0`;
+  return createHash("sha256").update(`${prefix}${canonicalJson(meaning)}`).digest("hex");
+}
+
+/** What a run works on: `candidate.identity`, the canonical Retrace `table`, the normalize `root`, or the resumed runId. */
+export function requestTarget(kind, request, runId) {
+  if (kind === "reconcile") return request.candidate.identity;
+  if (kind === "retrace") return canonicalJson(request.table);
+  if (kind === "normalize") return request.root;
+  return runId;
+}
+
+/** `run.json` facts of one run (`undefined` when missing or unreadable). */
+const readRunJson = (dirs) => readJsonIfExists(dirs.record).catch(() => undefined);
+
+/**
+ * The run class of one run folder, checked in this order: `live` (the highest
+ * claim's owner runs with the same start time); `parked` (phase `parked`,
+ * `state.json` and a parked record with exit 1, owner gone, every recorded and
+ * matched PID gone); `finished` (owner gone, phase not `parked`, a complete
+ * record with exit 0 or 1, every PID gone); otherwise `abandoned`. Returns
+ * `{ class, reason, owner, holder, presentPids, record, result }`: `owner` is
+ * the claim holder's state and `record` the `run.json` contents.
+ */
+export async function classifyRun({ runId, tmpRoot = TMP_ROOT, processes = [], observePid = defaultObservePid, processStart: start = processStart }) {
+  const dirs = privateRootFor(runId, tmpRoot);
+  const holder = await readOwnerClaim(dirs.root);
+  const owner = await ownerState(holder, { observePid, processStart: start });
+  const record = await readRunJson(dirs);
+  const result = await readRunResult(dirs);
+  const facts = { owner, holder, record, result };
+  if (owner === "live") return { class: "live", reason: "owner live", presentPids: [], ...facts };
+  const recorded = Array.isArray(record?.pids) ? record.pids.filter((pid) => Number.isInteger(pid) && pid > 0) : [];
+  const presentPids = [...new Set([...recorded.filter((pid) => observePid(pid) !== "ESRCH"), ...processes.map((p) => p.pid)])];
+  const abandoned = (reason) => ({ class: "abandoned", reason, presentPids, ...facts });
+  if (owner === "unknown") return abandoned(OWNER_UNREADABLE);
+  const ownerReason = owner === "reused" ? "owner PID reused" : "owner gone";
+  if (!holder || !record) return abandoned(`${ownerReason}; missing claim or \`run.json\``);
+  if (result === null) return abandoned(`${ownerReason}; incomplete record`);
+  if (record.phase === "parked") {
+    if (!(await exists(dirs.state))) return abandoned(`${ownerReason}; no parked state`);
+    if (presentPids.length) return abandoned(`${ownerReason}; live process without owner`);
+    if (!result) return abandoned(`${ownerReason}; parked without a record`);
+    if (result.exitCode !== 1) return abandoned(`${ownerReason}; cleanup not established`);
+    return { class: "parked", reason: "parked", presentPids, ...facts };
+  }
+  if (!result) return abandoned(`${ownerReason}; ${holder.index > 0 ? "crashed after resume" : "no parked state"}`);
+  if (presentPids.length) return abandoned(`${ownerReason}; live process without owner`);
+  if (result.exitCode !== 0 && result.exitCode !== 1) return abandoned(`${ownerReason}; cleanup not established`);
+  return { class: "finished", reason: "finished", presentPids, ...facts };
+}
+
+/**
+ * Every controller run, classified. Residue is grouped by runId:
+ * `<sessionsRoot>/acp-controller-<runId>` and `<tmpRoot>/acp-controller-<runId>`
+ * folders and live processes whose command line contains ` acp ` and
+ * `--session-dir <sessionsRoot>/acp-controller-<runId>`. A
+ * `<tmpRoot>/.acp-controller-<runId>.init` setup leftover is its own entry: live
+ * while its `claim-0` owner is live (still setting it up), otherwise abandoned
+ * (`setup incomplete`, or `owner start time unreadable`).
+ * Returns `[{ runId, class, reason, folders, processes, presentPids, record, result, owner, holder, dispose, setup? }]`.
+ */
+export async function scanRuns({ sessionsRoot = SESSIONS_ROOT, tmpRoot = TMP_ROOT, listProcesses: list = listProcesses, observePid = defaultObservePid, processStart: start = processStart } = {}) {
   const processes = await list();
   const tmpNames = await dirNames(tmpRoot);
   const ids = new Set([...runIdsOf(await dirNames(sessionsRoot)), ...runIdsOf(tmpNames)]);
@@ -138,31 +188,104 @@ export async function findAbandonedRuns({ sessionsRoot = SESSIONS_ROOT, tmpRoot 
     if (ids.has(runId)) {
       const matched = processesForRun(processes, runId, sessionsRoot);
       const verdict = await classifyRun({ runId, tmpRoot, processes: matched, observePid, processStart: start });
-      if (verdict.class === "abandoned") {
-        const folders = [];
-        for (const folder of [sessionDirFor(runId, sessionsRoot), privateRootFor(runId, tmpRoot).root]) if (await exists(folder)) folders.push(folder);
-        runs.push({ runId, reason: verdict.reason, folders, processes: matched, presentPids: verdict.presentPids, dispose });
-      }
+      const folders = [];
+      for (const folder of [sessionDirFor(runId, sessionsRoot), privateRootFor(runId, tmpRoot).root]) if (await exists(folder)) folders.push(folder);
+      runs.push({ runId, ...verdict, folders, processes: matched, dispose });
     }
     if (setupIds.has(runId)) {
       const root = initRootFor(runId, tmpRoot);
-      const owner = await ownerState(await readOwnerClaim(root), { observePid, processStart: start });
-      if (owner !== "live") runs.push({ runId, reason: owner === "unknown" ? OWNER_UNREADABLE : "setup incomplete", folders: [root], processes: [], presentPids: [], dispose });
+      const holder = await readOwnerClaim(root);
+      const owner = await ownerState(holder, { observePid, processStart: start });
+      const reason = owner === "live" ? "setting up" : owner === "unknown" ? OWNER_UNREADABLE : "setup incomplete";
+      runs.push({ runId, class: owner === "live" ? "live" : "abandoned", reason, folders: [root], processes: [], presentPids: [], owner, holder, dispose, setup: true });
     }
   }
+  return runs;
+}
+
+/** Abandoned runs only: they refuse every new run and `roles`. Returns `{ refuse, runs }`. */
+export async function findAbandonedRuns(options = {}) {
+  const runs = (await scanRuns(options)).filter((r) => r.class === "abandoned");
   return { refuse: runs.length > 0, runs };
+}
+
+/**
+ * Matches a new-run request to scanned runs: by identity first, then by target
+ * (same kind and target). Setup leftovers never match. Returns
+ * `{ by: "identity" | "target" | null, runs }`; more than one run in `runs` is ambiguous.
+ */
+export function matchRequest(runs, { kind, identity, target }) {
+  const candidates = runs.filter((r) => !r.setup && r.record);
+  const byIdentity = candidates.filter((r) => Array.isArray(r.record.identities) && r.record.identities.includes(identity));
+  if (byIdentity.length) return { by: "identity", runs: byIdentity };
+  const byTarget = candidates.filter((r) => r.record.kind === kind && r.record.target !== undefined && r.record.target === target);
+  return byTarget.length ? { by: "target", runs: byTarget } : { by: null, runs: [] };
+}
+
+/** The two ways to print a finished run's waiting record. */
+export const printWays = (runId) => [`print its record: rerun the original request, or \`cli.mjs stop ${runId}\``];
+
+const grouped = new Intl.NumberFormat("en-US", { maximumFractionDigits: 6 });
+
+/**
+ * Spend so far as one line from `run.json` spend rows (Spend#toJSON shape),
+ * with the `## Spend` totals rule: an unknown member makes a total `≥ <known sum> (unknown members)`.
+ */
+export function spendSoFar(rows) {
+  const tokens = rows.map((r) => (r.tokensLast === null ? null : r.tokensBase + r.tokensLast));
+  const costs = rows.map((r) => (r.costLast === null || !r.currency ? null : { amount: Number((r.costBase + r.costLast).toFixed(6)), currency: r.currency }));
+  const total = (values, format) => {
+    const known = values.filter((v) => v !== null);
+    return known.length === values.length ? format(known) : `≥ ${format(known)} (unknown members)`;
+  };
+  const costText = (known) => {
+    const by = new Map();
+    for (const c of known) by.set(c.currency, Number(((by.get(c.currency) ?? 0) + c.amount).toFixed(6)));
+    return by.size ? [...by].map(([cur, amount]) => `${grouped.format(amount)} ${cur}`).join(" + ") : "0";
+  };
+  return `${total(tokens, (k) => grouped.format(k.reduce((s, n) => s + n, 0)))} tokens, ${total(costs, costText)}`;
 }
 
 /** Refusal lines grouped per abandoned run (rendered as a nested bullet list). */
 export function abandonedRunLines(runs) {
   return runs.map((r) => {
     const commands = new Map(r.processes.map((p) => [p.pid, p.command]));
+    const spend = Array.isArray(r.record?.spend) ? [`spend so far: ${spendSoFar(r.record.spend)}`] : [];
     const rows = [
       `reason: ${r.reason}`,
       ...r.folders.map((f) => `folder \`${f}\``),
       ...r.presentPids.map((pid) => (commands.has(pid) ? `present PID ${pid}: \`${commands.get(pid)}\`` : `present PID ${pid}`)),
+      ...spend,
       `dispose (only on the human's explicit instruction): \`${r.dispose}\``,
     ];
     return `run \`${r.runId}\`\n${rows.map((row) => `  - ${row}`).join("\n")}`;
   });
+}
+
+/** A run's start time from its runId stamp (`<kind>-<yyyymmddThhmmssZ>-<hex>`), ISO-8601. */
+export function runStartedAt(runId) {
+  const m = /-(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z-/.exec(runId);
+  return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z` : "unknown";
+}
+
+/**
+ * The `roles` run list (run survival §8): every live, parked or finished run
+ * with its runId, kind, class, target, start time, worker PID while live and
+ * spend so far. Empty when there is no such run. Reads only scanned facts.
+ */
+export function renderRunList(runs) {
+  const shown = runs.filter((r) => !r.setup && ["live", "parked", "finished"].includes(r.class));
+  if (!shown.length) return "";
+  const line = (r) => {
+    const fields = [
+      r.record?.kind ?? r.runId.split("-")[0],
+      r.class,
+      `target \`${r.record?.target ?? "unknown"}\``,
+      `started ${runStartedAt(r.runId)}`,
+      ...(r.class === "live" ? [`worker PID ${r.holder.pid}`] : []),
+      `spend so far: ${Array.isArray(r.record?.spend) ? spendSoFar(r.record.spend) : "unknown"}`,
+    ];
+    return `- \`${r.runId}\` · ${fields.join(" · ")}`;
+  };
+  return `\nController runs:\n\n${shown.map(line).join("\n")}\n`;
 }

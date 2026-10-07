@@ -42,6 +42,16 @@ controller (`harnesses/omp/acp-controller/`), which owns their reviewer and
 scope sessions, first replies, pending observation, capacity and observed-exit
 disposal.
 
+Each controller run executes in a detached worker that outlives the calling
+tool call. Controller calls run only through `bash`, with the request file named
+by absolute path in the command, never through Eval or a path held in a shell
+variable, with `timeout: 0` as the normal path; a call that ends without a
+record is followed by the same command again, and a live run ends only with
+`stop` on the human's instruction, as the controller's `driver.md` says. The
+Eval and timeout rules under "Child foreground execution" stay as written for
+child commands; they are not the controller contract, and a backgrounded
+controller call is waited for, never cancelled and rerun through Eval.
+
 Keep independent-child concurrency. Operations for distinct owned children may
 run concurrently subject to the owning protocol and host capacity. Completion,
 a report, an echo, or a cancellation acknowledgement does not free an owned
@@ -391,6 +401,13 @@ audit, only when the requester names it.
   ([default](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/tool-timeouts.ts)).
 - A job backgrounded anyway is cancelled with `write proc://<id>/kill` and rerun
   once in the foreground through Eval before the return.
+- Every subprocess a child launches from Eval runs with a closed stdin:
+  `stdin=subprocess.DEVNULL` in Python, or `< /dev/null` for a shell command.
+  The Eval runner's stdin never closes, so a process that reads piped stdin,
+  such as print-mode `omp -p`, otherwise waits forever for EOF
+  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/main.ts)).
+  Commands run through the bash tool already get a null stdin
+  ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/crates/pi-shell/src/shell.rs)).
 - Every request that states the lean-return rule also states this rule.
 
 ## Inbox is not return recovery

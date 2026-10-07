@@ -11,8 +11,10 @@ import { main } from "../cli.mjs";
 import { runReconcile, runRetrace } from "../controller.mjs";
 import { observePid } from "../lib/adapter.mjs";
 import { socketDirFor } from "../lib/env.mjs";
+import { processStart } from "../lib/preflight.mjs";
 import { OMP_VERSION } from "../lib/versions.mjs";
 import { createScriptedLauncher } from "./fixtures/scripted-acp-agent.mjs";
+import { runWorker } from "../worker.mjs";
 
 const PROMPTS = {
   reviewer: {
@@ -88,10 +90,18 @@ function evaluatorPids(log) {
   return map;
 }
 
+/**
+ * Every process the scripted agent started has exited, no session folder or socket folder is
+ * left, and a run folder is left only holding a finished record (exit 0 or 1) that waits for its print.
+ */
 function assertCleanedUp() {
   for (const e of events().filter((x) => x.event === "start")) assert.equal(observePid(e.pid), "ESRCH", `pid ${e.pid} exited`);
   assert.deepEqual(fs.readdirSync(t.sessionsRoot), []);
-  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
+  for (const name of fs.readdirSync(t.tmpRoot)) {
+    const root = path.join(t.tmpRoot, name);
+    assert.ok([0, 1].includes(JSON.parse(fs.readFileSync(path.join(root, "record.json"), "utf8")).exitCode), `${name} holds a finished record`);
+    assert.equal(fs.existsSync(socketDirFor(path.join(root, "home"))), false, `${name} socket folder removed`);
+  }
 }
 
 test("KT3: at most four scope evaluators are live at once; a fifth starts only after an observed evaluator exit", async () => {
@@ -138,8 +148,15 @@ test("models override: an exact A override binds the scope evaluator and the del
     readModelCatalog: async () => ({ ok: true, models: [{ provider: "scripted", id: "c", selector: "scripted/c", thinking: ["low", "high"] }] }),
     loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
     log: () => {},
+    // The worker runs in this process on the JSON hand-off payload; its PID then reads as gone.
+    launchWorker: async (payload, injected) => {
+      await runWorker(JSON.parse(JSON.stringify(payload)), injected);
+      return { pid: process.pid };
+    },
   });
+  await out.settle?.();
   assert.equal(out.exitCode, 0, out.stdout);
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [], "the printed finished run's folder is removed");
   const starts = events().filter((e) => e.event === "start");
   assert.ok(starts.length >= 2, "evaluator and reviewer A started");
   assert.ok(starts.every((e) => e.model === "scripted/c"), `every actor on the override: ${starts.map((e) => e.model)}`);
@@ -147,6 +164,36 @@ test("models override: an exact A override binds the scope evaluator and the del
   const rows = spend.split("\n").filter((l) => l.startsWith("| S1/"));
   assert.ok(rows.length >= 2 && rows.every((r) => r.includes(" | scripted/c | high | ")), spend);
   assertCleanedUp();
+});
+
+test("RS10 finished/same: the same retrace again prints the waiting record with its exit code and starts nothing, then removes the folder", async () => {
+  setPlan({ "scripted/a": scopeEntries("S1", [candidate("S1")]) });
+  const first = await runRetrace(request([scope("S1")]), deps());
+  assert.equal(first.exitCode, 0, first.markdown);
+  const [folder] = fs.readdirSync(t.tmpRoot);
+  const bin = path.join(t.dir, "bin");
+  fs.mkdirSync(bin);
+  fs.writeFileSync(path.join(bin, "omp"), `#!/bin/sh\nif [ "$1" = "--version" ]; then echo '${OMP_VERSION}'; exit 0; fi\nexec '${t.launcher}' "$@"\n`, { mode: 0o755 });
+  const at = events().length;
+  const again = await main({
+    argv: ["retrace"],
+    stdinText: JSON.stringify(request([scope("S1")])),
+    env: { PATH: `${bin}:${process.env.PATH}` },
+    sessionsRoot: t.sessionsRoot,
+    tmpRoot: t.tmpRoot,
+    // A new caller process: this PID now has another start time, so the first run's owner is gone.
+    processStart: async (pid) => (pid === process.pid ? "a later process" : processStart(pid)),
+    readModelRoles: async () => ({ ok: true, roles: ROLES }),
+    loadPrompts: async () => ({ ok: true, prompts: PROMPTS, sources: {} }),
+    loadController: async () => assert.fail("a waiting record is printed without loading the controller"),
+    log: () => {},
+  });
+  assert.equal(again.exitCode, 0);
+  assert.equal(again.stdout, first.markdown);
+  assert.equal(events().length, at, "nothing started");
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), [folder], "nothing is removed before the print");
+  await again.settle();
+  assert.deepEqual(fs.readdirSync(t.tmpRoot), []);
 });
 
 /** The event names on the one arrow line under scope `id`'s `**Events**` in Evidence and Limits. */
