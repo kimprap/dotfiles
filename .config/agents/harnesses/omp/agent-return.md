@@ -108,8 +108,16 @@ and then returns a still-running snapshot. With no owned running job or live
 owned service it returns `No message within …` after a short message window
 (5 s rising to 300 s on repeated waits) in OMP v18.5.0
 ([message window](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/tools/wait.ts)).
-The cell keeps either result and the loop waits again. The controller never ends its
-turn to wait for the row.
+The cell keeps either result and the loop waits again. It prints every return
+that is not the settled bound row raw as it arrives, including a still-running
+snapshot and a `No message within …` or other return marked `useless`, never
+only a parsed field, which can be empty. After each return it also prints the
+last three lines of every launch log the child's request names (the output file
+of a process launched under [Child foreground execution](#child-foreground-execution)).
+OMP's startup watchdog follows each `Still starting … phase:` line with a log
+hint, so the last line alone can hide the phase. A stalled launch then shows
+within minutes. Printing only observes: it never stops, signals, resends or
+changes an allowance. The controller never ends its turn to wait for the row.
 
 Rows carry `id`, `type`, `status`, `agentUrlId`, `resultText` and
 `structured {source, mode, status, data}`. The kernel retains the complete
@@ -401,14 +409,32 @@ audit, only when the requester names it.
   ([default](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/tool-timeouts.ts)).
 - A job backgrounded anyway is cancelled with `write proc://<id>/kill` and rerun
   once in the foreground through Eval before the return.
-- Every subprocess a child launches from Eval runs with a closed stdin:
-  `stdin=subprocess.DEVNULL` in Python, or `< /dev/null` for a shell command.
-  The Eval runner's stdin never closes, so a process that reads piped stdin,
-  such as print-mode `omp -p`, otherwise waits forever for EOF
-  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/main.ts)).
+- Every subprocess a child launches from Eval runs with a closed stdin. The
+  Eval runner's stdin is the host's control channel and never closes: a process
+  that reads stdin that is not a terminal, such as print-mode `omp -p` even with
+  the prompt as an argument, waits forever for EOF
+  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/main.ts)),
+  and a process that reads it can take the host's control frames
+  ([runner stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/eval/py/runner.py)).
+  Prefer the runner's own shell forms, a `%%bash` cell or a `!cmd` line, which
+  already run with stdin on `/dev/null` and show output as it arrives. Use raw
+  `subprocess` only when those cannot do the job, with
+  `stdin=subprocess.DEVNULL`, and write its output to a file instead of holding
+  it with `capture_output`, so its diagnostics are readable while it runs.
   Commands run through the bash tool already get a null stdin
   ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/crates/pi-shell/src/shell.rs)).
-- Every request that states the lean-return rule also states this rule.
+- Every process a child launches from Eval also gets its own time limit of
+  about ten times its expected run time: `subprocess.run(timeout=…)` in Python,
+  or `/opt/homebrew/bin/timeout` in a shell form, never a bare `timeout`
+  (macOS has no `/usr/bin/timeout`). The limit ends only the direct child; tools
+  that child had already started can keep running and are reported, never
+  signalled by hand. A hit limit is reported in the return as an execution
+  failure and the process is not rerun; a paid session is repeated only on the
+  human's decision. The limit leaves the cell `timeout` rules above unchanged,
+  including `timeout: 0`, and does not apply to controller calls, which run
+  through `bash` with `timeout: 0`.
+- Every request that states the lean-return rule also states these child
+  foreground rules, naming the closed stdin and the process time limit.
 
 ## Inbox is not return recovery
 
