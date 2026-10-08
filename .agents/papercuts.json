@@ -2,15 +2,20 @@
   "records": {
     "pc-127bb3af1002afa4": {
       "first_seen": "2026-08-15",
-      "last_seen": "2026-08-15",
+      "last_seen": "2026-10-02",
       "observations": [
         {
           "date": "2026-08-15",
           "friction": "The OMP LSP rule interrupted a Prettier check for unrelated plan-rule files even though its policy excludes unrelated repository toolchain work.",
           "workaround": "Use the background formatter result and continue without applying the unrelated LSP guidance."
+        },
+        {
+          "date": "2026-10-02",
+          "friction": "The omp-lsp rule interrupted a papercut capture whose text only mentioned format-on-write; no OMP LSP config work was involved.",
+          "workaround": null
         }
       ],
-      "occurrence_count": 1,
+      "occurrence_count": 2,
       "resolution": null,
       "summary": "Narrow the OMP LSP rule activation so unrelated formatter commands do not interrupt.",
       "surface": "OMP omp-lsp TTSR activation"
@@ -28,6 +33,21 @@
       },
       "summary": "Deleted manifest-allowed paths cannot be staged through the helper.",
       "surface": "bin/dot-add staging helper"
+    },
+    "pc-201f2dad1a48c4d8": {
+      "first_seen": "2026-10-03",
+      "last_seen": "2026-10-03",
+      "observations": [
+        {
+          "date": "2026-10-03",
+          "friction": "In a live Reconcile run the session agent launched cli.mjs with bash name/ready six times; service mode could not read the local:// request redirect, later launches were refused for unacknowledged notifications, and after an explicit correction the retry and resume still ran as a reused-name service whose log mixed earlier output, leaving the exit code reported only by the agent.",
+          "workaround": "Human tells the session to use a plain foreground bash call with timeout 0 and no name/ready."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "The driver requires the controller call through bash with timeout 0 but does not forbid bash name/ready/async, so agents launch it as a background service.",
+      "surface": ".config/agents/harnesses/omp/acp-controller/driver.md controller bash invocation"
     },
     "pc-4a26350015d31957": {
       "first_seen": "2026-08-25",
@@ -88,6 +108,31 @@
       "resolution": null,
       "summary": "Bind the complete final proposal body to the confirmation interaction.",
       "surface": ".config/agents/skills/dev-grilling confirmation presentation"
+    },
+    "pc-7e87e9020047338c": {
+      "first_seen": "2026-10-02",
+      "last_seen": "2026-10-03",
+      "observations": [
+        {
+          "date": "2026-10-02",
+          "friction": "A 9-line edit to lib/env.mjs produced a 227-line whole-file reindent diff.",
+          "workaround": "Restore HEAD bytes and reapply the change through bash, as the bump-omp skill instructs."
+        },
+        {
+          "date": "2026-10-02",
+          "friction": "A two-line comment edit to lib/versions.mjs reindented the whole file (88-line diff).",
+          "workaround": "Restored HEAD bytes and reapplied only the intended lines through a script."
+        },
+        {
+          "date": "2026-10-03",
+          "friction": "A 3-line pin edit to acp-controller/lib/versions.mjs became a 90-line reformat diff.",
+          "workaround": "Restore HEAD bytes and reapply the exact lines through bash, as the bump-omp skill prescribes."
+        }
+      ],
+      "occurrence_count": 3,
+      "resolution": null,
+      "summary": "OMP format-on-write reindents whole acp-controller .mjs files on any edit because no formatter config there matches the files' 2-space style.",
+      "surface": "OMP format-on-write for .config/agents/harnesses/omp/acp-controller JS"
     },
     "pc-8ba3fb81c3a65110": {
       "first_seen": "2026-09-18",
@@ -238,15 +283,25 @@
     },
     "pc-f83f491fa66928b4": {
       "first_seen": "2026-10-02",
-      "last_seen": "2026-10-02",
+      "last_seen": "2026-10-03",
       "observations": [
         {
           "date": "2026-10-02",
           "friction": "A read-only pipeline of git diff -- <paths> | grep, git diff --stat and git ls-files was interrupted by the git-state-change gate; an earlier run interrupted after gh release view.",
           "workaround": "Acknowledge the interrupt and continue; the commands were read-only."
+        },
+        {
+          "date": "2026-10-02",
+          "friction": "During bump-omp, the gate interrupted after only read-only git log/rev-list inspection had run; no state-changing Git command was pending.",
+          "workaround": "Read rule://git and continue; no command change needed."
+        },
+        {
+          "date": "2026-10-03",
+          "friction": "During an omp bump, the gate interrupted a binary-save command (mkdir/cp/shasum, no Git write) right after a read-only git status/log batch; the agent had to stop and reread rule://git before continuing.",
+          "workaround": "Read rule://git, confirm no Git state change, continue."
         }
       ],
-      "occurrence_count": 1,
+      "occurrence_count": 3,
       "resolution": null,
       "summary": "The git state-change gate fires on read-only commands, so inspection pipelines are interrupted as if they changed Git state.",
       "surface": ".config/agents/rules/git-state-change.md trigger"
