@@ -104,16 +104,29 @@ returns; a dequeued message is otherwise unrecoverable. Every result that is
 not the bound row, such as a peer message, another job or a `wakeRelay`, is
 kept in kernel state and printed in full in that cell, and the loop continues.
 A `wait` call with an owned running job is bounded by `WAIT_MAX_MS` (30 min)
-and then returns a still-running snapshot. With no owned running job or live
-owned service it returns `No message within …` after a short message window
-(5 s rising to 300 s on repeated waits) in OMP v18.5.0
-([message window](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/tools/wait.ts)).
-The cell keeps either result and the loop waits again. It prints every return
-that is not the settled bound row raw as it arrives, including a still-running
-snapshot and a `No message within …` or other return marked `useless`, never
-only a parsed field, which can be empty. After each return it also prints the
-last three lines of every launch log the child's request names (the output file
-of a process launched under [Child foreground execution](#child-foreground-execution)).
+and then returns a still-running snapshot. In OMP v18.8.5 `wait` first returns
+a message already queued. With no owned running job, no finished owned job
+still undelivered and no live owned service, it then throws the tool error
+`Nothing to wait for: no background job or service you started is running.
+Other agents' results and messages arrive on their own.` A running peer does
+not prevent that throw
+([`wait`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/tools/wait.ts)).
+The Eval bridge passes the thrown message through unchanged, so
+`await tool.wait({})` in a Python cell raises a `RuntimeError` whose text is
+exactly that message
+([host bridge](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/eval/js/tool-bridge.ts),
+[Python bridge](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/eval/py/tool-bridge.ts),
+[prelude](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/eval/py/prelude.py)).
+The cell catches that error and prints it raw. After an eligible follow-up
+receipt it is the no-job wait stop below. During launch collection, with no
+eligible follow-up receipt, it is not that stop: the cell prints it raw, does
+not loop, and the return is not observed. The cell keeps every other result
+and the loop waits again. It prints every return that is not the settled bound
+row raw as it arrives, including a still-running snapshot and any return
+marked `useless`, never only a parsed field, which can be empty. After each
+return it also prints the last three lines of every launch log the child's
+request names (the output file of a process launched under
+[Child foreground execution](#child-foreground-execution)).
 OMP's startup watchdog follows each `Still starting … phase:` line with a log
 hint, so the last line alone can hide the phase. A stalled launch then shows
 within minutes. Printing only observes: it never stops, signals, resends or
@@ -184,9 +197,12 @@ The child returns the candidate through one terminal type-absent `yield` with
 tool call in the child's assistant turn, never invoked through eval,
 `tool.yield`, `getattr(tool, 'yield')`, a prelude helper or any other tool
 bridge: a bridged yield reports `Result submitted.` but emits no tool-execution
-events, so OMP registers no launch or wake job. An incremental array `type`
-continues the job and is not a completed candidate. The child neither sends the
-candidate through IRC nor parks for rethink.
+events, so OMP does not count it as an accepted yield
+([yield acceptance](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
+It is not a candidate; its effect on wake jobs is under
+[Implementation follow-up wake jobs](#implementation-follow-up-wake-jobs). An
+incremental array `type` continues the job and is not a completed candidate.
+The child neither sends the candidate through IRC nor parks for rethink.
 
 Every controller request to an implementation child, launch or follow-up,
 states each of these request rules:
@@ -240,8 +256,8 @@ the busy child's existing turn. A `revived` receipt with changed registry ID
 also stops. Only `woken` or `revived` with the same bound registry ID enters
 same-cell collection. No resend, replacement or allowance reset.
 Allow one outstanding request per child; send the next only after retaining
-the preceding wake job or observing that turn end with no registered job
-through the no-job wait stop below. This adds no polling rule.
+the preceding wake job or after the preceding request ended at the no-job wait
+stop below, which does not prove that turn ended. This adds no polling rule.
 
 The child ends the woken turn with one terminal type-absent `yield`, made as
 one direct native tool call under the rule above, whose `data` is exactly
@@ -267,34 +283,65 @@ consumption or five minutes if unconsumed. Do not wait for holds to expire just
 to avoid collisions. Old, duplicate or foreign rows cannot satisfy the next
 request, even when their job IDs look suitable.
 
-Failure before accepted yield registers no wake job and may relay `wakeRelay`
-to the parent. Such a notice is nonauthoritative: no admission, resend,
-replacement or allowance reset. Accepted yield followed by failure registers
-a rejecting job, which remains unadmitted even with structured data. Parent
-relay is skipped only when that parent owns the registered wake job; other
-wakers may receive relays. Registration may fail because the manager is shut
-down or its running limit is reached, not because the desired ID is held.
-No-job registration failure stops. Absence of a row alone is not proof that a
-turn failed or ended.
+A follow-up woken by the parent's own message, here the controller's request,
+opens its wake job at turn start when the job manager accepts it
+([wake monitor](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
+It does not register when the manager is shut down or its running limit is
+reached, or when there is no owner or manager. A held ID is not a failure; the
+job takes the next suffix
+([register](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/async/job-manager.ts)).
+A failed start leaves the job unset, so a later accepted yield in that turn
+tries the same registration again. A turn woken only by peers registers its
+job only when its `yield` is accepted.
 
-The no-job wait stop is the positive native observation of such a turn end.
-After the controller has read an eligible receipt, a later native `wait` result
-whose `details.jobs` is empty and whose text is
-`No running background jobs to wait for.` means no owner job, running peer or
-live owned service remained: the woken turn ended without a registered job, for
-example after a bridged yield. Stop that request as a missing reply, with no
-admission, further wait, resend, replacement or allowance reset, and assess it
-under the shared execution-recovery policy. Issue that `wait` only after reading
-the receipt, never in parallel with or before the send: the woken turn claims
-running state in microtasks queued before the receipt returns, so only an
-earlier `wait` could observe the pre-start state. A `wakeRelay` or other
-ordinary message remains nonauthoritative and does not end collection. While an
-unrelated peer or owned service runs this result cannot occur, and collection
-stays bounded only by native wait limits. A `wait` result with empty
-`details.jobs` and any other text, such as `No message within …` after the
-OMP v18.5.0 message window elapses while no owner job runs
-([message window](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/tools/wait.ts)),
-is not this stop. This adds no polling rule.
+A registered job settles whatever the turn does. An accepted structured
+`yield` resolves it with the yield result, and a failure after that yield
+rejects it; a rejecting job remains unadmitted even with structured data. A
+registered job whose turn has no accepted structured `yield` settles with no
+caller payload: text only on a clean end, rejected on failure. That row is not
+admitted, and the request stops as a missing reply. A bridged yield is not an
+accepted yield. On a parent-woken turn it does not cancel the job opened at
+start, which settles with no caller payload and is not admitted. On a
+peer-woken turn it registers no job.
+
+The relay skips the job owner only when the job registered; other wakers may
+still receive relays. If registration failed, the parent can receive a
+`wakeRelay`. A relay is never a reply: no admission, resend, replacement or
+allowance reset. Absence of a row alone is not proof that a turn failed or
+ended.
+
+The no-job wait stop is the thrown `Nothing to wait for: …` error described in
+[Same-cell structured return collection](#same-cell-structured-return-collection).
+It is not proof that the turn ended or that the child failed. After an
+eligible receipt, `tool.wait` can throw it while the child is still running if
+its wake job is not registered yet, and a running peer does not prevent the
+throw. The cell catches that error, prints it raw, and does not loop or poll.
+Only that error text is the stop; any other thrown error is not. A message
+already queued, including a `wakeRelay`, is returned before the throw, printed
+raw, and does not end collection; the loop waits again. The stop ends that
+request as a missing reply, with no admission, further wait, resend,
+replacement or allowance reset, and is assessed under the shared
+execution-recovery policy. A job that registers only after this stop is not
+collected. Do not fall back to relay text, history, inbox or a cut result. An
+owned running service or an undelivered owned job still prevents the throw,
+and collection then stays bounded only by the native wait limit. This adds no
+polling rule.
+
+Issue that `wait` only after reading the receipt, never in parallel with or
+before the send. In OMP v18.8.5 the session queues the wake turn's start on
+its pooled-yield transition before `deliver` returns `woken`
+([deliver](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/session/irc-bridge.ts),
+[wake turn](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/session/agent-session.ts)).
+When no such transition is pending, that start runs the wake monitor, which
+registers the parent-woken job, before the send path
+([send](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/irc/bus.ts))
+resumes from its `await`, so the job exists before the receipt returns. The
+ordering is not guaranteed when a pooled-yield transition is still pending or
+the wake is deferred behind another turn. An early throw can then stop a
+follow-up that might still produce a valid reply. That stop is not proof the
+child failed: it stays a missing reply assessed under the shared
+execution-recovery policy, and a job that registers only after the stop is
+still not collected.
 
 After candidate admission send the one implementation rethink as a separate
 request to that same child. It applies code rethink then test rethink, at most
