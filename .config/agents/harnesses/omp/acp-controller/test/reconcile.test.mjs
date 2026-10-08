@@ -1253,6 +1253,7 @@ const rows = (lines) => ["## Review rounds", "", "| Step | Outer | Actor/event |
 const stopped = (candidates, blocker) => ["## Reconcile stopped", "", "**Candidate**", "", ...candidates.map((c) => `- ${sha(c)}`), "", "**Blocker**", "", blocker, "", "**Resume from**", "", "- a new approved Reconcile run from the canonical identity above", ""];
 const REVISED = "REVISE<br>• Misses the stated goal";
 const ACCEPTED = "VALID<br>• Accepts the proposal";
+const ACCEPTED_NOTES = "VALID · with notes<br>• Accepts the proposal";
 
 test("citations: REVISE-only, with an absolute path, a positive line range and an exact non-empty quote", () => {
   const ctx = { mode: "conversation" };
@@ -1546,12 +1547,12 @@ test("NOTES3: the three-round example — VALIDs with notes travel between revie
     [
       ...rows([
         `1 | A | post-rethink | ${sha(T0)} | ${REVISED}`,
-        `1 | B | post-rethink | ${sha(X)} | ${ACCEPTED}`,
-        `1 | A | later | ${sha(X)} | ${ACCEPTED}`,
-        `1 | B | later | ${sha(X)} | ${ACCEPTED}`,
-        `1 | A | later | ${sha(X)} | ${ACCEPTED}`,
+        `1 | B | post-rethink | ${sha(X)} | ${ACCEPTED_NOTES}`,
+        `1 | A | later | ${sha(X)} | ${ACCEPTED_NOTES}`,
+        `1 | B | later | ${sha(X)} | ${ACCEPTED_NOTES}`,
+        `1 | A | later | ${sha(X)} | ${ACCEPTED_NOTES}`,
         `1 | apply | — | ${sha(X)} | applied (count 1)`,
-        `2 | A | later | ${sha(X)} | ${ACCEPTED}`,
+        `2 | A | later | ${sha(X)} | ${ACCEPTED_NOTES}`,
         `2 | B | later | ${sha(X)} | ${REVISED}`,
         `2 | A | later | ${sha(Y)} | ${ACCEPTED}`,
         `2 | apply | — | ${sha(Y)} | applied (count 2)`,
@@ -1582,7 +1583,7 @@ test("NOTES4: a note the other reviewer was never sent ends the Final proposal a
   assert.ok(
     recordOf(out.markdown).endsWith(
       [
-        `| 4 | 1 | B | later | ${sha(text)} | ${ACCEPTED} |`,
+        `| 4 | 1 | B | later | ${sha(text)} | ${ACCEPTED_NOTES} |`,
         `| 5 | 1 | closure | — | ${sha(text)} | unchanged proposal VALID |`,
         "| 6 | 1 | cleanup | — | — | A, B disposed (observed exit) |",
         "",
@@ -1664,9 +1665,9 @@ test("NOTES5: a REVISE answering a forwarded second VALID continues as a normal 
     recordOf(out.markdown),
     [
       ...rows([
-        `1 | A | post-rethink | ${sha(T0)} | ${ACCEPTED}`,
-        `1 | B | post-rethink | ${sha(T0)} | ${ACCEPTED}`,
-        `1 | A | later | ${sha(T0)} | ${ACCEPTED}`,
+        `1 | A | post-rethink | ${sha(T0)} | ${ACCEPTED_NOTES}`,
+        `1 | B | post-rethink | ${sha(T0)} | ${ACCEPTED_NOTES}`,
+        `1 | A | later | ${sha(T0)} | ${ACCEPTED_NOTES}`,
         `1 | B | later | ${sha(T0)} | ${REVISED}`,
         `1 | A | later | ${sha(Y)} | ${ACCEPTED}`,
         `1 | apply | — | ${sha(Y)} | applied (count 1)`,
@@ -1691,6 +1692,7 @@ test("NOTES5: A's VALID without notes never creates B", async () => {
   assert.equal(out.exitCode, 0, out.markdown);
   assert.deepEqual(prompts(), ["a:initial", "a:rethink"]);
   assert.equal(events().some((e) => e.model === "scripted/b"), false, "B never starts");
+  assert.match(out.markdown, /\| 1 \| 1 \| A \| post-rethink \| sha256:[0-9a-f]{64} \| VALID<br>• Accepts the proposal \|\n/, "a provisional response's notes never mark the finalized row");
   assert.ok(!out.markdown.includes("**Open notes**"), "a provisional response's notes are never open notes");
   assertCleanedUp();
 });

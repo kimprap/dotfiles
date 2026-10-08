@@ -222,9 +222,14 @@ const CORRECTION_SHAPE = {
   artifact: "`correction.edits`: one complete set of exact `{old, new}` edits against the unchanged outer base; each `old` occurs exactly once",
 };
 
-/** Outcome cell: the verdict word, then the reviewer-authored summary points (never reworded). */
+/**
+ * Outcome cell: the verdict word (`VALID · with notes` for a `VALID` whose notes
+ * list is non-empty), then the reviewer-authored summary points (never
+ * reworded). Note text never enters the cell.
+ */
 function verdictText(v) {
-  return [v.verdict, ...v.summary.map((p) => `• ${p}`)].join("\n");
+  const head = v.verdict === "VALID" && v.notes.length > 0 ? "VALID · with notes" : v.verdict;
+  return [head, ...v.summary.map((p) => `• ${p}`)].join("\n");
 }
 
 function addRow(rs, actor, pass, ident, outcome) {

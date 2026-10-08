@@ -659,7 +659,8 @@ rewrite, summarize, or reorder it. The controller projects the full trace into
 finalized verdict exactly once, plus apply, validate, freshness, cleanup, cap,
 park, resume, dispute, and stop milestones, and excludes provisional initial
 responses.
-Each finalized verdict's Outcome shows only the verdict word followed by the
+Each finalized verdict's Outcome shows the verdict word, or `VALID · with notes`
+for a finalized `VALID` with a non-empty notes list, followed by the
 reviewer-authored `summary` points (return contract in
 [reviewer protocol](references/reviewer-protocol.md)), one `• ` point per line,
 copied byte-for-byte from the admitted `data` strings. Full reviewer text
@@ -669,7 +670,8 @@ response the other reviewer was never sent is an open note, rendered as the
 `**Open notes**` field below with one `- {A|B}: {note}` child per note, in
 order, copied byte-for-byte; a multi-line note continues with the same
 continuation indentation as the proposal child. Omit the field when there are
-no open notes. The Outcome cell stays the verdict and summary points.
+no open notes. The Outcome cell holds only that first line and the summary
+points, never note text.
 
 ```markdown
 ## Review rounds
