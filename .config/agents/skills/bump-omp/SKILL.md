@@ -5,7 +5,8 @@ description: >
   acp controller in one unattended run: save the old omp binary, install,
   triage upstream changes, move the pin, run the quick checks, the kill-scope
   check, the offline
-  suite and the L1 live run when the changes need it, then commit or roll
+  suite when acpx or the ACP SDK moves, and the L1 live run when the changes
+  need it, then commit or roll
   back and report. Use only when the user explicitly asks to update,
   upgrade, or bump omp, acpx, or the ACP SDK. Skip ordinary omp use or
   configuration, controller or skill changes, and other tool upgrades.
@@ -56,7 +57,7 @@ A request that names no component bumps omp, acpx, and the ACP SDK to their late
 
 2. **After install.**
    - Settings: compare `omp config list --json` from the saved old binary with the new one. Add to `C/config/omp-overlay.yml` every new setting whose default adds context or side effects.
-   - Pin: move the omp pin in `C/lib/versions.mjs`. If the acpx/SDK pair moves, edit `C/lib/versions.mjs`, `C/package.json` (the dependency and the SDK override), and `C/package-lock.json` together, then run `npm ci` in `C`.
+   - Pin: move the omp pin in `C/lib/versions.mjs`. If the acpx/SDK pair moves, edit `C/lib/versions.mjs`, `C/package.json` (the dependency and the SDK override), and `C/package-lock.json` together, then run `npm ci` in `C` and start the suite at once (step 5).
    - Quick checks: `node .config/agents/harnesses/omp/acp-controller/cli.mjs roles` exits 0 and prints its models note, and `omp -p --no-session --thinking=low` with a short prompt answers. Record any startup or extension error either prints.
 
 3. **Kill-scope check.** Run it on every bump, after the quick checks, with no reviewer spend. The agent's own session still runs the old omp, so its `bash` cannot test the new omp's kill rules; the check runs in a new print-mode session of the new binary.
@@ -87,13 +88,13 @@ A request that names no component bumps omp, acpx, and the ACP SDK to their late
    - acpx/SDK moved.
 
 5. **Run the suite and L1 at the same time.**
-   - Suite: once the quick checks and the kill-scope check pass, start `npm test` in `C` as an `async` `bash` job with `timeout: 0` and its full output in a log file under `/tmp`. Done when every test passes.
+   - Suite: only when the acpx/SDK pair moves. Start `npm test` in `C` right after step 2's `npm ci`, before the quick checks, as an `async` `bash` job with `timeout: 0` and its full output in a log file under `/tmp`. Done when every test passes. On an omp-only bump, including a triage hold-back, do not run it: every test drives a fake omp that echoes the pin, so it cannot fail on the new binary. The commit message records the skip and that reason.
    - L1 waits for the citation arm. Immediately before it, record `git -C ~/.dotfiles status --short --untracked-files=all -- .config/agents/` and `git -C ~/.dotfiles diff -- .config/agents/ | shasum -a 256`; repeat both after L1 and expect them unchanged.
    - Run L1 as "L1 Artifact with park and resume" below says.
    - If the suite fails only with the new acpx/SDK pair:
      - If L1 was started, finish it before any package revert: perform its repair and resume, or dispose it while the pin still matches if repair cannot proceed. Do not wait for a parked run to end by itself. If L1 was not started, do not start it on the pair about to be held back.
      - If the suite process is still running, wait until it has exited.
-     - Hold the pair back: revert the pair's lines in `C/lib/versions.mjs` and its package files, run `npm ci` in `C`, and rerun the suite once.
+     - Hold the pair back: revert the pair's lines in `C/lib/versions.mjs` and its package files, and run `npm ci` in `C`. Do not rerun the suite: the bump is now omp-only. The commit message reports the failed pair suite and the hold-back.
      - If L1 had a trigger other than the pair move, run L1 once on the final pin (a rerun if it already ran); it checks the committed pin and must pass. An L1 whose only trigger was the pair move checked the held-back pair, not the committed pin, so its failure alone does not roll the omp bump back; the report names it.
 
 6. **All checks pass: commit.** Commit the pin with any overlay and citation changes. Stage exact paths with `git -C ~/.dotfiles add -- <path>...` per `.agents/AGENTS.md` `## Git`; never `git add -A`, `git add .`, or `git commit -a`; do not push. The message states old to new, the install command and source, each check's result including the kill-scope check, the live-run decision and why, each run's exit and spend, any hold-back and why, and the known limits below. Then report.
@@ -158,6 +159,7 @@ Cleanup, after the resume, not after the park: no `~/.omp/agent/sessions/acp-con
 - The skill layer is not tested during a bump.
 - Whether print mode reports extension load errors is unverified.
 - An acpx/SDK hold-back can add a second L1 run.
+- An omp-only bump runs no offline suite, so a controller regression committed outside a bump stays untested until the next acpx/SDK move or a manual `npm test`.
 - A coding-agent Breaking Changes section can trigger L1 when the break is unrelated.
 - The kill-scope check covers omp's `bash` deadline kill only; session-end cancellation takes the same kill path in omp's source, but no check exercises it.
 - The kill-scope check relies on a print-mode model following the fixed prompt; a skipped timeout fails the bump rather than passing it.
