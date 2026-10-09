@@ -28,3 +28,5 @@ ida:
   enabled: false
 telemetry:
   otlpExportEnabled: false
+archive:
+  enabled: false

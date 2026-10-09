@@ -13,8 +13,8 @@ The
 generic implementation-return facts are grounded in OMP v18.4.9 stock source;
 the version pin records evidence and does not enforce the runtime:
 
-- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/task/executor.ts)
-- [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/task/index.ts)
+- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)
+- [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/index.ts)
 - [`async/job-manager.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/async/job-manager.ts)
 - [`internal-urls/agent-protocol.ts`](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/internal-urls/agent-protocol.ts)
 
@@ -433,10 +433,10 @@ audit, only when the requester names it.
   terminal model error, or an exhausted reminder ladder with no pending work
   skips the quiescence barrier, so teardown cancels any background job it left
   running and the turn ends without a return
-  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/task/executor.ts)).
+  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
   A yield while jobs are pending is only parked until they settle, then a fresh
   yield is required
-  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/task/executor.ts));
+  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts));
   do not rely on that.
 - Before its terminal return, a child starts no background work: no bash
   `async: true` and no launched service.
@@ -446,11 +446,11 @@ audit, only when the requester names it.
   ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
   [threshold](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
   [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts),
-  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/bash.ts)).
+  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/tools/bash.ts)).
   A child runs any command that may exceed that threshold through Eval with an
   explicit `timeout` (Eval auto-background is off by default:
   [setting](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/eval/settings.ts),
-  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/eval.ts)),
+  [foreground path](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/tools/eval.ts)),
   and gives every Eval cell that may exceed the 30 s default an explicit
   `timeout`
   ([default](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/tool-timeouts.ts)).
@@ -460,16 +460,16 @@ audit, only when the requester names it.
   Eval runner's stdin is the host's control channel and never closes: a process
   that reads stdin that is not a terminal, such as print-mode `omp -p` even with
   the prompt as an argument, waits forever for EOF
-  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/main.ts)),
+  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/main.ts)),
   and a process that reads it can take the host's control frames
-  ([runner stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/packages/coding-agent/src/eval/py/runner.py)).
+  ([runner stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/eval/py/runner.py)).
   Prefer the runner's own shell forms, a `%%bash` cell or a `!cmd` line, which
   already run with stdin on `/dev/null` and show output as it arrives. Use raw
   `subprocess` only when those cannot do the job, with
   `stdin=subprocess.DEVNULL`, and write its output to a file instead of holding
   it with `capture_output`, so its diagnostics are readable while it runs.
   Commands run through the bash tool already get a null stdin
-  ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.1.21/crates/pi-shell/src/shell.rs)).
+  ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/crates/pi-shell/src/shell.rs)).
 - Every process a child launches from Eval also gets its own time limit of
   about ten times its expected run time: `subprocess.run(timeout=…)` in Python,
   or `/opt/homebrew/bin/timeout` in a shell form, never a bare `timeout`

@@ -8,7 +8,7 @@ import { promisify } from "node:util";
 
 const execFileP = promisify(execFile);
 
-export const OMP_VERSION = "omp/18.5.0";
+export const OMP_VERSION = "omp/18.8.5";
 export const ACPX_VERSION = "0.19.2";
 export const ACP_SDK_VERSION = "1.4.0";
 
