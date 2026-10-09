@@ -142,6 +142,8 @@ never with the path held in a shell variable, so the last controller command
 in the transcript is a complete recovery. `timeout: 0` stays the normal path
 because it needs the fewest calls; a call that still ends without a record
 follows "Call ended without a record".
+The `bash` call sets only `command` and `timeout: 0`, with the repository root
+as working directory, and never `name`, `ready`, `async` or `pty`.
 
 The call hands the run to a detached worker and writes a three-line notice to
 stderr, each line starting with `acp-controller:`: the runId, worker PID and

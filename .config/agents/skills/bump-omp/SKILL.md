@@ -61,7 +61,7 @@ A request that names no component bumps omp, acpx, and the ACP SDK to their late
 
 3. **Kill-scope check.** Run it on every bump, after the quick checks, with no reviewer spend. The agent's own session still runs the old omp, so its `bash` cannot test the new omp's kill rules; the check runs in a new print-mode session of the new binary.
    - Prepare: `node .config/agents/harnesses/omp/acp-controller/test/fixtures/kill-scope-check.mjs` creates a new `/tmp/acp-killscope-*` folder `<check dir>` with a fake `omp`, a scripted plan whose first reviewer turn takes about 20 seconds, and run and session roots, and prints one command, `<check command>`.
-   - Run, from the repository root, through `bash` with `timeout: 0`:
+   - Run, from the repository root, through `bash` with `timeout: 0` and no `name`, `ready`, `async` or `pty`:
 
      ```text
      ~/.local/bin/omp -p --no-session --thinking=low '<fixed prompt>'
@@ -87,7 +87,7 @@ A request that names no component bumps omp, acpx, and the ACP SDK to their late
    - acpx/SDK moved.
 
 5. **Run the suite and L1 at the same time.**
-   - Suite: once the quick checks and the kill-scope check pass, start `npm test` in `C` as an `async` `bash` job with its full output in a log file under `/tmp`. Done when every test passes.
+   - Suite: once the quick checks and the kill-scope check pass, start `npm test` in `C` as an `async` `bash` job with `timeout: 0` and its full output in a log file under `/tmp`. Done when every test passes.
    - L1 waits for the citation arm. Immediately before it, record `git -C ~/.dotfiles status --short --untracked-files=all -- .config/agents/` and `git -C ~/.dotfiles diff -- .config/agents/ | shasum -a 256`; repeat both after L1 and expect them unchanged.
    - Run L1 as "L1 Artifact with park and resume" below says.
    - If the suite fails only with the new acpx/SDK pair:
