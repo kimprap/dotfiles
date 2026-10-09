@@ -1,5 +1,35 @@
 {
   "records": {
+    "pc-0565b42e058a2bb7": {
+      "first_seen": "2026-10-08",
+      "last_seen": "2026-10-08",
+      "observations": [
+        {
+          "date": "2026-10-08",
+          "friction": "The kill-scope print-mode turn was launched with bash name; inside it node resolved to an x86_64 /usr/local/bin/node (os error 86), failing the check and triggering a rollback; foreground launches of both omp versions resolved the arm64 mise node.",
+          "workaround": "Launch kill-scope and quick-check commands in a plain foreground bash with timeout 0 and no name, ready or async."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "A bash call given a name runs as a supervised service with the macOS login PATH, so a kill-scope or quick-check turn launched that way resolves different binaries than the foreground session and can fail for reasons unrelated to the omp version.",
+      "surface": ".config/agents/skills/bump-omp check launches through bash name/ready"
+    },
+    "pc-0ef8a0cbad4621a9": {
+      "first_seen": "2026-10-08",
+      "last_seen": "2026-10-08",
+      "observations": [
+        {
+          "date": "2026-10-08",
+          "friction": "npm test in the acp-controller ran about 406 s (117 tests); the async bash job was killed at 300 s, and repeated relaunches still lacked an effective timeout 0.",
+          "workaround": "Run npm test from an Eval cell with timeout 0 (subprocess.run) and record the exit code and summary lines."
+        }
+      ],
+      "occurrence_count": 1,
+      "resolution": null,
+      "summary": "The suite step starts npm test as an async bash job without disabling the deadline, but the suite now runs longer than bash's 300 s default, so the deadline kills it mid-run.",
+      "surface": ".config/agents/skills/bump-omp offline suite launch"
+    },
     "pc-127bb3af1002afa4": {
       "first_seen": "2026-08-15",
       "last_seen": "2026-10-02",
