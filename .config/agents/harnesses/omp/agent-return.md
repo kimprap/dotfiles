@@ -13,7 +13,7 @@ The
 generic implementation-return facts are grounded in OMP v18.4.9 stock source;
 the version pin records evidence and does not enforce the runtime:
 
-- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)
+- [`task/executor.ts`](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/task/executor.ts)
 - [`task/index.ts`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/index.ts)
 - [`async/job-manager.ts`](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/async/job-manager.ts)
 - [`internal-urls/agent-protocol.ts`](https://github.com/can1357/oh-my-pi/blob/v18.5.0/packages/coding-agent/src/internal-urls/agent-protocol.ts)
@@ -165,7 +165,7 @@ Before creating any implementation child, require the OMP collector's
 `taskDepth` to be 0. At `taskDepth > 0`, stop `transport-unavailable` before
 allocation. This is adapter policy: OMP v18.4.9 exposes native `wait` to
 subagents when async, IRC or launch is enabled
-([native gate](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/index.ts)).
+([native gate](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/tools/index.ts)).
 Do not substitute or spawn a delegated controller to bypass this gate.
 Depth 0 still requires every schema, identity and collection capability below.
 This host restriction does not change capable other-host topology.
@@ -198,7 +198,7 @@ tool call in the child's assistant turn, never invoked through eval,
 `tool.yield`, `getattr(tool, 'yield')`, a prelude helper or any other tool
 bridge: a bridged yield reports `Result submitted.` but emits no tool-execution
 events, so OMP does not count it as an accepted yield
-([yield acceptance](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
+([yield acceptance](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/task/executor.ts)).
 It is not a candidate; its effect on wake jobs is under
 [Implementation follow-up wake jobs](#implementation-follow-up-wake-jobs). An
 incremental array `type` continues the job and is not a completed candidate.
@@ -285,7 +285,7 @@ request, even when their job IDs look suitable.
 
 A follow-up woken by the parent's own message, here the controller's request,
 opens its wake job at turn start when the job manager accepts it
-([wake monitor](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
+([wake monitor](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/task/executor.ts)).
 It does not register when the manager is shut down or its running limit is
 reached, or when there is no owner or manager. A held ID is not a failure; the
 job takes the next suffix
@@ -330,8 +330,8 @@ polling rule.
 Issue that `wait` only after reading the receipt, never in parallel with or
 before the send. In OMP v18.8.5 the session queues the wake turn's start on
 its pooled-yield transition before `deliver` returns `woken`
-([deliver](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/session/irc-bridge.ts),
-[wake turn](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/session/agent-session.ts)).
+([deliver](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/session/irc-bridge.ts),
+[wake turn](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/session/agent-session.ts)).
 When no such transition is pending, that start runs the wake monitor, which
 registers the parent-woken job, before the send path
 ([send](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/irc/bus.ts))
@@ -427,26 +427,26 @@ audit, only when the requester names it.
 ## Child foreground execution
 
 - A task child may have native `wait`
-  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/tools/index.ts));
+  ([native gate](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/tools/index.ts));
   the rules below still apply. A run that never yields first has its pending
   background jobs settled and is prompted again to yield. A budget stop, a
   terminal model error, or an exhausted reminder ladder with no pending work
   skips the quiescence barrier, so teardown cancels any background job it left
   running and the turn ends without a return
-  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts)).
+  ([teardown](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/task/executor.ts)).
   A yield while jobs are pending is only parked until they settle, then a fresh
   yield is required
-  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/task/executor.ts));
+  ([parked yield](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/task/executor.ts));
   do not rely on that.
 - Before its terminal return, a child starts no background work: no bash
   `async: true` and no launched service.
 - Bash auto-backgrounds a command still running after
   `bash.autoBackground.thresholdMs` (default 60 s), even with a longer `timeout`
   or `timeout: 0`
-  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
-  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/exec/settings.ts),
+  ([enabled](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/exec/settings.ts),
+  [threshold](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/exec/settings.ts),
   [wait budget](https://github.com/can1357/oh-my-pi/blob/v18.3.0/packages/coding-agent/src/async/auto-background.ts),
-  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/tools/bash.ts)).
+  [`timeout: 0`](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/tools/bash.ts)).
   A child runs any command that may exceed that threshold through Eval with an
   explicit `timeout` (Eval auto-background is off by default:
   [setting](https://github.com/can1357/oh-my-pi/blob/v18.4.9/packages/coding-agent/src/eval/settings.ts),
@@ -460,7 +460,7 @@ audit, only when the requester names it.
   Eval runner's stdin is the host's control channel and never closes: a process
   that reads stdin that is not a terminal, such as print-mode `omp -p` even with
   the prompt as an argument, waits forever for EOF
-  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/main.ts)),
+  ([piped stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.7/packages/coding-agent/src/main.ts)),
   and a process that reads it can take the host's control frames
   ([runner stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/packages/coding-agent/src/eval/py/runner.py)).
   Prefer the runner's own shell forms, a `%%bash` cell or a `!cmd` line, which
@@ -469,7 +469,7 @@ audit, only when the requester names it.
   `stdin=subprocess.DEVNULL`, and write its output to a file instead of holding
   it with `capture_output`, so its diagnostics are readable while it runs.
   Commands run through the bash tool already get a null stdin
-  ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.5/crates/pi-shell/src/shell.rs)).
+  ([bash stdin](https://github.com/can1357/oh-my-pi/blob/v18.8.7/crates/pi-shell/src/shell.rs)).
 - Every process a child launches from Eval also gets its own time limit of
   about ten times its expected run time: `subprocess.run(timeout=…)` in Python,
   or `/opt/homebrew/bin/timeout` in a shell form, never a bare `timeout`
