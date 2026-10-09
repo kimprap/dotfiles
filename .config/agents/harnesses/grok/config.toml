@@ -45,7 +45,6 @@ reasoning_effort = "xhigh"
 prompt_file = "/Users/kim/.agents/skills/dev-test-audit/references/opinion-agent.md"
 default_isolation = "none"
 
-
 [marketplace]
 official_marketplace_auto_installed = true
 default_skills_installs_purged = true
