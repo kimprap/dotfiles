@@ -3,30 +3,28 @@
     "pc-0565b42e058a2bb7": {
       "first_seen": "2026-10-08",
       "last_seen": "2026-10-08",
-      "observations": [
-        {
-          "date": "2026-10-08",
-          "friction": "The kill-scope print-mode turn was launched with bash name; inside it node resolved to an x86_64 /usr/local/bin/node (os error 86), failing the check and triggering a rollback; foreground launches of both omp versions resolved the arm64 mise node.",
-          "workaround": "Launch kill-scope and quick-check commands in a plain foreground bash with timeout 0 and no name, ready or async."
-        }
-      ],
+      "observations": [],
       "occurrence_count": 1,
-      "resolution": null,
+      "resolution": {
+        "kind": "fixed",
+        "reference": "34b2358",
+        "resolved_on": "2026-10-09",
+        "summary": "controller-call-guard.js rewrites the bump-omp kill-scope launch to timeout 0 without name, ready, async or pty, and bump-omp step 3 forbids those fields."
+      },
       "summary": "A bash call given a name runs as a supervised service with the macOS login PATH, so a kill-scope or quick-check turn launched that way resolves different binaries than the foreground session and can fail for reasons unrelated to the omp version.",
       "surface": ".config/agents/skills/bump-omp check launches through bash name/ready"
     },
     "pc-0ef8a0cbad4621a9": {
       "first_seen": "2026-10-08",
       "last_seen": "2026-10-08",
-      "observations": [
-        {
-          "date": "2026-10-08",
-          "friction": "npm test in the acp-controller ran about 406 s (117 tests); the async bash job was killed at 300 s, and repeated relaunches still lacked an effective timeout 0.",
-          "workaround": "Run npm test from an Eval cell with timeout 0 (subprocess.run) and record the exit code and summary lines."
-        }
-      ],
+      "observations": [],
       "occurrence_count": 1,
-      "resolution": null,
+      "resolution": {
+        "kind": "fixed",
+        "reference": "34b2358",
+        "resolved_on": "2026-10-09",
+        "summary": "bump-omp's suite step now sets timeout 0, and controller-call-guard.js rewrites controller npm test calls to timeout 0 while keeping async."
+      },
       "summary": "The suite step starts npm test as an async bash job without disabling the deadline, but the suite now runs longer than bash's 300 s default, so the deadline kills it mid-run.",
       "surface": ".config/agents/skills/bump-omp offline suite launch"
     },
@@ -67,15 +65,14 @@
     "pc-201f2dad1a48c4d8": {
       "first_seen": "2026-10-03",
       "last_seen": "2026-10-03",
-      "observations": [
-        {
-          "date": "2026-10-03",
-          "friction": "In a live Reconcile run the session agent launched cli.mjs with bash name/ready six times; service mode could not read the local:// request redirect, later launches were refused for unacknowledged notifications, and after an explicit correction the retry and resume still ran as a reused-name service whose log mixed earlier output, leaving the exit code reported only by the agent.",
-          "workaround": "Human tells the session to use a plain foreground bash call with timeout 0 and no name/ready."
-        }
-      ],
+      "observations": [],
       "occurrence_count": 1,
-      "resolution": null,
+      "resolution": {
+        "kind": "fixed",
+        "reference": "34b2358",
+        "resolved_on": "2026-10-09",
+        "summary": "driver.md now forbids name, ready, async and pty on controller bash calls, and controller-call-guard.js rewrites any controller call that sets them."
+      },
       "summary": "The driver requires the controller call through bash with timeout 0 but does not forbid bash name/ready/async, so agents launch it as a background service.",
       "surface": ".config/agents/harnesses/omp/acp-controller/driver.md controller bash invocation"
     },
